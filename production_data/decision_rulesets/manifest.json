@@ -55,11 +55,23 @@
       "created_at": "2025-10-15",
       "engine_version": "v1.2.0",
       "description": "Candidate v1.2 (a_floor 0.60->0.55, pre-drawdown fields)",
+      "status": "retired",
+      "requires_replay": false,
+      "notes": "Retired: stale candidate, superseded by v1.3.2 active ruleset.",
+      "updated_by": "manual_bootstrap",
+      "updated_at": "2026-02-16T00:00:00Z"
+    },
+    {
+      "id": "25f50278",
+      "file": "v1.4.0_candidate.json",
+      "created_at": "2026-02-16",
+      "engine_version": "v1.3.0",
+      "description": "Schema expansion: catalyst_time_decay_mode (logistic decay behind config, default=hard)",
       "status": "candidate",
       "requires_replay": false,
-      "notes": "Identical effective config to v2_phase2_default.json. Lacks drawdown_gate_mode/hard_floor/size_penalty fields (uses engine defaults).",
+      "notes": "Same params as v1.3.2 + catalyst_time_decay_mode=hard, catalyst_logistic_midpoint_days=150, catalyst_logistic_scale_days=30.0. No behavior change with default mode=hard. New output field: catalyst_decay_w.",
       "updated_by": "manual_bootstrap",
-      "updated_at": "2025-10-15T00:00:00Z"
+      "updated_at": "2026-02-16T00:00:00Z"
     },
     {
       "id": "be5e5c86",
@@ -96,14 +108,14 @@
       "updated_at": "2026-02-14T00:00:00Z"
     },
     {
-      "id": "ca05baa9",
+      "id": "18eb5154",
       "file": "v1.json",
       "created_at": "2024-11-01",
       "engine_version": "v1.0.0",
-      "description": "Original defaults (a_floor=0.60) + catalyst_priority_mode schema",
+      "description": "Original defaults (a_floor=0.60) + catalyst_time_decay_mode schema",
       "status": "retired",
       "requires_replay": false,
-      "notes": "Retired: a_floor=0.60 produces negative tier-A vs tier-C spread. Schema updated with catalyst_priority_mode/catalyst_priority_rank_bonuses fields."
+      "notes": "Retired: a_floor=0.60 produces negative tier-A vs tier-C spread. Schema updated with catalyst_time_decay_mode/logistic fields."
     },
     {
       "id": "96f655ee",

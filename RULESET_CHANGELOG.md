@@ -6,6 +6,31 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] 25f50278 — 2026-02-16 — Logistic catalyst decay + explainability columns
+
+**Schema expansion** (no behavior change with default `catalyst_time_decay_mode=hard`):
+- `catalyst_time_decay_mode`: "hard" (default) | "logistic" — smooth sigmoid gating
+- `catalyst_logistic_midpoint_days`: 150 (sigmoid center, decay_w=0.5)
+- `catalyst_logistic_scale_days`: 30.0 (sigmoid steepness)
+
+**New output field**: `catalyst_decay_w` — continuous proximity weight [0.0, 1.0].
+Hard mode: near=1.0, mid=0.7, far=0.3, missing=0.0. Logistic mode: sigmoid curve.
+
+**Logistic mode behavior** (opt-in via `catalyst_time_decay_mode="logistic"`):
+- Overlay `catalyst_strength` derived from decay_w thresholds (>=0.5=near, >=0.2=mid, else far)
+- Tier dev: `is_actionable = decay_w >= 0.2` (replaces hard near/mid check)
+- Catalyst tilt: continuous `0.90 + 0.20 * decay_w` (replaces discrete tilt map)
+
+**Explainability columns** (in SNAPSHOT_COLUMNS, rankings.csv):
+- `top_3_drivers`: semicolon-separated top-3 component score deviations from mean
+- `catalyst_reason_detail`: structured string with tier, reason, cat_days, strength, decay_w
+
+**New candidate**: `v1.4.0_candidate.json` (ID: 25f50278) — v1.3.2 params + schema fields.
+
+**Tests**: 16 in `test_logistic_catalyst_decay.py`, 13 in `test_explainability_columns.py`.
+
+---
+
 ## [v1.3.0] f3454ef7 — 2026-02-13 — Promote v1.3.0 + cat_priority observability
 
 **Promotion**: `v1.3.0_candidate.json` (ID: f3454ef7) promoted to active.

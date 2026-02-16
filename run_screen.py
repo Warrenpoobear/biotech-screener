@@ -1306,7 +1306,7 @@ SNAPSHOT_COLUMNS = [
     "decision_engine_version", "decision_engine_ruleset_id",
     "eligible", "ineligible_reasons",
     "sponsor_tier1_count", "sponsor_overlap_count", "sponsor_net_buying",
-    "catalyst_days", "catalyst_in_window", "catalyst_mode", "catalyst_strength",
+    "catalyst_days", "catalyst_in_window", "catalyst_mode", "catalyst_strength", "catalyst_decay_w",
     "runway_bucket", "mom_state", "risk_flags",
     "size_band", "size_reasons",
     "cost_mult", "cost_bucket", "cost_haircut_applied", "est_cost_bps",

@@ -2,6 +2,8 @@
   "alpha_headwind": -0.05,
   "alpha_tailwind": 0.05,
   "beta_high_threshold": 1.8,
+  "catalyst_logistic_midpoint_days": 150,
+  "catalyst_logistic_scale_days": 30.0,
   "catalyst_mid_days": 180,
   "catalyst_near_days": 90,
   "catalyst_priority_default": 9,
@@ -144,6 +146,7 @@
       0.9
     ]
   ],
+  "catalyst_time_decay_mode": "hard",
   "confidence_low_threshold": 0.3,
   "cost_haircut_buckets": [
     [

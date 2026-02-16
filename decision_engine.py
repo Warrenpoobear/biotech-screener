@@ -60,6 +60,9 @@ class DecisionRuleset:
     # Previously hardcoded inline values
     catalyst_near_days: int = 90
     catalyst_mid_days: int = 180
+    catalyst_time_decay_mode: str = "hard"           # "hard" | "logistic"
+    catalyst_logistic_midpoint_days: int = 150        # sigmoid center
+    catalyst_logistic_scale_days: float = 30.0        # sigmoid steepness
     sponsor_confirm_threshold: int = 2
 
     # Regime-aware drawdown gate
@@ -173,6 +176,17 @@ class DecisionRuleset:
                 raise ValueError(
                     f"mom_state_tilt_mults: mult must be > 0, got {mult} for '{state}'"
                 )
+        # Validate catalyst_time_decay_mode
+        if self.catalyst_time_decay_mode not in ("hard", "logistic"):
+            raise ValueError(
+                f"catalyst_time_decay_mode must be 'hard' or 'logistic', "
+                f"got '{self.catalyst_time_decay_mode}'"
+            )
+        if self.catalyst_logistic_scale_days <= 0:
+            raise ValueError(
+                f"catalyst_logistic_scale_days must be > 0, "
+                f"got {self.catalyst_logistic_scale_days}"
+            )
         # Validate catalyst_priority_mode
         if self.catalyst_priority_mode not in ("off", "tiebreaker", "blended"):
             raise ValueError(
@@ -308,6 +322,14 @@ def _safe_float(val, default=None):
         return float(str(val))
     except (ValueError, TypeError):
         return default
+
+
+def _logistic_decay(days: float | None, midpoint: float, scale: float) -> float:
+    """Continuous proximity weight: 1.0 (imminent) -> 0.0 (distant). Midpoint -> 0.5."""
+    if days is None or days < 0:
+        return 0.0
+    from math import exp
+    return 1.0 / (1.0 + exp((days - midpoint) / max(scale, 1e-6)))
 
 
 # Sentinel for "data not present" vs "present and zero"
@@ -481,6 +503,31 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
     else:
         out["catalyst_strength"] = "missing"
 
+    # Catalyst decay weight: continuous proximity score
+    if ruleset.catalyst_time_decay_mode == "logistic":
+        if out["catalyst_mode"] == "blended_window":
+            out["catalyst_decay_w"] = 1.0
+        elif out["catalyst_mode"] == "specific_days" and isinstance(days, (int, float)) and days >= 0:
+            out["catalyst_decay_w"] = round(
+                _logistic_decay(days, ruleset.catalyst_logistic_midpoint_days,
+                                ruleset.catalyst_logistic_scale_days), 4
+            )
+        else:
+            out["catalyst_decay_w"] = 0.0
+        # Override catalyst_strength to match logistic decay thresholds
+        if out["catalyst_mode"] in ("specific_days", "blended_window"):
+            w = out["catalyst_decay_w"]
+            if w >= 0.5:
+                out["catalyst_strength"] = "near"
+            elif w >= 0.2:
+                out["catalyst_strength"] = "mid"
+            else:
+                out["catalyst_strength"] = "far"
+    else:
+        # Hard mode: derive from bucket for backward compat
+        _hard_w = {"near": 1.0, "mid": 0.7, "far": 0.3, "missing": 0.0}
+        out["catalyst_decay_w"] = _hard_w.get(out["catalyst_strength"], 0.0)
+
     # --- Runway bucket (from severity / fundamental_red_flag_reasons) ---
     sev = str(rec.get("severity", "")).upper()
     red_reasons = rec.get("fundamental_red_flag_reasons") or []
@@ -648,6 +695,7 @@ def _compute_tier_dev(
     catalyst_in_window: str,
     catalyst_days: Any,
     ruleset: DecisionRuleset,
+    catalyst_decay_w: float = 0.0,
 ) -> Tuple[str, str]:
     """Compute dev tier (A/B/C/D) and tier_reason.
 
@@ -676,8 +724,18 @@ def _compute_tier_dev(
     has_catalyst_data = has_specific_days or has_blended_window
 
     # Catalyst strength: near/mid/far/missing
-    if has_blended_window:
+    if ruleset.catalyst_time_decay_mode == "logistic" and has_catalyst_data:
+        # Smooth: map continuous decay_w back to discrete strength labels
+        if catalyst_decay_w >= 0.5:
+            strength = "near"
+        elif catalyst_decay_w >= 0.2:
+            strength = "mid"
+        else:
+            strength = "far"
+        is_actionable = catalyst_decay_w >= 0.2
+    elif has_blended_window:
         strength = "near"
+        is_actionable = True
     elif has_specific_days:
         if catalyst_days <= ruleset.catalyst_near_days:
             strength = "near"
@@ -685,10 +743,10 @@ def _compute_tier_dev(
             strength = "mid"
         else:
             strength = "far"
+        is_actionable = strength in ("near", "mid")
     else:
         strength = "missing"
-
-    is_actionable = strength in ("near", "mid")
+        is_actionable = False
 
     # Catalyst tag for tier_reason
     if has_blended_window and not has_specific_days:
@@ -928,7 +986,7 @@ DECISION_COLUMNS = [
     "decision_engine_version", "decision_engine_ruleset_id",
     "eligible", "ineligible_reasons",
     "sponsor_tier1_count", "sponsor_overlap_count", "sponsor_net_buying",
-    "catalyst_days", "catalyst_in_window", "catalyst_mode", "catalyst_strength",
+    "catalyst_days", "catalyst_in_window", "catalyst_mode", "catalyst_strength", "catalyst_decay_w",
     "runway_bucket", "mom_state", "risk_flags",
     "size_band", "size_reasons",
     "cost_mult", "cost_bucket", "cost_haircut_applied",
@@ -974,6 +1032,7 @@ def compute_decision_fields(
         catalyst_in_window=overlays.get("catalyst_in_window", ""),
         catalyst_days=overlays.get("catalyst_days", ""),
         ruleset=rs,
+        catalyst_decay_w=overlays.get("catalyst_decay_w", 0.0),
     )
 
     # Cost multiplier (opt-in, affects sizing band + weight)
@@ -982,9 +1041,14 @@ def compute_decision_fields(
     # Catalyst tilt multiplier (opt-in, affects weight only)
     catalyst_tilt_mult = 1.0
     if rs.enable_catalyst_tilt:
-        tilt_map = dict(rs.catalyst_tilt_mults)
-        cat_strength = overlays.get("catalyst_strength", "missing")
-        catalyst_tilt_mult = tilt_map.get(cat_strength.upper(), 1.0)
+        if rs.catalyst_time_decay_mode == "logistic":
+            # Continuous tilt: w=1.0→1.10, w=0.5→1.00, w=0.0→0.90
+            decay_w = overlays.get("catalyst_decay_w", 0.0)
+            catalyst_tilt_mult = 0.90 + 0.20 * decay_w
+        else:
+            tilt_map = dict(rs.catalyst_tilt_mults)
+            cat_strength = overlays.get("catalyst_strength", "missing")
+            catalyst_tilt_mult = tilt_map.get(cat_strength.upper(), 1.0)
 
     # Momentum state tilt multiplier (opt-in, affects weight only)
     mom_state_tilt_mult = 1.0
