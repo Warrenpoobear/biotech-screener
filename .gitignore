@@ -150,6 +150,7 @@ cache/
 .mcp.json
 data/snapshots_v3_tiltfix/
 data/grid_search/
+data/diag/
 
 # --- Backfill / enrichment logs ---
 backfill_logs/
