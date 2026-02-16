@@ -86,8 +86,8 @@ ruleset.catalyst_priority_mode  # "off"|"tiebreaker"|"blended"
 ```
 
 **Pinned IDs:**
-- `PHASE2_PINNED_RULESET_ID` in `run_screen.py` = `"96f655ee"` (must match delta module)
-- `PHASE2_PINNED_RULESET_ID` in `run_phase2_snapshot_delta.py` = `"96f655ee"` (must match run_screen)
+- `PHASE2_PINNED_RULESET_ID` in `run_screen.py` = `"e1be5370"` (must match delta module)
+- `PHASE2_PINNED_RULESET_ID` in `run_phase2_snapshot_delta.py` = `"e1be5370"` (must match run_screen)
 - Both pins MUST be updated together — `run_screen.py` imports the delta module's pin
 
 ### Ruleset Promotion Pipeline
