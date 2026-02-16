@@ -1,7 +1,7 @@
 # Biotech Screener Model Documentation
 
-**Version:** 2.1.0
-**Last Updated:** February 15, 2026
+**Version:** 2.2.0
+**Last Updated:** February 16, 2026
 **System:** Wake Robin Capital Biotech Screening Pipeline
 
 ---
@@ -560,20 +560,33 @@ Tier assignments, catalyst provenance, and portfolio decisions.
 | Field | Type | Description |
 |-------|------|-------------|
 | `eligible` | 0/1 | Passes eligibility gates |
-| `tier_dev` | A/B/C/D | Dev-stage tier assignment |
-| `tier_reason` | string | Why this tier was assigned |
+| `ineligible_reasons` | string | Pipe-delimited reasons if ineligible |
+| `tier_dev` | A/B/C/D | Dev-stage tier assignment (drug_developer only) |
+| `tier_commercial` | A/B/C/D | Commercial tier assignment (commercial_* only) |
+| `tier_any` | A/B/C/D | Unified tier: tier_dev for dev, tier_commercial for commercial |
+| `tier_reason` | string | Why tier_dev was assigned |
+| `tier_any_reason` | string | Why tier_any was assigned (dev or commercial reason) |
 | `actionable_rank` | int | Rank within eligible+tiered universe |
 | `target_weight_pct` | float | Target portfolio weight |
 | `catalyst_mode` | string | specific_days, blended_window, no_upcoming, missing |
 | `catalyst_days` | int | Days to nearest catalyst |
 | `catalyst_strength` | string | NEAR, MID, FAR, MISSING |
+| `catalyst_decay_w` | float | Catalyst time-decay weight (1.0 = hard cutoff mode) |
 | `catalyst_source` | string | Source of nearest catalyst (CTGOV_CALENDAR, SEC_8K_FILING, etc.) |
 | `catalyst_event_type` | string | Type of nearest catalyst event |
 | `cat_priority` | int | Catalyst source priority (1=highest) |
 | `mom_state` | string | Momentum regime |
+| `risk_flags` | string | Pipe-delimited risk flag labels |
 | `size_band` | string | L, M, S, XS |
+| `size_reasons` | string | Pipe-delimited sizing rationale |
 | `cost_mult` | float | Cost-aware sizing multiplier |
 | `cost_bucket` | string | Cost classification |
+| `missing_components` | string | Pipe-delimited missing data feeds (catalyst\|sponsor\|drawdown) |
+| `missingness_penalty` | int | Count of missing components (0..N) |
+| `commercial_quality` | float | Raw quality composite (commercial_* only) |
+| `commercial_quality_pct` | float | Quality percentile within commercial cohort |
+| `de_drawdown_missing_reason` | string | Why drawdown is missing: no_price_series, series_too_short, or empty |
+| `top_3_drivers` | string | Top 3 composite score drivers with contributions |
 
 ---
 
@@ -768,12 +781,15 @@ Module 5 remains in the pipeline to produce `composite_score` and `composite_ran
 
 | Layer | Name | Description |
 |-------|------|-------------|
-| L0 | Eligibility | Drug developer archetype + no disqualifying flags |
+| L0 | Eligibility | No disqualifying flags (severity, red flags) |
 | L2 | Overlays | Catalyst tilt, momentum tilt, cost haircut |
-| L4 | Dev Tier | A/B/C/D tier assignment based on optionality + catalyst strength |
+| L4a | Dev Tier | A/B/C/D tier for `drug_developer` archetype based on optionality + catalyst strength |
+| L4b | Commercial Tier | A/B/C/D tier for `commercial_*` archetypes based on quality composite + catalyst strength |
 | L3 | Sizing | Target weight allocation within tier/band constraints |
 
 ### Tier Assignment
+
+#### Dev Tier (`tier_dev`) — drug_developer archetype
 
 | Tier | Criteria | Description |
 |------|----------|-------------|
@@ -781,6 +797,28 @@ Module 5 remains in the pipeline to produce `composite_score` and `composite_ran
 | B | optionality >= a_floor OR catalyst NEAR/MID | One strong signal present |
 | C | Eligible but neither criterion met | Watchlist |
 | D | Eligible with adverse flags | Deprioritized |
+
+#### Commercial Tier (`tier_commercial`) — commercial_biotech / commercial_pharma archetypes
+
+| Tier | Criteria | Description |
+|------|----------|-------------|
+| A | quality_pct >= 0.85 + catalyst NEAR/MID | High-quality commercial with actionable catalyst |
+| B | quality_pct >= 0.60 OR catalyst NEAR/MID | Moderate quality or catalyst present |
+| C | quality_pct < 0.60 or missing | Low quality or no data |
+| D | Ineligible | Deprioritized |
+
+**Commercial quality composite**: 45% financial_score + 35% valuation_score + 20% momentum_score, percentile-ranked within the commercial cohort. Stored as `commercial_quality` (raw) and `commercial_quality_pct` (percentile).
+
+**Unified tier (`tier_any`)**: `tier_dev` for drug developers, `tier_commercial` for commercial names. Always populated; the other tier column is empty.
+
+#### Tiering Priority Mode
+
+| Mode | Sort Key Prefix | Portfolio Filter | Default |
+|------|----------------|------------------|---------|
+| `dev_first` | (eligible, is_dev, tier_ord, ...) | drug_developer + tier_dev in [A,B] | Yes |
+| `tier_first` | (eligible, tier_ord, is_dev, ...) | tier_any in [A,B] (cross-archetype) | No |
+
+In `tier_first` mode, commercial A-tier names compete with dev A-tier for portfolio slots. Within the same tier, dev names sort first. Commercial names do **not** receive the dev optionality sizing boost (`tier_a_dev` band upgrade) — commercial quality is a different metric from dev optionality.
 
 ### Catalyst Strength Bands
 
@@ -797,17 +835,19 @@ When tickers share the same tier/rank, catalyst source priority breaks ties:
 
 | Priority | Sources |
 |----------|---------|
-| 1 | FDA_CALENDAR, FEDERAL_REGISTER |
+| 1 | FDA_CALENDAR, FDA_ADCOM_CALENDAR, FDA_PDUFA |
 | 2 | CTGOV_CALENDAR, SEC_10Q/10K/6K_FILING |
-| 3 | Corporate/ongoing events |
+| 3 | FEDERAL_REGISTER (procedural notices), corporate/ongoing events |
 | 9 | No catalyst |
+| 99 | Unknown source |
 
 ### Ruleset Configuration
 
 Decision rules are externalized as frozen `DecisionRuleset` dataclass instances, serialized to JSON with content-hash IDs for reproducibility.
 
-- **Pinned ruleset**: `v1.3.2_candidate.json` (ID=`96f655ee`)
+- **Active ruleset**: `v1.3.3_missing_sort_only_candidate.json` (ID=`e1be5370`)
 - **Pinned in**: `run_screen.py` AND `run_phase2_snapshot_delta.py` (must stay in sync)
+- **Candidate**: `v1.4.1_tier_first_candidate.json` (ID=`054bc5cc`) — commercial tier promotion, pending replay
 
 ### Phase-2 Health Gate
 
@@ -824,6 +864,10 @@ The health gate compares current vs prior snapshots and reports OK/WARN/FAIL:
 | Name turnover | - | > 50% |
 | Weight L1 delta | - | > 55% |
 | Catalyst coverage drop | - | > 5pp |
+| Drawdown coverage | < 95% | < 99% |
+| Sponsor coverage | - | < 90% |
+| Catalyst component coverage | - | < 85% |
+| Portfolio missing data | - | count > 0 |
 
 ### Snapshot Outputs
 
@@ -831,14 +875,17 @@ Each Phase-2 run saves to `data/snapshots/{as_of_date}/`:
 
 | File | Description |
 |------|-------------|
-| `rankings.csv` | Full universe with 30+ decision engine columns |
+| `rankings.csv` | Full universe with 40+ decision engine columns |
 | `catalyst_source_mix.json` | Event distribution by source, confidence, precision |
+| `catalyst_shadow_metrics.json` | Transition KPIs, overlap metrics, source attribution vs prior snapshot |
 | `decision_ruleset.json` | Frozen ruleset used for this run |
 | `decision_portfolio.csv` | Filtered A+B tier, top-K positions |
 | `decision_portfolio.json` | Same as CSV, JSON format |
 | `phase2_health.json` | Health gate result + metrics |
 | `phase2_run_delta_report.txt` | Human-readable delta report |
 | `phase2_run_delta.csv` | Per-ticker delta details |
+| `phase2_run_delta_details.json` | Machine-readable delta details (portfolio turnover, catalyst coverage, top catalysts) |
+| `ic_onepager.md` | IC one-pager summary (health, portfolio, delta, tier distribution, exceptions) |
 | `metadata.json` | Run metadata, version, timestamps |
 
 ---
@@ -888,8 +935,24 @@ Track these metrics each run to detect data issues, model drift, and unintended 
 - **Risk & overlay**: distribution of `defensive_bucket`, `volatility`, `drawdown`, and `confidence_risk` states.
 - **Red flags / kill switches**: counts of `severe_negative_flag`, `severity=SEV3`, and `fundamental_red_flag`.
 
+### Catalyst Shadow Metrics (Telemetry)
+
+Each snapshot writes `catalyst_shadow_metrics.json` with KPIs comparing current vs prior snapshot (dev tickers only):
+
+| Metric | Description |
+|--------|-------------|
+| `bad_to_good` / `good_to_bad` | Catalyst mode transition counts + ticker lists (good = specific_days or blended_window) |
+| `bad_to_good_in_top60` / `bad_to_good_in_top100` | Decision-relevant flips (portfolio touch zone) |
+| `median_catalyst_days_good` | Median days-to-catalyst for tickers with good catalyst mode |
+| `p10/p50/p90_catalyst_days` | Distribution of catalyst days across all dev tickers |
+| `top60_overlap` / `top100_overlap` | Jaccard similarity on composite_rank vs prior snapshot |
+| `sec_8k_events` / `ctgov_events` / `fda_events` | Source attribution counts |
+| `A_tier_count` | Dev A-tier count |
+
+Rollup: `scripts/rollup_shadow_metrics.py` aggregates per-snapshot JSON into `output/catalyst_shadow_timeseries.csv`.
+
 Suggested artifacts:
-- A small “run-to-run diff” report (top movers by rank and by catalyst window).
+- A small "run-to-run diff" report (top movers by rank and by catalyst window).
 - A weekly chart of coverage and confidence metrics (should be stable absent upstream data changes).
 
 ---
@@ -963,6 +1026,10 @@ python run_screen.py \
 | SEC 8-K Collector | `wake_robin_data_pipeline/collectors/sec_8k_catalyst_collector.py` | SEC filing catalyst extraction |
 | FDA Collector | `wake_robin_data_pipeline/collectors/fda_adcom_collector.py` | FDA calendar + regulatory notices |
 | Drift Report | `scripts/run_drift_report.py` | Daily guardrails + rollback triggers |
+| Shadow Metrics Rollup | `scripts/rollup_shadow_metrics.py` | Aggregate per-snapshot telemetry into timeseries |
+| IC One-Pager | `scripts/make_ic_onepager.py` | Generate IC summary from snapshot artifacts |
+| Ruleset Compare/Replay | `scripts/compare_rulesets_replay.py` | Re-sort rankings with baseline vs candidate ruleset |
+| Cache Warmer | `warm_caches.py` | Pre-build SEC 8-K and FDA caches before screen run |
 | Ablation Comparison | `scripts/compare_ablation_snapshots.py` | Snapshot A/B comparison |
 | CSV export | `export_results_csv.py` | JSON to CSV conversion |
 | Production validation | `production_validation.py` | Output validation |
@@ -972,6 +1039,7 @@ python run_screen.py \
 
 ## Changelog
 
+- **2026-02-16 v2.2.0**: Commercial tier promotion (tier_commercial, tier_any, quality composite, tiering_priority_mode), missingness penalty columns + health guardrails, catalyst shadow metrics telemetry, IC one-pager, updated pinned ruleset to e1be5370, corrected catalyst priority table (FEDERAL_REGISTER demoted to pri=3), expanded Decision Engine columns table
 - **2026-02-15 v2.1.0**: Added Decision Engine (Phase-2) section, expanded Module 3 with SEC multi-form sources, quality gating, source mix sidecar, updated file locations
 - **2026-02-03 v2.0.0**: Comprehensive documentation with field definitions
 - **2026-01-30 v1.1.0**: Added PIT diagnostics, production validation
