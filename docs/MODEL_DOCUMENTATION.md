@@ -1060,6 +1060,10 @@ Also report **hit rate** = % of events where excess return > 0.
 * **Horizon availability:** t+20 may be unavailable for recent flip dates (insufficient forward data).
 * **Regime flips are not "true events":** they can reflect improved detection rather than real-world information arrival; their return attribution is still useful, but should be interpreted as "signal added by coverage expansion," not necessarily "market reaction to new info."
 
+#### Connection to Continuous Alpha Columns
+
+The flipper return attribution diagnostic is the **empirical validation harness** for the two continuous alpha columns (e.g., `catalyst_alpha_z` and `clinical_alpha_z`): a "flip" is simply a **discrete manifestation of a meaningful upward change** in the underlying catalyst/clinical state, and the diagnostic tests whether those state improvements are followed by **positive forward excess returns** versus the same-day universe. In practice, you can treat the flipper cohorts as **event labels** for "large positive deltas" in `catalyst_alpha_z` (and later `clinical_alpha_z`), then use the same framework to evaluate (a) **level vs delta** predictive power (does high `*_alpha_z` outperform, or do **jumps** in the score outperform?), (b) **horizon fit** (t+1/t+5/t+20), and (c) **artifact isolation** (regime flips indicate coverage rollouts; organic flips are closer to real information arrival). This keeps the columns continuous for ranking/diagnostics, while giving you a PIT-safe way to prove they behave like alpha rather than noise.
+
 ---
 
 ## Configuration
