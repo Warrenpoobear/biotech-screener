@@ -100,9 +100,13 @@ class DecisionRuleset:
     enable_missingness_size_penalty: bool = False
 
     # Clinical signal sort tilt (opt-in, default OFF)
-    # When enabled, higher clinical_score_z sorts earlier within tier/catalyst.
+    # When enabled, blends clinical_score_z_tier into sort anchor (comp_rank
+    # or opt_neg), gated by stage_bucket.  Positive-only mode (default) only
+    # boosts high-clinical names without penalising low ones.
     enable_clinical_sort_signal: bool = False
     clinical_sort_weight: float = 1.0
+    clinical_positive_only: bool = True
+    clinical_stage_mults: tuple = (("early", 0.0), ("mid", 1.0), ("late", 1.5))
 
     # Commercial tiering (opt-in, default dev_first = current behavior)
     tiering_priority_mode: str = "dev_first"          # "dev_first" | "tier_first"
@@ -307,6 +311,11 @@ class DecisionRuleset:
         if "catalyst_priority_rank_bonuses" in d and isinstance(d["catalyst_priority_rank_bonuses"], list):
             d["catalyst_priority_rank_bonuses"] = tuple(
                 tuple(pair) for pair in d["catalyst_priority_rank_bonuses"]
+            )
+        # Convert clinical_stage_mults list-of-lists back to tuple-of-tuples
+        if "clinical_stage_mults" in d and isinstance(d["clinical_stage_mults"], list):
+            d["clinical_stage_mults"] = tuple(
+                tuple(pair) for pair in d["clinical_stage_mults"]
             )
         # Migration: enable_catalyst_priority=True → catalyst_priority_mode="tiebreaker"
         if d.get("enable_catalyst_priority") and "catalyst_priority_mode" not in d:
@@ -1041,24 +1050,33 @@ def compute_actionable_sort_key(
     if rs.enable_missingness_sort_penalty:
         missing_count = int(_safe_float(decision_fields.get("missingness_penalty", 0)))
 
-    # Clinical sort signal: higher z sorts earlier (negated, 0 when disabled)
-    clin_neg = 0.0
+    # Clinical sort signal: blended into anchor term (0 when disabled).
+    # Uses tier-local z-score, gated by stage_bucket (early=0, mid/late active).
+    # Positive-only mode: only boosts high-clinical, never penalises low.
+    # Clamped to ±2.0 to prevent spiky z in small tier cohorts.
+    clin_adj = 0.0
     if rs.enable_clinical_sort_signal:
-        cz = _safe_float(decision_fields.get("clinical_score_z")) or 0.0
-        clin_neg = -(rs.clinical_sort_weight * cz)
+        cz_tier = _safe_float(decision_fields.get("clinical_score_z_tier")) or 0.0
+        stage = str(decision_fields.get("stage_bucket", ""))
+        stage_mult = dict(rs.clinical_stage_mults).get(stage, 0.0)
+        if rs.clinical_positive_only:
+            cz_eff = min(2.0, max(0.0, cz_tier))
+        else:
+            cz_eff = max(-2.0, min(2.0, cz_tier))
+        clin_adj = rs.clinical_sort_weight * cz_eff * stage_mult
 
     # --- Mode dispatch ---
     # prefix is (is_eligible, is_dev, tier_ord) in dev_first mode
     # or (is_eligible, tier_ord, is_dev) in tier_first mode
     if mode == "tiebreaker":
         # comp_rank dominates after tier; priority only breaks ties
+        effective_comp_rank = float(comp_rank) - clin_adj
         return prefix + (
-            comp_rank,      # composite rank dominates
+            effective_comp_rank,  # comp_rank with clinical tilt
             missing_count,  # fewer missing components first
             cat_priority,   # priority breaks comp_rank ties
             cat_days,       # ascending days
             opt_neg,        # descending optionality
-            clin_neg,       # descending clinical z (0 when disabled)
             sponsor_neg,    # descending sponsor count
             mom_ord,        # tailwind < neutral < headwind
             cat_mode_ord,   # specific < blended < no_upcoming < missing
@@ -1069,14 +1087,13 @@ def compute_actionable_sort_key(
         # Build bonus map from ruleset tuples
         bonus_map = dict(rs.catalyst_priority_rank_bonuses)
         bonus = bonus_map.get(cat_priority, 0.0)
-        effective_comp_rank = float(comp_rank) - bonus
+        effective_comp_rank = float(comp_rank) - bonus - clin_adj
         return prefix + (
-            effective_comp_rank,  # comp_rank with gentle bonus tilt
+            effective_comp_rank,  # comp_rank with bonus + clinical tilt
             missing_count,        # fewer missing components first
             cat_mode_ord,         # specific < blended < no_upcoming < missing
             cat_days,             # ascending days
             opt_neg,              # descending optionality
-            clin_neg,             # descending clinical z (0 when disabled)
             sponsor_neg,          # descending sponsor count
             mom_ord,              # tailwind < neutral < headwind
             cat_priority,         # priority as tiebreaker
@@ -1084,17 +1101,17 @@ def compute_actionable_sort_key(
         )
 
     # mode == "off" (default)
+    effective_opt_neg = opt_neg - clin_adj  # higher cz → more negative → sorts earlier
     return prefix + (
-        cat_priority,   # 0 (neutral) — no effect on ordering
-        cat_mode_ord,   # specific < blended < no_upcoming < missing
-        cat_days,       # ascending days (missing=9999)
-        missing_count,  # fewer missing components first
-        opt_neg,        # descending optionality (negated)
-        clin_neg,       # descending clinical z (0 when disabled)
-        sponsor_neg,    # descending sponsor count (negated)
-        mom_ord,        # tailwind < neutral < headwind
-        comp_rank,      # ascending composite rank
-        ticker,         # alphabetic tiebreak
+        cat_priority,       # 0 (neutral) — no effect on ordering
+        cat_mode_ord,       # specific < blended < no_upcoming < missing
+        cat_days,           # ascending days (missing=9999)
+        missing_count,      # fewer missing components first
+        effective_opt_neg,  # optionality with clinical tilt (negated)
+        sponsor_neg,        # descending sponsor count (negated)
+        mom_ord,            # tailwind < neutral < headwind
+        comp_rank,          # ascending composite rank
+        ticker,             # alphabetic tiebreak
     )
 
 

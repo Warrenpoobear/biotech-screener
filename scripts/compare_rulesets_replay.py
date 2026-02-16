@@ -35,6 +35,8 @@ from decision_engine import (
 TOP_K = 20
 TOP_60 = 60
 
+import numpy as np
+
 _CQ_WEIGHTS = {"financial": 0.45, "valuation": 0.35, "momentum": 0.20}
 
 
@@ -342,6 +344,37 @@ def main(argv=None) -> int:
         return 1
 
     rankings = pd.read_csv(rankings_path)
+
+    # Backfill clinical z-scores if not in snapshot (pre-feature snapshots)
+    dev_mask = rankings["archetype"] == "drug_developer"
+    if "clinical_score_z" not in rankings.columns and "clinical_score" in rankings.columns:
+        scores = pd.to_numeric(rankings.loc[dev_mask, "clinical_score"], errors="coerce")
+        valid = scores.dropna()
+        if len(valid) > 1:
+            mean, std = valid.mean(), valid.std(ddof=0)
+            if std > 0:
+                rankings.loc[valid.index, "clinical_score_z"] = ((valid - mean) / std).round(4)
+        print(f"[INFO] Backfilled clinical_score_z for {len(valid)} drug_developers (ddof=0)")
+
+    if "clinical_score_z_tier" not in rankings.columns and "clinical_score" in rankings.columns:
+        n_filled = 0
+        for tier, grp in rankings.loc[dev_mask].groupby("tier_dev"):
+            if not tier:
+                continue
+            scores = pd.to_numeric(grp["clinical_score"], errors="coerce")
+            valid = scores.dropna()
+            if len(valid) < 2:
+                rankings.loc[valid.index, "clinical_score_z_tier"] = 0.0
+                n_filled += len(valid)
+                continue
+            mean, std = valid.mean(), valid.std(ddof=0)
+            if std > 0:
+                rankings.loc[valid.index, "clinical_score_z_tier"] = ((valid - mean) / std).round(4)
+            else:
+                rankings.loc[valid.index, "clinical_score_z_tier"] = 0.0
+            n_filled += len(valid)
+        print(f"[INFO] Backfilled clinical_score_z_tier for {n_filled} drug_developers (ddof=0)")
+
     baseline_rs = DecisionRuleset.from_json(args.baseline_ruleset)
     candidate_rs = DecisionRuleset.from_json(args.candidate_ruleset)
 

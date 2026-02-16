@@ -1304,7 +1304,7 @@ SNAPSHOT_COLUMNS = [
     "confidence_overall",
     "clinical_rank_pct_dev", "clinical_optionality_pct_dev",
     "clinical_alpha_z", "clinical_readout_days", "clinical_coverage_flag",
-    "clinical_score_z",
+    "clinical_score_z", "clinical_score_z_tier",
     "commercial_quality", "commercial_quality_pct",
     # Decision Engine v1 columns
     "decision_engine_version", "decision_engine_ruleset_id",
@@ -1345,7 +1345,7 @@ PHASE2_PORTFOLIO_COLUMNS = [
     "target_weight_pct", "tier_reason", "tier_any_reason", "size_reasons",
     "catalyst_mode", "catalyst_days", "cat_priority", "mom_state", "risk_flags",
     "composite_rank", "composite_score", "archetype",
-    "clinical_optionality_pct_dev", "clinical_alpha_z", "clinical_score_z",
+    "clinical_optionality_pct_dev", "clinical_alpha_z", "clinical_score_z", "clinical_score_z_tier",
     "commercial_quality_pct",
     "missing_components",
     "decision_engine_version", "decision_engine_ruleset_id",
@@ -2145,6 +2145,28 @@ def save_validation_snapshot(
                 csv_rows[idx]["clinical_score_z"] = round((_scores[j] - _mean) / _std, 4)
             else:
                 csv_rows[idx]["clinical_score_z"] = 0.0
+
+    # --- Compute clinical_score_z_tier (PIT-safe, z within tier_dev × drug_developer) ---
+    from collections import defaultdict as _defaultdict
+    _tier_groups = _defaultdict(list)  # tier_dev -> [(index, score)]
+    for i in _dev_indices:
+        tier = csv_rows[i].get("tier_dev", "")
+        if tier:
+            _tier_groups[tier].append((i, float(csv_rows[i]["clinical_score"])))
+    for _tier, _pairs in _tier_groups.items():
+        if len(_pairs) < 2:
+            for idx, _ in _pairs:
+                csv_rows[idx]["clinical_score_z_tier"] = 0.0
+            continue
+        _t_scores = [s for _, s in _pairs]
+        _t_mean = sum(_t_scores) / len(_t_scores)
+        _t_var = sum((s - _t_mean) ** 2 for s in _t_scores) / len(_t_scores)
+        _t_std = _t_var ** 0.5
+        for idx, s in _pairs:
+            if _t_std > 0:
+                csv_rows[idx]["clinical_score_z_tier"] = round((s - _t_mean) / _t_std, 4)
+            else:
+                csv_rows[idx]["clinical_score_z_tier"] = 0.0
 
     # --- Compute commercial_quality_pct (percentile within commercial cohort) ---
     _CQ_WEIGHTS = {"financial": 0.45, "valuation": 0.35, "momentum": 0.20}

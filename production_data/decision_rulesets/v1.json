@@ -147,7 +147,22 @@
     ]
   ],
   "catalyst_time_decay_mode": "hard",
+  "clinical_positive_only": true,
   "clinical_sort_weight": 1.0,
+  "clinical_stage_mults": [
+    [
+      "early",
+      0.0
+    ],
+    [
+      "mid",
+      1.0
+    ],
+    [
+      "late",
+      1.5
+    ]
+  ],
   "confidence_low_threshold": 0.3,
   "cost_haircut_buckets": [
     [
