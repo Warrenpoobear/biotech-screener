@@ -3898,6 +3898,25 @@ def run_screening_pipeline(
     if resume_index > 3 and checkpoint_dir:
         m4_result = load_checkpoint(checkpoint_dir, "module_4", as_of_date)
 
+    # Check for pre-computed clinical feature cache (same pattern as CTGov cache)
+    _clinical_cache = Path(__file__).parent / "cache" / "clinical" / f"clinical_features_{as_of_date}.json"
+    if m4_result is None and _clinical_cache.exists():
+        logger.info(f"  Using cached clinical features: {_clinical_cache.name}")
+        _cached = json.loads(_clinical_cache.read_text(encoding="utf-8"))
+        m4_result = {
+            "as_of_date": _cached["as_of_date"],
+            "scores": _cached["scores"],
+            "diagnostic_counts": {
+                "scored": _cached["diagnostic_counts"].get("tickers", 0),
+                "total_trials_raw": _cached["diagnostic_counts"].get("trials_raw", 0),
+                "total_trials_unique": _cached["diagnostic_counts"].get("trials_after_pit", 0),
+                "total_trials": _cached["diagnostic_counts"].get("trials_after_pit", 0),
+                "pit_filtered": 0,
+                "pit_fields_used": {},
+            },
+            "provenance": _cached.get("provenance", {}).get("module4_provenance", {}),
+        }
+
     if m4_result is None:
         m4_result = compute_module_4_clinical_dev(
             trial_records=trial_records,
