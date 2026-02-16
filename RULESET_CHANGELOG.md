@@ -6,6 +6,32 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] 054bc5cc — 2026-02-16 — Commercial tier promotion (tier_first mode)
+
+**Schema expansion** (no behavior change with default `tiering_priority_mode=dev_first`):
+- `tiering_priority_mode`: "dev_first" (default) | "tier_first" — cross-archetype competition
+- `tier_a_commercial_floor`: 0.85 (quality_pct cutoff for commercial A)
+- `tier_b_commercial_floor`: 0.60 (quality_pct cutoff for commercial B)
+
+**New output fields**: `tier_commercial`, `tier_any`, `tier_any_reason` — commercial names
+now receive tier labels (A/B/C/D) based on quality composite (financial + valuation + momentum).
+
+**New input fields**: `commercial_quality`, `commercial_quality_pct` — percentile rank within
+commercial cohort, computed in `run_screen.py` from weighted score composite.
+
+**tier_first mode** (opt-in via `tiering_priority_mode="tier_first"`):
+- Sort key: `(eligible, tier_ord, is_dev, ...)` — tier dominates, within same tier dev preferred
+- Portfolio filter: includes all archetypes with tier_any in tier_filter (not just drug_developer)
+- Sizing: effective tier = tier_any (commercial A gets tier_a sizing boost)
+
+**dev_first mode** (default): zero behavior change — sort key, portfolio filter, sizing identical.
+
+**New candidate**: `v1.4.1_tier_first_candidate.json` (ID: 054bc5cc) — v1.3.3 params + tier_first.
+
+**Tests**: 17 in `test_commercial_tier.py`.
+
+---
+
 ## [v1.3.0] 25f50278 — 2026-02-16 — Logistic catalyst decay + explainability columns
 
 **Schema expansion** (no behavior change with default `catalyst_time_decay_mode=hard`):

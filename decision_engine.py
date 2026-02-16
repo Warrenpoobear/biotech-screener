@@ -99,6 +99,11 @@ class DecisionRuleset:
     enable_missingness_sort_penalty: bool = False
     enable_missingness_size_penalty: bool = False
 
+    # Commercial tiering (opt-in, default dev_first = current behavior)
+    tiering_priority_mode: str = "dev_first"          # "dev_first" | "tier_first"
+    tier_a_commercial_floor: float = 0.85             # quality_pct cutoff for commercial A
+    tier_b_commercial_floor: float = 0.60             # quality_pct cutoff for commercial B
+
     # Actionable ordering — catalyst source/type priority (opt-in)
     enable_catalyst_priority: bool = False
     catalyst_priority_map: tuple = (
@@ -196,6 +201,12 @@ class DecisionRuleset:
             raise ValueError(
                 f"catalyst_priority_mode must be 'off', 'tiebreaker', or 'blended', "
                 f"got '{self.catalyst_priority_mode}'"
+            )
+        # Validate tiering_priority_mode
+        if self.tiering_priority_mode not in ("dev_first", "tier_first"):
+            raise ValueError(
+                f"tiering_priority_mode must be 'dev_first' or 'tier_first', "
+                f"got '{self.tiering_priority_mode}'"
             )
         # Validate dd_rel_margin_rescue_threshold: must be <= 0
         if self.dd_rel_margin_rescue_threshold > 0:
@@ -818,6 +829,93 @@ def _compute_tier_dev(
 
 
 # =============================================================================
+# LAYER 4b — COMMERCIAL TIER
+# =============================================================================
+
+def _compute_tier_commercial(
+    archetype: str,
+    eligible: bool,
+    quality_pct: Optional[float],
+    catalyst_in_window: str,
+    catalyst_days: Any,
+    ruleset: DecisionRuleset,
+    catalyst_decay_w: float = 0.0,
+) -> Tuple[str, str]:
+    """Compute commercial tier (A/B/C/D) and tier_reason.
+
+    Only for commercial_* archetypes.  Mirrors _compute_tier_dev structure but
+    uses commercial_quality_pct instead of optionality_pct_dev.
+
+    Returns (tier_letter, tier_reason).
+    """
+    if not str(archetype).startswith("commercial_"):
+        return "", ""
+
+    if not eligible:
+        return "D", "ineligible"
+
+    if quality_pct is None:
+        return "C", "no_quality_data"
+
+    # Determine catalyst proximity (same logic as _compute_tier_dev)
+    has_specific_days = isinstance(catalyst_days, (int, float)) and catalyst_days > 0
+    has_blended_window = catalyst_in_window == "1"
+    has_catalyst_data = has_specific_days or has_blended_window
+
+    if ruleset.catalyst_time_decay_mode == "logistic" and has_catalyst_data:
+        if catalyst_decay_w >= 0.5:
+            strength = "near"
+        elif catalyst_decay_w >= 0.2:
+            strength = "mid"
+        else:
+            strength = "far"
+        is_actionable = catalyst_decay_w >= 0.2
+    elif has_blended_window:
+        strength = "near"
+        is_actionable = True
+    elif has_specific_days:
+        if catalyst_days <= ruleset.catalyst_near_days:
+            strength = "near"
+        elif catalyst_days <= ruleset.catalyst_mid_days:
+            strength = "mid"
+        else:
+            strength = "far"
+        is_actionable = strength in ("near", "mid")
+    else:
+        strength = "missing"
+        is_actionable = False
+
+    # Catalyst tag for tier_reason
+    if has_blended_window and not has_specific_days:
+        cat_tag = "catalyst_window"
+    elif strength == "near":
+        cat_tag = "catalyst_near"
+    elif strength == "mid":
+        cat_tag = "catalyst_mid"
+    elif strength == "far":
+        cat_tag = "catalyst_far"
+    else:
+        cat_tag = ""
+
+    if has_catalyst_data:
+        if quality_pct >= ruleset.tier_a_commercial_floor and is_actionable:
+            return "A", f"high_quality+{cat_tag}"
+        elif quality_pct >= ruleset.tier_a_commercial_floor:
+            return "B", f"high_quality+{cat_tag}" if cat_tag else "high_quality+catalyst_far"
+        elif quality_pct >= ruleset.tier_b_commercial_floor and is_actionable:
+            return "B", f"mod_quality+{cat_tag}"
+        else:
+            return "C", "low_quality"
+    else:
+        if quality_pct >= ruleset.tier_a_commercial_floor:
+            return "B", "high_quality+no_catalyst_data"
+        elif quality_pct >= ruleset.tier_b_commercial_floor:
+            return "C", "mod_quality+no_catalyst_data"
+        else:
+            return "C", "low_quality+no_catalyst_data"
+
+
+# =============================================================================
 # ACTIONABLE ORDERING
 # =============================================================================
 
@@ -892,10 +990,21 @@ def compute_actionable_sort_key(
 
     is_dev = 0 if archetype == "drug_developer" else 1
 
-    tier = decision_fields.get("tier_dev", "")
+    rs = ruleset or DEFAULT_RULESET
+
+    # Select tier based on tiering priority mode
+    if rs.tiering_priority_mode == "tier_first":
+        tier = decision_fields.get("tier_any", "") or decision_fields.get("tier_dev", "")
+    else:
+        tier = decision_fields.get("tier_dev", "")
     tier_ord = _TIER_ORDER.get(str(tier), 4)
 
-    rs = ruleset or DEFAULT_RULESET
+    # Build prefix: tier_first puts tier before archetype
+    if rs.tiering_priority_mode == "tier_first":
+        prefix = (is_eligible, tier_ord, is_dev)
+    else:
+        prefix = (is_eligible, is_dev, tier_ord)
+
     mode = rs.catalyst_priority_mode
 
     # Resolve catalyst priority (needed for tiebreaker + blended modes)
@@ -928,21 +1037,20 @@ def compute_actionable_sort_key(
         missing_count = int(_safe_float(decision_fields.get("missingness_penalty", 0)))
 
     # --- Mode dispatch ---
+    # prefix is (is_eligible, is_dev, tier_ord) in dev_first mode
+    # or (is_eligible, tier_ord, is_dev) in tier_first mode
     if mode == "tiebreaker":
         # comp_rank dominates after tier; priority only breaks ties
-        return (
-            is_eligible,    # 0: eligible first
-            is_dev,         # 1: dev first
-            tier_ord,       # 2: A < B < C < D < blank
-            comp_rank,      # 3: composite rank dominates
-            missing_count,  # 4: fewer missing components first
-            cat_priority,   # 5: priority breaks comp_rank ties
-            cat_days,       # 6: ascending days
-            opt_neg,        # 7: descending optionality
-            sponsor_neg,    # 8: descending sponsor count
-            mom_ord,        # 9: tailwind < neutral < headwind
-            cat_mode_ord,   # 10: specific < blended < no_upcoming < missing
-            ticker,         # 11: alphabetic tiebreak
+        return prefix + (
+            comp_rank,      # composite rank dominates
+            missing_count,  # fewer missing components first
+            cat_priority,   # priority breaks comp_rank ties
+            cat_days,       # ascending days
+            opt_neg,        # descending optionality
+            sponsor_neg,    # descending sponsor count
+            mom_ord,        # tailwind < neutral < headwind
+            cat_mode_ord,   # specific < blended < no_upcoming < missing
+            ticker,         # alphabetic tiebreak
         )
 
     if mode == "blended":
@@ -950,35 +1058,29 @@ def compute_actionable_sort_key(
         bonus_map = dict(rs.catalyst_priority_rank_bonuses)
         bonus = bonus_map.get(cat_priority, 0.0)
         effective_comp_rank = float(comp_rank) - bonus
-        return (
-            is_eligible,          # 0: eligible first
-            is_dev,               # 1: dev first
-            tier_ord,             # 2: A < B < C < D < blank
-            effective_comp_rank,  # 3: comp_rank with gentle bonus tilt
-            missing_count,        # 4: fewer missing components first
-            cat_mode_ord,         # 5: specific < blended < no_upcoming < missing
-            cat_days,             # 6: ascending days
-            opt_neg,              # 7: descending optionality
-            sponsor_neg,          # 8: descending sponsor count
-            mom_ord,              # 9: tailwind < neutral < headwind
-            cat_priority,         # 10: priority as tiebreaker
-            ticker,               # 11: alphabetic tiebreak
+        return prefix + (
+            effective_comp_rank,  # comp_rank with gentle bonus tilt
+            missing_count,        # fewer missing components first
+            cat_mode_ord,         # specific < blended < no_upcoming < missing
+            cat_days,             # ascending days
+            opt_neg,              # descending optionality
+            sponsor_neg,          # descending sponsor count
+            mom_ord,              # tailwind < neutral < headwind
+            cat_priority,         # priority as tiebreaker
+            ticker,               # alphabetic tiebreak
         )
 
     # mode == "off" (default)
-    return (
-        is_eligible,    # 0: eligible first
-        is_dev,         # 1: dev first
-        tier_ord,       # 2: A < B < C < D < blank
-        cat_priority,   # 3: 0 (neutral) — no effect on ordering
-        cat_mode_ord,   # 4: specific < blended < no_upcoming < missing
-        cat_days,       # 5: ascending days (missing=9999)
-        missing_count,  # 6: fewer missing components first
-        opt_neg,        # 7: descending optionality (negated)
-        sponsor_neg,    # 8: descending sponsor count (negated)
-        mom_ord,        # 9: tailwind < neutral < headwind
-        comp_rank,      # 10: ascending composite rank
-        ticker,         # 11: alphabetic tiebreak
+    return prefix + (
+        cat_priority,   # 0 (neutral) — no effect on ordering
+        cat_mode_ord,   # specific < blended < no_upcoming < missing
+        cat_days,       # ascending days (missing=9999)
+        missing_count,  # fewer missing components first
+        opt_neg,        # descending optionality (negated)
+        sponsor_neg,    # descending sponsor count (negated)
+        mom_ord,        # tailwind < neutral < headwind
+        comp_rank,      # ascending composite rank
+        ticker,         # alphabetic tiebreak
     )
 
 
@@ -1040,6 +1142,7 @@ DECISION_COLUMNS = [
     "mom_state_tilt_mult", "mom_state_tilt_applied",
     "dd_rel_margin_rescued",
     "tier_dev", "tier_reason",
+    "tier_commercial", "tier_any", "tier_any_reason",
     "missing_components", "missingness_penalty",
 ]
 
@@ -1050,6 +1153,7 @@ def compute_decision_fields(
     optionality_pct_dev: Optional[float] = None,
     ruleset: Optional[DecisionRuleset] = None,
     est_cost_bps: Optional[float] = None,
+    commercial_quality_pct: Optional[float] = None,
 ) -> Dict[str, Any]:
     """Compute all decision engine fields for a single ticker.
 
@@ -1059,6 +1163,7 @@ def compute_decision_fields(
         optionality_pct_dev: pre-computed optionality percentile (float or None)
         ruleset: DecisionRuleset config (defaults to DEFAULT_RULESET)
         est_cost_bps: estimated round-trip trading cost in basis points (float or None)
+        commercial_quality_pct: pre-computed quality percentile for commercial archetypes (float or None)
 
     Returns:
         dict with all decision engine column values
@@ -1082,6 +1187,19 @@ def compute_decision_fields(
         catalyst_decay_w=overlays.get("catalyst_decay_w", 0.0),
     )
 
+    # Layer 4b — Commercial Tier
+    tier_commercial, tier_commercial_reason = _compute_tier_commercial(
+        archetype=archetype,
+        eligible=eligible,
+        quality_pct=commercial_quality_pct,
+        catalyst_in_window=overlays.get("catalyst_in_window", ""),
+        catalyst_days=overlays.get("catalyst_days", ""),
+        ruleset=rs,
+        catalyst_decay_w=overlays.get("catalyst_decay_w", 0.0),
+    )
+    tier_any = tier_dev or tier_commercial  # first non-empty
+    tier_any_reason = tier_reason if tier_dev else tier_commercial_reason
+
     # Cost multiplier (opt-in, affects sizing band + weight)
     cost_mult, cost_bucket = _compute_cost_mult(est_cost_bps, rs)
 
@@ -1104,11 +1222,16 @@ def compute_decision_fields(
         mom = overlays.get("mom_state", "neutral")
         mom_state_tilt_mult = mom_tilt_map.get(mom, 1.0)
 
-    # Layer 3 — Sizing
+    # Layer 3 — Sizing (effective tier depends on tiering priority mode)
+    effective_tier = tier_any if rs.tiering_priority_mode == "tier_first" else tier_dev
+    # For sizing, use the relevant quality metric: optionality for dev, quality_pct for commercial
+    effective_optionality = optionality_pct_dev
+    if effective_optionality is None and commercial_quality_pct is not None:
+        effective_optionality = commercial_quality_pct
     size_band, size_reasons = _compute_size_band(
         eligible=eligible,
-        tier_dev=tier_dev,
-        optionality=optionality_pct_dev,
+        tier_dev=effective_tier,
+        optionality=effective_optionality,
         overlays=overlays,
         ruleset=rs,
         rec=rec,
@@ -1127,6 +1250,9 @@ def compute_decision_fields(
         "size_reasons": "|".join(size_reasons) if size_reasons else "",
         "tier_dev": tier_dev,
         "tier_reason": tier_reason,
+        "tier_commercial": tier_commercial,
+        "tier_any": tier_any,
+        "tier_any_reason": tier_any_reason,
         "cost_mult": cost_mult,
         "cost_bucket": cost_bucket,
         "cost_haircut_applied": "1" if cost_mult < 1.0 else "0",

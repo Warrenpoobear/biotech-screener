@@ -113,27 +113,47 @@ def _portfolio_section(
                 first = t3.split(";")[0] if t3 else ""
                 driver_map[row.get("ticker", "")] = first
 
+    # Check if any commercial names are in portfolio
+    has_commercial = any(
+        r.get("archetype", "").startswith("commercial_") for r in portfolio_rows
+    )
+
     n = len(portfolio_rows)
-    lines = [
-        f"## Portfolio ({n} positions)",
-        "| # | Ticker | Tier | Wt% | Cat Days | Strength | Mom | Risk | Top Driver |",
-        "|---|--------|------|-----|----------|----------|-----|------|------------|",
-    ]
+    if has_commercial:
+        lines = [
+            f"## Portfolio ({n} positions)",
+            "| # | Ticker | Arch | Tier | Wt% | Cat Days | Strength | Mom | Risk | Top Driver |",
+            "|---|--------|------|------|-----|----------|----------|-----|------|------------|",
+        ]
+    else:
+        lines = [
+            f"## Portfolio ({n} positions)",
+            "| # | Ticker | Tier | Wt% | Cat Days | Strength | Mom | Risk | Top Driver |",
+            "|---|--------|------|-----|----------|----------|-----|------|------------|",
+        ]
 
     for row in portfolio_rows:
         rank = row.get("actionable_rank", "")
         ticker = row.get("ticker", "")
-        tier = row.get("tier_dev", "")
+        tier = row.get("tier_any", "") or row.get("tier_dev", "")
         wt = _fmt_pct(row.get("target_weight_pct", 0))
         cat_days = row.get("catalyst_days", "")
         strength = row.get("catalyst_strength", row.get("catalyst_mode", ""))
         mom = row.get("mom_state", "")
         risk = row.get("risk_flags", "")
         driver = driver_map.get(ticker, "")
-        lines.append(
-            f"| {rank} | {ticker} | {tier} | {wt} | {cat_days} "
-            f"| {strength} | {mom} | {risk} | {driver} |"
-        )
+        if has_commercial:
+            arch = row.get("archetype", "")
+            arch_label = "C" if arch.startswith("commercial_") else "D"
+            lines.append(
+                f"| {rank} | {ticker} | {arch_label} | {tier} | {wt} | {cat_days} "
+                f"| {strength} | {mom} | {risk} | {driver} |"
+            )
+        else:
+            lines.append(
+                f"| {rank} | {ticker} | {tier} | {wt} | {cat_days} "
+                f"| {strength} | {mom} | {risk} | {driver} |"
+            )
 
     return "\n".join(lines) + "\n"
 
@@ -214,28 +234,44 @@ def _tier_section(
     if rankings_rows is None:
         return f"## Tier Distribution\n{_NOT_AVAILABLE}\n"
 
-    # Count tiers in dev universe
+    # Check if tier_any column exists (commercial tier feature)
+    has_tier_any = any(row.get("tier_any", "") for row in rankings_rows)
+
+    # Count tiers in universe using tier_any (falls back to tier_dev)
     tier_order = ["A", "B", "C", "D"]
-    uni_counts: Dict[str, int] = {t: 0 for t in tier_order}
+    uni_dev: Dict[str, int] = {t: 0 for t in tier_order}
+    uni_comm: Dict[str, int] = {t: 0 for t in tier_order}
     for row in rankings_rows:
         td = row.get("tier_dev", "")
-        if td in uni_counts:
-            uni_counts[td] += 1
+        if td in uni_dev:
+            uni_dev[td] += 1
+        tc = row.get("tier_commercial", "")
+        if tc in uni_comm:
+            uni_comm[tc] += 1
 
     port_counts: Dict[str, int] = {t: 0 for t in tier_order}
     if portfolio_rows:
         for row in portfolio_rows:
-            td = row.get("tier_dev", "")
-            if td in port_counts:
-                port_counts[td] += 1
+            ta = row.get("tier_any", "") or row.get("tier_dev", "")
+            if ta in port_counts:
+                port_counts[ta] += 1
 
-    lines = [
-        "## Tier Distribution",
-        "| Tier | Universe | Portfolio |",
-        "|------|----------|-----------|",
-    ]
-    for t in tier_order:
-        lines.append(f"| {t} | {uni_counts[t]} | {port_counts[t]} |")
+    if has_tier_any and any(uni_comm[t] > 0 for t in tier_order):
+        lines = [
+            "## Tier Distribution",
+            "| Tier | Dev | Comm | Portfolio |",
+            "|------|-----|------|-----------|",
+        ]
+        for t in tier_order:
+            lines.append(f"| {t} | {uni_dev[t]} | {uni_comm[t]} | {port_counts[t]} |")
+    else:
+        lines = [
+            "## Tier Distribution",
+            "| Tier | Universe | Portfolio |",
+            "|------|----------|-----------|",
+        ]
+        for t in tier_order:
+            lines.append(f"| {t} | {uni_dev[t]} | {port_counts[t]} |")
 
     return "\n".join(lines) + "\n"
 

@@ -1302,6 +1302,7 @@ SNAPSHOT_COLUMNS = [
     "valuation_score", "clinical_score", "financial_score",
     "confidence_overall",
     "clinical_rank_pct_dev", "clinical_optionality_pct_dev",
+    "commercial_quality", "commercial_quality_pct",
     # Decision Engine v1 columns
     "decision_engine_version", "decision_engine_ruleset_id",
     "eligible", "ineligible_reasons",
@@ -1314,6 +1315,7 @@ SNAPSHOT_COLUMNS = [
     "mom_state_tilt_mult", "mom_state_tilt_applied",
     "dd_rel_margin_rescued",
     "tier_dev", "tier_reason",
+    "tier_commercial", "tier_any", "tier_any_reason",
     "missing_components", "missingness_penalty",
     # Decision Engine v2 actionable columns
     "actionable_rank", "target_weight_pct",
@@ -1336,11 +1338,11 @@ SNAPSHOT_COLUMNS = [
 
 # Phase-2 decision portfolio output columns
 PHASE2_PORTFOLIO_COLUMNS = [
-    "ticker", "tier_dev", "actionable_rank", "size_band",
-    "target_weight_pct", "tier_reason", "size_reasons",
+    "ticker", "tier_dev", "tier_commercial", "tier_any", "actionable_rank", "size_band",
+    "target_weight_pct", "tier_reason", "tier_any_reason", "size_reasons",
     "catalyst_mode", "catalyst_days", "cat_priority", "mom_state", "risk_flags",
     "composite_rank", "composite_score", "archetype",
-    "clinical_optionality_pct_dev",
+    "clinical_optionality_pct_dev", "commercial_quality_pct",
     "missing_components",
     "decision_engine_version", "decision_engine_ruleset_id",
 ]
@@ -1944,6 +1946,36 @@ def save_validation_snapshot(
             csv_rows[row_idx]["clinical_rank_pct_dev"] = round(p, 6)
             csv_rows[row_idx]["clinical_optionality_pct_dev"] = round(1.0 - p, 6)
 
+    # --- Compute commercial_quality_pct (percentile within commercial cohort) ---
+    _CQ_WEIGHTS = {"financial": 0.45, "valuation": 0.35, "momentum": 0.20}
+
+    comm_rows = [
+        (i, r) for i, r in enumerate(csv_rows)
+        if r.get("archetype", "").startswith("commercial_")
+        and r.get("financial_score") is not None
+        and r.get("valuation_score") is not None
+    ]
+    if comm_rows:
+        # Compute raw quality score
+        for idx, r in comm_rows:
+            cq = (
+                _CQ_WEIGHTS["financial"] * float(r["financial_score"])
+                + _CQ_WEIGHTS["valuation"] * float(r["valuation_score"])
+                + _CQ_WEIGHTS["momentum"] * float(r.get("momentum_score") or 0)
+            )
+            csv_rows[idx]["commercial_quality"] = round(cq, 6)
+
+        # Percentile rank (higher raw → higher pct)
+        comm_sorted = sorted(
+            comm_rows,
+            key=lambda x: (csv_rows[x[0]].get("commercial_quality", 0), x[1].get("ticker", "")),
+        )
+        n_comm = len(comm_sorted)
+        for rank_i, (row_idx, _) in enumerate(comm_sorted, start=1):
+            p = (rank_i - 0.5) / n_comm
+            p = max(0.001, min(0.999, p))
+            csv_rows[row_idx]["commercial_quality_pct"] = round(p, 6)
+
     # --- Decision Engine v1: compute eligibility, overlays, sizing, tiering ---
     rec_by_ticker = {rec["ticker"]: rec for rec in ranked}
 
@@ -1979,8 +2011,12 @@ def save_validation_snapshot(
                 cost_est = estimate_trade_cost(rep_weight, adv, cost_schedule)
                 est_cost_bps = cost_est.round_trip_bps
 
+        cq_pct = row.get("commercial_quality_pct")
+        cq_pct_float = float(cq_pct) if cq_pct is not None else None
+
         decision = compute_decision_fields(
             rec, arch, opt_float, ruleset=ruleset, est_cost_bps=est_cost_bps,
+            commercial_quality_pct=cq_pct_float,
         )
         row.update(decision)
         row["est_cost_bps"] = est_cost_bps if est_cost_bps is not None else ""
@@ -2139,12 +2175,19 @@ def save_validation_snapshot(
         tier_filter = PHASE2_DEFAULT_TIER_FILTER
         top_k = PHASE2_DEFAULT_TOP_K
 
-        # Filter to eligible dev-stage A+B, already have actionable_rank from above
-        portfolio_rows = [
-            r for r in eligible_rows
-            if r.get("archetype") == "drug_developer"
-            and r.get("tier_dev") in tier_filter
-        ]
+        # Filter to eligible tiered names (mode-dependent), already have actionable_rank from above
+        rs = ruleset or DEFAULT_RULESET
+        if rs.tiering_priority_mode == "tier_first":
+            portfolio_rows = [
+                r for r in eligible_rows
+                if r.get("tier_any") in tier_filter
+            ]
+        else:
+            portfolio_rows = [
+                r for r in eligible_rows
+                if r.get("archetype") == "drug_developer"
+                and r.get("tier_dev") in tier_filter
+            ]
         # Sort by actionable sort key (eligible_rows are already sorted this way
         # from the sort above, but re-sort to be defensive)
         portfolio_rows.sort(key=lambda r: compute_actionable_sort_key(
