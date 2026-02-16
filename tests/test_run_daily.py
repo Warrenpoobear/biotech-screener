@@ -68,7 +68,7 @@ class TestBuildCommands:
         import argparse
         defaults = {
             "as_of_date": "2026-02-15",
-            "sources": "fda_adcom,sec_8k",
+            "sources": "fda_adcom,sec_8k,ctgov",
             "data_dir": Path("production_data"),
             "snapshot_dir": Path("data/snapshots"),
             "health_thresholds": None,
@@ -84,7 +84,7 @@ class TestBuildCommands:
         assert "--as-of-date" in cmd
         assert "2026-02-15" in cmd
         assert "--sources" in cmd
-        assert "fda_adcom,sec_8k" in cmd
+        assert "fda_adcom,sec_8k,ctgov" in cmd
         assert "--data-dir" in cmd
 
     def test_screen_cmd_basic(self):

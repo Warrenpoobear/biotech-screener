@@ -3503,7 +3503,16 @@ def run_screening_pipeline(
         logger.info(f"  Universe validation passed: {validation_result['stats']['valid_count']} valid tickers")
 
     financial_records = load_json_data(data_dir / "financial_records.json", "Financial")
-    trial_records = load_json_data(data_dir / "trial_records.json", "Trials")
+
+    # Resolve trial_records: prefer PIT-filtered cache if available
+    _ctgov_cache = Path(__file__).parent / "cache" / "ctgov" / f"trial_records_{as_of_date}.json"
+    if _ctgov_cache.exists():
+        logger.info(f"  Using PIT-filtered CTGov cache: {_ctgov_cache.name}")
+        trial_records_path = _ctgov_cache
+    else:
+        trial_records_path = data_dir / "trial_records.json"
+
+    trial_records = load_json_data(trial_records_path, "Trials")
     market_records = load_json_data(data_dir / "market_data.json", "Market data")
 
     # Convert market_records list to dict keyed by ticker for Module 5
@@ -3849,7 +3858,7 @@ def run_screening_pipeline(
         # Run Module 3A with FULL UNIVERSE tickers (not post-Module-1 filtered)
         # This ensures stable delta comparisons regardless of Module 1 filtering
         m3_result = compute_module_3_catalyst(
-            trial_records_path=data_dir / "trial_records.json",  # Path, not list!
+            trial_records_path=trial_records_path,  # Resolved above (PIT cache or production)
             state_dir=state_dir,  # State directory for snapshots (namespaced by universe)
             active_tickers=full_universe_tickers,  # FULL universe, not filtered active_tickers
             as_of_date=as_of_date_obj,  # Date object

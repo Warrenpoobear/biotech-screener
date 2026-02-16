@@ -170,7 +170,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     # Pass-through
-    p.add_argument("--sources", default="fda_adcom,sec_8k", help="warm_caches sources")
+    p.add_argument("--sources", default="fda_adcom,sec_8k,ctgov", help="warm_caches sources")
     p.add_argument("--pit-mode", default="strict", help="PIT mode for run_screen")
     p.add_argument(
         "--data-dir",

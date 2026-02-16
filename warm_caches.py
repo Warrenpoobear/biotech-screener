@@ -4,18 +4,20 @@ warm_caches.py - Pre-populate catalyst data caches for production runs.
 
 Fetches external data sources (FDA ADCOM calendar, SEC 8-K filings) and
 writes cache files so the screening pipeline can consume them without
-live network access.
+live network access.  Also supports local PIT-filtered CTGov snapshots.
 
 Usage:
     python warm_caches.py                          # warm all caches for today
     python warm_caches.py --as-of-date 2026-02-07  # warm for specific date
     python warm_caches.py --sources fda_adcom      # warm only FDA ADCOM
     python warm_caches.py --sources sec_8k         # warm only SEC 8-K
-    python warm_caches.py --sources fda_adcom,sec_8k  # both (default)
+    python warm_caches.py --sources ctgov          # warm only CTGov PIT cache
+    python warm_caches.py --sources fda_adcom,sec_8k,ctgov  # all three
 
 Cache files are written to:
     cache/fda/adcom_calendar_{date}.json
     cache/sec/8k_catalysts/8k_catalysts_{date}.json
+    cache/ctgov/trial_records_{date}.json
 
 After running, the screening pipeline (with default cache_only mode) will
 automatically pick up these cached artifacts.
@@ -38,6 +40,9 @@ logger = logging.getLogger("warm_caches")
 # Project root (where this script lives)
 PROJECT_ROOT = Path(__file__).parent
 DATA_DIR = PROJECT_ROOT / "production_data"
+
+# CTGov PIT-filtered cache directory
+_CTGOV_CACHE_DIR = PROJECT_ROOT / "cache" / "ctgov"
 
 # Delta warming: narrow EDGAR search to recent filings only
 _DELTA_LOOKBACK_DAYS = 7
@@ -89,6 +94,40 @@ def warm_sec_8k(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
     cache_path = cache_dir / f"8k_catalysts_{as_of_date.isoformat()}.json"
     logger.info(f"SEC 8-K: {len(events)} events cached → {cache_path}")
     return len(events)
+
+
+def warm_ctgov(as_of_date: date, data_dir: Path, cache_dir: Path | None = None) -> int:
+    """Create PIT-filtered trial_records snapshot for as_of_date.
+
+    Keeps only records with last_update_posted <= as_of_date.
+    Returns count of records in filtered snapshot.
+    """
+    cache_dir = cache_dir or _CTGOV_CACHE_DIR
+    target = cache_dir / f"trial_records_{as_of_date.isoformat()}.json"
+    if target.exists():
+        existing = json.loads(target.read_text())
+        logger.info(f"CTGov cache exists: {target.name} ({len(existing)} records)")
+        return len(existing)
+
+    source = data_dir / "trial_records.json"
+    if not source.exists():
+        raise FileNotFoundError(f"trial_records.json not found in {data_dir}")
+
+    records = json.loads(source.read_text())
+    cutoff = as_of_date.isoformat()
+
+    filtered = [
+        r for r in records
+        if (r.get("last_update_posted") or "")[:10] <= cutoff
+    ]
+
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(filtered))
+    logger.info(
+        f"CTGov PIT filter: {len(records)} → {len(filtered)} records "
+        f"(cutoff={cutoff}, dropped={len(records) - len(filtered)})"
+    )
+    return len(filtered)
 
 
 def _load_universe(data_dir: Path) -> list:
@@ -289,6 +328,12 @@ def main():
                 total += warm_sec_8k(as_of, data_dir, sec_cache_dir)
         except Exception as e:
             logger.error(f"SEC 8-K warm failed: {e}")
+
+    if "ctgov" in sources:
+        try:
+            total += warm_ctgov(as_of, data_dir)
+        except Exception as e:
+            logger.error(f"CTGov warm failed: {e}")
 
     logger.info(f"Cache warm complete: {total} total events cached")
     return 0
