@@ -281,3 +281,80 @@ class TestValidation:
     def test_range_inverted(self):
         with pytest.raises(SystemExit):
             run_daily.main(["--from-date", "2026-02-15", "--to-date", "2026-02-09"])
+
+
+# ── TestDeltaSeedThreading ─────────────────────────────────────────────
+
+
+class TestFindCache:
+    def test_find_8k_cache_found(self, tmp_path):
+        """Glob finds versioned cache file in cache dir."""
+        cache_file = tmp_path / "8k_catalysts_2026-02-14_abcd1234.json"
+        cache_file.write_text("[]")
+        result = run_daily._find_8k_cache("2026-02-14", tmp_path)
+        assert result == cache_file
+
+    def test_find_8k_cache_missing(self, tmp_path):
+        """No cache file → returns None."""
+        result = run_daily._find_8k_cache("2026-02-14", tmp_path)
+        assert result is None
+
+
+class TestDeltaSeedThreading:
+    def test_range_second_date_gets_seed(self, tmp_path, capsys, monkeypatch):
+        """In range mode, 2nd date's warm cmd includes --seed-cache."""
+        cache_dir = tmp_path / "cache"
+        cache_dir.mkdir()
+        # Plant a cache for the first date
+        cache_file = cache_dir / "8k_catalysts_2026-02-12_abcd1234.json"
+        cache_file.write_text("[]")
+
+        monkeypatch.setattr("run_daily._DEFAULT_8K_CACHE_DIR", cache_dir)
+
+        captured_cmds: list[list[str]] = []
+
+        def fake_run_step(cmd, label, *, dry_run=False):
+            captured_cmds.append(cmd)
+            return 0
+
+        monkeypatch.setattr("run_daily.run_step", fake_run_step)
+
+        run_daily.main([
+            "--from-date", "2026-02-12",
+            "--to-date", "2026-02-13",
+            "--no-rollup",
+            "--no-skip-existing",
+        ])
+
+        warm_cmds = [c for c in captured_cmds if any("warm_caches.py" in s for s in c)]
+        assert len(warm_cmds) == 2
+        # First date: no --seed-cache
+        assert "--seed-cache" not in warm_cmds[0]
+        # Second date: has --seed-cache pointing to first date's cache
+        assert "--seed-cache" in warm_cmds[1]
+        seed_idx = warm_cmds[1].index("--seed-cache")
+        assert "2026-02-12" in warm_cmds[1][seed_idx + 1]
+
+    def test_single_date_no_seed(self, tmp_path, capsys, monkeypatch):
+        """Single-date mode: no --seed-cache in warm cmd."""
+        cache_dir = tmp_path / "cache"
+        cache_dir.mkdir()
+        monkeypatch.setattr("run_daily._DEFAULT_8K_CACHE_DIR", cache_dir)
+
+        captured_cmds: list[list[str]] = []
+
+        def fake_run_step(cmd, label, *, dry_run=False):
+            captured_cmds.append(cmd)
+            return 0
+
+        monkeypatch.setattr("run_daily.run_step", fake_run_step)
+
+        run_daily.main([
+            "--as-of-date", "2026-02-15",
+            "--no-rollup",
+            "--no-skip-existing",
+        ])
+
+        warm_cmds = [c for c in captured_cmds if any("warm_caches.py" in s for s in c)]
+        assert len(warm_cmds) == 1
+        assert "--seed-cache" not in warm_cmds[0]

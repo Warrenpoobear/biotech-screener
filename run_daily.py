@@ -24,6 +24,7 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
+_DEFAULT_8K_CACHE_DIR = SCRIPT_DIR / "cache" / "sec" / "8k_catalysts"
 
 # Exit-code semantics from run_phase2_daily.py
 _EXIT_OK = 0
@@ -55,17 +56,38 @@ def resolve_dates(args: argparse.Namespace) -> list[str]:
     return [args.as_of_date]
 
 
+# ── cache discovery ────────────────────────────────────────────────────
+
+
+def _find_8k_cache(date_str: str, cache_dir: Path) -> Path | None:
+    """Find a versioned 8-K cache file for the given date.
+
+    Globs for ``8k_catalysts_{date}_*.json`` and returns the first match
+    (sorted lexicographically), or *None* if no cache exists.
+    """
+    matches = sorted(cache_dir.glob(f"8k_catalysts_{date_str}_*.json"))
+    return matches[0] if matches else None
+
+
 # ── command builders ────────────────────────────────────────────────────
 
 
-def build_warm_cmd(date_str: str, args: argparse.Namespace) -> list[str]:
-    return [
+def build_warm_cmd(
+    date_str: str,
+    args: argparse.Namespace,
+    *,
+    seed_cache: Path | None = None,
+) -> list[str]:
+    cmd = [
         sys.executable,
         str(SCRIPT_DIR / "warm_caches.py"),
         "--as-of-date", date_str,
         "--sources", args.sources,
         "--data-dir", str(args.data_dir),
     ]
+    if seed_cache is not None:
+        cmd += ["--seed-cache", str(seed_cache)]
+    return cmd
 
 
 def build_screen_cmd(
@@ -195,6 +217,9 @@ def main(argv: list[str] | None = None) -> int:
 
     results: list[tuple[str, int, int]] = []  # (date, warm_rc, screen_rc)
     n_skipped = 0
+    is_range = len(dates) > 1
+    prev_date: str | None = None
+    cache_dir = _DEFAULT_8K_CACHE_DIR
 
     for d in dates:
         # ── skip existing ──
@@ -202,13 +227,19 @@ def main(argv: list[str] | None = None) -> int:
         if args.skip_existing and not args.dry_run and rankings.exists():
             print(f"[DAILY] {d}  warm=SKIP  screen=SKIP  (snapshot exists)")
             n_skipped += 1
+            prev_date = d  # skipped dates still seed the next (cache exists)
             continue
 
         # ── warm ──
         warm_rc = 0
         if not args.no_warm:
-            warm_cmd = build_warm_cmd(d, args)
-            warm_rc = run_step(warm_cmd, f"{d}  warm", dry_run=args.dry_run)
+            # Delta seed: for range mode, try prior date's cache
+            seed: Path | None = None
+            if is_range and prev_date is not None:
+                seed = _find_8k_cache(prev_date, cache_dir)
+            warm_cmd = build_warm_cmd(d, args, seed_cache=seed)
+            warm_label = f"{d}  warm (delta)" if seed else f"{d}  warm"
+            warm_rc = run_step(warm_cmd, warm_label, dry_run=args.dry_run)
 
         # ── screen ──
         screen_cmd = build_screen_cmd(d, args, extra=extra or None)
@@ -218,6 +249,7 @@ def main(argv: list[str] | None = None) -> int:
         screen_lbl = _STATUS_LABELS.get(screen_rc, f"ERR({screen_rc})")
         print(f"[DAILY] {d}  warm={warm_lbl}  screen={screen_lbl}")
         results.append((d, warm_rc, screen_rc))
+        prev_date = d
 
         if args.stop_on_fail and screen_rc == _EXIT_FAIL:
             print(f"[DAILY] Stopping: FAIL on {d}")
