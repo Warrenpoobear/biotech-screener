@@ -200,6 +200,10 @@ def main() -> int:
         "--delta-lookback", type=int, default=7,
         help="Delta lookback days (default: 7)",
     )
+    parser.add_argument(
+        "--strict", action="store_true",
+        help="Fail on ANY mismatch (default: only fail on high-quality late arrivals)",
+    )
     args = parser.parse_args()
 
     pairs = find_cache_pairs(args.cache_dir)
@@ -247,7 +251,7 @@ def main() -> int:
     print(f"{'='*60}")
 
     if not total_late:
-        print("  None. lookback={args.delta_lookback}d catches all new events.")
+        print(f"  None. lookback={args.delta_lookback}d catches all new events.")
     else:
         print(f"\n  {'ticker':<6}  {'event_type':<20}  {'event_date':<11}  "
               f"{'disclosed':<11}  {'age':>4}  {'conf':<4}  {'prec'}")
@@ -287,23 +291,28 @@ def main() -> int:
     print(f"  Missing from simulated: {total_missing} "
           f"(= late arrivals + expired late)")
 
+    # Classify late arrivals by quality
+    _JUNK_QUALITY = {"LOW"}
+    _JUNK_PRECISION = {"HALF_YEAR"}
+    high_quality_late = [
+        la for la in total_late
+        if la.confidence not in _JUNK_QUALITY or la.precision not in _JUNK_PRECISION
+    ]
+
     if len(total_late) == 0:
         print(f"\n  lookback={args.delta_lookback}d is SAFE for this universe.")
-    elif all(la.confidence == "LOW" and la.precision == "HALF_YEAR"
-             for la in total_late):
+    elif not high_quality_late:
         print(f"\n  All {len(total_late)} late arrivals are LOW/HALF_YEAR "
               f"(gated out by hard filter).")
         print(f"  lookback={args.delta_lookback}d is SAFE in practice.")
     else:
-        high_quality_late = [la for la in total_late
-                             if la.confidence != "LOW" or la.precision != "HALF_YEAR"]
-        if high_quality_late:
-            print(f"\n  WARNING: {len(high_quality_late)} late arrivals are "
-                  f"NOT low-quality — consider widening lookback.")
-        else:
-            print(f"\n  lookback={args.delta_lookback}d is SAFE in practice.")
+        print(f"\n  WARNING: {len(high_quality_late)} late arrivals are "
+              f"NOT low-quality — consider widening lookback.")
 
-    return 0 if n_mismatch == 0 else 2
+    # Exit code: --strict fails on any mismatch; default only on real risk
+    if args.strict:
+        return 0 if n_mismatch == 0 else 2
+    return 2 if high_quality_late else 0
 
 
 if __name__ == "__main__":
