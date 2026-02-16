@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from decision_engine import (
     DecisionRuleset,
+    _compute_tier_commercial,
     compute_actionable_sort_key,
 )
 
@@ -33,6 +34,62 @@ from decision_engine import (
 
 TOP_K = 20
 TOP_60 = 60
+
+_CQ_WEIGHTS = {"financial": 0.45, "valuation": 0.35, "momentum": 0.20}
+
+
+def _compute_commercial_quality(df: pd.DataFrame) -> pd.DataFrame:
+    """Add commercial_quality_pct column (percentile within commercial cohort).
+
+    Mirrors the computation in run_screen.py.  Operates in-place on a copy.
+    """
+    df = df.copy()
+    df["commercial_quality_pct"] = None
+
+    comm_mask = df["archetype"].str.startswith("commercial_", na=False)
+    comm = df.loc[
+        comm_mask
+        & df["financial_score"].notna()
+        & df["valuation_score"].notna()
+    ].copy()
+
+    if comm.empty:
+        return df
+
+    comm["_cq"] = (
+        _CQ_WEIGHTS["financial"] * comm["financial_score"].astype(float)
+        + _CQ_WEIGHTS["valuation"] * comm["valuation_score"].astype(float)
+        + _CQ_WEIGHTS["momentum"] * comm["momentum_score"].fillna(0).astype(float)
+    )
+    comm = comm.sort_values(["_cq", "ticker"])
+    n = len(comm)
+    for rank_i, idx in enumerate(comm.index, start=1):
+        p = max(0.001, min(0.999, (rank_i - 0.5) / n))
+        df.at[idx, "commercial_quality_pct"] = round(p, 6)
+
+    return df
+
+
+def _recompute_tier_any(row: pd.Series, ruleset: DecisionRuleset) -> str:
+    """Recompute tier_commercial and return tier_any for a row."""
+    archetype = str(row.get("archetype", ""))
+    eligible = str(row.get("eligible", "0")) in ("1", "1.0", "True")
+    cq_pct = _safe_float(row.get("commercial_quality_pct"))
+    cat_in_window = str(row.get("catalyst_in_window", "")) if pd.notna(row.get("catalyst_in_window")) else ""
+    cat_days = row.get("catalyst_days", "")
+    if pd.isna(cat_days):
+        cat_days = ""
+
+    tier_commercial, _ = _compute_tier_commercial(
+        archetype=archetype,
+        eligible=eligible,
+        quality_pct=cq_pct,
+        catalyst_in_window=cat_in_window,
+        catalyst_days=cat_days,
+        ruleset=ruleset,
+    )
+    tier_dev = str(row.get("tier_dev", "")) if pd.notna(row.get("tier_dev")) else ""
+    return tier_dev or tier_commercial
 
 
 def _sort_key_for_row(row: pd.Series, ruleset: DecisionRuleset) -> tuple:
@@ -65,27 +122,36 @@ def _safe_int(v) -> Optional[int]:
 
 
 def rank_portfolio(df: pd.DataFrame, ruleset: DecisionRuleset, top_k: int = TOP_K) -> pd.DataFrame:
-    """Re-sort rankings and return the top-K portfolio."""
-    # Filter to eligible dev-stage only (mirrors decision engine)
-    mask = (
-        (df.get("archetype", pd.Series(dtype=str)) == "drug_developer")
-        & (df.get("eligible", pd.Series(dtype=object)).astype(str).isin(["1", "1.0", "True"]))
-    )
-    dev_eligible = df[mask].copy()
-    if dev_eligible.empty:
-        return dev_eligible
+    """Re-sort rankings and return the top-K portfolio.
 
-    # Filter to tier_filter (A, B by default)
+    In dev_first mode: filter to drug_developer + tier_dev in tier_filter.
+    In tier_first mode: recompute tier_any, filter all archetypes by tier_any.
+    """
     tier_filter = set(ruleset.tier_filter) if hasattr(ruleset, "tier_filter") else {"A", "B"}
-    dev_eligible = dev_eligible[dev_eligible["tier_dev"].isin(tier_filter)]
+    eligible_mask = df.get("eligible", pd.Series(dtype=object)).astype(str).isin(["1", "1.0", "True"])
+
+    if ruleset.tiering_priority_mode == "tier_first":
+        # Recompute commercial quality + tier_any for all eligible rows
+        pool = df[eligible_mask].copy()
+        pool = _compute_commercial_quality(pool)
+        pool["tier_any"] = pool.apply(lambda r: _recompute_tier_any(r, ruleset), axis=1)
+        pool = pool[pool["tier_any"].isin(tier_filter)]
+    else:
+        # dev_first: only drug developers, filter on tier_dev
+        dev_mask = df.get("archetype", pd.Series(dtype=str)) == "drug_developer"
+        pool = df[eligible_mask & dev_mask].copy()
+        pool = pool[pool["tier_dev"].isin(tier_filter)]
+
+    if pool.empty:
+        return pool
 
     # Compute sort keys
-    dev_eligible["_sort_key"] = dev_eligible.apply(
+    pool["_sort_key"] = pool.apply(
         lambda r: _sort_key_for_row(r, ruleset), axis=1
     )
-    dev_eligible = dev_eligible.sort_values("_sort_key").reset_index(drop=True)
-    dev_eligible["_rank"] = range(1, len(dev_eligible) + 1)
-    return dev_eligible
+    pool = pool.sort_values("_sort_key").reset_index(drop=True)
+    pool["_rank"] = range(1, len(pool) + 1)
+    return pool
 
 
 def overlap_pct(set_a: set, set_b: set) -> float:
@@ -133,13 +199,32 @@ def compare(
             if t in base_ranks and t in cand_ranks:
                 rank_changes.append(abs(base_ranks[t] - cand_ranks[t]))
 
-    # Tier distribution comparison (top-20)
-    base_tiers = base_sorted.head(TOP_K)["tier_dev"].value_counts().to_dict()
-    cand_tiers = cand_sorted.head(TOP_K)["tier_dev"].value_counts().to_dict()
+    # Tier distribution comparison (top-20) — use tier_any if available, else tier_dev
+    def _tier_col(df):
+        if "tier_any" in df.columns and df["tier_any"].notna().any():
+            return "tier_any"
+        return "tier_dev"
+
+    base_tiers = base_sorted.head(TOP_K)[_tier_col(base_sorted)].value_counts().to_dict()
+    cand_tiers = cand_sorted.head(TOP_K)[_tier_col(cand_sorted)].value_counts().to_dict()
+
+    # Archetype distribution in candidate portfolio (for tier_first analysis)
+    cand_arch_20 = cand_sorted.head(TOP_K)["archetype"].value_counts().to_dict() if not cand_sorted.empty else {}
+    cand_arch_60 = cand_sorted.head(TOP_60)["archetype"].value_counts().to_dict() if not cand_sorted.empty else {}
+    base_arch_20 = base_sorted.head(TOP_K)["archetype"].value_counts().to_dict() if not base_sorted.empty else {}
+
+    # Commercial names entering candidate portfolio (tier_first specific)
+    cand_commercial_20 = sorted(
+        cand_sorted.head(TOP_K).loc[
+            cand_sorted.head(TOP_K)["archetype"] != "drug_developer", "ticker"
+        ].tolist()
+    ) if not cand_sorted.empty else []
 
     return {
         "baseline_id": baseline_rs.ruleset_id,
         "candidate_id": candidate_rs.ruleset_id,
+        "baseline_mode": baseline_rs.tiering_priority_mode,
+        "candidate_mode": candidate_rs.tiering_priority_mode,
         "top20_overlap": overlap_pct(base_top20, cand_top20),
         "top60_overlap": overlap_pct(base_top60, cand_top60),
         "entrants_20": entrants_20,
@@ -154,8 +239,12 @@ def compare(
         "max_rank_churn_top60": max(rank_changes) if rank_changes else 0,
         "base_tier_dist_20": base_tiers,
         "cand_tier_dist_20": cand_tiers,
-        "base_eligible_count": len(rank_portfolio(rankings, baseline_rs)),
-        "cand_eligible_count": len(rank_portfolio(rankings, candidate_rs)),
+        "base_eligible_count": len(base_sorted),
+        "cand_eligible_count": len(cand_sorted),
+        "base_arch_dist_20": base_arch_20,
+        "cand_arch_dist_20": cand_arch_20,
+        "cand_arch_dist_60": cand_arch_60,
+        "cand_commercial_20": cand_commercial_20,
     }
 
 
@@ -165,10 +254,12 @@ def compare(
 
 def format_report(result: dict, date: str) -> str:
     """Format comparison as markdown."""
+    base_mode = result.get("baseline_mode", "dev_first")
+    cand_mode = result.get("candidate_mode", "dev_first")
     lines = [
         f"# Ruleset Comparison — {date}",
         "",
-        f"Baseline: `{result['baseline_id']}` vs Candidate: `{result['candidate_id']}`",
+        f"Baseline: `{result['baseline_id']}` ({base_mode}) vs Candidate: `{result['candidate_id']}` ({cand_mode})",
         "",
         "## Overlap",
         f"| Metric | Value |",
@@ -202,6 +293,28 @@ def format_report(result: dict, date: str) -> str:
 
     lines.append("")
     lines.append(f"Eligible pool: baseline={result['base_eligible_count']}, candidate={result['cand_eligible_count']}")
+
+    # Archetype distribution (shows commercial names entering in tier_first)
+    cand_arch = result.get("cand_arch_dist_20", {})
+    base_arch = result.get("base_arch_dist_20", {})
+    if cand_arch and (len(cand_arch) > 1 or len(base_arch) > 1):
+        lines += [
+            "",
+            "## Archetype Distribution (Top-20)",
+            "| Archetype | Baseline | Candidate |",
+            "|-----------|----------|-----------|",
+        ]
+        all_archs = sorted(set(list(base_arch) + list(cand_arch)))
+        for a in all_archs:
+            lines.append(f"| {a} | {base_arch.get(a, 0)} | {cand_arch.get(a, 0)} |")
+
+    comm_names = result.get("cand_commercial_20", [])
+    if comm_names:
+        lines += [
+            "",
+            f"Commercial names in candidate top-20: {', '.join(comm_names)}",
+        ]
+
     lines.append("")
     return "\n".join(lines)
 
