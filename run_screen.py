@@ -1695,7 +1695,7 @@ def _compute_clinical_readout_days(
         best_days: Optional[int] = None
         for t in trials:
             # Study type filter
-            if t.get("study_type", "").upper() != "INTERVENTIONAL":
+            if (t.get("study_type") or "").upper() != "INTERVENTIONAL":
                 continue
             # Phase filter (Phase 1-3 only)
             phase = str(t.get("phase", "")).upper()
@@ -6126,6 +6126,14 @@ Module 3 Catalyst Detection:
         # Save validation snapshot for future forward-looking backtests
         if not args.no_snapshot:
             snapshot_dir = args.snapshot_dir or (args.data_dir.parent / "data" / "snapshots")
+
+            # Load trial_records for clinical_alpha_z computation
+            _ctgov_snap = Path(__file__).parent / "cache" / "ctgov" / f"trial_records_{args.as_of_date}.json"
+            if _ctgov_snap.exists():
+                trial_records = json.loads(_ctgov_snap.read_text())
+            else:
+                _tr_path = args.data_dir / "trial_records.json"
+                trial_records = json.loads(_tr_path.read_text()) if _tr_path.exists() else None
 
             # Build market_data lookup for cost-aware sizing in snapshot
             _mkt_data_for_snapshot = None
