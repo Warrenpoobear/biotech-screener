@@ -223,8 +223,8 @@ class TestComputeClinicalAlphaZ:
         normal_zs = [r["clinical_alpha_z"] for r in rows[:-1]]
         assert outlier_z >= max(normal_zs)
 
-    def test_non_dev_tickers_blank(self):
-        """Non drug_developer tickers should get blank values."""
+    def test_all_archetypes_with_m4_get_values(self):
+        """All tickers with m4 data get clinical_alpha_z, regardless of archetype."""
         rows = [
             _make_dev_row("DEV1"),
             _make_dev_row("DEV2"),
@@ -232,13 +232,28 @@ class TestComputeClinicalAlphaZ:
              "clinical_score": 80.0},
         ]
         m4 = {"DEV1": _make_m4("DEV1"), "DEV2": _make_m4("DEV2"),
-               "COMM1": _make_m4("COMM1")}
-        readout = {"DEV1": 30, "DEV2": 60}
+               "COMM1": _make_m4("COMM1", lead_phase="approved")}
+        readout = {"DEV1": 30, "DEV2": 60, "COMM1": 45}
 
         _compute_clinical_alpha_z(rows, m4, readout)
 
         assert "clinical_alpha_z" in rows[0]
-        assert "clinical_alpha_z" not in rows[2]
+        assert "clinical_alpha_z" in rows[2]
+
+    def test_no_m4_ticker_blank(self):
+        """Tickers without m4 data should not get clinical_alpha_z."""
+        rows = [
+            _make_dev_row("DEV1"),
+            {"ticker": "NOOM4", "archetype": "platform_devices",
+             "clinical_score": None},
+        ]
+        m4 = {"DEV1": _make_m4("DEV1")}
+        readout = {"DEV1": 30}
+
+        _compute_clinical_alpha_z(rows, m4, readout)
+
+        assert "clinical_alpha_z" in rows[0]
+        assert "clinical_alpha_z" not in rows[1]
 
     def test_coverage_flag_zero_no_readout(self):
         """coverage_flag = 0 when no readout data for a dev ticker."""

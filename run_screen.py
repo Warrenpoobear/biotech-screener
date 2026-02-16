@@ -1744,16 +1744,13 @@ def _compute_clinical_alpha_z(
 ) -> None:
     """Compute clinical_alpha_z, clinical_readout_days, clinical_coverage_flag.
 
-    Writes directly into csv_rows (dev tickers only).
-    Z-score is cross-sectional within the drug_developer cohort.
+    Writes into csv_rows for all tickers with module_4 scores.
+    Z-score is cross-sectional across the full ranked universe.
     """
-    # Collect raw scores for dev tickers
-    dev_indices: List[int] = []
+    eligible_indices: List[int] = []
     raw_scores: List[float] = []
 
     for i, row in enumerate(csv_rows):
-        if row.get("archetype") != "drug_developer":
-            continue
         ticker = row.get("ticker", "")
         m4 = m4_lookup.get(ticker)
         if m4 is None:
@@ -1770,7 +1767,7 @@ def _compute_clinical_alpha_z(
                + _CE_WEIGHTS["proximity"] * proximity
                + _CE_WEIGHTS["quality"] * quality)
 
-        dev_indices.append(i)
+        eligible_indices.append(i)
         raw_scores.append(raw)
 
         # Store readout metadata now (will add z later)
@@ -1797,7 +1794,7 @@ def _compute_clinical_alpha_z(
     var_val = sum((v - mean_val) ** 2 for v in winsorized) / len(winsorized)
     std_val = var_val ** 0.5
 
-    for j, idx in enumerate(dev_indices):
+    for j, idx in enumerate(eligible_indices):
         if std_val > 0:
             z = (winsorized[j] - mean_val) / std_val
         else:
