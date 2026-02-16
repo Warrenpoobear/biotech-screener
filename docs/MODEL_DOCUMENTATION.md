@@ -955,6 +955,111 @@ Suggested artifacts:
 - A small "run-to-run diff" report (top movers by rank and by catalyst window).
 - A weekly chart of coverage and confidence metrics (should be stable absent upstream data changes).
 
+### Diagnostic: Flipper Return Attribution (`scripts/diag_flipper_returns.py`)
+
+#### Purpose
+
+Quantify whether **catalyst-driven state changes** (specifically **bad→good catalyst flips** recorded in `catalyst_shadow_metrics.json`) show **subsequent excess returns** relative to the same-day universe. This is an attribution tool to answer:
+
+> "When the pipeline says a name improved due to catalysts, did it actually outperform afterward?"
+
+This diagnostic is **separate from portfolio construction**. It measures *signal efficacy*, not final sizing.
+
+#### Inputs
+
+* **Snapshots directory** (e.g., `data/snapshots/`), containing per-date outputs.
+* Shadow metrics file per snapshot date (e.g., `catalyst_shadow_metrics.json`) that records:
+  * flip dates
+  * flipped tickers
+  * flip type (bad→good)
+* Price data:
+  * baseline: `production_data/price_history.csv`
+  * optional backfill via **yfinance** for missing tickers/dates
+
+#### Outputs
+
+Written to `data/diag/` (diagnostic, transient):
+
+* `flipper_returns_<date_range>.csv` — one row per flip event
+* `flipper_returns_<date_range>.md` — summary tables, cohort breakdowns, and top/bottom movers
+* `price_cache.csv` — cached fetched prices to avoid refetching
+
+> `data/diag/` is gitignored.
+
+#### Methodology
+
+**1) Collect flip events (PIT-aligned)**
+
+For each snapshot date `t`:
+
+* Read the flip list from shadow metrics.
+* Treat `t` as the **signal timestamp** (what the model "knew" as of that snapshot).
+* Record each flip as an event `(ticker, flip_date=t, cohort=organic/regime)`.
+
+**2) Define cohorts (to isolate rollout artifacts)**
+
+* **Organic flips:** flip_count ≤ 10 on date `t` (normal behavior; currently small-N)
+* **Regime flips:** flip_count > 10 on date `t` (pipeline rollout / backfill days; large-N)
+
+Rationale: bulk flips can be dominated by **data availability changes**, not true information arrival, so they are analyzed separately.
+
+**3) Trading-day forward return alignment**
+
+Using sorted unique trading dates from price data:
+
+* Map each flip date `t` to the next available trading date (if needed).
+* Compute forward returns at: **t+1d**, **t+5d**, **t+20d** *(trading days)*
+* Skip a horizon if `t+N` is not available (insufficient forward history).
+
+**4) Excess returns vs same-day universe**
+
+For each flip event and each horizon:
+
+* Compute **flipper return**
+* Compute **universe median return** on the same flip date and horizon
+* Define **excess return = flipper − universe_median**
+
+Also report **hit rate** = % of events where excess return > 0.
+
+**5) Robust summaries**
+
+* Overall + cohort-specific summary stats
+* Optional tier breakdowns (A/B/C/D) when sample size supports it
+* Outlier-trimmed stats (e.g., drop top/bottom 2 by excess 5d) to reduce single-name distortion
+* Top/bottom movers table for inspection
+
+#### Design Decisions
+
+* **No test file:** This is a diagnostic script (like `diag_topn_flippers.py`); arithmetic is straightforward and validated via report inspection.
+* **Price cache:** `data/diag/price_cache.csv` prevents repeated downloads across runs.
+* **Batch fetching:** Uses yfinance per-ticker fetch with local caching for efficiency.
+* **Trading-day alignment:** Uses actual trading dates from the price series to define t+N.
+* **Regime threshold:** `flip_count > 10` to separate "rollout days" from organic flips (organic max is low in current telemetry; rollout days can be 70+).
+
+#### Verification / Runbook
+
+1. **No network / coverage check**
+   ```bash
+   python3 scripts/diag_flipper_returns.py --snapshot-dir data/snapshots --no-fetch
+   ```
+   Expected: runs using existing prices, reports missing coverage.
+
+2. **Full run with backfill**
+   ```bash
+   python3 scripts/diag_flipper_returns.py --snapshot-dir data/snapshots
+   ```
+   Expected: writes CSV + markdown report, updates `price_cache.csv`.
+
+3. **Inspect report** — cohort separation present, coverage % reported, stats tables populated, top/bottom movers plausible.
+
+4. **Sanity expectations** — organic flips: small sample, noisy; regime flips: dominates sample, interpret carefully due to overlapping windows and rollout artifacts.
+
+#### Interpretation Notes / Limitations
+
+* **Overlapping windows:** if the same ticker flips across multiple nearby dates (e.g., staggered cache rollout), return windows overlap; treat as non-independent observations.
+* **Horizon availability:** t+20 may be unavailable for recent flip dates (insufficient forward data).
+* **Regime flips are not "true events":** they can reflect improved detection rather than real-world information arrival; their return attribution is still useful, but should be interpreted as "signal added by coverage expansion," not necessarily "market reaction to new info."
+
 ---
 
 ## Configuration
@@ -1030,6 +1135,7 @@ python run_screen.py \
 | IC One-Pager | `scripts/make_ic_onepager.py` | Generate IC summary from snapshot artifacts |
 | Ruleset Compare/Replay | `scripts/compare_rulesets_replay.py` | Re-sort rankings with baseline vs candidate ruleset |
 | Cache Warmer | `warm_caches.py` | Pre-build SEC 8-K and FDA caches before screen run |
+| Flipper Return Attribution | `scripts/diag_flipper_returns.py` | Forward return analysis for catalyst flips |
 | Ablation Comparison | `scripts/compare_ablation_snapshots.py` | Snapshot A/B comparison |
 | CSV export | `export_results_csv.py` | JSON to CSV conversion |
 | Production validation | `production_validation.py` | Output validation |
@@ -1039,6 +1145,7 @@ python run_screen.py \
 
 ## Changelog
 
+- **2026-02-16 v2.2.1**: Added flipper return attribution diagnostic documentation (methodology, runbook, interpretation notes)
 - **2026-02-16 v2.2.0**: Commercial tier promotion (tier_commercial, tier_any, quality composite, tiering_priority_mode), missingness penalty columns + health guardrails, catalyst shadow metrics telemetry, IC one-pager, updated pinned ruleset to e1be5370, corrected catalyst priority table (FEDERAL_REGISTER demoted to pri=3), expanded Decision Engine columns table
 - **2026-02-15 v2.1.0**: Added Decision Engine (Phase-2) section, expanded Module 3 with SEC multi-form sources, quality gating, source mix sidecar, updated file locations
 - **2026-02-03 v2.0.0**: Comprehensive documentation with field definitions
