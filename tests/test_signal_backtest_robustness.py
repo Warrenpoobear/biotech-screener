@@ -26,6 +26,7 @@ from backtest_signal_robustness import (
     compute_cell_diagnostics,
     compute_double_sort_spread,
     compute_spread,
+    extend_price_csv,
     parse_train_mode,
     residualize_ranks,
     score_alpha_oos,
@@ -937,3 +938,140 @@ class TestGetFreshness:
         fresh = _get_freshness(summary)
         assert fresh["fwd_returns_stale"] is None
         assert fresh["price_end_date"] is None
+
+
+# ---------------------------------------------------------------------------
+# extend_price_csv
+# ---------------------------------------------------------------------------
+
+def _write_test_csv(path, rows):
+    """Write a minimal price CSV for testing."""
+    import csv as _csv
+    with open(path, "w", newline="") as f:
+        w = _csv.DictWriter(f, fieldnames=["date", "ticker", "close", "open", "high", "low", "volume"])
+        w.writeheader()
+        for r in rows:
+            w.writerow(r)
+
+
+class TestExtendPriceCsv:
+    def test_noop_when_current(self, tmp_path):
+        """No fetch when all tickers already have data through target date."""
+        csv_path = tmp_path / "prices.csv"
+        _write_test_csv(csv_path, [
+            {"date": "2026-02-15", "ticker": "AAA", "close": "10.0",
+             "open": "", "high": "", "low": "", "volume": ""},
+        ])
+        result = extend_price_csv(csv_path, through_date="2026-02-15")
+        assert result["n_extended"] == 0
+        assert result["n_rows_appended"] == 0
+        assert result["n_already_current"] == 1
+
+    def test_appends_missing_rows(self, tmp_path, monkeypatch):
+        """Fetches and appends rows for tickers behind target date."""
+        import pandas as pd
+
+        csv_path = tmp_path / "prices.csv"
+        _write_test_csv(csv_path, [
+            {"date": "2026-02-10", "ticker": "BBB", "close": "20.0",
+             "open": "", "high": "", "low": "", "volume": ""},
+        ])
+
+        # Mock yfinance to return 2 new rows
+        mock_hist = pd.DataFrame({
+            "Close": [21.0, 22.0],
+            "Open": [20.5, 21.5],
+            "High": [21.5, 22.5],
+            "Low": [20.0, 21.0],
+            "Volume": [1000, 2000],
+        }, index=pd.to_datetime(["2026-02-11", "2026-02-12"]))
+
+        class MockTicker:
+            def __init__(self, _):
+                pass
+            def history(self, **kwargs):
+                return mock_hist
+
+        import backtest_signal_robustness as bsr
+        monkeypatch.setattr(bsr, "extend_price_csv", extend_price_csv)
+        # Patch yfinance inside the function's lazy import
+        import yfinance
+        monkeypatch.setattr(yfinance, "Ticker", MockTicker)
+
+        result = extend_price_csv(csv_path, through_date="2026-02-12")
+        assert result["n_extended"] == 1
+        assert result["n_rows_appended"] == 2
+        assert result["n_failed"] == 0
+
+        # Verify CSV now has 3 rows (1 original + 2 appended)
+        import csv as _csv
+        with open(csv_path) as f:
+            rows = list(_csv.DictReader(f))
+        assert len(rows) == 3
+        dates = [r["date"] for r in rows]
+        assert "2026-02-11" in dates
+        assert "2026-02-12" in dates
+        # No duplicates
+        assert len(set((r["ticker"], r["date"]) for r in rows)) == 3
+
+    def test_partial_failure(self, tmp_path, monkeypatch):
+        """One ticker fails; other still extends; failed_tickers reported."""
+        import pandas as pd
+
+        csv_path = tmp_path / "prices.csv"
+        _write_test_csv(csv_path, [
+            {"date": "2026-02-10", "ticker": "CCC", "close": "30.0",
+             "open": "", "high": "", "low": "", "volume": ""},
+            {"date": "2026-02-10", "ticker": "DDD", "close": "40.0",
+             "open": "", "high": "", "low": "", "volume": ""},
+        ])
+
+        mock_hist = pd.DataFrame({
+            "Close": [31.0], "Open": [30.5], "High": [31.5],
+            "Low": [30.0], "Volume": [500],
+        }, index=pd.to_datetime(["2026-02-11"]))
+
+        class MockTicker:
+            def __init__(self, ticker):
+                self._ticker = ticker
+            def history(self, **kwargs):
+                if self._ticker == "DDD":
+                    raise ConnectionError("API down")
+                return mock_hist
+
+        import yfinance
+        monkeypatch.setattr(yfinance, "Ticker", MockTicker)
+
+        result = extend_price_csv(csv_path, through_date="2026-02-11")
+        assert result["n_extended"] == 1  # CCC succeeded
+        assert result["n_failed"] == 1
+        assert "DDD" in result["failed_tickers"]
+        assert result["n_rows_appended"] == 1  # only CCC's row
+
+    def test_pinned_end_date(self, tmp_path, monkeypatch):
+        """--prices-through pins the fetch window; doesn't chase today."""
+        import pandas as pd
+
+        csv_path = tmp_path / "prices.csv"
+        _write_test_csv(csv_path, [
+            {"date": "2026-02-10", "ticker": "EEE", "close": "50.0",
+             "open": "", "high": "", "low": "", "volume": ""},
+        ])
+
+        captured_kwargs = {}
+
+        class MockTicker:
+            def __init__(self, _):
+                pass
+            def history(self, **kwargs):
+                captured_kwargs.update(kwargs)
+                return pd.DataFrame()  # empty — no data in window
+
+        import yfinance
+        monkeypatch.setattr(yfinance, "Ticker", MockTicker)
+
+        result = extend_price_csv(csv_path, through_date="2026-02-12")
+        # yfinance end should be through_date + 1 day (exclusive)
+        assert captured_kwargs["end"] == "2026-02-13"
+        assert captured_kwargs["start"] == "2026-02-11"
+        assert result["n_rows_appended"] == 0

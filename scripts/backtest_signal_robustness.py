@@ -20,7 +20,7 @@ import statistics
 import sys
 import tarfile
 from collections import defaultdict
-from datetime import date as _date_cls
+from datetime import date as _date_cls, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -459,6 +459,85 @@ def _extract_catalyst(row: Dict[str, str]) -> Optional[float]:
 
 
 # ---------------------------------------------------------------------------
+# Price extension
+# ---------------------------------------------------------------------------
+
+def extend_price_csv(
+    csv_path: Path,
+    through_date: str,
+) -> Dict[str, Any]:
+    """Extend price_history.csv through *through_date* for all tickers.
+
+    For each ticker, fetches only the missing window (max_existing_date+1 ..
+    through_date) via yfinance.  Appends new rows; no duplicates because the
+    start is anchored to each ticker's existing max date.
+
+    Returns stats: {n_extended, n_rows_appended, n_failed, failed_tickers,
+                    n_already_current, n_tickers_total}.
+    """
+    import yfinance as yf  # lazy — not needed unless --extend-prices
+
+    # Find max date per ticker in existing CSV
+    max_dates: Dict[str, str] = {}
+    with open(csv_path, "r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            t = (row.get("ticker") or "").strip().upper()
+            d = (row.get("date") or "").strip()[:10]
+            if t and d:
+                if t not in max_dates or d > max_dates[t]:
+                    max_dates[t] = d
+
+    needs_ext = {t: d for t, d in max_dates.items() if d < through_date}
+    n_total = len(max_dates)
+    if not needs_ext:
+        return {"n_extended": 0, "n_rows_appended": 0, "n_failed": 0,
+                "failed_tickers": [], "n_already_current": n_total,
+                "n_tickers_total": n_total}
+
+    # yfinance end is exclusive — add 1 day to include through_date
+    end_yf = (_date_cls.fromisoformat(through_date) + timedelta(days=1)).isoformat()
+
+    all_rows: List[Dict[str, Any]] = []
+    failed: List[str] = []
+    for ticker, last_date in sorted(needs_ext.items()):
+        start = (_date_cls.fromisoformat(last_date) + timedelta(days=1)).isoformat()
+        try:
+            hist = yf.Ticker(ticker).history(start=start, end=end_yf,
+                                             auto_adjust=False)
+        except Exception as exc:
+            log.warning("  %s: yfinance fetch failed (%s)", ticker, exc)
+            failed.append(ticker)
+            continue
+        if hist.empty:
+            continue
+        for idx, row in hist.iterrows():
+            dt = idx.strftime("%Y-%m-%d")
+            close = row.get("Close")
+            if close is None or close != close:  # NaN guard
+                continue
+            all_rows.append({
+                "date": dt, "ticker": ticker, "close": str(close),
+                "open": str(row["Open"]) if row.get("Open") == row.get("Open") else "",
+                "high": str(row["High"]) if row.get("High") == row.get("High") else "",
+                "low": str(row["Low"]) if row.get("Low") == row.get("Low") else "",
+                "volume": str(int(row["Volume"])) if row.get("Volume") == row.get("Volume") else "",
+            })
+
+    if all_rows:
+        fieldnames = ["date", "ticker", "close", "open", "high", "low", "volume"]
+        with open(csv_path, "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            for row in all_rows:
+                writer.writerow(row)
+
+    n_ext = len(needs_ext) - len(failed)
+    return {"n_extended": n_ext, "n_rows_appended": len(all_rows),
+            "n_failed": len(failed), "failed_tickers": failed,
+            "n_already_current": n_total - len(needs_ext),
+            "n_tickers_total": n_total}
+
+
+# ---------------------------------------------------------------------------
 # Main loop
 # ---------------------------------------------------------------------------
 
@@ -476,6 +555,8 @@ def run_backtest(
     min_clinical_pos_share: float = 0.05,
     max_clinical_pos_share: float = 0.95,
     min_fwd_coverage: float = 0.0,
+    extend_prices: bool = False,
+    prices_through: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Run signal robustness backtest and write outputs."""
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -486,7 +567,19 @@ def run_backtest(
         log.warning("No archives found — exiting")
         return {}
 
-    # Build returns provider
+    # Optionally extend price data before building the provider
+    if extend_prices:
+        through = prices_through or _date_cls.today().isoformat()
+        log.info("Extending price_history.csv through %s …", through)
+        ext = extend_price_csv(PRICE_CSV, through)
+        log.info("Price extension: %d tickers extended, %d rows appended, "
+                 "%d already current, %d failed",
+                 ext["n_extended"], ext["n_rows_appended"],
+                 ext["n_already_current"], ext["n_failed"])
+        if ext["failed_tickers"]:
+            log.warning("  Failed tickers: %s", ", ".join(ext["failed_tickers"]))
+
+    # Build returns provider (reads potentially-updated CSV)
     ms = MorningstarReturnsProvider(RETURNS_JSON)
     csv_prov = CSVReturnsProvider(PRICE_CSV, price_col="close")
     provider = ChainedReturnsProvider(ms, csv_prov)
@@ -1075,6 +1168,10 @@ def main() -> None:
                         help="Max clinical pos_share to include a date in alpha training (default 0.95)")
     parser.add_argument("--min-fwd-coverage", type=float, default=0.0,
                         help="Min fwd_ret_coverage to include a date (0.0=only skip zero-return dates)")
+    parser.add_argument("--extend-prices", action="store_true", default=False,
+                        help="Fetch missing price data via yfinance before running")
+    parser.add_argument("--prices-through", type=str, default=None,
+                        help="Pin price extension end date (YYYY-MM-DD) for PIT reproducibility")
     parser.add_argument("--fail-if-stale", action="store_true", default=False,
                         help="Exit with code 2 if forward returns are stale")
     parser.add_argument("--no-warn-if-stale", action="store_true", default=False,
@@ -1102,6 +1199,8 @@ def main() -> None:
         min_clinical_pos_share=args.min_clinical_pos_share,
         max_clinical_pos_share=args.max_clinical_pos_share,
         min_fwd_coverage=args.min_fwd_coverage,
+        extend_prices=args.extend_prices,
+        prices_through=args.prices_through,
     )
     if summary:
         print(json.dumps(summary, indent=2))
