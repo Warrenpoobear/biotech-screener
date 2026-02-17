@@ -20,6 +20,7 @@ import statistics
 import sys
 import tarfile
 from collections import defaultdict
+from datetime import date as _date_cls
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -489,6 +490,7 @@ def run_backtest(
     ms = MorningstarReturnsProvider(RETURNS_JSON)
     csv_prov = CSVReturnsProvider(PRICE_CSV, price_col="close")
     provider = ChainedReturnsProvider(ms, csv_prov)
+    price_end_date = provider.get_last_date()  # Optional[date]
 
     # -----------------------------------------------------------------------
     # Pass 1: Load all archives, compute forward returns, cache per-date data
@@ -786,6 +788,7 @@ def run_backtest(
                 "spread_alpha_double"])
 
     # Build summary
+    max_archive_date = archives[-1][0] if archives else None
     summary = _build_summary(
         ic_rows, spread_rows, horizon, alpha_skipped,
         cell_diags=cell_diags, train_mode=train_mode, cutoff=cutoff,
@@ -795,6 +798,8 @@ def run_backtest(
         date_diagnostics=date_diagnostics,
         min_fwd_coverage=min_fwd_coverage,
         n_price_universe=n_price_universe,
+        price_end_date=price_end_date.isoformat() if price_end_date else None,
+        max_archive_date=max_archive_date,
     )
     with open(out_dir / "summary.json", "w") as f:
         json.dump(summary, f, indent=2)
@@ -839,6 +844,8 @@ def _build_summary(
     date_diagnostics: Optional[List[Dict[str, Any]]] = None,
     min_fwd_coverage: float = 0.0,
     n_price_universe: int = 0,
+    price_end_date: Optional[str] = None,
+    max_archive_date: Optional[str] = None,
 ) -> Dict[str, Any]:
     n_dates = len(ic_rows)
     if n_dates == 0:
@@ -979,6 +986,23 @@ def _build_summary(
         skipped_low = [d for d in date_diagnostics if d["skip_reason"] == "LOW_COVERAGE"]
         top_5_skipped = sorted(skipped_low, key=lambda d: d["fwd_ret_coverage"], reverse=True)[:5]
 
+        # Data freshness: detect when price data is too short for the horizon
+        freshness: Dict[str, Any] = {
+            "price_end_date": price_end_date,
+            "max_archive_date": max_archive_date,
+        }
+        if price_end_date and max_archive_date:
+            price_end_dt = _date_cls.fromisoformat(price_end_date)
+            max_arch_dt = _date_cls.fromisoformat(max_archive_date)
+            freshness["price_gap_days"] = (price_end_dt - max_arch_dt).days
+        else:
+            freshness["price_gap_days"] = None
+        # Ground-truth staleness: last archive date couldn't compute forward returns
+        last_diag = max(date_diagnostics, key=lambda d: d["date"])
+        freshness["fwd_returns_stale"] = (
+            last_diag["skip_reason"] in ("NO_FWD_RET", "LOW_COVERAGE")
+        )
+
         result["fwd_return_diagnostics"] = {
             "n_archives_total": len(date_diagnostics),
             "n_dates_included": len(included_dates),
@@ -992,6 +1016,7 @@ def _build_summary(
             "min_fwd_coverage_threshold": min_fwd_coverage,
             "n_price_universe": n_price_universe,
             "coverage_stats": coverage_stats,
+            "data_freshness": freshness,
             "bottom_5_included": [
                 {"date": d["date"], "fwd_ret_coverage": d["fwd_ret_coverage"]}
                 for d in bottom_5_included

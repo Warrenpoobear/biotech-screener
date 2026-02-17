@@ -794,6 +794,8 @@ class TestFwdReturnDiagnostics:
             ic_rows, spread_rows, horizon=126, alpha_skipped=0,
             date_diagnostics=date_diagnostics, min_fwd_coverage=0.5,
             n_price_universe=350,
+            price_end_date="2024-04-15",
+            max_archive_date="2024-05-31",
         )
         assert "fwd_return_diagnostics" in summary
         diag = summary["fwd_return_diagnostics"]
@@ -814,6 +816,12 @@ class TestFwdReturnDiagnostics:
         # Top 5 skipped LOW_COVERAGE
         assert len(diag["top_5_skipped_low_coverage"]) == 1
         assert diag["top_5_skipped_low_coverage"][0]["date"] == "2024-05-31"
+        # Data freshness — last date is LOW_COVERAGE → stale
+        fresh = diag["data_freshness"]
+        assert fresh["price_end_date"] == "2024-04-15"
+        assert fresh["max_archive_date"] == "2024-05-31"
+        assert fresh["price_gap_days"] == -46  # Apr 15 - May 31
+        assert fresh["fwd_returns_stale"] is True
 
     def test_diagnostics_empty_included(self):
         """When no dates are included, coverage_stats should be empty."""
@@ -842,3 +850,46 @@ class TestFwdReturnDiagnostics:
         assert diag["coverage_stats"] == {}
         assert diag["bottom_5_included"] == []
         assert diag["n_dates_included"] == 0
+        # Freshness defaults when not provided
+        fresh = diag["data_freshness"]
+        assert fresh["price_end_date"] is None
+        assert fresh["price_gap_days"] is None
+        assert fresh["fwd_returns_stale"] is True  # last date is NO_FWD_RET
+
+    def test_freshness_not_stale(self):
+        """When last archive date is included, fwd_returns_stale is False."""
+        date_diagnostics = [
+            {"date": "2024-01-31", "n_rows": 300, "n_price_rows": 280,
+             "n_fwd_rets": 260, "fwd_ret_coverage": 0.9286,
+             "skip_reason": "", "included": True},
+            {"date": "2024-02-28", "n_rows": 300, "n_price_rows": 280,
+             "n_fwd_rets": 270, "fwd_ret_coverage": 0.9643,
+             "skip_reason": "", "included": True},
+        ]
+        ic_rows = [
+            {"date": "2024-01-31", "regime": "",
+             "ic_clinical": 0.10, "ic_catalyst": 0.05, "ic_alpha": 0.08,
+             "ic_alpha_incr": 0.03},
+            {"date": "2024-02-28", "regime": "",
+             "ic_clinical": 0.12, "ic_catalyst": 0.06, "ic_alpha": 0.09,
+             "ic_alpha_incr": 0.04},
+        ]
+        spread_rows = [
+            {"date": "2024-01-31", "regime": "",
+             "spread_clinical": 0.02, "spread_catalyst": 0.01, "spread_alpha": 0.03,
+             "spread_alpha_double": 0.01},
+            {"date": "2024-02-28", "regime": "",
+             "spread_clinical": 0.03, "spread_catalyst": 0.015, "spread_alpha": 0.04,
+             "spread_alpha_double": 0.02},
+        ]
+        summary = _build_summary(
+            ic_rows, spread_rows, horizon=63, alpha_skipped=0,
+            date_diagnostics=date_diagnostics, min_fwd_coverage=0.0,
+            price_end_date="2024-12-31",
+            max_archive_date="2024-02-28",
+        )
+        fresh = summary["fwd_return_diagnostics"]["data_freshness"]
+        assert fresh["price_end_date"] == "2024-12-31"
+        assert fresh["max_archive_date"] == "2024-02-28"
+        assert fresh["price_gap_days"] == 307  # Dec 31 - Feb 28
+        assert fresh["fwd_returns_stale"] is False
