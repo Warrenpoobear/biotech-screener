@@ -54,6 +54,7 @@ DEFAULT_SHRINK_K = 50
 ALPHA_CLIP_MIN = -0.10
 ALPHA_CLIP_MAX = 0.10
 MIN_TRAIN_DATES = 2  # need at least this many prior dates to score alpha
+UNIVERSE_JSON = PROJECT_ROOT / "production_data" / "universe.json"
 
 # ---------------------------------------------------------------------------
 # Copied helpers (build_alpha_cohort_table.py, small & self-contained)
@@ -472,34 +473,69 @@ def _last_trading_day(d: _date_cls) -> _date_cls:
     return d
 
 
+_PRICE_FIELDNAMES = ["date", "ticker", "close", "open", "high", "low", "volume"]
+_BOOTSTRAP_START = "2020-01-01"
+
+
 def extend_price_csv(
     csv_path: Path,
     through_date: str,
+    tickers: Optional[List[str]] = None,
+    start_date: str = _BOOTSTRAP_START,
 ) -> Dict[str, Any]:
-    """Extend price_history.csv through *through_date* for all tickers.
+    """Extend price_history.csv through *through_date*.
 
-    For each ticker, fetches only the missing window (max_existing_date+1 ..
-    through_date) via yfinance.  Appends new rows; no duplicates because the
-    start is anchored to each ticker's existing max date.
+    For tickers already in the CSV, fetches only the missing window
+    (max_existing_date+1 .. through_date).  Tickers in *tickers* that
+    are absent from the CSV get a full bootstrap fetch from *start_date*.
+    Creates the CSV from scratch if it doesn't exist.
+
+    Writes atomically via temp file + os.replace() so an interrupted run
+    can't corrupt the CSV.
 
     Returns stats: {n_extended, n_rows_appended, n_failed, failed_tickers,
                     n_already_current, n_tickers_total}.
     """
+    import tempfile
     import yfinance as yf  # lazy — not needed unless --extend-prices
 
-    # Find max date per ticker in existing CSV
+    # Load existing data (if any)
+    existing_rows: List[Dict[str, str]] = []
     max_dates: Dict[str, str] = {}
-    with open(csv_path, "r", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            t = (row.get("ticker") or "").strip().upper()
-            d = (row.get("date") or "").strip()[:10]
-            if t and d:
-                if t not in max_dates or d > max_dates[t]:
-                    max_dates[t] = d
+    if csv_path.exists():
+        with open(csv_path, "r", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                existing_rows.append(row)
+                t = (row.get("ticker") or "").strip().upper()
+                d = (row.get("date") or "").strip()[:10]
+                if t and d:
+                    if t not in max_dates or d > max_dates[t]:
+                        max_dates[t] = d
 
-    needs_ext = {t: d for t, d in max_dates.items() if d < through_date}
-    n_total = len(max_dates)
-    if not needs_ext:
+    # Merge ticker sets: CSV tickers + provided tickers
+    all_tickers = set(max_dates.keys())
+    if tickers:
+        all_tickers |= set(t.upper() for t in tickers)
+
+    if not all_tickers:
+        log.warning("extend_price_csv: no tickers (CSV empty/missing and none provided)")
+        return {"n_extended": 0, "n_rows_appended": 0, "n_failed": 0,
+                "failed_tickers": [], "n_already_current": 0,
+                "n_tickers_total": 0}
+
+    # Determine fetch needs per ticker
+    needs_fetch: Dict[str, str] = {}  # ticker -> fetch_start_date
+    for t in sorted(all_tickers):
+        if t in max_dates:
+            if max_dates[t] < through_date:
+                needs_fetch[t] = (_date_cls.fromisoformat(max_dates[t])
+                                  + timedelta(days=1)).isoformat()
+        else:
+            # New ticker — full bootstrap
+            needs_fetch[t] = start_date
+
+    n_total = len(all_tickers)
+    if not needs_fetch:
         return {"n_extended": 0, "n_rows_appended": 0, "n_failed": 0,
                 "failed_tickers": [], "n_already_current": n_total,
                 "n_tickers_total": n_total}
@@ -507,12 +543,11 @@ def extend_price_csv(
     # yfinance end is exclusive — add 1 day to include through_date
     end_yf = (_date_cls.fromisoformat(through_date) + timedelta(days=1)).isoformat()
 
-    all_rows: List[Dict[str, Any]] = []
+    new_rows: List[Dict[str, str]] = []
     failed: List[str] = []
-    for ticker, last_date in sorted(needs_ext.items()):
-        start = (_date_cls.fromisoformat(last_date) + timedelta(days=1)).isoformat()
+    for ticker, fetch_start in sorted(needs_fetch.items()):
         try:
-            hist = yf.Ticker(ticker).history(start=start, end=end_yf,
+            hist = yf.Ticker(ticker).history(start=fetch_start, end=end_yf,
                                              auto_adjust=False)
         except Exception as exc:
             log.warning("  %s: yfinance fetch failed (%s)", ticker, exc)
@@ -525,7 +560,7 @@ def extend_price_csv(
             close = row.get("Close")
             if close is None or close != close:  # NaN guard
                 continue
-            all_rows.append({
+            new_rows.append({
                 "date": dt, "ticker": ticker, "close": str(close),
                 "open": str(row["Open"]) if row.get("Open") == row.get("Open") else "",
                 "high": str(row["High"]) if row.get("High") == row.get("High") else "",
@@ -533,17 +568,27 @@ def extend_price_csv(
                 "volume": str(int(row["Volume"])) if row.get("Volume") == row.get("Volume") else "",
             })
 
-    if all_rows:
-        fieldnames = ["date", "ticker", "close", "open", "high", "low", "volume"]
-        with open(csv_path, "a", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            for row in all_rows:
-                writer.writerow(row)
+    # Atomic write: existing + new → temp → os.replace()
+    if new_rows or not csv_path.exists():
+        csv_path.parent.mkdir(parents=True, exist_ok=True)
+        fd, tmp_path = tempfile.mkstemp(suffix=".csv", dir=csv_path.parent)
+        try:
+            with open(fd, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=_PRICE_FIELDNAMES)
+                writer.writeheader()
+                for row in existing_rows:
+                    writer.writerow({k: row.get(k, "") for k in _PRICE_FIELDNAMES})
+                for row in new_rows:
+                    writer.writerow(row)
+            Path(tmp_path).replace(csv_path)
+        except BaseException:
+            Path(tmp_path).unlink(missing_ok=True)
+            raise
 
-    n_ext = len(needs_ext) - len(failed)
-    return {"n_extended": n_ext, "n_rows_appended": len(all_rows),
+    n_ext = len(needs_fetch) - len(failed)
+    return {"n_extended": n_ext, "n_rows_appended": len(new_rows),
             "n_failed": len(failed), "failed_tickers": failed,
-            "n_already_current": n_total - len(needs_ext),
+            "n_already_current": n_total - len(needs_fetch),
             "n_tickers_total": n_total}
 
 
@@ -580,8 +625,17 @@ def run_backtest(
     # Optionally extend price data before building the provider
     if extend_prices:
         through = prices_through or _last_trading_day(_date_cls.today()).isoformat()
-        log.info("Extending price_history.csv through %s …", through)
-        ext = extend_price_csv(PRICE_CSV, through)
+        # Load universe tickers so new/missing tickers get bootstrapped
+        universe_tickers: Optional[List[str]] = None
+        if UNIVERSE_JSON.exists():
+            with open(UNIVERSE_JSON) as uf:
+                universe_tickers = [
+                    t["ticker"] for t in json.load(uf)
+                    if not t["ticker"].startswith("_")
+                ]
+        log.info("Extending price_history.csv through %s (%d universe tickers) …",
+                 through, len(universe_tickers or []))
+        ext = extend_price_csv(PRICE_CSV, through, tickers=universe_tickers)
         log.info("Price extension: %d tickers extended, %d rows appended, "
                  "%d already current, %d failed",
                  ext["n_extended"], ext["n_rows_appended"],

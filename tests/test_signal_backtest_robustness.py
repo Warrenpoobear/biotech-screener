@@ -978,7 +978,6 @@ class TestExtendPriceCsv:
              "open": "", "high": "", "low": "", "volume": ""},
         ])
 
-        # Mock yfinance to return 2 new rows
         mock_hist = pd.DataFrame({
             "Close": [21.0, 22.0],
             "Open": [20.5, 21.5],
@@ -993,9 +992,6 @@ class TestExtendPriceCsv:
             def history(self, **kwargs):
                 return mock_hist
 
-        import backtest_signal_robustness as bsr
-        monkeypatch.setattr(bsr, "extend_price_csv", extend_price_csv)
-        # Patch yfinance inside the function's lazy import
         import yfinance
         monkeypatch.setattr(yfinance, "Ticker", MockTicker)
 
@@ -1004,7 +1000,7 @@ class TestExtendPriceCsv:
         assert result["n_rows_appended"] == 2
         assert result["n_failed"] == 0
 
-        # Verify CSV now has 3 rows (1 original + 2 appended)
+        # Verify CSV now has 3 rows (1 original + 2 appended), atomic write
         import csv as _csv
         with open(csv_path) as f:
             rows = list(_csv.DictReader(f))
@@ -1012,7 +1008,6 @@ class TestExtendPriceCsv:
         dates = [r["date"] for r in rows]
         assert "2026-02-11" in dates
         assert "2026-02-12" in dates
-        # No duplicates
         assert len(set((r["ticker"], r["date"]) for r in rows)) == 3
 
     def test_partial_failure(self, tmp_path, monkeypatch):
@@ -1072,10 +1067,89 @@ class TestExtendPriceCsv:
         monkeypatch.setattr(yfinance, "Ticker", MockTicker)
 
         result = extend_price_csv(csv_path, through_date="2026-02-12")
-        # yfinance end should be through_date + 1 day (exclusive)
         assert captured_kwargs["end"] == "2026-02-13"
         assert captured_kwargs["start"] == "2026-02-11"
         assert result["n_rows_appended"] == 0
+
+    def test_bootstrap_new_ticker_from_universe(self, tmp_path, monkeypatch):
+        """Ticker in universe but not in CSV gets a full bootstrap fetch."""
+        import pandas as pd
+
+        csv_path = tmp_path / "prices.csv"
+        _write_test_csv(csv_path, [
+            {"date": "2026-02-15", "ticker": "OLD", "close": "10.0",
+             "open": "", "high": "", "low": "", "volume": ""},
+        ])
+
+        mock_hist = pd.DataFrame({
+            "Close": [5.0, 6.0], "Open": [4.5, 5.5], "High": [5.5, 6.5],
+            "Low": [4.0, 5.0], "Volume": [100, 200],
+        }, index=pd.to_datetime(["2026-02-14", "2026-02-15"]))
+
+        captured = {}
+
+        class MockTicker:
+            def __init__(self, ticker):
+                self._ticker = ticker
+            def history(self, **kwargs):
+                captured[self._ticker] = dict(kwargs)
+                if self._ticker == "NEW":
+                    return mock_hist
+                return pd.DataFrame()
+
+        import yfinance
+        monkeypatch.setattr(yfinance, "Ticker", MockTicker)
+
+        result = extend_price_csv(csv_path, through_date="2026-02-15",
+                                  tickers=["OLD", "NEW"])
+        # OLD is already current — no fetch needed
+        assert "OLD" not in captured
+        # NEW gets full bootstrap from start_date
+        assert captured["NEW"]["start"] == "2020-01-01"
+        assert result["n_extended"] == 1
+        assert result["n_rows_appended"] == 2
+        assert result["n_already_current"] == 1
+
+    def test_csv_missing_creates_from_scratch(self, tmp_path, monkeypatch):
+        """When CSV doesn't exist, creates it with header + fetched rows."""
+        import pandas as pd
+
+        csv_path = tmp_path / "prices.csv"
+        assert not csv_path.exists()
+
+        mock_hist = pd.DataFrame({
+            "Close": [10.0], "Open": [9.0], "High": [11.0],
+            "Low": [8.0], "Volume": [500],
+        }, index=pd.to_datetime(["2026-02-15"]))
+
+        class MockTicker:
+            def __init__(self, _):
+                pass
+            def history(self, **kwargs):
+                return mock_hist
+
+        import yfinance
+        monkeypatch.setattr(yfinance, "Ticker", MockTicker)
+
+        result = extend_price_csv(csv_path, through_date="2026-02-15",
+                                  tickers=["FRESH"])
+        assert csv_path.exists()
+        assert result["n_extended"] == 1
+        assert result["n_rows_appended"] == 1
+
+        import csv as _csv
+        with open(csv_path) as f:
+            rows = list(_csv.DictReader(f))
+        assert len(rows) == 1
+        assert rows[0]["ticker"] == "FRESH"
+        assert rows[0]["date"] == "2026-02-15"
+
+    def test_no_tickers_warns(self, tmp_path):
+        """Missing CSV + no tickers returns zeros (no error)."""
+        csv_path = tmp_path / "prices.csv"
+        result = extend_price_csv(csv_path, through_date="2026-02-15")
+        assert result["n_tickers_total"] == 0
+        assert result["n_extended"] == 0
 
 
 # ---------------------------------------------------------------------------
