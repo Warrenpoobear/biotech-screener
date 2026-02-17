@@ -37,13 +37,14 @@ def _make_fields(
 
 
 def _sort_key(fields, archetype="drug_developer", optionality=0.50,
-              composite_rank=100, ticker="TEST", **kwargs):
+              composite_rank=100, ticker="TEST", tiebreaker_pct=None, **kwargs):
     return compute_actionable_sort_key(
         decision_fields=fields,
         archetype=archetype,
         optionality=optionality,
         composite_rank=composite_rank,
         ticker=ticker,
+        tiebreaker_pct=tiebreaker_pct,
         **kwargs,
     )
 
@@ -674,3 +675,142 @@ class TestCatalystPriorityModes:
             assert loaded.catalyst_priority_mode == "tiebreaker"
         finally:
             os.unlink(tmp.name)
+
+
+# ── sort_anchor="optionality_pct" tests ──
+
+def _opt_ruleset(mode="off", **kwargs):
+    """Ruleset with sort_anchor='optionality_pct'."""
+    return DecisionRuleset(sort_anchor="optionality_pct",
+                           catalyst_priority_mode=mode, **kwargs)
+
+
+class TestSortAnchorOptionalityPct:
+    """Tests for sort_anchor='optionality_pct' mode."""
+
+    def test_higher_pct_sorts_first(self):
+        """Higher tiebreaker_pct ticker sorts before lower one."""
+        rs = _opt_ruleset()
+        f_high = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f_low = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_high = _sort_key(f_high, ticker="HIGH", composite_rank=None,
+                             tiebreaker_pct=0.90, ruleset=rs)
+        key_low = _sort_key(f_low, ticker="LOW", composite_rank=None,
+                            tiebreaker_pct=0.30, ruleset=rs)
+        assert key_high < key_low
+
+    def test_none_composite_rank_no_crash(self):
+        """composite_rank=None with optionality anchor does not crash."""
+        rs = _opt_ruleset()
+        f = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=60)
+        key = _sort_key(f, ticker="TEST", composite_rank=None,
+                        tiebreaker_pct=0.50, ruleset=rs)
+        assert isinstance(key, tuple)
+
+    def test_none_tiebreaker_pct_treated_as_zero(self):
+        """tiebreaker_pct=None is treated as 0.0 (sorts last)."""
+        rs = _opt_ruleset()
+        f = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_with = _sort_key(f, ticker="WITH", composite_rank=None,
+                             tiebreaker_pct=0.50, ruleset=rs)
+        key_none = _sort_key(f, ticker="NONE", composite_rank=None,
+                             tiebreaker_pct=None, ruleset=rs)
+        assert key_with < key_none
+
+    def test_tiebreaker_mode_with_optionality_anchor(self):
+        """Tiebreaker mode: pct dominates after tier, priority breaks ties."""
+        rs = _opt_ruleset(mode="tiebreaker")
+        f1 = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f2 = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        # Higher pct → lower anchor → sorts first
+        key_high = _sort_key(f1, ticker="H", composite_rank=None,
+                             tiebreaker_pct=0.80,
+                             catalyst_event_type="DATA_READOUT",
+                             catalyst_source="CTGOV_CALENDAR", ruleset=rs)
+        key_low = _sort_key(f2, ticker="L", composite_rank=None,
+                            tiebreaker_pct=0.40,
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs)
+        assert key_high < key_low  # pct dominates over priority
+
+    def test_blended_mode_with_optionality_anchor(self):
+        """Blended mode: bonus shifts anchor; pct still dominant."""
+        rs = _opt_ruleset(mode="blended")
+        f1 = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f2 = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        # pct=0.50 with FDA bonus(5) → anchor = -0.50 - 5 = -5.50
+        key_fda = _sort_key(f1, ticker="FDA", composite_rank=None,
+                            tiebreaker_pct=0.50,
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs)
+        # pct=0.50 no bonus → anchor = -0.50
+        key_gen = _sort_key(f2, ticker="GEN", composite_rank=None,
+                            tiebreaker_pct=0.50,
+                            catalyst_event_type="", catalyst_source="",
+                            ruleset=rs)
+        assert key_fda < key_gen  # bonus makes FDA sort first
+
+    def test_tier_still_dominates_optionality_anchor(self):
+        """A-tier beats B-tier regardless of tiebreaker_pct."""
+        rs = _opt_ruleset()
+        f_a = _make_fields(tier_dev="A", catalyst_mode="missing")
+        f_b = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=10)
+
+        key_a = _sort_key(f_a, ticker="A_T", composite_rank=None,
+                          tiebreaker_pct=0.10, ruleset=rs)
+        key_b = _sort_key(f_b, ticker="B_T", composite_rank=None,
+                          tiebreaker_pct=0.99, ruleset=rs)
+        assert key_a < key_b
+
+    def test_commercial_vs_dev_tiebreaker_pct(self):
+        """Different archetypes can use different tiebreaker_pct sources."""
+        rs = _opt_ruleset()
+        f_dev = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f_comm = _make_fields(tier_dev="", catalyst_mode="missing")
+
+        key_dev = _sort_key(f_dev, archetype="drug_developer", ticker="DEV",
+                            composite_rank=None, tiebreaker_pct=0.70, ruleset=rs)
+        key_comm = _sort_key(f_comm, archetype="commercial_biotech", ticker="COMM",
+                             composite_rank=None, tiebreaker_pct=0.90, ruleset=rs)
+        # Dev sorts before commercial (is_dev=0 < is_dev=1 in prefix)
+        assert key_dev < key_comm
+
+    def test_clinical_sort_blends_with_optionality_anchor(self):
+        """Clinical sort signal correctly blends into optionality anchor."""
+        rs = DecisionRuleset(
+            sort_anchor="optionality_pct",
+            catalyst_priority_mode="tiebreaker",
+            enable_clinical_sort_signal=True,
+            clinical_sort_weight=1.0,
+            clinical_positive_only=True,
+        )
+        f_clin = _make_fields(tier_dev="A", catalyst_mode="specific_days",
+                              catalyst_days=60)
+        f_clin["clinical_score_z_tier"] = 1.5
+        f_clin["stage_bucket"] = "mid"
+
+        f_noclin = _make_fields(tier_dev="A", catalyst_mode="specific_days",
+                                catalyst_days=60)
+        f_noclin["clinical_score_z_tier"] = 0.0
+        f_noclin["stage_bucket"] = "mid"
+
+        # Same pct, but clinical signal boosts f_clin
+        key_clin = _sort_key(f_clin, ticker="CLIN", composite_rank=None,
+                             tiebreaker_pct=0.50, ruleset=rs)
+        key_noclin = _sort_key(f_noclin, ticker="NOCL", composite_rank=None,
+                               tiebreaker_pct=0.50, ruleset=rs)
+        assert key_clin < key_noclin
+
+    def test_default_sort_anchor_is_composite_rank(self):
+        """Default sort_anchor='composite_rank' — existing behavior unchanged."""
+        rs = DecisionRuleset()  # default
+        assert rs.sort_anchor == "composite_rank"
+
+    def test_invalid_sort_anchor_raises(self):
+        """Invalid sort_anchor raises ValueError."""
+        with pytest.raises(ValueError, match="sort_anchor"):
+            DecisionRuleset(sort_anchor="invalid")

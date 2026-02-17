@@ -97,15 +97,21 @@ def _recompute_tier_any(row: pd.Series, ruleset: DecisionRuleset) -> str:
 def _sort_key_for_row(row: pd.Series, ruleset: DecisionRuleset) -> tuple:
     """Build sort key from a rankings.csv row."""
     fields = {k: ("" if pd.isna(v) else v) for k, v in row.to_dict().items()}
+    archetype = str(row.get("archetype", ""))
+    if archetype.startswith("commercial_"):
+        tb_pct = _safe_float(row.get("commercial_quality_pct"))
+    else:
+        tb_pct = _safe_float(row.get("clinical_optionality_pct_dev"))
     return compute_actionable_sort_key(
         decision_fields=fields,
-        archetype=str(row.get("archetype", "")),
+        archetype=archetype,
         optionality=_safe_float(row.get("clinical_optionality_pct_dev")),
         composite_rank=_safe_int(row.get("composite_rank")),
         ticker=str(row.get("ticker", "")),
         catalyst_event_type=str(row.get("catalyst_event_type", "")),
         catalyst_source=str(row.get("catalyst_source", "")),
         ruleset=ruleset,
+        tiebreaker_pct=tb_pct,
     )
 
 

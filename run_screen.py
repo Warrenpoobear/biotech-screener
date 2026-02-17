@@ -2398,6 +2398,12 @@ def save_validation_snapshot(
         catalyst_event_type=r.get("catalyst_event_type", ""),
         catalyst_source=r.get("catalyst_source", ""),
         ruleset=ruleset,
+        tiebreaker_pct=float(r["commercial_quality_pct"])
+            if r.get("archetype", "").startswith("commercial_")
+            and r.get("commercial_quality_pct") not in (None, "")
+            else (float(r["clinical_optionality_pct_dev"])
+                  if r.get("clinical_optionality_pct_dev") not in (None, "")
+                  else None),
     ))
 
     # Assign actionable_rank: eligible rows get 1..N, ineligible get blank
@@ -2413,11 +2419,21 @@ def save_validation_snapshot(
     compute_target_weights(eligible_rows, ruleset=ruleset)
 
     # In observe/phase2 mode, re-sort rankings.csv by composite_rank
+    # (fall back to actionable_rank when composite_rank is absent)
     if decision_mode in ("observe", "phase2"):
-        csv_rows.sort(key=lambda r: (
-            int(r["composite_rank"]) if r.get("composite_rank") not in (None, "") else 9999,
-            r.get("ticker", ""),
-        ))
+        has_composite = any(
+            r.get("composite_rank") not in (None, "") for r in csv_rows
+        )
+        if has_composite:
+            csv_rows.sort(key=lambda r: (
+                int(r["composite_rank"]) if r.get("composite_rank") not in (None, "") else 9999,
+                r.get("ticker", ""),
+            ))
+        else:
+            csv_rows.sort(key=lambda r: (
+                int(r["actionable_rank"]) if r.get("actionable_rank") not in (None, "") else 9999,
+                r.get("ticker", ""),
+            ))
 
     # --- Write rankings CSV ---
     csv_path = snap_path / "rankings.csv"
@@ -2493,6 +2509,12 @@ def save_validation_snapshot(
             catalyst_event_type=r.get("catalyst_event_type", ""),
             catalyst_source=r.get("catalyst_source", ""),
             ruleset=ruleset,
+            tiebreaker_pct=float(r["commercial_quality_pct"])
+                if r.get("archetype", "").startswith("commercial_")
+                and r.get("commercial_quality_pct") not in (None, "")
+                else (float(r["clinical_optionality_pct_dev"])
+                      if r.get("clinical_optionality_pct_dev") not in (None, "")
+                      else None),
         ))
         portfolio_rows = portfolio_rows[:top_k]
 
@@ -5285,7 +5307,12 @@ def add_bootstrap_analysis(
     if not ranked:
         results["bootstrap_analysis"] = {"error": "no_securities_to_bootstrap"}
         return results
-    
+
+    # Guard: skip if composite_score is absent/empty (e.g. DE-only mode)
+    if not any(s.get("composite_score") not in (None, "") for s in ranked):
+        results["bootstrap_analysis"] = {"error": "no_composite_scores"}
+        return results
+
     scores = [Decimal(s["composite_score"]) for s in ranked]
     
     # Compute bootstrap CI

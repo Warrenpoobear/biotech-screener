@@ -108,6 +108,9 @@ class DecisionRuleset:
     clinical_positive_only: bool = True
     clinical_stage_mults: tuple = (("early", 0.0), ("mid", 1.0), ("late", 1.5))
 
+    # Sort anchor (default composite_rank = current behavior)
+    sort_anchor: str = "composite_rank"               # "composite_rank" | "optionality_pct"
+
     # Commercial tiering (opt-in, default dev_first = current behavior)
     tiering_priority_mode: str = "dev_first"          # "dev_first" | "tier_first"
     tier_a_commercial_floor: float = 0.85             # quality_pct cutoff for commercial A
@@ -210,6 +213,12 @@ class DecisionRuleset:
             raise ValueError(
                 f"catalyst_priority_mode must be 'off', 'tiebreaker', or 'blended', "
                 f"got '{self.catalyst_priority_mode}'"
+            )
+        # Validate sort_anchor
+        if self.sort_anchor not in ("composite_rank", "optionality_pct"):
+            raise ValueError(
+                f"sort_anchor must be 'composite_rank' or 'optionality_pct', "
+                f"got '{self.sort_anchor}'"
             )
         # Validate tiering_priority_mode
         if self.tiering_priority_mode not in ("dev_first", "tier_first"):
@@ -984,6 +993,7 @@ def compute_actionable_sort_key(
     catalyst_event_type: str = "",
     catalyst_source: str = "",
     ruleset: Optional["DecisionRuleset"] = None,
+    tiebreaker_pct: Optional[float] = None,
 ) -> Tuple:
     """Return a sort-key tuple for deterministic actionable ordering.
 
@@ -1045,6 +1055,12 @@ def compute_actionable_sort_key(
 
     comp_rank = int(composite_rank) if composite_rank is not None else 9999
 
+    # Resolve anchor value based on sort_anchor mode
+    if rs.sort_anchor == "optionality_pct":
+        anchor = -(tiebreaker_pct or 0.0)  # higher pct → more negative → sorts first
+    else:
+        anchor = float(comp_rank)           # existing behavior
+
     # Missingness sort penalty: higher count sorts later (0 when disabled)
     missing_count = 0
     if rs.enable_missingness_sort_penalty:
@@ -1069,10 +1085,10 @@ def compute_actionable_sort_key(
     # prefix is (is_eligible, is_dev, tier_ord) in dev_first mode
     # or (is_eligible, tier_ord, is_dev) in tier_first mode
     if mode == "tiebreaker":
-        # comp_rank dominates after tier; priority only breaks ties
-        effective_comp_rank = float(comp_rank) - clin_adj
+        # anchor dominates after tier; priority only breaks ties
+        effective_comp_rank = anchor - clin_adj
         return prefix + (
-            effective_comp_rank,  # comp_rank with clinical tilt
+            effective_comp_rank,  # anchor with clinical tilt
             missing_count,  # fewer missing components first
             cat_priority,   # priority breaks comp_rank ties
             cat_days,       # ascending days
@@ -1087,9 +1103,9 @@ def compute_actionable_sort_key(
         # Build bonus map from ruleset tuples
         bonus_map = dict(rs.catalyst_priority_rank_bonuses)
         bonus = bonus_map.get(cat_priority, 0.0)
-        effective_comp_rank = float(comp_rank) - bonus - clin_adj
+        effective_comp_rank = anchor - bonus - clin_adj
         return prefix + (
-            effective_comp_rank,  # comp_rank with bonus + clinical tilt
+            effective_comp_rank,  # anchor with bonus + clinical tilt
             missing_count,        # fewer missing components first
             cat_mode_ord,         # specific < blended < no_upcoming < missing
             cat_days,             # ascending days
@@ -1110,7 +1126,7 @@ def compute_actionable_sort_key(
         effective_opt_neg,  # optionality with clinical tilt (negated)
         sponsor_neg,        # descending sponsor count (negated)
         mom_ord,            # tailwind < neutral < headwind
-        comp_rank,          # ascending composite rank
+        anchor,             # ascending composite rank (or negated pct)
         ticker,             # alphabetic tiebreak
     )
 
