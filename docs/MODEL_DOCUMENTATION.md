@@ -917,9 +917,9 @@ clin_adj = clinical_sort_weight * cz_eff * stage_mult
 
 Decision rules are externalized as frozen `DecisionRuleset` dataclass instances, serialized to JSON with content-hash IDs for reproducibility.
 
-- **Active ruleset**: `v1.3.3_missing_sort_only_candidate.json` (ID=`e1be5370`)
+- **Active ruleset**: `v1.3.4_clinical_sort_candidate.json` (ID=`f9842e1f`) — clinical sort signal (w=1.0, pos_only, stage-gated)
 - **Pinned in**: `run_screen.py` AND `run_phase2_snapshot_delta.py` (must stay in sync)
-- **Candidate**: `v1.3.4_clinical_sort_candidate.json` (ID=`f9842e1f`) — clinical sort signal (w=1.0, pos_only, stage-gated), pending promotion
+- **Previous**: `v1.3.3_missing_sort_only_candidate.json` (ID=`e1be5370`)
 - **Candidate**: `v1.4.1_tier_first_candidate.json` (ID=`054bc5cc`) — commercial tier promotion, pending replay
 
 ### Phase-2 Health Gate
@@ -1223,6 +1223,7 @@ python run_screen.py \
 
 ## Changelog
 
+- **2026-02-17 v2.3.1**: Promoted clinical sort signal — pinned ruleset `e1be5370` → `f9842e1f` (`enable_clinical_sort_signal=True`). Extended clinical z-scores to commercial cohorts. Added `clinical_sort_telemetry` to snapshot metadata (`n_nonzero_clin_adj_dev`, `n_nonzero_clin_adj_comm`). Fixed ctgov cache masking integration PIT tests.
 - **2026-02-16 v2.3.0**: Clinical sort signal — tier-local z-score (`clinical_score_z_tier`) blended into sort key anchor, stage-gated (early=0, mid=1.0, late=1.5), positive-only with ±2.0 clamp. Candidate v1.3.4 (`f9842e1f`). Added `clinical_score_z` (cross-universe) and top returners recall diagnostic.
 - **2026-02-16 v2.2.1**: Added flipper return attribution diagnostic documentation (methodology, runbook, interpretation notes)
 - **2026-02-16 v2.2.0**: Commercial tier promotion (tier_commercial, tier_any, quality composite, tiering_priority_mode), missingness penalty columns + health guardrails, catalyst shadow metrics telemetry, IC one-pager, updated pinned ruleset to e1be5370, corrected catalyst priority table (FEDERAL_REGISTER demoted to pri=3), expanded Decision Engine columns table
