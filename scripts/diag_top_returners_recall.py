@@ -1057,6 +1057,34 @@ def write_report(
         L.append(f"| {flag} | {nf} | {' | '.join(cells)} |")
     L.append("")
 
+    # Per-cohort N-flagged for cohort-aware flags
+    _COHORT_FLAGS = [
+        "clinical_score_z_top20", "clinical_score_z_tier_top20",
+        "clinical_cz_eff_top20", "clinical_late_high",
+    ]
+    _COHORT_ARCHETYPES = [
+        ("drug_developer", "DD"),
+        ("commercial_biotech", "CB"),
+        ("commercial_pharma", "CP"),
+    ]
+    L.append("**N flagged by cohort** (cohort-aware thresholds):")
+    L.append("")
+    L.append("| Flag | "
+             + " | ".join(abbr for _, abbr in _COHORT_ARCHETYPES)
+             + " | Total |")
+    L.append("|------|" + "|".join("-----" for _ in _COHORT_ARCHETYPES) + "|-------|")
+    for flag in _COHORT_FLAGS:
+        counts = []
+        total = 0
+        for arch, _ in _COHORT_ARCHETYPES:
+            n = sum(1 for r in rows
+                    if r.get(f"flag_{flag}") == 1
+                    and (r.get("archetype") or "") == arch)
+            counts.append(str(n))
+            total += n
+        L.append(f"| {flag} | {' | '.join(counts)} | {total} |")
+    L.append("")
+
     # --- 4. Detailed recall table (24m, with precision) ---
     L.append("## 4. Detailed Recall — 24m Horizon (informational)")
     L.append("")
