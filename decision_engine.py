@@ -121,6 +121,9 @@ class DecisionRuleset:
     alpha_cohort_clip_min: float = -0.10
     alpha_cohort_clip_max: float = 0.10
 
+    # Composite engine (default legacy = Module 5 composite scoring)
+    composite_engine: str = "legacy"   # "legacy" | "alpha_cohort"
+
     # Commercial tiering (opt-in, default dev_first = current behavior)
     tiering_priority_mode: str = "dev_first"          # "dev_first" | "tier_first"
     tier_a_commercial_floor: float = 0.85             # quality_pct cutoff for commercial A
@@ -229,6 +232,12 @@ class DecisionRuleset:
             raise ValueError(
                 f"sort_anchor must be 'composite_rank', 'optionality_pct', or 'alpha_cohort', "
                 f"got '{self.sort_anchor}'"
+            )
+        # Validate composite_engine
+        if self.composite_engine not in ("legacy", "alpha_cohort"):
+            raise ValueError(
+                f"composite_engine must be 'legacy' or 'alpha_cohort', "
+                f"got '{self.composite_engine}'"
             )
         # Validate tiering_priority_mode
         if self.tiering_priority_mode not in ("dev_first", "tier_first"):

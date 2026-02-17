@@ -1360,7 +1360,7 @@ PHASE2_DEFAULT_RULESET_PATH = (
 )
 PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
 PHASE2_DEFAULT_TOP_K = 20
-PHASE2_PINNED_RULESET_ID = "6bcffb1a"
+PHASE2_PINNED_RULESET_ID = "aa0aaf28"
 PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
@@ -2594,8 +2594,12 @@ def save_validation_snapshot(
         if _n_far_window:
             logger.info(f"  Far-horizon catalyst: {_n_far_window} tickers overridden to far_window")
 
-    # --- Alpha cohort scoring (opt-in via sort_anchor="alpha_cohort") ---
-    if ruleset and ruleset.sort_anchor == "alpha_cohort":
+    # --- Alpha cohort scoring (opt-in via sort_anchor or composite_engine) ---
+    _run_alpha_cohort = ruleset and (
+        ruleset.sort_anchor == "alpha_cohort"
+        or ruleset.composite_engine == "alpha_cohort"
+    )
+    if _run_alpha_cohort:
         from module_5_alpha_cohort import load_alpha_cohort_table, attach_alpha_scores
         _table_path = Path(__file__).resolve().parent / ruleset.alpha_cohort_table_path
         _alpha_table = load_alpha_cohort_table(_table_path)
@@ -2606,6 +2610,24 @@ def save_validation_snapshot(
             clip_max=ruleset.alpha_cohort_clip_max,
         )
         logger.info(f"  Alpha cohort scoring: {len(csv_rows)} tickers scored")
+
+    # --- Alpha cohort composite override (opt-in via composite_engine) ---
+    if ruleset and ruleset.composite_engine == "alpha_cohort":
+        from common.score_to_er import attach_rank_and_z as _rerank
+        # Overwrite composite_score with alpha_cohort_raw
+        for row in csv_rows:
+            row["composite_score"] = row.get("alpha_cohort_raw", 0.0)
+        # Recompute score_rank_pct and score_z from new composite_score
+        _rerank(csv_rows, score_key="composite_score")
+        # Recompute composite_rank (1 = highest composite_score)
+        _idx_sorted = sorted(
+            range(len(csv_rows)),
+            key=lambda i: (-float(csv_rows[i].get("composite_score", 0)),
+                           csv_rows[i].get("ticker", "")),
+        )
+        for rank, idx in enumerate(_idx_sorted, start=1):
+            csv_rows[idx]["composite_rank"] = rank
+        logger.info("  Composite engine: alpha_cohort (overrode composite_score/rank/pct)")
 
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key
@@ -2976,10 +2998,11 @@ def save_validation_snapshot(
             "far_window_decay_mult": ruleset.far_window_decay_mult if ruleset else None,
         },
         "alpha_cohort_telemetry": {
-            "enabled": ruleset.sort_anchor == "alpha_cohort" if ruleset else False,
+            "enabled": _run_alpha_cohort if _run_alpha_cohort else False,
+            "composite_engine": ruleset.composite_engine if ruleset else "legacy",
             "table_path": ruleset.alpha_cohort_table_path if ruleset else None,
             "shrink_k": ruleset.alpha_cohort_shrink_k if ruleset else None,
-        } if ruleset and ruleset.sort_anchor == "alpha_cohort" else {},
+        } if _run_alpha_cohort else {},
     }
 
     meta_path = snap_path / "metadata.json"

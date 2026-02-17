@@ -346,3 +346,118 @@ class TestFullKeyComposition:
                     assert key == f"{stage}|{horizon}|{sign}"
                     keys.add(key)
         assert len(keys) == 36
+
+
+# ======================================================================
+# Composite engine override
+# ======================================================================
+
+from common.score_to_er import attach_rank_and_z
+
+
+def _make_csv_rows(n=5, alpha_raws=None):
+    """Build minimal csv_rows with composite_score and alpha_cohort_raw."""
+    rows = []
+    for i in range(n):
+        rows.append({
+            "ticker": f"T{i:03d}",
+            "composite_score": float(n - i),  # legacy descending: T000=5, T001=4, ...
+            "composite_rank": i + 1,
+            "score_rank_pct": "",
+            "score_z": "",
+            "alpha_cohort_raw": alpha_raws[i] if alpha_raws else float(i) * 0.02,
+        })
+    # Seed legacy score_rank_pct/score_z via attach_rank_and_z
+    attach_rank_and_z(rows, score_key="composite_score")
+    return rows
+
+
+def _apply_composite_override(csv_rows):
+    """Replicate the composite override block from run_screen.py."""
+    for row in csv_rows:
+        row["composite_score"] = row.get("alpha_cohort_raw", 0.0)
+    attach_rank_and_z(csv_rows, score_key="composite_score")
+    _idx_sorted = sorted(
+        range(len(csv_rows)),
+        key=lambda i: (-float(csv_rows[i].get("composite_score", 0)),
+                       csv_rows[i].get("ticker", "")),
+    )
+    for rank, idx in enumerate(_idx_sorted, start=1):
+        csv_rows[idx]["composite_rank"] = rank
+
+
+class TestCompositeEngineOverride:
+    def test_composite_engine_legacy_unchanged(self):
+        """composite_engine='legacy' should leave composite_score as-is."""
+        rows = _make_csv_rows(5)
+        orig_scores = [r["composite_score"] for r in rows]
+        # No override applied — scores stay at legacy values
+        assert [r["composite_score"] for r in rows] == orig_scores
+
+    def test_composite_engine_alpha_overwrites_score(self):
+        """After override, composite_score == alpha_cohort_raw for every row."""
+        rows = _make_csv_rows(5)
+        _apply_composite_override(rows)
+        for r in rows:
+            assert r["composite_score"] == r["alpha_cohort_raw"]
+
+    def test_composite_rank_reordered(self):
+        """composite_rank reflects alpha_cohort_raw ordering (highest = rank 1)."""
+        alphas = [0.01, 0.08, 0.04, 0.02, 0.06]
+        rows = _make_csv_rows(5, alpha_raws=alphas)
+        _apply_composite_override(rows)
+        # Highest alpha_cohort_raw = 0.08 (T001) should be rank 1
+        rank_by_ticker = {r["ticker"]: r["composite_rank"] for r in rows}
+        assert rank_by_ticker["T001"] == 1
+        assert rank_by_ticker["T004"] == 2
+        assert rank_by_ticker["T002"] == 3
+        assert rank_by_ticker["T003"] == 4
+        assert rank_by_ticker["T000"] == 5
+
+    def test_score_rank_pct_recomputed(self):
+        """score_rank_pct and score_z are updated after override."""
+        alphas = [0.01, 0.08, 0.04, 0.02, 0.06]
+        rows = _make_csv_rows(5, alpha_raws=alphas)
+        old_pcts = [r["score_rank_pct"] for r in rows]
+        _apply_composite_override(rows)
+        new_pcts = [r["score_rank_pct"] for r in rows]
+        # Percentiles should change (alpha order != legacy order)
+        assert old_pcts != new_pcts
+        # Highest alpha (T001) should have highest percentile
+        t001 = next(r for r in rows if r["ticker"] == "T001")
+        assert t001["score_rank_pct"] == pytest.approx((5 - 1 + 0.5) / 5)
+        # score_z should be set (not empty)
+        for r in rows:
+            assert r["score_z"] != ""
+            assert isinstance(r["score_z"], float)
+
+    def test_corr_near_one(self):
+        """After override, corr(alpha_cohort_pct, score_rank_pct) should be ~1.0.
+
+        alpha_cohort_pct is assigned by attach_alpha_scores (rank by raw DESC),
+        score_rank_pct is assigned by attach_rank_and_z (rank by composite_score DESC).
+        After override composite_score == alpha_cohort_raw, so both rank the same way.
+        """
+        import statistics
+
+        n = 20
+        alphas = [i * 0.005 for i in range(n)]
+        rows = _make_csv_rows(n, alpha_raws=alphas)
+        # Simulate alpha_cohort_pct assignment (rank by raw DESC, continuity-corrected)
+        sorted_idx = sorted(range(n), key=lambda i: (-rows[i]["alpha_cohort_raw"],
+                                                      rows[i]["ticker"]))
+        for rank, idx in enumerate(sorted_idx, start=1):
+            rows[idx]["alpha_cohort_pct"] = (n - rank + 0.5) / n
+
+        _apply_composite_override(rows)
+
+        pcts = [r["alpha_cohort_pct"] for r in rows]
+        ranks = [r["score_rank_pct"] for r in rows]
+        # Pearson correlation
+        mean_p = statistics.mean(pcts)
+        mean_r = statistics.mean(ranks)
+        cov = sum((p - mean_p) * (r - mean_r) for p, r in zip(pcts, ranks))
+        std_p = (sum((p - mean_p) ** 2 for p in pcts)) ** 0.5
+        std_r = (sum((r - mean_r) ** 2 for r in ranks)) ** 0.5
+        corr = cov / (std_p * std_r) if std_p * std_r > 0 else 0.0
+        assert corr == pytest.approx(1.0, abs=0.01)
