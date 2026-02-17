@@ -3735,6 +3735,8 @@ def run_screening_pipeline(
     module5_weights_mode: str = "global",
     # Scoring mode (Baker-style or default)
     scoring_mode: Optional[str] = None,
+    # Override ctgov cache directory (None = auto-detect from repo; False = disable)
+    ctgov_cache_dir: Optional[Any] = None,
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -3856,8 +3858,16 @@ def run_screening_pipeline(
     financial_records = load_json_data(data_dir / "financial_records.json", "Financial")
 
     # Resolve trial_records: prefer PIT-filtered cache if available
-    _ctgov_cache = Path(__file__).parent / "cache" / "ctgov" / f"trial_records_{as_of_date}.json"
-    if _ctgov_cache.exists():
+    # ctgov_cache_dir=False disables cache lookup (used by tests)
+    if ctgov_cache_dir is False:
+        _ctgov_cache = None
+    else:
+        _cache_root = Path(ctgov_cache_dir) if ctgov_cache_dir else Path(__file__).parent / "cache" / "ctgov"
+        _ctgov_cache = _cache_root / f"trial_records_{as_of_date}.json"
+        if not _ctgov_cache.exists():
+            _ctgov_cache = None
+
+    if _ctgov_cache is not None:
         logger.info(f"  Using PIT-filtered CTGov cache: {_ctgov_cache.name}")
         trial_records_path = _ctgov_cache
     else:

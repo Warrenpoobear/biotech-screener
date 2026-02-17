@@ -38,6 +38,7 @@ _PIPELINE_KWARGS = dict(
     enable_short_interest=False,
     enable_coinvest=False,
     no_clinical_filter=True,
+    ctgov_cache_dir=False,  # Disable ctgov cache; use data_dir trial_records.json
 )
 
 
