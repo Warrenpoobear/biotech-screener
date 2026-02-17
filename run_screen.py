@@ -2358,6 +2358,33 @@ def save_validation_snapshot(
             else:
                 csv_rows[idx]["clinical_score_z_tier"] = 0.0
 
+    # --- Clinical adjustment telemetry (mirrors DE formula, for monitoring) ---
+    _clin_adj_dev = 0
+    _clin_adj_comm = 0
+    if ruleset and ruleset.enable_clinical_sort_signal:
+        _stage_mults_d = dict(ruleset.clinical_stage_mults)
+        for r in csv_rows:
+            _cz = r.get("clinical_score_z_tier")
+            if _cz is None or _cz == "":
+                continue
+            _cz = float(_cz)
+            _stage = str(r.get("stage_bucket", ""))
+            _sm = _stage_mults_d.get(_stage, 0.0)
+            if ruleset.clinical_positive_only:
+                _cz_eff = min(2.0, max(0.0, _cz))
+            else:
+                _cz_eff = max(-2.0, min(2.0, _cz))
+            _adj = ruleset.clinical_sort_weight * _cz_eff * _sm
+            if _adj != 0.0:
+                _arch = r.get("archetype", "")
+                if _arch == "drug_developer":
+                    _clin_adj_dev += 1
+                elif _arch in ("commercial_biotech", "commercial_pharma"):
+                    _clin_adj_comm += 1
+    logger.info(
+        f"  Clinical sort adjustment: dev={_clin_adj_dev}, comm={_clin_adj_comm}"
+    )
+
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key
     csv_rows.sort(key=lambda r: compute_actionable_sort_key(
@@ -2687,6 +2714,12 @@ def save_validation_snapshot(
             "max_clinical": round(max(float(r["clinical_score"]) for _, r in dev_rows), 4) if dev_rows else None,
         } if dev_rows else {"n_dev": 0},
         "input_hashes": results.get("run_metadata", {}).get("input_hashes", {}),
+        "clinical_sort_telemetry": {
+            "n_nonzero_clin_adj_dev": _clin_adj_dev,
+            "n_nonzero_clin_adj_comm": _clin_adj_comm,
+            "ruleset_id": ruleset.ruleset_id if ruleset else None,
+            "enable_clinical_sort_signal": ruleset.enable_clinical_sort_signal if ruleset else False,
+        },
     }
 
     meta_path = snap_path / "metadata.json"
