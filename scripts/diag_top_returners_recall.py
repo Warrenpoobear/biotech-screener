@@ -78,9 +78,9 @@ FLAG_DEFS = {
     "tier_ab": "tier_dev in {A, B} at t0",
     "clinical_z_high": "clinical_alpha_z >= +1.0 (approx PIT)",
     "clinical_top20": "clinical_alpha_z in top 20% (approx PIT)",
-    "clinical_score_z_top20": "zscore(clinical_score) top 20% (PIT-safe)",
-    "clinical_score_z_tier_top20": "tier-local zscore(clinical_score) top 20% (PIT-safe)",
-    "clinical_cz_eff_top20": "cz_eff (stage-gated, pos-only, clamped) top 20% (PIT-safe)",
+    "clinical_score_z_top20": "zscore(clinical_score) top 20% within cohort (PIT-safe)",
+    "clinical_score_z_tier_top20": "tier-local zscore(clinical_score) top 20% within cohort (PIT-safe)",
+    "clinical_cz_eff_top20": "cz_eff (stage-gated, pos-only, clamped) top 20% within cohort (PIT-safe)",
     "cs_z_top20_ab": "clinical_score_z top 20% restricted to tier A+B (DE scope)",
     "cz_eff_top20_ab": "cz_eff top 20% restricted to tier A+B (DE scope)",
     "clinical_near_readout": "readout_days <= 180 + coverage (approx PIT)",
@@ -692,31 +692,27 @@ def compute_flags(rows: List[dict]) -> None:
     n_top20_clin = max(1, int(len(clin_zs) * 0.20))
     clin_top20_thr = clin_zs[n_top20_clin - 1] if clin_zs else 0
 
-    cscore_zs = sorted(
-        [v for v in (_safe_float(r.get("clinical_score_z")) for r in rows)
-         if v is not None],
-        reverse=True,
-    )
-    n_top20_cs = max(1, int(len(cscore_zs) * 0.20))
-    cscore_top20_thr = cscore_zs[n_top20_cs - 1] if cscore_zs else 0
+    # Per-cohort top-20% thresholds (prevents mixed-distribution distortion)
+    _SIGNAL_COHORTS = ("drug_developer", "commercial_biotech", "commercial_pharma")
 
-    # Tier-local z threshold
-    czt_zs = sorted(
-        [v for v in (_safe_float(r.get("clinical_score_z_tier")) for r in rows)
-         if v is not None],
-        reverse=True,
-    )
-    n_top20_czt = max(1, int(len(czt_zs) * 0.20))
-    czt_top20_thr = czt_zs[n_top20_czt - 1] if czt_zs else 0
+    def _cohort_top20_thr(col: str) -> Dict[str, float]:
+        """Return {archetype: threshold} for top-20% within each cohort."""
+        thrs: Dict[str, float] = {}
+        for arch in _SIGNAL_COHORTS:
+            vals = sorted(
+                [v for r in rows
+                 if (r.get("archetype") or "") == arch
+                 for v in [_safe_float(r.get(col))]
+                 if v is not None],
+                reverse=True,
+            )
+            n20 = max(1, int(len(vals) * 0.20))
+            thrs[arch] = vals[n20 - 1] if vals else 0
+        return thrs
 
-    # cz_eff threshold (top 20% of ALL values incl zeros, consistent with other flags)
-    czeff_vals = sorted(
-        [v for v in (_safe_float(r.get("cz_eff")) for r in rows)
-         if v is not None],
-        reverse=True,
-    )
-    n_top20_czeff = max(1, int(len(czeff_vals) * 0.20))
-    czeff_top20_thr = czeff_vals[n_top20_czeff - 1] if czeff_vals else 0
+    cscore_top20_by_cohort = _cohort_top20_thr("clinical_score_z")
+    czt_top20_by_cohort = _cohort_top20_thr("clinical_score_z_tier")
+    czeff_top20_by_cohort = _cohort_top20_thr("cz_eff")
 
     # A+B tier thresholds (DE scope: where clinical sort actually operates)
     ab_rows = [r for r in rows if (r.get("tier_dev") or "").upper() in ("A", "B")]
@@ -739,6 +735,7 @@ def compute_flags(rows: List[dict]) -> None:
     for row in rows:
         comp_rank = _safe_float(row.get("composite_rank"))
         tier = (row.get("tier_dev") or "").upper()
+        arch = row.get("archetype") or ""
         clin_z = _safe_float(row.get("clinical_alpha_z"))
         cs_z = _safe_float(row.get("clinical_score_z"))
         cz_tier = _safe_float(row.get("clinical_score_z_tier"))
@@ -750,6 +747,11 @@ def compute_flags(rows: List[dict]) -> None:
         rd_val = _safe_float(rd) if rd != "" else None
         cov = row.get("clinical_coverage_flag")
         stage = (row.get("stage_bucket") or "").lower().strip()
+
+        # Per-cohort threshold lookup (non-matching archetypes get 0 → never flagged)
+        _cs_thr = cscore_top20_by_cohort.get(arch, 999)
+        _czt_thr = czt_top20_by_cohort.get(arch, 999)
+        _czeff_thr = czeff_top20_by_cohort.get(arch, 999)
 
         # Original flags
         row["flag_model_top20"] = 1 if (
@@ -767,19 +769,19 @@ def compute_flags(rows: List[dict]) -> None:
             and cat_days is not None and cat_days <= 180
         ) else 0
 
-        # New PIT-safe clinical_score_z flag
+        # PIT-safe clinical_score_z flag (per-cohort top 20%)
         row["flag_clinical_score_z_top20"] = 1 if (
-            cs_z is not None and cs_z >= cscore_top20_thr
+            cs_z is not None and cs_z >= _cs_thr
         ) else 0
 
-        # Tier-local z-score flag (PIT-safe)
+        # Tier-local z-score flag (per-cohort top 20%, PIT-safe)
         row["flag_clinical_score_z_tier_top20"] = 1 if (
-            cz_tier is not None and cz_tier >= czt_top20_thr
+            cz_tier is not None and cz_tier >= _czt_thr
         ) else 0
 
-        # cz_eff flag — the DE sort signal (PIT-safe, stage-gated)
+        # cz_eff flag — the DE sort signal (per-cohort top 20%, PIT-safe, stage-gated)
         row["flag_clinical_cz_eff_top20"] = 1 if (
-            cz_eff is not None and cz_eff >= czeff_top20_thr and cz_eff > 0
+            cz_eff is not None and cz_eff >= _czeff_thr and cz_eff > 0
         ) else 0
 
         # A+B tier flags (DE scope: where sort signal actually operates)
@@ -804,10 +806,10 @@ def compute_flags(rows: List[dict]) -> None:
             and row["flag_clinical_near_readout"] == 1
         ) else 0
 
-        # Late-stage + high clinical score z
+        # Late-stage + high clinical score z (per-cohort threshold)
         row["flag_clinical_late_high"] = 1 if (
             stage in ("mid", "late")
-            and cs_z is not None and cs_z >= cscore_top20_thr
+            and cs_z is not None and cs_z >= _cs_thr
         ) else 0
 
         # Any signal (union of non-meta flags)
@@ -1018,6 +1020,11 @@ def write_report(
              f"**Random baseline** = flagged/universe (expected recall "
              f"if top-{top_k} were random draws).")
     L.append("")
+    L.append("> **Primary horizons: 6m / 12m** (where clinical/catalyst signals "
+             "are designed to predict). **24m is informational only** "
+             "(diluted by noise, M&A, regime shifts). Lift < 1 at 24m does "
+             "not invalidate signal — check 6m/12m for actionable evidence.")
+    L.append("")
 
     # Show per-horizon universe size (baseline denominator varies)
     horizon_n = {}
@@ -1051,7 +1058,11 @@ def write_report(
     L.append("")
 
     # --- 4. Detailed recall table (24m, with precision) ---
-    L.append("## 4. Detailed Recall — 24m Horizon")
+    L.append("## 4. Detailed Recall — 24m Horizon (informational)")
+    L.append("")
+    L.append("> 24m horizon is noisy and diluted. Lift < 1.0 is expected for "
+             "signals designed around 6-12 month catalysts. Use this table "
+             "for completeness, not for signal validation.")
     L.append(
         f"| Flag | Definition | N | Baseline | Recall @{top_k} | "
         f"Recall @{top_pct * 100:.0f}% | Lift | Precision @{top_k} |"
@@ -1222,6 +1233,10 @@ def write_report(
              "for older archives without tier_commercial).")
     L.append("- cz_eff: stage-gated (early=0, mid=1.0, late=1.5), "
              "positive-only, clamped [0, 2]. The actual DE sort signal.")
+    L.append("- Top-20% flags for clinical_score_z, clinical_score_z_tier, and "
+             "cz_eff use **per-cohort thresholds** (drug_developer, "
+             "commercial_biotech, commercial_pharma computed separately, "
+             "then unioned). This prevents mixed-distribution distortion.")
     L.append("")
 
     output_path.write_text("\n".join(L), encoding="utf-8")
@@ -1434,19 +1449,21 @@ def main() -> None:
     print(f"\n--- Recall by Horizon (key table) ---")
     print(f"Universe: {len(rows)} tickers, "
           f"{sum(1 for r in rows if r.get('ret_24m') is not None)} survivors")
+    print(f"Primary horizons: 6m / 12m | 24m: informational only")
     print(f"{'Flag':28s} | "
           + " | ".join(f"R@{args.top_k} {h:>3s}" for h in RETURN_HORIZONS)
-          + " | Baseline | Lift 24m")
+          + " | Baseline | Lift 6m | Lift 12m")
     for fi, flag in enumerate(FLAG_NAMES):
         cells = []
         for label in RETURN_HORIZONS:
             rh = recall_by_horizon[label][fi]
             cells.append(_fmt_pct(rh["recall_k"]))
         bl = _fmt_pct(recall_24m[fi]["random_baseline"])
-        lift = _fmt_f2(recall_24m[fi]["lift"])
+        lift_6m = _fmt_f2(recall_by_horizon["6m"][fi]["lift"])
+        lift_12m = _fmt_f2(recall_by_horizon["12m"][fi]["lift"])
         print(f"  {flag:28s} | "
               + " | ".join(f"{c:>9s}" for c in cells)
-              + f" | {bl:>8s} | {lift}")
+              + f" | {bl:>8s} | {lift_6m:>7s} | {lift_12m}")
 
 
 if __name__ == "__main__":
