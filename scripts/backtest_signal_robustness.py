@@ -472,6 +472,9 @@ def run_backtest(
     train_mode: str = "expanding",
     cutoff: str = "2025-01-01",
     min_clinical_coverage: float = 0.0,
+    min_clinical_pos_share: float = 0.05,
+    max_clinical_pos_share: float = 0.95,
+    min_fwd_coverage: float = 0.0,
 ) -> Dict[str, Any]:
     """Run signal robustness backtest and write outputs."""
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -490,20 +493,49 @@ def run_backtest(
     # -----------------------------------------------------------------------
     # Pass 1: Load all archives, compute forward returns, cache per-date data
     # -----------------------------------------------------------------------
+    price_ticker_set = set(t.upper() for t in provider.get_available_tickers())
+    n_price_universe = len(price_ticker_set)
+
     date_cache: List[Dict[str, Any]] = []  # ordered by date
+    date_diagnostics: List[Dict[str, Any]] = []
     for date_str, tar_path in archives:
         log.info("Loading %s …", date_str)
         rows = load_rankings_dicts(tar_path)
         if not rows:
             log.warning("  empty rankings in %s — skipping", tar_path.name)
+            date_diagnostics.append({
+                "date": date_str, "n_rows": 0, "n_price_rows": 0,
+                "n_fwd_rets": 0, "fwd_ret_coverage": 0.0,
+                "skip_reason": "EMPTY_RANKINGS", "included": False,
+            })
             continue
 
         backfill_clinical_z_tier(rows)
 
         all_tickers = [r["ticker"] for r in rows if r.get("ticker")]
+        n_rows = len(all_tickers)
+        n_price_rows = sum(1 for t in all_tickers if t.upper() in price_ticker_set)
         fwd_rets = compute_forward_returns(provider, all_tickers, date_str, horizon)
-        if len(fwd_rets) < 10:
-            log.warning("  only %d forward returns for %s — skipping", len(fwd_rets), date_str)
+        n_fwd = len(fwd_rets)
+        # Coverage vs priceable tickers (not total rows) — avoids penalizing
+        # dates whose archives contain tickers absent from the price provider
+        coverage = n_fwd / n_price_rows if n_price_rows > 0 else 0.0
+
+        skip_reason = ""
+        if n_fwd == 0:
+            skip_reason = "NO_FWD_RET"
+        elif min_fwd_coverage > 0.0 and coverage < min_fwd_coverage:
+            skip_reason = "LOW_COVERAGE"
+
+        date_diagnostics.append({
+            "date": date_str, "n_rows": n_rows, "n_price_rows": n_price_rows,
+            "n_fwd_rets": n_fwd, "fwd_ret_coverage": round(coverage, 4),
+            "skip_reason": skip_reason, "included": skip_reason == "",
+        })
+
+        if skip_reason:
+            log.warning("  %s: %d/%d fwd returns (%.1f%% of priceable) — skipping (%s)",
+                        date_str, n_fwd, n_price_rows, coverage * 100, skip_reason)
             continue
 
         median_ret = statistics.median(fwd_rets.values())
@@ -521,13 +553,15 @@ def run_backtest(
 
         # Clinical sign dispersion: share of DDs with z_tier > 0 (after backfill)
         # If pos_share ≈ 0 or ≈ 1, the sign dimension of the cohort key is homogeneous
-        n_pos = sum(
-            1 for r in rows
-            if (r.get("archetype") or "").strip() in _DD_ARCHETYPES
-            and _extract_clinical(r) is not None
-            and _extract_clinical(r) > 0.0
-        )
-        n_valid_clin = sum(1 for r in rows if _extract_clinical(r) is not None)
+        n_pos = 0
+        n_valid_clin = 0
+        for r in rows:
+            z = _extract_clinical(r)
+            if z is None:
+                continue
+            n_valid_clin += 1
+            if z > 0.0:
+                n_pos += 1
         pos_share = n_pos / n_valid_clin if n_valid_clin > 0 else 0.0
 
         date_cache.append({
@@ -538,6 +572,17 @@ def run_backtest(
             "clinical_coverage": clin_ratio,
             "clinical_pos_share": pos_share,
         })
+
+    # Write date_diagnostics.csv (all dates, including skipped)
+    _write_csv(out_dir / "date_diagnostics.csv", date_diagnostics,
+               ["date", "n_rows", "n_price_rows", "n_fwd_rets",
+                "fwd_ret_coverage", "skip_reason", "included"])
+    n_included = sum(1 for d in date_diagnostics if d["included"])
+    n_skipped = sum(1 for d in date_diagnostics if not d["included"])
+    log.info("Wrote date_diagnostics.csv (%d dates, %d included, %d skipped, "
+             "threshold=%.2f, price_universe=%d)",
+             len(date_diagnostics), n_included, n_skipped,
+             min_fwd_coverage, n_price_universe)
 
     log.info("Usable dates after forward-return filter: %d", len(date_cache))
     if not date_cache:
@@ -625,11 +670,11 @@ def run_backtest(
         # Filter out dates with broken clinical data from alpha training:
         # 1. Raw clinical_score coverage below threshold
         # 2. Sign homogeneity (pos_share ≈ 0 or ≈ 1 → no sign variation)
-        if min_clinical_coverage > 0.0:
+        if (min_clinical_coverage > 0.0) or (min_clinical_pos_share > 0.0) or (max_clinical_pos_share < 1.0):
             train_dates = [
                 d for d in train_dates
                 if d["clinical_coverage"] >= min_clinical_coverage
-                and 0.05 <= d["clinical_pos_share"] <= 0.95
+                and min_clinical_pos_share <= d["clinical_pos_share"] <= max_clinical_pos_share
             ]
 
         # Apply training mode dispatch
@@ -745,6 +790,11 @@ def run_backtest(
         ic_rows, spread_rows, horizon, alpha_skipped,
         cell_diags=cell_diags, train_mode=train_mode, cutoff=cutoff,
         min_clinical_coverage=min_clinical_coverage,
+        min_clinical_pos_share=min_clinical_pos_share,
+        max_clinical_pos_share=max_clinical_pos_share,
+        date_diagnostics=date_diagnostics,
+        min_fwd_coverage=min_fwd_coverage,
+        n_price_universe=n_price_universe,
     )
     with open(out_dir / "summary.json", "w") as f:
         json.dump(summary, f, indent=2)
@@ -784,6 +834,11 @@ def _build_summary(
     train_mode: str = "expanding",
     cutoff: str = "2025-01-01",
     min_clinical_coverage: float = 0.0,
+    min_clinical_pos_share: float = 0.05,
+    max_clinical_pos_share: float = 0.95,
+    date_diagnostics: Optional[List[Dict[str, Any]]] = None,
+    min_fwd_coverage: float = 0.0,
+    n_price_universe: int = 0,
 ) -> Dict[str, Any]:
     n_dates = len(ic_rows)
     if n_dates == 0:
@@ -888,6 +943,8 @@ def _build_summary(
         "train_mode": train_mode,
         "cutoff": cutoff,
         "min_clinical_coverage": min_clinical_coverage,
+        "min_clinical_pos_share": min_clinical_pos_share,
+        "max_clinical_pos_share": max_clinical_pos_share,
         "n_dates_total": n_dates,
         "n_dates_alpha_eval": n_alpha_eval,
         "n_dates_alpha_skipped_due_to_insufficient_train": alpha_skipped,
@@ -903,6 +960,48 @@ def _build_summary(
         result["regime"] = regime_stats
     if cell_summary is not None:
         result["cell_diagnostics"] = cell_summary
+
+    # Forward-return coverage diagnostics
+    if date_diagnostics:
+        included_dates = [d for d in date_diagnostics if d["included"]]
+        included_coverages = [d["fwd_ret_coverage"] for d in included_dates]
+        coverage_stats: Dict[str, Any] = {}
+        if included_coverages:
+            coverage_stats = {
+                "min": round(min(included_coverages), 4),
+                "median": round(statistics.median(included_coverages), 4),
+                "max": round(max(included_coverages), 4),
+            }
+
+        # Bottom 5 included dates by coverage (weakest data)
+        bottom_5_included = sorted(included_dates, key=lambda d: d["fwd_ret_coverage"])[:5]
+        # Top 5 skipped dates by coverage (closest to threshold)
+        skipped_low = [d for d in date_diagnostics if d["skip_reason"] == "LOW_COVERAGE"]
+        top_5_skipped = sorted(skipped_low, key=lambda d: d["fwd_ret_coverage"], reverse=True)[:5]
+
+        result["fwd_return_diagnostics"] = {
+            "n_archives_total": len(date_diagnostics),
+            "n_dates_included": len(included_dates),
+            "n_dates_skipped_no_fwd": sum(
+                1 for d in date_diagnostics if d["skip_reason"] == "NO_FWD_RET"
+            ),
+            "n_dates_skipped_low_coverage": len(skipped_low),
+            "n_dates_skipped_empty_rankings": sum(
+                1 for d in date_diagnostics if d["skip_reason"] == "EMPTY_RANKINGS"
+            ),
+            "min_fwd_coverage_threshold": min_fwd_coverage,
+            "n_price_universe": n_price_universe,
+            "coverage_stats": coverage_stats,
+            "bottom_5_included": [
+                {"date": d["date"], "fwd_ret_coverage": d["fwd_ret_coverage"]}
+                for d in bottom_5_included
+            ],
+            "top_5_skipped_low_coverage": [
+                {"date": d["date"], "fwd_ret_coverage": d["fwd_ret_coverage"]}
+                for d in top_5_skipped
+            ],
+        }
+
     return result
 
 
@@ -924,6 +1023,12 @@ def main() -> None:
                         help="Cutoff date for pre/post splits (cell diagnostics, subperiod)")
     parser.add_argument("--min-clinical-coverage", type=float, default=0.0,
                         help="Min clinical_valid/n_dd ratio to include a date in alpha training (0=off)")
+    parser.add_argument("--min-clinical-pos-share", type=float, default=0.05,
+                        help="Min clinical pos_share to include a date in alpha training (default 0.05)")
+    parser.add_argument("--max-clinical-pos-share", type=float, default=0.95,
+                        help="Max clinical pos_share to include a date in alpha training (default 0.95)")
+    parser.add_argument("--min-fwd-coverage", type=float, default=0.0,
+                        help="Min fwd_ret_coverage to include a date (0.0=only skip zero-return dates)")
     parser.add_argument("--log-level", type=str, default="INFO")
     args = parser.parse_args()
 
@@ -944,6 +1049,9 @@ def main() -> None:
         train_mode=args.train_mode,
         cutoff=args.cutoff,
         min_clinical_coverage=args.min_clinical_coverage,
+        min_clinical_pos_share=args.min_clinical_pos_share,
+        max_clinical_pos_share=args.max_clinical_pos_share,
+        min_fwd_coverage=args.min_fwd_coverage,
     )
     if summary:
         print(json.dumps(summary, indent=2))

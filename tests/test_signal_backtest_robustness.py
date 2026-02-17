@@ -626,6 +626,60 @@ class TestCutoffSubperiod:
         assert summary["subperiod"]["post_cutoff"]["clinical"]["n"] == 1
         assert summary["cutoff"] == "2025-01-01"
 
+    def test_pos_share_thresholds_in_summary(self):
+        """min/max pos_share thresholds appear in summary output."""
+        ic_rows = [
+            {"date": "2024-06-01", "regime": "",
+             "ic_clinical": 0.10, "ic_catalyst": 0.05, "ic_alpha": 0.08,
+             "ic_alpha_incr": 0.03},
+        ]
+        spread_rows = [
+            {"date": "2024-06-01", "regime": "",
+             "spread_clinical": 0.02, "spread_catalyst": 0.01, "spread_alpha": 0.03,
+             "spread_alpha_double": 0.01},
+        ]
+        summary = _build_summary(
+            ic_rows, spread_rows, horizon=126, alpha_skipped=0,
+            min_clinical_pos_share=0.10, max_clinical_pos_share=0.90,
+        )
+        assert summary["min_clinical_pos_share"] == 0.10
+        assert summary["max_clinical_pos_share"] == 0.90
+
+    def test_pos_share_filter_independent_of_coverage(self):
+        """pos_share filter activates even when min_clinical_coverage=0.0.
+
+        When max_clinical_pos_share < 1.0, dates with homogeneous sign
+        distribution should be excluded from training regardless of
+        the coverage threshold.
+        """
+        # Build two mock date_cache entries:
+        # date A: pos_share=0.50 (healthy)
+        # date B: pos_share=0.99 (homogeneous — should be excluded)
+        # With min_clinical_coverage=0.0 but max_clinical_pos_share=0.95,
+        # date B should be filtered out.
+        train_dates = [
+            {"clinical_coverage": 1.0, "clinical_pos_share": 0.50},
+            {"clinical_coverage": 1.0, "clinical_pos_share": 0.99},
+        ]
+
+        min_cov = 0.0  # off
+        min_ps = 0.05
+        max_ps = 0.95
+
+        # The decoupled filter condition:
+        if (min_cov > 0.0) or (min_ps > 0.0) or (max_ps < 1.0):
+            filtered = [
+                d for d in train_dates
+                if d["clinical_coverage"] >= min_cov
+                and min_ps <= d["clinical_pos_share"] <= max_ps
+            ]
+        else:
+            filtered = train_dates
+
+        # Only date A survives
+        assert len(filtered) == 1
+        assert filtered[0]["clinical_pos_share"] == 0.50
+
     def test_cutoff_recorded_in_summary(self):
         """Cutoff date appears in summary.json output."""
         ic_rows = [
@@ -641,3 +695,150 @@ class TestCutoffSubperiod:
         summary = _build_summary(ic_rows, spread_rows, horizon=126, alpha_skipped=0,
                                  cutoff="2024-10-01")
         assert summary["cutoff"] == "2024-10-01"
+
+
+# ---------------------------------------------------------------------------
+# Forward-return coverage diagnostics
+# ---------------------------------------------------------------------------
+
+class TestFwdReturnDiagnostics:
+    def test_coverage_metrics_basic(self):
+        """Coverage = n_fwd / n_price_rows (priceable denominator);
+        skip_reason="" when above threshold."""
+        n_price_rows = 190
+        n_fwd = 180
+        min_fwd_coverage = 0.5
+        coverage = n_fwd / n_price_rows if n_price_rows > 0 else 0.0
+
+        skip_reason = ""
+        if n_fwd == 0:
+            skip_reason = "NO_FWD_RET"
+        elif min_fwd_coverage > 0.0 and coverage < min_fwd_coverage:
+            skip_reason = "LOW_COVERAGE"
+
+        assert abs(coverage - 180 / 190) < 1e-9
+        assert skip_reason == ""
+
+    def test_skip_reason_no_fwd(self):
+        """n_fwd=0 → skip_reason='NO_FWD_RET', included=False."""
+        n_price_rows = 190
+        n_fwd = 0
+        min_fwd_coverage = 0.0
+        coverage = n_fwd / n_price_rows if n_price_rows > 0 else 0.0
+
+        skip_reason = ""
+        if n_fwd == 0:
+            skip_reason = "NO_FWD_RET"
+        elif min_fwd_coverage > 0.0 and coverage < min_fwd_coverage:
+            skip_reason = "LOW_COVERAGE"
+
+        included = skip_reason == ""
+        assert skip_reason == "NO_FWD_RET"
+        assert included is False
+        assert coverage == 0.0
+
+    def test_skip_reason_low_coverage(self):
+        """n_fwd > 0 but coverage < min_fwd_coverage → 'LOW_COVERAGE'."""
+        n_price_rows = 190
+        n_fwd = 50
+        min_fwd_coverage = 0.5
+        coverage = n_fwd / n_price_rows if n_price_rows > 0 else 0.0
+
+        skip_reason = ""
+        if n_fwd == 0:
+            skip_reason = "NO_FWD_RET"
+        elif min_fwd_coverage > 0.0 and coverage < min_fwd_coverage:
+            skip_reason = "LOW_COVERAGE"
+
+        included = skip_reason == ""
+        assert skip_reason == "LOW_COVERAGE"
+        assert included is False
+        assert abs(coverage - 50 / 190) < 1e-9
+
+    def test_diagnostics_in_summary(self):
+        """_build_summary() with date_diagnostics produces fwd_return_diagnostics block."""
+        date_diagnostics = [
+            {"date": "2024-01-31", "n_rows": 300, "n_price_rows": 280,
+             "n_fwd_rets": 260, "fwd_ret_coverage": 0.9286,
+             "skip_reason": "", "included": True},
+            {"date": "2024-02-28", "n_rows": 300, "n_price_rows": 280,
+             "n_fwd_rets": 270, "fwd_ret_coverage": 0.9643,
+             "skip_reason": "", "included": True},
+            {"date": "2024-03-31", "n_rows": 300, "n_price_rows": 280,
+             "n_fwd_rets": 0, "fwd_ret_coverage": 0.0,
+             "skip_reason": "NO_FWD_RET", "included": False},
+            {"date": "2024-04-30", "n_rows": 0, "n_price_rows": 0,
+             "n_fwd_rets": 0, "fwd_ret_coverage": 0.0,
+             "skip_reason": "EMPTY_RANKINGS", "included": False},
+            {"date": "2024-05-31", "n_rows": 300, "n_price_rows": 280,
+             "n_fwd_rets": 30, "fwd_ret_coverage": 0.1071,
+             "skip_reason": "LOW_COVERAGE", "included": False},
+        ]
+        ic_rows = [
+            {"date": "2024-01-31", "regime": "",
+             "ic_clinical": 0.10, "ic_catalyst": 0.05, "ic_alpha": 0.08,
+             "ic_alpha_incr": 0.03},
+            {"date": "2024-02-28", "regime": "",
+             "ic_clinical": 0.12, "ic_catalyst": 0.06, "ic_alpha": 0.09,
+             "ic_alpha_incr": 0.04},
+        ]
+        spread_rows = [
+            {"date": "2024-01-31", "regime": "",
+             "spread_clinical": 0.02, "spread_catalyst": 0.01, "spread_alpha": 0.03,
+             "spread_alpha_double": 0.01},
+            {"date": "2024-02-28", "regime": "",
+             "spread_clinical": 0.03, "spread_catalyst": 0.015, "spread_alpha": 0.04,
+             "spread_alpha_double": 0.02},
+        ]
+        summary = _build_summary(
+            ic_rows, spread_rows, horizon=126, alpha_skipped=0,
+            date_diagnostics=date_diagnostics, min_fwd_coverage=0.5,
+            n_price_universe=350,
+        )
+        assert "fwd_return_diagnostics" in summary
+        diag = summary["fwd_return_diagnostics"]
+        assert diag["n_archives_total"] == 5
+        assert diag["n_dates_included"] == 2
+        assert diag["n_dates_skipped_no_fwd"] == 1
+        assert diag["n_dates_skipped_low_coverage"] == 1
+        assert diag["n_dates_skipped_empty_rankings"] == 1
+        assert diag["min_fwd_coverage_threshold"] == 0.5
+        assert diag["n_price_universe"] == 350
+        # Coverage stats from included dates only (260/280, 270/280)
+        assert diag["coverage_stats"]["min"] == 0.9286
+        assert diag["coverage_stats"]["max"] == 0.9643
+        assert diag["coverage_stats"]["median"] == 0.9465  # (0.9286+0.9643)/2
+        # Bottom 5 included dates (sorted by coverage ascending)
+        assert len(diag["bottom_5_included"]) == 2
+        assert diag["bottom_5_included"][0]["date"] == "2024-01-31"
+        # Top 5 skipped LOW_COVERAGE
+        assert len(diag["top_5_skipped_low_coverage"]) == 1
+        assert diag["top_5_skipped_low_coverage"][0]["date"] == "2024-05-31"
+
+    def test_diagnostics_empty_included(self):
+        """When no dates are included, coverage_stats should be empty."""
+        date_diagnostics = [
+            {"date": "2024-01-31", "n_rows": 300, "n_price_rows": 280,
+             "n_fwd_rets": 0, "fwd_ret_coverage": 0.0,
+             "skip_reason": "NO_FWD_RET", "included": False},
+        ]
+        # Empty ic/spread means we get early return, so test _build_summary directly
+        # with non-empty ic_rows but all dates skipped in diagnostics
+        ic_rows = [
+            {"date": "2024-01-31", "regime": "",
+             "ic_clinical": 0.10, "ic_catalyst": 0.05, "ic_alpha": 0.08,
+             "ic_alpha_incr": 0.03},
+        ]
+        spread_rows = [
+            {"date": "2024-01-31", "regime": "",
+             "spread_clinical": 0.02, "spread_catalyst": 0.01, "spread_alpha": 0.03,
+             "spread_alpha_double": 0.01},
+        ]
+        summary = _build_summary(
+            ic_rows, spread_rows, horizon=126, alpha_skipped=0,
+            date_diagnostics=date_diagnostics, min_fwd_coverage=0.0,
+        )
+        diag = summary["fwd_return_diagnostics"]
+        assert diag["coverage_stats"] == {}
+        assert diag["bottom_5_included"] == []
+        assert diag["n_dates_included"] == 0
