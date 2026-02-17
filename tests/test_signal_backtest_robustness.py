@@ -17,7 +17,9 @@ from backtest_signal_robustness import (
     _extract_catalyst,
     _extract_clinical,
     build_rolling_alpha_table,
+    compute_double_sort_spread,
     compute_spread,
+    residualize_ranks,
     score_alpha_oos,
     spearman_rank_corr,
 )
@@ -253,3 +255,72 @@ class TestAlphaOOSRequiresTrain:
                       "clinical_score_z_tier": "1.0"}]
         scores = score_alpha_oos(test_rows, table)
         assert scores["X"] == 0.0
+
+
+# ---------------------------------------------------------------------------
+# Residualize ranks
+# ---------------------------------------------------------------------------
+
+class TestResidualizeRanks:
+    def test_residualize_identical(self):
+        """If x == z (perfectly correlated), residuals should have zero
+        correlation with z."""
+        x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        z = list(x)  # identical
+        resid = residualize_ranks(x, z)
+        # Residuals should be all zero (or near-zero)
+        assert all(abs(r) < 1e-9 for r in resid)
+        # Correlation with z should be zero
+        ic = spearman_rank_corr(resid, z)
+        assert abs(ic) < 1e-6
+
+    def test_residualize_orthogonal(self):
+        """If x and z are independent/orthogonal, residuals ≈ x ranks."""
+        # x ascending, z a shuffled pattern uncorrelated with x
+        x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        z = [5.0, 1.0, 8.0, 3.0, 10.0, 2.0, 7.0, 4.0, 9.0, 6.0]
+        resid = residualize_ranks(x, z)
+        # Residuals should still correlate with the original x
+        ic_resid_x = spearman_rank_corr(resid, x)
+        assert ic_resid_x > 0.5  # strong residual correlation preserved
+
+    def test_residualize_too_few(self):
+        """n < 3 → returns x ranks unchanged."""
+        x = [3.0, 1.0]
+        z = [10.0, 20.0]
+        resid = residualize_ranks(x, z)
+        ranks = _avg_ranks(x)
+        assert resid == ranks
+
+
+# ---------------------------------------------------------------------------
+# Double-sort spread
+# ---------------------------------------------------------------------------
+
+class TestDoubleSortSpread:
+    def test_double_sort_positive(self):
+        """Toy data where alpha separates within each catalyst tercile
+        → spread should be positive."""
+        n = 60
+        # sort1 (catalyst): 3 groups of 20
+        sort1 = [float(i) for i in range(n)]
+        # sort2 (alpha): within each group, top half has positive excess
+        sort2 = []
+        excess = []
+        for g in range(3):
+            for i in range(20):
+                sort2.append(float(20 - i))  # descending within group
+                # Top 10 in each group get +0.10, bottom 10 get -0.10
+                excess.append(0.10 if i < 10 else -0.10)
+        spread = compute_double_sort_spread(sort1, sort2, excess, n_groups=3, min_per_group=10)
+        assert spread > 0.0
+        # Expected: each tercile spread = 0.10 - (-0.10) = 0.20, avg = 0.20
+        assert abs(spread - 0.20) < 1e-9
+
+    def test_double_sort_too_few(self):
+        """Small n → returns 0.0."""
+        sort1 = [1.0, 2.0, 3.0]
+        sort2 = [3.0, 2.0, 1.0]
+        excess = [0.1, 0.0, -0.1]
+        spread = compute_double_sort_spread(sort1, sort2, excess, n_groups=3, min_per_group=10)
+        assert spread == 0.0

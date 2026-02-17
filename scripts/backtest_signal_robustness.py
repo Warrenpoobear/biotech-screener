@@ -176,6 +176,72 @@ def compute_spread(
 
 
 # ---------------------------------------------------------------------------
+# Rank-residualization (partial IC)
+# ---------------------------------------------------------------------------
+
+def residualize_ranks(x: List[float], z: List[float]) -> List[float]:
+    """Residualize x ranks vs z ranks via OLS on ranks.
+
+    Returns residuals (x_rank - predicted_x_rank).
+    If n < 3 or z has zero variance, returns x ranks unchanged.
+    """
+    n = len(x)
+    if n < 3:
+        return list(_avg_ranks(x))
+    rx = _avg_ranks(x)
+    rz = _avg_ranks(z)
+    mz = statistics.mean(rz)
+    var_z = sum((rz[i] - mz) ** 2 for i in range(n))
+    if var_z == 0.0:
+        return list(rx)
+    mx = statistics.mean(rx)
+    cov_xz = sum((rx[i] - mx) * (rz[i] - mz) for i in range(n))
+    b = cov_xz / var_z
+    a = mx - b * mz
+    return [rx[i] - (a + b * rz[i]) for i in range(n)]
+
+
+# ---------------------------------------------------------------------------
+# Double-sort spread
+# ---------------------------------------------------------------------------
+
+def compute_double_sort_spread(
+    sort1_signals: List[float],
+    sort2_signals: List[float],
+    excess_rets: List[float],
+    n_groups: int = 3,
+    min_per_group: int = 10,
+) -> float:
+    """Double-sort: split into n_groups by sort1, then within each group
+    compute top-half vs bottom-half spread on sort2.  Average across groups.
+
+    Returns 0.0 if any group has fewer than min_per_group members.
+    """
+    n = len(sort1_signals)
+    if n < n_groups * min_per_group:
+        return 0.0
+    # Sort by sort1 and assign group indices
+    order = sorted(range(n), key=lambda i: sort1_signals[i])
+    group_size = n // n_groups
+    spreads: List[float] = []
+    for g in range(n_groups):
+        start = g * group_size
+        end = start + group_size if g < n_groups - 1 else n
+        members = order[start:end]
+        if len(members) < min_per_group:
+            return 0.0
+        # Within this group, sort by sort2 and split top/bottom half
+        members_sorted = sorted(members, key=lambda i: sort2_signals[i], reverse=True)
+        half = len(members_sorted) // 2
+        if half == 0:
+            return 0.0
+        top_mean = statistics.mean([excess_rets[i] for i in members_sorted[:half]])
+        bot_mean = statistics.mean([excess_rets[i] for i in members_sorted[half:]])
+        spreads.append(top_mean - bot_mean)
+    return statistics.mean(spreads) if spreads else 0.0
+
+
+# ---------------------------------------------------------------------------
 # Rolling out-of-sample alpha cohort table
 # ---------------------------------------------------------------------------
 
@@ -406,6 +472,31 @@ def run_backtest(
             log.info("  alpha skipped: only %d train dates (need %d)",
                      len(train_dates), MIN_TRAIN_DATES)
 
+        # --- Incremental IC: alpha residualized vs catalyst ---
+        ic_alpha_incr = float("nan")
+        spread_alpha_double = float("nan")
+        n_incr = 0
+
+        if not math.isnan(ic_alpha):
+            incr_triples: List[Tuple[float, float, float]] = []
+            for row in rows:
+                tk = (row.get("ticker") or "").strip()
+                if tk in excess and tk in alpha_scores:
+                    cat_sig = _extract_catalyst(row)
+                    if cat_sig is not None:
+                        incr_triples.append((alpha_scores[tk], cat_sig, excess[tk]))
+
+            n_incr = len(incr_triples)
+            if n_incr >= 10:
+                alpha_vals = [p[0] for p in incr_triples]
+                cat_vals = [p[1] for p in incr_triples]
+                excess_vals = [p[2] for p in incr_triples]
+                residuals = residualize_ranks(alpha_vals, cat_vals)
+                ic_alpha_incr = spearman_rank_corr(residuals, excess_vals)
+                spread_alpha_double = compute_double_sort_spread(
+                    cat_vals, alpha_vals, excess_vals,
+                )
+
         ic_rows.append({
             "date": date_str,
             "horizon": horizon,
@@ -416,6 +507,8 @@ def run_backtest(
             "ic_clinical": ic_clinical,
             "ic_catalyst": ic_catalyst,
             "ic_alpha": ic_alpha,
+            "ic_alpha_incr": ic_alpha_incr,
+            "n_incr": n_incr,
         })
         spread_rows.append({
             "date": date_str,
@@ -423,14 +516,16 @@ def run_backtest(
             "spread_clinical": spread_clinical,
             "spread_catalyst": spread_catalyst,
             "spread_alpha": spread_alpha,
+            "spread_alpha_double": spread_alpha_double,
         })
 
     # Write CSV outputs
     _write_csv(out_dir / "ic_timeseries.csv", ic_rows,
                ["date", "horizon", "n_all", "n_dd", "n_cat_nonzero", "n_train_dates",
-                "ic_clinical", "ic_catalyst", "ic_alpha"])
+                "ic_clinical", "ic_catalyst", "ic_alpha", "ic_alpha_incr", "n_incr"])
     _write_csv(out_dir / "spread_timeseries.csv", spread_rows,
-               ["date", "horizon", "spread_clinical", "spread_catalyst", "spread_alpha"])
+               ["date", "horizon", "spread_clinical", "spread_catalyst", "spread_alpha",
+                "spread_alpha_double"])
 
     # Build summary
     summary = _build_summary(ic_rows, spread_rows, horizon, alpha_skipped)
@@ -514,7 +609,23 @@ def _build_summary(
             "clinical": subperiod_stats("ic_clinical", "spread_clinical", ic_sl, sp_sl),
             "catalyst": subperiod_stats("ic_catalyst", "spread_catalyst", ic_sl, sp_sl),
             "alpha": subperiod_stats("ic_alpha", "spread_alpha", ic_sl, sp_sl),
+            "alpha_incremental": subperiod_stats("ic_alpha_incr", "spread_alpha_double", ic_sl, sp_sl),
         }
+
+    # Alpha incremental stats
+    incr_ics = _safe_vals([r["ic_alpha_incr"] for r in ic_rows])
+    incr_spreads = _safe_vals([r["spread_alpha_double"] for r in spread_rows])
+    alpha_incr_stats: Dict[str, Any] = {}
+    if incr_ics:
+        alpha_incr_stats["mean_ic"] = round(statistics.mean(incr_ics), 4)
+        alpha_incr_stats["median_ic"] = round(statistics.median(incr_ics), 4)
+        alpha_incr_stats["stderr_ic"] = round(
+            statistics.stdev(incr_ics) / math.sqrt(len(incr_ics)), 4
+        ) if len(incr_ics) >= 2 else 0.0
+    if incr_spreads:
+        alpha_incr_stats["mean_double_sort_spread"] = round(statistics.mean(incr_spreads), 4)
+        alpha_incr_stats["median_double_sort_spread"] = round(statistics.median(incr_spreads), 4)
+    alpha_incr_stats["n_dates"] = len(incr_ics)
 
     return {
         "horizon": horizon,
@@ -525,6 +636,7 @@ def _build_summary(
             "clinical": signal_stats("ic_clinical", "spread_clinical"),
             "catalyst": signal_stats("ic_catalyst", "spread_catalyst"),
             "alpha": signal_stats("ic_alpha", "spread_alpha"),
+            "alpha_incremental": alpha_incr_stats,
         },
         "subperiod": subperiod,
     }
