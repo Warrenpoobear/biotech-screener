@@ -449,7 +449,7 @@ def _returns_source_metrics(rankings: pd.DataFrame) -> Optional[Dict[str, Any]]:
     return result
 
 
-_CATALYST_MODE_KEYS = ("specific_days", "blended_window", "no_upcoming", "missing")
+_CATALYST_MODE_KEYS = ("specific_days", "blended_window", "far_window", "no_upcoming", "missing")
 
 
 def _catalyst_coverage_metrics(rankings: pd.DataFrame) -> Optional[Dict[str, Any]]:

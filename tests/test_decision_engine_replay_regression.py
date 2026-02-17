@@ -55,7 +55,7 @@ VALID_TIERS = {"A", "B", "C", "D", ""}
 VALID_BANDS = {"L", "M", "S", "XS"}
 VALID_ELIGIBLE = {"0", "1"}
 VALID_MOM_STATES = {"tailwind", "neutral", "headwind", ""}
-VALID_CATALYST_MODES = {"specific_days", "blended_window", "no_upcoming", "missing", ""}
+VALID_CATALYST_MODES = {"specific_days", "blended_window", "far_window", "no_upcoming", "missing", ""}
 VALID_RUNWAY_BUCKETS = {"critical", "short", "adequate", ""}
 
 

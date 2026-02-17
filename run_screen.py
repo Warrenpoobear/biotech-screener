@@ -1805,8 +1805,121 @@ def _compute_clinical_alpha_z(
 
 
 # ---------------------------------------------------------------------------
-# Catalyst coverage bucket classification
+# Far-horizon catalyst hydration
 # ---------------------------------------------------------------------------
+
+def _hydrate_far_horizon_catalysts(
+    csv_rows: List[dict],
+    trial_records: List[dict],
+    as_of_date: str,
+    ruleset: "DecisionRuleset",
+) -> int:
+    """Override no_upcoming/missing tickers with far_window when a far PCD exists.
+
+    For each row where catalyst_mode is "no_upcoming" or "missing", scans
+    trial_records for active INTERVENTIONAL trials with a future PCD within
+    ``ruleset.far_window_days``.  If found, sets catalyst_mode="far_window"
+    and populates catalyst fields with a dampened signal.
+
+    Returns the count of overridden tickers (for telemetry).
+    """
+    as_of = datetime.strptime(as_of_date[:10], "%Y-%m-%d").date()
+    far_max = ruleset.far_window_days
+
+    # Build per-ticker: min future PCD days from active interventional trials
+    # Only consider PCDs beyond the current catalyst window (> 270d) but
+    # within far_window_days — that's the operational gap we're filling.
+    # Also include PCDs within 270d that the pipeline missed (missing mode).
+    min_future_pcd: Dict[str, int] = {}
+    for t in trial_records:
+        tk = t.get("ticker", "")
+        if not tk:
+            continue
+        stype = (t.get("study_type") or "").upper()
+        if "INTERVENTIONAL" not in stype:
+            continue
+        status = (t.get("status") or "?").upper()
+        if status in _TERMINAL_NEGATIVE_STATUSES:
+            continue
+        pcd = t.get("primary_completion_date")
+        if not pcd:
+            continue
+        try:
+            pcd_date = datetime.strptime(pcd[:10], "%Y-%m-%d").date()
+        except (ValueError, TypeError):
+            continue
+        days = (pcd_date - as_of).days
+        if days <= 0:
+            continue  # past PCD — not a future catalyst
+        if days > far_max:
+            continue  # beyond far window
+        if tk not in min_future_pcd or days < min_future_pcd[tk]:
+            min_future_pcd[tk] = days
+
+    # Override eligible rows
+    n_overrides = 0
+    for row in csv_rows:
+        mode = row.get("catalyst_mode", row.get("de_catalyst_mode", ""))
+        if mode not in ("no_upcoming", "missing"):
+            continue
+        tk = row.get("ticker", "")
+        if tk not in min_future_pcd:
+            continue
+        days = min_future_pcd[tk]
+        row["catalyst_mode"] = "far_window"
+        row["catalyst_days"] = days
+        row["catalyst_source"] = "CTGOV_PCD_FAR"
+        row["catalyst_event_type"] = "CT_PRIMARY_COMPLETION"
+        row["catalyst_strength"] = "far"
+        row["catalyst_decay_w"] = ruleset.far_window_decay_mult
+        n_overrides += 1
+
+    return n_overrides
+
+
+# ---------------------------------------------------------------------------
+# Catalyst shadow metrics telemetry
+# ---------------------------------------------------------------------------
+
+_GOOD_CATALYST_MODES = frozenset({"specific_days", "blended_window", "far_window"})
+_BAD_CATALYST_MODES = frozenset({"no_upcoming", "missing"})
+
+_DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _find_prior_rankings(snapshot_dir: Path, current_date: str) -> Optional[dict]:
+    """Find the most recent prior snapshot with a tier_dev-bearing rankings.csv.
+
+    Returns ``{"date": str, "rows": [dict, ...]}`` or *None*.
+    """
+    if not snapshot_dir.exists():
+        return None
+
+    all_dates = sorted(
+        [d.name for d in snapshot_dir.iterdir()
+         if d.is_dir() and _DATE_DIR_RE.match(d.name)],
+        reverse=True,
+    )
+    if current_date not in all_dates:
+        return None
+
+    idx = all_dates.index(current_date)
+    # Walk backward (max 10 candidates) looking for a valid prior
+    for candidate in all_dates[idx + 1: idx + 11]:
+        rankings_csv = snapshot_dir / candidate / "rankings.csv"
+        if not rankings_csv.exists():
+            continue
+        with open(rankings_csv, "r", encoding="utf-8") as f:
+            header = f.readline().strip()
+        if "tier_dev" not in header.split(","):
+            continue
+        # Valid prior — read full CSV
+        with open(rankings_csv, "r", encoding="utf-8") as f:
+            rows = list(csv.DictReader(f))
+        return {"date": candidate, "rows": rows}
+
+    return None
+
 
 _TERMINAL_NEGATIVE_STATUSES = frozenset({"WITHDRAWN", "TERMINATED", "SUSPENDED"})
 
@@ -1820,7 +1933,7 @@ def _classify_coverage_buckets(
     """Classify each ticker into a catalyst coverage bucket.
 
     Buckets:
-      OK      — Has catalyst signal (specific_days or blended_window)
+      OK      — Has catalyst signal (specific_days, blended_window, or far_window)
       A       — No trials in snapshot at all
       B       — Trials exist but none are INTERVENTIONAL
       C       — All interventional trials are terminal (W/T/S)
@@ -1883,7 +1996,7 @@ def _classify_coverage_buckets(
     for row in csv_rows:
         tk = row.get("ticker", "")
         mode = row.get("catalyst_mode", row.get("de_catalyst_mode", "missing"))
-        if mode in ("specific_days", "blended_window"):
+        if mode in ("specific_days", "blended_window", "far_window"):
             bucket = "OK"
         elif mode == "missing":
             bucket = "MISSING"
@@ -1920,50 +2033,6 @@ def _classify_coverage_buckets(
     result["n_addressable_gap"] = n_addressable_gap
     result["n_coverage_total"] = total
     return result
-
-
-# ---------------------------------------------------------------------------
-# Catalyst shadow metrics telemetry
-# ---------------------------------------------------------------------------
-
-_GOOD_CATALYST_MODES = frozenset({"specific_days", "blended_window"})
-_BAD_CATALYST_MODES = frozenset({"no_upcoming", "missing"})
-
-_DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-
-
-def _find_prior_rankings(snapshot_dir: Path, current_date: str) -> Optional[dict]:
-    """Find the most recent prior snapshot with a tier_dev-bearing rankings.csv.
-
-    Returns ``{"date": str, "rows": [dict, ...]}`` or *None*.
-    """
-    if not snapshot_dir.exists():
-        return None
-
-    all_dates = sorted(
-        [d.name for d in snapshot_dir.iterdir()
-         if d.is_dir() and _DATE_DIR_RE.match(d.name)],
-        reverse=True,
-    )
-    if current_date not in all_dates:
-        return None
-
-    idx = all_dates.index(current_date)
-    # Walk backward (max 10 candidates) looking for a valid prior
-    for candidate in all_dates[idx + 1: idx + 11]:
-        rankings_csv = snapshot_dir / candidate / "rankings.csv"
-        if not rankings_csv.exists():
-            continue
-        with open(rankings_csv, "r", encoding="utf-8") as f:
-            header = f.readline().strip()
-        if "tier_dev" not in header.split(","):
-            continue
-        # Valid prior — read full CSV
-        with open(rankings_csv, "r", encoding="utf-8") as f:
-            rows = list(csv.DictReader(f))
-        return {"date": candidate, "rows": rows}
-
-    return None
 
 
 def _compute_shadow_metrics(
@@ -2514,6 +2583,15 @@ def save_validation_snapshot(
         f"  Clinical sort adjustment: dev={_clin_adj_dev}, comm={_clin_adj_comm}"
     )
 
+    # --- Far-horizon catalyst hydration (opt-in, after DE sets catalyst_mode) ---
+    _n_far_window = 0
+    if trial_records and ruleset and ruleset.far_window_days > 0:
+        _n_far_window = _hydrate_far_horizon_catalysts(
+            csv_rows, trial_records, as_of_date, ruleset,
+        )
+        if _n_far_window:
+            logger.info(f"  Far-horizon catalyst: {_n_far_window} tickers overridden to far_window")
+
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key
     csv_rows.sort(key=lambda r: compute_actionable_sort_key(
@@ -2871,6 +2949,11 @@ def save_validation_snapshot(
             "n_nonzero_clin_adj_comm": _clin_adj_comm,
             "ruleset_id": ruleset.ruleset_id if ruleset else None,
             "enable_clinical_sort_signal": ruleset.enable_clinical_sort_signal if ruleset else False,
+        },
+        "far_window_telemetry": {
+            "n_far_window_overrides": _n_far_window,
+            "far_window_days": ruleset.far_window_days if ruleset else None,
+            "far_window_decay_mult": ruleset.far_window_decay_mult if ruleset else None,
         },
     }
 

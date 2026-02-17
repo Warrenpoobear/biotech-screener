@@ -108,6 +108,10 @@ class DecisionRuleset:
     clinical_positive_only: bool = True
     clinical_stage_mults: tuple = (("early", 0.0), ("mid", 1.0), ("late", 1.5))
 
+    # Far-horizon catalyst (opt-in, off by default; set far_window_days > 0 to enable)
+    far_window_days: int = 0                          # max PCD horizon for far_window mode (0 = off)
+    far_window_decay_mult: float = 0.15               # catalyst_decay_w for far_window tickers
+
     # Sort anchor (default composite_rank = current behavior)
     sort_anchor: str = "composite_rank"               # "composite_rank" | "optionality_pct"
 
@@ -231,6 +235,17 @@ class DecisionRuleset:
             raise ValueError(
                 f"dd_rel_margin_rescue_threshold must be <= 0, "
                 f"got {self.dd_rel_margin_rescue_threshold}"
+            )
+        # Validate far_window_days: must be >= 0
+        if self.far_window_days < 0:
+            raise ValueError(
+                f"far_window_days must be >= 0, got {self.far_window_days}"
+            )
+        # Validate far_window_decay_mult: must be in (0, 1]
+        if not (0.0 < self.far_window_decay_mult <= 1.0):
+            raise ValueError(
+                f"far_window_decay_mult must be in (0, 1], "
+                f"got {self.far_window_decay_mult}"
             )
 
     @property
@@ -944,7 +959,7 @@ def _compute_tier_commercial(
 
 # Priority mappings for sort key construction
 _TIER_ORDER = {"A": 0, "B": 1, "C": 2, "D": 3, "": 4}
-_CATALYST_MODE_ORDER = {"specific_days": 0, "blended_window": 1, "no_upcoming": 2, "missing": 3}
+_CATALYST_MODE_ORDER = {"specific_days": 0, "blended_window": 1, "far_window": 2, "no_upcoming": 3, "missing": 4}
 _MOM_STATE_ORDER = {"tailwind": 0, "neutral": 1, "headwind": 2}
 
 
@@ -1040,7 +1055,7 @@ def compute_actionable_sort_key(
         cat_priority = 0  # neutral — no effect on ordering
 
     cat_mode = decision_fields.get("catalyst_mode", "missing")
-    cat_mode_ord = _CATALYST_MODE_ORDER.get(str(cat_mode), 3)
+    cat_mode_ord = _CATALYST_MODE_ORDER.get(str(cat_mode), 4)
 
     cat_days_raw = decision_fields.get("catalyst_days", "")
     cat_days = int(cat_days_raw) if cat_days_raw != "" and cat_days_raw is not None else 9999

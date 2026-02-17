@@ -339,7 +339,7 @@ class TestSchemaContract:
     def test_catalyst_mode_valid(self, golden_output):
         _, fields = golden_output
         assert fields["catalyst_mode"] in (
-            "specific_days", "blended_window", "no_upcoming", "missing"
+            "specific_days", "blended_window", "far_window", "no_upcoming", "missing"
         ), f"catalyst_mode invalid: {fields['catalyst_mode']!r}"
 
     def test_catalyst_strength_valid(self, golden_output):

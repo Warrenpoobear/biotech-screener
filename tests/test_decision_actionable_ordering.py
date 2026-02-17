@@ -106,12 +106,13 @@ def test_tier_priority_a_above_b():
 # ── Test 3: Catalyst tiebreak within same tier ──
 
 def test_catalyst_tiebreak_within_tier():
-    """specific_days < blended_window < no_upcoming < missing within same tier."""
-    modes = ["specific_days", "blended_window", "no_upcoming", "missing"]
+    """specific_days < blended_window < far_window < no_upcoming < missing within same tier."""
+    modes = ["specific_days", "blended_window", "far_window", "no_upcoming", "missing"]
     keys = []
     for mode in modes:
-        f = _make_fields(tier_dev="B", catalyst_mode=mode, catalyst_days=60 if mode == "specific_days" else "")
-        keys.append(_sort_key(f, ticker=mode.upper()))
+        f = _make_fields(tier_dev="B", catalyst_mode=mode,
+                         catalyst_days=60 if mode in ("specific_days", "far_window") else "")
+        keys.append(_sort_key(f, ticker=mode.upper()[:3]))
 
     for i in range(len(keys) - 1):
         assert keys[i] < keys[i + 1], f"{modes[i]} should sort before {modes[i+1]}"
@@ -814,3 +815,75 @@ class TestSortAnchorOptionalityPct:
         """Invalid sort_anchor raises ValueError."""
         with pytest.raises(ValueError, match="sort_anchor"):
             DecisionRuleset(sort_anchor="invalid")
+
+
+# ── Far-window catalyst mode ordering tests ──
+
+class TestFarWindowOrdering:
+    """Tests for far_window catalyst mode in sort key ordering."""
+
+    def test_far_window_between_blended_and_no_upcoming(self):
+        """far_window sorts after blended_window but before no_upcoming."""
+        f_blended = _make_fields(tier_dev="B", catalyst_mode="blended_window", catalyst_days=0)
+        f_far = _make_fields(tier_dev="B", catalyst_mode="far_window", catalyst_days=400)
+        f_no_up = _make_fields(tier_dev="B", catalyst_mode="no_upcoming", catalyst_days=0)
+
+        key_blended = _sort_key(f_blended, ticker="BLD")
+        key_far = _sort_key(f_far, ticker="FAR")
+        key_no_up = _sort_key(f_no_up, ticker="NOU")
+
+        assert key_blended < key_far, "blended_window should sort before far_window"
+        assert key_far < key_no_up, "far_window should sort before no_upcoming"
+
+    def test_far_window_after_specific_days(self):
+        """far_window with days=400 sorts after specific_days with days=60."""
+        f_specific = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=60)
+        f_far = _make_fields(tier_dev="B", catalyst_mode="far_window", catalyst_days=400)
+
+        key_specific = _sort_key(f_specific, ticker="SPD")
+        key_far = _sort_key(f_far, ticker="FAR")
+
+        assert key_specific < key_far
+
+    def test_far_window_before_missing(self):
+        """far_window sorts before missing."""
+        f_far = _make_fields(tier_dev="B", catalyst_mode="far_window", catalyst_days=350)
+        f_missing = _make_fields(tier_dev="B", catalyst_mode="missing", catalyst_days="")
+
+        key_far = _sort_key(f_far, ticker="FAR")
+        key_missing = _sort_key(f_missing, ticker="MSS")
+
+        assert key_far < key_missing
+
+    def test_far_window_all_priority_modes(self):
+        """far_window sorts correctly in all three catalyst_priority_mode values.
+
+        In practice, no_upcoming has empty catalyst_days (→ 9999 in sort key).
+        """
+        for mode in ("off", "tiebreaker", "blended"):
+            rs = DecisionRuleset(catalyst_priority_mode=mode)
+            f_far = _make_fields(tier_dev="B", catalyst_mode="far_window", catalyst_days=400)
+            f_no_up = _make_fields(tier_dev="B", catalyst_mode="no_upcoming", catalyst_days="")
+
+            key_far = _sort_key(f_far, ticker="FAR", ruleset=rs)
+            key_no_up = _sort_key(f_no_up, ticker="NOU", ruleset=rs)
+
+            assert key_far < key_no_up, (
+                f"far_window should sort before no_upcoming in mode={mode}"
+            )
+
+    def test_full_mode_ordering_with_far_window(self):
+        """Complete mode ordering: specific < blended < far_window < no_upcoming < missing."""
+        modes = ["specific_days", "blended_window", "far_window", "no_upcoming", "missing"]
+        keys = []
+        for mode in modes:
+            f = _make_fields(
+                tier_dev="B", catalyst_mode=mode,
+                catalyst_days=60 if mode in ("specific_days", "far_window") else "",
+            )
+            keys.append(_sort_key(f, ticker=mode.upper()[:3]))
+
+        for i in range(len(keys) - 1):
+            assert keys[i] < keys[i + 1], (
+                f"{modes[i]} should sort before {modes[i+1]}"
+            )

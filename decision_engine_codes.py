@@ -123,7 +123,7 @@ _SIZING_DELTA: Dict[str, int] = {
 # =============================================================================
 
 VALID_CATALYST_MODES: FrozenSet[str] = frozenset({
-    "specific_days", "blended_window", "no_upcoming", "missing",
+    "specific_days", "blended_window", "far_window", "no_upcoming", "missing",
 })
 
 VALID_CATALYST_STRENGTHS: FrozenSet[str] = frozenset({

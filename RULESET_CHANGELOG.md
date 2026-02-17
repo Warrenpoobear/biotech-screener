@@ -6,6 +6,36 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.5] — 2026-02-17 — Far-horizon catalyst mode + bucket telemetry
+
+**Registry fingerprint**: `9884d97764ec` → `3877c5c0b774` (added `far_window` to VALID_CATALYST_MODES)
+
+**Bucket telemetry** (no behavior change):
+- `_classify_coverage_buckets()`: classifies each ticker into buckets OK/A-G/MISSING
+  based on catalyst_mode + trial_records PCD decomposition
+- `_compute_shadow_metrics()` extended with `trial_records` + `max_window` params
+- New sidecar keys: `coverage_bucket_*`, `n_no_upcoming_total`, `n_addressable_gap`,
+  `n_coverage_total`
+- 8 new tests in `test_catalyst_shadow_metrics.py`
+
+**Far-horizon catalyst mode** (opt-in via `far_window_days > 0`):
+- `far_window_days`: 0 (off by default; set > 0 to enable, e.g. 540)
+- `far_window_decay_mult`: 0.15 (dampened decay weight for far tickers)
+- `_hydrate_far_horizon_catalysts()`: overrides `no_upcoming`/`missing` tickers with
+  `far_window` mode when an active interventional trial has a future PCD within
+  `far_window_days`. Sets catalyst_mode, catalyst_days, catalyst_source, catalyst_strength,
+  catalyst_decay_w.
+- `_CATALYST_MODE_ORDER`: `far_window` inserted between `blended_window` (1) and
+  `no_upcoming` (3) at position 2
+- `_GOOD_CATALYST_MODES` includes `far_window` for shadow metrics transitions
+- `VALID_CATALYST_MODES` includes `far_window` in codes registry
+- Metadata: `far_window_telemetry` block with `n_far_window_overrides`, `far_window_days`,
+  `far_window_decay_mult`
+- 14 tests in `test_far_horizon_catalyst.py`, 5 ordering tests in
+  `test_decision_actionable_ordering.py`
+
+---
+
 ## [v1.3.0] 054bc5cc — 2026-02-16 — Commercial tier promotion (tier_first mode)
 
 **Schema expansion** (no behavior change with default `tiering_priority_mode=dev_first`):
