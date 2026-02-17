@@ -20,6 +20,7 @@ from backtest_signal_robustness import (
     _build_summary,
     _extract_catalyst,
     _extract_clinical,
+    _get_freshness,
     build_rolling_alpha_table,
     build_weighted_alpha_table,
     compute_cell_diagnostics,
@@ -893,3 +894,46 @@ class TestFwdReturnDiagnostics:
         assert fresh["max_archive_date"] == "2024-02-28"
         assert fresh["price_gap_days"] == 307  # Dec 31 - Feb 28
         assert fresh["fwd_returns_stale"] is False
+
+
+# ---------------------------------------------------------------------------
+# _get_freshness helper
+# ---------------------------------------------------------------------------
+
+class TestGetFreshness:
+    def test_stale_summary(self):
+        """Stale summary returns True + expected fields."""
+        summary = {"fwd_return_diagnostics": {"data_freshness": {
+            "price_end_date": "2026-02-06",
+            "max_archive_date": "2026-02-07",
+            "price_gap_days": -1,
+            "fwd_returns_stale": True,
+        }}}
+        fresh = _get_freshness(summary)
+        assert fresh["fwd_returns_stale"] is True
+        assert fresh["price_end_date"] == "2026-02-06"
+        assert fresh["price_gap_days"] == -1
+
+    def test_not_stale_summary(self):
+        """Healthy summary returns False."""
+        summary = {"fwd_return_diagnostics": {"data_freshness": {
+            "price_end_date": "2026-12-31",
+            "max_archive_date": "2026-02-07",
+            "price_gap_days": 327,
+            "fwd_returns_stale": False,
+        }}}
+        fresh = _get_freshness(summary)
+        assert fresh["fwd_returns_stale"] is False
+        assert fresh["price_gap_days"] == 327
+
+    def test_missing_diagnostics(self):
+        """Empty summary returns safe defaults (stale=None)."""
+        assert _get_freshness({})["fwd_returns_stale"] is None
+        assert _get_freshness({"fwd_return_diagnostics": {}})["fwd_returns_stale"] is None
+
+    def test_missing_freshness_block(self):
+        """Diagnostics without data_freshness returns safe defaults."""
+        summary = {"fwd_return_diagnostics": {"n_archives_total": 10}}
+        fresh = _get_freshness(summary)
+        assert fresh["fwd_returns_stale"] is None
+        assert fresh["price_end_date"] is None

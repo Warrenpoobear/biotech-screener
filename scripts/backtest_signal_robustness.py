@@ -986,7 +986,11 @@ def _build_summary(
         skipped_low = [d for d in date_diagnostics if d["skip_reason"] == "LOW_COVERAGE"]
         top_5_skipped = sorted(skipped_low, key=lambda d: d["fwd_ret_coverage"], reverse=True)[:5]
 
-        # Data freshness: detect when price data is too short for the horizon
+        # Data freshness: detect when price data is too short for the horizon.
+        # price_gap_days = (price_end_date - max_archive_date).days:
+        #   positive → prices extend past latest archive (healthy)
+        #   zero     → prices end on the same day as latest archive
+        #   negative → prices end BEFORE latest archive (stale)
         freshness: Dict[str, Any] = {
             "price_end_date": price_end_date,
             "max_archive_date": max_archive_date,
@@ -997,7 +1001,8 @@ def _build_summary(
             freshness["price_gap_days"] = (price_end_dt - max_arch_dt).days
         else:
             freshness["price_gap_days"] = None
-        # Ground-truth staleness: last archive date couldn't compute forward returns
+        # Ground-truth staleness: newest archive date is not evaluable
+        # (derived from actual skip_reason, not from price_gap_days)
         last_diag = max(date_diagnostics, key=lambda d: d["date"])
         freshness["fwd_returns_stale"] = (
             last_diag["skip_reason"] in ("NO_FWD_RET", "LOW_COVERAGE")
@@ -1030,6 +1035,22 @@ def _build_summary(
     return result
 
 
+def _get_freshness(summary: Dict[str, Any]) -> Dict[str, Any]:
+    """Extract data_freshness from a summary dict.
+
+    Returns the freshness sub-dict if present, otherwise a safe default
+    with fwd_returns_stale=None (unknown).
+    """
+    diag = summary.get("fwd_return_diagnostics")
+    if not diag:
+        return {"fwd_returns_stale": None, "price_end_date": None,
+                "max_archive_date": None, "price_gap_days": None}
+    return diag.get("data_freshness", {"fwd_returns_stale": None,
+                                        "price_end_date": None,
+                                        "max_archive_date": None,
+                                        "price_gap_days": None})
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -1054,6 +1075,10 @@ def main() -> None:
                         help="Max clinical pos_share to include a date in alpha training (default 0.95)")
     parser.add_argument("--min-fwd-coverage", type=float, default=0.0,
                         help="Min fwd_ret_coverage to include a date (0.0=only skip zero-return dates)")
+    parser.add_argument("--fail-if-stale", action="store_true", default=False,
+                        help="Exit with code 2 if forward returns are stale")
+    parser.add_argument("--no-warn-if-stale", action="store_true", default=False,
+                        help="Suppress the default staleness warning")
     parser.add_argument("--log-level", type=str, default="INFO")
     args = parser.parse_args()
 
@@ -1080,6 +1105,21 @@ def main() -> None:
     )
     if summary:
         print(json.dumps(summary, indent=2))
+
+        # Staleness guardrail (CLI path only)
+        fresh = _get_freshness(summary)
+        if fresh["fwd_returns_stale"] is True:
+            msg = (
+                "Forward returns stale: price_end_date=%s "
+                "max_archive_date=%s price_gap_days=%s"
+            )
+            fields = (fresh["price_end_date"], fresh["max_archive_date"],
+                      fresh["price_gap_days"])
+            if args.fail_if_stale:
+                log.error(msg, *fields)
+                raise SystemExit(2)
+            elif not args.no_warn_if_stale:
+                log.warning(msg, *fields)
 
 
 if __name__ == "__main__":
