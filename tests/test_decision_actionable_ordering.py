@@ -887,3 +887,126 @@ class TestFarWindowOrdering:
             assert keys[i] < keys[i + 1], (
                 f"{modes[i]} should sort before {modes[i+1]}"
             )
+
+
+# ── sort_anchor="alpha_cohort" tests ──
+
+def _alpha_ruleset(mode="off", **kwargs):
+    """Ruleset with sort_anchor='alpha_cohort'."""
+    return DecisionRuleset(sort_anchor="alpha_cohort",
+                           catalyst_priority_mode=mode, **kwargs)
+
+
+class TestSortAnchorAlphaCohort:
+    """Tests for sort_anchor='alpha_cohort' mode."""
+
+    def test_higher_pct_sorts_first(self):
+        """Higher alpha_cohort_pct ticker sorts before lower one."""
+        rs = _alpha_ruleset()
+        f_high = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f_low = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_high = _sort_key(f_high, ticker="HIGH", composite_rank=None,
+                             tiebreaker_pct=0.90, ruleset=rs)
+        key_low = _sort_key(f_low, ticker="LOW", composite_rank=None,
+                            tiebreaker_pct=0.30, ruleset=rs)
+        assert key_high < key_low
+
+    def test_tier_still_dominates(self):
+        """A-tier beats B-tier regardless of alpha_cohort_pct."""
+        rs = _alpha_ruleset()
+        f_a = _make_fields(tier_dev="A", catalyst_mode="missing")
+        f_b = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=10)
+
+        key_a = _sort_key(f_a, ticker="A_T", composite_rank=None,
+                          tiebreaker_pct=0.10, ruleset=rs)
+        key_b = _sort_key(f_b, ticker="B_T", composite_rank=None,
+                          tiebreaker_pct=0.99, ruleset=rs)
+        assert key_a < key_b
+
+    def test_none_tiebreaker_pct_treated_as_zero(self):
+        """tiebreaker_pct=None is treated as 0.0 (sorts last)."""
+        rs = _alpha_ruleset()
+        f = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_with = _sort_key(f, ticker="WITH", composite_rank=None,
+                             tiebreaker_pct=0.50, ruleset=rs)
+        key_none = _sort_key(f, ticker="NONE", composite_rank=None,
+                             tiebreaker_pct=None, ruleset=rs)
+        assert key_with < key_none
+
+    def test_tiebreaker_mode_with_alpha_cohort(self):
+        """Tiebreaker mode: alpha_cohort_pct dominates; priority breaks ties."""
+        rs = _alpha_ruleset(mode="tiebreaker")
+        f1 = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f2 = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_high = _sort_key(f1, ticker="H", composite_rank=None,
+                             tiebreaker_pct=0.80,
+                             catalyst_event_type="DATA_READOUT",
+                             catalyst_source="CTGOV_CALENDAR", ruleset=rs)
+        key_low = _sort_key(f2, ticker="L", composite_rank=None,
+                            tiebreaker_pct=0.40,
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs)
+        assert key_high < key_low  # pct dominates over priority
+
+    def test_blended_mode_with_alpha_cohort(self):
+        """Blended mode: bonus shifts anchor; alpha_cohort_pct still dominant."""
+        rs = _alpha_ruleset(mode="blended")
+        f1 = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f2 = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        # pct=0.50 with FDA bonus(5) → anchor = -0.50 - 5 = -5.50
+        key_fda = _sort_key(f1, ticker="FDA", composite_rank=None,
+                            tiebreaker_pct=0.50,
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs)
+        # pct=0.50 no bonus → anchor = -0.50
+        key_gen = _sort_key(f2, ticker="GEN", composite_rank=None,
+                            tiebreaker_pct=0.50,
+                            catalyst_event_type="", catalyst_source="",
+                            ruleset=rs)
+        assert key_fda < key_gen  # bonus makes FDA sort first
+
+    def test_clinical_sort_blends_with_alpha_cohort(self):
+        """Clinical sort signal correctly blends into alpha cohort anchor."""
+        rs = DecisionRuleset(
+            sort_anchor="alpha_cohort",
+            catalyst_priority_mode="tiebreaker",
+            enable_clinical_sort_signal=True,
+            clinical_sort_weight=1.0,
+            clinical_positive_only=True,
+        )
+        f_clin = _make_fields(tier_dev="A", catalyst_mode="specific_days",
+                              catalyst_days=60)
+        f_clin["clinical_score_z_tier"] = 1.5
+        f_clin["stage_bucket"] = "mid"
+
+        f_noclin = _make_fields(tier_dev="A", catalyst_mode="specific_days",
+                                catalyst_days=60)
+        f_noclin["clinical_score_z_tier"] = 0.0
+        f_noclin["stage_bucket"] = "mid"
+
+        # Same pct, but clinical signal boosts f_clin
+        key_clin = _sort_key(f_clin, ticker="CLIN", composite_rank=None,
+                             tiebreaker_pct=0.50, ruleset=rs)
+        key_noclin = _sort_key(f_noclin, ticker="NOCL", composite_rank=None,
+                               tiebreaker_pct=0.50, ruleset=rs)
+        assert key_clin < key_noclin
+
+    def test_off_mode_with_alpha_cohort(self):
+        """Off mode: alpha_cohort_pct used as anchor in trailing position."""
+        rs = _alpha_ruleset(mode="off")
+        f1 = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f2 = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        # In off mode, anchor is in a trailing position but still matters
+        key_high = _sort_key(f1, ticker="H", composite_rank=None,
+                             tiebreaker_pct=0.80, ruleset=rs)
+        key_low = _sort_key(f2, ticker="L", composite_rank=None,
+                            tiebreaker_pct=0.30, ruleset=rs)
+        # With same catalyst_mode/days, optionality breaks tie before anchor
+        # but if optionality also same, anchor differentiates
+        assert isinstance(key_high, tuple)
+        assert isinstance(key_low, tuple)

@@ -913,6 +913,57 @@ clin_adj = clinical_sort_weight * cz_eff * stage_mult
 | `clinical_cz_eff_top20` | 31 | 10.9% | 16.0% | 2.11 | 16.0% | 2.91 | 19.35% |
 | `clinical_score_z_top20` | 56 | 19.7% | 22.0% | 1.21 | 22.0% | 2.57 | 12.50% |
 
+### Alpha Cohort Scoring (Alternative Ranking Signal)
+
+**File:** `module_5_alpha_cohort.py`
+**Purpose:** Table-driven ranking signal keyed on `stage_bucket × catalyst_horizon_band × clinical_z_sign`. Activated via `sort_anchor="alpha_cohort"`.
+
+**Design:** Each ticker maps to one of 36 cohort cells (3 stages × 6 horizons × 2 signs). The cell's historical mean excess return (6m) is shrunk toward zero via James-Stein shrinkage and clipped to prevent extreme values. The resulting `alpha_cohort_raw` is percentile-ranked to produce `alpha_cohort_pct`, which replaces `composite_rank` as the actionable sort anchor when enabled.
+
+**Grid dimensions:**
+
+| Dimension | Values |
+|-----------|--------|
+| Stage | `early`, `mid`, `late` (empty/unknown → `early`) |
+| Horizon | `near_0_30`, `near_31_90`, `near_91_180`, `near_181_270`, `far_271_540`, `none` |
+| Sign | `pos` (clinical_score_z_tier > 0), `nonpos` (≤ 0 or missing) |
+
+**Horizon mapping:**
+
+| catalyst_mode | catalyst_days | Horizon band |
+|--------------|---------------|--------------|
+| `specific_days` / `blended_window` | 0-30 | `near_0_30` |
+| `specific_days` / `blended_window` | 31-90 | `near_31_90` |
+| `specific_days` / `blended_window` | 91-180 | `near_91_180` |
+| `specific_days` / `blended_window` | 181-270 | `near_181_270` |
+| `specific_days` / `blended_window` | 271+ | `far_271_540` |
+| `far_window` | any | `far_271_540` |
+| `no_upcoming` / `missing` | any | `none` |
+
+**Shrinkage formula:** `w = n / (n + shrink_k)`, `alpha = clamp(mean × w, clip_min, clip_max)`
+
+**Percentile:** `pct = (rank - 0.5) / N` where rank 1 = highest alpha. Ties broken by ticker (alphabetical ascending).
+
+**Pipeline columns:**
+
+| Column | Description |
+|--------|-------------|
+| `alpha_cohort_key` | Pipe-delimited key: `stage\|horizon\|sign` |
+| `alpha_cohort_raw` | Shrunk + clipped alpha estimate |
+| `alpha_cohort_pct` | Deterministic percentile rank (0, 1) |
+
+**DecisionRuleset fields:**
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `sort_anchor` | str | `"composite_rank"` | Set to `"alpha_cohort"` to enable |
+| `alpha_cohort_table_path` | str | `production_data/alpha_cohort_tables/v1.json` | Path to cohort lookup table |
+| `alpha_cohort_shrink_k` | float | 50.0 | Shrinkage strength parameter |
+| `alpha_cohort_clip_min` | float | -0.10 | Floor for clipped alpha |
+| `alpha_cohort_clip_max` | float | 0.10 | Ceiling for clipped alpha |
+
+**Relationship to Module 5:** Module 5 continues to run and produce `composite_score`, `composite_rank`, and all component scores consumed by the Decision Engine. Alpha cohort scoring is an alternative ranking signal that replaces `composite_rank` in the sort key when enabled. Both `composite_score` and `alpha_cohort_pct` are written to the snapshot for diagnostic comparison.
+
 ### Ruleset Configuration
 
 Decision rules are externalized as frozen `DecisionRuleset` dataclass instances, serialized to JSON with content-hash IDs for reproducibility.

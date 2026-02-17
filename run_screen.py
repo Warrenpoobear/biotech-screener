@@ -1306,6 +1306,7 @@ SNAPSHOT_COLUMNS = [
     "clinical_alpha_z", "clinical_readout_days", "clinical_coverage_flag",
     "clinical_score_z", "clinical_score_z_tier",
     "commercial_quality", "commercial_quality_pct",
+    "alpha_cohort_key", "alpha_cohort_raw", "alpha_cohort_pct",
     # Decision Engine v1 columns
     "decision_engine_version", "decision_engine_ruleset_id",
     "eligible", "ineligible_reasons",
@@ -1347,6 +1348,7 @@ PHASE2_PORTFOLIO_COLUMNS = [
     "composite_rank", "composite_score", "archetype",
     "clinical_optionality_pct_dev", "clinical_alpha_z", "clinical_score_z", "clinical_score_z_tier",
     "commercial_quality_pct",
+    "alpha_cohort_key", "alpha_cohort_raw", "alpha_cohort_pct",
     "missing_components",
     "decision_engine_version", "decision_engine_ruleset_id",
 ]
@@ -2592,6 +2594,19 @@ def save_validation_snapshot(
         if _n_far_window:
             logger.info(f"  Far-horizon catalyst: {_n_far_window} tickers overridden to far_window")
 
+    # --- Alpha cohort scoring (opt-in via sort_anchor="alpha_cohort") ---
+    if ruleset and ruleset.sort_anchor == "alpha_cohort":
+        from module_5_alpha_cohort import load_alpha_cohort_table, attach_alpha_scores
+        _table_path = Path(__file__).resolve().parent / ruleset.alpha_cohort_table_path
+        _alpha_table = load_alpha_cohort_table(_table_path)
+        attach_alpha_scores(
+            csv_rows, _alpha_table,
+            shrink_k=ruleset.alpha_cohort_shrink_k,
+            clip_min=ruleset.alpha_cohort_clip_min,
+            clip_max=ruleset.alpha_cohort_clip_max,
+        )
+        logger.info(f"  Alpha cohort scoring: {len(csv_rows)} tickers scored")
+
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key
     csv_rows.sort(key=lambda r: compute_actionable_sort_key(
@@ -2605,12 +2620,17 @@ def save_validation_snapshot(
         catalyst_event_type=r.get("catalyst_event_type", ""),
         catalyst_source=r.get("catalyst_source", ""),
         ruleset=ruleset,
-        tiebreaker_pct=float(r["commercial_quality_pct"])
-            if r.get("archetype", "").startswith("commercial_")
-            and r.get("commercial_quality_pct") not in (None, "")
-            else (float(r["clinical_optionality_pct_dev"])
-                  if r.get("clinical_optionality_pct_dev") not in (None, "")
-                  else None),
+        tiebreaker_pct=(
+            float(r["alpha_cohort_pct"])
+            if ruleset and ruleset.sort_anchor == "alpha_cohort"
+            and r.get("alpha_cohort_pct") not in (None, "")
+            else (float(r["commercial_quality_pct"])
+                  if r.get("archetype", "").startswith("commercial_")
+                  and r.get("commercial_quality_pct") not in (None, "")
+                  else (float(r["clinical_optionality_pct_dev"])
+                        if r.get("clinical_optionality_pct_dev") not in (None, "")
+                        else None))
+        ),
     ))
 
     # Assign actionable_rank: eligible rows get 1..N, ineligible get blank
@@ -2955,6 +2975,11 @@ def save_validation_snapshot(
             "far_window_days": ruleset.far_window_days if ruleset else None,
             "far_window_decay_mult": ruleset.far_window_decay_mult if ruleset else None,
         },
+        "alpha_cohort_telemetry": {
+            "enabled": ruleset.sort_anchor == "alpha_cohort" if ruleset else False,
+            "table_path": ruleset.alpha_cohort_table_path if ruleset else None,
+            "shrink_k": ruleset.alpha_cohort_shrink_k if ruleset else None,
+        } if ruleset and ruleset.sort_anchor == "alpha_cohort" else {},
     }
 
     meta_path = snap_path / "metadata.json"

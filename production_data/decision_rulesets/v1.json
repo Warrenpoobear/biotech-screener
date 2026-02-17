@@ -1,4 +1,8 @@
 {
+  "alpha_cohort_clip_max": 0.1,
+  "alpha_cohort_clip_min": -0.1,
+  "alpha_cohort_shrink_k": 50.0,
+  "alpha_cohort_table_path": "production_data/alpha_cohort_tables/v1.json",
   "alpha_headwind": -0.05,
   "alpha_tailwind": 0.05,
   "beta_high_threshold": 1.8,
@@ -196,6 +200,8 @@
   "enable_missingness_size_penalty": false,
   "enable_missingness_sort_penalty": false,
   "enable_mom_state_tilt": false,
+  "far_window_days": 0,
+  "far_window_decay_mult": 0.15,
   "mom_state_tilt_mults": [
     [
       "tailwind",
@@ -217,6 +223,7 @@
     "S": 0.3,
     "XS": 0.15
   },
+  "sort_anchor": "composite_rank",
   "sponsor_confirm_threshold": 2,
   "tier_a_commercial_floor": 0.85,
   "tier_a_optionality_floor": 0.6,

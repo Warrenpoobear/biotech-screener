@@ -6,6 +6,30 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.4.0] — 2026-02-17 — Alpha cohort scoring mode
+
+**New module**: `module_5_alpha_cohort.py` — table-driven ranking signal keyed on
+`stage_bucket × catalyst_horizon_band × clinical_z_sign` (36 cohort cells).
+
+**New sort_anchor option**: `"alpha_cohort"` — opt-in via DecisionRuleset. When enabled,
+`alpha_cohort_pct` replaces `composite_rank` as the actionable sort anchor. Module 5
+still runs and produces all component scores consumed by the Decision Engine.
+
+**New DecisionRuleset fields**:
+- `alpha_cohort_table_path`: path to frozen lookup table (default: `production_data/alpha_cohort_tables/v1.json`)
+- `alpha_cohort_shrink_k`: shrinkage strength (default: 50.0)
+- `alpha_cohort_clip_min` / `alpha_cohort_clip_max`: alpha clipping bounds (default: ±0.10)
+
+**New snapshot columns**: `alpha_cohort_key`, `alpha_cohort_raw`, `alpha_cohort_pct`
+(populated only when `sort_anchor="alpha_cohort"`).
+
+**Telemetry**: `alpha_cohort_telemetry` block in metadata.json when enabled.
+
+**No default change**: active ruleset remains `v1.3.4` (ID=`f9842e1f`) with
+`sort_anchor="composite_rank"`.
+
+---
+
 ## [v1.3.5] — 2026-02-17 — Far-horizon catalyst mode + bucket telemetry
 
 **Registry fingerprint**: `9884d97764ec` → `3877c5c0b774` (added `far_window` to VALID_CATALYST_MODES)

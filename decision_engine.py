@@ -113,7 +113,13 @@ class DecisionRuleset:
     far_window_decay_mult: float = 0.15               # catalyst_decay_w for far_window tickers
 
     # Sort anchor (default composite_rank = current behavior)
-    sort_anchor: str = "composite_rank"               # "composite_rank" | "optionality_pct"
+    sort_anchor: str = "composite_rank"               # "composite_rank" | "optionality_pct" | "alpha_cohort"
+
+    # Alpha cohort scoring (opt-in via sort_anchor="alpha_cohort")
+    alpha_cohort_table_path: str = "production_data/alpha_cohort_tables/v1.json"
+    alpha_cohort_shrink_k: float = 50.0
+    alpha_cohort_clip_min: float = -0.10
+    alpha_cohort_clip_max: float = 0.10
 
     # Commercial tiering (opt-in, default dev_first = current behavior)
     tiering_priority_mode: str = "dev_first"          # "dev_first" | "tier_first"
@@ -219,9 +225,9 @@ class DecisionRuleset:
                 f"got '{self.catalyst_priority_mode}'"
             )
         # Validate sort_anchor
-        if self.sort_anchor not in ("composite_rank", "optionality_pct"):
+        if self.sort_anchor not in ("composite_rank", "optionality_pct", "alpha_cohort"):
             raise ValueError(
-                f"sort_anchor must be 'composite_rank' or 'optionality_pct', "
+                f"sort_anchor must be 'composite_rank', 'optionality_pct', or 'alpha_cohort', "
                 f"got '{self.sort_anchor}'"
             )
         # Validate tiering_priority_mode
@@ -1071,7 +1077,7 @@ def compute_actionable_sort_key(
     comp_rank = int(composite_rank) if composite_rank is not None else 9999
 
     # Resolve anchor value based on sort_anchor mode
-    if rs.sort_anchor == "optionality_pct":
+    if rs.sort_anchor in ("optionality_pct", "alpha_cohort"):
         anchor = -(tiebreaker_pct or 0.0)  # higher pct → more negative → sorts first
     else:
         anchor = float(comp_rank)           # existing behavior
