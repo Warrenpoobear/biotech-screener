@@ -21,6 +21,7 @@ from backtest_signal_robustness import (
     _extract_catalyst,
     _extract_clinical,
     _get_freshness,
+    _last_trading_day,
     build_rolling_alpha_table,
     build_weighted_alpha_table,
     compute_cell_diagnostics,
@@ -1075,3 +1076,23 @@ class TestExtendPriceCsv:
         assert captured_kwargs["end"] == "2026-02-13"
         assert captured_kwargs["start"] == "2026-02-11"
         assert result["n_rows_appended"] == 0
+
+
+# ---------------------------------------------------------------------------
+# _last_trading_day
+# ---------------------------------------------------------------------------
+
+class TestLastTradingDay:
+    def test_weekday_unchanged(self):
+        from datetime import date
+        # Monday through Friday — returned as-is
+        assert _last_trading_day(date(2026, 2, 16)) == date(2026, 2, 16)  # Mon
+        assert _last_trading_day(date(2026, 2, 20)) == date(2026, 2, 20)  # Fri
+
+    def test_saturday_rolls_to_friday(self):
+        from datetime import date
+        assert _last_trading_day(date(2026, 2, 21)) == date(2026, 2, 20)  # Sat → Fri
+
+    def test_sunday_rolls_to_friday(self):
+        from datetime import date
+        assert _last_trading_day(date(2026, 2, 22)) == date(2026, 2, 20)  # Sun → Fri

@@ -143,6 +143,7 @@ production_data/screen_*.json
 production_data/morningstar_mcp_data.json
 production_data/morningstar_price_history.json
 production_data/morningstar_returns_history.json
+production_data/price_history.csv
 production_data/price_history_split_adj.csv
 
 # --- Cache directories (regenerated at runtime) ---

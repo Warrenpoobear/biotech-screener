@@ -462,6 +462,16 @@ def _extract_catalyst(row: Dict[str, str]) -> Optional[float]:
 # Price extension
 # ---------------------------------------------------------------------------
 
+def _last_trading_day(d: _date_cls) -> _date_cls:
+    """Roll back to Friday if *d* falls on a weekend."""
+    wd = d.weekday()  # Mon=0 .. Sun=6
+    if wd == 5:  # Saturday
+        return d - timedelta(days=1)
+    if wd == 6:  # Sunday
+        return d - timedelta(days=2)
+    return d
+
+
 def extend_price_csv(
     csv_path: Path,
     through_date: str,
@@ -569,7 +579,7 @@ def run_backtest(
 
     # Optionally extend price data before building the provider
     if extend_prices:
-        through = prices_through or _date_cls.today().isoformat()
+        through = prices_through or _last_trading_day(_date_cls.today()).isoformat()
         log.info("Extending price_history.csv through %s …", through)
         ext = extend_price_csv(PRICE_CSV, through)
         log.info("Price extension: %d tickers extended, %d rows appended, "
