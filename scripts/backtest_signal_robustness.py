@@ -642,8 +642,11 @@ def run_backtest(
                  ext["n_already_current"], ext["n_failed"])
         if ext["failed_tickers"]:
             log.warning("  Failed tickers: %s", ", ".join(ext["failed_tickers"]))
+        if ext["n_tickers_total"] == 0:
+            log.error("--extend-prices: no tickers found (CSV empty/missing "
+                      "and universe.json not available) — extension is a no-op")
 
-    # Build returns provider (reads potentially-updated CSV)
+    # Build returns provider AFTER extension so freshness reflects new data
     ms = MorningstarReturnsProvider(RETURNS_JSON)
     csv_prov = CSVReturnsProvider(PRICE_CSV, price_col="close")
     provider = ChainedReturnsProvider(ms, csv_prov)

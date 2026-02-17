@@ -1151,6 +1151,97 @@ class TestExtendPriceCsv:
         assert result["n_tickers_total"] == 0
         assert result["n_extended"] == 0
 
+    def test_provider_sees_extended_data(self, tmp_path, monkeypatch):
+        """Ordering: provider built after extension sees the new price_end_date.
+
+        Simulates the run_backtest flow: extend → build CSVReturnsProvider →
+        provider.get_last_date() reflects post-extension state.
+        """
+        import pandas as pd
+        from datetime import date
+        from backtest.returns_provider import CSVReturnsProvider
+
+        csv_path = tmp_path / "prices.csv"
+        _write_test_csv(csv_path, [
+            {"date": "2026-02-10", "ticker": "TEST", "close": "10.0",
+             "open": "", "high": "", "low": "", "volume": ""},
+        ])
+
+        # Provider BEFORE extension
+        prov_before = CSVReturnsProvider(csv_path, price_col="close")
+        assert prov_before.get_last_date() == date(2026, 2, 10)
+
+        # Extend
+        mock_hist = pd.DataFrame({
+            "Close": [11.0, 12.0], "Open": [10.5, 11.5], "High": [11.5, 12.5],
+            "Low": [10.0, 11.0], "Volume": [1000, 2000],
+        }, index=pd.to_datetime(["2026-02-11", "2026-02-12"]))
+
+        class MockTicker:
+            def __init__(self, _):
+                pass
+            def history(self, **kwargs):
+                return mock_hist
+
+        import yfinance
+        monkeypatch.setattr(yfinance, "Ticker", MockTicker)
+
+        ext = extend_price_csv(csv_path, through_date="2026-02-12")
+        assert ext["n_rows_appended"] == 2
+
+        # Provider AFTER extension — must see new end date
+        prov_after = CSVReturnsProvider(csv_path, price_col="close")
+        assert prov_after.get_last_date() == date(2026, 2, 12)
+
+    def test_freshness_not_stale_after_successful_extension(self, tmp_path, monkeypatch):
+        """After extension through a reachable date, summary shows not-stale."""
+        import pandas as pd
+
+        csv_path = tmp_path / "prices.csv"
+        _write_test_csv(csv_path, [
+            {"date": "2026-02-10", "ticker": "GGG", "close": "10.0",
+             "open": "", "high": "", "low": "", "volume": ""},
+        ])
+
+        mock_hist = pd.DataFrame({
+            "Close": [11.0], "Open": [10.5], "High": [11.5],
+            "Low": [10.0], "Volume": [1000],
+        }, index=pd.to_datetime(["2026-02-11"]))
+
+        class MockTicker:
+            def __init__(self, _):
+                pass
+            def history(self, **kwargs):
+                return mock_hist
+
+        import yfinance
+        monkeypatch.setattr(yfinance, "Ticker", MockTicker)
+
+        extend_price_csv(csv_path, through_date="2026-02-11")
+
+        # Simulate post-extension diagnostics where last archive is included
+        date_diagnostics = [
+            {"date": "2026-02-10", "n_rows": 1, "n_price_rows": 1,
+             "n_fwd_rets": 1, "fwd_ret_coverage": 1.0,
+             "skip_reason": "", "included": True},
+        ]
+        ic_rows = [{"date": "2026-02-10", "regime": "",
+                     "ic_clinical": 0.1, "ic_catalyst": 0.05,
+                     "ic_alpha": 0.08, "ic_alpha_incr": 0.03}]
+        spread_rows = [{"date": "2026-02-10", "regime": "",
+                         "spread_clinical": 0.02, "spread_catalyst": 0.01,
+                         "spread_alpha": 0.03, "spread_alpha_double": 0.01}]
+
+        summary = _build_summary(
+            ic_rows, spread_rows, horizon=1, alpha_skipped=0,
+            date_diagnostics=date_diagnostics, min_fwd_coverage=0.0,
+            price_end_date="2026-02-11",
+            max_archive_date="2026-02-10",
+        )
+        fresh = summary["fwd_return_diagnostics"]["data_freshness"]
+        assert fresh["fwd_returns_stale"] is False
+        assert fresh["price_gap_days"] == 1  # positive = healthy
+
 
 # ---------------------------------------------------------------------------
 # _last_trading_day
