@@ -1805,6 +1805,124 @@ def _compute_clinical_alpha_z(
 
 
 # ---------------------------------------------------------------------------
+# Catalyst coverage bucket classification
+# ---------------------------------------------------------------------------
+
+_TERMINAL_NEGATIVE_STATUSES = frozenset({"WITHDRAWN", "TERMINATED", "SUSPENDED"})
+
+
+def _classify_coverage_buckets(
+    csv_rows: List[dict],
+    trial_records: List[dict],
+    as_of_date: str,
+    max_window: int = 270,
+) -> dict:
+    """Classify each ticker into a catalyst coverage bucket.
+
+    Buckets:
+      OK      — Has catalyst signal (specific_days or blended_window)
+      A       — No trials in snapshot at all
+      B       — Trials exist but none are INTERVENTIONAL
+      C       — All interventional trials are terminal (W/T/S)
+      D       — Active interventional trials but ALL PCDs in the past
+      E       — Active trials, all forward PCDs > max_window
+      F       — Active trials, mix of past + far (>max_window) PCDs
+      G       — Active trials with near PCD (should have catalyst — investigate)
+      MISSING — catalyst_mode == "missing"
+
+    Returns dict with per-bucket counts + aggregate keys.
+    """
+    as_of = datetime.strptime(as_of_date[:10], "%Y-%m-%d").date()
+    all_tickers = {r.get("ticker", "") for r in csv_rows}
+
+    # Build per-ticker trial info
+    info: Dict[str, dict] = {}
+    for tk in all_tickers:
+        info[tk] = {
+            "n_trials": 0, "n_interventional": 0, "n_active_interventional": 0,
+            "near_pcds": [], "past_pcds": [], "far_pcds": [],
+        }
+
+    for t in trial_records:
+        tk = t.get("ticker", "")
+        if tk not in info:
+            continue
+        rec = info[tk]
+        rec["n_trials"] += 1
+
+        stype = (t.get("study_type") or "").upper()
+        status = (t.get("status") or "?").upper()
+        is_terminal = status in _TERMINAL_NEGATIVE_STATUSES
+
+        if "INTERVENTIONAL" not in stype:
+            continue
+        rec["n_interventional"] += 1
+        if not is_terminal:
+            rec["n_active_interventional"] += 1
+
+        pcd = t.get("primary_completion_date")
+        if not pcd:
+            continue
+        try:
+            pcd_date = datetime.strptime(pcd[:10], "%Y-%m-%d").date()
+        except (ValueError, TypeError):
+            continue
+        if is_terminal:
+            continue
+
+        days = (pcd_date - as_of).days
+        if days <= 0:
+            rec["past_pcds"].append(days)
+        elif days <= max_window:
+            rec["near_pcds"].append(days)
+        else:
+            rec["far_pcds"].append(days)
+
+    # Classify each ticker
+    counts: Dict[str, int] = {k: 0 for k in ("OK", "A", "B", "C", "D", "E", "F", "G", "MISSING")}
+    for row in csv_rows:
+        tk = row.get("ticker", "")
+        mode = row.get("catalyst_mode", row.get("de_catalyst_mode", "missing"))
+        if mode in ("specific_days", "blended_window"):
+            bucket = "OK"
+        elif mode == "missing":
+            bucket = "MISSING"
+        elif not tk or tk not in info:
+            bucket = "MISSING"
+        else:
+            ti = info[tk]
+            if ti["n_trials"] == 0:
+                bucket = "A"
+            elif ti["n_interventional"] == 0:
+                bucket = "B"
+            elif ti["n_active_interventional"] == 0:
+                bucket = "C"
+            elif ti["near_pcds"]:
+                bucket = "G"
+            elif ti["past_pcds"] and ti["far_pcds"]:
+                bucket = "F"
+            elif ti["far_pcds"]:
+                bucket = "E"
+            elif ti["past_pcds"]:
+                bucket = "D"
+            else:
+                bucket = "A"
+        counts[bucket] += 1
+
+    total = len(csv_rows)
+    n_no_upcoming_total = sum(counts[k] for k in "ABCDEFG")
+    n_addressable_gap = counts["D"] + counts["E"] + counts["F"]
+
+    result = {}
+    for k in ("OK", "A", "B", "C", "D", "E", "F", "G", "MISSING"):
+        result[f"coverage_bucket_{k}"] = counts[k]
+    result["n_no_upcoming_total"] = n_no_upcoming_total
+    result["n_addressable_gap"] = n_addressable_gap
+    result["n_coverage_total"] = total
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Catalyst shadow metrics telemetry
 # ---------------------------------------------------------------------------
 
@@ -1853,6 +1971,8 @@ def _compute_shadow_metrics(
     as_of_date: str,
     snapshot_dir: Path,
     source_mix: Optional[dict],
+    trial_records: Optional[List[dict]] = None,
+    max_window: int = 270,
 ) -> dict:
     """Compute catalyst shadow metrics for telemetry sidecar.
 
@@ -1990,7 +2110,7 @@ def _compute_shadow_metrics(
         if r.get("archetype") == "drug_developer" and r.get("tier_dev") == "A"
     )
 
-    return {
+    metrics = {
         "as_of_date": as_of_date,
         "prior_date": prior_date,
         "bad_to_good_count": bad_to_good_count,
@@ -2010,6 +2130,15 @@ def _compute_shadow_metrics(
         "ctgov_events": ctgov_events,
         "fda_events": fda_events,
     }
+
+    # ----- Coverage bucket telemetry (requires trial_records) -----
+    if trial_records is not None:
+        bucket_metrics = _classify_coverage_buckets(
+            csv_rows, trial_records, as_of_date, max_window,
+        )
+        metrics.update(bucket_metrics)
+
+    return metrics
 
 
 def save_validation_snapshot(
@@ -2464,6 +2593,7 @@ def save_validation_snapshot(
             as_of_date=as_of_date,
             snapshot_dir=snapshot_dir,
             source_mix=source_mix,
+            trial_records=trial_records,
         )
         with open(snap_path / "catalyst_shadow_metrics.json", "w", encoding="utf-8") as f:
             json.dump(shadow, f, indent=2, default=str)

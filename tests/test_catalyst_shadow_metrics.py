@@ -10,6 +10,7 @@ import pytest
 from run_screen import (
     _find_prior_rankings,
     _compute_shadow_metrics,
+    _classify_coverage_buckets,
     _GOOD_CATALYST_MODES,
     _BAD_CATALYST_MODES,
 )
@@ -446,3 +447,131 @@ class TestIntegration:
         assert (path / "rankings.csv").exists()
         # shadow metrics file should NOT exist (write failed)
         assert not (path / "catalyst_shadow_metrics.json").exists()
+
+
+# ===================================================================
+# TestCoverageBuckets
+# ===================================================================
+
+class TestCoverageBuckets:
+    """Tests for _classify_coverage_buckets() and bucket telemetry."""
+
+    def _make_trial(self, ticker, study_type="INTERVENTIONAL",
+                    status="RECRUITING", pcd=None):
+        t = {"ticker": ticker, "study_type": study_type, "status": status}
+        if pcd:
+            t["primary_completion_date"] = pcd
+        return t
+
+    def test_bucket_counts_sum_to_total(self, tmp_path):
+        """All bucket counts should sum to n_coverage_total."""
+        rows = [
+            _make_dev_row("A", catalyst_mode="specific_days"),
+            _make_dev_row("B", catalyst_mode="blended_window"),
+            _make_dev_row("C", catalyst_mode="no_upcoming"),
+            _make_dev_row("D", catalyst_mode="missing"),
+            _make_dev_row("E", catalyst_mode="no_upcoming"),
+        ]
+        trials = [
+            # C has trials but no near PCD
+            self._make_trial("C", pcd="2025-01-01"),  # past PCD
+            # E has no trials at all → bucket A
+        ]
+        result = _classify_coverage_buckets(rows, trials, "2026-02-14")
+        total = sum(
+            result[f"coverage_bucket_{k}"]
+            for k in ("OK", "A", "B", "C", "D", "E", "F", "G", "MISSING")
+        )
+        assert total == result["n_coverage_total"]
+        assert total == len(rows)
+
+    def test_ok_bucket_matches_good_modes(self):
+        """Tickers with specific_days or blended_window go to OK bucket."""
+        rows = [
+            _make_dev_row("A", catalyst_mode="specific_days"),
+            _make_dev_row("B", catalyst_mode="blended_window"),
+            _make_dev_row("C", catalyst_mode="no_upcoming"),
+        ]
+        result = _classify_coverage_buckets(rows, [], "2026-02-14")
+        assert result["coverage_bucket_OK"] == 2
+        # C has no_upcoming and no trials → bucket A
+        assert result["coverage_bucket_A"] == 1
+
+    def test_addressable_gap_d_e_f(self):
+        """n_addressable_gap = D + E + F when trial_records match."""
+        rows = [
+            _make_dev_row("OK1", catalyst_mode="specific_days"),
+            _make_dev_row("D1", catalyst_mode="no_upcoming"),  # all PCDs past
+            _make_dev_row("E1", catalyst_mode="no_upcoming"),  # all PCDs far
+            _make_dev_row("F1", catalyst_mode="no_upcoming"),  # mix past + far
+        ]
+        trials = [
+            # D1: past PCD only
+            self._make_trial("D1", pcd="2025-06-01"),
+            # E1: far PCD only (> 270d from 2026-02-14)
+            self._make_trial("E1", pcd="2027-06-01"),
+            # F1: past + far PCDs
+            self._make_trial("F1", pcd="2025-01-01"),
+            self._make_trial("F1", pcd="2027-03-01"),
+        ]
+        result = _classify_coverage_buckets(rows, trials, "2026-02-14")
+        assert result["coverage_bucket_D"] == 1
+        assert result["coverage_bucket_E"] == 1
+        assert result["coverage_bucket_F"] == 1
+        assert result["n_addressable_gap"] == 3
+
+    def test_no_trials_for_ticker_bucket_a(self):
+        """Ticker with no_upcoming and no matching trials → bucket A."""
+        rows = [_make_dev_row("ORPHAN", catalyst_mode="no_upcoming")]
+        result = _classify_coverage_buckets(rows, [], "2026-02-14")
+        assert result["coverage_bucket_A"] == 1
+
+    def test_terminal_trials_bucket_c(self):
+        """Ticker with only terminated interventional trials → bucket C."""
+        rows = [_make_dev_row("TERM", catalyst_mode="no_upcoming")]
+        trials = [
+            self._make_trial("TERM", status="TERMINATED", pcd="2026-06-01"),
+            self._make_trial("TERM", status="WITHDRAWN", pcd="2026-05-01"),
+        ]
+        result = _classify_coverage_buckets(rows, trials, "2026-02-14")
+        assert result["coverage_bucket_C"] == 1
+
+    def test_observational_only_bucket_b(self):
+        """Ticker with only OBSERVATIONAL trials → bucket B."""
+        rows = [_make_dev_row("OBS", catalyst_mode="no_upcoming")]
+        trials = [
+            self._make_trial("OBS", study_type="OBSERVATIONAL", pcd="2026-06-01"),
+        ]
+        result = _classify_coverage_buckets(rows, trials, "2026-02-14")
+        assert result["coverage_bucket_B"] == 1
+
+    def test_shadow_metrics_no_trial_records_omits_buckets(self, tmp_path):
+        """When trial_records is None, bucket fields are absent from shadow metrics."""
+        snap = tmp_path / "snapshots"
+        rows = [_make_dev_row("A")]
+        _write_rankings(snap, "2026-02-14", rows)
+
+        result = _compute_shadow_metrics(rows, "2026-02-14", snap, None,
+                                         trial_records=None)
+        assert "coverage_bucket_OK" not in result
+        assert "n_addressable_gap" not in result
+
+    def test_shadow_metrics_with_trial_records_has_buckets(self, tmp_path):
+        """When trial_records is provided, bucket fields appear in shadow metrics."""
+        snap = tmp_path / "snapshots"
+        rows = [
+            _make_dev_row("A", catalyst_mode="specific_days"),
+            _make_dev_row("B", catalyst_mode="no_upcoming"),
+        ]
+        _write_rankings(snap, "2026-02-14", rows)
+        trials = [
+            {"ticker": "B", "study_type": "INTERVENTIONAL",
+             "status": "RECRUITING", "primary_completion_date": "2027-06-01"},
+        ]
+
+        result = _compute_shadow_metrics(rows, "2026-02-14", snap, None,
+                                         trial_records=trials)
+        assert "coverage_bucket_OK" in result
+        assert result["coverage_bucket_OK"] == 1
+        assert result["n_coverage_total"] == 2
+        assert result["n_addressable_gap"] >= 0
