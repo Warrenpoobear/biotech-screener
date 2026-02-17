@@ -9,16 +9,23 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
+import math
+import pytest
+
 from backtest_signal_robustness import (
     ALPHA_CLIP_MAX,
     ALPHA_CLIP_MIN,
     DEFAULT_SHRINK_K,
     _avg_ranks,
+    _build_summary,
     _extract_catalyst,
     _extract_clinical,
     build_rolling_alpha_table,
+    build_weighted_alpha_table,
+    compute_cell_diagnostics,
     compute_double_sort_spread,
     compute_spread,
+    parse_train_mode,
     residualize_ranks,
     score_alpha_oos,
     spearman_rank_corr,
@@ -324,3 +331,313 @@ class TestDoubleSortSpread:
         excess = [0.1, 0.0, -0.1]
         spread = compute_double_sort_spread(sort1, sort2, excess, n_groups=3, min_per_group=10)
         assert spread == 0.0
+
+
+# ---------------------------------------------------------------------------
+# Cell diagnostics
+# ---------------------------------------------------------------------------
+
+def _make_entry(date, rows, excess):
+    return {"date": date, "rows": rows, "excess": excess}
+
+
+def _make_rows_excess(tickers, excess_vals, stage="mid", cat_mode="specific_days",
+                      cat_days="50", cz="1.0"):
+    """Build matching rows + excess dict for a list of tickers."""
+    rows = [
+        {"ticker": tk, "stage_bucket": stage, "catalyst_mode": cat_mode,
+         "catalyst_days": cat_days, "clinical_score_z_tier": cz}
+        for tk in tickers
+    ]
+    excess = dict(zip(tickers, excess_vals))
+    return rows, excess
+
+
+class TestCellDiagnostics:
+    def test_cell_diagnostics_basic(self):
+        """Pre/post means and delta computed correctly; sorted ascending."""
+        tickers = ["A", "B"]
+        # Pre period: both tickers have excess 0.10
+        rows1, exc1 = _make_rows_excess(tickers, [0.10, 0.10])
+        # Post period: both tickers have excess -0.05
+        rows2, exc2 = _make_rows_excess(tickers, [-0.05, -0.05])
+        cache = [
+            _make_entry("2024-06-01", rows1, exc1),
+            _make_entry("2025-06-01", rows2, exc2),
+        ]
+        diags = compute_cell_diagnostics(cache, cutoff="2025-01-01")
+        assert len(diags) == 1  # all rows map to the same cell key
+        d = diags[0]
+        assert abs(d["mean_excess_pre"] - 0.10) < 1e-9
+        assert abs(d["mean_excess_post"] - (-0.05)) < 1e-9
+        assert abs(d["delta"] - (-0.15)) < 1e-9
+        assert d["n_pre"] == 2
+        assert d["n_post"] == 2
+
+    def test_cell_diagnostics_one_period_only(self):
+        """Cell with only pre data → post NaN, delta NaN, sorted to end."""
+        tickers = ["A"]
+        rows1, exc1 = _make_rows_excess(tickers, [0.05])
+        # Second entry also pre (before cutoff)
+        rows2, exc2 = _make_rows_excess(tickers, [0.03], stage="early")
+        cache = [
+            _make_entry("2024-03-01", rows1, exc1),
+            _make_entry("2024-06-01", rows2, exc2),
+        ]
+        diags = compute_cell_diagnostics(cache, cutoff="2025-01-01")
+        # Two cells: mid|...|pos and early|...|nonpos — both pre-only
+        for d in diags:
+            assert math.isnan(d["delta"])
+            assert d["n_post"] == 0
+
+    def test_cell_diagnostics_empty_cache(self):
+        """Empty input → empty output."""
+        assert compute_cell_diagnostics([]) == []
+
+    def test_cell_diagnostics_all_same_period(self):
+        """All dates before cutoff → post means are NaN."""
+        tickers = ["X"]
+        rows, exc = _make_rows_excess(tickers, [0.02])
+        cache = [_make_entry("2024-01-01", rows, exc)]
+        diags = compute_cell_diagnostics(cache, cutoff="2025-01-01")
+        assert len(diags) == 1
+        assert math.isnan(diags[0]["mean_excess_post"])
+        assert math.isnan(diags[0]["delta"])
+
+
+# ---------------------------------------------------------------------------
+# Regime label propagation
+# ---------------------------------------------------------------------------
+
+class TestRegime:
+    def test_regime_label_propagation(self):
+        """ic_rows with regime → summary has regime stats."""
+        ic_rows = [
+            {"date": "2024-06-01", "regime": "BULL",
+             "ic_clinical": 0.10, "ic_catalyst": 0.05, "ic_alpha": 0.08,
+             "ic_alpha_incr": 0.03},
+            {"date": "2025-06-01", "regime": "BEAR",
+             "ic_clinical": -0.05, "ic_catalyst": -0.02, "ic_alpha": -0.04,
+             "ic_alpha_incr": -0.01},
+        ]
+        spread_rows = [
+            {"date": "2024-06-01", "regime": "BULL",
+             "spread_clinical": 0.02, "spread_catalyst": 0.01, "spread_alpha": 0.03,
+             "spread_alpha_double": 0.01},
+            {"date": "2025-06-01", "regime": "BEAR",
+             "spread_clinical": -0.01, "spread_catalyst": -0.005, "spread_alpha": -0.02,
+             "spread_alpha_double": -0.005},
+        ]
+        summary = _build_summary(ic_rows, spread_rows, horizon=126, alpha_skipped=0)
+        assert "regime" in summary
+        assert "BULL" in summary["regime"]
+        assert "BEAR" in summary["regime"]
+        bull = summary["regime"]["BULL"]
+        assert bull["clinical"]["mean_ic"] == 0.10
+        assert bull["clinical"]["n"] == 1
+
+    def test_regime_empty_when_not_used(self):
+        """No regime labels → no regime key in summary."""
+        ic_rows = [
+            {"date": "2024-06-01", "regime": "",
+             "ic_clinical": 0.10, "ic_catalyst": 0.05, "ic_alpha": 0.08,
+             "ic_alpha_incr": 0.03},
+        ]
+        spread_rows = [
+            {"date": "2024-06-01", "regime": "",
+             "spread_clinical": 0.02, "spread_catalyst": 0.01, "spread_alpha": 0.03,
+             "spread_alpha_double": 0.01},
+        ]
+        summary = _build_summary(ic_rows, spread_rows, horizon=126, alpha_skipped=0)
+        assert "regime" not in summary
+
+
+# ---------------------------------------------------------------------------
+# Training mode parsing
+# ---------------------------------------------------------------------------
+
+class TestParseTrainMode:
+    def test_parse_expanding(self):
+        assert parse_train_mode("expanding") == ("expanding", None)
+
+    def test_parse_trailing(self):
+        assert parse_train_mode("trailing-6") == ("trailing", 6)
+
+    def test_parse_decay(self):
+        assert parse_train_mode("decay-3") == ("decay", 3)
+
+    def test_parse_invalid(self):
+        with pytest.raises(ValueError):
+            parse_train_mode("bogus")
+        with pytest.raises(ValueError):
+            parse_train_mode("trailing-abc")
+        with pytest.raises(ValueError):
+            parse_train_mode("decay-0")
+
+
+# ---------------------------------------------------------------------------
+# Weighted alpha table
+# ---------------------------------------------------------------------------
+
+class TestWeightedAlphaTable:
+    def _make_train_entry(self, rows, excess):
+        return {"rows": rows, "excess": excess}
+
+    def test_weighted_uniform_matches_unweighted(self):
+        """All weights=1.0 matches build_rolling_alpha_table()."""
+        rows = [
+            {"ticker": "A", "stage_bucket": "mid", "catalyst_mode": "specific_days",
+             "catalyst_days": "50", "clinical_score_z_tier": "1.0"},
+            {"ticker": "B", "stage_bucket": "mid", "catalyst_mode": "specific_days",
+             "catalyst_days": "50", "clinical_score_z_tier": "1.0"},
+        ]
+        exc1 = {"A": 0.10, "B": 0.20}
+        exc2 = {"A": 0.05, "B": 0.15}
+        cache = [
+            self._make_train_entry(rows, exc1),
+            self._make_train_entry(rows, exc2),
+        ]
+        rolling = build_rolling_alpha_table(cache, shrink_k=50)
+        weighted = build_weighted_alpha_table(cache, [1.0, 1.0], shrink_k=50)
+        # Cell means and n should match
+        for key in rolling["cells"]:
+            assert abs(rolling["cells"][key]["mean_excess_ret_6m"]
+                       - weighted["cells"][key]["mean_excess_ret_6m"]) < 1e-6
+            assert abs(rolling["cells"][key]["n"]
+                       - weighted["cells"][key]["n"]) < 1e-6
+
+    def test_weighted_decay_weights(self):
+        """Known weights → correct weighted mean + effective n."""
+        rows = [
+            {"ticker": "A", "stage_bucket": "mid", "catalyst_mode": "specific_days",
+             "catalyst_days": "50", "clinical_score_z_tier": "1.0"},
+        ]
+        exc1 = {"A": 0.10}  # weight 0.5
+        exc2 = {"A": 0.20}  # weight 1.0
+        cache = [
+            self._make_train_entry(rows, exc1),
+            self._make_train_entry(rows, exc2),
+        ]
+        table = build_weighted_alpha_table(cache, [0.5, 1.0], shrink_k=50)
+        # Weighted mean = (0.5*0.10 + 1.0*0.20) / (0.5+1.0) = 0.25/1.5 = 0.1667
+        cell = list(table["cells"].values())[0]
+        assert abs(cell["mean_excess_ret_6m"] - (0.25 / 1.5)) < 1e-5
+        # Effective n = 0.5 + 1.0 = 1.5
+        assert abs(cell["n"] - 1.5) < 1e-9
+
+    def test_weighted_zero_weight(self):
+        """Weight=0.0 contributes nothing."""
+        rows = [
+            {"ticker": "A", "stage_bucket": "mid", "catalyst_mode": "specific_days",
+             "catalyst_days": "50", "clinical_score_z_tier": "1.0"},
+        ]
+        exc1 = {"A": 0.10}  # weight 0.0 → ignored
+        exc2 = {"A": 0.20}  # weight 1.0
+        cache = [
+            self._make_train_entry(rows, exc1),
+            self._make_train_entry(rows, exc2),
+        ]
+        table = build_weighted_alpha_table(cache, [0.0, 1.0], shrink_k=50)
+        cell = list(table["cells"].values())[0]
+        # Only exc2 contributes: mean = 0.20, n = 1.0
+        assert abs(cell["mean_excess_ret_6m"] - 0.20) < 1e-6
+        assert abs(cell["n"] - 1.0) < 1e-9
+
+
+# ---------------------------------------------------------------------------
+# Clinical coverage gate
+# ---------------------------------------------------------------------------
+
+class TestClinicalCoverageGate:
+    def test_missing_z_tier_excluded_from_pairing(self):
+        """Rows with empty clinical_score_z_tier are excluded by _extract_clinical."""
+        # DD with valid z_tier → included
+        row_ok = {"archetype": "drug_developer", "clinical_score_z_tier": "1.5"}
+        assert _extract_clinical(row_ok) == 1.5
+
+        # DD with empty z_tier (e.g., missing clinical_score in 2026 archives) → None
+        row_blank = {"archetype": "drug_developer", "clinical_score_z_tier": ""}
+        assert _extract_clinical(row_blank) is None
+
+        # DD with z_tier = "0.0" (backfill fallback) → included (0.0 is valid)
+        row_zero = {"archetype": "drug_developer", "clinical_score_z_tier": "0.0"}
+        assert _extract_clinical(row_zero) == 0.0
+
+    def test_clinical_ic_nan_when_all_z_tier_missing(self):
+        """If no rows have parseable z_tier, IC should be NaN (< 3 pairs)."""
+        # Simulate a 2026-01 archive: all DDs have z_tier="" after failed backfill
+        rows_blank = [
+            {"archetype": "drug_developer", "clinical_score_z_tier": "",
+             "ticker": f"T{i}"} for i in range(50)
+        ]
+        clin_pairs = []
+        excess = {f"T{i}": 0.01 * i for i in range(50)}
+        for row in rows_blank:
+            sig = _extract_clinical(row)
+            tk = row["ticker"]
+            if sig is not None and tk in excess:
+                clin_pairs.append((sig, excess[tk]))
+        # No pairs should form
+        assert len(clin_pairs) == 0
+        # IC computation would return NaN (< 3 pairs)
+        ic = spearman_rank_corr(
+            [p[0] for p in clin_pairs], [p[1] for p in clin_pairs]
+        ) if len(clin_pairs) >= 3 else float("nan")
+        assert math.isnan(ic)
+
+
+# ---------------------------------------------------------------------------
+# Cutoff-based subperiod split
+# ---------------------------------------------------------------------------
+
+class TestCutoffSubperiod:
+    def test_subperiod_uses_cutoff(self):
+        """Subperiod keys are pre_cutoff/post_cutoff, split at cutoff date."""
+        ic_rows = [
+            {"date": "2024-06-01", "regime": "",
+             "ic_clinical": 0.10, "ic_catalyst": 0.05, "ic_alpha": 0.08,
+             "ic_alpha_incr": 0.03},
+            {"date": "2024-12-01", "regime": "",
+             "ic_clinical": 0.12, "ic_catalyst": 0.06, "ic_alpha": 0.09,
+             "ic_alpha_incr": 0.04},
+            {"date": "2025-03-01", "regime": "",
+             "ic_clinical": -0.02, "ic_catalyst": -0.01, "ic_alpha": -0.03,
+             "ic_alpha_incr": -0.02},
+        ]
+        spread_rows = [
+            {"date": "2024-06-01", "regime": "",
+             "spread_clinical": 0.02, "spread_catalyst": 0.01, "spread_alpha": 0.03,
+             "spread_alpha_double": 0.01},
+            {"date": "2024-12-01", "regime": "",
+             "spread_clinical": 0.03, "spread_catalyst": 0.015, "spread_alpha": 0.04,
+             "spread_alpha_double": 0.02},
+            {"date": "2025-03-01", "regime": "",
+             "spread_clinical": -0.01, "spread_catalyst": -0.005, "spread_alpha": -0.02,
+             "spread_alpha_double": -0.005},
+        ]
+        summary = _build_summary(ic_rows, spread_rows, horizon=126, alpha_skipped=0,
+                                 cutoff="2025-01-01")
+        assert "subperiod" in summary
+        assert "pre_cutoff" in summary["subperiod"]
+        assert "post_cutoff" in summary["subperiod"]
+        # Pre-cutoff has 2 dates (2024-06-01, 2024-12-01)
+        assert summary["subperiod"]["pre_cutoff"]["clinical"]["n"] == 2
+        # Post-cutoff has 1 date (2025-03-01)
+        assert summary["subperiod"]["post_cutoff"]["clinical"]["n"] == 1
+        assert summary["cutoff"] == "2025-01-01"
+
+    def test_cutoff_recorded_in_summary(self):
+        """Cutoff date appears in summary.json output."""
+        ic_rows = [
+            {"date": "2024-06-01", "regime": "",
+             "ic_clinical": 0.10, "ic_catalyst": 0.05, "ic_alpha": 0.08,
+             "ic_alpha_incr": 0.03},
+        ]
+        spread_rows = [
+            {"date": "2024-06-01", "regime": "",
+             "spread_clinical": 0.02, "spread_catalyst": 0.01, "spread_alpha": 0.03,
+             "spread_alpha_double": 0.01},
+        ]
+        summary = _build_summary(ic_rows, spread_rows, horizon=126, alpha_skipped=0,
+                                 cutoff="2024-10-01")
+        assert summary["cutoff"] == "2024-10-01"
