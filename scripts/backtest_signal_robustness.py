@@ -519,12 +519,24 @@ def run_backtest(
         )
         clin_ratio = n_raw_clin / n_dd if n_dd > 0 else 0.0
 
+        # Clinical sign dispersion: share of DDs with z_tier > 0 (after backfill)
+        # If pos_share ≈ 0 or ≈ 1, the sign dimension of the cohort key is homogeneous
+        n_pos = sum(
+            1 for r in rows
+            if (r.get("archetype") or "").strip() in _DD_ARCHETYPES
+            and _extract_clinical(r) is not None
+            and _extract_clinical(r) > 0.0
+        )
+        n_valid_clin = sum(1 for r in rows if _extract_clinical(r) is not None)
+        pos_share = n_pos / n_valid_clin if n_valid_clin > 0 else 0.0
+
         date_cache.append({
             "date": date_str,
             "rows": rows,
             "fwd_rets": fwd_rets,
             "excess": excess,
             "clinical_coverage": clin_ratio,
+            "clinical_pos_share": pos_share,
         })
 
     log.info("Usable dates after forward-return filter: %d", len(date_cache))
@@ -610,11 +622,14 @@ def run_backtest(
         spread_alpha = float("nan")
         train_dates = date_cache[:eval_idx]  # strictly before eval date
 
-        # Filter out dates with broken clinical data from alpha training
+        # Filter out dates with broken clinical data from alpha training:
+        # 1. Raw clinical_score coverage below threshold
+        # 2. Sign homogeneity (pos_share ≈ 0 or ≈ 1 → no sign variation)
         if min_clinical_coverage > 0.0:
             train_dates = [
                 d for d in train_dates
                 if d["clinical_coverage"] >= min_clinical_coverage
+                and 0.05 <= d["clinical_pos_share"] <= 0.95
             ]
 
         # Apply training mode dispatch
@@ -686,6 +701,7 @@ def run_backtest(
             "n_all": len(fwd_rets),
             "n_dd": n_dd_total,
             "n_clinical_valid": len(clin_pairs),
+            "clinical_pos_share": round(entry["clinical_pos_share"], 4),
             "n_cat_nonzero": len(cat_pairs_nonzero),
             "n_train_dates": len(train_dates),
             "ic_clinical": ic_clinical,
@@ -718,7 +734,7 @@ def run_backtest(
     # Write CSV outputs
     _write_csv(out_dir / "ic_timeseries.csv", ic_rows,
                ["date", "horizon", "regime", "n_all", "n_dd", "n_clinical_valid",
-                "n_cat_nonzero", "n_train_dates",
+                "clinical_pos_share", "n_cat_nonzero", "n_train_dates",
                 "ic_clinical", "ic_catalyst", "ic_alpha", "ic_alpha_incr", "n_incr"])
     _write_csv(out_dir / "spread_timeseries.csv", spread_rows,
                ["date", "horizon", "regime", "spread_clinical", "spread_catalyst", "spread_alpha",
