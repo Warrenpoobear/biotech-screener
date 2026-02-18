@@ -176,7 +176,6 @@ run_attn_grid_search.py
 
 # --- Root-level obsolete/one-off scripts ---
 /module_5_scoring_v3.py
-/module_5_composite_with_defensive.py
 /test_my_data.py
 /test_module_*.py
 /test_module[0-9]*_*.py
