@@ -208,6 +208,67 @@ class TestCompanyNamePopulated:
         rows = _read_csv(snap)
         assert rows[0]["company_name"] == ""
 
+    def test_sector_label_replaced_with_override(self, tmp_path):
+        """When M1 company_name is a sector label (e.g. 'Healthcare'),
+        the override table supplies the real name."""
+        secs = [
+            _make_ranked_security("PVLA", 1, 80.0),
+            _make_ranked_security("CLYM", 2, 70.0),
+        ]
+        active = [
+            {"ticker": "PVLA", "company_name": "Healthcare"},
+            {"ticker": "CLYM", "company_name": "Healthcare"},
+        ]
+        results = _make_results(secs, active_securities=active)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+        )
+        assert snap is not None
+
+        rows = _read_csv(snap)
+        name_by_ticker = {r["ticker"]: r["company_name"] for r in rows}
+        assert name_by_ticker["PVLA"] == "Palvella Therapeutics, Inc."
+        assert name_by_ticker["CLYM"] == "Climb Bio, Inc."
+
+    def test_sector_label_unknown_ticker_gets_empty(self, tmp_path):
+        """A sector-labeled ticker NOT in the override table gets empty string."""
+        secs = [_make_ranked_security("FAKE", 1, 80.0)]
+        active = [{"ticker": "FAKE", "company_name": "Healthcare"}]
+        results = _make_results(secs, active_securities=active)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+        )
+        assert snap is not None
+
+        rows = _read_csv(snap)
+        assert rows[0]["company_name"] == ""
+
+    def test_real_name_not_overridden(self, tmp_path):
+        """A real company name (not a sector label) is kept even for override tickers."""
+        secs = [_make_ranked_security("PVLA", 1, 80.0)]
+        active = [{"ticker": "PVLA", "company_name": "Palvella Custom Name"}]
+        results = _make_results(secs, active_securities=active)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+        )
+        assert snap is not None
+
+        rows = _read_csv(snap)
+        # The real name should pass through, override only triggers on sector labels
+        assert rows[0]["company_name"] == "Palvella Custom Name"
+
 
 # ---------------------------------------------------------------------------
 # Tests: decision ranking mode — eligible-first + monotonic actionable_rank

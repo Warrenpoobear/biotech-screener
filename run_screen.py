@@ -2319,11 +2319,65 @@ def save_validation_snapshot(
     m3_summaries = (results.get("module_3_catalyst") or {}).get("summaries")
 
     # --- Build company name lookup from Module 1 universe ---
+    # Some tickers in universe.json have market_data.company_name set to the
+    # sector label (e.g. "Healthcare") instead of the real company name.
+    # Detect these and substitute from the override table below.
+    _SECTOR_LABELS = frozenset({
+        "Healthcare", "Biotechnology", "Technology", "Financial",
+        "Industrials", "Consumer Defensive", "Consumer Cyclical",
+        "Basic Materials", "Energy", "Communication Services",
+        "Real Estate", "Utilities",
+    })
+    _NAME_OVERRIDES: Dict[str, str] = {
+        "ABEO": "Abeona Therapeutics Inc.",
+        "ABOS": "Acumen Pharmaceuticals, Inc.",
+        "ACRV": "Acrivon Therapeutics, Inc.",
+        "AKTX": "Akari Therapeutics Plc",
+        "ALDX": "Aldeyra Therapeutics, Inc.",
+        "ALGS": "Aligos Therapeutics, Inc.",
+        "ARTV": "Artiva Biotherapeutics, Inc.",
+        "ASMB": "Assembly Biosciences, Inc.",
+        "BLTE": "Belite Bio, Inc",
+        "BMEA": "Biomea Fusion, Inc.",
+        "CELC": "Celcuity Inc.",
+        "CERS": "Cerus Corporation",
+        "CLYM": "Climb Bio, Inc.",
+        "DNTH": "Dianthus Therapeutics, Inc.",
+        "DRUG": "Bright Minds Biosciences Inc.",
+        "ELDN": "Eledon Pharmaceuticals, Inc.",
+        "ENGN": "enGene Holdings Inc.",
+        "GBIO": "Generation Bio Co.",
+        "HOWL": "Werewolf Therapeutics, Inc.",
+        "IKT": "Inhibikase Therapeutics, Inc.",
+        "IMTX": "Immatics N.V.",
+        "JBIO": "Jade Biosciences, Inc.",
+        "LBRX": "LB Pharmaceuticals Inc",
+        "LYRA": "Lyra Therapeutics, Inc.",
+        "MLTX": "MoonLake Immunotherapeutics",
+        "NAUT": "Nautilus Biotechnology, Inc.",
+        "NKTX": "Nkarta, Inc.",
+        "OCS": "Oculis Holding AG",
+        "PRLD": "Prelude Therapeutics Incorporated",
+        "PRQR": "ProQR Therapeutics N.V.",
+        "PVLA": "Palvella Therapeutics, Inc.",
+        "SABS": "SAB Biotherapeutics, Inc.",
+        "SERA": "Sera Prognostics, Inc.",
+        "SKYE": "Skye Bioscience, Inc.",
+        "TARA": "Protara Therapeutics, Inc.",
+        "TCRX": "TScan Therapeutics, Inc.",
+        "TENX": "Tenax Therapeutics, Inc.",
+        "VKTX": "Viking Therapeutics, Inc.",
+        "VRDN": "Viridian Therapeutics, Inc.",
+    }
     _ticker_to_name: Dict[str, str] = {}
     for sec in (results.get("module_1_universe") or {}).get("active_securities", []):
         _t = sec.get("ticker")
         if _t:
-            _ticker_to_name[_t] = sec.get("company_name") or ""
+            raw_name = sec.get("company_name") or ""
+            if raw_name in _SECTOR_LABELS:
+                _ticker_to_name[_t] = _NAME_OVERRIDES.get(_t, "")
+            else:
+                _ticker_to_name[_t] = raw_name
 
     # --- Helper: extract a named component's normalized score from component_scores ---
     def _component_score(rec, name):
