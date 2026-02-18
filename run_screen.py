@@ -36,6 +36,7 @@ import csv
 import json
 import logging
 import math
+import os
 import re
 import shutil
 import sys
@@ -6852,16 +6853,22 @@ Module 3 Catalyst Detection:
             if _rb["ruleset_path"] and not args.ruleset:
                 args.ruleset = _rb["ruleset_path"]
                 logger.info(f"[REPLAY BUNDLE] Auto-wired ruleset: {_rb['ruleset_path']}")
-            # Auto-wire cache dirs if present in bundle
-            if _rb.get("ctgov_cache_dir"):
-                args.ctgov_cache_dir = _rb["ctgov_cache_dir"]
-                logger.info(f"[REPLAY BUNDLE] Auto-wired ctgov cache: {_rb['ctgov_cache_dir']}")
-            if _rb.get("sec_cache_dir"):
-                args.sec_cache_dir = _rb["sec_cache_dir"]
-                logger.info(f"[REPLAY BUNDLE] Auto-wired sec cache: {_rb['sec_cache_dir']}")
-            if _rb.get("fda_cache_dir"):
-                args.fda_cache_dir = _rb["fda_cache_dir"]
-                logger.info(f"[REPLAY BUNDLE] Auto-wired fda cache: {_rb['fda_cache_dir']}")
+            # Auto-wire cache dirs: set args AND symlink to default locations
+            # (module_3_catalyst + event_ledger resolve via Path(__file__).parent / "cache")
+            _repo_cache = Path(__file__).parent / "cache"
+            for cache_key in ("ctgov_cache_dir", "sec_cache_dir", "fda_cache_dir"):
+                bundle_dir = _rb.get(cache_key)
+                if not bundle_dir:
+                    continue
+                setattr(args, cache_key, bundle_dir)
+                logger.info(f"[REPLAY BUNDLE] Auto-wired {cache_key}: {bundle_dir}")
+                # Symlink to default location so hardcoded resolvers find it
+                subdir = cache_key.replace("_cache_dir", "")  # ctgov, sec, fda
+                link_target = _repo_cache / subdir
+                if not link_target.exists():
+                    link_target.parent.mkdir(parents=True, exist_ok=True)
+                    os.symlink(str(bundle_dir), str(link_target))
+                    logger.info(f"[REPLAY BUNDLE] Symlinked {link_target} → {bundle_dir}")
             logger.info(f"[REPLAY BUNDLE] data_dir → {_rb['data_dir']}")
 
         # SECURITY: Validate data_dir (after replay-bundle auto-wiring)
