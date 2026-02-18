@@ -2752,9 +2752,24 @@ def save_validation_snapshot(
     # Compute target weights for eligible rows
     compute_target_weights(eligible_rows, ruleset=ruleset)
 
-    # In composite ranking mode (legacy), re-sort rankings.csv by composite_rank
-    # In decision ranking mode (default), rows stay in decision engine order
-    if ranking_mode == "composite" and decision_mode in ("observe", "phase2"):
+    # --- Final CSV row ordering ---
+    # In decision ranking mode (default): eligible rows first (in DE order),
+    # then ineligible rows sorted deterministically by composite_rank + ticker.
+    # In composite ranking mode (legacy): re-sort all rows by composite_rank.
+    if ranking_mode == "decision":
+        # eligible_rows already in DE sort order from the sort above.
+        # Sort ineligible rows deterministically: composite_rank asc, ticker asc.
+        def _inelig_sort_key(r):
+            cr = r.get("composite_rank")
+            try:
+                cr_val = float(cr) if cr not in (None, "") else 1e18
+            except (ValueError, TypeError):
+                cr_val = 1e18
+            return (cr_val, r.get("ticker", ""))
+        ineligible_rows.sort(key=_inelig_sort_key)
+        csv_rows = eligible_rows + ineligible_rows
+    elif decision_mode in ("observe", "phase2"):
+        # Legacy composite ordering
         has_composite = any(
             r.get("composite_rank") not in (None, "") for r in csv_rows
         )

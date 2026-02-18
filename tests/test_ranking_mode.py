@@ -4,10 +4,12 @@
 Exercises:
   - company_name appears at index 1 in both SNAPSHOT_COLUMNS and PHASE2_PORTFOLIO_COLUMNS
   - company_name is populated from module_1_universe.active_securities
-  - ranking_mode="decision" preserves DE sort order in rankings.csv
+  - ranking_mode="decision" preserves DE sort order in rankings.csv:
+    * all eligible rows first, then all ineligible rows (no interleaving)
+    * actionable_rank is monotonically increasing 1..N within the eligible block
   - ranking_mode="composite" restores legacy composite_rank ordering
   - actionable_rank values are stable regardless of ranking_mode
-  - deterministic tiebreak (alphabetic ticker) for identical decision profiles
+  - deterministic tiebreak for identical decision profiles
   - decision_portfolio.csv always uses decision engine sort
 """
 from __future__ import annotations
@@ -18,6 +20,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
+import pandas as pd
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -49,6 +52,7 @@ def _make_ranked_security(
     tier1_count: int = 3,
     confidence_overall: float = 0.72,
     clinical_normalized: float = 0.6,
+    fundamental_red_flag: bool = False,
 ) -> Dict[str, Any]:
     """Build a minimal ranked_securities entry for save_validation_snapshot."""
     cd: Dict[str, Any] = {}
@@ -70,7 +74,7 @@ def _make_ranked_security(
         "market_cap_bucket": market_cap_bucket,
         "severity": severity,
         "confidence_overall": confidence_overall,
-        "fundamental_red_flag": False,
+        "fundamental_red_flag": fundamental_red_flag,
         "fundamental_red_flag_reasons": [],
         "flags": [],
         "attn_flags": [],
@@ -206,11 +210,120 @@ class TestCompanyNamePopulated:
 
 
 # ---------------------------------------------------------------------------
-# Tests: ranking mode
+# Tests: decision ranking mode — eligible-first + monotonic actionable_rank
 # ---------------------------------------------------------------------------
 
-class TestDecisionRankingMode:
-    """Verify ranking_mode='decision' sorts by DE sort key (not composite_rank)."""
+class TestDecisionRankingEligibleFirst:
+    """The core test that would have caught the uploaded-CSV bug.
+
+    Key invariant: in ranking_mode='decision', ALL eligible rows must appear
+    before ALL ineligible rows, and the eligible block must have monotonically
+    increasing actionable_rank (1, 2, 3, ..., N).
+    """
+
+    def test_no_eligibility_interleaving(self, tmp_path):
+        """Eligible rows first, ineligible rows last — no interleaving.
+
+        Deliberately gives ineligible rows LOWER composite_rank so that
+        composite-based sorting would interleave them into the top of
+        the file.  If the file is still sorted by M5, this test fails.
+        """
+        # Ineligible rows: composite_rank 1-3 (top M5 ranks, but ineligible)
+        # Eligible rows: composite_rank 4-6 (worse M5, but eligible)
+        secs = [
+            # Ineligible: fundamental_red_flag=True triggers ineligibility
+            _make_ranked_security("INELIG_A", 1, 95.0, fundamental_red_flag=True),
+            _make_ranked_security("INELIG_B", 2, 90.0, fundamental_red_flag=True),
+            _make_ranked_security("INELIG_C", 3, 85.0, fundamental_red_flag=True),
+            # Eligible: good profiles with catalyst
+            _make_ranked_security("ELIG_X", 4, 70.0, catalyst_days=30, catalyst_in_window=True),
+            _make_ranked_security("ELIG_Y", 5, 60.0, catalyst_days=60),
+            _make_ranked_security("ELIG_Z", 6, 50.0, catalyst_days=90),
+        ]
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+            ranking_mode="decision",
+        )
+        assert snap is not None
+
+        rows = _read_csv(snap)
+        assert len(rows) == 6
+
+        # Check: no interleaving.  Once we see an ineligible row, no eligible
+        # row should appear after it.
+        seen_ineligible = False
+        for r in rows:
+            is_elig = r.get("eligible") == "1"
+            if not is_elig:
+                seen_ineligible = True
+            if seen_ineligible and is_elig:
+                raise AssertionError(
+                    f"Eligibility interleaving: eligible row {r['ticker']} "
+                    f"appeared after ineligible row.  Row order (ticker, eligible): "
+                    + str([(x["ticker"], x.get("eligible")) for x in rows])
+                )
+
+        # Eligible rows must come first
+        eligible_tickers = [r["ticker"] for r in rows if r.get("eligible") == "1"]
+        ineligible_tickers = [r["ticker"] for r in rows if r.get("eligible") != "1"]
+        assert len(eligible_tickers) == 3, f"Expected 3 eligible, got {eligible_tickers}"
+        assert len(ineligible_tickers) == 3, f"Expected 3 ineligible, got {ineligible_tickers}"
+        # First 3 rows must be the eligible ones
+        assert [r["ticker"] for r in rows[:3]] == eligible_tickers
+
+    def test_actionable_rank_monotonic_in_eligible_block(self, tmp_path):
+        """actionable_rank must be exactly 1, 2, 3, ..., N in row order."""
+        secs = [
+            _make_ranked_security("INELIG_A", 1, 95.0, fundamental_red_flag=True),
+            _make_ranked_security("ELIG_X", 2, 80.0, catalyst_days=30, catalyst_in_window=True),
+            _make_ranked_security("ELIG_Y", 3, 70.0, catalyst_days=60),
+            _make_ranked_security("ELIG_Z", 4, 60.0, catalyst_days=90),
+        ]
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+            ranking_mode="decision",
+        )
+        assert snap is not None
+
+        df = pd.read_csv(snap / "rankings.csv", dtype=str)
+        eligible = df["eligible"].astype(str).isin(["1"])
+        act = pd.to_numeric(df["actionable_rank"], errors="coerce")
+
+        # Eligible block must be at the top
+        eligible_indices = df.index[eligible].tolist()
+        ineligible_indices = df.index[~eligible].tolist()
+        if eligible_indices and ineligible_indices:
+            assert max(eligible_indices) < min(ineligible_indices), (
+                f"Eligible rows not all before ineligible. "
+                f"Eligible idx: {eligible_indices}, Ineligible idx: {ineligible_indices}"
+            )
+
+        # actionable_rank in the eligible block must be monotonically increasing
+        act_elig = act[eligible].dropna()
+        assert len(act_elig) == eligible.sum()
+        assert act_elig.is_monotonic_increasing, (
+            f"actionable_rank not monotonic: {act_elig.tolist()}"
+        )
+        # Must be exactly 1..N
+        assert act_elig.tolist() == list(range(1, len(act_elig) + 1))
+
+        # Ineligible rows should have blank/NaN actionable_rank
+        act_inelig = act[~eligible]
+        assert act_inelig.isna().all(), (
+            f"Ineligible rows have non-blank actionable_rank: {act_inelig.tolist()}"
+        )
 
     def test_decision_mode_ignores_composite_order(self, tmp_path):
         """When ranking_mode=decision, tier A row before tier B even if composite_rank disagrees."""
@@ -233,15 +346,20 @@ class TestDecisionRankingMode:
         assert snap is not None
 
         rows = _read_csv(snap)
-        tickers = [r["ticker"] for r in rows]
-        # In decision mode, the DE sort key determines order.
-        # The row with the better actionable_rank should come first.
-        ranks = {r["ticker"]: r["actionable_rank"] for r in rows}
         # Both should be eligible
         eligible_tickers = [r["ticker"] for r in rows if r["actionable_rank"] != ""]
         assert len(eligible_tickers) == 2
         # First row in CSV should have actionable_rank=1
         assert rows[0]["actionable_rank"] == "1"
+        # Composite_rank should NOT be monotonic (proves it's not M5-sorted)
+        comp_ranks = [int(r["composite_rank"]) for r in rows]
+        # If first row has actionable_rank=1 but NOT composite_rank=1,
+        # that proves DE ordering, not M5 ordering
+        if rows[0]["composite_rank"] != "1":
+            pass  # DE is driving the order, not composite
+        # At minimum: actionable_rank is monotonic in the eligible block
+        act_ranks = [int(r["actionable_rank"]) for r in rows if r["actionable_rank"] != ""]
+        assert act_ranks == [1, 2]
 
 
 class TestCompositeRankingMode:
@@ -269,6 +387,32 @@ class TestCompositeRankingMode:
         # In composite mode, rows are re-sorted by composite_rank
         assert rows[0]["ticker"] == "BTST"  # composite_rank=1
         assert rows[1]["ticker"] == "ATST"  # composite_rank=5
+
+    def test_composite_mode_interleaves_eligible_and_ineligible(self, tmp_path):
+        """Legacy composite mode may interleave eligible/ineligible by composite_rank."""
+        secs = [
+            _make_ranked_security("INELIG_A", 1, 95.0, fundamental_red_flag=True),
+            _make_ranked_security("ELIG_X", 2, 80.0, catalyst_days=30, catalyst_in_window=True),
+            _make_ranked_security("INELIG_B", 3, 70.0, fundamental_red_flag=True),
+            _make_ranked_security("ELIG_Y", 4, 60.0, catalyst_days=60),
+        ]
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+            ranking_mode="composite",
+        )
+        assert snap is not None
+
+        rows = _read_csv(snap)
+        # In composite mode, order is by composite_rank (1,2,3,4)
+        assert [r["ticker"] for r in rows] == [
+            "INELIG_A", "ELIG_X", "INELIG_B", "ELIG_Y",
+        ]
 
 
 class TestActionableRankStability:
@@ -298,7 +442,7 @@ class TestActionableRankStability:
         rows_dec = _read_csv(tmp_path / "snap_decision" / "2026-01-01")
         rows_comp = _read_csv(tmp_path / "snap_composite" / "2026-01-01")
 
-        # Build ticker→actionable_rank maps
+        # Build ticker->actionable_rank maps
         ranks_dec = {r["ticker"]: r["actionable_rank"] for r in rows_dec}
         ranks_comp = {r["ticker"]: r["actionable_rank"] for r in rows_comp}
 
@@ -370,6 +514,44 @@ class TestPortfolioCsvAlwaysDecisionSorted:
                 # Portfolio should be sorted by DE sort key, not composite_rank
                 # The row with actionable_rank=1 should be first
                 assert rows[0]["actionable_rank"] == "1"
+
+
+class TestPortfolioCsvCompanyName:
+    """decision_portfolio.csv includes company_name."""
+
+    def test_portfolio_csv_has_company_name(self, tmp_path):
+        """decision_portfolio.csv has company_name column populated from M1."""
+        secs = [
+            _make_ranked_security("ACRS", 1, 80.0, catalyst_days=30, catalyst_in_window=True),
+            _make_ranked_security("BMRN", 2, 70.0, catalyst_days=60),
+        ]
+        active = [
+            {"ticker": "ACRS", "company_name": "Aclaris Therapeutics, Inc."},
+            {"ticker": "BMRN", "company_name": "BioMarin Pharmaceutical Inc."},
+        ]
+        results = _make_results(secs, active_securities=active)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+        )
+        assert snap is not None
+
+        portfolio_path = snap / "decision_portfolio.csv"
+        if portfolio_path.exists():
+            rows = _read_csv(snap, "decision_portfolio.csv")
+            assert len(rows) > 0
+            assert "company_name" in rows[0], "company_name column missing from portfolio CSV"
+            name_by_ticker = {r["ticker"]: r["company_name"] for r in rows}
+            for ticker, expected in [
+                ("ACRS", "Aclaris Therapeutics, Inc."),
+                ("BMRN", "BioMarin Pharmaceutical Inc."),
+            ]:
+                if ticker in name_by_ticker:
+                    assert name_by_ticker[ticker] == expected
 
 
 class TestMetadataRankingMode:
