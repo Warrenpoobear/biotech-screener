@@ -1,5 +1,5 @@
 #!/bin/bash
-# create_golden_baseline.sh — Bootstrap a golden replay baseline
+# create_golden_baseline.sh -- Bootstrap a golden replay baseline
 #
 # Usage: ./scripts/create_golden_baseline.sh [AS_OF_DATE]
 #
