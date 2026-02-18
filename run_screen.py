@@ -6971,6 +6971,7 @@ Module 3 Catalyst Detection:
             scoring_mode=getattr(args, "scoring_mode", None),
             inputs_manifest_mode=args.inputs_manifest,
             inputs_manifest_verify_path=getattr(args, "inputs_manifest_path", None),
+            ctgov_cache_dir=getattr(args, "ctgov_cache_dir", None),
         )
 
         # Add bootstrap analysis if requested

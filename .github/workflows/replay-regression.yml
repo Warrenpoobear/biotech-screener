@@ -84,7 +84,6 @@ jobs:
           BUNDLE="${{ steps.bundle.outputs.bundle_path }}"
 
           mkdir -p /tmp/candidate
-          # --data-dir must exist (validated before --replay-bundle auto-wires it)
           python run_screen.py \
             --replay-bundle "$BUNDLE" \
             --as-of-date "$DATE" \
