@@ -37,7 +37,8 @@ jobs:
       - name: Download golden bundle
         id: bundle
         run: |
-          if ! gh release download golden-baseline --pattern "replay_bundle_*.tgz" --dir /tmp/golden 2>/dev/null; then
+          mkdir -p /tmp/golden
+          if ! gh release download golden-baseline --pattern "replay_bundle_*.tgz" --dir /tmp/golden; then
             echo "::notice::No golden-baseline release found — skipping replay regression"
             echo "skip=true" >> "$GITHUB_OUTPUT"
             exit 0
