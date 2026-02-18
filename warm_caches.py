@@ -262,6 +262,31 @@ def warm_sec_8k_delta(
     return len(final)
 
 
+def warm_event_ledger(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
+    """Build and write event_ledger_{as_of_date}.jsonl from existing caches.
+
+    Reads all cached sources (CTGov, SEC, FDA, PDUFA) and writes a unified
+    ledger file for downstream consumption.  Returns entry count.
+    """
+    from event_ledger import build_event_ledger, write_ledger_jsonl, LedgerConfig
+
+    ledger_config = LedgerConfig(
+        ctgov_cache_dir=cache_dir.parent / "ctgov",
+        sec_cache_dir=cache_dir.parent / "sec" / "8k_catalysts",
+        fda_cache_dir=cache_dir.parent / "fda",
+        data_dir=data_dir,
+        strict_ctgov=False,
+    )
+    ledger = build_event_ledger(as_of_date, ledger_config)
+
+    out_dir = cache_dir.parent / "ledger"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"event_ledger_{as_of_date.isoformat()}.jsonl"
+    write_ledger_jsonl(ledger, out_path)
+    logger.info(f"Event ledger: {len(ledger)} entries → {out_path}")
+    return len(ledger)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Pre-populate catalyst data caches for production screening runs.",
@@ -276,7 +301,7 @@ def main():
         "--sources",
         type=str,
         default="fda_adcom,sec_8k",
-        help="Comma-separated sources to warm (default: fda_adcom,sec_8k)",
+        help="Comma-separated sources to warm: fda_adcom,sec_8k,ctgov,event_ledger (default: fda_adcom,sec_8k)",
     )
     parser.add_argument(
         "--data-dir",
@@ -338,9 +363,20 @@ def main():
         except Exception as e:
             logger.error(f"CTGov warm failed: {e}")
 
+    ledger_entries = 0
+    if "event_ledger" in sources:
+        try:
+            # Use fda cache dir as reference for cache root
+            cache_root = Path(args.fda_cache_dir).parent
+            ledger_entries = warm_event_ledger(as_of, data_dir, cache_root / "fda")
+        except Exception as e:
+            logger.error(f"Event ledger warm failed: {e}")
+
     parts = [f"{total} events"]
     if ctgov_records:
         parts.append(f"{ctgov_records} CTGov records")
+    if ledger_entries:
+        parts.append(f"{ledger_entries} ledger entries")
     logger.info(f"Cache warm complete: {', '.join(parts)}")
     return 0
 

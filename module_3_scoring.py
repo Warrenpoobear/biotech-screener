@@ -648,6 +648,7 @@ def calculate_ticker_catalyst_score(
     as_of_date: date,
     prior_events: Optional[List[CatalystEventV2]] = None,
     historical_proximities: Optional[List[Decimal]] = None,
+    event_ledger: Optional[List] = None,
 ) -> TickerCatalystSummaryV2:
     """
     Calculate complete catalyst score for a ticker.
@@ -704,8 +705,28 @@ def calculate_ticker_catalyst_score(
         for e in sorted_events
     )
 
-    # Compute integration hooks
-    next_catalyst_date, catalyst_window_days, nearest_catalyst_type = _compute_next_catalyst(sorted_events, as_of_date)
+    # Compute integration hooks — use ledger if available, else fallback
+    nearest_event_id = None
+    nearest_disclosed_at = None
+    nearest_source_uid = None
+
+    if event_ledger is not None:
+        from event_ledger import query_nearest_catalyst as _query_nearest
+        nearest = _query_nearest(event_ledger, ticker, as_of_date)
+        if nearest:
+            next_catalyst_date = nearest["event_date"]
+            catalyst_window_days = nearest["days_to_catalyst"]
+            nearest_catalyst_type = nearest["event_type"]
+            nearest_event_id = nearest["event_id"]
+            nearest_disclosed_at = nearest["disclosed_at"]
+            nearest_source_uid = nearest["source_uid"]
+        else:
+            next_catalyst_date = None
+            catalyst_window_days = None
+            nearest_catalyst_type = None
+    else:
+        next_catalyst_date, catalyst_window_days, nearest_catalyst_type = _compute_next_catalyst(sorted_events, as_of_date)
+
     catalyst_window_bucket = compute_catalyst_window_bucket(catalyst_window_days)
     catalyst_confidence = _compute_catalyst_confidence(sorted_events, next_catalyst_date)
 
@@ -753,6 +774,10 @@ def calculate_ticker_catalyst_score(
         catalyst_velocity_4w=velocity,
         # NEW: Nearest catalyst type (for stage bucket in Module 5)
         nearest_catalyst_type=nearest_catalyst_type,
+        # Traceability from event ledger
+        nearest_catalyst_event_id=nearest_event_id,
+        nearest_catalyst_disclosed_at=nearest_disclosed_at,
+        nearest_catalyst_source_uid=nearest_source_uid,
     )
 
 
@@ -892,6 +917,7 @@ def score_catalyst_events(
     as_of_date: date,
     prior_events_by_ticker: Optional[Dict[str, List[CatalystEventV2]]] = None,
     historical_proximities_by_ticker: Optional[Dict[str, List[Decimal]]] = None,
+    event_ledger: Optional[List] = None,
 ) -> Tuple[Dict[str, TickerCatalystSummaryV2], DiagnosticCounts]:
     """
     Score catalyst events for all active tickers.
@@ -924,6 +950,7 @@ def score_catalyst_events(
             ticker, events, as_of_date,
             prior_events=prior_events,
             historical_proximities=historical_proximities,
+            event_ledger=event_ledger,
         )
         summaries[ticker] = summary
 

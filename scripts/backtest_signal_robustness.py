@@ -623,6 +623,7 @@ def run_backtest(
         return {}
 
     # Optionally extend price data before building the provider
+    price_extension_result: Optional[Dict[str, Any]] = None
     if extend_prices:
         through = prices_through or _last_trading_day(_date_cls.today()).isoformat()
         # Load universe tickers so new/missing tickers get bootstrapped
@@ -636,6 +637,7 @@ def run_backtest(
         log.info("Extending price_history.csv through %s (%d universe tickers) …",
                  through, len(universe_tickers or []))
         ext = extend_price_csv(PRICE_CSV, through, tickers=universe_tickers)
+        price_extension_result = ext
         log.info("Price extension: %d tickers extended, %d rows appended, "
                  "%d already current, %d failed",
                  ext["n_extended"], ext["n_rows_appended"],
@@ -960,6 +962,7 @@ def run_backtest(
         n_price_universe=n_price_universe,
         price_end_date=price_end_date.isoformat() if price_end_date else None,
         max_archive_date=max_archive_date,
+        price_extension_result=price_extension_result,
     )
     with open(out_dir / "summary.json", "w") as f:
         json.dump(summary, f, indent=2)
@@ -1006,6 +1009,7 @@ def _build_summary(
     n_price_universe: int = 0,
     price_end_date: Optional[str] = None,
     max_archive_date: Optional[str] = None,
+    price_extension_result: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     n_dates = len(ic_rows)
     if n_dates == 0:
@@ -1167,6 +1171,17 @@ def _build_summary(
         freshness["fwd_returns_stale"] = (
             last_diag["skip_reason"] in ("NO_FWD_RET", "LOW_COVERAGE")
         )
+
+        # Price extension telemetry (machine-readable, even when Morningstar
+        # masks the staleness).  Only present when --extend-prices was used.
+        if price_extension_result is not None:
+            ext = price_extension_result
+            freshness["price_extension_attempted"] = True
+            freshness["price_extension_no_tickers"] = ext["n_tickers_total"] == 0
+            freshness["price_extension_failed_all"] = (
+                ext["n_tickers_total"] > 0
+                and ext["n_failed"] == ext["n_tickers_total"]
+            )
 
         result["fwd_return_diagnostics"] = {
             "n_archives_total": len(date_diagnostics),

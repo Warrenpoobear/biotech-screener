@@ -6,7 +6,8 @@
     "pdufa_date": "2026-04-03",
     "submission_type": "sNDA",
     "confidence": "confirmed",
-    "source": "company_guidance"
+    "source": "company_guidance",
+    "curated_disclosed_at": null
   },
   {
     "ticker": "AXSM",
@@ -15,7 +16,8 @@
     "pdufa_date": "2026-05-22",
     "submission_type": "NDA",
     "confidence": "confirmed",
-    "source": "company_guidance"
+    "source": "company_guidance",
+    "curated_disclosed_at": null
   },
   {
     "ticker": "CYTK",
@@ -24,7 +26,8 @@
     "pdufa_date": "2026-03-28",
     "submission_type": "NDA",
     "confidence": "confirmed",
-    "source": "company_guidance"
+    "source": "company_guidance",
+    "curated_disclosed_at": null
   },
   {
     "ticker": "INSM",
@@ -33,7 +36,8 @@
     "pdufa_date": "2026-03-14",
     "submission_type": "NDA",
     "confidence": "confirmed",
-    "source": "company_guidance"
+    "source": "company_guidance",
+    "curated_disclosed_at": null
   },
   {
     "ticker": "KRYS",
@@ -42,7 +46,8 @@
     "pdufa_date": "2026-02-28",
     "submission_type": "NDA",
     "confidence": "confirmed",
-    "source": "company_guidance"
+    "source": "company_guidance",
+    "curated_disclosed_at": null
   },
   {
     "ticker": "MRNA",
@@ -51,7 +56,8 @@
     "pdufa_date": "2026-05-12",
     "submission_type": "BLA",
     "confidence": "estimated",
-    "source": "analyst_estimate"
+    "source": "analyst_estimate",
+    "curated_disclosed_at": null
   },
   {
     "ticker": "NBIX",
@@ -60,7 +66,8 @@
     "pdufa_date": "2026-04-15",
     "submission_type": "sBLA",
     "confidence": "confirmed",
-    "source": "company_guidance"
+    "source": "company_guidance",
+    "curated_disclosed_at": null
   },
   {
     "ticker": "REGN",
@@ -69,7 +76,8 @@
     "pdufa_date": "2026-06-27",
     "submission_type": "sBLA",
     "confidence": "confirmed",
-    "source": "company_guidance"
+    "source": "company_guidance",
+    "curated_disclosed_at": null
   },
   {
     "ticker": "RVMD",
@@ -78,7 +86,8 @@
     "pdufa_date": "2026-07-15",
     "submission_type": "BLA",
     "confidence": "estimated",
-    "source": "analyst_estimate"
+    "source": "analyst_estimate",
+    "curated_disclosed_at": null
   },
   {
     "ticker": "SRPT",
@@ -87,7 +96,8 @@
     "pdufa_date": "2026-06-21",
     "submission_type": "sBLA",
     "confidence": "confirmed",
-    "source": "company_guidance"
+    "source": "company_guidance",
+    "curated_disclosed_at": null
   },
   {
     "ticker": "VRTX",
@@ -96,6 +106,7 @@
     "pdufa_date": "2026-03-30",
     "submission_type": "NDA",
     "confidence": "confirmed",
-    "source": "company_guidance"
+    "source": "company_guidance",
+    "curated_disclosed_at": null
   }
 ]

@@ -2222,6 +2222,7 @@ def save_validation_snapshot(
     price_history_path: Optional[Path] = None,
     market_data_by_ticker: Optional[Dict[str, Dict]] = None,
     trial_records: Optional[List[Dict]] = None,
+    alpha_schema_mode: str = "warn",
 ) -> Optional[Path]:
     """
     Save a lightweight validation snapshot for future forward-looking backtests.
@@ -2406,6 +2407,17 @@ def save_validation_snapshot(
             impact_cap_bps=ruleset.cost_impact_cap_bps,
         )
         rep_weight = 100.0 / PHASE2_DEFAULT_TOP_K
+
+    # --- Alpha signal contract: validate DE inputs ---
+    _alpha_schema_mode = alpha_schema_mode
+    try:
+        from alpha_signal_contract import validate_alpha_inputs
+        _alpha_input_diag = validate_alpha_inputs(
+            rec_by_ticker, csv_rows, schema_mode=_alpha_schema_mode,
+        )
+    except Exception as _asc_err:
+        logger.warning(f"Alpha contract input validation error: {_asc_err}")
+        _alpha_input_diag = None
 
     for row in csv_rows:
         ticker = row.get("ticker", "")
@@ -2628,6 +2640,18 @@ def save_validation_snapshot(
         for rank, idx in enumerate(_idx_sorted, start=1):
             csv_rows[idx]["composite_rank"] = rank
         logger.info("  Composite engine: alpha_cohort (overrode composite_score/rank/pct)")
+
+    # --- Alpha signal contract: validate DE outputs ---
+    try:
+        from alpha_signal_contract import validate_alpha_outputs
+        _alpha_output_diag = validate_alpha_outputs(
+            csv_rows,
+            schema_mode=_alpha_schema_mode,
+            alpha_cohort_enabled=bool(_run_alpha_cohort),
+        )
+    except Exception as _aso_err:
+        logger.warning(f"Alpha contract output validation error: {_aso_err}")
+        _alpha_output_diag = None
 
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key
@@ -3003,6 +3027,10 @@ def save_validation_snapshot(
             "table_path": ruleset.alpha_cohort_table_path if ruleset else None,
             "shrink_k": ruleset.alpha_cohort_shrink_k if ruleset else None,
         } if _run_alpha_cohort else {},
+        "alpha_contract_telemetry": {
+            "input": _alpha_input_diag.to_dict() if _alpha_input_diag else {"skipped": True},
+            "output": _alpha_output_diag.to_dict() if _alpha_output_diag else {"skipped": True},
+        },
     }
 
     meta_path = snap_path / "metadata.json"
@@ -5874,6 +5902,15 @@ Module 3 Catalyst Detection:
     )
 
     parser.add_argument(
+        "--alpha-schema-mode",
+        type=str,
+        default="warn",
+        choices=["warn", "fail"],
+        help="Alpha signal contract enforcement: 'warn' (log + continue, default) "
+             "or 'fail' (raise on missing required fields).",
+    )
+
+    parser.add_argument(
         "--health-thresholds",
         type=Path,
         default=None,
@@ -6571,6 +6608,7 @@ Module 3 Catalyst Detection:
                 price_history_path=args.data_dir / "price_history.csv",
                 market_data_by_ticker=_mkt_data_for_snapshot,
                 trial_records=trial_records,
+                alpha_schema_mode=args.alpha_schema_mode,
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")

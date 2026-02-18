@@ -577,6 +577,11 @@ class TickerCatalystSummaryV2:
     # NEW: Nearest catalyst type (for stage bucket determination in Module 5)
     nearest_catalyst_type: Optional[str] = None  # e.g., "FDA_PDUFA_DATE", "CT_RESULTS_POSTED"
 
+    # Traceability: event_id + disclosed_at + source_uid of the nearest catalyst
+    nearest_catalyst_event_id: Optional[str] = None
+    nearest_catalyst_disclosed_at: Optional[str] = None
+    nearest_catalyst_source_uid: Optional[str] = None
+
     # Schema metadata
     schema_version: str = SCHEMA_VERSION
     score_version: str = SCORE_VERSION
@@ -608,6 +613,9 @@ class TickerCatalystSummaryV2:
                 "catalyst_window_days": self.catalyst_window_days,
                 "catalyst_window_bucket": self.catalyst_window_bucket.value,
                 "catalyst_confidence": self.catalyst_confidence.value,
+                "nearest_catalyst_event_id": self.nearest_catalyst_event_id,
+                "nearest_catalyst_disclosed_at": self.nearest_catalyst_disclosed_at,
+                "nearest_catalyst_source_uid": self.nearest_catalyst_source_uid,
             },
             "event_summary": {
                 "events_total": self.events_total,
@@ -655,6 +663,9 @@ class TickerCatalystSummaryV2:
             events=events,
             schema_version=schema.get("schema_version", SCHEMA_VERSION),
             score_version=schema.get("score_version", SCORE_VERSION),
+            nearest_catalyst_event_id=data.get("integration", {}).get("nearest_catalyst_event_id"),
+            nearest_catalyst_disclosed_at=data.get("integration", {}).get("nearest_catalyst_disclosed_at"),
+            nearest_catalyst_source_uid=data.get("integration", {}).get("nearest_catalyst_source_uid"),
         )
 
     @classmethod

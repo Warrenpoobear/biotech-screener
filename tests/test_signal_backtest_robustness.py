@@ -942,6 +942,87 @@ class TestGetFreshness:
 
 
 # ---------------------------------------------------------------------------
+# Price extension telemetry in summary
+# ---------------------------------------------------------------------------
+
+class TestPriceExtensionTelemetry:
+    """Test price_extension_* flags in data_freshness block."""
+
+    def _diag(self, date="2026-02-07", included=True, skip_reason=""):
+        return {"date": date, "n_rows": 100, "n_price_rows": 95,
+                "n_fwd_rets": 90, "fwd_ret_coverage": 0.9474,
+                "skip_reason": skip_reason, "included": included}
+
+    def _ic(self, date="2026-02-07"):
+        return {"date": date, "regime": "", "ic_clinical": 0.1,
+                "ic_catalyst": 0.05, "ic_alpha": 0.08, "ic_alpha_incr": 0.03}
+
+    def _sp(self, date="2026-02-07"):
+        return {"date": date, "regime": "", "spread_clinical": 0.02,
+                "spread_catalyst": 0.01, "spread_alpha": 0.03,
+                "spread_alpha_double": 0.01}
+
+    def test_extension_success(self):
+        """Successful extension: attempted=True, no_tickers=False, failed_all=False."""
+        ext_result = {"n_extended": 5, "n_rows_appended": 50, "n_failed": 0,
+                      "failed_tickers": [], "n_already_current": 300,
+                      "n_tickers_total": 305}
+        summary = _build_summary(
+            [self._ic()], [self._sp()], horizon=126, alpha_skipped=0,
+            date_diagnostics=[self._diag()], min_fwd_coverage=0.0,
+            price_end_date="2026-08-07", max_archive_date="2026-02-07",
+            price_extension_result=ext_result,
+        )
+        fresh = summary["fwd_return_diagnostics"]["data_freshness"]
+        assert fresh["price_extension_attempted"] is True
+        assert fresh["price_extension_no_tickers"] is False
+        assert fresh["price_extension_failed_all"] is False
+
+    def test_extension_no_tickers(self):
+        """No tickers found: no_tickers=True, failed_all=False."""
+        ext_result = {"n_extended": 0, "n_rows_appended": 0, "n_failed": 0,
+                      "failed_tickers": [], "n_already_current": 0,
+                      "n_tickers_total": 0}
+        summary = _build_summary(
+            [self._ic()], [self._sp()], horizon=126, alpha_skipped=0,
+            date_diagnostics=[self._diag()], min_fwd_coverage=0.0,
+            price_end_date="2026-02-06", max_archive_date="2026-02-07",
+            price_extension_result=ext_result,
+        )
+        fresh = summary["fwd_return_diagnostics"]["data_freshness"]
+        assert fresh["price_extension_attempted"] is True
+        assert fresh["price_extension_no_tickers"] is True
+        assert fresh["price_extension_failed_all"] is False
+
+    def test_extension_all_failed(self):
+        """All tickers failed: no_tickers=False, failed_all=True."""
+        ext_result = {"n_extended": 0, "n_rows_appended": 0, "n_failed": 3,
+                      "failed_tickers": ["AAA", "BBB", "CCC"],
+                      "n_already_current": 0, "n_tickers_total": 3}
+        summary = _build_summary(
+            [self._ic()], [self._sp()], horizon=126, alpha_skipped=0,
+            date_diagnostics=[self._diag()], min_fwd_coverage=0.0,
+            price_end_date="2026-02-06", max_archive_date="2026-02-07",
+            price_extension_result=ext_result,
+        )
+        fresh = summary["fwd_return_diagnostics"]["data_freshness"]
+        assert fresh["price_extension_attempted"] is True
+        assert fresh["price_extension_no_tickers"] is False
+        assert fresh["price_extension_failed_all"] is True
+
+    def test_no_extension_no_flags(self):
+        """When --extend-prices not used, no price_extension_* keys."""
+        summary = _build_summary(
+            [self._ic()], [self._sp()], horizon=126, alpha_skipped=0,
+            date_diagnostics=[self._diag()], min_fwd_coverage=0.0,
+            price_end_date="2026-08-07", max_archive_date="2026-02-07",
+        )
+        fresh = summary["fwd_return_diagnostics"]["data_freshness"]
+        assert "price_extension_attempted" not in fresh
+        assert "price_extension_no_tickers" not in fresh
+
+
+# ---------------------------------------------------------------------------
 # extend_price_csv
 # ---------------------------------------------------------------------------
 

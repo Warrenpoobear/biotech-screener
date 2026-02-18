@@ -1814,6 +1814,29 @@ def compute_module_3_catalyst(
         "by_date_precision": dict(sorted(_prec_counts.items())),
     }
 
+    # =========================================================================
+    # BUILD EVENT LEDGER for PIT-safe nearest-catalyst query + traceability
+    # =========================================================================
+    _event_ledger = None
+    try:
+        from event_ledger import build_event_ledger, LedgerConfig
+        _ctgov_dir = Path(__file__).parent / "cache" / "ctgov"
+        _ledger_config = LedgerConfig(
+            ctgov_cache_dir=_ctgov_dir if _ctgov_dir.exists() else None,
+            sec_cache_dir=Path(config.sec_8k_cache_dir),
+            fda_cache_dir=Path(config.fda_adcom_cache_dir),
+            data_dir=data_dir,
+            strict_ctgov=(pit_mode == "strict"),
+        )
+        _event_ledger = build_event_ledger(as_of_date, _ledger_config)
+        logger.info(f"Event ledger built: {len(_event_ledger)} entries")
+    except FileNotFoundError:
+        if pit_mode == "strict":
+            raise
+        logger.warning("Event ledger build failed (missing cache) — nearest-catalyst will use legacy path")
+    except Exception as e:
+        logger.warning(f"Event ledger build failed: {e} — nearest-catalyst will use legacy path")
+
     # Score events using new scoring system
     logger.info("Scoring events with vNext scorer...")
     summaries_v2, diagnostics = score_catalyst_events(
@@ -1822,6 +1845,7 @@ def compute_module_3_catalyst(
         as_of_date,
         prior_events_by_ticker=prior_events_by_ticker_v2 if prior_events_by_ticker_v2 else None,
         historical_proximities_by_ticker=historical_proximities if historical_proximities else None,
+        event_ledger=_event_ledger,
     )
 
     # Update diagnostics with dedup count
