@@ -1299,7 +1299,7 @@ def write_json_output(filepath: Path, data: Dict[str, Any], secure: bool = True)
 # Columns saved in the validation snapshot CSV.
 # These are the minimum fields needed for forward IC / decile-lift analysis.
 SNAPSHOT_COLUMNS = [
-    "ticker", "composite_rank", "composite_score",
+    "ticker", "company_name", "composite_rank", "composite_score",
     "score_rank_pct", "score_z",
     "composite_score_attn", "score_rank_pct_attn", "score_z_attn",
     "stage_bucket", "market_cap_bucket", "severity",
@@ -1347,7 +1347,7 @@ SNAPSHOT_COLUMNS = [
 
 # Phase-2 decision portfolio output columns
 PHASE2_PORTFOLIO_COLUMNS = [
-    "ticker", "tier_dev", "tier_commercial", "tier_any", "actionable_rank", "size_band",
+    "ticker", "company_name", "tier_dev", "tier_commercial", "tier_any", "actionable_rank", "size_band",
     "target_weight_pct", "tier_reason", "tier_any_reason", "size_reasons",
     "catalyst_mode", "catalyst_days", "cat_priority", "mom_state", "risk_flags",
     "composite_rank", "composite_score", "archetype",
@@ -2272,6 +2272,7 @@ def save_validation_snapshot(
     trial_records: Optional[List[Dict]] = None,
     alpha_schema_mode: str = "warn",
     inputs_manifest_mode: str = "off",
+    ranking_mode: str = "decision",
 ) -> Optional[Path]:
     """
     Save a lightweight validation snapshot for future forward-looking backtests.
@@ -2294,6 +2295,9 @@ def save_validation_snapshot(
                        (observe + emit decision_portfolio.csv/json with A+B filter)
         ruleset: DecisionRuleset config (defaults to DEFAULT_RULESET)
         price_history_path: Path to price_history.csv for drawdown hydration
+        ranking_mode: "decision" (sort rankings.csv by DE actionable sort key)
+                      or "composite" (legacy: re-sort by composite_rank in
+                      observe/phase2 modes)
 
     Returns:
         Path to the snapshot directory, or None if save failed
@@ -2314,6 +2318,13 @@ def save_validation_snapshot(
     archetypes = results.get("company_archetypes", {})
     m3_summaries = (results.get("module_3_catalyst") or {}).get("summaries")
 
+    # --- Build company name lookup from Module 1 universe ---
+    _ticker_to_name: Dict[str, str] = {}
+    for sec in (results.get("module_1_universe") or {}).get("active_securities", []):
+        _t = sec.get("ticker")
+        if _t:
+            _ticker_to_name[_t] = sec.get("company_name") or ""
+
     # --- Helper: extract a named component's normalized score from component_scores ---
     def _component_score(rec, name):
         for c in rec.get("component_scores") or []:
@@ -2332,6 +2343,7 @@ def save_validation_snapshot(
         val = rec.get("valuation_signal") or {}
         row = {
             "ticker": ticker,
+            "company_name": _ticker_to_name.get(ticker, ""),
             "composite_rank": rec.get("composite_rank"),
             "composite_score": rec.get("composite_score"),
             "score_rank_pct": rec.get("score_rank_pct"),
@@ -2740,9 +2752,9 @@ def save_validation_snapshot(
     # Compute target weights for eligible rows
     compute_target_weights(eligible_rows, ruleset=ruleset)
 
-    # In observe/phase2 mode, re-sort rankings.csv by composite_rank
-    # (fall back to actionable_rank when composite_rank is absent)
-    if decision_mode in ("observe", "phase2"):
+    # In composite ranking mode (legacy), re-sort rankings.csv by composite_rank
+    # In decision ranking mode (default), rows stay in decision engine order
+    if ranking_mode == "composite" and decision_mode in ("observe", "phase2"):
         has_composite = any(
             r.get("composite_rank") not in (None, "") for r in csv_rows
         )
@@ -3041,6 +3053,7 @@ def save_validation_snapshot(
         "as_of_date": as_of_date,
         "saved_at": datetime.utcnow().isoformat() + "Z",
         "decision_mode": decision_mode,
+        "ranking_mode": ranking_mode,
         "version": version,
         "ticker_count": len(ranked),
         "source_type": "live_pipeline_v3",
@@ -6325,6 +6338,15 @@ Module 3 Catalyst Detection:
     )
 
     parser.add_argument(
+        "--ranking-mode",
+        type=str,
+        default="decision",
+        choices=["decision", "composite"],
+        help="CSV sort order: 'decision' (default, rows sorted by DE actionable "
+             "sort key) or 'composite' (legacy, re-sort by composite_rank).",
+    )
+
+    parser.add_argument(
         "--ruleset",
         type=Path,
         default=None,
@@ -7148,6 +7170,7 @@ Module 3 Catalyst Detection:
                 trial_records=trial_records,
                 alpha_schema_mode=args.alpha_schema_mode,
                 inputs_manifest_mode=args.inputs_manifest,
+                ranking_mode=args.ranking_mode,
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")
