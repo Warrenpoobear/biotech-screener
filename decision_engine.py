@@ -245,6 +245,12 @@ class DecisionRuleset:
                 f"tiering_priority_mode must be 'dev_first' or 'tier_first', "
                 f"got '{self.tiering_priority_mode}'"
             )
+        # Validate drawdown_gate_mode
+        if self.drawdown_gate_mode not in ("hard", "soft"):
+            raise ValueError(
+                f"drawdown_gate_mode must be 'hard' or 'soft', "
+                f"got '{self.drawdown_gate_mode}'"
+            )
         # Validate dd_rel_margin_rescue_threshold: must be <= 0
         if self.dd_rel_margin_rescue_threshold > 0:
             raise ValueError(
@@ -359,6 +365,11 @@ class DecisionRuleset:
         # Migration: enable_catalyst_priority=True → catalyst_priority_mode="tiebreaker"
         if d.get("enable_catalyst_priority") and "catalyst_priority_mode" not in d:
             d["catalyst_priority_mode"] = "tiebreaker"
+        # Filter to known fields for forward compatibility (ignore unknown keys
+        # that may have been added by a newer schema version).
+        import dataclasses as _dc
+        _known = {f.name for f in _dc.fields(cls)}
+        d = {k: v for k, v in d.items() if k in _known}
         instance = cls(**d)
         # Store file-content hash on the frozen instance (bypasses __setattr__)
         object.__setattr__(instance, "_file_content_hash", file_hash)
@@ -1421,7 +1432,15 @@ def compute_gate_margins(rec: Dict, ruleset: Optional[DecisionRuleset] = None) -
             dd_combined_passed = not abs_breach
             mode = "abs_only_fallback"
         elif rs.drawdown_gate_require_both:
-            dd_combined_passed = not (abs_breach and rel_breach)
+            if abs_breach and rel_breach:
+                # Mirror the rescue path from _compute_eligibility
+                if (rs.enable_dd_rel_margin_rescue and dd_rel is not None):
+                    rel_margin = dd_rel - rs.drawdown_rel_xbi_gate
+                    dd_combined_passed = rel_margin > rs.dd_rel_margin_rescue_threshold
+                else:
+                    dd_combined_passed = False
+            else:
+                dd_combined_passed = True
             mode = "require_both"
         else:
             dd_combined_passed = not (abs_breach or rel_breach)

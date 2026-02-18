@@ -147,6 +147,39 @@ class TestCompanyNameSchema:
         assert PHASE2_PORTFOLIO_COLUMNS[1] == "company_name"
 
 
+class TestColumnLayout:
+    """Lock the DE-first, composite-last column ordering contract."""
+
+    def test_snapshot_de_first(self):
+        """rankings.csv: DE ranking fields immediately after identity."""
+        assert SNAPSHOT_COLUMNS[:6] == [
+            "ticker", "company_name",
+            "actionable_rank", "target_weight_pct",
+            "tier_any", "tier_any_reason",
+        ]
+
+    def test_snapshot_composite_last(self):
+        """rankings.csv: legacy Module 5 composite fields at far right."""
+        assert SNAPSHOT_COLUMNS[-7:] == [
+            "composite_rank", "composite_score",
+            "score_rank_pct", "score_z",
+            "composite_score_attn", "score_rank_pct_attn", "score_z_attn",
+        ]
+
+    def test_portfolio_de_first(self):
+        """decision_portfolio.csv: DE output immediately after identity."""
+        assert PHASE2_PORTFOLIO_COLUMNS[:4] == [
+            "ticker", "company_name",
+            "actionable_rank", "target_weight_pct",
+        ]
+
+    def test_portfolio_composite_last(self):
+        """decision_portfolio.csv: legacy composite at far right."""
+        assert PHASE2_PORTFOLIO_COLUMNS[-2:] == [
+            "composite_rank", "composite_score",
+        ]
+
+
 class TestCompanyNamePopulated:
     """Verify company_name is populated from M1 universe data."""
 
