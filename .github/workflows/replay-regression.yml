@@ -1,0 +1,137 @@
+name: replay-regression
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: replay-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      # ── Download golden replay bundle from GitHub Release ──────────
+      - name: Download golden bundle
+        id: bundle
+        run: |
+          if ! gh release download golden-baseline --pattern "replay_bundle_*.tgz" --dir /tmp/golden 2>/dev/null; then
+            echo "::notice::No golden-baseline release found — skipping replay regression"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          BUNDLE_PATH=$(ls /tmp/golden/replay_bundle_*.tgz | head -1)
+          echo "bundle_path=${BUNDLE_PATH}" >> "$GITHUB_OUTPUT"
+
+          # Extract as_of_date from bundle_index.json inside the tarball
+          AS_OF_DATE=$(python -c "
+          import tarfile, json, io, sys
+          with tarfile.open(sys.argv[1], 'r:gz') as t:
+              f = t.extractfile('bundle_index.json')
+              print(json.load(io.TextIOWrapper(f))['as_of_date'])
+          " "$BUNDLE_PATH")
+          echo "as_of_date=${AS_OF_DATE}" >> "$GITHUB_OUTPUT"
+          echo "Downloaded bundle for as_of_date=${AS_OF_DATE}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Verify baseline exists in repo ─────────────────────────────
+      - name: Verify baseline
+        if: steps.bundle.outputs.skip != 'true'
+        id: baseline
+        run: |
+          DATE="${{ steps.bundle.outputs.as_of_date }}"
+          BASELINE_DIR="golden/baseline_${DATE}"
+
+          if [ ! -f "${BASELINE_DIR}/rankings.csv" ]; then
+            echo "::error::Missing baseline: ${BASELINE_DIR}/rankings.csv"
+            echo "::error::Run scripts/create_golden_baseline.sh ${DATE} to bootstrap"
+            exit 1
+          fi
+
+          echo "baseline_dir=${BASELINE_DIR}" >> "$GITHUB_OUTPUT"
+          echo "Baseline found: ${BASELINE_DIR}/rankings.csv"
+
+      # ── Run pipeline from replay bundle ────────────────────────────
+      - name: Run candidate pipeline
+        if: steps.bundle.outputs.skip != 'true'
+        run: |
+          DATE="${{ steps.bundle.outputs.as_of_date }}"
+          BUNDLE="${{ steps.bundle.outputs.bundle_path }}"
+
+          mkdir -p /tmp/candidate
+          # --data-dir must exist (validated before --replay-bundle auto-wires it)
+          python run_screen.py \
+            --replay-bundle "$BUNDLE" \
+            --as-of-date "$DATE" \
+            --data-dir /tmp \
+            --output /tmp/candidate/${DATE}/screen_output.json \
+            --decision-mode phase2 \
+            --snapshot-dir /tmp/candidate
+
+      # ── Diff candidate vs baseline ─────────────────────────────────
+      - name: Run replay diff
+        if: steps.bundle.outputs.skip != 'true'
+        id: diff
+        run: |
+          set +e
+          mkdir -p output
+          python scripts/replay_diff.py \
+            --baseline "${{ steps.baseline.outputs.baseline_dir }}" \
+            --candidate "/tmp/candidate/${{ steps.bundle.outputs.as_of_date }}/" \
+            --output-dir output/
+          RC=$?
+          echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+          # Don't fail yet — routing step handles exit code
+          exit 0
+
+      # ── Upload diff report ─────────────────────────────────────────
+      - name: Upload diff artifacts
+        if: steps.bundle.outputs.skip != 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: replay-diff-report
+          path: |
+            output/diff_report.json
+            output/diff_report.md
+          retention-days: 30
+
+      # ── Exit code routing ──────────────────────────────────────────
+      - name: Evaluate replay result
+        if: steps.bundle.outputs.skip != 'true'
+        run: |
+          RC=${{ steps.diff.outputs.exit_code }}
+
+          if [ "$RC" = "0" ]; then
+            echo "Replay regression: OK"
+            exit 0
+          elif [ "$RC" = "2" ]; then
+            echo "::warning::Replay regression: WARN — review diff_report.md artifact for details"
+            exit 0
+          else
+            echo "::error::Replay regression: FAIL — ranking impact exceeds thresholds"
+            exit 1
+          fi

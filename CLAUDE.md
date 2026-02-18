@@ -61,9 +61,11 @@ The Decision Engine (`decision_engine.py`, ~620 lines) is the primary post-proce
 
 - **Tiers**: A (highest conviction) → B → C → D (lowest). A-tier requires `score_rank_pct >= a_floor` AND catalyst strength NEAR or MID.
 - **Catalyst strength bands**: NEAR (< catalyst_near days), MID (< catalyst_mid days), FAR, MISSING
-- **Catalyst mode**: `specific_days` (dated event), `blended_window` (days_to_catalyst=0 + in_optimal_window), `no_upcoming`, `missing`
-- **Catalyst priority**: FDA=1 (highest), CTGOV/SEC=2, FEDERAL_REGISTER=1, corporate=3, none=9, unknown=99
-- **Layers**: L0 (eligibility) → L2 (overlays) → L4 (dev tier) → L3 (sizing)
+- **Catalyst mode**: `specific_days` (dated event), `blended_window` (days_to_catalyst=0 + in_optimal_window), `far_window` (far-horizon PCD override), `no_upcoming`, `missing`
+- **Catalyst priority**: FDA=1 (highest), CTGOV/SEC=2, FEDERAL_REGISTER=3, corporate=3, none=9, unknown=99
+- **Layers**: L0 (eligibility) → L2 (overlays) → L4 (dev tier) → L4b (commercial tier) → L3 (sizing)
+- **Composite engine**: `"legacy"` (Module 5 composite) or `"alpha_cohort"` (overwrites composite_score/rank/pct with alpha_cohort_raw-derived values)
+- **Sort anchor**: `"composite_rank"` (default), `"optionality_pct"`, or `"alpha_cohort"` — controls primary sort key in actionable ordering
 
 ### DecisionRuleset
 
@@ -73,21 +75,25 @@ Externalized, frozen dataclass with all tunable parameters. Stored as JSON in `p
 from decision_engine import DecisionRuleset
 
 # Load from JSON (file-content hash becomes ruleset_id)
-ruleset = DecisionRuleset.from_json("production_data/decision_rulesets/v1.3.2_candidate.json")
-print(ruleset.ruleset_id)  # e.g. "96f655ee"
+ruleset = DecisionRuleset.from_json("production_data/decision_rulesets/v1.4.0_alpha_cohort_candidate.json")
+print(ruleset.ruleset_id)  # e.g. "aa0aaf28"
 
 # Key operational parameters
-ruleset.a_floor          # 0.60 — minimum score_rank_pct for A-tier
-ruleset.catalyst_near    # 120 days
-ruleset.catalyst_mid     # 180 days
-ruleset.tier_filter      # ["A", "B"]
-ruleset.top_k            # 20 — max portfolio names
-ruleset.catalyst_priority_mode  # "off"|"tiebreaker"|"blended"
+ruleset.a_floor                  # 0.60 — minimum score_rank_pct for A-tier
+ruleset.catalyst_near            # 120 days
+ruleset.catalyst_mid             # 180 days
+ruleset.tier_filter              # ["A", "B"]
+ruleset.top_k                    # 20 — max portfolio names
+ruleset.catalyst_priority_mode   # "off"|"tiebreaker"|"blended"
+ruleset.composite_engine         # "legacy"|"alpha_cohort"
+ruleset.sort_anchor              # "composite_rank"|"optionality_pct"|"alpha_cohort"
+ruleset.enable_clinical_sort_signal  # True — clinical z blended into sort anchor
+ruleset.far_window_days          # 0 = off; >0 enables far-horizon PCD catalyst detection
 ```
 
 **Pinned IDs:**
-- `PHASE2_PINNED_RULESET_ID` in `run_screen.py` = `"f9842e1f"` (must match delta module)
-- `PHASE2_PINNED_RULESET_ID` in `run_phase2_snapshot_delta.py` = `"f9842e1f"` (must match run_screen)
+- `PHASE2_PINNED_RULESET_ID` in `run_screen.py` = `"aa0aaf28"` (must match delta module)
+- `PHASE2_PINNED_RULESET_ID` in `run_phase2_snapshot_delta.py` = `"aa0aaf28"` (must match run_screen)
 - Both pins MUST be updated together — `run_screen.py` imports the delta module's pin
 
 ### Ruleset Promotion Pipeline
@@ -249,6 +255,10 @@ wake_robin_data_pipeline/cache/fda/
 | `scripts/build_multi_form_caches.py` | Build SEC multi-form caches for archive dates |
 | `scripts/compare_ablation_snapshots.py` | Compare two snapshot folders (ablation analysis) |
 | `scripts/run_phase2_health_calibration.py` | Replay archives to calibrate health thresholds |
+| `scripts/backtest_signal_robustness.py` | Out-of-sample signal IC + forward-return coverage |
+| `scripts/compare_rulesets_replay.py` | Re-sort rankings with baseline vs candidate ruleset |
+| `scripts/diag_flipper_returns.py` | Forward return analysis for catalyst flips |
+| `scripts/diag_top_returners_recall.py` | Multi-horizon signal recall study |
 
 ## MCP Server
 
@@ -364,6 +374,8 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 10. **`from_json()` migration** — `enable_catalyst_priority=true` + no mode field → auto-migrates to `catalyst_priority_mode="tiebreaker"`
 11. **Hash outputs for reproducibility** — Use `stable_json_dumps()` for deterministic serialization
 12. **Don't silently drop invalid data** — Track and report validation failures
+13. **`far_window` is a good catalyst mode** — `_GOOD_CATALYST_MODES = {"specific_days", "blended_window", "far_window"}`; health gating treats it as good
+14. **Alpha cohort composite override order** — alpha scoring → composite override → alpha signal contract validation → far-horizon hydration → DE loop → z_tier computation
 
 ## Important Files Reference
 
@@ -380,11 +392,26 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 | `enrich_archive_inputs.py` | Archive re-enrichment (catalyst-only mode) |
 | `run_rank_ic_backtest.py` | Backtest harness with signals + group-by |
 | `scripts/run_drift_report.py` | Drift monitoring + rollback triggers |
+| `alpha_signal_contract.py` | Alpha signal input/output validation (v1.1.0) |
+| `module_5_alpha_cohort.py` | Alpha cohort table-driven scoring |
+| `scripts/backtest_signal_robustness.py` | Signal IC + coverage diagnostics |
 | `tests/conftest.py` | Shared test fixtures |
 
 ## Recent Changes
 
-### v2.1.0 (February 2026 - Current)
+### v2.4.0 (February 2026 - Current)
+
+- **Alpha Cohort Composite Engine**: `composite_engine="alpha_cohort"` overwrites composite_score/rank/pct with alpha_cohort_raw-derived values; activated in ruleset v1.4.0 (ID=`aa0aaf28`)
+- **Sort Anchor**: `sort_anchor` field — `"composite_rank"`, `"optionality_pct"`, or `"alpha_cohort"` controls primary actionable sort key
+- **Far-Window Catalyst Mode**: `far_window_days` enables detection of far-horizon PCD (>180d); overrides `no_upcoming`/`missing` → `far_window` with `CTGOV_PCD_FAR` source
+- **Alpha Signal Contract**: `alpha_signal_contract.py` (v1.1.0) — validates required/recommended fields at DE boundary; `validate_alpha_inputs()` / `validate_alpha_outputs()`
+- **PIT Event Ledger**: Deterministic audit trail of every PIT-filtered event; written to snapshot as sidecar
+- **Signal Robustness Backtest**: `scripts/backtest_signal_robustness.py` — out-of-sample cross-sectional IC, forward-return coverage diagnostics, data freshness metadata, `--extend-prices` auto-fetch, `--fail-if-stale`
+- **Clinical Sort Signal**: Promoted (enabled in v1.4.0); tier-local z-score blended into sort anchor, stage-gated, positive-only
+- **Commercial Tier Promotion**: L4b layer for commercial_* archetypes; `tier_commercial`, `tier_any`, `tiering_priority_mode`
+- **Catalyst Coverage Bucket Telemetry**: Shadow metrics now track coverage decomposition + far_window overrides
+
+### v2.1.0 (February 2026)
 
 - **Decision Engine v1.3.0+**: Tier assignment (A/B/C/D), position sizing, catalyst overlays, frozen DecisionRuleset dataclass
 - **catalyst_priority_mode**: "off"|"tiebreaker"|"blended" — supersedes legacy `enable_catalyst_priority` bool

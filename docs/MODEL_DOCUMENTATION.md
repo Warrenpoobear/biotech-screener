@@ -1,7 +1,7 @@
 # Biotech Screener Model Documentation
 
-**Version:** 2.3.0
-**Last Updated:** February 16, 2026
+**Version:** 2.4.0
+**Last Updated:** February 18, 2026
 **System:** Wake Robin Capital Biotech Screening Pipeline
 
 ---
@@ -67,7 +67,7 @@ python run_screen.py \
 
 ### Recommended IC workflow
 
-1. **Portfolio**: Start with `decision_portfolio.csv` (Decision Engine output: A+B tier, top-K, sized). This supersedes the legacy Module 5 `composite_rank` for all investment decisions.
+1. **Portfolio**: Start with `decision_portfolio.csv` (Decision Engine output: A+B tier, top-K, sized). Under ruleset v1.4.0, `composite_score` is driven by alpha cohort signals (not Module 5 linear combination). This supersedes legacy Module 5 `composite_rank` for all investment decisions.
 2. **Risk gates**: Review `severity`, `risk_flags`, and `tier_reason` before any investment decision.
 3. **Thesis build**: Use catalyst provenance (`catalyst_source`, `catalyst_days`, `catalyst_strength`) + Module 4 (pipeline quality) as the thesis backbone.
 4. **Health check**: Review `phase2_health.json` — FAIL means do not act, WARN means review before acting.
@@ -568,7 +568,7 @@ Tier assignments, catalyst provenance, and portfolio decisions.
 | `tier_any_reason` | string | Why tier_any was assigned (dev or commercial reason) |
 | `actionable_rank` | int | Rank within eligible+tiered universe |
 | `target_weight_pct` | float | Target portfolio weight |
-| `catalyst_mode` | string | specific_days, blended_window, no_upcoming, missing |
+| `catalyst_mode` | string | specific_days, blended_window, far_window, no_upcoming, missing |
 | `catalyst_days` | int | Days to nearest catalyst |
 | `catalyst_strength` | string | NEAR, MID, FAR, MISSING |
 | `catalyst_decay_w` | float | Catalyst time-decay weight (1.0 = hard cutoff mode) |
@@ -783,6 +783,7 @@ Module 5 remains in the pipeline to produce `composite_score` and `composite_ran
 
 | Layer | Name | Description |
 |-------|------|-------------|
+| Pre-DE | Composite Engine | If `composite_engine="alpha_cohort"`: overwrite composite_score with alpha_cohort_raw, recompute rank/pct |
 | L0 | Eligibility | No disqualifying flags (severity, red flags) |
 | L2 | Overlays | Catalyst tilt, momentum tilt, cost haircut |
 | L4a | Dev Tier | A/B/C/D tier for `drug_developer` archetype based on optionality + catalyst strength |
@@ -830,6 +831,20 @@ In `tier_first` mode, commercial A-tier names compete with dev A-tier for portfo
 | MID | 121-180 days | Approaching catalyst |
 | FAR | > 180 days | Distant catalyst |
 | MISSING | No catalyst found | No dated catalyst event |
+
+### Far-Window Catalyst Mode
+
+When `far_window_days > 0` in the ruleset, the pipeline scans trial_records for INTERVENTIONAL trials with future PCD beyond the normal catalyst horizon. Tickers with `catalyst_mode` of `no_upcoming` or `missing` are overridden to `far_window` if a qualifying PCD is found.
+
+| Field | Value |
+|-------|-------|
+| `catalyst_mode` | `"far_window"` |
+| `catalyst_source` | `"CTGOV_PCD_FAR"` |
+| `catalyst_event_type` | `"CT_PRIMARY_COMPLETION"` |
+| `catalyst_strength` | `"far"` |
+| `catalyst_decay_w` | `far_window_decay_mult` (default 0.15) |
+
+**Good catalyst modes** (for health gating): `{"specific_days", "blended_window", "far_window"}`
 
 ### Catalyst Priority (Tiebreaker Mode)
 
@@ -887,7 +902,7 @@ clin_adj = clinical_sort_weight * cz_eff * stage_mult
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `enable_clinical_sort_signal` | bool | `False` | Master switch (OFF in production) |
+| `enable_clinical_sort_signal` | bool | `True` (v1.4.0) | Master switch (ON in active ruleset) |
 | `clinical_sort_weight` | float | `1.0` | Multiplier for clinical adjustment |
 | `clinical_positive_only` | bool | `True` | Only boost positive z, never penalize |
 | `clinical_stage_mults` | tuple | `(early=0, mid=1, late=1.5)` | Stage gating multipliers |
@@ -956,7 +971,8 @@ clin_adj = clinical_sort_weight * cz_eff * stage_mult
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `sort_anchor` | str | `"composite_rank"` | Set to `"alpha_cohort"` to enable |
+| `composite_engine` | str | `"legacy"` | `"alpha_cohort"` to overwrite composite_score with alpha_cohort_raw |
+| `sort_anchor` | str | `"composite_rank"` | `"alpha_cohort"` to use alpha_cohort_pct as primary sort key |
 | `alpha_cohort_table_path` | str | `production_data/alpha_cohort_tables/v1.json` | Path to cohort lookup table |
 | `alpha_cohort_shrink_k` | float | 50.0 | Shrinkage strength parameter |
 | `alpha_cohort_clip_min` | float | -0.10 | Floor for clipped alpha |
@@ -964,14 +980,50 @@ clin_adj = clinical_sort_weight * cz_eff * stage_mult
 
 **Relationship to Module 5:** Module 5 continues to run and produce `composite_score`, `composite_rank`, and all component scores consumed by the Decision Engine. Alpha cohort scoring is an alternative ranking signal that replaces `composite_rank` in the sort key when enabled. Both `composite_score` and `alpha_cohort_pct` are written to the snapshot for diagnostic comparison.
 
+**Active status:** In ruleset v1.4.0 (ID=`aa0aaf28`), `composite_engine="alpha_cohort"` and `sort_anchor="alpha_cohort"` are both enabled, making alpha cohort the authoritative ranking signal for all portfolio decisions.
+
+### Composite Engine Override
+
+When `composite_engine="alpha_cohort"`, the pipeline performs a **pre-DE override**:
+
+1. For each ticker with an `alpha_cohort_raw` value, `composite_score` is overwritten with `alpha_cohort_raw`
+2. `composite_rank`, `score_rank_pct`, and `score_z` are recomputed from the new composite_score
+3. The Decision Engine then operates on these overwritten values
+
+This means tier assignment (which uses `score_rank_pct` for the optionality floor) is driven by alpha cohort signals rather than the legacy Module 5 linear combination.
+
+**Pipeline ordering invariant:**
+```
+alpha cohort scoring → composite engine override → alpha signal contract validation
+→ far-horizon catalyst hydration → DE loop → clinical_score_z_tier computation
+```
+
+### Alpha Signal Contract (`alpha_signal_contract.py`)
+
+**Version:** v1.1.0
+
+Validates required and recommended fields at the Decision Engine boundary to catch data gaps early.
+
+| Scope | Required Fields |
+|-------|----------------|
+| rec dict | `catalyst_decay.days_to_catalyst`, `catalyst_decay.in_optimal_window`, `defensive_features`, `severity` |
+| csv_row | `clinical_score_z` (for drug_developer, commercial_biotech, commercial_pharma) |
+| alpha output | `alpha_cohort_key`, `alpha_cohort_raw`, `alpha_cohort_pct` (when alpha enabled) |
+
+```python
+from alpha_signal_contract import validate_alpha_inputs, validate_alpha_outputs
+validate_alpha_inputs(rec_by_ticker, csv_rows, schema_mode="warn")
+validate_alpha_outputs(csv_rows, schema_mode="warn", alpha_cohort_enabled=True)
+```
+
 ### Ruleset Configuration
 
 Decision rules are externalized as frozen `DecisionRuleset` dataclass instances, serialized to JSON with content-hash IDs for reproducibility.
 
-- **Active ruleset**: `v1.3.4_clinical_sort_candidate.json` (ID=`f9842e1f`) — clinical sort signal (w=1.0, pos_only, stage-gated)
+- **Active ruleset**: `v1.4.0_alpha_cohort_candidate.json` (ID=`aa0aaf28`) — alpha cohort composite engine ON + clinical sort signal ON + tiebreaker priority
 - **Pinned in**: `run_screen.py` AND `run_phase2_snapshot_delta.py` (must stay in sync)
-- **Previous**: `v1.3.3_missing_sort_only_candidate.json` (ID=`e1be5370`)
-- **Candidate**: `v1.4.1_tier_first_candidate.json` (ID=`054bc5cc`) — commercial tier promotion, pending replay
+- **Previous**: `v1.3.4_clinical_sort_candidate.json` (ID=`f9842e1f`)
+- **Candidate**: `v1.4.1_tier_first_candidate.json` (ID=`054bc5cc`) — commercial tier promotion with tier_first mode, pending replay
 
 ### Phase-2 Health Gate
 
@@ -1078,6 +1130,29 @@ Rollup: `scripts/rollup_shadow_metrics.py` aggregates per-snapshot JSON into `ou
 Suggested artifacts:
 - A small "run-to-run diff" report (top movers by rank and by catalyst window).
 - A weekly chart of coverage and confidence metrics (should be stable absent upstream data changes).
+
+### Signal Robustness Backtest (`scripts/backtest_signal_robustness.py`)
+
+Out-of-sample cross-sectional IC evaluation across archived snapshots. Tests whether clinical/catalyst/alpha signals predict forward returns.
+
+**Key features:**
+- Per-date Spearman IC and top-minus-bottom spread computation
+- Forward-return coverage diagnostics (`n_fwd_rets / n_price_rows`)
+- Data freshness metadata: `price_end_date`, `max_archive_date`, `price_gap_days`, `fwd_returns_stale`
+- Training modes: `expanding`, `trailing-N`, `decay-H` (exponential weighting)
+- Price extension: `--extend-prices` auto-fetches missing price data via yfinance before backtest
+
+**CLI flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--min-fwd-coverage` | Minimum forward-return coverage threshold |
+| `--fail-if-stale` | Exit 2 if forward returns are stale |
+| `--no-warn-if-stale` | Suppress staleness warnings |
+| `--extend-prices` | Auto-fetch missing prices before running |
+| `--prices-through` | Extend prices through this date |
+
+**Skip reasons:** `EMPTY_RANKINGS` (no data), `NO_FWD_RET` (no forward returns), `LOW_COVERAGE` (below threshold)
 
 ### Diagnostic: Flipper Return Attribution (`scripts/diag_flipper_returns.py`)
 
@@ -1266,6 +1341,9 @@ python run_screen.py \
 | Flipper Return Attribution | `scripts/diag_flipper_returns.py` | Forward return analysis for catalyst flips |
 | Top Returners Recall | `scripts/diag_top_returners_recall.py` | Multi-horizon signal recall study (clinical + catalyst vs realized returns) |
 | Ablation Comparison | `scripts/compare_ablation_snapshots.py` | Snapshot A/B comparison |
+| Alpha Cohort Scoring | `module_5_alpha_cohort.py` | Table-driven alternative ranking signal |
+| Alpha Signal Contract | `alpha_signal_contract.py` | DE boundary validation (v1.1.0) |
+| Signal Robustness Backtest | `scripts/backtest_signal_robustness.py` | Out-of-sample IC + coverage diagnostics |
 | CSV export | `export_results_csv.py` | JSON to CSV conversion |
 | Production validation | `production_validation.py` | Output validation |
 | Date backfill | `backfill_ctgov_dates.py` | PIT date enhancement |
@@ -1274,6 +1352,7 @@ python run_screen.py \
 
 ## Changelog
 
+- **2026-02-18 v2.4.0**: Alpha cohort composite engine promoted — pinned ruleset `f9842e1f` → `aa0aaf28` (`composite_engine="alpha_cohort"`, `sort_anchor="alpha_cohort"`). Added composite engine override (pre-DE rewrite of composite_score/rank/pct). Added `far_window` catalyst mode for far-horizon PCD detection. Added alpha signal contract v1.1.0 (`alpha_signal_contract.py`). Added PIT event ledger sidecar. Added signal robustness backtest (`backtest_signal_robustness.py`) with forward-return coverage diagnostics, data freshness metadata, and `--extend-prices` auto-fetch. Added `sort_anchor="optionality_pct"` option. Added catalyst coverage bucket telemetry to shadow metrics.
 - **2026-02-17 v2.3.1**: Promoted clinical sort signal — pinned ruleset `e1be5370` → `f9842e1f` (`enable_clinical_sort_signal=True`). Extended clinical z-scores to commercial cohorts. Added `clinical_sort_telemetry` to snapshot metadata (`n_nonzero_clin_adj_dev`, `n_nonzero_clin_adj_comm`). Fixed ctgov cache masking integration PIT tests.
 - **2026-02-16 v2.3.0**: Clinical sort signal — tier-local z-score (`clinical_score_z_tier`) blended into sort key anchor, stage-gated (early=0, mid=1.0, late=1.5), positive-only with ±2.0 clamp. Candidate v1.3.4 (`f9842e1f`). Added `clinical_score_z` (cross-universe) and top returners recall diagnostic.
 - **2026-02-16 v2.2.1**: Added flipper return attribution diagnostic documentation (methodology, runbook, interpretation notes)

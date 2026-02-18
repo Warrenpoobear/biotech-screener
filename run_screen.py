@@ -37,7 +37,10 @@ import json
 import logging
 import math
 import re
+import shutil
 import sys
+import tarfile
+import tempfile
 from datetime import date, datetime
 import hashlib
 from decimal import Decimal
@@ -127,6 +130,7 @@ from decision_engine import (
     ACTIONABLE_COLUMNS,
 )
 from backtest.cost_model import CostSchedule, estimate_trade_cost
+from archive_snapshot import sha256_file
 
 # Module 3A specific imports
 from event_detector import SimpleMarketCalendar
@@ -1368,6 +1372,49 @@ PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
 PHASE2_PINNED_THRESHOLDS_ID = "0dae2ff0"
 
 
+# =============================================================================
+# INPUT MANIFEST – dependency registry
+# =============================================================================
+
+class InputDependency:
+    """Describes one input file the pipeline may consume."""
+    __slots__ = ("key", "path_template", "required", "condition", "resolved_from", "load_site")
+
+    def __init__(self, key: str, path_template: str, required: bool,
+                 condition: str, resolved_from: str, load_site: str):
+        self.key = key
+        self.path_template = path_template
+        self.required = required
+        self.condition = condition
+        self.resolved_from = resolved_from
+        self.load_site = load_site
+
+DEPENDENCY_REGISTRY: List[InputDependency] = [
+    # --- Required core inputs ---
+    InputDependency("universe",           "universe.json",              True,  "",                    "data_dir",  "run_screen.py:4171"),
+    InputDependency("financial_records",  "financial_records.json",     True,  "",                    "data_dir",  "run_screen.py:4185"),
+    InputDependency("trial_records",      "trial_records.json",        True,  "",                    "data_dir",  "run_screen.py:4196"),
+    InputDependency("market_data",        "market_data.json",          True,  "",                    "data_dir",  "run_screen.py:4200"),
+    # --- Optional data-dir files ---
+    InputDependency("coinvest_signals",   "coinvest_signals.json",     False, "enable_coinvest",     "data_dir",  "run_screen.py:4310"),
+    InputDependency("holdings_detailed",  "holdings_detailed.json",    False, "enable_coinvest",     "data_dir",  "run_screen.py:4320"),
+    InputDependency("price_history",      "price_history.csv",         False, "",                    "data_dir",  "run_screen.py:4250"),
+    InputDependency("morningstar_prices", "morningstar_price_history.json", False, "",               "data_dir",  "run_screen.py:4245"),
+    InputDependency("market_snapshot",    "market_snapshot.json",      False, "enable_enhancements", "data_dir",  "run_screen.py:4350"),
+    InputDependency("short_interest",     "short_interest.json",       False, "enable_enhancements", "data_dir",  "run_screen.py:4360"),
+    InputDependency("fda_designations",   "fda_designations.json",     False, "",                    "data_dir",  "run_screen.py:5110"),
+    InputDependency("partnerships",       "partnerships.json",         False, "",                    "data_dir",  "run_screen.py:5120"),
+    InputDependency("quarterly_burn",     "quarterly_burn_history.json", False, "",                  "data_dir",  "run_screen.py:5143"),
+    InputDependency("pdufa_dates",        "pdufa_dates.json",          False, "",                    "data_dir",  "run_screen.py:5130"),
+    # --- Dynamic / cache paths (path_template="" → resolved at runtime) ---
+    InputDependency("ctgov_cache",        "",                          False, "pit_mode",            "cache/ctgov",        "run_screen.py:4209"),
+    InputDependency("sec_8k_cache",       "",                          False, "sec_8k",              "cache/sec",          "run_screen.py:4026"),
+    InputDependency("fda_adcom_cache",    "",                          False, "fda_adcom",           "cache/fda",          "run_screen.py:4030"),
+    InputDependency("decision_ruleset",   "",                          False, "decision_phase2",     "production_data",    "run_screen.py:6544"),
+]
+
+MANIFEST_VERSION = "v1"
+
 MIN_BARS_FOR_ESTIMATE = 126  # trading bars (rows), half of 252-bar window; below this drawdown is unreliable
 
 VALID_DRAWDOWN_MISSING_REASONS = frozenset({"", "no_price_series", "series_too_short"})
@@ -2223,6 +2270,7 @@ def save_validation_snapshot(
     market_data_by_ticker: Optional[Dict[str, Dict]] = None,
     trial_records: Optional[List[Dict]] = None,
     alpha_schema_mode: str = "warn",
+    inputs_manifest_mode: str = "off",
 ) -> Optional[Path]:
     """
     Save a lightweight validation snapshot for future forward-looking backtests.
@@ -3031,6 +3079,16 @@ def save_validation_snapshot(
             "input": _alpha_input_diag.to_dict() if _alpha_input_diag else {"skipped": True},
             "output": _alpha_output_diag.to_dict() if _alpha_output_diag else {"skipped": True},
         },
+        "inputs_manifest": {
+            "mode": inputs_manifest_mode,
+            "path": "inputs_manifest.json" if inputs_manifest_mode != "off" else None,
+            "all_required_present": (
+                results.get("run_metadata", {}).get("inputs_manifest", {}).get(
+                    "validation", {}
+                ).get("all_required_present")
+                if inputs_manifest_mode != "off" else None
+            ),
+        },
     }
 
     meta_path = snap_path / "metadata.json"
@@ -3041,6 +3099,17 @@ def save_validation_snapshot(
     except OSError as e:
         logger.warning(f"Could not write snapshot metadata: {e}")
         return None
+
+    # Write inputs_manifest.json sidecar
+    if inputs_manifest_mode in ("write", "verify"):
+        manifest_data = results.get("run_metadata", {}).get("inputs_manifest")
+        if manifest_data:
+            try:
+                with open(snap_path / "inputs_manifest.json", "w", encoding="utf-8") as f:
+                    json.dump(manifest_data, f, indent=2)
+                    f.write("\n")
+            except OSError as e:
+                logger.warning(f"Could not write inputs_manifest.json: {e}")
 
     logger.info(f"[SNAPSHOT] Saved validation snapshot: {snap_path} "
                 f"({len(ranked)} tickers, v{version})")
@@ -3623,6 +3692,331 @@ def validate_inputs_dry_run(data_dir: Path, enable_coinvest: bool = False) -> Di
 
 
 # =============================================================================
+# INPUT MANIFEST – builders
+# =============================================================================
+
+def _count_records(filepath: Path) -> Optional[int]:
+    """Return record count for a data file (JSON list/dict length, or CSV row count)."""
+    try:
+        if filepath.suffix == ".csv":
+            with open(filepath, "r", encoding="utf-8") as f:
+                # subtract 1 for header
+                n = sum(1 for _ in f) - 1
+            return max(n, 0)
+        with open(filepath, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, list):
+            return len(data)
+        if isinstance(data, dict):
+            return len(data)
+        return None
+    except Exception:
+        return None
+
+
+def _resolve_cache_paths(
+    as_of_date: str,
+    data_dir: Path,
+    ctgov_cache_dir: Optional[Any] = None,
+) -> Dict[str, Path]:
+    """Pre-resolve dynamic cache paths for the input manifest."""
+    resolved: Dict[str, Path] = {}
+    repo_root = Path(__file__).resolve().parent
+
+    # ctgov cache
+    if ctgov_cache_dir is not False:
+        _cache_root = Path(ctgov_cache_dir) if ctgov_cache_dir else repo_root / "cache" / "ctgov"
+        candidate = _cache_root / f"trial_records_{as_of_date}.json"
+        if candidate.exists():
+            resolved["ctgov_cache"] = candidate
+
+    # SEC 8-K cache
+    sec_dir = repo_root / "cache" / "sec" / "8k_catalysts"
+    if sec_dir.is_dir():
+        candidates = sorted(sec_dir.glob(f"8k_catalysts_{as_of_date}*.json"))
+        if candidates:
+            resolved["sec_8k_cache"] = candidates[-1]
+
+    # FDA AdCom cache
+    fda_dir = repo_root / "cache" / "fda"
+    if fda_dir.is_dir():
+        candidate = fda_dir / f"adcom_calendar_{as_of_date}.json"
+        if candidate.exists():
+            resolved["fda_adcom_cache"] = candidate
+
+    return resolved
+
+
+def build_inputs_manifest(
+    as_of_date: str,
+    data_dir: Path,
+    conditions: Dict[str, bool],
+    resolved_paths: Optional[Dict[str, Path]] = None,
+) -> Dict[str, Any]:
+    """Build a deterministic manifest of every input file consumed by this run.
+
+    Returns a dict matching the inputs_manifest.json v1 schema.
+    """
+    resolved_paths = resolved_paths or {}
+    dependencies = []
+    errors: List[str] = []
+    warnings: List[str] = []
+
+    for dep in DEPENDENCY_REGISTRY:
+        # Condition gating: skip entries whose condition is inactive
+        if dep.condition and not conditions.get(dep.condition, False):
+            continue
+
+        # Resolve path
+        if dep.key in resolved_paths:
+            filepath = resolved_paths[dep.key]
+        elif dep.path_template:
+            filepath = data_dir / dep.path_template
+        else:
+            # Dynamic path with no override — not resolvable
+            if dep.required:
+                errors.append(f"{dep.key}: required but path not resolvable")
+            else:
+                warnings.append(f"{dep.key}: dynamic path not resolved (skipped)")
+            continue
+
+        entry: Dict[str, Any] = {
+            "key": dep.key,
+            "path": str(filepath),
+            "required": dep.required,
+            "exists": filepath.exists(),
+            "resolved_from": dep.resolved_from,
+            "load_site": dep.load_site,
+            "sha256": None,
+            "record_count": None,
+        }
+
+        if filepath.exists():
+            entry["sha256"] = sha256_file(filepath)
+            entry["record_count"] = _count_records(filepath)
+        else:
+            if dep.required:
+                errors.append(f"{dep.key}: required file missing ({filepath})")
+            else:
+                warnings.append(f"{dep.key}: optional file missing ({filepath})")
+
+        dependencies.append(entry)
+
+    # Sort by key for determinism
+    dependencies.sort(key=lambda d: d["key"])
+
+    return {
+        "manifest_version": MANIFEST_VERSION,
+        "as_of_date": as_of_date,
+        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "data_dir": str(data_dir),
+        "dependencies": dependencies,
+        "validation": {
+            "all_required_present": len(errors) == 0,
+            "errors": errors,
+            "warnings": warnings,
+        },
+    }
+
+
+def verify_inputs_manifest(manifest: Dict[str, Any]) -> bool:
+    """Return True if all required inputs are present, logging each error."""
+    validation = manifest.get("validation", {})
+    for err in validation.get("errors", []):
+        logger.error(f"[INPUT MANIFEST] {err}")
+    for warn in validation.get("warnings", []):
+        logger.warning(f"[INPUT MANIFEST] {warn}")
+    return validation.get("all_required_present", False)
+
+
+def verify_against_prior_manifest(
+    current: Dict[str, Any], prior: Dict[str, Any],
+) -> List[str]:
+    """Compare current manifest against a prior one.
+
+    Returns a list of drift errors for required deps that are missing or
+    whose SHA-256 has changed.
+    """
+    errs: List[str] = []
+    if prior.get("manifest_version") != current.get("manifest_version"):
+        return [f"manifest_version mismatch (prior={prior.get('manifest_version')} current={current.get('manifest_version')})"]
+    if prior.get("as_of_date") != current.get("as_of_date"):
+        return [f"as_of_date mismatch (prior={prior.get('as_of_date')} current={current.get('as_of_date')})"]
+
+    cur_map = {d["key"]: d for d in current.get("dependencies", []) if d.get("required")}
+    prior_req = {d["key"] for d in prior.get("dependencies", []) if d.get("required")}
+    for key in sorted(set(cur_map.keys()) - prior_req):
+        errs.append(f"{key}: required dep absent from prior manifest (cannot drift-check)")
+
+    for p in prior.get("dependencies", []):
+        if not p.get("required"):
+            continue
+        key = p["key"]
+        c = cur_map.get(key)
+        if not c or not c.get("exists"):
+            errs.append(f"{key}: required dep missing (prior path={p.get('path')})")
+            continue
+        p_sha = p.get("sha256")
+        c_sha = c.get("sha256")
+        if p_sha and c_sha and p_sha != c_sha:
+            errs.append(
+                f"{key}: sha256 drift (prior={p_sha[:12]}.. current={c_sha[:12]}..)"
+            )
+    return errs
+
+
+# =============================================================================
+# REPLAY BUNDLES
+# =============================================================================
+
+_CACHE_KEY_TO_SUBDIR = {
+    "ctgov_cache": "ctgov",
+    "ctgov_cache_dir": "ctgov",
+    "sec_8k_cache": "sec",
+    "sec_cache_dir": "sec",
+    "fda_adcom_cache": "fda",
+    "fda_cache_dir": "fda",
+}
+
+
+def _bundle_relpath(dep: Dict[str, Any]) -> Optional[str]:
+    """Map a manifest dependency to its relative path inside a replay bundle."""
+    key = dep.get("key", "")
+    path = dep.get("path", "")
+    if not path:
+        return None
+    p = Path(path)
+    fname = p.name
+    if key == "decision_ruleset":
+        return f"rulesets/{fname}"
+    subdir = _CACHE_KEY_TO_SUBDIR.get(key)
+    if subdir:
+        # If the dep itself is a directory, it *is* the cache root.
+        return f"cache/{subdir}" if p.is_dir() else f"cache/{subdir}/{fname}"
+    return f"data/{fname}"
+
+
+def create_replay_bundle(
+    manifest: Dict[str, Any],
+    output_path: Path,
+    include_optional_present: bool = True,
+) -> Path:
+    """Create a replay_bundle.tgz from a manifest's dependency list.
+
+    Args:
+        manifest: The inputs_manifest dict (as returned by build_inputs_manifest).
+        output_path: Where to write the tarball.
+        include_optional_present: If True, include optional deps that exist.
+
+    Returns:
+        The output_path written.
+    """
+    deps = manifest.get("dependencies", [])
+    index_entries: List[Dict[str, Any]] = []
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with tarfile.open(output_path, "w:gz") as tar:
+        # 1. Write inputs_manifest.json
+        manifest_bytes = json.dumps(manifest, indent=2).encode("utf-8")
+        import io
+        ti = tarfile.TarInfo(name="inputs_manifest.json")
+        ti.size = len(manifest_bytes)
+        tar.addfile(ti, io.BytesIO(manifest_bytes))
+
+        # 2. Package each included dependency
+        for dep in deps:
+            if not dep.get("exists"):
+                continue
+            if not dep.get("required") and not include_optional_present:
+                continue
+            src = Path(dep["path"])
+            if not src.exists():
+                continue
+            relpath = _bundle_relpath(dep)
+            if not relpath:
+                continue
+            # For directories, arcname is the dir root; for files, it's the full path.
+            arc = relpath if src.is_file() else relpath.rstrip("/")
+            tar.add(str(src), arcname=arc)
+            index_entries.append({
+                "key": dep["key"],
+                "relpath": relpath,
+                "sha256": dep.get("sha256"),
+                "required": dep.get("required", False),
+            })
+
+        # 3. Write bundle_index.json
+        bundle_index = {
+            "bundle_version": "v1",
+            "manifest_version": manifest.get("manifest_version"),
+            "as_of_date": manifest.get("as_of_date"),
+            "created_at": datetime.utcnow().isoformat() + "Z",
+            "files": sorted(index_entries, key=lambda e: e["key"]),
+        }
+        idx_bytes = json.dumps(bundle_index, indent=2).encode("utf-8")
+        ti2 = tarfile.TarInfo(name="bundle_index.json")
+        ti2.size = len(idx_bytes)
+        tar.addfile(ti2, io.BytesIO(idx_bytes))
+
+    logger.info(f"[REPLAY BUNDLE] Created: {output_path} "
+                f"({len(index_entries)} files)")
+    return output_path
+
+
+def extract_replay_bundle(bundle_path: Path) -> Dict[str, Any]:
+    """Extract a replay bundle to a temp directory and return path mappings.
+
+    Returns:
+        Dict with keys:
+            tmp_dir: Path to the temp directory (caller should clean up)
+            data_dir: Path to extracted data/ directory
+            manifest_path: Path to inputs_manifest.json
+            ruleset_path: Path to first ruleset file (or None)
+            ctgov_cache_dir: Path to ctgov cache dir (or None)
+            bundle_index: Parsed bundle_index.json dict
+    """
+    tmp_dir = Path(tempfile.mkdtemp(prefix="replay_bundle_"))
+    with tarfile.open(bundle_path, "r:gz") as tar:
+        tar.extractall(tmp_dir, filter="data")
+
+    data_dir = tmp_dir / "data"
+    if not data_dir.is_dir():
+        data_dir.mkdir()
+
+    manifest_path = tmp_dir / "inputs_manifest.json"
+    index_path = tmp_dir / "bundle_index.json"
+
+    bundle_index = {}
+    if index_path.exists():
+        with open(index_path, "r", encoding="utf-8") as f:
+            bundle_index = json.load(f)
+
+    # Detect ruleset
+    rulesets_dir = tmp_dir / "rulesets"
+    ruleset_path = None
+    if rulesets_dir.is_dir():
+        rulesets = list(rulesets_dir.glob("*.json"))
+        if rulesets:
+            ruleset_path = rulesets[0]
+
+    # Detect cache dirs
+    ctgov_cache_dir = (tmp_dir / "cache" / "ctgov") if (tmp_dir / "cache" / "ctgov").is_dir() else None
+    sec_cache_dir = (tmp_dir / "cache" / "sec") if (tmp_dir / "cache" / "sec").is_dir() else None
+    fda_cache_dir = (tmp_dir / "cache" / "fda") if (tmp_dir / "cache" / "fda").is_dir() else None
+
+    return {
+        "tmp_dir": tmp_dir,
+        "data_dir": data_dir,
+        "manifest_path": manifest_path,
+        "ruleset_path": ruleset_path,
+        "ctgov_cache_dir": ctgov_cache_dir,
+        "sec_cache_dir": sec_cache_dir,
+        "fda_cache_dir": fda_cache_dir,
+        "bundle_index": bundle_index,
+    }
+
+
+# =============================================================================
 # AUDIT TRAIL
 # =============================================================================
 
@@ -4081,6 +4475,9 @@ def run_screening_pipeline(
     scoring_mode: Optional[str] = None,
     # Override ctgov cache directory (None = auto-detect from repo; False = disable)
     ctgov_cache_dir: Optional[Any] = None,
+    # Input manifest mode: "off", "write", "verify"
+    inputs_manifest_mode: str = "off",
+    inputs_manifest_verify_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -4165,6 +4562,52 @@ def run_screening_pipeline(
         audit_record = create_audit_record(as_of_date, data_dir, content_hashes)
         append_audit_log(audit_log_path, audit_record)
         logger.info(f"  Audit record written to: {audit_log_path}")
+
+    # Build input manifest (before data loading for early-fail verify)
+    _inputs_manifest = None
+    if inputs_manifest_mode in ("write", "verify"):
+        _manifest_conditions = {
+            "enable_coinvest": enable_coinvest,
+            "enable_enhancements": enable_enhancements,
+            "decision_phase2": False,  # resolved in main(), post-patched
+            "pit_mode": pit_mode != "off",
+            "sec_8k": sec_8k_mode != "off",
+            "fda_adcom": True,
+        }
+        _manifest_resolved = _resolve_cache_paths(as_of_date, data_dir, ctgov_cache_dir)
+        _inputs_manifest = build_inputs_manifest(
+            as_of_date, data_dir, _manifest_conditions, _manifest_resolved,
+        )
+        if inputs_manifest_mode == "verify":
+            # First: basic required-file check
+            if not verify_inputs_manifest(_inputs_manifest):
+                raise FileNotFoundError(
+                    "Input manifest verify failed: "
+                    + "; ".join(_inputs_manifest["validation"]["errors"])
+                )
+            # Second: drift check against prior manifest
+            if not inputs_manifest_verify_path:
+                raise FileNotFoundError(
+                    "--inputs-manifest verify requires --inputs-manifest-path"
+                )
+            if not inputs_manifest_verify_path.exists():
+                raise FileNotFoundError(
+                    f"Prior inputs_manifest not found: {inputs_manifest_verify_path}"
+                )
+            with open(inputs_manifest_verify_path, "r", encoding="utf-8") as _mf:
+                _prior_manifest = json.load(_mf)
+            drift_errors = verify_against_prior_manifest(_inputs_manifest, _prior_manifest)
+            if drift_errors:
+                for de in drift_errors:
+                    logger.error(f"[INPUT MANIFEST DRIFT] {de}")
+                raise FileNotFoundError(
+                    "Input manifest drift vs prior: " + "; ".join(drift_errors)
+                )
+            logger.info("[INPUT MANIFEST] Verify passed — no drift vs prior manifest")
+        logger.info(f"[INPUT MANIFEST] Built manifest: "
+                     f"{len(_inputs_manifest['dependencies'])} deps, "
+                     f"{len(_inputs_manifest['validation']['errors'])} errors, "
+                     f"{len(_inputs_manifest['validation']['warnings'])} warnings")
 
     # Load input data
     logger.info("[1/7] Loading input data...")
@@ -5463,6 +5906,7 @@ def run_screening_pipeline(
                 m5_result.get("diagnostic_counts", {}).get("conviction_horizon_overlay_applied", 0)
                 if m5_result else 0
             ),
+            "inputs_manifest": _inputs_manifest,
         },
         "module_1_universe": m1_result,
         "module_2_financial": m2_result,
@@ -5908,6 +6352,39 @@ Module 3 Catalyst Detection:
         choices=["warn", "fail"],
         help="Alpha signal contract enforcement: 'warn' (log + continue, default) "
              "or 'fail' (raise on missing required fields).",
+    )
+
+    parser.add_argument(
+        "--inputs-manifest",
+        type=str,
+        default="off",
+        choices=["off", "write", "verify"],
+        dest="inputs_manifest",
+        help="Input manifest mode: 'off' (default), 'write' (emit sidecar), "
+             "'verify' (drift-check against prior manifest, fail on hash mismatch).",
+    )
+
+    parser.add_argument(
+        "--inputs-manifest-path",
+        type=Path,
+        default=None,
+        help="Path to an existing inputs_manifest.json to verify against "
+             "(required when --inputs-manifest=verify).",
+    )
+
+    parser.add_argument(
+        "--replay-bundle-out",
+        type=Path,
+        default=None,
+        help="Write a replay_bundle.tgz after the run using the inputs manifest. "
+             "Implies --inputs-manifest=write.",
+    )
+
+    parser.add_argument(
+        "--replay-bundle",
+        type=Path,
+        default=None,
+        help="Run from a replay bundle (extracts data, auto-wires verify + ruleset).",
     )
 
     parser.add_argument(
@@ -6358,7 +6835,36 @@ Module 3 Catalyst Detection:
         logger.debug(f"Diagnostics output defaulting to: {diagnostics_out}")
 
     try:
-        # SECURITY: Validate data_dir early
+        # Replay bundle: extract and override args before pipeline
+        _replay_tmp_dir = None
+        if args.replay_bundle:
+            if not args.replay_bundle.exists():
+                logger.error(f"Replay bundle not found: {args.replay_bundle}")
+                return 1
+            logger.info(f"[REPLAY BUNDLE] Extracting: {args.replay_bundle}")
+            _rb = extract_replay_bundle(args.replay_bundle)
+            _replay_tmp_dir = _rb["tmp_dir"]
+            args.data_dir = _rb["data_dir"]
+            # Auto-wire verify mode
+            args.inputs_manifest = "verify"
+            args.inputs_manifest_path = _rb["manifest_path"]
+            # Auto-wire ruleset if present
+            if _rb["ruleset_path"] and not args.ruleset:
+                args.ruleset = _rb["ruleset_path"]
+                logger.info(f"[REPLAY BUNDLE] Auto-wired ruleset: {_rb['ruleset_path']}")
+            # Auto-wire cache dirs if present in bundle
+            if _rb.get("ctgov_cache_dir"):
+                args.ctgov_cache_dir = _rb["ctgov_cache_dir"]
+                logger.info(f"[REPLAY BUNDLE] Auto-wired ctgov cache: {_rb['ctgov_cache_dir']}")
+            if _rb.get("sec_cache_dir"):
+                args.sec_cache_dir = _rb["sec_cache_dir"]
+                logger.info(f"[REPLAY BUNDLE] Auto-wired sec cache: {_rb['sec_cache_dir']}")
+            if _rb.get("fda_cache_dir"):
+                args.fda_cache_dir = _rb["fda_cache_dir"]
+                logger.info(f"[REPLAY BUNDLE] Auto-wired fda cache: {_rb['fda_cache_dir']}")
+            logger.info(f"[REPLAY BUNDLE] data_dir → {_rb['data_dir']}")
+
+        # SECURITY: Validate data_dir (after replay-bundle auto-wiring)
         if not args.data_dir.exists():
             logger.error(f"Data directory not found: {args.data_dir}")
             return 1
@@ -6401,6 +6907,10 @@ Module 3 Catalyst Detection:
             logger.info("=" * 60)
 
             return 0 if validation["valid"] else 1
+
+        # Replay bundle out: force manifest write mode
+        if args.replay_bundle_out and args.inputs_manifest == "off":
+            args.inputs_manifest = "write"
 
         # Verify input freshness against previous screen if requested
         if args.verify_against:
@@ -6459,6 +6969,8 @@ Module 3 Catalyst Detection:
             module5_weights_path=(Path(args.module5_weights) if getattr(args, "module5_weights", None) else None),
             module5_weights_mode=getattr(args, "module5_weights_mode", "global"),
             scoring_mode=getattr(args, "scoring_mode", None),
+            inputs_manifest_mode=args.inputs_manifest,
+            inputs_manifest_verify_path=getattr(args, "inputs_manifest_path", None),
         )
 
         # Add bootstrap analysis if requested
@@ -6598,6 +7110,24 @@ Module 3 Catalyst Detection:
                     except Exception as e:
                         logger.warning(f"Could not load market_data for cost sizing: {e}")
 
+            # Post-patch inputs manifest with decision ruleset (only known in main)
+            if args.inputs_manifest != "off" and args.decision_mode == "phase2":
+                _manifest = results.get("run_metadata", {}).get("inputs_manifest")
+                if _manifest is not None:
+                    _rs_path = Path(args.ruleset) if args.ruleset else PHASE2_DEFAULT_RULESET_PATH
+                    _rs_entry: Dict[str, Any] = {
+                        "key": "decision_ruleset",
+                        "path": str(_rs_path),
+                        "required": False,
+                        "exists": _rs_path.exists(),
+                        "resolved_from": "production_data",
+                        "load_site": "run_screen.py:6544",
+                        "sha256": sha256_file(_rs_path) if _rs_path.exists() else None,
+                        "record_count": None,
+                    }
+                    _manifest["dependencies"].append(_rs_entry)
+                    _manifest["dependencies"].sort(key=lambda d: d["key"])
+
             snap_result = save_validation_snapshot(
                 snapshot_dir=snapshot_dir,
                 as_of_date=args.as_of_date,
@@ -6609,9 +7139,18 @@ Module 3 Catalyst Detection:
                 market_data_by_ticker=_mkt_data_for_snapshot,
                 trial_records=trial_records,
                 alpha_schema_mode=args.alpha_schema_mode,
+                inputs_manifest_mode=args.inputs_manifest,
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")
+
+                # Create replay bundle if requested
+                if args.replay_bundle_out:
+                    _manifest = results.get("run_metadata", {}).get("inputs_manifest")
+                    if _manifest:
+                        create_replay_bundle(_manifest, args.replay_bundle_out)
+                    else:
+                        logger.warning("[REPLAY BUNDLE] No inputs_manifest in results — skipping bundle creation")
 
                 # Phase-2 delta report hook
                 if (
@@ -6658,6 +7197,11 @@ Module 3 Catalyst Detection:
         error_msg = sanitize_for_logging(str(e), max_string_length=200)
         logger.exception(f"UNEXPECTED ERROR ({error_type}): {error_msg}")
         return 2
+    finally:
+        # Clean up replay bundle temp dir if it was created
+        _tmp = locals().get("_replay_tmp_dir")
+        if _tmp and Path(_tmp).is_dir():
+            shutil.rmtree(_tmp, ignore_errors=True)
 
 
 if __name__ == "__main__":
