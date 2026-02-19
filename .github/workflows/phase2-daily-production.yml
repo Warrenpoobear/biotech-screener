@@ -73,6 +73,7 @@ jobs:
 
       # ── Hydrate inputs bundle (if available) ────────────────────
       - name: Hydrate inputs
+        id: hydrate
         run: |
           DATE="${{ steps.date.outputs.as_of_date }}"
           BUNDLE="phase2-inputs-${DATE}.tar.gz"
@@ -86,14 +87,27 @@ jobs:
             BUNDLE="phase2-inputs-latest.tar.gz"
             echo "Downloaded latest bundle"
           else
-            echo "::notice::No inputs bundle found — using committed production_data"
+            echo "::notice::No inputs bundle found — will try collect_market_data.py fallback"
+            echo "bundle_ok=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           echo "Extracting ${BUNDLE} → production_data/"
           tar -xzf "/tmp/${BUNDLE}" -C production_data/
+          echo "bundle_ok=true" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Collect market data (fallback if no bundle) ────────────
+      - name: Collect market data (fallback)
+        if: steps.hydrate.outputs.bundle_ok != 'true'
+        run: |
+          echo "No inputs bundle — collecting market data from Yahoo Finance ..."
+          python collect_market_data.py \
+            --universe production_data/universe.json \
+            --output production_data/market_data.json || {
+            echo "::warning::collect_market_data.py failed — inputs_present gate will catch this"
+          }
 
       # ── Warm ctgov cache ────────────────────────────────────────
       - name: Warm ctgov cache

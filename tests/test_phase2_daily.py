@@ -38,6 +38,10 @@ from run_daily_production import (
     promote_snapshot,
     run_daily,
 )
+from publish_inputs_bundle import (
+    build_tarball,
+    validate_market_data,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -730,3 +734,63 @@ class TestMarketDataStalenessGate:
         result = check_market_data_staleness(data_dir, "2026-02-19")
         assert result.status == "FAIL"
         assert "collected_at" in result.detail
+
+
+# ---------------------------------------------------------------------------
+# Tests: Inputs bundle publish (validate + build)
+# ---------------------------------------------------------------------------
+
+class TestValidateMarketData:
+
+    def test_valid_fresh_data(self, tmp_path):
+        """Fresh market_data.json with collected_at → valid."""
+        _write_market_data(tmp_path / "market_data.json", "2026-02-19", n_records=5)
+        ok, detail = validate_market_data(tmp_path, "2026-02-19")
+        assert ok is True
+        assert "5 records" in detail
+
+    def test_missing_file_fails(self, tmp_path):
+        ok, detail = validate_market_data(tmp_path, "2026-02-19")
+        assert ok is False
+        assert "not found" in detail
+
+    def test_stale_data_fails(self, tmp_path):
+        _write_market_data(tmp_path / "market_data.json", "2026-02-10")
+        ok, detail = validate_market_data(tmp_path, "2026-02-19")
+        assert ok is False
+        assert "stale" in detail
+
+    def test_empty_list_fails(self, tmp_path):
+        (tmp_path / "market_data.json").write_text("[]")
+        ok, detail = validate_market_data(tmp_path, "2026-02-19")
+        assert ok is False
+        assert "empty" in detail
+
+    def test_no_collected_at_fails(self, tmp_path):
+        (tmp_path / "market_data.json").write_text('[{"ticker": "A"}]')
+        ok, detail = validate_market_data(tmp_path, "2026-02-19")
+        assert ok is False
+        assert "collected_at" in detail.lower()
+
+
+class TestBuildTarball:
+
+    def test_tarball_contains_market_data(self, tmp_path):
+        """Tarball includes market_data.json at root level."""
+        import tarfile as _tarfile
+        _write_market_data(tmp_path / "market_data.json", "2026-02-19")
+        out = tmp_path / "bundle.tar.gz"
+        build_tarball(tmp_path, "2026-02-19", out)
+        assert out.exists()
+        with _tarfile.open(out, "r:gz") as tar:
+            names = tar.getnames()
+        assert "market_data.json" in names
+
+    def test_tarball_skips_missing_files(self, tmp_path):
+        """Missing files are skipped, not errored."""
+        import tarfile as _tarfile
+        out = tmp_path / "bundle.tar.gz"
+        build_tarball(tmp_path, "2026-02-19", out)
+        assert out.exists()
+        with _tarfile.open(out, "r:gz") as tar:
+            assert len(tar.getnames()) == 0
