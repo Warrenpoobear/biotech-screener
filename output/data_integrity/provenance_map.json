@@ -1,0 +1,331 @@
+{
+  "_meta": {
+    "generated": "2026-02-19",
+    "version": "1.0.0",
+    "description": "Provenance map for Decision Engine input fields — source, hydration policy, staleness risk"
+  },
+
+  "price_derived": {
+    "de_drawdown": {
+      "source": "price_history.csv (252-day peak-to-trough)",
+      "hydration": "overwrite_always",
+      "fallback": "pipeline defensive_features['drawdown'] → defensive_features['drawdown_current'] → defensive_features['drawdown_60d']",
+      "as_of_date_dependent": true,
+      "function": "_hydrate_drawdown()",
+      "file": "run_screen.py:1526-1750",
+      "staleness_risk": "LOW (fixed: now always recomputed from price CSV)",
+      "notes": "Post-fix: pipeline value only used when price CSV has no data for ticker"
+    },
+    "de_drawdown_xbi": {
+      "source": "price_history.csv (XBI 252-day drawdown)",
+      "hydration": "overwrite_always",
+      "fallback": "None if XBI series unavailable",
+      "as_of_date_dependent": true,
+      "function": "_hydrate_drawdown()",
+      "file": "run_screen.py:1717-1738",
+      "staleness_risk": "LOW (recomputed from price CSV)",
+      "notes": "Set for ALL records after XBI series computed"
+    },
+    "de_drawdown_rel_xbi": {
+      "source": "derived: de_drawdown - de_drawdown_xbi",
+      "hydration": "overwrite_always",
+      "fallback": "None if either component missing",
+      "as_of_date_dependent": true,
+      "function": "_hydrate_drawdown()",
+      "file": "run_screen.py:1735-1738",
+      "staleness_risk": "LOW (derived from recomputed values)"
+    },
+    "de_beta_xbi_60d": {
+      "source": "defensive_features_cache.json → data.features_by_ticker[ticker].beta_xbi_60d",
+      "hydration": "fill_missing_only",
+      "fallback": "pipeline defensive_features['beta_xbi_60d'] (kept if present)",
+      "as_of_date_dependent": true,
+      "function": "_hydrate_beta_rsi()",
+      "file": "run_screen.py:1773-1800",
+      "staleness_risk": "HIGH — same failure mode as pre-fix drawdown. If pipeline carries stale beta, it is NOT overwritten.",
+      "notes": "Cache sourced from warm_caches.py. No inline recomputation from price_history."
+    },
+    "de_rsi_14d": {
+      "source": "price_history.csv (Wilder-smoothed 14-day RSI)",
+      "hydration": "overwrite_always",
+      "fallback": "pipeline defensive_features['rsi_14d'] (only if no price CSV data)",
+      "as_of_date_dependent": true,
+      "function": "_hydrate_beta_rsi()",
+      "file": "run_screen.py:1802-1885",
+      "staleness_risk": "LOW (fixed: now always recomputed from price CSV for ALL tickers)",
+      "notes": "Fix applied 2026-02-19: changed from fill_missing_only to overwrite_always (same as drawdown)"
+    },
+    "de_alpha_60d": {
+      "source": "score_breakdown.enhancements.momentum.alpha_60d OR momentum_signal.alpha_60d",
+      "hydration": "none (read-only from pipeline)",
+      "fallback": "momentum_signal.alpha_60d if enhancements empty; empty string if neither",
+      "as_of_date_dependent": true,
+      "function": "save_validation_snapshot() inline",
+      "file": "run_screen.py:2831-2834",
+      "staleness_risk": "MEDIUM — purely pipeline-provided. Formula: return_60d - beta * xbi_return_60d. Depends on beta_xbi_60d (which may be stale).",
+      "notes": "Computed in enrich_archive_inputs.py during archive enrichment, not recomputed in snapshot"
+    },
+    "vol_60d": {
+      "source": "pipeline defensive_features['vol_60d']",
+      "hydration": "none (no hydration function)",
+      "fallback": "None/missing — no fallback computation",
+      "as_of_date_dependent": true,
+      "function": "read directly in decision_engine.py:665",
+      "file": "decision_engine.py:665",
+      "staleness_risk": "MEDIUM — purely pipeline-provided, no recomputation. Used for high_vol risk flag.",
+      "notes": "Not persisted as de_ column in CSV. Only affects risk_flags."
+    },
+    "risk_flags": {
+      "source": "derived from defensive_features in decision_engine.py:662-685",
+      "hydration": "computed fresh each run from current defensive_features",
+      "fallback": "empty string if no flags triggered",
+      "as_of_date_dependent": false,
+      "function": "compute_decision_fields() → inline",
+      "file": "decision_engine.py:662-685",
+      "staleness_risk": "MEDIUM — correctness depends on upstream field freshness (drawdown, beta, rsi, vol)",
+      "flag_sources": {
+        "high_vol": "vol_60d > 0.80 (pipeline only)",
+        "high_beta": "beta_xbi_60d > 1.2 (cache, fill-missing-only)",
+        "deep_drawdown": "drawdown < -0.30 (recomputed from price CSV)",
+        "deep_drawdown_rel_xbi": "drawdown_rel_xbi < -0.20 (recomputed)",
+        "overbought_rsi": "rsi_14d > 70 (fill-missing-only)",
+        "drawdown_data_missing": "drawdown is None",
+        "low_confidence": "confidence_overall < threshold (pipeline)"
+      }
+    }
+  },
+
+  "catalyst": {
+    "catalyst_days": {
+      "source": "Module 3 → Module 5 catalyst_decay.days_to_catalyst",
+      "hydration": "none (pipeline-provided)",
+      "fallback": "empty string if no catalyst data",
+      "as_of_date_dependent": true,
+      "function": "_compute_overlays() in decision_engine.py",
+      "file": "decision_engine.py:569-592",
+      "staleness_risk": "LOW if caches warmed before run. MEDIUM if CT.gov cache stale."
+    },
+    "catalyst_mode": {
+      "source": "derived from catalyst_days + in_optimal_window in decision_engine.py",
+      "hydration": "computed fresh each run",
+      "fallback": "'missing' if no catalyst_decay data",
+      "as_of_date_dependent": true,
+      "function": "_compute_overlays()",
+      "file": "decision_engine.py:569-592",
+      "staleness_risk": "LOW (derived from pipeline catalyst_decay)"
+    },
+    "catalyst_in_window": {
+      "source": "Module 5 catalyst_decay.in_optimal_window",
+      "hydration": "none (pipeline-provided)",
+      "fallback": "empty string",
+      "as_of_date_dependent": true,
+      "function": "_compute_overlays()",
+      "file": "decision_engine.py:569-592",
+      "staleness_risk": "LOW"
+    },
+    "catalyst_source": {
+      "source": "Module 3 summaries → nearest event source",
+      "hydration": "none (pipeline-provided)",
+      "fallback": "empty string if no events",
+      "as_of_date_dependent": true,
+      "function": "_nearest_catalyst_source()",
+      "file": "run_screen.py:1884",
+      "staleness_risk": "LOW"
+    },
+    "catalyst_event_type": {
+      "source": "Module 3 summaries → nearest event type",
+      "hydration": "none (pipeline-provided)",
+      "fallback": "empty string if no events",
+      "as_of_date_dependent": true,
+      "function": "_nearest_catalyst_event_type()",
+      "file": "run_screen.py:1911",
+      "staleness_risk": "LOW"
+    },
+    "cat_priority": {
+      "source": "derived from (catalyst_event_type, catalyst_source) via ruleset priority map",
+      "hydration": "computed fresh each run",
+      "fallback": "ruleset.catalyst_priority_default (9)",
+      "as_of_date_dependent": false,
+      "function": "resolve_catalyst_priority()",
+      "file": "decision_engine.py:998",
+      "staleness_risk": "LOW (deterministic from event_type + source)"
+    },
+    "catalyst_decay_w": {
+      "source": "derived from catalyst_days via logistic or hard decay model",
+      "hydration": "computed fresh each run",
+      "fallback": "0.0 for missing mode",
+      "as_of_date_dependent": true,
+      "function": "_compute_overlays()",
+      "file": "decision_engine.py:594-630",
+      "staleness_risk": "LOW (depends on catalyst_days freshness)"
+    },
+    "catalyst_strength": {
+      "source": "bucketed from catalyst_decay_w",
+      "hydration": "computed fresh each run",
+      "fallback": "'missing'",
+      "as_of_date_dependent": true,
+      "function": "_compute_overlays()",
+      "file": "decision_engine.py:594-630",
+      "staleness_risk": "LOW"
+    }
+  },
+
+  "clinical": {
+    "clinical_optionality_pct_dev": {
+      "source": "inverted percentile of clinical_score within drug_developer cohort",
+      "hydration": "computed fresh each run",
+      "fallback": "blank for non-drug-developer or missing clinical_score",
+      "as_of_date_dependent": false,
+      "function": "save_validation_snapshot() inline",
+      "file": "run_screen.py:2677-2691",
+      "staleness_risk": "LOW (derived from Module 5 clinical_score)"
+    },
+    "clinical_rank_pct_dev": {
+      "source": "percentile of clinical_score within drug_developer cohort",
+      "hydration": "computed fresh each run",
+      "fallback": "blank",
+      "as_of_date_dependent": false,
+      "function": "save_validation_snapshot() inline",
+      "file": "run_screen.py:2690",
+      "staleness_risk": "LOW"
+    },
+    "clinical_alpha_z": {
+      "source": "cross-sectional z from 0.35*phase + 0.35*proximity + 0.30*quality",
+      "hydration": "computed fresh each run",
+      "fallback": "blank if no Module 4 score",
+      "as_of_date_dependent": true,
+      "function": "_compute_clinical_alpha_z()",
+      "file": "run_screen.py:2043-2106",
+      "staleness_risk": "LOW (uses trial_records with PIT gating)"
+    },
+    "clinical_readout_days": {
+      "source": "min days to nearest PIT-safe INTERVENTIONAL Phase 1-3 trial readout",
+      "hydration": "computed fresh each run",
+      "fallback": "blank if no qualifying trials",
+      "as_of_date_dependent": true,
+      "function": "_compute_clinical_readout_days()",
+      "file": "run_screen.py:1976-2040",
+      "staleness_risk": "LOW (PIT-filtered from trial_records)"
+    },
+    "clinical_coverage_flag": {
+      "source": "binary: 1 if clinical_readout_days is not None",
+      "hydration": "computed fresh",
+      "fallback": "0",
+      "as_of_date_dependent": true,
+      "function": "_compute_clinical_alpha_z() inline",
+      "file": "run_screen.py:2078",
+      "staleness_risk": "LOW"
+    },
+    "clinical_score_z": {
+      "source": "per-cohort z-score of clinical_score (ddof=0)",
+      "hydration": "computed fresh each run",
+      "fallback": "blank if wrong archetype or missing score",
+      "as_of_date_dependent": false,
+      "function": "save_validation_snapshot() inline",
+      "file": "run_screen.py:2700-2724",
+      "staleness_risk": "LOW"
+    },
+    "clinical_score_z_tier": {
+      "source": "per-(archetype, tier) z-score of clinical_score",
+      "hydration": "computed fresh each run (AFTER DE loop)",
+      "fallback": "blank",
+      "as_of_date_dependent": false,
+      "function": "save_validation_snapshot() inline",
+      "file": "run_screen.py:2895-2943",
+      "staleness_risk": "LOW",
+      "notes": "MUST be after DE loop — needs tier_dev/tier_commercial"
+    }
+  },
+
+  "commercial_sponsor": {
+    "commercial_quality": {
+      "source": "0.45*financial + 0.35*valuation + 0.20*momentum (M5 scores)",
+      "hydration": "computed fresh each run",
+      "fallback": "blank for drug_developer or missing scores",
+      "as_of_date_dependent": false,
+      "function": "save_validation_snapshot() inline",
+      "file": "run_screen.py:2730-2747",
+      "staleness_risk": "LOW"
+    },
+    "commercial_quality_pct": {
+      "source": "percentile rank of commercial_quality",
+      "hydration": "computed fresh each run",
+      "fallback": "blank",
+      "as_of_date_dependent": false,
+      "function": "save_validation_snapshot() inline",
+      "file": "run_screen.py:2749-2758",
+      "staleness_risk": "LOW"
+    },
+    "sponsor_tier1_count": {
+      "source": "rec['coinvest']['tier1_count']",
+      "hydration": "none (read directly)",
+      "fallback": "empty string if missing",
+      "as_of_date_dependent": false,
+      "function": "_compute_overlays()",
+      "file": "decision_engine.py:543",
+      "staleness_risk": "LOW (from Module 5 pipeline)"
+    },
+    "sponsor_overlap_count": {
+      "source": "rec['smart_money_signal']['overlap_count']",
+      "hydration": "none (read directly)",
+      "fallback": "empty string",
+      "as_of_date_dependent": false,
+      "function": "_compute_overlays()",
+      "file": "decision_engine.py:550",
+      "staleness_risk": "LOW"
+    },
+    "sponsor_net_buying": {
+      "source": "derived: len(holders_increasing) vs len(holders_decreasing)",
+      "hydration": "computed fresh",
+      "fallback": "empty string if both missing",
+      "as_of_date_dependent": false,
+      "function": "_compute_overlays()",
+      "file": "decision_engine.py:554-567",
+      "staleness_risk": "LOW"
+    }
+  },
+
+  "eligibility_tiering": {
+    "eligible": {
+      "source": "decision_engine.py _compute_eligibility() — gates: red_flag, sev3, drawdown, adv",
+      "hydration": "computed fresh each run",
+      "fallback": "N/A",
+      "as_of_date_dependent": false,
+      "function": "_compute_eligibility()",
+      "file": "decision_engine.py:444-516",
+      "staleness_risk": "MEDIUM — depends on upstream drawdown/beta/rsi freshness"
+    },
+    "ineligible_reasons": {
+      "source": "pipe-delimited reasons from _compute_eligibility()",
+      "hydration": "computed fresh",
+      "as_of_date_dependent": false,
+      "staleness_risk": "MEDIUM (same as eligible)"
+    },
+    "missing_components": {
+      "source": "derived: checks catalyst_mode, sponsor_tier1_count, risk_flags for gaps",
+      "hydration": "computed fresh",
+      "as_of_date_dependent": false,
+      "function": "_compute_missing_components()",
+      "file": "decision_engine.py:428-437",
+      "staleness_risk": "LOW"
+    },
+    "missingness_penalty": {
+      "source": "len(missing_components list)",
+      "hydration": "computed fresh",
+      "as_of_date_dependent": false,
+      "staleness_risk": "LOW"
+    }
+  },
+
+  "identity": {
+    "company_name": {
+      "source": "Module 1 universe active_securities[ticker].company_name",
+      "hydration": "none (read directly from pipeline results)",
+      "fallback": "empty string",
+      "as_of_date_dependent": false,
+      "function": "save_validation_snapshot() inline",
+      "file": "run_screen.py:2651",
+      "staleness_risk": "LOW"
+    }
+  }
+}

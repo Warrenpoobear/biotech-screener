@@ -1,7 +1,8 @@
-"""Tests for _hydrate_drawdown() in run_screen.py."""
+"""Tests for _hydrate_drawdown() and _hydrate_beta_rsi() in run_screen.py."""
 from __future__ import annotations
 
 import csv
+import json
 import sys
 import tempfile
 from pathlib import Path
@@ -12,7 +13,7 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from run_screen import _hydrate_drawdown, MIN_BARS_FOR_ESTIMATE
+from run_screen import _hydrate_drawdown, _hydrate_beta_rsi, MIN_BARS_FOR_ESTIMATE
 
 
 # ---------------------------------------------------------------------------
@@ -547,4 +548,130 @@ class TestStaleDrawdownOverwrite:
         assert abs(recs["FRESH"]["defensive_features"]["drawdown"] - (-0.10)) < 0.01
         assert abs(recs["STALE"]["defensive_features"]["drawdown"] - (-0.50)) < 0.01
         assert abs(recs["EMPTY"]["defensive_features"]["drawdown"] - (-0.30)) < 0.01
+        assert n >= 3
+
+
+# ===========================================================================
+# RSI Overwrite Tests (_hydrate_beta_rsi)
+# ===========================================================================
+
+def _make_rsi_prices(ticker: str, n_bars: int, start_close: float = 50.0):
+    """Generate price series suitable for RSI computation.
+
+    Alternates between up/down moves to produce a mid-range RSI (~50).
+    """
+    from datetime import date, timedelta
+    rows = []
+    d = date(2026, 1, 1)
+    close = start_close
+    for i in range(n_bars):
+        rows.append({"ticker": ticker, "date": d.isoformat(), "close": round(close, 4)})
+        d += timedelta(days=1)
+        # Alternate: up 1%, down 0.8% → mild uptrend
+        if i % 2 == 0:
+            close *= 1.01
+        else:
+            close *= 0.992
+    return rows, (d - timedelta(days=1)).isoformat()
+
+
+def _write_rsi_csv(path: Path, price_rows):
+    with open(path, "w", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=["ticker", "date", "close"])
+        writer.writeheader()
+        writer.writerows(price_rows)
+
+
+class TestRsiOverwrite:
+    """Regression tests for _hydrate_beta_rsi RSI overwrite policy."""
+
+    def test_stale_pipeline_rsi_overwritten(self):
+        """Pipeline RSI (77.3) should be overwritten with fresh price-CSV computation."""
+        recs = {
+            "AVTR": {
+                "ticker": "AVTR",
+                "defensive_features": {"rsi_14d": 77.3},  # stale pipeline value
+            },
+        }
+        prices, last_date = _make_rsi_prices("AVTR", 100)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_rsi_csv(csv_path, prices)
+            n = _hydrate_beta_rsi(recs, csv_path, last_date)
+        rsi = recs["AVTR"]["defensive_features"]["rsi_14d"]
+        # Should NOT be the stale 77.3; should be recomputed
+        assert rsi != 77.3
+        assert 0 <= rsi <= 100
+        assert n >= 1
+
+    def test_missing_rsi_filled(self):
+        """When pipeline has no RSI, hydration computes from CSV."""
+        recs = {
+            "TEST": {
+                "ticker": "TEST",
+                "defensive_features": {},
+            },
+        }
+        prices, last_date = _make_rsi_prices("TEST", 50)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_rsi_csv(csv_path, prices)
+            n = _hydrate_beta_rsi(recs, csv_path, last_date)
+        rsi = recs["TEST"]["defensive_features"]["rsi_14d"]
+        assert rsi is not None
+        assert 0 <= rsi <= 100
+
+    def test_too_few_bars_no_rsi(self):
+        """With fewer than 15 bars, RSI should not be set."""
+        recs = {
+            "SHORT": {
+                "ticker": "SHORT",
+                "defensive_features": {},
+            },
+        }
+        prices, last_date = _make_rsi_prices("SHORT", 10)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_rsi_csv(csv_path, prices)
+            _hydrate_beta_rsi(recs, csv_path, last_date)
+        assert recs["SHORT"]["defensive_features"].get("rsi_14d") is None
+
+    def test_no_csv_path_keeps_pipeline_rsi(self):
+        """When price_history_path is None, pipeline RSI is preserved."""
+        recs = {
+            "KEEP": {
+                "ticker": "KEEP",
+                "defensive_features": {"rsi_14d": 55.0},
+            },
+        }
+        _hydrate_beta_rsi(recs, None, "2026-02-19")
+        assert recs["KEEP"]["defensive_features"]["rsi_14d"] == 55.0
+
+    def test_multiple_tickers_all_recomputed(self):
+        """All tickers with price data get fresh RSI, even those with existing values."""
+        recs = {
+            "STALE1": {
+                "ticker": "STALE1",
+                "defensive_features": {"rsi_14d": 99.0},  # stale
+            },
+            "STALE2": {
+                "ticker": "STALE2",
+                "defensive_features": {"rsi_14d": 10.0},  # stale
+            },
+            "FRESH": {
+                "ticker": "FRESH",
+                "defensive_features": {},  # missing
+            },
+        }
+        p1, last = _make_rsi_prices("STALE1", 80)
+        p2, _ = _make_rsi_prices("STALE2", 80)
+        p3, _ = _make_rsi_prices("FRESH", 80)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_rsi_csv(csv_path, p1 + p2 + p3)
+            n = _hydrate_beta_rsi(recs, csv_path, last)
+        # All three should have been recomputed (stale values overwritten)
+        assert recs["STALE1"]["defensive_features"]["rsi_14d"] != 99.0
+        assert recs["STALE2"]["defensive_features"]["rsi_14d"] != 10.0
+        assert recs["FRESH"]["defensive_features"]["rsi_14d"] is not None
         assert n >= 3

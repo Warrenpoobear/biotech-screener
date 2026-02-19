@@ -1755,13 +1755,14 @@ def _hydrate_beta_rsi(
     price_history_path: Optional[Path],
     as_of_date: str,
 ) -> int:
-    """Fill missing ``beta_xbi_60d`` and ``rsi_14d`` in defensive_features.
+    """Hydrate ``beta_xbi_60d`` and ``rsi_14d`` in defensive_features.
 
     **beta_xbi_60d**: Loaded from ``defensive_features_cache.json`` in the
-    same directory as *price_history_path*. Falls back to computing from
-    price_history.csv if cache is unavailable.
+    same directory as *price_history_path*. Only fills missing values.
 
-    **rsi_14d**: Computed from price_history.csv (14-day Wilder smoothing).
+    **rsi_14d**: Always recomputed from price_history.csv (14-day Wilder
+    smoothing) for ALL tickers — overwrites stale pipeline values.
+    Same overwrite policy as ``_hydrate_drawdown()``.
 
     Returns the total number of fields hydrated.
     """
@@ -1800,28 +1801,25 @@ def _hydrate_beta_rsi(
                     pass
 
     # --- Step B: rsi_14d from price_history.csv ---
+    # Always recompute RSI for ALL tickers (same overwrite policy as drawdown).
+    # Pipeline RSI can be stale — price_history.csv is the source of truth.
     if price_history_path is None or not price_history_path.exists():
         return hydrated
 
-    missing_rsi = [
-        t for t, r in rec_by_ticker.items()
-        if (r.get("defensive_features") or {}).get("rsi_14d") is None
-    ]
-    if not missing_rsi:
-        return hydrated
+    all_tickers = list(rec_by_ticker.keys())
 
     try:
         ref_date = _dt.strptime(as_of_date, "%Y-%m-%d").date()
     except ValueError:
         return hydrated
 
-    missing_set = set(missing_rsi)
+    all_set = set(all_tickers)
     prices_by_ticker: Dict[str, List] = {}
     with open(price_history_path, "r", encoding="utf-8") as fh:
         reader = _csv.DictReader(fh)
         for row in reader:
             ticker = (row.get("ticker") or "").upper()
-            if ticker not in missing_set:
+            if ticker not in all_set:
                 continue
             date_str = row.get("date", "")
             close_str = row.get("close", "")
@@ -1844,7 +1842,7 @@ def _hydrate_beta_rsi(
     RSI_PERIOD = 14
     MIN_BARS_RSI = RSI_PERIOD + 1  # need at least 15 prices
 
-    for ticker in missing_rsi:
+    for ticker in all_tickers:
         series = prices_by_ticker.get(ticker)
         if not series or len(series) < MIN_BARS_RSI:
             continue
@@ -1875,7 +1873,14 @@ def _hydrate_beta_rsi(
         if df is None:
             df = {}
             rec_by_ticker[ticker]["defensive_features"] = df
-        df["rsi_14d"] = round(rsi_val, 4)
+        old_rsi = df.get("rsi_14d")
+        new_rsi = round(rsi_val, 4)
+        if old_rsi is not None and abs(float(old_rsi) - new_rsi) > 5.0:
+            logger.debug(
+                "RSI overwrite %s: %.2f -> %.2f (delta=%.2f)",
+                ticker, float(old_rsi), new_rsi, abs(float(old_rsi) - new_rsi),
+            )
+        df["rsi_14d"] = new_rsi
         hydrated += 1
 
     return hydrated
