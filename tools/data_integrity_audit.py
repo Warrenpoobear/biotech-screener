@@ -49,7 +49,7 @@ SANITY_RANGES = {
     "de_drawdown_rel_xbi": (-1.0, 1.0),
     "de_beta_xbi_60d": (-5.0, 5.0),
     "de_rsi_14d": (0.0, 100.0),
-    "de_alpha_60d": (-2.0, 2.0),
+    "de_alpha_60d": (-5.0, 5.0),  # 60d excess return — small-cap biotech routinely > ±2
     "clinical_optionality_pct_dev": (0.0, 1.0),
     "clinical_rank_pct_dev": (0.0, 1.0),
     "commercial_quality_pct": (0.0, 1.0),
@@ -57,6 +57,37 @@ SANITY_RANGES = {
     "score_rank_pct": (0.0, 1.0),
     "missingness_penalty": (0.0, 3.0),
 }
+
+# Violation severity: determines exit code behaviour.
+#   critical → exit 1 (FAIL)
+#   warn     → exit 2 (WARN) — structural inconsistency needing human review
+#   info     → exit 0 (OK)   — logged but not actionable
+VIOLATION_SEVERITY: Dict[str, str] = {
+    # Critical — data model broken
+    "eligible_reasons_mismatch": "critical",
+    "ineligible_has_rank": "critical",
+    # Warn — structural inconsistency
+    "catalyst_window_no_days": "warn",
+    "catalyst_window_negative_days": "warn",
+    "specific_days_no_days": "warn",
+    "specific_days_non_integer": "warn",
+    "specific_days_invalid": "warn",
+    "penalty_no_components": "warn",
+    "tier_no_reason": "warn",
+    "deep_dd_no_value": "warn",
+    "rsi_flag_no_value": "warn",
+    "beta_flag_no_value": "warn",
+}
+# Anything starting with "range_" defaults to "info" (see _violation_severity())
+
+
+def _violation_severity(rule: str) -> str:
+    """Return severity for a violation rule name."""
+    if rule in VIOLATION_SEVERITY:
+        return VIOLATION_SEVERITY[rule]
+    if rule.startswith("range_"):
+        return "info"
+    return "warn"  # unknown rules default to warn
 
 
 # ---------------------------------------------------------------------------
@@ -757,26 +788,52 @@ def main():
     print(f"  Stale-but-present: {total_stale}")
     print(f"  Written to {summary_path}")
 
+    # --- Classify violations by severity ---
+    by_severity: Dict[str, List[Dict[str, str]]] = {
+        "critical": [], "warn": [], "info": [],
+    }
+    for v in violations:
+        sev = _violation_severity(v["rule"])
+        by_severity[sev].append(v)
+
+    # Write machine-readable summary (consumed by run_daily_production.py)
+    summary = {
+        "total": len(violations),
+        "critical": len(by_severity["critical"]),
+        "warn": len(by_severity["warn"]),
+        "info": len(by_severity["info"]),
+        "by_rule": {},
+    }
+    for v in violations:
+        key = v["rule"]
+        summary["by_rule"][key] = summary["by_rule"].get(key, 0) + 1
+    summary_path_json = out_dir / "invariants_summary.json"
+    with open(summary_path_json, "w") as f:
+        json.dump(summary, f, indent=2)
+
     # --- Exit code ---
     has_price_fails = any(r.get(f"{f}_verdict") == "FAIL"
                          for r in price_diffs for f in ["dd", "rsi", "beta", "alpha"])
-    has_critical_violations = any(v["rule"] in ("eligible_reasons_mismatch", "ineligible_has_rank")
-                                 for v in violations)
-    if has_price_fails or has_critical_violations:
-        print(f"\n{'='*60}")
-        print("AUDIT RESULT: FAIL")
-        print(f"{'='*60}")
-        sys.exit(1)
-    elif violations:
-        print(f"\n{'='*60}")
-        print("AUDIT RESULT: WARN")
-        print(f"{'='*60}")
-        sys.exit(2)
+    has_critical = len(by_severity["critical"]) > 0
+    has_warn = len(by_severity["warn"]) > 0
+
+    if has_price_fails or has_critical:
+        verdict = "FAIL"
+        exit_code = 1
+    elif has_warn:
+        verdict = "WARN"
+        exit_code = 2
     else:
-        print(f"\n{'='*60}")
-        print("AUDIT RESULT: OK")
-        print(f"{'='*60}")
-        sys.exit(0)
+        # info-only violations (e.g. range outliers) → OK
+        verdict = "OK"
+        exit_code = 0
+
+    n_info = len(by_severity["info"])
+    info_suffix = f" ({n_info} info-level)" if n_info > 0 and verdict == "OK" else ""
+    print(f"\n{'='*60}")
+    print(f"AUDIT RESULT: {verdict}{info_suffix}")
+    print(f"{'='*60}")
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":

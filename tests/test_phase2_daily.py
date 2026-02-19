@@ -30,7 +30,9 @@ from run_daily_production import (
     MARKET_DATA_REQUIRED_FIELDS,
     GateConfig,
     GateResult,
+    _format_audit_detail,
     _get_ticker_last_date,
+    _read_invariants_summary,
     build_run_manifest,
     check_audit_result,
     check_ctgov_cache,
@@ -43,6 +45,12 @@ from run_daily_production import (
     check_xbi_staleness,
     promote_snapshot,
     run_daily,
+)
+from data_integrity_audit import (
+    SANITY_RANGES,
+    VIOLATION_SEVERITY,
+    _violation_severity,
+    check_invariants,
 )
 from publish_inputs_bundle import (
     build_tarball,
@@ -245,6 +253,137 @@ class TestAuditGate:
         config = GateConfig(audit_warn_is_gate_warn=False)
         result = check_audit_result(proc, config)
         assert result.status == "PASS"
+
+    def test_audit_detail_enriched_from_summary(self, tmp_path):
+        """Gate detail includes violation breakdown when summary JSON exists."""
+        summary = {
+            "total": 3, "critical": 0, "warn": 2, "info": 1,
+            "by_rule": {"catalyst_window_no_days": 2, "range_de_alpha_60d": 1},
+        }
+        (tmp_path / "invariants_summary.json").write_text(json.dumps(summary))
+        proc = subprocess.CompletedProcess(args=[], returncode=2)
+        result = check_audit_result(proc, GateConfig(), tmp_path)
+        assert result.status == "WARN"
+        assert "2 warn" in result.detail
+        assert "1 info" in result.detail
+        assert "catalyst_window_no_days:2" in result.detail
+
+    def test_audit_ok_with_info_only_violations(self, tmp_path):
+        """Info-only violations → audit exit 0 → PASS with detail."""
+        summary = {
+            "total": 2, "critical": 0, "warn": 0, "info": 2,
+            "by_rule": {"range_de_alpha_60d": 2},
+        }
+        (tmp_path / "invariants_summary.json").write_text(json.dumps(summary))
+        proc = subprocess.CompletedProcess(args=[], returncode=0)
+        result = check_audit_result(proc, GateConfig(), tmp_path)
+        assert result.status == "PASS"
+        assert "2 info" in result.detail
+
+    def test_audit_no_summary_file(self):
+        """Gracefully handles missing summary JSON (backward compat)."""
+        proc = subprocess.CompletedProcess(args=[], returncode=0)
+        result = check_audit_result(proc, GateConfig(), Path("/nonexistent"))
+        assert result.status == "PASS"
+        assert result.detail == "Audit OK"
+
+
+# ---------------------------------------------------------------------------
+# Tests: Violation severity classification
+# ---------------------------------------------------------------------------
+
+class TestViolationSeverity:
+
+    def test_critical_rules(self):
+        assert _violation_severity("eligible_reasons_mismatch") == "critical"
+        assert _violation_severity("ineligible_has_rank") == "critical"
+
+    def test_warn_rules(self):
+        for rule in ("catalyst_window_no_days", "tier_no_reason",
+                      "penalty_no_components", "deep_dd_no_value"):
+            assert _violation_severity(rule) == "warn"
+
+    def test_range_rules_are_info(self):
+        assert _violation_severity("range_de_alpha_60d") == "info"
+        assert _violation_severity("range_de_drawdown") == "info"
+        assert _violation_severity("range_score_rank_pct") == "info"
+
+    def test_unknown_rule_defaults_to_warn(self):
+        assert _violation_severity("some_future_rule") == "warn"
+
+    def test_alpha_60d_range_widened(self):
+        """de_alpha_60d sanity range is [-5.0, 5.0] — wide enough for small-cap biotech."""
+        lo, hi = SANITY_RANGES["de_alpha_60d"]
+        assert lo == -5.0
+        assert hi == 5.0
+
+    def test_invariants_range_only_is_info(self):
+        """Range-only violations don't produce warn-level results."""
+        import pandas as pd
+        df = pd.DataFrame([{
+            "ticker": "TEST",
+            "eligible": "1",
+            "ineligible_reasons": "",
+            "actionable_rank": "1",
+            "de_alpha_60d": 4.5,  # outside old range, inside new range
+        }])
+        violations = check_invariants(df)
+        assert len(violations) == 0  # inside [-5.0, 5.0] now
+
+    def test_invariants_extreme_alpha_still_caught(self):
+        """Truly extreme alpha_60d (>5.0) still produces a violation."""
+        import pandas as pd
+        df = pd.DataFrame([{
+            "ticker": "TEST",
+            "eligible": "1",
+            "ineligible_reasons": "",
+            "actionable_rank": "1",
+            "de_alpha_60d": 6.0,
+        }])
+        violations = check_invariants(df)
+        assert len(violations) == 1
+        assert violations[0]["rule"] == "range_de_alpha_60d"
+        assert _violation_severity(violations[0]["rule"]) == "info"
+
+    def test_severity_map_covers_all_structural_rules(self):
+        """Every explicitly-mapped rule has a defined severity."""
+        for rule, sev in VIOLATION_SEVERITY.items():
+            assert sev in ("critical", "warn", "info")
+
+
+# ---------------------------------------------------------------------------
+# Tests: Audit detail formatting
+# ---------------------------------------------------------------------------
+
+class TestAuditDetailFormat:
+
+    def test_format_with_summary(self):
+        summary = {
+            "total": 5, "critical": 1, "warn": 2, "info": 2,
+            "by_rule": {"eligible_reasons_mismatch": 1, "tier_no_reason": 2, "range_de_alpha_60d": 2},
+        }
+        detail = _format_audit_detail("Audit FAIL", summary)
+        assert "1 critical" in detail
+        assert "2 warn" in detail
+        assert "2 info" in detail
+
+    def test_format_without_summary(self):
+        detail = _format_audit_detail("Audit OK", None)
+        assert detail == "Audit OK"
+
+    def test_format_empty_violations(self):
+        summary = {"total": 0, "critical": 0, "warn": 0, "info": 0, "by_rule": {}}
+        detail = _format_audit_detail("Audit OK", summary)
+        assert detail == "Audit OK"
+
+    def test_read_summary_missing_file(self, tmp_path):
+        assert _read_invariants_summary(tmp_path) is None
+
+    def test_read_summary_valid(self, tmp_path):
+        data = {"total": 3, "critical": 0, "warn": 1, "info": 2, "by_rule": {}}
+        (tmp_path / "invariants_summary.json").write_text(json.dumps(data))
+        result = _read_invariants_summary(tmp_path)
+        assert result["total"] == 3
 
 
 # ---------------------------------------------------------------------------

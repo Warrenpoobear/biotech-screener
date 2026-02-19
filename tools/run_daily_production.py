@@ -348,25 +348,58 @@ def check_turnover(
     )
 
 
+def _read_invariants_summary(audit_output_dir: Path) -> Optional[Dict[str, Any]]:
+    """Read invariants_summary.json written by the audit tool."""
+    p = audit_output_dir / "invariants_summary.json"
+    if not p.exists():
+        return None
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def _format_audit_detail(
+    base_msg: str,
+    summary: Optional[Dict[str, Any]],
+) -> str:
+    """Enrich audit gate detail with violation breakdown from summary JSON."""
+    if not summary:
+        return base_msg
+    parts = []
+    for sev in ("critical", "warn", "info"):
+        n = summary.get(sev, 0)
+        if n > 0:
+            parts.append(f"{n} {sev}")
+    if not parts:
+        return base_msg
+    by_rule = summary.get("by_rule", {})
+    rule_detail = ", ".join(f"{r}:{c}" for r, c in sorted(by_rule.items(), key=lambda x: -x[1]))
+    return f"{base_msg} [{', '.join(parts)}] ({rule_detail})"
+
+
 def check_audit_result(
     audit_proc: subprocess.CompletedProcess,
     config: GateConfig,
+    audit_output_dir: Optional[Path] = None,
 ) -> GateResult:
     """Translate audit tool exit code into a gate result."""
+    summary = _read_invariants_summary(audit_output_dir) if audit_output_dir else None
+
     if audit_proc.returncode == 0:
-        return GateResult(name="audit", status="PASS", detail="Audit OK")
+        detail = _format_audit_detail("Audit OK", summary)
+        return GateResult(name="audit", status="PASS", detail=detail)
     elif audit_proc.returncode == 2:
         status = "WARN" if config.audit_warn_is_gate_warn else "PASS"
-        return GateResult(
-            name="audit", status=status,
-            detail="Audit WARN (invariant violations, no critical failures)",
-        )
+        detail = _format_audit_detail("Audit WARN", summary)
+        return GateResult(name="audit", status=status, detail=detail)
     else:
         status = "FAIL" if config.audit_fail_is_gate_fail else "WARN"
-        return GateResult(
-            name="audit", status=status,
-            detail=f"Audit FAIL (exit code {audit_proc.returncode})",
+        detail = _format_audit_detail(
+            f"Audit FAIL (exit code {audit_proc.returncode})", summary,
         )
+        return GateResult(name="audit", status=status, detail=detail)
 
 
 def _parse_cache_date(p: Path) -> Optional["date"]:
@@ -1111,7 +1144,7 @@ def run_daily(
         print(f"\n[3/5] Running data integrity audit ...")
         audit_output_dir = staging_date_dir / "audit"
         audit_proc = run_audit(staging_date_dir, price_csv, as_of_date, audit_output_dir)
-        audit_gate = check_audit_result(audit_proc, config)
+        audit_gate = check_audit_result(audit_proc, config, audit_output_dir)
         gate_results.append(audit_gate)
         print(f"  Audit gate: {audit_gate.status} — {audit_gate.detail}")
     else:
