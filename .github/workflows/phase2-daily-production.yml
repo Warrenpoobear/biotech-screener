@@ -50,13 +50,14 @@ jobs:
           pip install pytest-xdist yfinance
           pip install -e .
 
-      # ── Unit tests (excludes pipeline smoke/integration tests that need production data) ──
+      # ── Unit tests (excludes pipeline/integration tests that need production data or caches) ──
       - name: Run unit tests
         run: |
           python -m pytest tests/ -q \
             --ignore=tests/integration \
             --ignore=tests/test_minimum_suite.py \
-            --ignore=tests/test_golden_baseline.py
+            --ignore=tests/test_golden_baseline.py \
+            --ignore=tests/test_run_screen.py
 
       # ── Resolve as_of_date (Detroit-local) ──────────────────────
       - name: Resolve date
