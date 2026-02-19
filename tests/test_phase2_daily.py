@@ -24,6 +24,10 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "tools"))
 from run_daily_production import (
+    GATE_ALLOWLIST,
+    MANIFEST_VERSION,
+    MARKET_DATA_NUMERIC_FIELDS,
+    MARKET_DATA_REQUIRED_FIELDS,
     GateConfig,
     GateResult,
     _get_ticker_last_date,
@@ -31,6 +35,8 @@ from run_daily_production import (
     check_audit_result,
     check_ctgov_cache,
     check_inputs_present,
+    check_market_data_coverage,
+    check_market_data_schema,
     check_market_data_staleness,
     check_missing_reason_fraction,
     check_turnover,
@@ -321,7 +327,7 @@ class TestRunManifest:
                 snapshot_date_dir=snap,
             )
 
-        assert manifest["manifest_version"] == "1.1.0"
+        assert manifest["manifest_version"] == MANIFEST_VERSION
         assert manifest["as_of_date"] == "2026-02-19"
         assert manifest["requested_as_of_date"] == "2026-02-19"
         assert manifest["effective_as_of_date"] == "2026-02-19"
@@ -387,9 +393,9 @@ class TestScreenFailureGate:
         data_dir.mkdir()
         # Write minimal universe so price refresh doesn't error
         (data_dir / "universe.json").write_text(json.dumps([{"ticker": "XBI"}]))
-        # Required by inputs_present + market_data_staleness gates
+        # Required by inputs_present + schema + staleness + coverage gates
         (data_dir / "market_data.json").write_text(
-            json.dumps([{"ticker": "XBI", "price": 100, "collected_at": "2026-02-19"}])
+            json.dumps([{"ticker": "XBI", "price": 100, "market_cap": 1e9, "collected_at": "2026-02-19"}])
         )
 
         final_dir = tmp_path / "snapshots"
@@ -794,3 +800,244 @@ class TestBuildTarball:
         assert out.exists()
         with _tarfile.open(out, "r:gz") as tar:
             assert len(tar.getnames()) == 0
+
+
+# ---------------------------------------------------------------------------
+# Tests: Ops contract — gate allowlist + manifest schema
+# ---------------------------------------------------------------------------
+
+def _make_valid_market_data(data_dir: Path, collected_at: str = "2026-02-19") -> None:
+    """Write market_data.json + universe.json that pass all market data gates."""
+    tickers = [f"T{i}" for i in range(10)]
+    records = [
+        {"ticker": t, "price": 10.0 + i, "market_cap": 1e9, "collected_at": collected_at}
+        for i, t in enumerate(tickers)
+    ]
+    (data_dir / "market_data.json").write_text(json.dumps(records))
+    universe = [{"ticker": t} for t in tickers]
+    (data_dir / "universe.json").write_text(json.dumps(universe))
+
+
+class TestOpsContract:
+    """Enforce the gate allowlist and manifest schema contract."""
+
+    def test_gate_allowlist_is_frozenset(self):
+        assert isinstance(GATE_ALLOWLIST, frozenset)
+        assert len(GATE_ALLOWLIST) >= 10
+
+    def test_all_known_gates_in_allowlist(self):
+        """Every gate name emitted by the codebase must be in the allowlist."""
+        expected = {
+            "xbi_staleness", "ctgov_cache", "inputs_present",
+            "market_data_schema", "market_data_staleness", "market_data_coverage",
+            "screen", "audit", "missing_reason_fraction", "turnover",
+        }
+        assert expected == GATE_ALLOWLIST
+
+    def test_build_manifest_rejects_unknown_gate(self):
+        """Gate name not in allowlist → ValueError."""
+        gates = [GateResult(name="bogus_gate", status="PASS", detail="")]
+        screen_proc = subprocess.CompletedProcess(args=[], returncode=0)
+        with patch("run_daily_production.get_git_info", return_value={}):
+            with pytest.raises(ValueError, match="bogus_gate"):
+                build_run_manifest("2026-02-19", gates, {}, screen_proc, None, GateConfig())
+
+    def test_manifest_schema_v1_2(self, tmp_path):
+        """Manifest v1.2.0 has all required top-level keys."""
+        snap = tmp_path / "snap"
+        snap.mkdir()
+        (snap / "metadata.json").write_text(json.dumps({
+            "version": "v1.4.0",
+            "clinical_sort_telemetry": {"ruleset_id": "aa0aaf28"},
+            "ranking_mode": "decision",
+            "decision_mode": "phase2",
+            "ticker_count": 10,
+        }))
+
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        _make_valid_market_data(data_dir)
+
+        gates = [
+            GateResult(name="xbi_staleness", status="PASS", detail="ok", value=0, threshold=3),
+            GateResult(name="audit", status="PASS", detail="ok"),
+        ]
+        screen_proc = subprocess.CompletedProcess(args=[], returncode=0)
+        audit_proc = subprocess.CompletedProcess(args=[], returncode=0)
+
+        with patch("run_daily_production.get_git_info", return_value={
+            "branch": "main", "commit_sha": "abc123", "dirty": False,
+        }):
+            manifest = build_run_manifest(
+                "2026-02-19", gates, {"xbi_last_date": "2026-02-19"},
+                screen_proc, audit_proc, GateConfig(),
+                snapshot_date_dir=snap,
+                data_dir=data_dir,
+            )
+
+        # Version
+        assert manifest["manifest_version"] == MANIFEST_VERSION
+
+        # Required top-level keys
+        required_keys = {
+            "manifest_version", "requested_as_of_date", "effective_as_of_date",
+            "as_of_date", "generated_at", "git", "ruleset", "row_counts",
+            "price_refresh", "market_data_refresh", "missing_reason_counts",
+            "gates", "overall_status", "screen_exit_code", "audit_exit_code",
+            "gate_config",
+        }
+        assert required_keys.issubset(set(manifest.keys()))
+
+        # market_data_refresh block
+        mdr = manifest["market_data_refresh"]
+        assert mdr["collected_at"] == "2026-02-19"
+        assert mdr["age_days"] == 0
+        assert mdr["ticker_count"] == 10
+        assert mdr["coverage_pct"] == 1.0
+        assert isinstance(mdr["sha256"], str)
+        assert len(mdr["sha256"]) == 64
+
+        # Gate entries have required fields
+        for g in manifest["gates"]:
+            assert "name" in g
+            assert "status" in g
+            assert "detail" in g
+            assert g["name"] in GATE_ALLOWLIST
+            assert g["status"] in ("PASS", "WARN", "FAIL")
+
+
+# ---------------------------------------------------------------------------
+# Tests: Market data schema gate
+# ---------------------------------------------------------------------------
+
+class TestMarketDataSchemaGate:
+
+    def test_valid_records_pass(self, tmp_path):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        _make_valid_market_data(data_dir)
+        result = check_market_data_schema(data_dir)
+        assert result.status == "PASS"
+        assert "10 records" in result.detail
+
+    def test_missing_required_field_fails(self, tmp_path):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "market_data.json").write_text(
+            json.dumps([{"ticker": "A", "price": 10}])  # missing market_cap, collected_at
+        )
+        result = check_market_data_schema(data_dir)
+        assert result.status == "FAIL"
+        assert result.value > 0
+
+    def test_non_numeric_field_fails(self, tmp_path):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "market_data.json").write_text(json.dumps([
+            {"ticker": "A", "price": "not_a_number", "market_cap": 1e9, "collected_at": "2026-02-19"}
+        ]))
+        result = check_market_data_schema(data_dir)
+        assert result.status == "FAIL"
+        assert "str" in result.detail
+
+    def test_empty_array_fails(self, tmp_path):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "market_data.json").write_text("[]")
+        result = check_market_data_schema(data_dir)
+        assert result.status == "FAIL"
+        assert "empty" in result.detail
+
+    def test_not_array_fails(self, tmp_path):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "market_data.json").write_text('{"ticker": "A"}')
+        result = check_market_data_schema(data_dir)
+        assert result.status == "FAIL"
+        assert "not a JSON array" in result.detail
+
+    def test_missing_file_passes(self, tmp_path):
+        """Missing file → PASS (inputs_present catches it)."""
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        result = check_market_data_schema(data_dir)
+        assert result.status == "PASS"
+
+    def test_null_numeric_ok(self, tmp_path):
+        """Numeric fields with None value are acceptable."""
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "market_data.json").write_text(json.dumps([
+            {"ticker": "A", "price": 10, "market_cap": 1e9, "collected_at": "2026-02-19",
+             "beta": None, "avg_volume": None}
+        ]))
+        result = check_market_data_schema(data_dir)
+        assert result.status == "PASS"
+
+
+# ---------------------------------------------------------------------------
+# Tests: Market data coverage gate
+# ---------------------------------------------------------------------------
+
+class TestMarketDataCoverageGate:
+
+    def test_full_coverage_passes(self, tmp_path):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        _make_valid_market_data(data_dir)
+        result = check_market_data_coverage(data_dir, min_coverage=0.90)
+        assert result.status == "PASS"
+        assert result.value == 1.0
+
+    def test_low_coverage_fails(self, tmp_path):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        # market_data has 2 tickers, universe has 10
+        (data_dir / "market_data.json").write_text(json.dumps([
+            {"ticker": "T0", "price": 10}, {"ticker": "T1", "price": 20},
+        ]))
+        universe = [{"ticker": f"T{i}"} for i in range(10)]
+        (data_dir / "universe.json").write_text(json.dumps(universe))
+        result = check_market_data_coverage(data_dir, min_coverage=0.90)
+        assert result.status == "FAIL"
+        assert result.value == 0.2
+
+    def test_synthetic_tickers_excluded(self, tmp_path):
+        """Tickers starting with _ are excluded from the denominator."""
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "market_data.json").write_text(json.dumps([
+            {"ticker": "A", "price": 10},
+        ]))
+        universe = [{"ticker": "A"}, {"ticker": "_XBI_BENCHMARK_"}]
+        (data_dir / "universe.json").write_text(json.dumps(universe))
+        result = check_market_data_coverage(data_dir, min_coverage=0.90)
+        assert result.status == "PASS"
+        assert result.value == 1.0
+
+    def test_missing_universe_fails(self, tmp_path):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "market_data.json").write_text('[{"ticker": "A"}]')
+        result = check_market_data_coverage(data_dir, min_coverage=0.90)
+        assert result.status == "FAIL"
+        assert "universe.json" in result.detail
+
+    def test_missing_file_passes(self, tmp_path):
+        """Missing file → PASS (inputs_present catches it)."""
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        result = check_market_data_coverage(data_dir)
+        assert result.status == "PASS"
+
+    def test_coverage_at_threshold_passes(self, tmp_path):
+        """Exactly at threshold → PASS (not <)."""
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "market_data.json").write_text(json.dumps([
+            {"ticker": f"T{i}", "price": 10} for i in range(9)
+        ]))
+        universe = [{"ticker": f"T{i}"} for i in range(10)]
+        (data_dir / "universe.json").write_text(json.dumps(universe))
+        result = check_market_data_coverage(data_dir, min_coverage=0.90)
+        assert result.status == "PASS"  # 0.9 >= 0.9

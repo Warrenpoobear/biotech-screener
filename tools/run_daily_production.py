@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import os
 import shutil
@@ -35,6 +36,37 @@ from typing import Any, Dict, List, Optional
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 from archive_snapshot import get_git_info
+
+# ---------------------------------------------------------------------------
+# Ops contract constants
+# ---------------------------------------------------------------------------
+MANIFEST_VERSION = "1.2.0"
+
+# Canonical gate names — every gate emitted by run_daily() MUST be in this set.
+# Adding a new gate requires updating this allowlist.
+GATE_ALLOWLIST: frozenset[str] = frozenset({
+    "xbi_staleness",
+    "ctgov_cache",
+    "inputs_present",
+    "market_data_schema",
+    "market_data_staleness",
+    "market_data_coverage",
+    "screen",
+    "audit",
+    "missing_reason_fraction",
+    "turnover",
+})
+
+# Required fields in each market_data.json record for schema gate
+MARKET_DATA_REQUIRED_FIELDS: frozenset[str] = frozenset({
+    "ticker", "price", "market_cap", "collected_at",
+})
+
+# Fields that must be numeric (int/float) or None — schema gate checks type
+MARKET_DATA_NUMERIC_FIELDS: frozenset[str] = frozenset({
+    "price", "market_cap", "avg_volume", "beta",
+    "52w_high", "52w_low", "volatility_90d", "returns_1m", "returns_3m",
+})
 
 # ---------------------------------------------------------------------------
 # Gate thresholds (defaults; overridable via --gate-config)
@@ -60,6 +92,9 @@ class GateConfig:
 
     market_data_max_age_days: int = 3
     """Max calendar-day age of market_data.json (collected_at vs as_of_date)."""
+
+    market_data_min_coverage: float = 0.90
+    """Min fraction of universe tickers that must have market_data records."""
 
     @staticmethod
     def from_json(path: Path) -> "GateConfig":
@@ -497,6 +532,212 @@ def check_market_data_staleness(
     )
 
 
+def check_market_data_schema(data_dir: Path) -> GateResult:
+    """Validate market_data.json record structure.
+
+    Checks that every record has required fields (ticker, price, market_cap,
+    collected_at) and that numeric fields are actually numeric or None.
+    Returns FAIL if >0 records are malformed; PASS otherwise.
+    """
+    mkt_path = data_dir / "market_data.json"
+    if not mkt_path.exists():
+        return GateResult(
+            name="market_data_schema", status="PASS",
+            detail="Skipped (file missing; inputs_present gate will catch)",
+        )
+
+    try:
+        with open(mkt_path) as f:
+            records = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(
+            name="market_data_schema", status="FAIL",
+            detail=f"Cannot parse market_data.json: {e}",
+        )
+
+    if not isinstance(records, list):
+        return GateResult(
+            name="market_data_schema", status="FAIL",
+            detail="market_data.json is not a JSON array",
+        )
+
+    if len(records) == 0:
+        return GateResult(
+            name="market_data_schema", status="FAIL",
+            detail="market_data.json is empty",
+        )
+
+    bad_records: list[str] = []
+    for i, rec in enumerate(records):
+        if not isinstance(rec, dict):
+            bad_records.append(f"[{i}]: not a dict")
+            continue
+        missing = MARKET_DATA_REQUIRED_FIELDS - set(rec.keys())
+        if missing:
+            bad_records.append(f"{rec.get('ticker', f'[{i}]')}: missing {sorted(missing)}")
+            continue
+        for fld in MARKET_DATA_NUMERIC_FIELDS:
+            val = rec.get(fld)
+            if val is not None and not isinstance(val, (int, float)):
+                bad_records.append(f"{rec['ticker']}: {fld} is {type(val).__name__}")
+                break
+
+    if bad_records:
+        sample = "; ".join(bad_records[:3])
+        return GateResult(
+            name="market_data_schema", status="FAIL",
+            detail=f"{len(bad_records)} invalid records: {sample}",
+            value=len(bad_records), threshold=0,
+        )
+
+    return GateResult(
+        name="market_data_schema", status="PASS",
+        detail=f"{len(records)} records, all valid",
+        value=0, threshold=0,
+    )
+
+
+def check_market_data_coverage(
+    data_dir: Path,
+    min_coverage: float = 0.90,
+) -> GateResult:
+    """Check that market_data.json covers enough of the universe.
+
+    Compares ticker sets: market_data tickers vs universe.json tickers.
+    FAIL if coverage < min_coverage.  Synthetic tickers (prefixed with _)
+    are excluded from the denominator.
+    """
+    mkt_path = data_dir / "market_data.json"
+    uni_path = data_dir / "universe.json"
+
+    if not mkt_path.exists():
+        return GateResult(
+            name="market_data_coverage", status="PASS",
+            detail="Skipped (file missing; inputs_present gate will catch)",
+        )
+    if not uni_path.exists():
+        return GateResult(
+            name="market_data_coverage", status="FAIL",
+            detail="universe.json not found",
+        )
+
+    try:
+        with open(mkt_path) as f:
+            records = json.load(f)
+        with open(uni_path) as f:
+            universe = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(
+            name="market_data_coverage", status="FAIL",
+            detail=f"Cannot read files: {e}",
+        )
+
+    mkt_tickers = {r["ticker"] for r in records if isinstance(r, dict) and r.get("ticker")}
+    uni_tickers = set()
+    for entry in universe:
+        t = entry.get("ticker") if isinstance(entry, dict) else str(entry)
+        if t and not t.startswith("_"):  # exclude synthetic like _XBI_BENCHMARK_
+            uni_tickers.add(t)
+
+    if not uni_tickers:
+        return GateResult(
+            name="market_data_coverage", status="FAIL",
+            detail="Universe is empty",
+        )
+
+    covered = len(mkt_tickers & uni_tickers)
+    coverage = covered / len(uni_tickers)
+    missing = sorted(uni_tickers - mkt_tickers)
+
+    if coverage < min_coverage:
+        sample = ", ".join(missing[:5])
+        return GateResult(
+            name="market_data_coverage", status="FAIL",
+            detail=(
+                f"{covered}/{len(uni_tickers)} ({coverage:.1%}) coverage, "
+                f"below {min_coverage:.0%} threshold. "
+                f"Missing: {sample}{'...' if len(missing) > 5 else ''}"
+            ),
+            value=round(coverage, 4), threshold=min_coverage,
+        )
+
+    detail = f"{covered}/{len(uni_tickers)} ({coverage:.1%}) coverage"
+    if missing:
+        detail += f", {len(missing)} missing: {', '.join(missing[:5])}"
+    return GateResult(
+        name="market_data_coverage", status="PASS",
+        detail=detail,
+        value=round(coverage, 4), threshold=min_coverage,
+    )
+
+
+def _compute_market_data_refresh(
+    data_dir: Path,
+    as_of_date: str,
+) -> Dict[str, Any]:
+    """Build the market_data_refresh manifest block.
+
+    Returns provenance metadata about market_data.json for the manifest.
+    """
+    mkt_path = data_dir / "market_data.json"
+    info: Dict[str, Any] = {
+        "collected_at": None,
+        "age_days": None,
+        "ticker_count": 0,
+        "coverage_pct": None,
+        "sha256": None,
+    }
+
+    if not mkt_path.exists():
+        return info
+
+    try:
+        raw = mkt_path.read_bytes()
+        info["sha256"] = hashlib.sha256(raw).hexdigest()
+        records = json.loads(raw)
+    except (json.JSONDecodeError, OSError):
+        return info
+
+    if not isinstance(records, list):
+        return info
+
+    info["ticker_count"] = len(records)
+
+    # collected_at
+    dates = [r.get("collected_at") for r in records
+             if isinstance(r, dict) and r.get("collected_at")]
+    if dates:
+        info["collected_at"] = max(dates)
+        try:
+            from datetime import date as _date
+            info["age_days"] = (_date.fromisoformat(as_of_date) -
+                                _date.fromisoformat(info["collected_at"])).days
+        except ValueError:
+            pass
+
+    # coverage vs universe
+    uni_path = data_dir / "universe.json"
+    if uni_path.exists():
+        try:
+            with open(uni_path) as f:
+                universe = json.load(f)
+            uni_tickers = set()
+            for entry in universe:
+                t = entry.get("ticker") if isinstance(entry, dict) else str(entry)
+                if t and not t.startswith("_"):
+                    uni_tickers.add(t)
+            mkt_tickers = {r["ticker"] for r in records
+                           if isinstance(r, dict) and r.get("ticker")}
+            if uni_tickers:
+                info["coverage_pct"] = round(
+                    len(mkt_tickers & uni_tickers) / len(uni_tickers), 4,
+                )
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    return info
+
+
 # ---------------------------------------------------------------------------
 # Step 5: Run manifest
 # ---------------------------------------------------------------------------
@@ -513,6 +754,7 @@ def build_run_manifest(
     requested_as_of_date: Optional[str] = None,
     git_pre_run: Optional[Dict[str, Any]] = None,
     git_post_run: Optional[Dict[str, Any]] = None,
+    data_dir: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """Build the run_manifest.json with full provenance.
 
@@ -582,8 +824,21 @@ def build_run_manifest(
     git_block["dirty_post_run"] = git_post_run.get("dirty") if git_post_run else None
     git_block["dirty"] = git_block["dirty_pre_run"]  # backward compat
 
+    # Validate gate names against allowlist
+    for g in gate_results:
+        if g.name not in GATE_ALLOWLIST:
+            raise ValueError(
+                f"Gate '{g.name}' not in GATE_ALLOWLIST. "
+                f"Add it to the allowlist before using it."
+            )
+
+    # Market data refresh provenance
+    mkt_refresh: Dict[str, Any] = {}
+    if data_dir:
+        mkt_refresh = _compute_market_data_refresh(data_dir, as_of_date)
+
     return {
-        "manifest_version": "1.1.0",
+        "manifest_version": MANIFEST_VERSION,
         "requested_as_of_date": _requested,
         "effective_as_of_date": as_of_date,
         "as_of_date": as_of_date,  # backward compat alias
@@ -598,6 +853,7 @@ def build_run_manifest(
             "failed_tickers": price_stats.get("failed_tickers", []),
             "xbi_last_date": price_stats.get("xbi_last_date"),
         },
+        "market_data_refresh": mkt_refresh,
         "missing_reason_counts": missing_reason_counts,
         "gates": [
             {
@@ -708,6 +964,7 @@ def run_daily(
             None, config,
             requested_as_of_date=requested_as_of_date,
             git_pre_run=git_pre_run,
+            data_dir=data_dir,
         )
         return manifest
 
@@ -727,6 +984,7 @@ def run_daily(
             None, config,
             requested_as_of_date=requested_as_of_date,
             git_pre_run=git_pre_run,
+            data_dir=data_dir,
         )
         return manifest
 
@@ -747,13 +1005,30 @@ def run_daily(
             None, config,
             requested_as_of_date=requested_as_of_date,
             git_pre_run=git_pre_run,
+            data_dir=data_dir,
+        )
+        return manifest
+
+    # --- Gate: market data schema ---
+    schema_gate = check_market_data_schema(data_dir)
+    gate_results.append(schema_gate)
+    print(f"  Market data schema gate: {schema_gate.status} — {schema_gate.detail}")
+    if schema_gate.status == "FAIL":
+        print("\n  FATAL: Market data schema invalid. Aborting before screen run.")
+        manifest = build_run_manifest(
+            as_of_date, gate_results, price_stats,
+            subprocess.CompletedProcess(args=[], returncode=-1),
+            None, config,
+            requested_as_of_date=requested_as_of_date,
+            git_pre_run=git_pre_run,
+            data_dir=data_dir,
         )
         return manifest
 
     # --- Gate: market data staleness ---
     mkt_gate = check_market_data_staleness(data_dir, as_of_date, config.market_data_max_age_days)
     gate_results.append(mkt_gate)
-    print(f"  Market data gate: {mkt_gate.status} — {mkt_gate.detail}")
+    print(f"  Market data staleness gate: {mkt_gate.status} — {mkt_gate.detail}")
     if mkt_gate.status == "FAIL":
         print("\n  FATAL: Market data too stale. Aborting before screen run.")
         print(f"  Hint: python collect_market_data.py --universe {data_dir}/universe.json")
@@ -763,6 +1038,23 @@ def run_daily(
             None, config,
             requested_as_of_date=requested_as_of_date,
             git_pre_run=git_pre_run,
+            data_dir=data_dir,
+        )
+        return manifest
+
+    # --- Gate: market data coverage ---
+    cov_gate = check_market_data_coverage(data_dir, config.market_data_min_coverage)
+    gate_results.append(cov_gate)
+    print(f"  Market data coverage gate: {cov_gate.status} — {cov_gate.detail}")
+    if cov_gate.status == "FAIL":
+        print("\n  FATAL: Market data coverage too low. Aborting before screen run.")
+        manifest = build_run_manifest(
+            as_of_date, gate_results, price_stats,
+            subprocess.CompletedProcess(args=[], returncode=-1),
+            None, config,
+            requested_as_of_date=requested_as_of_date,
+            git_pre_run=git_pre_run,
+            data_dir=data_dir,
         )
         return manifest
 
@@ -790,6 +1082,7 @@ def run_daily(
             as_of_date, gate_results, price_stats, screen_proc, None, config,
             requested_as_of_date=requested_as_of_date,
             git_pre_run=git_pre_run,
+            data_dir=data_dir,
         )
         return manifest
 
@@ -808,6 +1101,7 @@ def run_daily(
             as_of_date, gate_results, price_stats, screen_proc, None, config,
             requested_as_of_date=requested_as_of_date,
             git_pre_run=git_pre_run,
+            data_dir=data_dir,
         )
         return manifest
 
@@ -844,6 +1138,7 @@ def run_daily(
         requested_as_of_date=requested_as_of_date,
         git_pre_run=git_pre_run,
         git_post_run=git_post_run,
+        data_dir=data_dir,
     )
 
     # Write manifest to staging dir
