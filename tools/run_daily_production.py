@@ -7,7 +7,7 @@ Single entrypoint that orchestrates:
   3. data_integrity_audit.py → cross-validates price-derived fields
   4. Hard gates: XBI staleness, missing-reason fraction, turnover, audit verdict
   5. Run manifest (run_manifest.json) with full provenance
-  6. Atomic promotion: staging → data/snapshots/{as_of_date}/ on gate pass
+  6. Atomic promotion: staging → data/snapshots/{effective_as_of_date}/ on gate pass
 
 Exit codes:
   0 — all gates passed, snapshot promoted
@@ -331,6 +331,74 @@ def check_audit_result(
         )
 
 
+def _parse_cache_date(p: Path) -> Optional["date"]:
+    """Extract and parse YYYY-MM-DD from a trial_records_{date}.json filename."""
+    from datetime import date
+    s = p.stem.replace("trial_records_", "")
+    try:
+        return date.fromisoformat(s)
+    except ValueError:
+        return None
+
+
+def check_ctgov_cache(
+    as_of_date: str,
+    cache_dir: Path,
+    allow_fallback: bool = False,
+) -> tuple[GateResult, str]:
+    """Check if PIT-filtered ctgov cache exists for the requested date.
+
+    Returns (gate_result, effective_as_of_date).
+    If allow_fallback=True and the exact date is missing, picks the latest
+    cached date <= requested date and returns WARN.
+    """
+    from datetime import date
+
+    exact = cache_dir / f"trial_records_{as_of_date}.json"
+    if exact.exists():
+        return (
+            GateResult(
+                name="ctgov_cache", status="PASS",
+                detail=f"PIT cache found: {exact.name}",
+            ),
+            as_of_date,
+        )
+
+    # Exact date missing — look for fallback if allowed
+    if allow_fallback:
+        req = date.fromisoformat(as_of_date)
+        parsed = []
+        for p in cache_dir.glob("trial_records_*.json"):
+            d = _parse_cache_date(p)
+            if d is not None and d <= req:
+                parsed.append((d, p))
+        parsed.sort(key=lambda x: x[0])
+        if parsed:
+            fallback_date = parsed[-1][0].isoformat()
+            return (
+                GateResult(
+                    name="ctgov_cache", status="WARN",
+                    detail=(
+                        f"PIT cache missing for {as_of_date}; "
+                        f"falling back to {fallback_date} (--allow-date-fallback)"
+                    ),
+                ),
+                fallback_date,
+            )
+
+    # No exact match, no fallback allowed (or no prior dates)
+    return (
+        GateResult(
+            name="ctgov_cache", status="FAIL",
+            detail=(
+                f"PIT cache missing: {exact.name}. "
+                f"Run: warm_caches.py --as-of-date {as_of_date} --sources ctgov"
+            ),
+        ),
+        as_of_date,
+    )
+
+
 # ---------------------------------------------------------------------------
 # Step 5: Run manifest
 # ---------------------------------------------------------------------------
@@ -343,8 +411,14 @@ def build_run_manifest(
     audit_proc: Optional[subprocess.CompletedProcess],
     config: GateConfig,
     snapshot_date_dir: Optional[Path] = None,
+    *,
+    requested_as_of_date: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Build the run_manifest.json with full provenance."""
+    """Build the run_manifest.json with full provenance.
+
+    If requested_as_of_date differs from as_of_date, it means a date
+    fallback occurred and both are recorded in the manifest.
+    """
     git = get_git_info(REPO_ROOT)
 
     # Read metadata.json from snapshot for ruleset info
@@ -396,9 +470,12 @@ def build_run_manifest(
         if g.status == "WARN" and overall_status != "FAIL":
             overall_status = "WARN"
 
+    _requested = requested_as_of_date or as_of_date
     return {
-        "manifest_version": "1.0.0",
-        "as_of_date": as_of_date,
+        "manifest_version": "1.1.0",
+        "requested_as_of_date": _requested,
+        "effective_as_of_date": as_of_date,
+        "as_of_date": as_of_date,  # backward compat alias
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "git": git,
         "ruleset": ruleset_info,
@@ -474,6 +551,8 @@ def run_daily(
     skip_price_refresh: bool = False,
     skip_audit: bool = False,
     extra_screen_args: Optional[List[str]] = None,
+    allow_date_fallback: bool = False,
+    ctgov_cache_dir: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """Execute the full daily Phase-2 pipeline.
 
@@ -482,6 +561,7 @@ def run_daily(
     """
     config = gate_config or GateConfig()
     gate_results: List[GateResult] = []
+    requested_as_of_date = as_of_date  # preserve the original request
 
     print(f"{'='*70}")
     print(f"PHASE-2 DAILY RUN — {as_of_date}")
@@ -512,8 +592,31 @@ def run_daily(
             as_of_date, gate_results, price_stats,
             subprocess.CompletedProcess(args=[], returncode=-1),
             None, config,
+            requested_as_of_date=requested_as_of_date,
         )
         return manifest
+
+    # --- Gate: ctgov PIT cache availability ---
+    _cache_dir = ctgov_cache_dir or (REPO_ROOT / "cache" / "ctgov")
+    ctgov_gate, effective_as_of_date = check_ctgov_cache(
+        as_of_date, _cache_dir, allow_fallback=allow_date_fallback,
+    )
+    gate_results.append(ctgov_gate)
+    print(f"  CTGov cache gate: {ctgov_gate.status} — {ctgov_gate.detail}")
+    if ctgov_gate.status == "FAIL":
+        print("\n  FATAL: CTGov PIT cache not found. Aborting before screen run.")
+        print(f"  Hint: run warm_caches.py --as-of-date {as_of_date} --sources ctgov")
+        manifest = build_run_manifest(
+            as_of_date, gate_results, price_stats,
+            subprocess.CompletedProcess(args=[], returncode=-1),
+            None, config,
+            requested_as_of_date=requested_as_of_date,
+        )
+        return manifest
+
+    if effective_as_of_date != as_of_date:
+        print(f"  Date fallback: {as_of_date} → {effective_as_of_date}")
+        as_of_date = effective_as_of_date
 
     # --- Step 2: Run screen into staging dir ---
     print(f"\n[2/5] Running screen (phase2, ranking_mode=decision) ...")
@@ -532,6 +635,7 @@ def run_daily(
                 print(f"    {line}")
         manifest = build_run_manifest(
             as_of_date, gate_results, price_stats, screen_proc, None, config,
+            requested_as_of_date=requested_as_of_date,
         )
         return manifest
 
@@ -544,6 +648,7 @@ def run_daily(
         print(f"  ERROR: Expected snapshot at {staging_date_dir} not found")
         manifest = build_run_manifest(
             as_of_date, gate_results, price_stats, screen_proc, None, config,
+            requested_as_of_date=requested_as_of_date,
         )
         return manifest
 
@@ -576,6 +681,7 @@ def run_daily(
         as_of_date, gate_results, price_stats,
         screen_proc, audit_proc, config,
         snapshot_date_dir=staging_date_dir,
+        requested_as_of_date=requested_as_of_date,
     )
 
     # Write manifest to staging dir
@@ -658,6 +764,14 @@ def main():
         "--skip-audit", action="store_true",
         help="Skip data integrity audit step",
     )
+    parser.add_argument(
+        "--allow-date-fallback", action="store_true",
+        help="If ctgov cache missing for --as-of-date, fall back to latest cached date (WARN).",
+    )
+    parser.add_argument(
+        "--ctgov-cache-dir", type=Path, default=None,
+        help="Path to ctgov cache directory (default: cache/ctgov/)",
+    )
     args = parser.parse_args()
 
     config = GateConfig()
@@ -673,6 +787,8 @@ def main():
         ruleset_path=args.ruleset,
         skip_price_refresh=args.skip_price_refresh,
         skip_audit=args.skip_audit,
+        allow_date_fallback=args.allow_date_fallback,
+        ctgov_cache_dir=args.ctgov_cache_dir,
     )
 
     status = manifest.get("overall_status", "FAIL")

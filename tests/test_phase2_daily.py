@@ -29,6 +29,7 @@ from run_daily_production import (
     _get_ticker_last_date,
     build_run_manifest,
     check_audit_result,
+    check_ctgov_cache,
     check_missing_reason_fraction,
     check_turnover,
     check_xbi_staleness,
@@ -313,8 +314,10 @@ class TestRunManifest:
                 snapshot_date_dir=snap,
             )
 
-        assert manifest["manifest_version"] == "1.0.0"
+        assert manifest["manifest_version"] == "1.1.0"
         assert manifest["as_of_date"] == "2026-02-19"
+        assert manifest["requested_as_of_date"] == "2026-02-19"
+        assert manifest["effective_as_of_date"] == "2026-02-19"
         assert manifest["git"]["commit_sha"] == "abc123"
         assert manifest["ruleset"]["ruleset_hash"] == "aa0aaf28"
         assert manifest["ruleset"]["ranking_mode"] == "decision"
@@ -407,3 +410,104 @@ class TestGetTickerLastDate:
 
     def test_no_file(self, tmp_path):
         assert _get_ticker_last_date(tmp_path / "nope.csv", "XBI") is None
+
+
+# ---------------------------------------------------------------------------
+# Tests: CTGov cache gate
+# ---------------------------------------------------------------------------
+
+class TestCtgovCacheGate:
+
+    def _make_cache(self, cache_dir: Path, dates: list[str]) -> None:
+        """Create fake trial_records_{date}.json files."""
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        for d in dates:
+            (cache_dir / f"trial_records_{d}.json").write_text("[]")
+
+    def test_exact_match_pass(self, tmp_path):
+        """Cache exists for requested date → PASS, effective == requested."""
+        cache_dir = tmp_path / "ctgov"
+        self._make_cache(cache_dir, ["2026-02-19"])
+        gate, effective = check_ctgov_cache("2026-02-19", cache_dir)
+        assert gate.status == "PASS"
+        assert effective == "2026-02-19"
+
+    def test_missing_no_fallback_fail(self, tmp_path):
+        """Cache missing, no --allow-date-fallback → FAIL."""
+        cache_dir = tmp_path / "ctgov"
+        self._make_cache(cache_dir, ["2026-02-18"])
+        gate, effective = check_ctgov_cache("2026-02-19", cache_dir, allow_fallback=False)
+        assert gate.status == "FAIL"
+        assert "warm_caches.py" in gate.detail
+        assert effective == "2026-02-19"  # unchanged on FAIL
+
+    def test_missing_with_fallback_warn(self, tmp_path):
+        """Cache missing but prior date available + fallback allowed → WARN."""
+        cache_dir = tmp_path / "ctgov"
+        self._make_cache(cache_dir, ["2026-02-17", "2026-02-18"])
+        gate, effective = check_ctgov_cache("2026-02-19", cache_dir, allow_fallback=True)
+        assert gate.status == "WARN"
+        assert effective == "2026-02-18"  # picked latest <= requested
+        assert "falling back to 2026-02-18" in gate.detail
+
+    def test_fallback_no_prior_dates_fail(self, tmp_path):
+        """Fallback allowed but no prior cached dates → FAIL."""
+        cache_dir = tmp_path / "ctgov"
+        self._make_cache(cache_dir, ["2026-02-20"])  # only future date
+        gate, effective = check_ctgov_cache("2026-02-19", cache_dir, allow_fallback=True)
+        assert gate.status == "FAIL"
+
+    def test_empty_cache_dir_fail(self, tmp_path):
+        """Empty cache dir → FAIL."""
+        cache_dir = tmp_path / "ctgov"
+        cache_dir.mkdir(parents=True)
+        gate, effective = check_ctgov_cache("2026-02-19", cache_dir)
+        assert gate.status == "FAIL"
+
+    def test_stray_filename_ignored(self, tmp_path):
+        """Non-date filenames in cache dir are silently skipped."""
+        cache_dir = tmp_path / "ctgov"
+        cache_dir.mkdir(parents=True)
+        (cache_dir / "trial_records_latest.json").write_text("[]")
+        (cache_dir / "trial_records_backup.json").write_text("[]")
+        (cache_dir / "trial_records_2026-02-17.json").write_text("[]")
+        gate, effective = check_ctgov_cache("2026-02-19", cache_dir, allow_fallback=True)
+        assert gate.status == "WARN"
+        assert effective == "2026-02-17"  # only valid date picked
+
+
+# ---------------------------------------------------------------------------
+# Tests: Manifest date fields
+# ---------------------------------------------------------------------------
+
+class TestManifestDateFields:
+
+    def test_manifest_records_both_dates(self, tmp_path):
+        """Manifest records requested and effective dates when they differ."""
+        gates = [
+            GateResult(name="xbi_staleness", status="PASS", detail="ok"),
+        ]
+        screen_proc = subprocess.CompletedProcess(args=[], returncode=0)
+        with patch("run_daily_production.get_git_info", return_value={}):
+            manifest = build_run_manifest(
+                "2026-02-18", gates, {},
+                screen_proc, None, GateConfig(),
+                requested_as_of_date="2026-02-19",
+            )
+        assert manifest["requested_as_of_date"] == "2026-02-19"
+        assert manifest["effective_as_of_date"] == "2026-02-18"
+        assert manifest["as_of_date"] == "2026-02-18"  # backward compat
+
+    def test_manifest_dates_match_when_no_fallback(self, tmp_path):
+        """When no fallback, requested == effective."""
+        gates = [
+            GateResult(name="xbi_staleness", status="PASS", detail="ok"),
+        ]
+        screen_proc = subprocess.CompletedProcess(args=[], returncode=0)
+        with patch("run_daily_production.get_git_info", return_value={}):
+            manifest = build_run_manifest(
+                "2026-02-19", gates, {},
+                screen_proc, None, GateConfig(),
+            )
+        assert manifest["requested_as_of_date"] == "2026-02-19"
+        assert manifest["effective_as_of_date"] == "2026-02-19"
