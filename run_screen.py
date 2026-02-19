@@ -1199,7 +1199,8 @@ def compute_momentum_from_price_history(
     xbi_return_120d = get_return(xbi_ticker, 120)
 
     if xbi_return_60d is not None:
-        logger.info(f"XBI benchmark returns: 20d={xbi_return_20d:.2%}, 60d={xbi_return_60d:.2%}, 120d={xbi_return_120d:.2%}")
+        _fmt = lambda v: f"{v:.2%}" if v is not None else "N/A"
+        logger.info(f"XBI benchmark returns: 20d={_fmt(xbi_return_20d)}, 60d={_fmt(xbi_return_60d)}, 120d={_fmt(xbi_return_120d)}")
     else:
         logger.warning(f"Could not compute XBI benchmark returns - XBI not in price history")
 
