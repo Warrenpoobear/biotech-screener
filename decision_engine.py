@@ -696,10 +696,11 @@ def _compute_cost_mult(
     Returns (multiplier, bucket_label).  When cost haircut is disabled
     or cost data is unavailable, returns (1.0, "").
     """
-    if not ruleset.enable_cost_haircut or est_cost_bps is None:
+    cost_val = _safe_float(est_cost_bps)
+    if not ruleset.enable_cost_haircut or cost_val is None:
         return 1.0, ""
     for upper, mult in ruleset.cost_haircut_buckets:
-        if est_cost_bps <= upper:
+        if cost_val <= upper:
             return mult, f"<={int(upper)}bps"
     last_upper = ruleset.cost_haircut_buckets[-1][0] if ruleset.cost_haircut_buckets else 0
     return ruleset.cost_haircut_floor_mult, f">{int(last_upper)}bps"
@@ -707,7 +708,7 @@ def _compute_cost_mult(
 
 def _compute_size_band(
     eligible: bool,
-    tier_dev: str,
+    effective_tier: str,
     optionality: Optional[float],
     overlays: Dict[str, Any],
     ruleset: DecisionRuleset,
@@ -724,10 +725,10 @@ def _compute_size_band(
     reasons: List[str] = []
 
     # Tier A with high optionality/quality → push toward L
-    if tier_dev == "A" and optionality is not None and optionality >= ruleset.tier_a_optionality_floor:
+    if effective_tier == "A" and optionality is not None and optionality >= ruleset.tier_a_optionality_floor:
         idx += 1
         reasons.append("tier_a_dev")
-    elif tier_dev == "A" and optionality is None and commercial_quality_pct is not None and commercial_quality_pct >= ruleset.tier_a_commercial_floor:
+    elif effective_tier == "A" and optionality is None and commercial_quality_pct is not None and commercial_quality_pct >= ruleset.tier_a_commercial_floor:
         idx += 1
         reasons.append("tier_a_commercial")
 
@@ -769,10 +770,10 @@ def _compute_size_band(
         if _has_flag(overlays.get("risk_flags"), "drawdown_data_missing"):
             idx -= 1
             reasons.append("missing_drawdown")
-        if tier_dev in ("A", "B") and overlays.get("sponsor_tier1_count") in ("", None):
+        if effective_tier in ("A", "B") and overlays.get("sponsor_tier1_count") in ("", None):
             idx -= 1
             reasons.append("missing_sponsor")
-        if tier_dev == "A" and overlays.get("catalyst_mode") == "missing":
+        if effective_tier == "A" and overlays.get("catalyst_mode") == "missing":
             idx -= 1
             reasons.append("missing_catalyst")
 
@@ -829,27 +830,29 @@ def _compute_tier_dev(
     # days_to_catalyst == 0 + in_optimal_window == "1" means "blended proximity mode"
     #   (pipeline couldn't pin exact days but proximity scoring is active).
     # days_to_catalyst absent + in_optimal_window absent/False = no catalyst data.
-    has_specific_days = isinstance(catalyst_days, (int, float)) and catalyst_days > 0
+    c_days_float = _safe_float(catalyst_days, default=0.0)
+    has_specific_days = c_days_float > 0
     has_blended_window = catalyst_in_window == "1"
     has_catalyst_data = has_specific_days or has_blended_window
 
     # Catalyst strength: near/mid/far/missing
     if ruleset.catalyst_time_decay_mode == "logistic" and has_catalyst_data:
         # Smooth: map continuous decay_w back to discrete strength labels
-        if catalyst_decay_w >= 0.5:
+        decay_w = _safe_float(catalyst_decay_w, default=0.0)
+        if decay_w >= 0.5:
             strength = "near"
-        elif catalyst_decay_w >= 0.2:
+        elif decay_w >= 0.2:
             strength = "mid"
         else:
             strength = "far"
-        is_actionable = catalyst_decay_w >= 0.2
+        is_actionable = decay_w >= 0.2
     elif has_blended_window:
         strength = "near"
         is_actionable = True
     elif has_specific_days:
-        if catalyst_days <= ruleset.catalyst_near_days:
+        if c_days_float <= ruleset.catalyst_near_days:
             strength = "near"
-        elif catalyst_days <= ruleset.catalyst_mid_days:
+        elif c_days_float <= ruleset.catalyst_mid_days:
             strength = "mid"
         else:
             strength = "far"
@@ -923,25 +926,27 @@ def _compute_tier_commercial(
         return "C", "no_quality_data"
 
     # Determine catalyst proximity (same logic as _compute_tier_dev)
-    has_specific_days = isinstance(catalyst_days, (int, float)) and catalyst_days > 0
+    c_days_float = _safe_float(catalyst_days, default=0.0)
+    has_specific_days = c_days_float > 0
     has_blended_window = catalyst_in_window == "1"
     has_catalyst_data = has_specific_days or has_blended_window
 
     if ruleset.catalyst_time_decay_mode == "logistic" and has_catalyst_data:
-        if catalyst_decay_w >= 0.5:
+        decay_w = _safe_float(catalyst_decay_w, default=0.0)
+        if decay_w >= 0.5:
             strength = "near"
-        elif catalyst_decay_w >= 0.2:
+        elif decay_w >= 0.2:
             strength = "mid"
         else:
             strength = "far"
-        is_actionable = catalyst_decay_w >= 0.2
+        is_actionable = decay_w >= 0.2
     elif has_blended_window:
         strength = "near"
         is_actionable = True
     elif has_specific_days:
-        if catalyst_days <= ruleset.catalyst_near_days:
+        if c_days_float <= ruleset.catalyst_near_days:
             strength = "near"
-        elif catalyst_days <= ruleset.catalyst_mid_days:
+        elif c_days_float <= ruleset.catalyst_mid_days:
             strength = "mid"
         else:
             strength = "far"
@@ -1091,8 +1096,8 @@ def compute_actionable_sort_key(
 
     opt_neg = -(float(optionality)) if optionality is not None else 0.0
 
-    sponsor_raw = decision_fields.get("sponsor_tier1_count", "")
-    sponsor_neg = -(int(sponsor_raw)) if sponsor_raw != "" and sponsor_raw is not None else 0
+    sponsor_val = _safe_float(decision_fields.get("sponsor_tier1_count"), default=0.0)
+    sponsor_neg = -int(sponsor_val)
 
     mom = decision_fields.get("mom_state", "neutral")
     mom_ord = _MOM_STATE_ORDER.get(str(mom), 1)
@@ -1116,7 +1121,7 @@ def compute_actionable_sort_key(
     # Clamped to ±2.0 to prevent spiky z in small tier cohorts.
     clin_adj = 0.0
     if rs.enable_clinical_sort_signal:
-        cz_tier = _safe_float(decision_fields.get("clinical_score_z_tier")) or 0.0
+        cz_tier = _safe_float(decision_fields.get("clinical_score_z_tier"), default=0.0)
         stage = str(decision_fields.get("stage_bucket", ""))
         stage_mult = dict(rs.clinical_stage_mults).get(stage, 0.0)
         if rs.clinical_positive_only:
@@ -1323,7 +1328,7 @@ def compute_decision_fields(
         effective_tier = tier_dev
     size_band, size_reasons = _compute_size_band(
         eligible=eligible,
-        tier_dev=effective_tier,
+        effective_tier=effective_tier,
         optionality=optionality_pct_dev,
         overlays=overlays,
         ruleset=rs,

@@ -143,7 +143,7 @@ class TestBandStepDown:
     def test_no_step_down_at_085(self):
         """cost_mult=0.85 should NOT trigger band step-down."""
         band, reasons = _compute_size_band(
-            eligible=True, tier_dev="B", optionality=0.50,
+            eligible=True, effective_tier="B", optionality=0.50,
             overlays={}, ruleset=ENABLED_RS,
             cost_mult=0.85, cost_bucket="<=1000bps",
         )
@@ -152,7 +152,7 @@ class TestBandStepDown:
     def test_step_down_at_070(self):
         """cost_mult=0.70 triggers band step-down."""
         band, reasons = _compute_size_band(
-            eligible=True, tier_dev="B", optionality=0.50,
+            eligible=True, effective_tier="B", optionality=0.50,
             overlays={}, ruleset=ENABLED_RS,
             cost_mult=0.70, cost_bucket="<=2000bps",
         )
@@ -163,7 +163,7 @@ class TestBandStepDown:
     def test_step_down_at_floor(self):
         """cost_mult=0.55 (floor) also triggers band step-down."""
         band, reasons = _compute_size_band(
-            eligible=True, tier_dev="B", optionality=0.50,
+            eligible=True, effective_tier="B", optionality=0.50,
             overlays={}, ruleset=ENABLED_RS,
             cost_mult=0.55, cost_bucket=">2000bps",
         )
@@ -173,7 +173,7 @@ class TestBandStepDown:
         """Band step-down can't go below XS."""
         # Headwind pushes to S, cost pushes again — should clamp at XS
         band, reasons = _compute_size_band(
-            eligible=True, tier_dev="C", optionality=0.10,
+            eligible=True, effective_tier="C", optionality=0.10,
             overlays={"mom_state": "headwind", "runway_bucket": "critical"},
             ruleset=ENABLED_RS,
             cost_mult=0.55, cost_bucket=">2000bps",
