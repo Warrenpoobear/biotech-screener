@@ -109,12 +109,14 @@ jobs:
           fi
 
       # ── Production daily run (includes audit + all gates) ──────
+      # NOTE: nothing above this step should create files in-repo,
+      # otherwise git_pre_run will report dirty=true from CI artifacts.
       - name: Run production daily
         id: runner
         continue-on-error: true  # don't short-circuit — uploads must happen
         run: |
           DATE="${{ steps.date.outputs.as_of_date }}"
-          mkdir -p output
+          LOG="$RUNNER_TEMP/production_daily.log"
 
           ARGS="--as-of-date $DATE"
           if [ "${{ inputs.skip_price_refresh }}" = "true" ]; then
@@ -124,44 +126,29 @@ jobs:
             ARGS="$ARGS --allow-date-fallback"
           fi
 
-          python tools/run_daily_production.py $ARGS 2>&1 | tee output/production_daily.log
+          set +e
+          python tools/run_daily_production.py $ARGS 2>&1 | tee "$LOG"
           RC=${PIPESTATUS[0]}
+          set -e
           echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
 
-      # ── Extract manifest from snapshot dir ──────────────────────
+          # Copy log to output/ (runner creates output/ via run_manifest.json)
+          mkdir -p output
+          cp "$LOG" output/production_daily.log || true
+
+      # ── Read manifest (runner always writes output/run_manifest.json) ──
       - name: Locate manifest
         if: always()
         id: manifest
         run: |
-          DATE="${{ steps.date.outputs.as_of_date }}"
-
-          # The runner always writes output/run_manifest.json (even on FAIL).
-          # On promotion (PASS/WARN), it also lives in data/snapshots/{date}/.
-          # Prefer the snapshot copy (has effective date in path), fall back to output/.
-          MANIFEST=""
-          for d in $(ls -1rd data/snapshots/*/run_manifest.json 2>/dev/null); do
-            MANIFEST="$d"
-            break
-          done
-
-          # Fallback: runner always writes to output/
-          if [ -z "$MANIFEST" ] && [ -f "output/run_manifest.json" ]; then
-            MANIFEST="output/run_manifest.json"
-            echo "Using fallback manifest from output/ (snapshot not promoted)"
-          fi
-
-          if [ -n "$MANIFEST" ]; then
+          MANIFEST="output/run_manifest.json"
+          if [ -f "$MANIFEST" ]; then
             EFF_DATE=$(python -c "import json,sys; m=json.load(open(sys.argv[1])); print(m.get('effective_as_of_date', m.get('as_of_date','')))" "$MANIFEST")
             echo "effective_date=$EFF_DATE" >> "$GITHUB_OUTPUT"
-            echo "Found manifest at $MANIFEST (effective_date=$EFF_DATE)"
-
-            # Ensure output/ copy exists for artifact upload
-            if [ "$MANIFEST" != "output/run_manifest.json" ]; then
-              cp "$MANIFEST" output/run_manifest.json
-            fi
+            echo "Found manifest (effective_date=$EFF_DATE)"
           else
-            echo "effective_date=$DATE" >> "$GITHUB_OUTPUT"
-            echo "::warning::No run_manifest.json found anywhere"
+            echo "effective_date=${{ steps.date.outputs.as_of_date }}" >> "$GITHUB_OUTPUT"
+            echo "::warning::No run_manifest.json found — runner may have crashed before writing it"
           fi
 
       # ── Upload snapshot artifacts ───────────────────────────────
@@ -187,6 +174,8 @@ jobs:
           if-no-files-found: warn
 
       # ── Evaluate outcome (AFTER uploads) ────────────────────────
+      # RC is the primary signal (0=PASS, 2=WARN, else=FAIL).
+      # Manifest overall_status is a cross-check.
       - name: Evaluate outcome
         if: always()
         run: |
@@ -199,7 +188,16 @@ jobs:
             RC=1
           fi
 
-          # Write job summary
+          # Determine verdict from RC (primary)
+          if [ "$RC" = "0" ]; then
+            VERDICT="PASS"
+          elif [ "$RC" = "2" ]; then
+            VERDICT="WARN"
+          else
+            VERDICT="FAIL"
+          fi
+
+          # Write job summary header
           echo "## Phase-2 Daily Production Run" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
@@ -208,9 +206,10 @@ jobs:
           echo "| Effective date | \`$EFF_DATE\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Exit code | \`$RC\` |" >> "$GITHUB_STEP_SUMMARY"
 
-          # Parse manifest for summary details if available
+          # Parse manifest for summary details + cross-check
+          MANIFEST_STATUS=""
           if [ -f output/run_manifest.json ]; then
-            python -c "
+            MANIFEST_STATUS=$(python -c "
           import json, sys
           m = json.load(open('output/run_manifest.json'))
           git = m.get('git', {})
@@ -219,7 +218,8 @@ jobs:
           print(f'| Ruleset hash | \`{m.get(\"ruleset\", {}).get(\"ruleset_hash\", \"?\")}\` |')
           rc = m.get('row_counts', {})
           print(f'| Tickers | \`{rc.get(\"ticker_count\", \"?\")}\` |')
-          print(f'| Overall status | **{m.get(\"overall_status\", \"?\")}** |')
+          ms = m.get('overall_status', '?')
+          print(f'| Overall status | **{ms}** |')
           print()
           gates = m.get('gates', [])
           if gates:
@@ -230,21 +230,29 @@ jobs:
               for g in gates:
                   icon = {'PASS': ':white_check_mark:', 'WARN': ':warning:', 'FAIL': ':x:'}.get(g['status'], '')
                   print(f'| {g[\"name\"]} | {icon} {g[\"status\"]} | {g.get(\"detail\", \"\")} |')
-          " >> "$GITHUB_STEP_SUMMARY"
+          # Emit status on stderr for shell to capture
+          print(ms, file=sys.stderr)
+          " >> "$GITHUB_STEP_SUMMARY" 2>/tmp/_manifest_status)
+            MANIFEST_STATUS=$(cat /tmp/_manifest_status 2>/dev/null)
+
+            # Cross-check: warn if RC and manifest disagree
+            if [ -n "$MANIFEST_STATUS" ] && [ "$MANIFEST_STATUS" != "$VERDICT" ]; then
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "> :rotating_light: **Cross-check mismatch**: exit code says \`$VERDICT\` but manifest says \`$MANIFEST_STATUS\`" >> "$GITHUB_STEP_SUMMARY"
+              echo "::warning::RC=$RC ($VERDICT) disagrees with manifest overall_status=$MANIFEST_STATUS"
+            fi
           fi
 
-          # Exit code routing
-          if [ "$RC" = "0" ]; then
-            echo "" >> "$GITHUB_STEP_SUMMARY"
+          # Banner + exit — driven by RC, not manifest
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$VERDICT" = "PASS" ]; then
             echo "> :white_check_mark: All gates passed. Snapshot promoted." >> "$GITHUB_STEP_SUMMARY"
             exit 0
-          elif [ "$RC" = "2" ]; then
-            echo "" >> "$GITHUB_STEP_SUMMARY"
+          elif [ "$VERDICT" = "WARN" ]; then
             echo "> :warning: **WARN** — Snapshot promoted with warnings. Review gates above." >> "$GITHUB_STEP_SUMMARY"
             echo "::warning::Phase-2 daily production completed with WARN status"
             exit 0
           else
-            echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "> :x: **FAIL** — Snapshot NOT promoted. See gates and logs." >> "$GITHUB_STEP_SUMMARY"
             echo "::error::Phase-2 daily production FAILED (exit code $RC)"
             exit 1
