@@ -1,0 +1,117 @@
+{
+  "generated_at": "2026-02-19T13:00:48Z",
+  "current": {
+    "date": "2026-02-17",
+    "ruleset_id": "aa0aaf28",
+    "has_native_portfolio": true,
+    "portfolio_size": 20
+  },
+  "prior": null,
+  "tier_distribution": {
+    "current": {
+      "A": 29,
+      "B": 37,
+      "C": 57,
+      "D": 60
+    }
+  },
+  "tier_in_portfolio": {
+    "current": {
+      "A": 20,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    }
+  },
+  "sizing": {
+    "current": {
+      "L": 14,
+      "M": 4,
+      "S": 2,
+      "XS": 0
+    }
+  },
+  "catalyst_coverage": {
+    "current": {
+      "n_dev": 183,
+      "n_specific": 169,
+      "pct": 92.3,
+      "mode_dist": {
+        "specific_days": 169,
+        "no_upcoming": 14
+      },
+      "backfill_share_pct": 0.0
+    }
+  },
+  "top_catalysts": {
+    "current": [
+      {
+        "ticker": "SYRE",
+        "catalyst_days": 1,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "DNLI",
+        "catalyst_days": 8,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "ADCT",
+        "catalyst_days": 11,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "NMRA",
+        "catalyst_days": 12,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "PVLA",
+        "catalyst_days": 12,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "KYTX",
+        "catalyst_days": 12,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "VRDN",
+        "catalyst_days": 12,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "OLMA",
+        "catalyst_days": 12,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "NUVL",
+        "catalyst_days": 12,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "BNTX",
+        "catalyst_days": 12,
+        "tier_dev": "B"
+      }
+    ]
+  },
+  "risk_flags": {
+    "current": {
+      "deep_drawdown": 4,
+      "high_vol": 4,
+      "high_beta": 0,
+      "overbought_rsi": 0,
+      "low_confidence": 0
+    }
+  },
+  "guardrails": {
+    "passed": [
+      "Ruleset matches pinned Phase-2 ID (aa0aaf28)",
+      "A-tier count >= 1 (29)",
+      "Catalyst coverage 92.3% >= 50.0%"
+    ],
+    "warnings": []
+  }
+}
