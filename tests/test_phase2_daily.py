@@ -34,6 +34,7 @@ from run_daily_production import (
     check_turnover,
     check_xbi_staleness,
     promote_snapshot,
+    run_daily,
 )
 
 
@@ -359,6 +360,55 @@ class TestRunManifest:
             )
 
         assert manifest["overall_status"] == "WARN"
+
+
+class TestScreenFailureGate:
+    """Screen failure must produce overall_status=FAIL, not silent PASS."""
+
+    def test_screen_crash_yields_fail_manifest(self, tmp_path):
+        """When run_screen exits non-0/2, overall_status must be FAIL."""
+        price_csv = tmp_path / "prices.csv"
+        _write_price_csv(price_csv, [
+            {"ticker": "XBI", "date": "2026-02-19", "close": "100"},
+        ])
+
+        # Create ctgov cache so that gate passes
+        cache_dir = tmp_path / "ctgov"
+        cache_dir.mkdir(parents=True)
+        (cache_dir / "trial_records_2026-02-19.json").write_text("[]")
+
+        data_dir = tmp_path / "production_data"
+        data_dir.mkdir()
+        # Write minimal universe so price refresh doesn't error
+        (data_dir / "universe.json").write_text(json.dumps([{"ticker": "XBI"}]))
+
+        final_dir = tmp_path / "snapshots"
+        final_dir.mkdir()
+
+        # Patch run_screen to simulate crash (exit 1)
+        fake_proc = subprocess.CompletedProcess(
+            args=[], returncode=1, stdout="", stderr="ERROR: something broke",
+        )
+        with patch("run_daily_production.run_screen", return_value=fake_proc), \
+             patch("run_daily_production.get_git_info", return_value={
+                 "branch": "main", "commit_sha": "test", "dirty": False,
+             }):
+            manifest = run_daily(
+                "2026-02-19",
+                data_dir=data_dir,
+                price_csv=price_csv,
+                final_snapshots_dir=final_dir,
+                skip_price_refresh=True,
+                ctgov_cache_dir=cache_dir,
+            )
+
+        assert manifest["overall_status"] == "FAIL"
+        # Must have a "screen" gate in FAIL state
+        screen_gates = [g for g in manifest["gates"] if g["name"] == "screen"]
+        assert len(screen_gates) == 1
+        assert screen_gates[0]["status"] == "FAIL"
+        # Snapshot should NOT be promoted
+        assert not (final_dir / "2026-02-19").exists()
 
 
 # ---------------------------------------------------------------------------

@@ -134,18 +134,19 @@ jobs:
         run: |
           DATE="${{ steps.date.outputs.as_of_date }}"
 
-          # The runner promotes into data/snapshots/{effective_date}/
-          # On FAIL, manifest may be in a staging tmpdir (not accessible).
-          # Search snapshot dir for the most recent run_manifest.json.
+          # The runner always writes output/run_manifest.json (even on FAIL).
+          # On promotion (PASS/WARN), it also lives in data/snapshots/{date}/.
+          # Prefer the snapshot copy (has effective date in path), fall back to output/.
           MANIFEST=""
           for d in $(ls -1rd data/snapshots/*/run_manifest.json 2>/dev/null); do
             MANIFEST="$d"
             break
           done
 
-          # Fallback: try the requested date directly
-          if [ -z "$MANIFEST" ] && [ -f "data/snapshots/${DATE}/run_manifest.json" ]; then
-            MANIFEST="data/snapshots/${DATE}/run_manifest.json"
+          # Fallback: runner always writes to output/
+          if [ -z "$MANIFEST" ] && [ -f "output/run_manifest.json" ]; then
+            MANIFEST="output/run_manifest.json"
+            echo "Using fallback manifest from output/ (snapshot not promoted)"
           fi
 
           if [ -n "$MANIFEST" ]; then
@@ -153,11 +154,13 @@ jobs:
             echo "effective_date=$EFF_DATE" >> "$GITHUB_OUTPUT"
             echo "Found manifest at $MANIFEST (effective_date=$EFF_DATE)"
 
-            # Copy to output/ for artifact upload
-            cp "$MANIFEST" output/run_manifest.json
+            # Ensure output/ copy exists for artifact upload
+            if [ "$MANIFEST" != "output/run_manifest.json" ]; then
+              cp "$MANIFEST" output/run_manifest.json
+            fi
           else
             echo "effective_date=$DATE" >> "$GITHUB_OUTPUT"
-            echo "::warning::No run_manifest.json found in snapshot directory"
+            echo "::warning::No run_manifest.json found anywhere"
           fi
 
       # ── Upload snapshot artifacts ───────────────────────────────

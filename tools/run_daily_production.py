@@ -651,6 +651,11 @@ def run_daily(
         if screen_proc.stderr:
             for line in screen_proc.stderr.strip().splitlines()[-10:]:
                 print(f"    {line}")
+        gate_results.append(GateResult(
+            name="screen", status="FAIL",
+            detail=f"Screen failed (exit {screen_proc.returncode})",
+            value=screen_proc.returncode,
+        ))
         manifest = build_run_manifest(
             as_of_date, gate_results, price_stats, screen_proc, None, config,
             requested_as_of_date=requested_as_of_date,
@@ -665,6 +670,10 @@ def run_daily(
 
     if not staging_date_dir.exists():
         print(f"  ERROR: Expected snapshot at {staging_date_dir} not found")
+        gate_results.append(GateResult(
+            name="screen", status="FAIL",
+            detail=f"Snapshot directory not created by screen: {staging_date_dir}",
+        ))
         manifest = build_run_manifest(
             as_of_date, gate_results, price_stats, screen_proc, None, config,
             requested_as_of_date=requested_as_of_date,
@@ -813,6 +822,14 @@ def main():
         allow_date_fallback=args.allow_date_fallback,
         ctgov_cache_dir=args.ctgov_cache_dir,
     )
+
+    # Always write manifest to output/ for CI discoverability
+    # (snapshot-dir manifest only exists on successful promotion)
+    output_dir = REPO_ROOT / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    fallback_manifest = output_dir / "run_manifest.json"
+    with open(fallback_manifest, "w") as f:
+        json.dump(manifest, f, indent=2, default=str)
 
     status = manifest.get("overall_status", "FAIL")
     if status == "FAIL":
