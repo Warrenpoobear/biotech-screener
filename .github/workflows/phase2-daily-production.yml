@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       as_of_date:
-        description: "Screen date (YYYY-MM-DD), defaults to today"
+        description: "Screen date (YYYY-MM-DD), defaults to today (Detroit TZ)"
         required: false
         type: string
       allow_date_fallback:
@@ -26,7 +26,7 @@ permissions:
 
 concurrency:
   group: phase2-daily-production
-  cancel-in-progress: true
+  cancel-in-progress: false  # queue, don't cancel — avoid lost runs
 
 jobs:
   production-run:
@@ -54,13 +54,13 @@ jobs:
       - name: Run unit tests
         run: python -m pytest tests/ -q
 
-      # ── Resolve as_of_date ──────────────────────────────────────
+      # ── Resolve as_of_date (Detroit-local) ──────────────────────
       - name: Resolve date
         id: date
         run: |
           DATE="${{ inputs.as_of_date }}"
           if [ -z "$DATE" ]; then
-            DATE=$(date +%Y-%m-%d)
+            DATE=$(TZ=America/Detroit date +%F)
           fi
           echo "as_of_date=$DATE" >> "$GITHUB_OUTPUT"
           echo "Resolved as_of_date=$DATE"
@@ -102,14 +102,15 @@ jobs:
             }
           fi
 
-      # ── Production daily run ────────────────────────────────────
+      # ── Production daily run (includes audit + all gates) ──────
       - name: Run production daily
         id: runner
+        continue-on-error: true  # don't short-circuit — uploads must happen
         run: |
-          set +e
           DATE="${{ steps.date.outputs.as_of_date }}"
+          mkdir -p output
 
-          ARGS="--as-of-date $DATE --skip-audit"
+          ARGS="--as-of-date $DATE"
           if [ "${{ inputs.skip_price_refresh }}" = "true" ]; then
             ARGS="$ARGS --skip-price-refresh"
           fi
@@ -121,44 +122,37 @@ jobs:
           RC=${PIPESTATUS[0]}
           echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
 
-          # Extract effective_as_of_date from manifest for artifact upload
-          # Find the manifest in the snapshot dir
-          MANIFEST=$(find data/snapshots/ -name "run_manifest.json" -newer output/production_daily.log 2>/dev/null | head -1)
-          if [ -z "$MANIFEST" ]; then
-            # Fallback: find any manifest from today's run
-            MANIFEST=$(find data/snapshots/"$DATE"/ -name "run_manifest.json" 2>/dev/null | head -1)
+      # ── Extract manifest from snapshot dir ──────────────────────
+      - name: Locate manifest
+        if: always()
+        id: manifest
+        run: |
+          DATE="${{ steps.date.outputs.as_of_date }}"
+
+          # The runner promotes into data/snapshots/{effective_date}/
+          # On FAIL, manifest may be in a staging tmpdir (not accessible).
+          # Search snapshot dir for the most recent run_manifest.json.
+          MANIFEST=""
+          for d in $(ls -1rd data/snapshots/*/run_manifest.json 2>/dev/null); do
+            MANIFEST="$d"
+            break
+          done
+
+          # Fallback: try the requested date directly
+          if [ -z "$MANIFEST" ] && [ -f "data/snapshots/${DATE}/run_manifest.json" ]; then
+            MANIFEST="data/snapshots/${DATE}/run_manifest.json"
           fi
 
           if [ -n "$MANIFEST" ]; then
             EFF_DATE=$(python -c "import json,sys; m=json.load(open(sys.argv[1])); print(m.get('effective_as_of_date', m.get('as_of_date','')))" "$MANIFEST")
             echo "effective_date=$EFF_DATE" >> "$GITHUB_OUTPUT"
-            echo "manifest_path=$MANIFEST" >> "$GITHUB_OUTPUT"
+            echo "Found manifest at $MANIFEST (effective_date=$EFF_DATE)"
 
-            # Copy manifest to output/ for easy artifact access
+            # Copy to output/ for artifact upload
             cp "$MANIFEST" output/run_manifest.json
           else
             echo "effective_date=$DATE" >> "$GITHUB_OUTPUT"
             echo "::warning::No run_manifest.json found in snapshot directory"
-          fi
-
-          # Don't fail yet — evaluate step handles routing
-          exit 0
-
-      # ── Data integrity audit ────────────────────────────────────
-      - name: Run integrity audit
-        if: steps.runner.outputs.exit_code != '1'
-        run: |
-          EFF_DATE="${{ steps.runner.outputs.effective_date }}"
-          SNAP_DIR="data/snapshots/${EFF_DATE}"
-          if [ -d "$SNAP_DIR" ] && [ -f "$SNAP_DIR/rankings.csv" ]; then
-            mkdir -p "$SNAP_DIR/audit"
-            python tools/data_integrity_audit.py \
-              --snapshot-dir "$SNAP_DIR" \
-              --price-history production_data/price_history.csv \
-              --as-of-date "$EFF_DATE" \
-              --output-dir "$SNAP_DIR/audit" || true
-          else
-            echo "::notice::Snapshot not found at $SNAP_DIR — skipping audit"
           fi
 
       # ── Upload snapshot artifacts ───────────────────────────────
@@ -166,9 +160,9 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase2-snapshot-${{ steps.runner.outputs.effective_date || steps.date.outputs.as_of_date }}
+          name: phase2-snapshot-${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}
           path: |
-            data/snapshots/${{ steps.runner.outputs.effective_date || steps.date.outputs.as_of_date }}/
+            data/snapshots/${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}/
           retention-days: 90
           if-no-files-found: warn
 
@@ -176,20 +170,25 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase2-manifest-${{ steps.runner.outputs.effective_date || steps.date.outputs.as_of_date }}
+          name: phase2-manifest-${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}
           path: |
             output/run_manifest.json
             output/production_daily.log
           retention-days: 90
           if-no-files-found: warn
 
-      # ── Evaluate outcome ────────────────────────────────────────
+      # ── Evaluate outcome (AFTER uploads) ────────────────────────
       - name: Evaluate outcome
         if: always()
         run: |
-          RC=${{ steps.runner.outputs.exit_code }}
-          EFF_DATE="${{ steps.runner.outputs.effective_date }}"
+          RC="${{ steps.runner.outputs.exit_code }}"
+          EFF_DATE="${{ steps.manifest.outputs.effective_date }}"
           REQ_DATE="${{ steps.date.outputs.as_of_date }}"
+
+          # Default RC to 1 if runner step failed before setting output
+          if [ -z "$RC" ]; then
+            RC=1
+          fi
 
           # Write job summary
           echo "## Phase-2 Daily Production Run" >> "$GITHUB_STEP_SUMMARY"
