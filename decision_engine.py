@@ -734,7 +734,7 @@ def _compute_size_band(
     if tier_dev == "A" and optionality is not None and optionality >= ruleset.tier_a_optionality_floor:
         idx += 1
         reasons.append("tier_a_dev")
-    elif tier_dev == "A" and optionality is None and commercial_quality_pct is not None and commercial_quality_pct >= ruleset.tier_a_optionality_floor:
+    elif tier_dev == "A" and optionality is None and commercial_quality_pct is not None and commercial_quality_pct >= ruleset.tier_a_commercial_floor:
         idx += 1
         reasons.append("tier_a_commercial")
 
@@ -884,6 +884,8 @@ def _compute_tier_dev(
             return "B", f"high_opt+{cat_tag}" if cat_tag else "high_opt+catalyst_far"
         elif optionality >= ruleset.tier_b_optionality_floor and is_actionable:
             return "B", f"mod_opt+{cat_tag}"
+        elif optionality >= ruleset.tier_b_optionality_floor:
+            return "C", f"mod_opt+{cat_tag}" if cat_tag else "mod_opt+catalyst_far"
         else:
             return "C", "low_opt"
     else:
@@ -974,6 +976,8 @@ def _compute_tier_commercial(
             return "B", f"high_quality+{cat_tag}" if cat_tag else "high_quality+catalyst_far"
         elif quality_pct >= ruleset.tier_b_commercial_floor and is_actionable:
             return "B", f"mod_quality+{cat_tag}"
+        elif quality_pct >= ruleset.tier_b_commercial_floor:
+            return "C", f"mod_quality+{cat_tag}" if cat_tag else "mod_quality+catalyst_far"
         else:
             return "C", "low_quality"
     else:
