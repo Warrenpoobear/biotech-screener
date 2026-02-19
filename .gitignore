@@ -49,6 +49,7 @@ htmlcov/
 Thumbs.db
 
 # Project outputs (generated, not source)
+output/
 outputs/
 data/archives/
 data/archives_backfilled/

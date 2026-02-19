@@ -30,6 +30,7 @@ from run_daily_production import (
     build_run_manifest,
     check_audit_result,
     check_ctgov_cache,
+    check_inputs_present,
     check_missing_reason_fraction,
     check_turnover,
     check_xbi_staleness,
@@ -381,6 +382,8 @@ class TestScreenFailureGate:
         data_dir.mkdir()
         # Write minimal universe so price refresh doesn't error
         (data_dir / "universe.json").write_text(json.dumps([{"ticker": "XBI"}]))
+        # Required by inputs_present gate
+        (data_dir / "market_data.json").write_text("[]")
 
         final_dir = tmp_path / "snapshots"
         final_dir.mkdir()
@@ -603,3 +606,65 @@ class TestGitDirtySemantics:
         assert manifest["git"]["dirty_pre_run"] is True
         assert manifest["git"]["dirty_post_run"] is None
         assert manifest["git"]["dirty"] is True
+
+
+# ---------------------------------------------------------------------------
+# Tests: Inputs-present gate
+# ---------------------------------------------------------------------------
+
+class TestInputsPresentGate:
+
+    def test_pass_when_market_data_exists(self, tmp_path):
+        """All required gitignored files present → PASS."""
+        data_dir = tmp_path / "production_data"
+        data_dir.mkdir()
+        (data_dir / "market_data.json").write_text("[]")
+        result = check_inputs_present(data_dir)
+        assert result.status == "PASS"
+
+    def test_fail_when_market_data_missing(self, tmp_path):
+        """market_data.json absent → FAIL with filename in detail."""
+        data_dir = tmp_path / "production_data"
+        data_dir.mkdir()
+        result = check_inputs_present(data_dir)
+        assert result.status == "FAIL"
+        assert "market_data.json" in result.detail
+
+    def test_inputs_gate_aborts_before_screen(self, tmp_path):
+        """run_daily returns FAIL manifest without running screen."""
+        price_csv = tmp_path / "prices.csv"
+        _write_price_csv(price_csv, [
+            {"ticker": "XBI", "date": "2026-02-19", "close": "100"},
+        ])
+        cache_dir = tmp_path / "ctgov"
+        cache_dir.mkdir(parents=True)
+        (cache_dir / "trial_records_2026-02-19.json").write_text("[]")
+
+        data_dir = tmp_path / "production_data"
+        data_dir.mkdir()
+        (data_dir / "universe.json").write_text(json.dumps([{"ticker": "XBI"}]))
+        # Deliberately do NOT create market_data.json
+
+        final_dir = tmp_path / "snapshots"
+        final_dir.mkdir()
+
+        with patch("run_daily_production.run_screen") as mock_screen, \
+             patch("run_daily_production.get_git_info", return_value={
+                 "branch": "main", "commit_sha": "test", "dirty": False,
+             }):
+            manifest = run_daily(
+                "2026-02-19",
+                data_dir=data_dir,
+                price_csv=price_csv,
+                final_snapshots_dir=final_dir,
+                skip_price_refresh=True,
+                ctgov_cache_dir=cache_dir,
+            )
+            # Screen should never be called
+            mock_screen.assert_not_called()
+
+        assert manifest["overall_status"] == "FAIL"
+        inputs_gates = [g for g in manifest["gates"] if g["name"] == "inputs_present"]
+        assert len(inputs_gates) == 1
+        assert inputs_gates[0]["status"] == "FAIL"
+        assert "market_data.json" in inputs_gates[0]["detail"]

@@ -399,6 +399,32 @@ def check_ctgov_cache(
     )
 
 
+def check_inputs_present(data_dir: Path) -> GateResult:
+    """Check that required (gitignored) input files exist before running screen.
+
+    Required files that are tracked in git (universe.json, financial_records.json,
+    trial_records.json) are always present after checkout.  This gate checks for
+    files that are gitignored and must come from an inputs bundle or local setup.
+    """
+    required = [
+        ("market_data.json", "Market data (pricing, industry, volume)"),
+    ]
+    missing = []
+    for filename, desc in required:
+        if not (data_dir / filename).exists():
+            missing.append(filename)
+
+    if missing:
+        return GateResult(
+            name="inputs_present", status="FAIL",
+            detail=f"missing: {', '.join(missing)}",
+        )
+    return GateResult(
+        name="inputs_present", status="PASS",
+        detail=f"All required inputs found in {data_dir.name}/",
+    )
+
+
 # ---------------------------------------------------------------------------
 # Step 5: Run manifest
 # ---------------------------------------------------------------------------
@@ -635,6 +661,22 @@ def run_daily(
     if effective_as_of_date != as_of_date:
         print(f"  Date fallback: {as_of_date} → {effective_as_of_date}")
         as_of_date = effective_as_of_date
+
+    # --- Gate: required inputs present ---
+    inputs_gate = check_inputs_present(data_dir)
+    gate_results.append(inputs_gate)
+    print(f"  Inputs gate: {inputs_gate.status} — {inputs_gate.detail}")
+    if inputs_gate.status == "FAIL":
+        print("\n  FATAL: Required input files missing. Aborting before screen run.")
+        print(f"  Hint: publish an inputs bundle or copy market_data.json to {data_dir}/")
+        manifest = build_run_manifest(
+            as_of_date, gate_results, price_stats,
+            subprocess.CompletedProcess(args=[], returncode=-1),
+            None, config,
+            requested_as_of_date=requested_as_of_date,
+            git_pre_run=git_pre_run,
+        )
+        return manifest
 
     # --- Step 2: Run screen into staging dir ---
     print(f"\n[2/5] Running screen (phase2, ranking_mode=decision) ...")
