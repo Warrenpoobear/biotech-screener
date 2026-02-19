@@ -67,11 +67,32 @@ fi
 echo "Baseline rankings produced."
 echo ""
 
-# ── Step 3: Copy baseline rankings to golden/ ────────────────────
+# ── Step 3: Copy baseline rankings + write metadata to golden/ ───
 echo "[3/4] Copying baseline to ${GOLDEN_DIR}/..."
 mkdir -p "$GOLDEN_DIR"
 cp "${BASELINE_SNAP}/${DATE}/rankings.csv" "${GOLDEN_DIR}/rankings.csv"
-echo "Baseline ready: ${GOLDEN_DIR}/rankings.csv"
+
+# Write baseline_meta.json sidecar for freshness tracking
+GIT_SHA=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+THRESHOLDS_ID=$($PYTHON -c "
+from scripts.replay_diff import DiffThresholds
+print(DiffThresholds().thresholds_id)
+" 2>/dev/null || echo "unknown")
+
+$PYTHON -c "
+import json
+meta = {
+    'as_of_date': '${DATE}',
+    'created_at': '${DATE}',
+    'git_sha': '${GIT_SHA}',
+    'thresholds_id': '${THRESHOLDS_ID}',
+}
+with open('${GOLDEN_DIR}/baseline_meta.json', 'w') as f:
+    json.dump(meta, f, indent=2)
+    f.write('\n')
+print('Wrote baseline_meta.json')
+"
+echo "Baseline ready: ${GOLDEN_DIR}/rankings.csv + baseline_meta.json"
 echo ""
 
 # ── Step 4: Upload bundle to GitHub Release ──────────────────────
@@ -92,7 +113,7 @@ echo ""
 echo "=== Done ==="
 echo ""
 echo "Next steps:"
-echo "  1. git add ${GOLDEN_DIR}/rankings.csv"
+echo "  1. git add ${GOLDEN_DIR}/rankings.csv ${GOLDEN_DIR}/baseline_meta.json"
 echo "  2. git commit -m 'Add golden baseline for ${DATE}'"
 echo "  3. git push"
 echo ""

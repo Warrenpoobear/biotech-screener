@@ -32,6 +32,8 @@ jobs:
   production-run:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      PYTHONHASHSEED: "0"
 
     steps:
       - uses: actions/checkout@v4

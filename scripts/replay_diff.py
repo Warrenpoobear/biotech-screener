@@ -26,7 +26,7 @@ import math
 import sys
 import tarfile
 from dataclasses import dataclass, fields as dc_fields
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -145,6 +145,49 @@ def _is_commercial(archetype) -> bool:
     if pd.isna(archetype):
         return False
     return str(archetype).strip().lower().startswith("commercial_")
+
+
+# ---------------------------------------------------------------------------
+# Baseline freshness
+# ---------------------------------------------------------------------------
+
+
+def check_baseline_freshness(
+    baseline_path: str, max_age_days: int = 14
+) -> Dict[str, object]:
+    """Check whether the golden baseline is stale.
+
+    Looks for ``baseline_meta.json`` sidecar next to rankings.csv.
+    Falls back to file mtime if no sidecar exists.
+
+    Returns a dict with ``age_days``, ``stale``, ``source`` ("meta"|"mtime"|"unknown").
+    """
+    p = Path(baseline_path)
+
+    # If baseline_path is a tarball, we can't check freshness meaningfully
+    if not p.is_dir():
+        return {"age_days": None, "stale": False, "source": "unknown"}
+
+    meta_path = p / "baseline_meta.json"
+    today = date.today()
+
+    if meta_path.exists():
+        with open(meta_path, "r", encoding="utf-8") as fh:
+            meta = json.load(fh)
+        created_str = meta.get("created_at") or meta.get("as_of_date")
+        if created_str:
+            created = date.fromisoformat(created_str)
+            age = (today - created).days
+            return {"age_days": age, "stale": age > max_age_days, "source": "meta"}
+
+    # Fallback: rankings.csv mtime
+    csv_path = p / "rankings.csv"
+    if csv_path.exists():
+        mtime = datetime.fromtimestamp(csv_path.stat().st_mtime)
+        age = (today - mtime.date()).days
+        return {"age_days": age, "stale": age > max_age_days, "source": "mtime"}
+
+    return {"age_days": None, "stale": False, "source": "unknown"}
 
 
 # ---------------------------------------------------------------------------
@@ -818,9 +861,10 @@ def format_json_report(
     result: DiffResult,
     verdict: HealthVerdict,
     thresholds: DiffThresholds,
+    baseline_freshness: Optional[Dict[str, object]] = None,
 ) -> dict:
     """Build a JSON-serializable report dict."""
-    return {
+    report = {
         "version": VERSION,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "thresholds_id": thresholds.thresholds_id,
@@ -835,6 +879,9 @@ def format_json_report(
             f.name: getattr(thresholds, f.name) for f in dc_fields(thresholds)
         },
     }
+    if baseline_freshness is not None:
+        report["baseline_freshness"] = baseline_freshness
+    return report
 
 
 def format_markdown_report(
@@ -1060,6 +1107,10 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         "--strict", action="store_true",
         help="WARN also exits 1 (for CI lockdown)",
     )
+    p.add_argument(
+        "--baseline-max-age-days", type=int, default=14,
+        help="Warn if golden baseline is older than N days (default: 14)",
+    )
     return p.parse_args(argv)
 
 
@@ -1073,6 +1124,15 @@ def main(argv: Optional[List[str]] = None) -> int:
         thresholds = DiffThresholds()
 
     print(f"Thresholds ID: {thresholds.thresholds_id}")
+
+    # Baseline freshness
+    freshness = check_baseline_freshness(
+        args.baseline, args.baseline_max_age_days
+    )
+    if freshness["age_days"] is not None:
+        print(f"Baseline age: {freshness['age_days']} days (source: {freshness['source']})")
+        if freshness["stale"]:
+            print(f"  WARNING: baseline is stale (>{args.baseline_max_age_days} days)")
 
     # Load sources
     print(f"Loading baseline: {args.baseline}")
@@ -1090,6 +1150,18 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     # Evaluate health
     verdict = evaluate_health(result, thresholds)
+
+    # Inject baseline_stale warning if applicable
+    if freshness["stale"]:
+        age = freshness["age_days"]
+        verdict.warn_reasons.append(
+            f"baseline_stale: golden baseline is {age} days old "
+            f"(max {args.baseline_max_age_days})"
+        )
+        if verdict.status == "OK":
+            verdict.status = "WARN"
+            verdict.exit_code = 2
+
     print(f"\nVerdict: {verdict.status} (exit code {verdict.exit_code})")
 
     if verdict.fail_reasons:
@@ -1104,7 +1176,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     json_path = out_dir / args.json_out
-    report = format_json_report(result, verdict, thresholds)
+    report = format_json_report(result, verdict, thresholds, freshness)
     with open(json_path, "w", encoding="utf-8") as fh:
         json.dump(report, fh, indent=2)
         fh.write("\n")

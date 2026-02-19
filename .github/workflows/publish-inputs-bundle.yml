@@ -23,6 +23,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      PYTHONHASHSEED: "0"
 
     steps:
       - uses: actions/checkout@v4

@@ -16,6 +16,8 @@ jobs:
   replay:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      PYTHONHASHSEED: "0"
 
     steps:
       - uses: actions/checkout@v4
@@ -76,6 +78,27 @@ jobs:
           echo "baseline_dir=${BASELINE_DIR}" >> "$GITHUB_OUTPUT"
           echo "Baseline found: ${BASELINE_DIR}/rankings.csv"
 
+      # ── Check baseline freshness ───────────────────────────────────
+      - name: Check baseline freshness
+        if: steps.bundle.outputs.skip != 'true'
+        run: |
+          META="${{ steps.baseline.outputs.baseline_dir }}/baseline_meta.json"
+          if [ -f "$META" ]; then
+            AGE=$(python -c "
+          import json
+          from datetime import date
+          m = json.load(open('$META'))
+          age = (date.today() - date.fromisoformat(m['created_at'])).days
+          print(age)
+          ")
+            echo "Baseline age: ${AGE} days"
+            if [ "$AGE" -gt 14 ]; then
+              echo "::warning::Golden baseline is ${AGE} days old — consider refreshing"
+            fi
+          else
+            echo "::notice::No baseline_meta.json — age check skipped"
+          fi
+
       # ── Run pipeline from replay bundle ────────────────────────────
       - name: Run candidate pipeline
         if: steps.bundle.outputs.skip != 'true'
@@ -102,7 +125,8 @@ jobs:
           python scripts/replay_diff.py \
             --baseline "${{ steps.baseline.outputs.baseline_dir }}" \
             --candidate "/tmp/candidate/${{ steps.bundle.outputs.as_of_date }}/" \
-            --output-dir output/
+            --output-dir output/ \
+            --thresholds production_data/diff_thresholds/v1.json
           RC=$?
           echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
           # Don't fail yet — routing step handles exit code

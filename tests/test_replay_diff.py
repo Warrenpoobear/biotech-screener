@@ -28,6 +28,7 @@ from scripts.replay_diff import (
     _is_eligible,
     _jaccard_overlap,
     _safe_float,
+    check_baseline_freshness,
     compute_diff,
     evaluate_health,
     format_json_report,
@@ -790,3 +791,117 @@ class TestHelpers:
         assert _is_eligible("0") is False
         assert _is_eligible("") is False
         assert _is_eligible(None) is False
+
+
+# ===========================================================================
+# TestBaselineFreshness
+# ===========================================================================
+
+
+class TestBaselineFreshness:
+    def test_freshness_ok(self, tmp_path):
+        """Baseline within max_age_days → not stale."""
+        from datetime import date
+
+        meta = {"as_of_date": str(date.today()), "created_at": str(date.today())}
+        (tmp_path / "baseline_meta.json").write_text(json.dumps(meta))
+        (tmp_path / "rankings.csv").write_text("ticker\nAAA\n")
+
+        result = check_baseline_freshness(str(tmp_path), max_age_days=14)
+        assert result["stale"] is False
+        assert result["age_days"] == 0
+        assert result["source"] == "meta"
+
+    def test_freshness_stale(self, tmp_path):
+        """Baseline beyond max_age_days → stale."""
+        meta = {"as_of_date": "2025-01-01", "created_at": "2025-01-01"}
+        (tmp_path / "baseline_meta.json").write_text(json.dumps(meta))
+        (tmp_path / "rankings.csv").write_text("ticker\nAAA\n")
+
+        result = check_baseline_freshness(str(tmp_path), max_age_days=14)
+        assert result["stale"] is True
+        assert result["age_days"] > 14
+        assert result["source"] == "meta"
+
+    def test_freshness_no_meta_falls_back_to_mtime(self, tmp_path):
+        """Missing baseline_meta.json → falls back to mtime (not stale today)."""
+        csv_path = tmp_path / "rankings.csv"
+        csv_path.write_text("ticker\nAAA\n")
+
+        result = check_baseline_freshness(str(tmp_path), max_age_days=14)
+        assert result["source"] == "mtime"
+        assert result["stale"] is False
+        assert result["age_days"] is not None
+
+    def test_freshness_tarball_unknown(self, tmp_path):
+        """Non-directory baseline → unknown source, not stale."""
+        tar_path = tmp_path / "baseline.tar.gz"
+        tar_path.write_bytes(b"")
+
+        result = check_baseline_freshness(str(tar_path), max_age_days=14)
+        assert result["source"] == "unknown"
+        assert result["stale"] is False
+
+    def test_thresholds_from_json_roundtrip(self, tmp_path):
+        """Load v1.json, verify thresholds_id matches."""
+        original = DiffThresholds()
+        path = str(tmp_path / "thresholds.json")
+        original.to_json(path)
+
+        loaded = DiffThresholds.from_json(path)
+        assert loaded.thresholds_id == original.thresholds_id
+        assert loaded.thresholds_id == "b7ac2ea2"
+
+    def test_stale_baseline_injects_warn(self, tmp_path):
+        """Stale baseline injects baseline_stale into warn_reasons via main()."""
+        # Create stale baseline dir
+        base_dir = tmp_path / "base"
+        base_dir.mkdir()
+        df = _make_rankings(n=30)
+        _write_rankings_csv(df, base_dir)
+        meta = {"as_of_date": "2025-01-01", "created_at": "2025-01-01"}
+        (base_dir / "baseline_meta.json").write_text(json.dumps(meta))
+
+        # Candidate with identical data
+        cand_dir = tmp_path / "cand"
+        cand_dir.mkdir()
+        _write_rankings_csv(df, cand_dir)
+
+        out_dir = tmp_path / "output"
+        rc = main([
+            "--baseline", str(base_dir),
+            "--candidate", str(cand_dir),
+            "--output-dir", str(out_dir),
+        ])
+        assert rc == 2  # WARN (baseline_stale)
+
+        report = json.loads((out_dir / "diff_report.json").read_text())
+        assert any("baseline_stale" in r for r in report["verdict"]["warn_reasons"])
+        assert report["baseline_freshness"]["stale"] is True
+
+    def test_fresh_baseline_no_stale_warn(self, tmp_path):
+        """Fresh baseline does not inject baseline_stale warning."""
+        from datetime import date
+
+        base_dir = tmp_path / "base"
+        base_dir.mkdir()
+        df = _make_rankings(n=30)
+        _write_rankings_csv(df, base_dir)
+        meta = {"as_of_date": str(date.today()), "created_at": str(date.today())}
+        (base_dir / "baseline_meta.json").write_text(json.dumps(meta))
+
+        cand_dir = tmp_path / "cand"
+        cand_dir.mkdir()
+        _write_rankings_csv(df, cand_dir)
+
+        out_dir = tmp_path / "output"
+        rc = main([
+            "--baseline", str(base_dir),
+            "--candidate", str(cand_dir),
+            "--output-dir", str(out_dir),
+        ])
+        assert rc == 0
+
+        report = json.loads((out_dir / "diff_report.json").read_text())
+        assert not any("baseline_stale" in r for r in report["verdict"]["warn_reasons"])
+        assert report["baseline_freshness"]["stale"] is False
