@@ -1,29 +1,29 @@
 ========================================================================
 PHASE-2 RUN DELTA REPORT
 ========================================================================
-Generated: 2026-02-19T13:52:06Z
+Generated: 2026-02-19T14:17:02Z
 Current:   2026-02-19 (ruleset aa0aaf28)
 Prior:     2026-02-17 (ruleset aa0aaf28)
 
 HEALTH: WARN [high_weight_churn]
-  turnover=30.0%  catalyst=92.3%  A=29  ruleset=aa0aaf28
+  turnover=35.0%  catalyst=92.3%  A=32  ruleset=aa0aaf28
 
 1. PORTFOLIO TURNOVER
 ------------------------------------------------------------------------
   Current portfolio: 20 names
   Prior portfolio:   20 names
-  Entrants (6):  CELC, CGON, COGT, FDMT, ORKA, VRDN
-  Exits (6):  ARTV, CNTA, CRSP, NUVB, NUVL, VERA
-  Name turnover: 30.0%
-  Weight L1 delta: 68.4%
+  Entrants (7):  COGT, FDMT, IMVT, OCGN, ORKA, RVMD, VRDN
+  Exits (7):  ARTV, CLYM, CNTA, CRSP, NUVB, NUVL, VERA
+  Name turnover: 35.0%
+  Weight L1 delta: 77.5%
 
 2. TIER DISTRIBUTION (dev-stage universe)
 ------------------------------------------------------------------------
                 Current    Prior    Delta
-  A                  29       29       0
-  B                  35       35       0
-  C                  59       59       0
-  D                  60       60       0
+  A                  32       29 +      3
+  B                  39       35 +      4
+  C                  61       59 +      2
+  D                  51       60      -9
 
   In portfolio:
     A: 20 (100%)   Prior: 20 (100%)
@@ -32,9 +32,9 @@ HEALTH: WARN [high_weight_churn]
 3. SIZING (portfolio)
 ------------------------------------------------------------------------
                 Current    Prior    Delta
-  L                  13       15      -2
+  L                  12       15      -3
   M                   6        5 +      1
-  S                   1        0 +      1
+  S                   2        0 +      2
   XS                  0        0       0
 
 4. CATALYST COVERAGE (dev-stage)
@@ -47,9 +47,9 @@ HEALTH: WARN [high_weight_churn]
   Nearest 10 catalysts (current):
     DNLI       6d  tier=B      ADCT       9d  tier=A
     NMRA      10d  tier=A      PVLA      10d  tier=A
-    VRDN      10d  tier=A      OLMA      10d  tier=A
-    NUVL      10d  tier=A      ABVX      10d  tier=B
-    KYTX      10d  tier=B      VIR       10d  tier=B
+    IMVT      10d  tier=A      VRDN      10d  tier=A
+    OLMA      10d  tier=A      NUVL      10d  tier=A
+    ABVX      10d  tier=B      KYTX      10d  tier=B
 
 5. RISK SANITY (portfolio)
 ------------------------------------------------------------------------
@@ -63,6 +63,6 @@ HEALTH: WARN [high_weight_churn]
 6. GUARDRAILS
 ------------------------------------------------------------------------
   [PASS] Ruleset matches pinned Phase-2 ID (aa0aaf28)
-  [PASS] A-tier count > 0 (29)
+  [PASS] A-tier count > 0 (32)
   [PASS] Catalyst specific_days coverage > 50.0% (92.3%)
-  [PASS] Name turnover 30.0% <= 40.0%
+  [PASS] Name turnover 35.0% <= 40.0%

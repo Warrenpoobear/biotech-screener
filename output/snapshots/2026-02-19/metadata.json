@@ -1,6 +1,6 @@
 {
   "as_of_date": "2026-02-19",
-  "saved_at": "2026-02-19T13:52:06.247901Z",
+  "saved_at": "2026-02-19T14:17:02.488051Z",
   "decision_mode": "phase2",
   "ranking_mode": "decision",
   "version": "1.6.0",
@@ -512,8 +512,8 @@
     "universe_mapped.json": "15f9c56365b4bad7"
   },
   "clinical_sort_telemetry": {
-    "n_nonzero_clin_adj_dev": 67,
-    "n_nonzero_clin_adj_comm": 60,
+    "n_nonzero_clin_adj_dev": 68,
+    "n_nonzero_clin_adj_comm": 61,
     "ruleset_id": "aa0aaf28",
     "enable_clinical_sort_signal": true
   },

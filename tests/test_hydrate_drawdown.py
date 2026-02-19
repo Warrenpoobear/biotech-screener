@@ -182,20 +182,25 @@ class TestComputeFromPriceHistory:
         assert n == 0
         assert recs["MISS"]["defensive_features"].get("drawdown") is None
 
-    def test_already_normalized_skipped(self):
-        """Tickers already hydrated by Step A are not recomputed."""
+    def test_csv_overwrites_normalized_value(self):
+        """When price CSV has data, CSV-computed drawdown overwrites pipeline value."""
+        from datetime import date, timedelta
         recs = {"NORM": _make_rec("NORM", drawdown_current=-0.10)}
         with tempfile.TemporaryDirectory() as tmp:
             csv_path = Path(tmp) / "price_history.csv"
+            base = date(2024, 6, 1)
             prices = [
-                {"ticker": "NORM", "date": "2025-01-01", "close": "100"},
-                {"ticker": "NORM", "date": "2025-06-01", "close": "50"},
+                {"ticker": "NORM", "date": (base + timedelta(days=i)).isoformat(),
+                 "close": "100"}
+                for i in range(MIN_BARS_FOR_ESTIMATE - 1)
             ]
+            last_date = (base + timedelta(days=MIN_BARS_FOR_ESTIMATE - 1)).isoformat()
+            prices.append({"ticker": "NORM", "date": last_date, "close": "50"})
             _write_price_csv(csv_path, prices)
-            n = _hydrate_drawdown(recs, csv_path, "2025-06-01")
-        # Should have used normalized value, not computed -0.50
+            n = _hydrate_drawdown(recs, csv_path, last_date)
+        # CSV-computed -0.50 overwrites the pipeline-normalized -0.10
         assert n == 1
-        assert recs["NORM"]["defensive_features"]["drawdown"] == -0.10
+        assert abs(recs["NORM"]["defensive_features"]["drawdown"] - (-0.50)) < 1e-4
 
     def test_missing_csv_returns_zero(self):
         """Non-existent csv path returns 0 hydrated."""
@@ -447,3 +452,99 @@ class TestXbiRelativeDrawdown:
         df = recs["ACME"]["defensive_features"]
         assert df["drawdown_xbi"] is None
         assert df["drawdown_rel_xbi"] is None
+
+
+# ---------------------------------------------------------------------------
+# Regression: stale pipeline drawdown overwrite (KRYS case)
+# ---------------------------------------------------------------------------
+
+class TestStaleDrawdownOverwrite:
+    """Regression tests for the KRYS bug: Morningstar pipeline provided stale
+    drawdown (-45.8%) while price_history.csv showed only -5.3%.  The fix
+    ensures _hydrate_drawdown always recomputes from price_history.csv,
+    overwriting any stale pipeline value.
+    """
+
+    @staticmethod
+    def _make_prices(ticker, n_bars, start_price, end_price):
+        from datetime import date, timedelta
+        base = date(2025, 6, 1)
+        rows = []
+        for i in range(n_bars):
+            frac = i / max(n_bars - 1, 1)
+            price = start_price + (end_price - start_price) * frac
+            rows.append({
+                "ticker": ticker,
+                "date": (base + timedelta(days=i)).isoformat(),
+                "close": f"{price:.4f}",
+            })
+        return rows, (base + timedelta(days=n_bars - 1)).isoformat()
+
+    def test_stale_pipeline_drawdown_overwritten(self):
+        """Pipeline drawdown is replaced by price_history.csv computation."""
+        # Pipeline says -0.45 (stale), actual prices show only -5% drop
+        recs = {"KRYS": _make_rec("KRYS", drawdown=-0.4581)}
+        prices, last_date = self._make_prices("KRYS", 200, 100.0, 95.0)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, prices)
+            n = _hydrate_drawdown(recs, csv_path, last_date)
+        dd = recs["KRYS"]["defensive_features"]["drawdown"]
+        assert n >= 1
+        # Fresh drawdown should be around -0.05, NOT -0.4581
+        assert abs(dd - (-0.05)) < 0.01
+        assert recs["KRYS"]["defensive_features"]["drawdown_missing_reason"] == ""
+
+    def test_overwrite_corrects_relative_drawdown(self):
+        """Relative drawdown is recomputed after overwrite."""
+        # Pipeline has stale abs drawdown; CSV has correct prices
+        recs = {"STALE": _make_rec("STALE", drawdown=-0.50)}
+        ticker_prices, last_date = self._make_prices("STALE", 200, 100.0, 90.0)
+        xbi_prices, _ = self._make_prices("XBI", 200, 100.0, 95.0)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, ticker_prices + xbi_prices)
+            _hydrate_drawdown(recs, csv_path, last_date)
+        df = recs["STALE"]["defensive_features"]
+        # STALE drops 10%, XBI drops 5%, relative = -10% - (-5%) = -5%
+        assert abs(df["drawdown"] - (-0.10)) < 0.01
+        assert abs(df["drawdown_rel_xbi"] - (-0.05)) < 0.01
+
+    def test_no_csv_data_keeps_pipeline_value(self):
+        """When price CSV has no data for ticker, pipeline value is kept."""
+        recs = {"NOCSVDATA": _make_rec("NOCSVDATA", drawdown=-0.30)}
+        # CSV has data for OTHER but not NOCSVDATA
+        other_prices, last_date = self._make_prices("OTHER", 200, 100.0, 80.0)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, other_prices)
+            _hydrate_drawdown(recs, csv_path, last_date)
+        # Pipeline value preserved as fallback
+        assert recs["NOCSVDATA"]["defensive_features"]["drawdown"] == -0.30
+        assert recs["NOCSVDATA"]["defensive_features"]["drawdown_missing_reason"] == ""
+
+    def test_no_csv_path_keeps_pipeline_value(self):
+        """When price_history_path is None, pipeline drawdown preserved."""
+        recs = {"NOOP": _make_rec("NOOP", drawdown=-0.25)}
+        _hydrate_drawdown(recs, None, "2025-06-01")
+        assert recs["NOOP"]["defensive_features"]["drawdown"] == -0.25
+
+    def test_multiple_tickers_all_recomputed(self):
+        """All tickers with price data get fresh drawdowns, not just missing."""
+        recs = {
+            "FRESH": _make_rec("FRESH", drawdown=-0.80),   # stale, overstated
+            "STALE": _make_rec("STALE", drawdown=-0.05),   # stale, understated
+            "EMPTY": _make_rec("EMPTY"),                     # missing
+        }
+        fresh_prices, last_date = self._make_prices("FRESH", 200, 100.0, 90.0)
+        stale_prices, _ = self._make_prices("STALE", 200, 100.0, 50.0)
+        empty_prices, _ = self._make_prices("EMPTY", 200, 100.0, 70.0)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, fresh_prices + stale_prices + empty_prices)
+            n = _hydrate_drawdown(recs, csv_path, last_date)
+        # All three should have CSV-computed drawdowns
+        assert abs(recs["FRESH"]["defensive_features"]["drawdown"] - (-0.10)) < 0.01
+        assert abs(recs["STALE"]["defensive_features"]["drawdown"] - (-0.50)) < 0.01
+        assert abs(recs["EMPTY"]["defensive_features"]["drawdown"] - (-0.30)) < 0.01
+        assert n >= 3

@@ -1528,68 +1528,59 @@ def _hydrate_drawdown(
     price_history_path: Optional[Path],
     as_of_date: str,
 ) -> int:
-    """Ensure ``defensive_features["drawdown"]`` is populated for every record.
+    """Ensure ``defensive_features["drawdown"]`` is fresh for every record.
 
-    **Step A — Normalize existing keys**: If ``drawdown`` is absent but
-    ``drawdown_current`` or ``drawdown_60d`` exists in ``defensive_features``,
-    copy the first available value to ``drawdown``.
+    **Step A — Recompute from price_history.csv**: For ALL tickers with
+    sufficient price data, compute 252-day drawdown ``(current / peak) - 1.0``
+    and write into ``defensive_features["drawdown"]``, *overwriting* any
+    existing pipeline value.  This guarantees a single, consistent source of
+    truth — the Morningstar pipeline may carry stale drawdowns when its
+    underlying price feed lags the yfinance-sourced price_history.csv.
 
-    **Step B — Compute from price_history.csv**: For records still missing
-    ``drawdown``, load daily closes (date <= as_of_date, PIT-safe), compute
-    252-day drawdown ``(current / peak) - 1.0`` and write into
-    ``defensive_features["drawdown"]``.
+    **Step B — Fallback**: For tickers where price_history.csv has no data,
+    keep any pipeline-provided ``drawdown`` (or alias ``drawdown_current``).
 
     Also writes ``defensive_features["drawdown_missing_reason"]``:
       - ``""`` — drawdown is present (computed or normalized)
       - ``"no_price_series"`` — ticker not found in price_history.csv
       - ``"series_too_short"`` — has price data but bars < MIN_BARS_FOR_ESTIMATE
 
-    Returns the number of records hydrated (either normalized or computed).
+    Returns the number of records hydrated (overwritten or newly computed).
     """
     import csv as _csv
     from datetime import datetime as _dt
 
     hydrated = 0
 
-    # --- Step A: key normalization (coerce to float | None) ---
-    for rec in rec_by_ticker.values():
-        df = rec.get("defensive_features")
-        if df is None:
-            df = {}
-            rec["defensive_features"] = df
-        # Coerce existing drawdown to float (JSON may store as string)
-        raw_dd = df.get("drawdown")
-        if raw_dd is not None:
-            try:
-                df["drawdown"] = float(raw_dd)
-            except (ValueError, TypeError):
-                df["drawdown"] = None
-        if df.get("drawdown") is not None:
-            df["drawdown_missing_reason"] = ""
-            continue
-        for alt_key in ("drawdown_current", "drawdown_60d"):
-            val = df.get(alt_key)
-            if val is not None:
-                try:
-                    df["drawdown"] = float(val)
-                except (ValueError, TypeError):
-                    continue
-                df["drawdown_missing_reason"] = ""
-                hydrated += 1
-                break
-
-    # --- Step B: compute from price_history.csv ---
-    still_missing = [t for t, r in rec_by_ticker.items()
-                     if (r.get("defensive_features") or {}).get("drawdown") is None]
-    if not still_missing or price_history_path is None or not price_history_path.exists():
-        # Tag remaining missing tickers with reason (no CSV available)
-        for t in still_missing if still_missing else []:
-            df = rec_by_ticker[t].get("defensive_features")
+    # --- Step A: Compute from price_history.csv for ALL tickers ---
+    if price_history_path is None or not price_history_path.exists():
+        # No price CSV: fall back to pipeline values (normalize keys only)
+        for rec in rec_by_ticker.values():
+            df = rec.get("defensive_features")
             if df is None:
                 df = {}
-                rec_by_ticker[t]["defensive_features"] = df
-            if "drawdown_missing_reason" not in df:
-                df["drawdown_missing_reason"] = "no_price_series"
+                rec["defensive_features"] = df
+            raw_dd = df.get("drawdown")
+            if raw_dd is not None:
+                try:
+                    df["drawdown"] = float(raw_dd)
+                except (ValueError, TypeError):
+                    df["drawdown"] = None
+            if df.get("drawdown") is not None:
+                df["drawdown_missing_reason"] = ""
+                continue
+            for alt_key in ("drawdown_current", "drawdown_60d"):
+                val = df.get(alt_key)
+                if val is not None:
+                    try:
+                        df["drawdown"] = float(val)
+                    except (ValueError, TypeError):
+                        continue
+                    df["drawdown_missing_reason"] = ""
+                    hydrated += 1
+                    break
+            else:
+                df.setdefault("drawdown_missing_reason", "no_price_series")
         return hydrated
 
     try:
@@ -1598,11 +1589,9 @@ def _hydrate_drawdown(
         logger.warning(f"_hydrate_drawdown: invalid as_of_date {as_of_date}")
         return hydrated
 
-    missing_set = set(still_missing)
+    all_tickers = set(rec_by_ticker.keys())
 
     # --- Symbol alias variants ---
-    # For each missing ticker, generate deterministic alias variants
-    # (dot↔dash, strip whitespace) to match against CSV symbols.
     def _alias_variants(sym: str) -> List[str]:
         s = sym.strip().upper()
         variants = [s]
@@ -1612,20 +1601,19 @@ def _hydrate_drawdown(
             variants.append(s.replace("-", "."))
         return variants
 
-    # Build set of all symbols we want from the CSV: exact + alias variants
     alias_targets: set = set()
-    for t in missing_set:
+    for t in all_tickers:
         for v in _alias_variants(t):
             alias_targets.add(v)
 
-    # Also read XBI prices for relative drawdown computation
+    # Read prices for ALL universe tickers + XBI
     xbi_want = {"XBI"}
     prices_by_ticker: Dict[str, List[float]] = {}
     with open(price_history_path, "r", encoding="utf-8") as fh:
         reader = _csv.DictReader(fh)
         for row in reader:
             ticker = (row.get("ticker") or "").upper()
-            if ticker not in missing_set and ticker not in alias_targets and ticker not in xbi_want:
+            if ticker not in all_tickers and ticker not in alias_targets and ticker not in xbi_want:
                 continue
             date_str = row.get("date", "")
             close_str = row.get("close", "")
@@ -1645,28 +1633,24 @@ def _hydrate_drawdown(
                 continue
             prices_by_ticker.setdefault(ticker, []).append((row_date, close))
 
-    # --- Build alias index: variant → CSV symbol ---
-    # For CSV symbols NOT already exact-matched, check if they are alias
-    # variants of any missing ticker.  On collision, keep lexicographically
-    # smallest CSV symbol for determinism.
+    # --- Build alias index ---
     alias_to_csv_sym: Dict[str, str] = {}
     csv_syms_with_data = set(prices_by_ticker.keys())
-    for csv_sym in sorted(csv_syms_with_data):  # sorted → deterministic
+    for csv_sym in sorted(csv_syms_with_data):
         for v in _alias_variants(csv_sym):
-            if v in missing_set and v not in prices_by_ticker:
-                # This CSV symbol is an alias for missing ticker v
+            if v in all_tickers and v not in prices_by_ticker:
                 if v not in alias_to_csv_sym:
                     alias_to_csv_sym[v] = csv_sym
 
     WINDOW = 252
-    for ticker in still_missing:
+    recomputed_tickers: set = set()
+    for ticker in all_tickers:
         rec = rec_by_ticker[ticker]
         df = rec.get("defensive_features")
         if df is None:
             df = {}
             rec["defensive_features"] = df
 
-        # Try exact match first, then alias resolution
         resolved_sym = None
         series = prices_by_ticker.get(ticker)
         if not series:
@@ -1675,11 +1659,30 @@ def _hydrate_drawdown(
                 series = prices_by_ticker.get(csv_sym)
                 resolved_sym = csv_sym
 
-        if not series:
-            df["drawdown_missing_reason"] = "no_price_series"
-            continue
-        if len(series) < MIN_BARS_FOR_ESTIMATE:
-            df["drawdown_missing_reason"] = "series_too_short"
+        if not series or len(series) < MIN_BARS_FOR_ESTIMATE:
+            # No sufficient price data — fall back to pipeline value
+            raw_dd = df.get("drawdown")
+            if raw_dd is not None:
+                try:
+                    df["drawdown"] = float(raw_dd)
+                except (ValueError, TypeError):
+                    df["drawdown"] = None
+            if df.get("drawdown") is None:
+                for alt_key in ("drawdown_current", "drawdown_60d"):
+                    val = df.get(alt_key)
+                    if val is not None:
+                        try:
+                            df["drawdown"] = float(val)
+                        except (ValueError, TypeError):
+                            continue
+                        hydrated += 1
+                        break
+            if df.get("drawdown") is not None:
+                df["drawdown_missing_reason"] = ""
+            elif not series:
+                df["drawdown_missing_reason"] = "no_price_series"
+            else:
+                df["drawdown_missing_reason"] = "series_too_short"
             continue
 
         series.sort(key=lambda x: x[0])
@@ -1689,11 +1692,26 @@ def _hydrate_drawdown(
         if peak == 0:
             df["drawdown_missing_reason"] = "series_too_short"
             continue
-        dd = (closes[-1] / peak) - 1.0
-        df["drawdown"] = round(dd, 6)
+
+        old_dd = df.get("drawdown")
+        dd = round((closes[-1] / peak) - 1.0, 6)
+        df["drawdown"] = dd
         df["drawdown_missing_reason"] = ""
         if resolved_sym:
             df["drawdown_price_symbol"] = resolved_sym
+        recomputed_tickers.add(ticker)
+
+        # Track overwrite for logging
+        if old_dd is not None:
+            try:
+                old_dd_f = float(old_dd)
+                if abs(dd - old_dd_f) > 0.05:
+                    logger.debug(
+                        f"_hydrate_drawdown: {ticker} overwrite "
+                        f"{old_dd_f:.4f} → {dd:.4f} (delta {dd - old_dd_f:+.4f})"
+                    )
+            except (ValueError, TypeError):
+                pass
         hydrated += 1
 
     # --- XBI drawdown + relative drawdown for ALL tickers ---
@@ -3120,6 +3138,53 @@ def save_validation_snapshot(
         rs.to_json(str(snap_path / "decision_ruleset.json"))
     except OSError as e:
         logger.warning(f"Could not write decision_ruleset.json: {e}")
+
+    # --- Eligibility debug diagnostics (phase2 only) ---
+    if decision_mode == "phase2":
+        try:
+            from decision_engine import compute_gate_margins
+            _elig_rs = ruleset or DEFAULT_RULESET
+            elig_debug = []
+            for row in csv_rows:
+                _t = row.get("ticker", "")
+                _rec = rec_by_ticker.get(_t)
+                if _rec is None:
+                    continue
+                _df = _rec.get("defensive_features") or {}
+                _gm = compute_gate_margins(_rec, ruleset=_elig_rs)
+                elig_debug.append({
+                    "ticker": _t,
+                    "dd_abs": _df.get("drawdown"),
+                    "dd_rel": _df.get("drawdown_rel_xbi"),
+                    "dd_xbi": _df.get("drawdown_xbi"),
+                    "abs_breach": (
+                        _df.get("drawdown") is not None
+                        and _df.get("drawdown") < _elig_rs.drawdown_gate
+                    ),
+                    "rel_breach": (
+                        _df.get("drawdown_rel_xbi") is not None
+                        and _df.get("drawdown_rel_xbi") < _elig_rs.drawdown_rel_xbi_gate
+                    ),
+                    "gate_mode": _elig_rs.drawdown_gate_mode,
+                    "require_both": _elig_rs.drawdown_gate_require_both,
+                    "rescue_enabled": _elig_rs.enable_dd_rel_margin_rescue,
+                    "rescue_threshold": _elig_rs.dd_rel_margin_rescue_threshold,
+                    "dd_combined_passed": next(
+                        (g["passed"] for g in _gm["gates"] if g["gate"] == "deep_drawdown"),
+                        None,
+                    ),
+                    "dd_abs_margin": _gm.get("dd_abs_margin"),
+                    "dd_rel_margin": _gm.get("dd_rel_margin"),
+                    "rescued_by_rel": _gm.get("rescued_by_rel"),
+                    "final_eligible": row.get("eligible"),
+                    "ineligible_reasons": row.get("ineligible_reasons", ""),
+                })
+            with open(snap_path / "eligibility_debug.json", "w", encoding="utf-8") as f:
+                json.dump(elig_debug, f, indent=2, default=str)
+                f.write("\n")
+            logger.info(f"Eligibility debug: {len(elig_debug)} tickers -> eligibility_debug.json")
+        except Exception as e:
+            logger.warning(f"Could not write eligibility_debug.json: {e}")
 
     # --- Phase-2 decision portfolio (full DE-ranked research list) ---
     if decision_mode == "phase2":
