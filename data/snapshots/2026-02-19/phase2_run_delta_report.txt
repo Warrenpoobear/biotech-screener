@@ -1,0 +1,68 @@
+========================================================================
+PHASE-2 RUN DELTA REPORT
+========================================================================
+Generated: 2026-02-19T13:04:08Z
+Current:   2026-02-19 (ruleset aa0aaf28)
+Prior:     2026-02-17 (ruleset aa0aaf28)
+
+HEALTH: OK
+  turnover=25.0%  catalyst=92.3%  A=29  ruleset=aa0aaf28
+
+1. PORTFOLIO TURNOVER
+------------------------------------------------------------------------
+  Current portfolio: 20 names
+  Prior portfolio:   20 names
+  Entrants (5):  ALMS, CLYM, RNA, SYRE, VRDN
+  Exits (5):  CRSP, DNLI, KALV, KYTX, NUVB
+  Name turnover: 25.0%
+  Weight L1 delta: 51.9%
+
+2. TIER DISTRIBUTION (dev-stage universe)
+------------------------------------------------------------------------
+                Current    Prior    Delta
+  A                  29       29       0
+  B                  35       37      -2
+  C                  59       57 +      2
+  D                  60       60       0
+
+  In portfolio:
+    A: 20 (100%)   Prior: 20 (100%)
+    B: 0 (0%)   Prior: 0 (0%)
+
+3. SIZING (portfolio)
+------------------------------------------------------------------------
+                Current    Prior    Delta
+  L                  13       14      -1
+  M                   6        4 +      2
+  S                   1        2      -1
+  XS                  0        0       0
+
+4. CATALYST COVERAGE (dev-stage)
+------------------------------------------------------------------------
+  specific_days:  92.3%  (Prior: 92.3%)
+  Mode distribution (current):
+    no_upcoming: 14
+    specific_days: 169
+
+  Nearest 10 catalysts (current):
+    DNLI       6d  tier=B      ADCT       9d  tier=A
+    NMRA      10d  tier=A      PVLA      10d  tier=A
+    VRDN      10d  tier=A      OLMA      10d  tier=A
+    NUVL      10d  tier=A      ABVX      10d  tier=B
+    KYTX      10d  tier=B      VIR       10d  tier=B
+
+5. RISK SANITY (portfolio)
+------------------------------------------------------------------------
+  Flag                  Current    Prior
+  deep_drawdown               1        4
+  high_vol                    3        4
+  high_beta                   0        0
+  overbought_rsi              0        0
+  low_confidence              0        0
+
+6. GUARDRAILS
+------------------------------------------------------------------------
+  [PASS] Ruleset matches pinned Phase-2 ID (aa0aaf28)
+  [PASS] A-tier count > 0 (29)
+  [PASS] Catalyst specific_days coverage > 50.0% (92.3%)
+  [PASS] Name turnover 25.0% <= 40.0%
