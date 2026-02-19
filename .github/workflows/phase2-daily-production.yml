@@ -1,0 +1,243 @@
+name: phase2-daily-production
+
+on:
+  schedule:
+    # Weekdays at 2:00 PM UTC (9–10 AM America/Detroit depending on DST)
+    - cron: "0 14 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      as_of_date:
+        description: "Screen date (YYYY-MM-DD), defaults to today"
+        required: false
+        type: string
+      allow_date_fallback:
+        description: "Allow ctgov cache date fallback (WARN instead of FAIL)"
+        required: false
+        type: boolean
+        default: false
+      skip_price_refresh:
+        description: "Skip yfinance price refresh (use existing price_history.csv)"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase2-daily-production
+  cancel-in-progress: true
+
+jobs:
+  production-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest-xdist yfinance
+          pip install -e .
+
+      # ── Unit tests (fast gate) ──────────────────────────────────
+      - name: Run unit tests
+        run: python -m pytest tests/ -q
+
+      # ── Resolve as_of_date ──────────────────────────────────────
+      - name: Resolve date
+        id: date
+        run: |
+          DATE="${{ inputs.as_of_date }}"
+          if [ -z "$DATE" ]; then
+            DATE=$(date +%Y-%m-%d)
+          fi
+          echo "as_of_date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "Resolved as_of_date=$DATE"
+
+      # ── Hydrate inputs bundle (if available) ────────────────────
+      - name: Hydrate inputs
+        run: |
+          DATE="${{ steps.date.outputs.as_of_date }}"
+          BUNDLE="phase2-inputs-${DATE}.tar.gz"
+          TAG="inputs-${DATE}"
+
+          echo "Attempting to download bundle: ${BUNDLE} (tag: ${TAG})"
+
+          if gh release download "$TAG" --pattern "$BUNDLE" --dir /tmp 2>/dev/null; then
+            echo "Downloaded date-specific bundle"
+          elif gh release download "inputs-latest" --pattern "phase2-inputs-latest.tar.gz" --dir /tmp 2>/dev/null; then
+            BUNDLE="phase2-inputs-latest.tar.gz"
+            echo "Downloaded latest bundle"
+          else
+            echo "::notice::No inputs bundle found — using committed production_data"
+            exit 0
+          fi
+
+          echo "Extracting ${BUNDLE} → production_data/"
+          tar -xzf "/tmp/${BUNDLE}" -C production_data/
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Warm ctgov cache ────────────────────────────────────────
+      - name: Warm ctgov cache
+        run: |
+          DATE="${{ steps.date.outputs.as_of_date }}"
+          if [ -f cache/ctgov/trial_records_${DATE}.json ]; then
+            echo "CTGov cache already exists for ${DATE}"
+          else
+            echo "Warming ctgov cache for ${DATE}..."
+            python warm_caches.py --as-of-date "$DATE" --sources ctgov || {
+              echo "::warning::CTGov cache warming failed — production runner will gate this"
+            }
+          fi
+
+      # ── Production daily run ────────────────────────────────────
+      - name: Run production daily
+        id: runner
+        run: |
+          set +e
+          DATE="${{ steps.date.outputs.as_of_date }}"
+
+          ARGS="--as-of-date $DATE --skip-audit"
+          if [ "${{ inputs.skip_price_refresh }}" = "true" ]; then
+            ARGS="$ARGS --skip-price-refresh"
+          fi
+          if [ "${{ inputs.allow_date_fallback }}" = "true" ]; then
+            ARGS="$ARGS --allow-date-fallback"
+          fi
+
+          python tools/run_daily_production.py $ARGS 2>&1 | tee output/production_daily.log
+          RC=${PIPESTATUS[0]}
+          echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+
+          # Extract effective_as_of_date from manifest for artifact upload
+          # Find the manifest in the snapshot dir
+          MANIFEST=$(find data/snapshots/ -name "run_manifest.json" -newer output/production_daily.log 2>/dev/null | head -1)
+          if [ -z "$MANIFEST" ]; then
+            # Fallback: find any manifest from today's run
+            MANIFEST=$(find data/snapshots/"$DATE"/ -name "run_manifest.json" 2>/dev/null | head -1)
+          fi
+
+          if [ -n "$MANIFEST" ]; then
+            EFF_DATE=$(python -c "import json,sys; m=json.load(open(sys.argv[1])); print(m.get('effective_as_of_date', m.get('as_of_date','')))" "$MANIFEST")
+            echo "effective_date=$EFF_DATE" >> "$GITHUB_OUTPUT"
+            echo "manifest_path=$MANIFEST" >> "$GITHUB_OUTPUT"
+
+            # Copy manifest to output/ for easy artifact access
+            cp "$MANIFEST" output/run_manifest.json
+          else
+            echo "effective_date=$DATE" >> "$GITHUB_OUTPUT"
+            echo "::warning::No run_manifest.json found in snapshot directory"
+          fi
+
+          # Don't fail yet — evaluate step handles routing
+          exit 0
+
+      # ── Data integrity audit ────────────────────────────────────
+      - name: Run integrity audit
+        if: steps.runner.outputs.exit_code != '1'
+        run: |
+          EFF_DATE="${{ steps.runner.outputs.effective_date }}"
+          SNAP_DIR="data/snapshots/${EFF_DATE}"
+          if [ -d "$SNAP_DIR" ] && [ -f "$SNAP_DIR/rankings.csv" ]; then
+            mkdir -p "$SNAP_DIR/audit"
+            python tools/data_integrity_audit.py \
+              --snapshot-dir "$SNAP_DIR" \
+              --price-history production_data/price_history.csv \
+              --as-of-date "$EFF_DATE" \
+              --output-dir "$SNAP_DIR/audit" || true
+          else
+            echo "::notice::Snapshot not found at $SNAP_DIR — skipping audit"
+          fi
+
+      # ── Upload snapshot artifacts ───────────────────────────────
+      - name: Upload snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-snapshot-${{ steps.runner.outputs.effective_date || steps.date.outputs.as_of_date }}
+          path: |
+            data/snapshots/${{ steps.runner.outputs.effective_date || steps.date.outputs.as_of_date }}/
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Upload run manifest & logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-manifest-${{ steps.runner.outputs.effective_date || steps.date.outputs.as_of_date }}
+          path: |
+            output/run_manifest.json
+            output/production_daily.log
+          retention-days: 90
+          if-no-files-found: warn
+
+      # ── Evaluate outcome ────────────────────────────────────────
+      - name: Evaluate outcome
+        if: always()
+        run: |
+          RC=${{ steps.runner.outputs.exit_code }}
+          EFF_DATE="${{ steps.runner.outputs.effective_date }}"
+          REQ_DATE="${{ steps.date.outputs.as_of_date }}"
+
+          # Write job summary
+          echo "## Phase-2 Daily Production Run" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Requested date | \`$REQ_DATE\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Effective date | \`$EFF_DATE\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Exit code | \`$RC\` |" >> "$GITHUB_STEP_SUMMARY"
+
+          # Parse manifest for summary details if available
+          if [ -f output/run_manifest.json ]; then
+            python -c "
+          import json, sys
+          m = json.load(open('output/run_manifest.json'))
+          git = m.get('git', {})
+          print(f'| Git SHA | \`{git.get(\"commit_sha\", \"?\")}\` |')
+          print(f'| Git dirty (pre-run) | \`{git.get(\"dirty_pre_run\", \"?\")}\` |')
+          print(f'| Ruleset hash | \`{m.get(\"ruleset\", {}).get(\"ruleset_hash\", \"?\")}\` |')
+          rc = m.get('row_counts', {})
+          print(f'| Tickers | \`{rc.get(\"ticker_count\", \"?\")}\` |')
+          print(f'| Overall status | **{m.get(\"overall_status\", \"?\")}** |')
+          print()
+          gates = m.get('gates', [])
+          if gates:
+              print('### Gates')
+              print()
+              print('| Gate | Status | Detail |')
+              print('|------|--------|--------|')
+              for g in gates:
+                  icon = {'PASS': ':white_check_mark:', 'WARN': ':warning:', 'FAIL': ':x:'}.get(g['status'], '')
+                  print(f'| {g[\"name\"]} | {icon} {g[\"status\"]} | {g.get(\"detail\", \"\")} |')
+          " >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          # Exit code routing
+          if [ "$RC" = "0" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "> :white_check_mark: All gates passed. Snapshot promoted." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          elif [ "$RC" = "2" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "> :warning: **WARN** — Snapshot promoted with warnings. Review gates above." >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::Phase-2 daily production completed with WARN status"
+            exit 0
+          else
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "> :x: **FAIL** — Snapshot NOT promoted. See gates and logs." >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::Phase-2 daily production FAILED (exit code $RC)"
+            exit 1
+          fi
