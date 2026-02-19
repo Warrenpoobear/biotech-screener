@@ -1358,8 +1358,12 @@ SNAPSHOT_COLUMNS = [
     "de_catalyst_in_window",
     "de_catalyst_mode",
     "de_alpha_60d",
+    "de_alpha_60d_source",
+    "de_alpha_60d_missing_reason",
     "de_tier1_count",
     "de_beta_xbi_60d",
+    "de_beta_xbi_60d_source",
+    "de_beta_xbi_60d_missing_reason",
     "de_drawdown",
     "de_drawdown_missing_reason",
     "de_rsi_14d",
@@ -1750,59 +1754,60 @@ def _hydrate_drawdown(
     return hydrated
 
 
+BETA_WINDOW = 60
+"""Number of aligned trading days for beta/alpha computation."""
+
+MIN_OVERLAP_BARS = 30
+"""Minimum date-aligned bars required for a meaningful beta estimate."""
+
+XBI_STALE_THRESHOLD = 3
+"""Max acceptable trading-day gap between XBI last date and other tickers.
+If exceeded, beta/alpha are marked ``xbi_stale`` rather than computed
+silently from stale benchmark data."""
+
+
 def _hydrate_beta_rsi(
     rec_by_ticker: Dict[str, Dict[str, Any]],
     price_history_path: Optional[Path],
     as_of_date: str,
 ) -> int:
-    """Hydrate ``beta_xbi_60d`` and ``rsi_14d`` in defensive_features.
+    """Hydrate ``beta_xbi_60d``, ``alpha_60d``, and ``rsi_14d`` from price CSV.
 
-    **beta_xbi_60d**: Loaded from ``defensive_features_cache.json`` in the
-    same directory as *price_history_path*. Only fills missing values.
+    All three fields use **overwrite_always** policy — ``price_history.csv``
+    is the single source of truth.  Stale pipeline / cache values are always
+    replaced when recomputation is possible.
 
-    **rsi_14d**: Always recomputed from price_history.csv (14-day Wilder
-    smoothing) for ALL tickers — overwrites stale pipeline values.
-    Same overwrite policy as ``_hydrate_drawdown()``.
+    **Beta** is computed from date-aligned daily returns (inner-join by date)
+    over a 60-day window.
 
-    Returns the total number of fields hydrated.
+    **Alpha** (excess return) is ``ticker_cum_return − beta × xbi_cum_return``
+    over the same aligned window.
+
+    **RSI** is 14-day Wilder-smoothed, unchanged from prior implementation.
+
+    **XBI staleness guard**: when XBI price data is >3 trading days behind
+    *as_of_date*, beta and alpha are *not* computed.  Instead the missing-
+    reason field is set to ``xbi_stale``.
+
+    Missing-reason fields stored on ``defensive_features``:
+
+    * ``beta_xbi_60d_missing_reason``: ``""`` | ``no_xbi_series`` |
+      ``xbi_stale`` | ``insufficient_overlap`` | ``series_too_short`` |
+      ``zero_var_benchmark``
+    * ``alpha_60d_missing_reason``: ``""`` | ``beta_missing:<reason>``
+
+    Source-tagging fields:
+
+    * ``beta_xbi_60d_source``: ``"price_history"`` | ``""``
+    * ``alpha_60d_source``: ``"price_history"`` | ``""``
+
+    Returns the total number of fields hydrated (beta + alpha + RSI).
     """
     import csv as _csv
     from datetime import datetime as _dt
 
     hydrated = 0
 
-    # --- Step A: beta_xbi_60d from defensive cache ---
-    cache_path = None
-    if price_history_path is not None:
-        cache_path = price_history_path.parent / "defensive_features_cache.json"
-
-    if cache_path and cache_path.exists():
-        try:
-            with open(cache_path, "r", encoding="utf-8") as f:
-                cache = json.load(f)
-            fbt = cache.get("data", {}).get("features_by_ticker", {})
-        except (json.JSONDecodeError, OSError):
-            fbt = {}
-
-        for ticker, rec in rec_by_ticker.items():
-            df = rec.get("defensive_features")
-            if df is None:
-                df = {}
-                rec["defensive_features"] = df
-            if df.get("beta_xbi_60d") is not None:
-                continue
-            cached = fbt.get(ticker, {})
-            beta_val = cached.get("beta_xbi_60d")
-            if beta_val is not None:
-                try:
-                    df["beta_xbi_60d"] = float(beta_val)
-                    hydrated += 1
-                except (ValueError, TypeError):
-                    pass
-
-    # --- Step B: rsi_14d from price_history.csv ---
-    # Always recompute RSI for ALL tickers (same overwrite policy as drawdown).
-    # Pipeline RSI can be stale — price_history.csv is the source of truth.
     if price_history_path is None or not price_history_path.exists():
         return hydrated
 
@@ -1813,13 +1818,16 @@ def _hydrate_beta_rsi(
     except ValueError:
         return hydrated
 
-    all_set = set(all_tickers)
+    # ------------------------------------------------------------------
+    # Parse price CSV for ALL tickers + XBI (single pass)
+    # ------------------------------------------------------------------
+    ticker_set = set(all_tickers) | {"XBI"}
     prices_by_ticker: Dict[str, List] = {}
     with open(price_history_path, "r", encoding="utf-8") as fh:
         reader = _csv.DictReader(fh)
         for row in reader:
             ticker = (row.get("ticker") or "").upper()
-            if ticker not in all_set:
+            if ticker not in ticker_set:
                 continue
             date_str = row.get("date", "")
             close_str = row.get("close", "")
@@ -1839,6 +1847,174 @@ def _hydrate_beta_rsi(
                 continue
             prices_by_ticker.setdefault(ticker, []).append((row_date, close))
 
+    for tk in prices_by_ticker:
+        prices_by_ticker[tk].sort(key=lambda x: x[0])
+
+    # ------------------------------------------------------------------
+    # XBI freshness check
+    # ------------------------------------------------------------------
+    xbi_series = prices_by_ticker.get("XBI")
+    xbi_available = xbi_series is not None and len(xbi_series) >= 2
+    xbi_stale = False
+    xbi_gap_days = 0
+
+    if xbi_available:
+        xbi_last_date = xbi_series[-1][0]
+        # Count unique trading dates across non-XBI tickers after XBI's last
+        post_xbi_dates: set = set()
+        for tk, series in prices_by_ticker.items():
+            if tk == "XBI":
+                continue
+            for d, _ in series:
+                if d > xbi_last_date:
+                    post_xbi_dates.add(d)
+        xbi_gap_days = len(post_xbi_dates)
+        if xbi_gap_days > XBI_STALE_THRESHOLD:
+            xbi_stale = True
+            logger.warning(
+                "XBI benchmark stale: last_date=%s, as_of=%s, gap=%d trading "
+                "days (threshold=%d). Beta/alpha marked xbi_stale.",
+                xbi_last_date, as_of_date, xbi_gap_days, XBI_STALE_THRESHOLD,
+            )
+
+    # ------------------------------------------------------------------
+    # Step A: beta_xbi_60d from price_history.csv (overwrite_always)
+    #         + alpha_60d from same aligned window
+    # ------------------------------------------------------------------
+    xbi_date_close: Dict = {}
+    if xbi_available:
+        xbi_date_close = {d: c for d, c in xbi_series}
+
+    for ticker in all_tickers:
+        dfe = rec_by_ticker[ticker].get("defensive_features")
+        if dfe is None:
+            dfe = {}
+            rec_by_ticker[ticker]["defensive_features"] = dfe
+
+        # --- guard: XBI not in price CSV ---
+        if not xbi_available:
+            dfe["beta_xbi_60d_missing_reason"] = "no_xbi_series"
+            dfe["beta_xbi_60d_source"] = ""
+            dfe["alpha_60d_missing_reason"] = "beta_missing:no_xbi_series"
+            dfe["alpha_60d_source"] = ""
+            continue
+
+        # --- guard: XBI stale ---
+        if xbi_stale:
+            dfe["beta_xbi_60d_missing_reason"] = "xbi_stale"
+            dfe["beta_xbi_60d_source"] = ""
+            dfe["alpha_60d_missing_reason"] = "beta_missing:xbi_stale"
+            dfe["alpha_60d_source"] = ""
+            continue
+
+        t_series = prices_by_ticker.get(ticker)
+        if not t_series or len(t_series) < 2:
+            dfe["beta_xbi_60d_missing_reason"] = "series_too_short"
+            dfe["beta_xbi_60d_source"] = ""
+            dfe["alpha_60d_missing_reason"] = "beta_missing:series_too_short"
+            dfe["alpha_60d_source"] = ""
+            continue
+
+        # Date-aligned inner join
+        aligned = []
+        for d, c in t_series:
+            xc = xbi_date_close.get(d)
+            if xc is not None:
+                aligned.append((d, c, xc))
+
+        if len(aligned) < MIN_OVERLAP_BARS + 1:
+            dfe["beta_xbi_60d_missing_reason"] = "insufficient_overlap"
+            dfe["beta_xbi_60d_source"] = ""
+            dfe["alpha_60d_missing_reason"] = "beta_missing:insufficient_overlap"
+            dfe["alpha_60d_source"] = ""
+            continue
+
+        # Take most recent BETA_WINDOW+1 aligned bars (or all if fewer)
+        window_bars = min(BETA_WINDOW + 1, len(aligned))
+        aligned = aligned[-window_bars:]
+
+        # Compute daily returns
+        n_rets = len(aligned) - 1
+        t_rets = [
+            (aligned[i][1] / aligned[i - 1][1]) - 1.0
+            for i in range(1, len(aligned))
+        ]
+        x_rets = [
+            (aligned[i][2] / aligned[i - 1][2]) - 1.0
+            for i in range(1, len(aligned))
+        ]
+
+        # Beta = cov(t, x) / var(x)
+        t_mean = sum(t_rets) / n_rets
+        x_mean = sum(x_rets) / n_rets
+        cov_tx = sum(
+            (t_rets[i] - t_mean) * (x_rets[i] - x_mean)
+            for i in range(n_rets)
+        ) / n_rets
+        var_x = sum(
+            (x_rets[i] - x_mean) ** 2 for i in range(n_rets)
+        ) / n_rets
+
+        if var_x == 0:
+            dfe["beta_xbi_60d_missing_reason"] = "zero_var_benchmark"
+            dfe["beta_xbi_60d_source"] = ""
+            dfe["alpha_60d_missing_reason"] = "beta_missing:zero_var_benchmark"
+            dfe["alpha_60d_source"] = ""
+            continue
+
+        new_beta = round(cov_tx / var_x, 4)
+        old_beta = dfe.get("beta_xbi_60d")
+        if old_beta is not None:
+            try:
+                if abs(float(old_beta) - new_beta) > 0.5:
+                    logger.debug(
+                        "Beta overwrite %s: %.4f -> %.4f (delta=%.4f)",
+                        ticker, float(old_beta), new_beta,
+                        abs(float(old_beta) - new_beta),
+                    )
+            except (ValueError, TypeError):
+                pass
+
+        dfe["beta_xbi_60d"] = new_beta
+        dfe["beta_xbi_60d_source"] = "price_history"
+        dfe["beta_xbi_60d_missing_reason"] = ""
+        hydrated += 1
+
+        # --- Alpha from same aligned window ---
+        t_cum = (aligned[-1][1] / aligned[0][1]) - 1.0
+        x_cum = (aligned[-1][2] / aligned[0][2]) - 1.0
+        new_alpha = round(t_cum - new_beta * x_cum, 6)
+
+        # Log large overwrite deltas vs pipeline alpha
+        mom_enh = (
+            (rec_by_ticker[ticker].get("score_breakdown") or {})
+            .get("enhancements", {})
+            .get("momentum") or {}
+        )
+        pipeline_alpha = mom_enh.get("alpha_60d")
+        if pipeline_alpha is None:
+            pipeline_alpha = (
+                rec_by_ticker[ticker].get("momentum_signal") or {}
+            ).get("alpha_60d")
+        if pipeline_alpha is not None:
+            try:
+                if abs(float(pipeline_alpha) - new_alpha) > 0.05:
+                    logger.debug(
+                        "Alpha overwrite %s: %.6f -> %.6f (delta=%.6f)",
+                        ticker, float(pipeline_alpha), new_alpha,
+                        abs(float(pipeline_alpha) - new_alpha),
+                    )
+            except (ValueError, TypeError):
+                pass
+
+        dfe["alpha_60d"] = new_alpha
+        dfe["alpha_60d_source"] = "price_history"
+        dfe["alpha_60d_missing_reason"] = ""
+        hydrated += 1
+
+    # ------------------------------------------------------------------
+    # Step B: rsi_14d from price_history.csv (overwrite_always — unchanged)
+    # ------------------------------------------------------------------
     RSI_PERIOD = 14
     MIN_BARS_RSI = RSI_PERIOD + 1  # need at least 15 prices
 
@@ -1846,7 +2022,6 @@ def _hydrate_beta_rsi(
         series = prices_by_ticker.get(ticker)
         if not series or len(series) < MIN_BARS_RSI:
             continue
-        series.sort(key=lambda x: x[0])
         closes = [p for _, p in series]
 
         # Wilder-smoothed RSI
@@ -1869,18 +2044,18 @@ def _hydrate_beta_rsi(
             rs = avg_gain / avg_loss
             rsi_val = 100.0 - (100.0 / (1.0 + rs))
 
-        df = rec_by_ticker[ticker].get("defensive_features")
-        if df is None:
-            df = {}
-            rec_by_ticker[ticker]["defensive_features"] = df
-        old_rsi = df.get("rsi_14d")
+        dfe = rec_by_ticker[ticker].get("defensive_features")
+        if dfe is None:
+            dfe = {}
+            rec_by_ticker[ticker]["defensive_features"] = dfe
+        old_rsi = dfe.get("rsi_14d")
         new_rsi = round(rsi_val, 4)
         if old_rsi is not None and abs(float(old_rsi) - new_rsi) > 5.0:
             logger.debug(
                 "RSI overwrite %s: %.2f -> %.2f (delta=%.2f)",
                 ticker, float(old_rsi), new_rsi, abs(float(old_rsi) - new_rsi),
             )
-        df["rsi_14d"] = new_rsi
+        dfe["rsi_14d"] = new_rsi
         hydrated += 1
 
     return hydrated
@@ -2833,13 +3008,20 @@ def save_validation_snapshot(
         row["de_catalyst_days"] = cd.get("days_to_catalyst", "")
         row["de_catalyst_in_window"] = cd.get("in_optimal_window", "")
         row["de_catalyst_mode"] = decision.get("catalyst_mode", "")
-        row["de_alpha_60d"] = mom_enh.get("alpha_60d", "")
+        # Alpha: prefer price_history recompute, then pipeline fallback
+        row["de_alpha_60d"] = df.get("alpha_60d", "")
+        if row["de_alpha_60d"] == "":
+            row["de_alpha_60d"] = mom_enh.get("alpha_60d", "")
         if row["de_alpha_60d"] == "":
             mom_top = rec.get("momentum_signal") or {}
             row["de_alpha_60d"] = mom_top.get("alpha_60d", "")
+        row["de_alpha_60d_source"] = df.get("alpha_60d_source", "")
+        row["de_alpha_60d_missing_reason"] = df.get("alpha_60d_missing_reason", "")
         t1 = coinv.get("tier1_count")
         row["de_tier1_count"] = t1 if t1 is not None else ""
         row["de_beta_xbi_60d"] = df.get("beta_xbi_60d", "")
+        row["de_beta_xbi_60d_source"] = df.get("beta_xbi_60d_source", "")
+        row["de_beta_xbi_60d_missing_reason"] = df.get("beta_xbi_60d_missing_reason", "")
         row["de_drawdown"] = df.get("drawdown", "")
         row["de_drawdown_missing_reason"] = df.get("drawdown_missing_reason", "")
         row["de_rsi_14d"] = df.get("rsi_14d", "")

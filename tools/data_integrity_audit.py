@@ -312,21 +312,31 @@ def recompute_price_fields(
         entry["rsi_diff"] = abs((stored_rsi or 0) - (recomp_rsi or 0)) if stored_rsi is not None and recomp_rsi is not None else None
         entry["rsi_verdict"] = _verdict(stored_rsi, recomp_rsi, TOLERANCES["rsi_14d"])
 
-        # Beta
+        # Beta — check missing_reason first (xbi_stale etc. are explained, not FAIL)
+        beta_missing_reason = str(row.get("de_beta_xbi_60d_missing_reason", "")).strip()
         recomp_beta = _compute_beta_from_prices(prices, ticker, as_of)
         stored_beta = _safe_float(row.get("de_beta_xbi_60d"))
         entry["beta_stored"] = stored_beta
         entry["beta_recomputed"] = recomp_beta
+        entry["beta_missing_reason"] = beta_missing_reason
         entry["beta_diff"] = abs((stored_beta or 0) - (recomp_beta or 0)) if stored_beta is not None and recomp_beta is not None else None
-        entry["beta_verdict"] = _verdict(stored_beta, recomp_beta, TOLERANCES["beta_xbi_60d"])
+        if beta_missing_reason:
+            entry["beta_verdict"] = f"EXPLAINED:{beta_missing_reason}"
+        else:
+            entry["beta_verdict"] = _verdict(stored_beta, recomp_beta, TOLERANCES["beta_xbi_60d"])
 
-        # Alpha
+        # Alpha — check missing_reason first
+        alpha_missing_reason = str(row.get("de_alpha_60d_missing_reason", "")).strip()
         recomp_alpha = _compute_alpha_from_prices(prices, ticker, as_of, beta=recomp_beta)
         stored_alpha = _safe_float(row.get("de_alpha_60d"))
         entry["alpha_stored"] = stored_alpha
         entry["alpha_recomputed"] = recomp_alpha
+        entry["alpha_missing_reason"] = alpha_missing_reason
         entry["alpha_diff"] = abs((stored_alpha or 0) - (recomp_alpha or 0)) if stored_alpha is not None and recomp_alpha is not None else None
-        entry["alpha_verdict"] = _verdict(stored_alpha, recomp_alpha, TOLERANCES["alpha_60d"])
+        if alpha_missing_reason:
+            entry["alpha_verdict"] = f"EXPLAINED:{alpha_missing_reason}"
+        else:
+            entry["alpha_verdict"] = _verdict(stored_alpha, recomp_alpha, TOLERANCES["alpha_60d"])
 
         results.append(entry)
 
@@ -468,13 +478,25 @@ def catalyst_spot_check(
 # Part D — Root cause summary
 # ---------------------------------------------------------------------------
 def classify_root_causes(price_diffs: List[Dict]) -> Dict[str, Any]:
-    """Classify FAIL rows by root cause pattern."""
+    """Classify FAIL rows by root cause pattern.
+
+    EXPLAINED verdicts (from explicit missing_reason) are tracked separately.
+    """
     causes = defaultdict(list)
     for row in price_diffs:
         ticker = row["ticker"]
         for field_prefix in ["dd", "rsi", "beta", "alpha"]:
             verdict_key = f"{field_prefix}_verdict"
-            if row.get(verdict_key) != "FAIL":
+            verdict = str(row.get(verdict_key, ""))
+            # EXPLAINED verdicts are tracked but not mixed with FAIL
+            if verdict.startswith("EXPLAINED:"):
+                reason = verdict.split(":", 1)[1]
+                causes["explained_missing_reason"].append({
+                    "ticker": ticker, "field": field_prefix,
+                    "reason": reason,
+                })
+                continue
+            if verdict != "FAIL":
                 continue
             stored = row.get(f"{field_prefix}_stored")
             recomp = row.get(f"{field_prefix}_recomputed")
@@ -516,7 +538,8 @@ def write_root_cause_summary(
         total = sum(1 for r in price_diffs if r.get(vk) is not None)
         ok = sum(1 for r in price_diffs if r.get(vk) == "OK")
         fail = sum(1 for r in price_diffs if r.get(vk) == "FAIL")
-        missing = total - ok - fail
+        explained = sum(1 for r in price_diffs if str(r.get(vk, "")).startswith("EXPLAINED:"))
+        missing = total - ok - fail - explained
         label = {
             "dd": "Drawdown (252d)",
             "rsi": "RSI (14d)",
@@ -525,7 +548,11 @@ def write_root_cause_summary(
             "dd_xbi": "Drawdown XBI",
             "dd_rel": "Drawdown Relative",
         }.get(field, field)
-        lines.append(f"- **{label}**: {ok} OK, {fail} FAIL, {missing} missing/skip (of {total})")
+        parts = [f"{ok} OK", f"{fail} FAIL"]
+        if explained:
+            parts.append(f"{explained} EXPLAINED")
+        parts.append(f"{missing} missing/skip (of {total})")
+        lines.append(f"- **{label}**: {', '.join(parts)}")
     lines.append("")
 
     # --- Root cause classification ---

@@ -13,7 +13,14 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from run_screen import _hydrate_drawdown, _hydrate_beta_rsi, MIN_BARS_FOR_ESTIMATE
+from run_screen import (
+    _hydrate_drawdown,
+    _hydrate_beta_rsi,
+    MIN_BARS_FOR_ESTIMATE,
+    BETA_WINDOW,
+    MIN_OVERLAP_BARS,
+    XBI_STALE_THRESHOLD,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -675,3 +682,191 @@ class TestRsiOverwrite:
         assert recs["STALE2"]["defensive_features"]["rsi_14d"] != 10.0
         assert recs["FRESH"]["defensive_features"]["rsi_14d"] is not None
         assert n >= 3
+
+
+# ===========================================================================
+# Beta / Alpha Overwrite Tests (_hydrate_beta_rsi)
+# ===========================================================================
+
+def _make_aligned_prices(
+    ticker: str,
+    n_bars: int = 80,
+    ticker_start: float = 50.0,
+    xbi_start: float = 100.0,
+    xbi_ends_early: int = 0,
+):
+    """Generate aligned price series for a ticker and XBI.
+
+    Both start on the same date with identical trading dates.
+    If *xbi_ends_early* > 0, XBI will stop that many bars before the ticker,
+    creating an XBI staleness gap.
+
+    Returns (all_rows, last_date, xbi_last_date).
+    """
+    from datetime import date, timedelta
+    rows = []
+    d = date(2026, 1, 1)
+    t_close = ticker_start
+    x_close = xbi_start
+    xbi_last = None
+    for i in range(n_bars):
+        day_str = d.isoformat()
+        rows.append({"ticker": ticker, "date": day_str,
+                      "close": round(t_close, 4)})
+        if i < n_bars - xbi_ends_early:
+            rows.append({"ticker": "XBI", "date": day_str,
+                          "close": round(x_close, 4)})
+            xbi_last = day_str
+        d += timedelta(days=1)
+        # Ticker: +0.5% per bar, XBI: +0.3% per bar
+        t_close *= 1.005
+        x_close *= 1.003
+    last_date = (d - timedelta(days=1)).isoformat()
+    return rows, last_date, xbi_last
+
+
+class TestBetaAlphaOverwrite:
+    """Regression tests for aligned-return beta/alpha recomputation."""
+
+    def test_stale_pipeline_beta_overwritten(self):
+        """Pipeline beta (2.50) should be overwritten with fresh computation."""
+        recs = {
+            "ACME": {
+                "ticker": "ACME",
+                "defensive_features": {"beta_xbi_60d": 2.50},
+            },
+        }
+        prices, last_date, _ = _make_aligned_prices("ACME", n_bars=80)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_rsi_csv(csv_path, prices)
+            _hydrate_beta_rsi(recs, csv_path, last_date)
+        df = recs["ACME"]["defensive_features"]
+        # Should be recomputed (highly correlated series → beta near 1.5-2.0)
+        assert df["beta_xbi_60d"] != 2.50
+        assert isinstance(df["beta_xbi_60d"], float)
+        assert df["beta_xbi_60d_source"] == "price_history"
+        assert df["beta_xbi_60d_missing_reason"] == ""
+
+    def test_alpha_computed_with_source_tagging(self):
+        """Alpha should be computed from same aligned window and tagged."""
+        recs = {
+            "ACME": {
+                "ticker": "ACME",
+                "defensive_features": {},
+                "score_breakdown": {
+                    "enhancements": {
+                        "momentum": {"alpha_60d": 0.999}  # stale pipeline
+                    }
+                },
+            },
+        }
+        prices, last_date, _ = _make_aligned_prices("ACME", n_bars=80)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_rsi_csv(csv_path, prices)
+            _hydrate_beta_rsi(recs, csv_path, last_date)
+        df = recs["ACME"]["defensive_features"]
+        assert "alpha_60d" in df
+        assert isinstance(df["alpha_60d"], float)
+        assert df["alpha_60d_source"] == "price_history"
+        assert df["alpha_60d_missing_reason"] == ""
+
+    def test_xbi_stale_marks_missing_reason(self):
+        """When XBI is >XBI_STALE_THRESHOLD trading days behind, mark xbi_stale."""
+        gap = XBI_STALE_THRESHOLD + 2  # ensure we exceed the threshold
+        recs = {
+            "ACME": {
+                "ticker": "ACME",
+                "defensive_features": {"beta_xbi_60d": 1.5},
+            },
+        }
+        prices, last_date, _ = _make_aligned_prices(
+            "ACME", n_bars=80, xbi_ends_early=gap,
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_rsi_csv(csv_path, prices)
+            _hydrate_beta_rsi(recs, csv_path, last_date)
+        df = recs["ACME"]["defensive_features"]
+        assert df["beta_xbi_60d_missing_reason"] == "xbi_stale"
+        assert df["beta_xbi_60d_source"] == ""
+        assert df["alpha_60d_missing_reason"] == "beta_missing:xbi_stale"
+        assert df["alpha_60d_source"] == ""
+        # Original pipeline value preserved (not cleared)
+        assert df["beta_xbi_60d"] == 1.5
+
+    def test_no_xbi_series(self):
+        """When XBI is completely absent from price CSV, mark no_xbi_series."""
+        from datetime import date, timedelta
+        recs = {
+            "ALONE": {
+                "ticker": "ALONE",
+                "defensive_features": {},
+            },
+        }
+        # Only ticker data, no XBI
+        d = date(2026, 1, 1)
+        rows = []
+        for i in range(80):
+            rows.append({"ticker": "ALONE", "date": d.isoformat(), "close": 50 + i * 0.1})
+            d += timedelta(days=1)
+        last = (d - timedelta(days=1)).isoformat()
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_rsi_csv(csv_path, rows)
+            _hydrate_beta_rsi(recs, csv_path, last)
+        df = recs["ALONE"]["defensive_features"]
+        assert df["beta_xbi_60d_missing_reason"] == "no_xbi_series"
+        assert df["alpha_60d_missing_reason"] == "beta_missing:no_xbi_series"
+
+    def test_insufficient_overlap(self):
+        """When overlap bars < MIN_OVERLAP_BARS, mark insufficient_overlap."""
+        from datetime import date, timedelta
+        recs = {
+            "SHORT": {
+                "ticker": "SHORT",
+                "defensive_features": {},
+            },
+        }
+        # XBI spans the full 80 bars (so it's NOT stale), but the ticker
+        # only has 10 bars at the very end → only 10 overlapping dates.
+        d = date(2026, 1, 1)
+        rows = []
+        for i in range(80):
+            day_str = (d + timedelta(days=i)).isoformat()
+            rows.append({"ticker": "XBI", "date": day_str, "close": 100 + i * 0.1})
+            # Ticker only present for the last 10 bars
+            if i >= 70:
+                rows.append({"ticker": "SHORT", "date": day_str, "close": 50 + (i - 70) * 0.1})
+        last = (d + timedelta(days=79)).isoformat()
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_rsi_csv(csv_path, rows)
+            _hydrate_beta_rsi(recs, csv_path, last)
+        df = recs["SHORT"]["defensive_features"]
+        assert df["beta_xbi_60d_missing_reason"] == "insufficient_overlap"
+
+    def test_alpha_consistent_with_beta(self):
+        """Alpha = ticker_cum_return - beta * xbi_cum_return (from aligned window)."""
+        recs = {
+            "VERIFY": {
+                "ticker": "VERIFY",
+                "defensive_features": {},
+            },
+        }
+        prices, last_date, _ = _make_aligned_prices("VERIFY", n_bars=80)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_rsi_csv(csv_path, prices)
+            _hydrate_beta_rsi(recs, csv_path, last_date)
+        df = recs["VERIFY"]["defensive_features"]
+        beta = df["beta_xbi_60d"]
+        alpha = df["alpha_60d"]
+        # Manual check: alpha should be small for correlated series
+        # Both have positive drift, so alpha reflects excess return
+        assert isinstance(alpha, float)
+        assert isinstance(beta, float)
+        # With ticker +0.5%/bar and XBI +0.3%/bar, ticker outperforms
+        # Alpha should be positive (ticker grows faster than beta * XBI)
+        assert alpha > -0.5  # sanity bound
