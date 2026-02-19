@@ -394,11 +394,17 @@ SIZING_WEIGHTS = DEFAULT_RULESET.sizing_weights_dict
 # =============================================================================
 
 def _safe_float(val, default=None):
-    """Convert a value to float, handling None/str/Decimal."""
+    """Convert a value to float, handling None/str/Decimal/NaN."""
     if val is None:
         return default
     try:
-        return float(str(val))
+        if isinstance(val, str) and val.strip() == "":
+            return default
+        v = float(val)
+        # NaN should behave like missing (pandas frequently produces NaN)
+        if v != v:
+            return default
+        return v
     except (ValueError, TypeError):
         return default
 

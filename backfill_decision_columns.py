@@ -187,9 +187,10 @@ def build_rec(
     conf_str = row.get("confidence_overall", "").strip()
     rec["confidence_overall"] = float(conf_str) if conf_str else None
 
-    # fundamental_red_flag: not available in archives, set False
-    # (SEV3 gate in eligibility still works via severity field)
-    rec["fundamental_red_flag"] = False
+    # fundamental_red_flag: not available in archives, set None so the
+    # decision engine's fallback can recompute from rec fields if present.
+    # (SEV3 gate in eligibility still works via severity field.)
+    rec["fundamental_red_flag"] = None
 
     # Catalyst: prefer enriched (trials+PDUFA) over archive catalyst_events JSON
     if "days_to_catalyst" in enriched:

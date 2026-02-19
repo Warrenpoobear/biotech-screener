@@ -1010,3 +1010,28 @@ class TestSortAnchorAlphaCohort:
         # but if optionality also same, anchor differentiates
         assert isinstance(key_high, tuple)
         assert isinstance(key_low, tuple)
+
+
+# ── NaN safety in sort key ──────────────────────────────────────────────
+
+
+def test_nan_in_sort_key_fields_produces_comparable_tuple():
+    """NaN in clinical_score_z_tier and sponsor_tier1_count must not
+    poison the sort tuple with NaN or raise ValueError."""
+    import math
+
+    fields = _make_fields()
+    fields["clinical_score_z_tier"] = float("nan")
+    fields["sponsor_tier1_count"] = float("nan")
+    fields["stage_bucket"] = "mid"
+
+    rs = DecisionRuleset(enable_clinical_sort_signal=True)
+    key = _sort_key(fields, ruleset=rs)
+
+    assert isinstance(key, tuple)
+    # No element should be NaN
+    for i, elem in enumerate(key):
+        if isinstance(elem, float):
+            assert not math.isnan(elem), f"Element {i} is NaN"
+    # Must be comparable to itself (deterministic sort)
+    assert key <= key
