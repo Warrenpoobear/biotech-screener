@@ -581,7 +581,7 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
     # None/absent means "no data"
     days_val = _safe_float(days, default=None)
     if days_val is not None:
-        out["catalyst_days"] = int(days_val)
+        out["catalyst_days"] = max(0, int(days_val))
     else:
         out["catalyst_days"] = ""
     if in_win is not None:
@@ -1107,9 +1107,9 @@ def compute_actionable_sort_key(
     cat_mode_ord = _CATALYST_MODE_ORDER.get(str(cat_mode), 4)
 
     cat_days_raw = decision_fields.get("catalyst_days", "")
-    cat_days = int(cat_days_raw) if cat_days_raw != "" and cat_days_raw is not None else 9999
+    cat_days = int(_safe_float(cat_days_raw, default=9999))
 
-    opt_neg = -(float(optionality)) if optionality is not None else 0.0
+    opt_neg = -(_safe_float(optionality, default=0.0))
 
     sponsor_val = _safe_float(decision_fields.get("sponsor_tier1_count"), default=0.0)
     sponsor_neg = -int(sponsor_val)
@@ -1513,7 +1513,8 @@ def compute_gate_margins(rec: Dict, ruleset: Optional[DecisionRuleset] = None) -
 
     # --- Rescued by relative gate ---
     rescued_by_rel = (
-        dd_abs_margin is not None and dd_abs_margin < 0
+        rs.drawdown_gate_mode == "hard"
+        and dd_abs_margin is not None and dd_abs_margin < 0
         and dd_rel_margin is not None and dd_rel_margin >= 0
         and rs.drawdown_gate_require_both
     )
@@ -1562,6 +1563,8 @@ def compute_gate_margins(rec: Dict, ruleset: Optional[DecisionRuleset] = None) -
                         counterfactual["drawdown"] = rs.drawdown_gate
                     if rel_breach:
                         counterfactual["drawdown_rel_xbi"] = rs.drawdown_rel_xbi_gate
+                elif mode == "soft":
+                    counterfactual["drawdown"] = rs.drawdown_hard_floor
             elif gname == "adv_fail":
                 counterfactual["flags"] = "remove_adv_fail"
 
