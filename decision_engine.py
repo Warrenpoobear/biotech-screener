@@ -544,15 +544,17 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
 
     # tier1_count: prefer coinvest.tier1_count (int), blank if missing
     t1_raw = coinvest.get("tier1_count")
-    if t1_raw is not None:
-        out["sponsor_tier1_count"] = int(t1_raw)
+    t1_val = _safe_float(t1_raw, default=None)
+    if t1_val is not None:
+        out["sponsor_tier1_count"] = int(t1_val)
     else:
         out["sponsor_tier1_count"] = ""
 
     # overlap_count: prefer smart_money_signal, blank if missing
     oc_raw = sms.get("overlap_count")
-    if oc_raw is not None:
-        out["sponsor_overlap_count"] = int(oc_raw)
+    oc_val = _safe_float(oc_raw, default=None)
+    if oc_val is not None:
+        out["sponsor_overlap_count"] = int(oc_val)
     else:
         out["sponsor_overlap_count"] = ""
 
@@ -577,8 +579,9 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
     in_win = cd.get("in_optimal_window")
     # days_to_catalyst: 0 means "no upcoming catalyst", positive int means real distance
     # None/absent means "no data"
-    if days is not None:
-        out["catalyst_days"] = int(days)
+    days_val = _safe_float(days, default=None)
+    if days_val is not None:
+        out["catalyst_days"] = int(days_val)
     else:
         out["catalyst_days"] = ""
     if in_win is not None:
@@ -587,9 +590,9 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
         out["catalyst_in_window"] = ""
 
     # Catalyst mode: explicit label for how catalyst proximity was determined
-    if isinstance(days, (int, float)) and days > 0:
+    if days_val is not None and days_val > 0:
         out["catalyst_mode"] = "specific_days"
-    elif days == 0 and in_win is True:
+    elif days_val == 0 and bool(in_win):
         out["catalyst_mode"] = "blended_window"
     elif days is not None or in_win is not None:
         out["catalyst_mode"] = "no_upcoming"
@@ -599,10 +602,10 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
     # Catalyst strength: near/mid/far/missing (using catalyst_mid_days boundary)
     if out["catalyst_mode"] == "blended_window":
         out["catalyst_strength"] = "near"
-    elif out["catalyst_mode"] == "specific_days" and isinstance(days, (int, float)) and days > 0:
-        if days <= ruleset.catalyst_near_days:
+    elif out["catalyst_mode"] == "specific_days" and days_val is not None and days_val > 0:
+        if days_val <= ruleset.catalyst_near_days:
             out["catalyst_strength"] = "near"
-        elif days <= ruleset.catalyst_mid_days:
+        elif days_val <= ruleset.catalyst_mid_days:
             out["catalyst_strength"] = "mid"
         else:
             out["catalyst_strength"] = "far"
@@ -613,9 +616,9 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
     if ruleset.catalyst_time_decay_mode == "logistic":
         if out["catalyst_mode"] == "blended_window":
             out["catalyst_decay_w"] = 1.0
-        elif out["catalyst_mode"] == "specific_days" and isinstance(days, (int, float)) and days >= 0:
+        elif out["catalyst_mode"] == "specific_days" and days_val is not None and days_val >= 0:
             out["catalyst_decay_w"] = round(
-                _logistic_decay(days, ruleset.catalyst_logistic_midpoint_days,
+                _logistic_decay(days_val, ruleset.catalyst_logistic_midpoint_days,
                                 ruleset.catalyst_logistic_scale_days), 4
             )
         else:
@@ -1114,18 +1117,19 @@ def compute_actionable_sort_key(
     mom = decision_fields.get("mom_state", "neutral")
     mom_ord = _MOM_STATE_ORDER.get(str(mom), 1)
 
-    comp_rank = int(composite_rank) if composite_rank is not None else 9999
+    _cr = _safe_float(composite_rank, default=None)
+    comp_rank = int(_cr) if _cr is not None else 9999
 
     # Resolve anchor value based on sort_anchor mode
     if rs.sort_anchor in ("optionality_pct", "alpha_cohort"):
-        anchor = -(tiebreaker_pct or 0.0)  # higher pct → more negative → sorts first
+        anchor = -(tiebreaker_pct if tiebreaker_pct is not None else 0.0)  # higher pct → more negative → sorts first
     else:
         anchor = float(comp_rank)           # existing behavior
 
     # Missingness sort penalty: higher count sorts later (0 when disabled)
     missing_count = 0
     if rs.enable_missingness_sort_penalty:
-        missing_count = int(_safe_float(decision_fields.get("missingness_penalty", 0)))
+        missing_count = int(_safe_float(decision_fields.get("missingness_penalty", 0), default=0))
 
     # Clinical sort signal: blended into anchor term (0 when disabled).
     # Uses tier-local z-score, gated by stage_bucket (early=0, mid/late active).
@@ -1404,7 +1408,13 @@ def compute_gate_margins(rec: Dict, ruleset: Optional[DecisionRuleset] = None) -
     gates: List[Dict[str, Any]] = []
 
     # Gate 1: fundamental_red_flag (boolean)
-    has_red_flag = bool(rec.get("fundamental_red_flag"))
+    # Mirror the fallback from _compute_eligibility: if not pre-computed,
+    # detect it from the rec fields directly.
+    has_red_flag = rec.get("fundamental_red_flag")
+    if has_red_flag is None:
+        from defensive_overlay_adapter import detect_fundamental_red_flags
+        has_red_flag, _ = detect_fundamental_red_flags(rec)
+    has_red_flag = bool(has_red_flag)
     gates.append({
         "gate": "fundamental_red_flag",
         "passed": not has_red_flag,
@@ -1515,14 +1525,11 @@ def compute_gate_margins(rec: Dict, ruleset: Optional[DecisionRuleset] = None) -
     _EFFECTIVE_GATES = ("fundamental_red_flag", "sev3", "deep_drawdown", "adv_fail")
     effective_pass = {g["gate"]: g["passed"] for g in gates if g["gate"] in _EFFECTIVE_GATES}
 
-    first_failed = ""
     first_failed_effective = ""
     for gname in _EFFECTIVE_GATES:
         if not effective_pass.get(gname, True):
             if not first_failed_effective:
                 first_failed_effective = gname
-            if not first_failed:
-                first_failed = gname
 
     eligible = all(effective_pass.get(g, True) for g in _EFFECTIVE_GATES)
 
@@ -1562,7 +1569,7 @@ def compute_gate_margins(rec: Dict, ruleset: Optional[DecisionRuleset] = None) -
         "dd_abs_margin": dd_abs_margin,
         "dd_rel_margin": dd_rel_margin,
         "rescued_by_rel": rescued_by_rel,
-        "first_failed_gate": first_failed,
+        "first_failed_gate": first_failed_effective,
         "first_failed_effective_gate": first_failed_effective,
         "gates": gates,
         "counterfactual": counterfactual,
