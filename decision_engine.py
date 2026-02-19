@@ -411,18 +411,11 @@ def _logistic_decay(days: float | None, midpoint: float, scale: float) -> float:
     return 1.0 / (1.0 + exp((days - midpoint) / max(scale, 1e-6)))
 
 
-# Sentinel for "data not present" vs "present and zero"
-_MISSING = object()
-
-
 def _has_flag(rf, flag: str) -> bool:
     """Check if a risk-flag string contains a specific flag."""
     if not rf:
         return False
     return flag in str(rf).replace("|", ",").split(",")
-
-
-_MISSINGNESS_COMPONENTS = ("catalyst", "sponsor", "drawdown")
 
 
 def _compute_missing_components(decision_fields: dict) -> list:
