@@ -413,13 +413,19 @@ def build_run_manifest(
     snapshot_date_dir: Optional[Path] = None,
     *,
     requested_as_of_date: Optional[str] = None,
+    git_pre_run: Optional[Dict[str, Any]] = None,
+    git_post_run: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Build the run_manifest.json with full provenance.
 
     If requested_as_of_date differs from as_of_date, it means a date
     fallback occurred and both are recorded in the manifest.
+
+    git_pre_run: git info captured before any artifacts are written.
+    git_post_run: git info captured after screen/audit (optional).
+    git.dirty == git.dirty_pre_run for backward compatibility.
     """
-    git = get_git_info(REPO_ROOT)
+    git = git_pre_run if git_pre_run is not None else get_git_info(REPO_ROOT)
 
     # Read metadata.json from snapshot for ruleset info
     ruleset_info: Dict[str, Any] = {}
@@ -471,13 +477,20 @@ def build_run_manifest(
             overall_status = "WARN"
 
     _requested = requested_as_of_date or as_of_date
+
+    # Enrich git block with pre/post-run dirty flags
+    git_block = dict(git)  # shallow copy to avoid mutating caller's dict
+    git_block["dirty_pre_run"] = git.get("dirty")
+    git_block["dirty_post_run"] = git_post_run.get("dirty") if git_post_run else None
+    git_block["dirty"] = git_block["dirty_pre_run"]  # backward compat
+
     return {
         "manifest_version": "1.1.0",
         "requested_as_of_date": _requested,
         "effective_as_of_date": as_of_date,
         "as_of_date": as_of_date,  # backward compat alias
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "git": git,
+        "git": git_block,
         "ruleset": ruleset_info,
         "row_counts": row_counts,
         "price_refresh": {
@@ -563,6 +576,9 @@ def run_daily(
     gate_results: List[GateResult] = []
     requested_as_of_date = as_of_date  # preserve the original request
 
+    # Capture git state BEFORE any artifacts are written
+    git_pre_run = get_git_info(REPO_ROOT)
+
     print(f"{'='*70}")
     print(f"PHASE-2 DAILY RUN — {as_of_date}")
     print(f"{'='*70}")
@@ -593,6 +609,7 @@ def run_daily(
             subprocess.CompletedProcess(args=[], returncode=-1),
             None, config,
             requested_as_of_date=requested_as_of_date,
+            git_pre_run=git_pre_run,
         )
         return manifest
 
@@ -611,6 +628,7 @@ def run_daily(
             subprocess.CompletedProcess(args=[], returncode=-1),
             None, config,
             requested_as_of_date=requested_as_of_date,
+            git_pre_run=git_pre_run,
         )
         return manifest
 
@@ -636,6 +654,7 @@ def run_daily(
         manifest = build_run_manifest(
             as_of_date, gate_results, price_stats, screen_proc, None, config,
             requested_as_of_date=requested_as_of_date,
+            git_pre_run=git_pre_run,
         )
         return manifest
 
@@ -649,6 +668,7 @@ def run_daily(
         manifest = build_run_manifest(
             as_of_date, gate_results, price_stats, screen_proc, None, config,
             requested_as_of_date=requested_as_of_date,
+            git_pre_run=git_pre_run,
         )
         return manifest
 
@@ -677,11 +697,14 @@ def run_daily(
 
     # --- Step 5: Build manifest ---
     print(f"\n[5/5] Building run manifest ...")
+    git_post_run = get_git_info(REPO_ROOT)
     manifest = build_run_manifest(
         as_of_date, gate_results, price_stats,
         screen_proc, audit_proc, config,
         snapshot_date_dir=staging_date_dir,
         requested_as_of_date=requested_as_of_date,
+        git_pre_run=git_pre_run,
+        git_post_run=git_post_run,
     )
 
     # Write manifest to staging dir

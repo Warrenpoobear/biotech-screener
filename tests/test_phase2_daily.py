@@ -511,3 +511,45 @@ class TestManifestDateFields:
             )
         assert manifest["requested_as_of_date"] == "2026-02-19"
         assert manifest["effective_as_of_date"] == "2026-02-19"
+
+
+# ---------------------------------------------------------------------------
+# Tests: Git dirty pre/post-run
+# ---------------------------------------------------------------------------
+
+class TestGitDirtySemantics:
+
+    def test_dirty_pre_post_run_recorded(self):
+        """dirty_pre_run and dirty_post_run are distinct; dirty == dirty_pre_run."""
+        git_pre = {"branch": "main", "commit_sha": "abc123", "dirty": False}
+        git_post = {"branch": "main", "commit_sha": "abc123", "dirty": True}
+        gates = [GateResult(name="xbi_staleness", status="PASS", detail="ok")]
+        screen_proc = subprocess.CompletedProcess(args=[], returncode=0)
+
+        manifest = build_run_manifest(
+            "2026-02-19", gates, {},
+            screen_proc, None, GateConfig(),
+            git_pre_run=git_pre,
+            git_post_run=git_post,
+        )
+
+        assert manifest["git"]["dirty_pre_run"] is False
+        assert manifest["git"]["dirty_post_run"] is True
+        assert manifest["git"]["dirty"] is False  # backward compat == pre_run
+        assert manifest["git"]["commit_sha"] == "abc123"
+
+    def test_dirty_post_run_none_on_early_exit(self):
+        """Early-exit manifests have dirty_post_run=None."""
+        git_pre = {"branch": "main", "commit_sha": "abc123", "dirty": True}
+        gates = [GateResult(name="xbi_staleness", status="FAIL", detail="stale")]
+        screen_proc = subprocess.CompletedProcess(args=[], returncode=-1)
+
+        manifest = build_run_manifest(
+            "2026-02-19", gates, {},
+            screen_proc, None, GateConfig(),
+            git_pre_run=git_pre,
+        )
+
+        assert manifest["git"]["dirty_pre_run"] is True
+        assert manifest["git"]["dirty_post_run"] is None
+        assert manifest["git"]["dirty"] is True
