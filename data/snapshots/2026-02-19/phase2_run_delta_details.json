@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-19T13:04:08Z",
+  "generated_at": "2026-02-19T13:52:06Z",
   "current": {
     "date": "2026-02-19",
     "ruleset_id": "aa0aaf28",
@@ -14,21 +14,23 @@
   },
   "portfolio_turnover": {
     "entrants": [
-      "ALMS",
-      "CLYM",
-      "RNA",
-      "SYRE",
+      "CELC",
+      "CGON",
+      "COGT",
+      "FDMT",
+      "ORKA",
       "VRDN"
     ],
     "exits": [
+      "ARTV",
+      "CNTA",
       "CRSP",
-      "DNLI",
-      "KALV",
-      "KYTX",
-      "NUVB"
+      "NUVB",
+      "NUVL",
+      "VERA"
     ],
-    "name_turnover_pct": 25.0,
-    "weight_l1_delta": 51.9
+    "name_turnover_pct": 30.0,
+    "weight_l1_delta": 68.4
   },
   "tier_distribution": {
     "current": {
@@ -39,8 +41,8 @@
     },
     "prior": {
       "A": 29,
-      "B": 37,
-      "C": 57,
+      "B": 35,
+      "C": 59,
       "D": 60
     }
   },
@@ -66,9 +68,9 @@
       "XS": 0
     },
     "prior": {
-      "L": 14,
-      "M": 4,
-      "S": 2,
+      "L": 15,
+      "M": 5,
+      "S": 0,
       "XS": 0
     }
   },
@@ -151,12 +153,12 @@
       {
         "ticker": "SYRE",
         "catalyst_days": 1,
-        "tier_dev": "B"
+        "tier_dev": "A"
       },
       {
         "ticker": "DNLI",
         "catalyst_days": 8,
-        "tier_dev": "A"
+        "tier_dev": "B"
       },
       {
         "ticker": "ADCT",
@@ -170,11 +172,6 @@
       },
       {
         "ticker": "PVLA",
-        "catalyst_days": 12,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "KYTX",
         "catalyst_days": 12,
         "tier_dev": "A"
       },
@@ -194,7 +191,12 @@
         "tier_dev": "A"
       },
       {
-        "ticker": "BNTX",
+        "ticker": "ABVX",
+        "catalyst_days": 12,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "KYTX",
         "catalyst_days": 12,
         "tier_dev": "B"
       }
@@ -204,13 +206,13 @@
     "current": {
       "deep_drawdown": 1,
       "high_vol": 3,
-      "high_beta": 0,
-      "overbought_rsi": 0,
+      "high_beta": 1,
+      "overbought_rsi": 1,
       "low_confidence": 0
     },
     "prior": {
-      "deep_drawdown": 4,
-      "high_vol": 4,
+      "deep_drawdown": 3,
+      "high_vol": 3,
       "high_beta": 0,
       "overbought_rsi": 0,
       "low_confidence": 0
@@ -221,7 +223,7 @@
       "Ruleset matches pinned Phase-2 ID (aa0aaf28)",
       "A-tier count >= 1 (29)",
       "Catalyst coverage 92.3% >= 50.0%",
-      "Name turnover 25.0% <= 40.0%"
+      "Name turnover 30.0% <= 40.0%"
     ],
     "warnings": []
   }

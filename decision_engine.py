@@ -721,6 +721,7 @@ def _compute_size_band(
     rec: Optional[Dict] = None,
     cost_mult: float = 1.0,
     cost_bucket: str = "",
+    commercial_quality_pct: Optional[float] = None,
 ) -> Tuple[str, List[str]]:
     """Rule-based sizing band. Returns (band, list_of_reasons)."""
     if not eligible:
@@ -729,10 +730,13 @@ def _compute_size_band(
     idx = 2  # Start at M (index 2)
     reasons: List[str] = []
 
-    # Tier A dev with high optionality → push toward L
+    # Tier A with high optionality/quality → push toward L
     if tier_dev == "A" and optionality is not None and optionality >= ruleset.tier_a_optionality_floor:
         idx += 1
         reasons.append("tier_a_dev")
+    elif tier_dev == "A" and optionality is None and commercial_quality_pct is not None and commercial_quality_pct >= ruleset.tier_a_optionality_floor:
+        idx += 1
+        reasons.append("tier_a_commercial")
 
     # Catalyst FAR lift (far data is better than missing — at least we have a date)
     cat_strength = overlays.get("catalyst_strength", "missing")
@@ -1313,7 +1317,13 @@ def compute_decision_fields(
         mom_state_tilt_mult = mom_tilt_map.get(mom, 1.0)
 
     # Layer 3 — Sizing (effective tier depends on tiering priority mode)
-    effective_tier = tier_any if rs.tiering_priority_mode == "tier_first" else tier_dev
+    # For non-drug-developer archetypes, always use tier_any (tier_dev is empty).
+    if archetype != "drug_developer":
+        effective_tier = tier_any
+    elif rs.tiering_priority_mode == "tier_first":
+        effective_tier = tier_any
+    else:
+        effective_tier = tier_dev
     size_band, size_reasons = _compute_size_band(
         eligible=eligible,
         tier_dev=effective_tier,
@@ -1323,6 +1333,7 @@ def compute_decision_fields(
         rec=rec,
         cost_mult=cost_mult,
         cost_bucket=cost_bucket,
+        commercial_quality_pct=commercial_quality_pct,
     )
 
     # Assemble output

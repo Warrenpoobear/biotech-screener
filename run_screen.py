@@ -1732,6 +1732,137 @@ def _hydrate_drawdown(
     return hydrated
 
 
+def _hydrate_beta_rsi(
+    rec_by_ticker: Dict[str, Dict[str, Any]],
+    price_history_path: Optional[Path],
+    as_of_date: str,
+) -> int:
+    """Fill missing ``beta_xbi_60d`` and ``rsi_14d`` in defensive_features.
+
+    **beta_xbi_60d**: Loaded from ``defensive_features_cache.json`` in the
+    same directory as *price_history_path*. Falls back to computing from
+    price_history.csv if cache is unavailable.
+
+    **rsi_14d**: Computed from price_history.csv (14-day Wilder smoothing).
+
+    Returns the total number of fields hydrated.
+    """
+    import csv as _csv
+    from datetime import datetime as _dt
+
+    hydrated = 0
+
+    # --- Step A: beta_xbi_60d from defensive cache ---
+    cache_path = None
+    if price_history_path is not None:
+        cache_path = price_history_path.parent / "defensive_features_cache.json"
+
+    if cache_path and cache_path.exists():
+        try:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                cache = json.load(f)
+            fbt = cache.get("data", {}).get("features_by_ticker", {})
+        except (json.JSONDecodeError, OSError):
+            fbt = {}
+
+        for ticker, rec in rec_by_ticker.items():
+            df = rec.get("defensive_features")
+            if df is None:
+                df = {}
+                rec["defensive_features"] = df
+            if df.get("beta_xbi_60d") is not None:
+                continue
+            cached = fbt.get(ticker, {})
+            beta_val = cached.get("beta_xbi_60d")
+            if beta_val is not None:
+                try:
+                    df["beta_xbi_60d"] = float(beta_val)
+                    hydrated += 1
+                except (ValueError, TypeError):
+                    pass
+
+    # --- Step B: rsi_14d from price_history.csv ---
+    if price_history_path is None or not price_history_path.exists():
+        return hydrated
+
+    missing_rsi = [
+        t for t, r in rec_by_ticker.items()
+        if (r.get("defensive_features") or {}).get("rsi_14d") is None
+    ]
+    if not missing_rsi:
+        return hydrated
+
+    try:
+        ref_date = _dt.strptime(as_of_date, "%Y-%m-%d").date()
+    except ValueError:
+        return hydrated
+
+    missing_set = set(missing_rsi)
+    prices_by_ticker: Dict[str, List] = {}
+    with open(price_history_path, "r", encoding="utf-8") as fh:
+        reader = _csv.DictReader(fh)
+        for row in reader:
+            ticker = (row.get("ticker") or "").upper()
+            if ticker not in missing_set:
+                continue
+            date_str = row.get("date", "")
+            close_str = row.get("close", "")
+            if not date_str or not close_str:
+                continue
+            try:
+                row_date = _dt.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                continue
+            if row_date > ref_date:
+                continue
+            try:
+                close = float(close_str)
+            except (ValueError, TypeError):
+                continue
+            if close <= 0:
+                continue
+            prices_by_ticker.setdefault(ticker, []).append((row_date, close))
+
+    RSI_PERIOD = 14
+    MIN_BARS_RSI = RSI_PERIOD + 1  # need at least 15 prices
+
+    for ticker in missing_rsi:
+        series = prices_by_ticker.get(ticker)
+        if not series or len(series) < MIN_BARS_RSI:
+            continue
+        series.sort(key=lambda x: x[0])
+        closes = [p for _, p in series]
+
+        # Wilder-smoothed RSI
+        deltas = [closes[i] - closes[i - 1] for i in range(1, len(closes))]
+        gains = [max(d, 0) for d in deltas]
+        losses = [max(-d, 0) for d in deltas]
+
+        # Seed with simple average of first RSI_PERIOD changes
+        avg_gain = sum(gains[:RSI_PERIOD]) / RSI_PERIOD
+        avg_loss = sum(losses[:RSI_PERIOD]) / RSI_PERIOD
+
+        # Wilder smoothing for remaining
+        for i in range(RSI_PERIOD, len(deltas)):
+            avg_gain = (avg_gain * (RSI_PERIOD - 1) + gains[i]) / RSI_PERIOD
+            avg_loss = (avg_loss * (RSI_PERIOD - 1) + losses[i]) / RSI_PERIOD
+
+        if avg_loss == 0:
+            rsi_val = 100.0
+        else:
+            rs = avg_gain / avg_loss
+            rsi_val = 100.0 - (100.0 / (1.0 + rs))
+
+        df = rec_by_ticker[ticker].get("defensive_features")
+        if df is None:
+            df = {}
+            rec_by_ticker[ticker]["defensive_features"] = df
+        df["rsi_14d"] = round(rsi_val, 4)
+        hydrated += 1
+
+    return hydrated
+
+
 def _nearest_catalyst_source(
     m3_summaries: Optional[Dict[str, Any]],
     ticker: str,
@@ -2616,6 +2747,11 @@ def save_validation_snapshot(
         n_hydrated = _hydrate_drawdown(rec_by_ticker, price_history_path, as_of_date)
         if n_hydrated:
             logger.info(f"Hydrated drawdown for {n_hydrated} tickers")
+
+    # Hydrate beta_xbi_60d (defensive cache) + rsi_14d (price-history)
+    n_beta_rsi = _hydrate_beta_rsi(rec_by_ticker, price_history_path, as_of_date)
+    if n_beta_rsi:
+        logger.info(f"Hydrated beta/RSI for {n_beta_rsi} fields")
 
     # Cost-aware sizing: initialize cost schedule when enabled
     cost_schedule = None
