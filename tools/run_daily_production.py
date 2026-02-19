@@ -149,10 +149,14 @@ def run_screen(
     extra_args: Optional[List[str]] = None,
 ) -> subprocess.CompletedProcess:
     """Run run_screen.py in phase2 mode with decision ranking."""
+    # run_screen.py requires --output for the raw JSON results
+    output_json = snapshot_dir / as_of_date / "screen_output.json"
+    output_json.parent.mkdir(parents=True, exist_ok=True)
     cmd = [
         sys.executable, str(REPO_ROOT / "run_screen.py"),
         "--as-of-date", as_of_date,
         "--data-dir", str(data_dir),
+        "--output", str(output_json),
         "--decision-mode", "phase2",
         "--ranking-mode", "decision",
         "--snapshot-dir", str(snapshot_dir),
@@ -348,12 +352,23 @@ def build_run_manifest(
     row_counts: Dict[str, Any] = {}
     if snapshot_date_dir and (snapshot_date_dir / "metadata.json").exists():
         meta = json.loads((snapshot_date_dir / "metadata.json").read_text())
+        # Ruleset ID is in clinical_sort_telemetry (primary) or health JSON
+        cst = meta.get("clinical_sort_telemetry") or {}
         ruleset_info = {
-            "ruleset_version": meta.get("decision_engine_version", ""),
-            "ruleset_hash": meta.get("ruleset_id", ""),
+            "ruleset_version": meta.get("version", ""),
+            "ruleset_hash": cst.get("ruleset_id", ""),
             "ranking_mode": meta.get("ranking_mode", ""),
             "decision_mode": meta.get("decision_mode", ""),
         }
+        # Also check phase2_health.json for authoritative ruleset_id
+        health_path = snapshot_date_dir / "phase2_health.json"
+        if health_path.exists():
+            try:
+                health = json.loads(health_path.read_text())
+                if health.get("ruleset_id"):
+                    ruleset_info["ruleset_hash"] = health["ruleset_id"]
+            except (json.JSONDecodeError, OSError):
+                pass
         row_counts = {
             "ticker_count": meta.get("ticker_count"),
             "total_evaluated": meta.get("total_evaluated"),
@@ -620,8 +635,8 @@ def main():
         help="Path to production_data/ (default: production_data/)",
     )
     parser.add_argument(
-        "--price-history", type=Path, default=REPO_ROOT / "data" / "price_history.csv",
-        help="Path to price_history.csv",
+        "--price-history", type=Path, default=REPO_ROOT / "production_data" / "price_history.csv",
+        help="Path to price_history.csv (default: production_data/price_history.csv)",
     )
     parser.add_argument(
         "--snapshot-dir", type=Path, default=REPO_ROOT / "data" / "snapshots",

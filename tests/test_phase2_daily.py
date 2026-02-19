@@ -288,8 +288,8 @@ class TestRunManifest:
         snap.mkdir(parents=True)
         (snap / "metadata.json").write_text(json.dumps({
             "as_of_date": "2026-02-19",
-            "decision_engine_version": "v1.4.0",
-            "ruleset_id": "aa0aaf28",
+            "version": "v1.4.0",
+            "clinical_sort_telemetry": {"ruleset_id": "aa0aaf28"},
             "ranking_mode": "decision",
             "decision_mode": "phase2",
             "ticker_count": 319,
