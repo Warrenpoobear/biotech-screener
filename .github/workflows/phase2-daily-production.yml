@@ -50,9 +50,9 @@ jobs:
           pip install pytest-xdist yfinance
           pip install -e .
 
-      # ── Unit tests (fast gate) ──────────────────────────────────
+      # ── Unit tests (fast gate — excludes integration tests that need production data) ──
       - name: Run unit tests
-        run: python -m pytest tests/ -q
+        run: python -m pytest tests/ -q --ignore=tests/integration
 
       # ── Resolve as_of_date (Detroit-local) ──────────────────────
       - name: Resolve date
