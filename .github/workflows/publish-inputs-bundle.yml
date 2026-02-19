@@ -1,0 +1,140 @@
+name: publish-inputs-bundle
+
+on:
+  schedule:
+    # Weekdays at 12:00 PM UTC (7–8 AM America/Detroit depending on DST)
+    # Runs ~2 hours before phase2-daily-production (2 PM UTC)
+    - cron: "0 12 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      as_of_date:
+        description: "Bundle date (YYYY-MM-DD), defaults to today (Detroit TZ)"
+        required: false
+        type: string
+
+permissions:
+  contents: write  # needed to create GitHub releases
+
+concurrency:
+  group: publish-inputs-bundle
+  cancel-in-progress: true  # latest data wins — safe to cancel stale runs
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install yfinance
+
+      # ── Resolve date ─────────────────────────────────────────────
+      - name: Resolve date
+        id: date
+        run: |
+          DATE="${{ inputs.as_of_date }}"
+          if [ -z "$DATE" ]; then
+            DATE=$(TZ=America/Detroit date +%F)
+          fi
+          echo "as_of_date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "Resolved as_of_date=$DATE"
+
+      # ── Collect market data from Yahoo Finance ───────────────────
+      - name: Collect market data
+        id: collect
+        run: |
+          DATE="${{ steps.date.outputs.as_of_date }}"
+          echo "Collecting market data for $DATE ..."
+
+          python collect_market_data.py \
+            --universe production_data/universe.json \
+            --output production_data/market_data.json
+
+          # Capture stats for the summary
+          TICKER_COUNT=$(python -c "
+          import json
+          data = json.load(open('production_data/market_data.json'))
+          print(len(data))
+          ")
+          COLLECTED_AT=$(python -c "
+          import json
+          data = json.load(open('production_data/market_data.json'))
+          dates = [r.get('collected_at','') for r in data if isinstance(r,dict)]
+          print(max(dates) if dates else 'unknown')
+          ")
+          SHA256=$(sha256sum production_data/market_data.json | cut -d' ' -f1)
+
+          echo "ticker_count=$TICKER_COUNT" >> "$GITHUB_OUTPUT"
+          echo "collected_at=$COLLECTED_AT" >> "$GITHUB_OUTPUT"
+          echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
+          echo "Collected $TICKER_COUNT tickers (collected_at=$COLLECTED_AT)"
+
+      # ── Validate + publish bundle ────────────────────────────────
+      - name: Publish inputs bundle
+        id: publish
+        run: |
+          DATE="${{ steps.date.outputs.as_of_date }}"
+          python tools/publish_inputs_bundle.py \
+            --as-of-date "$DATE" \
+            --update-latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Upload provenance artifact ───────────────────────────────
+      - name: Write provenance
+        if: always()
+        run: |
+          mkdir -p output
+          python -c "
+          import json, os
+          provenance = {
+              'as_of_date': '${{ steps.date.outputs.as_of_date }}',
+              'collected_at': '${{ steps.collect.outputs.collected_at }}',
+              'ticker_count': int('${{ steps.collect.outputs.ticker_count }}' or '0'),
+              'sha256': '${{ steps.collect.outputs.sha256 }}',
+              'release_tag': 'inputs-${{ steps.date.outputs.as_of_date }}',
+              'git_sha': os.environ.get('GITHUB_SHA', ''),
+              'workflow_run_id': os.environ.get('GITHUB_RUN_ID', ''),
+          }
+          with open('output/inputs_provenance.json', 'w') as f:
+              json.dump(provenance, f, indent=2)
+          print(json.dumps(provenance, indent=2))
+          "
+
+      - name: Upload provenance
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: inputs-provenance-${{ steps.date.outputs.as_of_date }}
+          path: output/inputs_provenance.json
+          retention-days: 90
+
+      # ── Job summary ──────────────────────────────────────────────
+      - name: Summary
+        if: always()
+        run: |
+          DATE="${{ steps.date.outputs.as_of_date }}"
+          COUNT="${{ steps.collect.outputs.ticker_count }}"
+          COLLECTED="${{ steps.collect.outputs.collected_at }}"
+          SHA="${{ steps.collect.outputs.sha256 }}"
+
+          echo "## Inputs Bundle Published" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Date | \`$DATE\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Tickers | \`$COUNT\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Collected at | \`$COLLECTED\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| SHA-256 | \`${SHA:0:16}...\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Release tag | \`inputs-$DATE\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "> :white_check_mark: Bundle available for phase2-daily-production hydration" >> "$GITHUB_STEP_SUMMARY"
