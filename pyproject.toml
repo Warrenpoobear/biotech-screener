@@ -43,7 +43,7 @@ testpaths = ["tests"]
 pythonpath = [".", "tests"]
 python_files = "test_*.py"
 python_functions = "test_*"
-addopts = "-n auto --dist loadfile -q"
+addopts = "-n auto --dist worksteal -q"
 markers = [
     "slow: marks tests that run the full pipeline or take >5s (deselect with '-m \"not slow\"')",
 ]
