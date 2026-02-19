@@ -1,0 +1,23 @@
+{
+  "as_of_date": "2026-01-21",
+  "prior_date": "2026-01-20",
+  "bad_to_good_count": 2,
+  "good_to_bad_count": 0,
+  "bad_to_good_tickers": [
+    "GOSS",
+    "TRVI"
+  ],
+  "good_to_bad_tickers": [],
+  "bad_to_good_in_top60": 1,
+  "bad_to_good_in_top100": 1,
+  "median_catalyst_days_good": 40.0,
+  "p10_catalyst_days": 9.0,
+  "p50_catalyst_days": 40.0,
+  "p90_catalyst_days": 201.9,
+  "A_tier_count": 38,
+  "top60_overlap": 1.0,
+  "top100_overlap": 0.9802,
+  "sec_8k_events": 215,
+  "ctgov_events": 1001,
+  "fda_events": 5
+}

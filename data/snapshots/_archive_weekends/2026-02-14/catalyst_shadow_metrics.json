@@ -1,0 +1,29 @@
+{
+  "as_of_date": "2026-02-14",
+  "prior_date": "2026-02-11",
+  "bad_to_good_count": 8,
+  "good_to_bad_count": 0,
+  "bad_to_good_tickers": [
+    "AURA",
+    "BCAX",
+    "DYN",
+    "ENTA",
+    "LBRX",
+    "NUVB",
+    "PCVX",
+    "RAPT"
+  ],
+  "good_to_bad_tickers": [],
+  "bad_to_good_in_top60": 2,
+  "bad_to_good_in_top100": 2,
+  "median_catalyst_days_good": 45.0,
+  "p10_catalyst_days": 15.0,
+  "p50_catalyst_days": 45.0,
+  "p90_catalyst_days": 199.0,
+  "A_tier_count": 37,
+  "top60_overlap": 0.875,
+  "top100_overlap": 0.9608,
+  "sec_8k_events": 206,
+  "ctgov_events": 1084,
+  "fda_events": 11
+}

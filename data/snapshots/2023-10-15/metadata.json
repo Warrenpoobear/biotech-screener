@@ -1,0 +1,10 @@
+{
+  "as_of_date": "2023-10-15",
+  "reconstructed_at": "2026-01-14T12:21:16.423865",
+  "ticker_count": 284,
+  "source_type": "historical_reconstruction",
+  "data_sources": [
+    "SEC_EDGAR",
+    "ClinicalTrials.gov"
+  ]
+}

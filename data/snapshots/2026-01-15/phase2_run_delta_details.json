@@ -1,0 +1,117 @@
+{
+  "generated_at": "2026-02-19T17:16:20Z",
+  "current": {
+    "date": "2026-01-15",
+    "ruleset_id": "aa0aaf28",
+    "has_native_portfolio": true,
+    "portfolio_size": 20
+  },
+  "prior": null,
+  "tier_distribution": {
+    "current": {
+      "A": 25,
+      "B": 47,
+      "C": 62,
+      "D": 47
+    }
+  },
+  "tier_in_portfolio": {
+    "current": {
+      "A": 20,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    }
+  },
+  "sizing": {
+    "current": {
+      "L": 16,
+      "M": 2,
+      "S": 1,
+      "XS": 1
+    }
+  },
+  "catalyst_coverage": {
+    "current": {
+      "n_dev": 181,
+      "n_specific": 153,
+      "pct": 84.5,
+      "mode_dist": {
+        "specific_days": 153,
+        "no_upcoming": 28
+      },
+      "backfill_share_pct": 0.0
+    }
+  },
+  "top_catalysts": {
+    "current": [
+      {
+        "ticker": "PRTA",
+        "catalyst_days": 8,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "MBX",
+        "catalyst_days": 11,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "BEAM",
+        "catalyst_days": 14,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "KOD",
+        "catalyst_days": 16,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "CGEM",
+        "catalyst_days": 16,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "CRNX",
+        "catalyst_days": 17,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "PHVS",
+        "catalyst_days": 17,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "ERAS",
+        "catalyst_days": 17,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "ANRO",
+        "catalyst_days": 17,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "NAMS",
+        "catalyst_days": 17,
+        "tier_dev": "B"
+      }
+    ]
+  },
+  "risk_flags": {
+    "current": {
+      "deep_drawdown": 3,
+      "high_vol": 3,
+      "high_beta": 3,
+      "overbought_rsi": 3,
+      "low_confidence": 0
+    }
+  },
+  "guardrails": {
+    "passed": [
+      "Ruleset matches pinned Phase-2 ID (aa0aaf28)",
+      "A-tier count >= 1 (25)",
+      "Catalyst coverage 84.5% >= 50.0%"
+    ],
+    "warnings": []
+  }
+}

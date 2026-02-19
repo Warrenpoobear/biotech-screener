@@ -1,0 +1,62 @@
+========================================================================
+PHASE-2 RUN DELTA REPORT
+========================================================================
+Generated: 2026-02-19T17:23:54Z
+Current:   2026-02-18 (ruleset aa0aaf28)
+Prior:     (none)
+
+HEALTH: OK
+  catalyst=92.3%  A=33  ruleset=aa0aaf28
+
+1. PORTFOLIO TURNOVER
+------------------------------------------------------------------------
+  Portfolio: 20 names (no prior for comparison)
+
+2. TIER DISTRIBUTION (dev-stage universe)
+------------------------------------------------------------------------
+                Current
+  A                  33
+  B                  41
+  C                  58
+  D                  51
+
+  In portfolio:
+    A: 20 (100%)
+    B: 0 (0%)
+
+3. SIZING (portfolio)
+------------------------------------------------------------------------
+                Current
+  L                  15
+  M                   4
+  S                   1
+  XS                  0
+
+4. CATALYST COVERAGE (dev-stage)
+------------------------------------------------------------------------
+  specific_days:  92.3%
+  Mode distribution:
+    no_upcoming: 14
+    specific_days: 169
+
+  Nearest 10 catalysts:
+    DNLI       7d  tier=B      ADCT      10d  tier=A
+    NMRA      11d  tier=A      PVLA      11d  tier=A
+    IMVT      11d  tier=A      VRDN      11d  tier=A
+    OLMA      11d  tier=A      NUVL      11d  tier=A
+    ABVX      11d  tier=B      KYTX      11d  tier=B
+
+5. RISK SANITY (portfolio)
+------------------------------------------------------------------------
+  Flag                  Current
+  deep_drawdown               1
+  high_vol                    2
+  high_beta                   3
+  overbought_rsi              1
+  low_confidence              0
+
+6. GUARDRAILS
+------------------------------------------------------------------------
+  [PASS] Ruleset matches pinned Phase-2 ID (aa0aaf28)
+  [PASS] A-tier count > 0 (33)
+  [PASS] Catalyst specific_days coverage > 50.0% (92.3%)

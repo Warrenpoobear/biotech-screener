@@ -1,17 +1,16 @@
 {
-  "total_events": 1097,
+  "total_events": 1086,
   "unique_tickers_with_events": 235,
   "by_source": {
-    "CTGOV_CALENDAR": 1086,
-    "FDA_CALENDAR": 11
+    "CTGOV_CALENDAR": 1086
   },
   "by_confidence": {
-    "HIGH": 126,
+    "HIGH": 117,
     "LOW": 785,
-    "MED": 186
+    "MED": 184
   },
   "by_date_precision": {
-    "DAY": 868,
+    "DAY": 857,
     "RANGE": 229
   }
 }

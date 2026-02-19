@@ -1,6 +1,6 @@
 {
   "as_of_date": "2026-02-19",
-  "saved_at": "2026-02-19T15:06:36.372226Z",
+  "saved_at": "2026-02-19T18:46:19.707184Z",
   "decision_mode": "phase2",
   "ranking_mode": "decision",
   "version": "1.6.0",
@@ -49,17 +49,17 @@
     },
     "momentum_score": {
       "n_total": 319,
-      "n_unique": 290,
-      "tie_pct": 0.0909
+      "n_unique": 295,
+      "tie_pct": 0.0752
     },
     "catalyst_score": {
       "n_total": 319,
-      "n_unique": 183,
-      "tie_pct": 0.4263,
+      "n_unique": 184,
+      "tie_pct": 0.4232,
       "zero_signal_count": 94,
       "signal_n": 225,
-      "signal_unique": 194,
-      "signal_tie_pct": 0.1378
+      "signal_unique": 196,
+      "signal_tie_pct": 0.1289
     },
     "smart_money_score": {
       "n_total": 263,
@@ -269,8 +269,8 @@
     "catalyst_events_2026-02-15.json": "90dc37f3bc5c81a4",
     "catalyst_events_2026-02-16.json": "7ed12bcee68039ef",
     "catalyst_events_2026-02-17.json": "3980da13594dd0a3",
-    "catalyst_events_2026-02-18.json": "0fd5cb60d9a10d3b",
-    "catalyst_events_2026-02-19.json": "69c2fc24ae3928fe",
+    "catalyst_events_2026-02-18.json": "e58f60bc63e70ecd",
+    "catalyst_events_2026-02-19.json": "8fab708db1909e66",
     "catalyst_events_vnext_2023-01-15.json": "5d8698ae7dc05f46",
     "catalyst_events_vnext_2023-04-15.json": "944784087f2f8266",
     "catalyst_events_vnext_2023-07-15.json": "06d4232f61d3ceb7",
@@ -429,8 +429,8 @@
     "catalyst_events_vnext_2026-02-15.json": "3cd621e4059660a0",
     "catalyst_events_vnext_2026-02-16.json": "214c28595bc30200",
     "catalyst_events_vnext_2026-02-17.json": "afbffa19496f653d",
-    "catalyst_events_vnext_2026-02-18.json": "d37640c52e234beb",
-    "catalyst_events_vnext_2026-02-19.json": "ca1e785087230a5d",
+    "catalyst_events_vnext_2026-02-18.json": "03bcc33c6313f3bf",
+    "catalyst_events_vnext_2026-02-19.json": "9c4b0b195e7ed45a",
     "catalyst_overrides.json": "e4c587ce6c537d65",
     "cfo_data_2026-01-08.json": "33e0d93576eff5d0",
     "corporate_catalysts.json": "8e8db689efba18c2",
@@ -512,7 +512,7 @@
     "universe_mapped.json": "15f9c56365b4bad7"
   },
   "clinical_sort_telemetry": {
-    "n_nonzero_clin_adj_dev": 68,
+    "n_nonzero_clin_adj_dev": 69,
     "n_nonzero_clin_adj_comm": 61,
     "ruleset_id": "aa0aaf28",
     "enable_clinical_sort_signal": true

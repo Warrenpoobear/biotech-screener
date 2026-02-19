@@ -1,0 +1,20 @@
+{
+  "total_events": 1326,
+  "unique_tickers_with_events": 264,
+  "by_source": {
+    "CTGOV_CALENDAR": 1097,
+    "FDA_CALENDAR": 11,
+    "SEC_8K_FILING": 218
+  },
+  "by_confidence": {
+    "HIGH": 142,
+    "LOW": 931,
+    "MED": 253
+  },
+  "by_date_precision": {
+    "DAY": 934,
+    "HALF_YEAR": 127,
+    "QUARTER": 23,
+    "RANGE": 242
+  }
+}

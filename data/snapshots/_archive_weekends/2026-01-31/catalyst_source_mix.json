@@ -1,0 +1,18 @@
+{
+  "total_events": 229,
+  "unique_tickers_with_events": 131,
+  "by_source": {
+    "FDA_CALENDAR": 11,
+    "SEC_8K_FILING": 218
+  },
+  "by_confidence": {
+    "HIGH": 23,
+    "LOW": 131,
+    "MED": 75
+  },
+  "by_date_precision": {
+    "DAY": 75,
+    "HALF_YEAR": 131,
+    "QUARTER": 23
+  }
+}

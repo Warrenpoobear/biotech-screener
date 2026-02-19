@@ -1,0 +1,72 @@
+========================================================================
+PHASE-2 RUN DELTA REPORT
+========================================================================
+Generated: 2026-02-16T14:18:21Z
+Current:   2026-02-02 (ruleset 96f655ee)
+Prior:     2026-02-01 (ruleset 96f655ee)
+
+HEALTH: WARN [high_turnover, high_weight_churn]
+  turnover=60.0%  catalyst=76.0%  A=36  ruleset=96f655ee
+
+WARNINGS:
+  - Name turnover 60.0% > 40.0% threshold
+
+1. PORTFOLIO TURNOVER
+------------------------------------------------------------------------
+  Current portfolio: 20 names
+  Prior portfolio:   20 names
+  Entrants (12):  ACLX, ARTV, ATXS, CNTA, FDMT, KURA, ORKA, PHVS, PRTA, PVLA, ... (+2 more)
+  Exits (12):  ADCT, BCAX, CELC, COGT, DNLI, IVVD, OLMA, PCVX, RNA, SION, ... (+2 more)
+  Name turnover: 60.0%
+  Weight L1 delta: 124.7%
+
+2. TIER DISTRIBUTION (dev-stage universe)
+------------------------------------------------------------------------
+                Current    Prior    Delta
+  A                  36       17 +     19
+  B                  38       44      -6
+  C                  54       68     -14
+  D                  55       54 +      1
+
+  In portfolio:
+    A: 20 (100%)   Prior: 17 (85%)
+    B: 0 (0%)   Prior: 3 (15%)
+
+3. SIZING (portfolio)
+------------------------------------------------------------------------
+                Current    Prior    Delta
+  L                  17       16 +      1
+  M                   2        3      -1
+  S                   1        1       0
+  XS                  0        0       0
+
+4. CATALYST COVERAGE (dev-stage)
+------------------------------------------------------------------------
+  specific_days:  76.0%  (Prior: 36.1%)
+  Mode distribution (current):
+    blended_window: 1
+    no_upcoming: 43
+    specific_days: 139
+
+  Nearest 10 catalysts (current):
+    CVAC       2d  tier=B      GLPG       3d  tier=C
+    AGIO       4d  tier=D      URGN       6d  tier=B
+    IBRX       8d  tier=A      XNCR      10d  tier=C
+    KALV      12d  tier=B      PHVS      12d  tier=A
+    CTNM      13d  tier=C      OCGN      15d  tier=D
+
+5. RISK SANITY (portfolio)
+------------------------------------------------------------------------
+  Flag                  Current    Prior
+  deep_drawdown               0        2
+  high_vol                    0        3
+  high_beta                   0        0
+  overbought_rsi              0        0
+  low_confidence              0        0
+
+6. GUARDRAILS
+------------------------------------------------------------------------
+  [PASS] Ruleset matches pinned Phase-2 ID (96f655ee)
+  [PASS] A-tier count > 0 (36)
+  [PASS] Catalyst specific_days coverage > 50.0% (76.0%)
+  [WARN] Name turnover 60.0% > 40.0%

@@ -1,0 +1,22 @@
+{
+  "as_of_date": "2026-01-29",
+  "prior_date": "2026-01-28",
+  "bad_to_good_count": 0,
+  "good_to_bad_count": 1,
+  "bad_to_good_tickers": [],
+  "good_to_bad_tickers": [
+    "ABEO"
+  ],
+  "bad_to_good_in_top60": 0,
+  "bad_to_good_in_top100": 0,
+  "median_catalyst_days_good": 37.0,
+  "p10_catalyst_days": 2.0,
+  "p50_catalyst_days": 37.0,
+  "p90_catalyst_days": 193.9,
+  "A_tier_count": 34,
+  "top60_overlap": 0.9672,
+  "top100_overlap": 0.9802,
+  "sec_8k_events": 216,
+  "ctgov_events": 1027,
+  "fda_events": 5
+}

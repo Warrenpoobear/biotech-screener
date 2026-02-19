@@ -1,0 +1,31 @@
+{
+  "status": "WARN",
+  "reasons": [
+    "portfolio_missing_data"
+  ],
+  "metrics": {
+    "a_count": 29,
+    "catalyst_coverage_pct": 92.3,
+    "portfolio_size": 319,
+    "ruleset_id": "aa0aaf28",
+    "thresholds_id": "0dae2ff0",
+    "coverage_catalyst_pct": 100.0,
+    "coverage_sponsor_pct": 100.0,
+    "coverage_drawdown_pct": 99.5,
+    "portfolio_missing_count": 1
+  },
+  "thresholds_id": "0dae2ff0",
+  "thresholds": {
+    "fail_catalyst_coverage_min": 20.0,
+    "fail_a_count_min": 1,
+    "fail_optionality_coverage_min": 80.0,
+    "fail_drawdown_coverage_min": 95.0,
+    "warn_a_count_low": 2,
+    "warn_turnover_pct": 50.0,
+    "warn_weight_l1_pct": 55.0,
+    "warn_catalyst_drop_pp": 5.0,
+    "warn_drawdown_coverage_min": 99.0,
+    "warn_sponsor_coverage_min": 90.0,
+    "warn_catalyst_comp_coverage_min": 85.0
+  }
+}

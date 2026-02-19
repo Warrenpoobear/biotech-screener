@@ -1,0 +1,225 @@
+{
+  "generated_at": "2026-02-15T17:42:05Z",
+  "current": {
+    "date": "2026-02-14",
+    "ruleset_id": "96f655ee",
+    "has_native_portfolio": true,
+    "portfolio_size": 20
+  },
+  "prior": {
+    "date": "2026-02-11",
+    "ruleset_id": "96f655ee",
+    "has_native_portfolio": true,
+    "portfolio_size": 20
+  },
+  "portfolio_turnover": {
+    "entrants": [
+      "AURA",
+      "BCAX",
+      "RAPP"
+    ],
+    "exits": [
+      "ADCT",
+      "CNTA",
+      "OLMA"
+    ],
+    "name_turnover_pct": 15.0,
+    "weight_l1_delta": 29.3
+  },
+  "tier_distribution": {
+    "current": {
+      "A": 37,
+      "B": 37,
+      "C": 55,
+      "D": 54
+    },
+    "prior": {
+      "A": 33,
+      "B": 41,
+      "C": 55,
+      "D": 54
+    }
+  },
+  "tier_in_portfolio": {
+    "current": {
+      "A": 20,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "prior": {
+      "A": 20,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    }
+  },
+  "sizing": {
+    "current": {
+      "L": 16,
+      "M": 3,
+      "S": 1,
+      "XS": 0
+    },
+    "prior": {
+      "L": 16,
+      "M": 3,
+      "S": 1,
+      "XS": 0
+    }
+  },
+  "catalyst_coverage": {
+    "current": {
+      "n_dev": 183,
+      "n_specific": 141,
+      "pct": 77.0,
+      "mode_dist": {
+        "specific_days": 141,
+        "no_upcoming": 41,
+        "blended_window": 1
+      },
+      "backfill_share_pct": 0.0
+    },
+    "prior": {
+      "n_dev": 183,
+      "n_specific": 134,
+      "pct": 73.2,
+      "mode_dist": {
+        "specific_days": 134,
+        "no_upcoming": 49
+      },
+      "backfill_share_pct": 0.0
+    }
+  },
+  "top_catalysts": {
+    "current": [
+      {
+        "ticker": "CTNM",
+        "catalyst_days": 1,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "SGMT",
+        "catalyst_days": 3,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "OCGN",
+        "catalyst_days": 3,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "SYRE",
+        "catalyst_days": 4,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "UPB",
+        "catalyst_days": 5,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "BNTX",
+        "catalyst_days": 6,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "PRTA",
+        "catalyst_days": 8,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "IBRX",
+        "catalyst_days": 10,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "DNLI",
+        "catalyst_days": 11,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "AGIO",
+        "catalyst_days": 13,
+        "tier_dev": "D"
+      }
+    ],
+    "prior": [
+      {
+        "ticker": "XNCR",
+        "catalyst_days": 1,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "KALV",
+        "catalyst_days": 3,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "PHVS",
+        "catalyst_days": 3,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "CTNM",
+        "catalyst_days": 4,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "SGMT",
+        "catalyst_days": 6,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "OCGN",
+        "catalyst_days": 6,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "SYRE",
+        "catalyst_days": 7,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "UPB",
+        "catalyst_days": 8,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "BNTX",
+        "catalyst_days": 9,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "PRTA",
+        "catalyst_days": 11,
+        "tier_dev": "A"
+      }
+    ]
+  },
+  "risk_flags": {
+    "current": {
+      "deep_drawdown": 1,
+      "high_vol": 0,
+      "high_beta": 0,
+      "overbought_rsi": 0,
+      "low_confidence": 0
+    },
+    "prior": {
+      "deep_drawdown": 1,
+      "high_vol": 1,
+      "high_beta": 0,
+      "overbought_rsi": 0,
+      "low_confidence": 0
+    }
+  },
+  "guardrails": {
+    "passed": [
+      "Ruleset matches pinned Phase-2 ID (96f655ee)",
+      "A-tier count >= 1 (37)",
+      "Catalyst coverage 77.0% >= 50.0%",
+      "Name turnover 15.0% <= 40.0%"
+    ],
+    "warnings": []
+  }
+}

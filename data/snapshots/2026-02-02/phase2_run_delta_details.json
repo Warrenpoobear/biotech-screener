@@ -1,0 +1,245 @@
+{
+  "generated_at": "2026-02-16T14:18:21Z",
+  "current": {
+    "date": "2026-02-02",
+    "ruleset_id": "96f655ee",
+    "has_native_portfolio": true,
+    "portfolio_size": 20
+  },
+  "prior": {
+    "date": "2026-02-01",
+    "ruleset_id": "96f655ee",
+    "has_native_portfolio": true,
+    "portfolio_size": 20
+  },
+  "portfolio_turnover": {
+    "entrants": [
+      "ACLX",
+      "ARTV",
+      "ATXS",
+      "CNTA",
+      "FDMT",
+      "KURA",
+      "ORKA",
+      "PHVS",
+      "PRTA",
+      "PVLA",
+      "SRRK",
+      "SYRE"
+    ],
+    "exits": [
+      "ADCT",
+      "BCAX",
+      "CELC",
+      "COGT",
+      "DNLI",
+      "IVVD",
+      "OLMA",
+      "PCVX",
+      "RNA",
+      "SION",
+      "SLDB",
+      "VRDN"
+    ],
+    "name_turnover_pct": 60.0,
+    "weight_l1_delta": 124.7
+  },
+  "tier_distribution": {
+    "current": {
+      "A": 36,
+      "B": 38,
+      "C": 54,
+      "D": 55
+    },
+    "prior": {
+      "A": 17,
+      "B": 44,
+      "C": 68,
+      "D": 54
+    }
+  },
+  "tier_in_portfolio": {
+    "current": {
+      "A": 20,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "prior": {
+      "A": 17,
+      "B": 3,
+      "C": 0,
+      "D": 0
+    }
+  },
+  "sizing": {
+    "current": {
+      "L": 17,
+      "M": 2,
+      "S": 1,
+      "XS": 0
+    },
+    "prior": {
+      "L": 16,
+      "M": 3,
+      "S": 1,
+      "XS": 0
+    }
+  },
+  "catalyst_coverage": {
+    "current": {
+      "n_dev": 183,
+      "n_specific": 139,
+      "pct": 76.0,
+      "mode_dist": {
+        "specific_days": 139,
+        "no_upcoming": 43,
+        "blended_window": 1
+      },
+      "backfill_share_pct": 0.0
+    },
+    "prior": {
+      "n_dev": 183,
+      "n_specific": 66,
+      "pct": 36.1,
+      "mode_dist": {
+        "specific_days": 66,
+        "no_upcoming": 117
+      },
+      "backfill_share_pct": 0.0
+    }
+  },
+  "top_catalysts": {
+    "current": [
+      {
+        "ticker": "CVAC",
+        "catalyst_days": 2,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "GLPG",
+        "catalyst_days": 3,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "AGIO",
+        "catalyst_days": 4,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "URGN",
+        "catalyst_days": 6,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "IBRX",
+        "catalyst_days": 8,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "XNCR",
+        "catalyst_days": 10,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "KALV",
+        "catalyst_days": 12,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "PHVS",
+        "catalyst_days": 12,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "CTNM",
+        "catalyst_days": 13,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "OCGN",
+        "catalyst_days": 15,
+        "tier_dev": "D"
+      }
+    ],
+    "prior": [
+      {
+        "ticker": "CYTK",
+        "catalyst_days": 55,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "TBPH",
+        "catalyst_days": 58,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "PVLA",
+        "catalyst_days": 58,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "EYPT",
+        "catalyst_days": 58,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "CELC",
+        "catalyst_days": 58,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "VRDN",
+        "catalyst_days": 58,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "ALMS",
+        "catalyst_days": 58,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "DYN",
+        "catalyst_days": 59,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "RAPP",
+        "catalyst_days": 59,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "REPL",
+        "catalyst_days": 68,
+        "tier_dev": "D"
+      }
+    ]
+  },
+  "risk_flags": {
+    "current": {
+      "deep_drawdown": 0,
+      "high_vol": 0,
+      "high_beta": 0,
+      "overbought_rsi": 0,
+      "low_confidence": 0
+    },
+    "prior": {
+      "deep_drawdown": 2,
+      "high_vol": 3,
+      "high_beta": 0,
+      "overbought_rsi": 0,
+      "low_confidence": 0
+    }
+  },
+  "guardrails": {
+    "passed": [
+      "Ruleset matches pinned Phase-2 ID (96f655ee)",
+      "A-tier count >= 1 (36)",
+      "Catalyst coverage 76.0% >= 50.0%"
+    ],
+    "warnings": [
+      "Name turnover 60.0% > 40.0%",
+      "Name turnover 60.0% > 40.0% threshold"
+    ]
+  }
+}

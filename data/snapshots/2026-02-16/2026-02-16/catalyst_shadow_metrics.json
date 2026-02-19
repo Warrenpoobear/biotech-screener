@@ -1,0 +1,20 @@
+{
+  "as_of_date": "2026-02-16",
+  "prior_date": null,
+  "bad_to_good_count": null,
+  "good_to_bad_count": null,
+  "bad_to_good_tickers": null,
+  "good_to_bad_tickers": null,
+  "bad_to_good_in_top60": null,
+  "bad_to_good_in_top100": null,
+  "median_catalyst_days_good": 43.5,
+  "p10_catalyst_days": 13.0,
+  "p50_catalyst_days": 43.5,
+  "p90_catalyst_days": 197.0,
+  "A_tier_count": 37,
+  "top60_overlap": null,
+  "top100_overlap": null,
+  "sec_8k_events": 206,
+  "ctgov_events": 1082,
+  "fda_events": 6
+}

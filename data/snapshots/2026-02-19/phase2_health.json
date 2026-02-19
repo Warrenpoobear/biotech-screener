@@ -1,16 +1,14 @@
 {
-  "status": "WARN",
-  "reasons": [
-    "high_weight_churn"
-  ],
+  "status": "OK",
+  "reasons": [],
   "metrics": {
     "a_count": 32,
     "catalyst_coverage_pct": 92.3,
     "portfolio_size": 20,
     "ruleset_id": "aa0aaf28",
     "thresholds_id": "0dae2ff0",
-    "name_turnover_pct": 35.0,
-    "weight_l1_delta": 77.5,
+    "name_turnover_pct": 0.0,
+    "weight_l1_delta": 4.2,
     "coverage_catalyst_pct": 100.0,
     "coverage_sponsor_pct": 100.0,
     "coverage_drawdown_pct": 99.5,

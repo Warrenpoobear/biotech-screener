@@ -1,0 +1,1588 @@
+{
+  "as_of_date": "2023-01-15",
+  "count": 316,
+  "tickers": [
+    "PGEN",
+    "CRVS",
+    "ATAI",
+    "ABSI",
+    "SPRY",
+    "NUVB",
+    "CRSP",
+    "AGIO",
+    "INSM",
+    "SNDX",
+    "RVMD",
+    "SVRA",
+    "MNMD",
+    "TKNO",
+    "CGON",
+    "NUVL",
+    "OLMA",
+    "CLDX",
+    "ORIC",
+    "KYMR",
+    "CRNX",
+    "ACLX",
+    "APGE",
+    "DSGN",
+    "XNCR",
+    "RCUS",
+    "CYTK",
+    "ORKA",
+    "ARQT",
+    "AVTR",
+    "ARDX",
+    "VTYX",
+    "XENE",
+    "ADPT",
+    "SYRE",
+    "PTGX",
+    "MDGL",
+    "NRIX",
+    "CTNM",
+    "TNGX",
+    "NMRA",
+    "PCVX",
+    "PHAT",
+    "ACRS",
+    "EPRX",
+    "TRVI",
+    "LXEO",
+    "JANX",
+    "KYTX",
+    "CRBU",
+    "LYEL",
+    "RLAY",
+    "GLPG",
+    "PSNL",
+    "FTRE",
+    "OMER",
+    "SRRK",
+    "FULC",
+    "RGNX",
+    "LQDA",
+    "PACB",
+    "OCGN",
+    "URGN",
+    "ENTA",
+    "LFCR",
+    "PYXS",
+    "LCTX",
+    "LEGN",
+    "LENZ",
+    "MLYS",
+    "ABCL",
+    "TARS",
+    "BHVN",
+    "GRAL",
+    "QTRX",
+    "ESPR",
+    "EOLS",
+    "CATX",
+    "ATXS",
+    "ZBIO",
+    "OCUL",
+    "AARD",
+    "AVBP",
+    "REPL",
+    "OBIO",
+    "ARGX",
+    "CGEM",
+    "CDXS",
+    "AUTL",
+    "INBX",
+    "VNDA",
+    "TYRA",
+    "RCKT",
+    "ANNX",
+    "SLN",
+    "SGMO",
+    "MYGN",
+    "VERA",
+    "BCAX",
+    "TRDA",
+    "WVE",
+    "PRME",
+    "ALLO",
+    "NGNE",
+    "STRO",
+    "LRMR",
+    "RXRX",
+    "TNYA",
+    "DRMA",
+    "MRSN",
+    "AXSM",
+    "ADRO",
+    "IMMP",
+    "KALV",
+    "RANI",
+    "BEAM",
+    "ABVX",
+    "ACIU",
+    "AKRO",
+    "ASND",
+    "BGXX",
+    "BNTX",
+    "ELVN",
+    "EWTX",
+    "FDMT",
+    "FHTX",
+    "FLGT",
+    "GHRS",
+    "IDYA",
+    "PHVS",
+    "STVN",
+    "PRAX",
+    "SION",
+    "BMRN",
+    "PRTA",
+    "TVTX",
+    "CSTL",
+    "GOSS",
+    "DVAX",
+    "ROIV",
+    "IVVD",
+    "AMLX",
+    "AQST",
+    "MRNA",
+    "MRVI",
+    "BBIO",
+    "SNY",
+    "NVCR",
+    "AVIR",
+    "KMDA",
+    "TXG",
+    "MENS",
+    "DAWN",
+    "CRGX",
+    "SGAFT",
+    "THRD",
+    "XTSLA",
+    "GPCR",
+    "EDIT",
+    "GRFS",
+    "IRON",
+    "MCRB",
+    "PEPG",
+    "VOR",
+    "TSHA",
+    "KURA",
+    "STOK",
+    "AVXL",
+    "SUPN",
+    "VTRS",
+    "RYTM",
+    "ANRO",
+    "BCYC",
+    "RAPT",
+    "HROW",
+    "ADCT",
+    "CNTA",
+    "NBIX",
+    "ALNY",
+    "DNLI",
+    "AUPH",
+    "LGND",
+    "RPRX",
+    "IBRX",
+    "VRTX",
+    "EXEL",
+    "AMRX",
+    "DNA",
+    "BCRX",
+    "AMGN",
+    "ARWR",
+    "CLLS",
+    "MGTX",
+    "EYPT",
+    "KNSA",
+    "OPCH",
+    "ZYME",
+    "TERN",
+    "ALMS",
+    "UTHR",
+    "NTRA",
+    "RIGL",
+    "ETON",
+    "MNKD",
+    "LAB",
+    "BRKR",
+    "RGEN",
+    "CABA",
+    "VCEL",
+    "SMMT",
+    "ARVN",
+    "VCYT",
+    "CTMX",
+    "GILD",
+    "XERS",
+    "ABUS",
+    "VIR",
+    "SANA",
+    "RARE",
+    "PTCT",
+    "ZVRA",
+    "INCY",
+    "PCRX",
+    "RNA",
+    "PRVA",
+    "ANIP",
+    "CTKB",
+    "ZLAB",
+    "COGT",
+    "IMRX",
+    "TECX",
+    "PBYI",
+    "INVA",
+    "MESO",
+    "TBPH",
+    "BDTX",
+    "ALT",
+    "IRWD",
+    "UPB",
+    "KOD",
+    "REGN",
+    "GMAB",
+    "HRMY",
+    "SEPN",
+    "ARCT",
+    "TEM",
+    "FGEN",
+    "IOVA",
+    "OABI",
+    "QURE",
+    "RAPP",
+    "NTLA",
+    "CRL",
+    "AURA",
+    "SGMT",
+    "CDNA",
+    "AMPH",
+    "SRPT",
+    "ANAB",
+    "HUMA",
+    "DYN",
+    "ERAS",
+    "VYGR",
+    "SLDB",
+    "USD",
+    "CHRS",
+    "FATE",
+    "GERN",
+    "KALA",
+    "QSI",
+    "IONS",
+    "HALO",
+    "MAZE",
+    "GH",
+    "JAZZ",
+    "IMVT",
+    "NAME",
+    "GLUE",
+    "CMPS",
+    "EBS",
+    "NBP",
+    "CAI",
+    "CCCC",
+    "APLS",
+    "HRTX",
+    "COLL",
+    "ALVO",
+    "AZN",
+    "TWST",
+    "BIOA",
+    "ONC",
+    "TECH",
+    "ILMN",
+    "NAMS",
+    "MBX",
+    "TGTX",
+    "KRYS",
+    "OPK",
+    "PAHC",
+    "MEDP",
+    "AKE",
+    "FOLD",
+    "ACAD",
+    "ADMA",
+    "CRMD",
+    "MIRM",
+    "CVAC",
+    "CADL",
+    "INDV",
+    "BIIB",
+    "KROS",
+    "SIGA",
+    "IMCR",
+    "BBOT",
+    "ALKS",
+    "NVAX"
+  ],
+  "securities": {
+    "PGEN": {
+      "ticker": "PGEN",
+      "status": "active"
+    },
+    "CRVS": {
+      "ticker": "CRVS",
+      "status": "active"
+    },
+    "ATAI": {
+      "ticker": "ATAI",
+      "status": "active"
+    },
+    "ABSI": {
+      "ticker": "ABSI",
+      "status": "active"
+    },
+    "SPRY": {
+      "ticker": "SPRY",
+      "status": "active"
+    },
+    "NUVB": {
+      "ticker": "NUVB",
+      "status": "active"
+    },
+    "CRSP": {
+      "ticker": "CRSP",
+      "status": "active"
+    },
+    "AGIO": {
+      "ticker": "AGIO",
+      "status": "active"
+    },
+    "INSM": {
+      "ticker": "INSM",
+      "status": "active"
+    },
+    "SNDX": {
+      "ticker": "SNDX",
+      "status": "active"
+    },
+    "RVMD": {
+      "ticker": "RVMD",
+      "status": "active"
+    },
+    "SVRA": {
+      "ticker": "SVRA",
+      "status": "active"
+    },
+    "MNMD": {
+      "ticker": "MNMD",
+      "status": "active"
+    },
+    "TKNO": {
+      "ticker": "TKNO",
+      "status": "active"
+    },
+    "CGON": {
+      "ticker": "CGON",
+      "status": "active"
+    },
+    "NUVL": {
+      "ticker": "NUVL",
+      "status": "active"
+    },
+    "OLMA": {
+      "ticker": "OLMA",
+      "status": "active"
+    },
+    "CLDX": {
+      "ticker": "CLDX",
+      "status": "active"
+    },
+    "ORIC": {
+      "ticker": "ORIC",
+      "status": "active"
+    },
+    "KYMR": {
+      "ticker": "KYMR",
+      "status": "active"
+    },
+    "CRNX": {
+      "ticker": "CRNX",
+      "status": "active"
+    },
+    "ACLX": {
+      "ticker": "ACLX",
+      "status": "active"
+    },
+    "APGE": {
+      "ticker": "APGE",
+      "status": "active"
+    },
+    "DSGN": {
+      "ticker": "DSGN",
+      "status": "active"
+    },
+    "XNCR": {
+      "ticker": "XNCR",
+      "status": "active"
+    },
+    "RCUS": {
+      "ticker": "RCUS",
+      "status": "active"
+    },
+    "CYTK": {
+      "ticker": "CYTK",
+      "status": "active"
+    },
+    "ORKA": {
+      "ticker": "ORKA",
+      "status": "active"
+    },
+    "ARQT": {
+      "ticker": "ARQT",
+      "status": "active"
+    },
+    "AVTR": {
+      "ticker": "AVTR",
+      "status": "active"
+    },
+    "ARDX": {
+      "ticker": "ARDX",
+      "status": "active"
+    },
+    "VTYX": {
+      "ticker": "VTYX",
+      "status": "active"
+    },
+    "XENE": {
+      "ticker": "XENE",
+      "status": "active"
+    },
+    "ADPT": {
+      "ticker": "ADPT",
+      "status": "active"
+    },
+    "SYRE": {
+      "ticker": "SYRE",
+      "status": "active"
+    },
+    "PTGX": {
+      "ticker": "PTGX",
+      "status": "active"
+    },
+    "MDGL": {
+      "ticker": "MDGL",
+      "status": "active"
+    },
+    "NRIX": {
+      "ticker": "NRIX",
+      "status": "active"
+    },
+    "CTNM": {
+      "ticker": "CTNM",
+      "status": "active"
+    },
+    "TNGX": {
+      "ticker": "TNGX",
+      "status": "active"
+    },
+    "NMRA": {
+      "ticker": "NMRA",
+      "status": "active"
+    },
+    "PCVX": {
+      "ticker": "PCVX",
+      "status": "active"
+    },
+    "PHAT": {
+      "ticker": "PHAT",
+      "status": "active"
+    },
+    "ACRS": {
+      "ticker": "ACRS",
+      "status": "active"
+    },
+    "EPRX": {
+      "ticker": "EPRX",
+      "status": "active"
+    },
+    "TRVI": {
+      "ticker": "TRVI",
+      "status": "active"
+    },
+    "LXEO": {
+      "ticker": "LXEO",
+      "status": "active"
+    },
+    "JANX": {
+      "ticker": "JANX",
+      "status": "active"
+    },
+    "KYTX": {
+      "ticker": "KYTX",
+      "status": "active"
+    },
+    "CRBU": {
+      "ticker": "CRBU",
+      "status": "active"
+    },
+    "LYEL": {
+      "ticker": "LYEL",
+      "status": "active"
+    },
+    "RLAY": {
+      "ticker": "RLAY",
+      "status": "active"
+    },
+    "GLPG": {
+      "ticker": "GLPG",
+      "status": "active"
+    },
+    "PSNL": {
+      "ticker": "PSNL",
+      "status": "active"
+    },
+    "FTRE": {
+      "ticker": "FTRE",
+      "status": "active"
+    },
+    "OMER": {
+      "ticker": "OMER",
+      "status": "active"
+    },
+    "SRRK": {
+      "ticker": "SRRK",
+      "status": "active"
+    },
+    "FULC": {
+      "ticker": "FULC",
+      "status": "active"
+    },
+    "RGNX": {
+      "ticker": "RGNX",
+      "status": "active"
+    },
+    "LQDA": {
+      "ticker": "LQDA",
+      "status": "active"
+    },
+    "PACB": {
+      "ticker": "PACB",
+      "status": "active"
+    },
+    "OCGN": {
+      "ticker": "OCGN",
+      "status": "active"
+    },
+    "URGN": {
+      "ticker": "URGN",
+      "status": "active"
+    },
+    "ENTA": {
+      "ticker": "ENTA",
+      "status": "active"
+    },
+    "LFCR": {
+      "ticker": "LFCR",
+      "status": "active"
+    },
+    "PYXS": {
+      "ticker": "PYXS",
+      "status": "active"
+    },
+    "LCTX": {
+      "ticker": "LCTX",
+      "status": "active"
+    },
+    "LEGN": {
+      "ticker": "LEGN",
+      "status": "active"
+    },
+    "LENZ": {
+      "ticker": "LENZ",
+      "status": "active"
+    },
+    "MLYS": {
+      "ticker": "MLYS",
+      "status": "active"
+    },
+    "ABCL": {
+      "ticker": "ABCL",
+      "status": "active"
+    },
+    "TARS": {
+      "ticker": "TARS",
+      "status": "active"
+    },
+    "BHVN": {
+      "ticker": "BHVN",
+      "status": "active"
+    },
+    "GRAL": {
+      "ticker": "GRAL",
+      "status": "active"
+    },
+    "QTRX": {
+      "ticker": "QTRX",
+      "status": "active"
+    },
+    "ESPR": {
+      "ticker": "ESPR",
+      "status": "active"
+    },
+    "EOLS": {
+      "ticker": "EOLS",
+      "status": "active"
+    },
+    "CATX": {
+      "ticker": "CATX",
+      "status": "active"
+    },
+    "ATXS": {
+      "ticker": "ATXS",
+      "status": "active"
+    },
+    "ZBIO": {
+      "ticker": "ZBIO",
+      "status": "active"
+    },
+    "OCUL": {
+      "ticker": "OCUL",
+      "status": "active"
+    },
+    "AARD": {
+      "ticker": "AARD",
+      "status": "active"
+    },
+    "AVBP": {
+      "ticker": "AVBP",
+      "status": "active"
+    },
+    "REPL": {
+      "ticker": "REPL",
+      "status": "active"
+    },
+    "OBIO": {
+      "ticker": "OBIO",
+      "status": "active"
+    },
+    "ARGX": {
+      "ticker": "ARGX",
+      "status": "active"
+    },
+    "CGEM": {
+      "ticker": "CGEM",
+      "status": "active"
+    },
+    "CDXS": {
+      "ticker": "CDXS",
+      "status": "active"
+    },
+    "AUTL": {
+      "ticker": "AUTL",
+      "status": "active"
+    },
+    "INBX": {
+      "ticker": "INBX",
+      "status": "active"
+    },
+    "VNDA": {
+      "ticker": "VNDA",
+      "status": "active"
+    },
+    "TYRA": {
+      "ticker": "TYRA",
+      "status": "active"
+    },
+    "RCKT": {
+      "ticker": "RCKT",
+      "status": "active"
+    },
+    "ANNX": {
+      "ticker": "ANNX",
+      "status": "active"
+    },
+    "SLN": {
+      "ticker": "SLN",
+      "status": "active"
+    },
+    "SGMO": {
+      "ticker": "SGMO",
+      "status": "active"
+    },
+    "MYGN": {
+      "ticker": "MYGN",
+      "status": "active"
+    },
+    "VERA": {
+      "ticker": "VERA",
+      "status": "active"
+    },
+    "BCAX": {
+      "ticker": "BCAX",
+      "status": "active"
+    },
+    "TRDA": {
+      "ticker": "TRDA",
+      "status": "active"
+    },
+    "WVE": {
+      "ticker": "WVE",
+      "status": "active"
+    },
+    "PRME": {
+      "ticker": "PRME",
+      "status": "active"
+    },
+    "ALLO": {
+      "ticker": "ALLO",
+      "status": "active"
+    },
+    "NGNE": {
+      "ticker": "NGNE",
+      "status": "active"
+    },
+    "STRO": {
+      "ticker": "STRO",
+      "status": "active"
+    },
+    "LRMR": {
+      "ticker": "LRMR",
+      "status": "active"
+    },
+    "RXRX": {
+      "ticker": "RXRX",
+      "status": "active"
+    },
+    "TNYA": {
+      "ticker": "TNYA",
+      "status": "active"
+    },
+    "DRMA": {
+      "ticker": "DRMA",
+      "status": "active"
+    },
+    "MRSN": {
+      "ticker": "MRSN",
+      "status": "active"
+    },
+    "AXSM": {
+      "ticker": "AXSM",
+      "status": "active"
+    },
+    "ADRO": {
+      "ticker": "ADRO",
+      "status": "active"
+    },
+    "IMMP": {
+      "ticker": "IMMP",
+      "status": "active"
+    },
+    "KALV": {
+      "ticker": "KALV",
+      "status": "active"
+    },
+    "RANI": {
+      "ticker": "RANI",
+      "status": "active"
+    },
+    "BEAM": {
+      "ticker": "BEAM",
+      "status": "active"
+    },
+    "ABVX": {
+      "ticker": "ABVX",
+      "status": "active"
+    },
+    "ACIU": {
+      "ticker": "ACIU",
+      "status": "active"
+    },
+    "AKRO": {
+      "ticker": "AKRO",
+      "status": "active"
+    },
+    "ASND": {
+      "ticker": "ASND",
+      "status": "active"
+    },
+    "BGXX": {
+      "ticker": "BGXX",
+      "status": "active"
+    },
+    "BNTX": {
+      "ticker": "BNTX",
+      "status": "active"
+    },
+    "ELVN": {
+      "ticker": "ELVN",
+      "status": "active"
+    },
+    "EWTX": {
+      "ticker": "EWTX",
+      "status": "active"
+    },
+    "FDMT": {
+      "ticker": "FDMT",
+      "status": "active"
+    },
+    "FHTX": {
+      "ticker": "FHTX",
+      "status": "active"
+    },
+    "FLGT": {
+      "ticker": "FLGT",
+      "status": "active"
+    },
+    "GHRS": {
+      "ticker": "GHRS",
+      "status": "active"
+    },
+    "IDYA": {
+      "ticker": "IDYA",
+      "status": "active"
+    },
+    "PHVS": {
+      "ticker": "PHVS",
+      "status": "active"
+    },
+    "STVN": {
+      "ticker": "STVN",
+      "status": "active"
+    },
+    "PRAX": {
+      "ticker": "PRAX",
+      "status": "active"
+    },
+    "SION": {
+      "ticker": "SION",
+      "status": "active"
+    },
+    "BMRN": {
+      "ticker": "BMRN",
+      "status": "active"
+    },
+    "PRTA": {
+      "ticker": "PRTA",
+      "status": "active"
+    },
+    "TVTX": {
+      "ticker": "TVTX",
+      "status": "active"
+    },
+    "CSTL": {
+      "ticker": "CSTL",
+      "status": "active"
+    },
+    "GOSS": {
+      "ticker": "GOSS",
+      "status": "active"
+    },
+    "DVAX": {
+      "ticker": "DVAX",
+      "status": "active"
+    },
+    "ROIV": {
+      "ticker": "ROIV",
+      "status": "active"
+    },
+    "IVVD": {
+      "ticker": "IVVD",
+      "status": "active"
+    },
+    "AMLX": {
+      "ticker": "AMLX",
+      "status": "active"
+    },
+    "AQST": {
+      "ticker": "AQST",
+      "status": "active"
+    },
+    "MRNA": {
+      "ticker": "MRNA",
+      "status": "active"
+    },
+    "MRVI": {
+      "ticker": "MRVI",
+      "status": "active"
+    },
+    "BBIO": {
+      "ticker": "BBIO",
+      "status": "active"
+    },
+    "SNY": {
+      "ticker": "SNY",
+      "status": "active"
+    },
+    "NVCR": {
+      "ticker": "NVCR",
+      "status": "active"
+    },
+    "AVIR": {
+      "ticker": "AVIR",
+      "status": "active"
+    },
+    "KMDA": {
+      "ticker": "KMDA",
+      "status": "active"
+    },
+    "TXG": {
+      "ticker": "TXG",
+      "status": "active"
+    },
+    "MENS": {
+      "ticker": "MENS",
+      "status": "active"
+    },
+    "DAWN": {
+      "ticker": "DAWN",
+      "status": "active"
+    },
+    "CRGX": {
+      "ticker": "CRGX",
+      "status": "active"
+    },
+    "SGAFT": {
+      "ticker": "SGAFT",
+      "status": "active"
+    },
+    "THRD": {
+      "ticker": "THRD",
+      "status": "active"
+    },
+    "XTSLA": {
+      "ticker": "XTSLA",
+      "status": "active"
+    },
+    "GPCR": {
+      "ticker": "GPCR",
+      "status": "active"
+    },
+    "EDIT": {
+      "ticker": "EDIT",
+      "status": "active"
+    },
+    "GRFS": {
+      "ticker": "GRFS",
+      "status": "active"
+    },
+    "IRON": {
+      "ticker": "IRON",
+      "status": "active"
+    },
+    "MCRB": {
+      "ticker": "MCRB",
+      "status": "active"
+    },
+    "PEPG": {
+      "ticker": "PEPG",
+      "status": "active"
+    },
+    "VOR": {
+      "ticker": "VOR",
+      "status": "active"
+    },
+    "TSHA": {
+      "ticker": "TSHA",
+      "status": "active"
+    },
+    "KURA": {
+      "ticker": "KURA",
+      "status": "active"
+    },
+    "STOK": {
+      "ticker": "STOK",
+      "status": "active"
+    },
+    "AVXL": {
+      "ticker": "AVXL",
+      "status": "active"
+    },
+    "SUPN": {
+      "ticker": "SUPN",
+      "status": "active"
+    },
+    "VTRS": {
+      "ticker": "VTRS",
+      "status": "active"
+    },
+    "RYTM": {
+      "ticker": "RYTM",
+      "status": "active"
+    },
+    "ANRO": {
+      "ticker": "ANRO",
+      "status": "active"
+    },
+    "BCYC": {
+      "ticker": "BCYC",
+      "status": "active"
+    },
+    "RAPT": {
+      "ticker": "RAPT",
+      "status": "active"
+    },
+    "HROW": {
+      "ticker": "HROW",
+      "status": "active"
+    },
+    "ADCT": {
+      "ticker": "ADCT",
+      "status": "active"
+    },
+    "CNTA": {
+      "ticker": "CNTA",
+      "status": "active"
+    },
+    "NBIX": {
+      "ticker": "NBIX",
+      "status": "active"
+    },
+    "ALNY": {
+      "ticker": "ALNY",
+      "status": "active"
+    },
+    "DNLI": {
+      "ticker": "DNLI",
+      "status": "active"
+    },
+    "AUPH": {
+      "ticker": "AUPH",
+      "status": "active"
+    },
+    "LGND": {
+      "ticker": "LGND",
+      "status": "active"
+    },
+    "RPRX": {
+      "ticker": "RPRX",
+      "status": "active"
+    },
+    "IBRX": {
+      "ticker": "IBRX",
+      "status": "active"
+    },
+    "VRTX": {
+      "ticker": "VRTX",
+      "status": "active"
+    },
+    "EXEL": {
+      "ticker": "EXEL",
+      "status": "active"
+    },
+    "AMRX": {
+      "ticker": "AMRX",
+      "status": "active"
+    },
+    "DNA": {
+      "ticker": "DNA",
+      "status": "active"
+    },
+    "BCRX": {
+      "ticker": "BCRX",
+      "status": "active"
+    },
+    "AMGN": {
+      "ticker": "AMGN",
+      "status": "active"
+    },
+    "ARWR": {
+      "ticker": "ARWR",
+      "status": "active"
+    },
+    "CLLS": {
+      "ticker": "CLLS",
+      "status": "active"
+    },
+    "MGTX": {
+      "ticker": "MGTX",
+      "status": "active"
+    },
+    "EYPT": {
+      "ticker": "EYPT",
+      "status": "active"
+    },
+    "KNSA": {
+      "ticker": "KNSA",
+      "status": "active"
+    },
+    "OPCH": {
+      "ticker": "OPCH",
+      "status": "active"
+    },
+    "ZYME": {
+      "ticker": "ZYME",
+      "status": "active"
+    },
+    "TERN": {
+      "ticker": "TERN",
+      "status": "active"
+    },
+    "ALMS": {
+      "ticker": "ALMS",
+      "status": "active"
+    },
+    "UTHR": {
+      "ticker": "UTHR",
+      "status": "active"
+    },
+    "NTRA": {
+      "ticker": "NTRA",
+      "status": "active"
+    },
+    "RIGL": {
+      "ticker": "RIGL",
+      "status": "active"
+    },
+    "ETON": {
+      "ticker": "ETON",
+      "status": "active"
+    },
+    "MNKD": {
+      "ticker": "MNKD",
+      "status": "active"
+    },
+    "LAB": {
+      "ticker": "LAB",
+      "status": "active"
+    },
+    "BRKR": {
+      "ticker": "BRKR",
+      "status": "active"
+    },
+    "RGEN": {
+      "ticker": "RGEN",
+      "status": "active"
+    },
+    "CABA": {
+      "ticker": "CABA",
+      "status": "active"
+    },
+    "VCEL": {
+      "ticker": "VCEL",
+      "status": "active"
+    },
+    "SMMT": {
+      "ticker": "SMMT",
+      "status": "active"
+    },
+    "ARVN": {
+      "ticker": "ARVN",
+      "status": "active"
+    },
+    "VCYT": {
+      "ticker": "VCYT",
+      "status": "active"
+    },
+    "CTMX": {
+      "ticker": "CTMX",
+      "status": "active"
+    },
+    "GILD": {
+      "ticker": "GILD",
+      "status": "active"
+    },
+    "XERS": {
+      "ticker": "XERS",
+      "status": "active"
+    },
+    "ABUS": {
+      "ticker": "ABUS",
+      "status": "active"
+    },
+    "VIR": {
+      "ticker": "VIR",
+      "status": "active"
+    },
+    "SANA": {
+      "ticker": "SANA",
+      "status": "active"
+    },
+    "RARE": {
+      "ticker": "RARE",
+      "status": "active"
+    },
+    "PTCT": {
+      "ticker": "PTCT",
+      "status": "active"
+    },
+    "ZVRA": {
+      "ticker": "ZVRA",
+      "status": "active"
+    },
+    "INCY": {
+      "ticker": "INCY",
+      "status": "active"
+    },
+    "PCRX": {
+      "ticker": "PCRX",
+      "status": "active"
+    },
+    "RNA": {
+      "ticker": "RNA",
+      "status": "active"
+    },
+    "PRVA": {
+      "ticker": "PRVA",
+      "status": "active"
+    },
+    "ANIP": {
+      "ticker": "ANIP",
+      "status": "active"
+    },
+    "CTKB": {
+      "ticker": "CTKB",
+      "status": "active"
+    },
+    "ZLAB": {
+      "ticker": "ZLAB",
+      "status": "active"
+    },
+    "COGT": {
+      "ticker": "COGT",
+      "status": "active"
+    },
+    "IMRX": {
+      "ticker": "IMRX",
+      "status": "active"
+    },
+    "TECX": {
+      "ticker": "TECX",
+      "status": "active"
+    },
+    "PBYI": {
+      "ticker": "PBYI",
+      "status": "active"
+    },
+    "INVA": {
+      "ticker": "INVA",
+      "status": "active"
+    },
+    "MESO": {
+      "ticker": "MESO",
+      "status": "active"
+    },
+    "TBPH": {
+      "ticker": "TBPH",
+      "status": "active"
+    },
+    "BDTX": {
+      "ticker": "BDTX",
+      "status": "active"
+    },
+    "ALT": {
+      "ticker": "ALT",
+      "status": "active"
+    },
+    "IRWD": {
+      "ticker": "IRWD",
+      "status": "active"
+    },
+    "UPB": {
+      "ticker": "UPB",
+      "status": "active"
+    },
+    "KOD": {
+      "ticker": "KOD",
+      "status": "active"
+    },
+    "REGN": {
+      "ticker": "REGN",
+      "status": "active"
+    },
+    "GMAB": {
+      "ticker": "GMAB",
+      "status": "active"
+    },
+    "HRMY": {
+      "ticker": "HRMY",
+      "status": "active"
+    },
+    "SEPN": {
+      "ticker": "SEPN",
+      "status": "active"
+    },
+    "ARCT": {
+      "ticker": "ARCT",
+      "status": "active"
+    },
+    "TEM": {
+      "ticker": "TEM",
+      "status": "active"
+    },
+    "FGEN": {
+      "ticker": "FGEN",
+      "status": "active"
+    },
+    "IOVA": {
+      "ticker": "IOVA",
+      "status": "active"
+    },
+    "OABI": {
+      "ticker": "OABI",
+      "status": "active"
+    },
+    "QURE": {
+      "ticker": "QURE",
+      "status": "active"
+    },
+    "RAPP": {
+      "ticker": "RAPP",
+      "status": "active"
+    },
+    "NTLA": {
+      "ticker": "NTLA",
+      "status": "active"
+    },
+    "CRL": {
+      "ticker": "CRL",
+      "status": "active"
+    },
+    "AURA": {
+      "ticker": "AURA",
+      "status": "active"
+    },
+    "SGMT": {
+      "ticker": "SGMT",
+      "status": "active"
+    },
+    "CDNA": {
+      "ticker": "CDNA",
+      "status": "active"
+    },
+    "AMPH": {
+      "ticker": "AMPH",
+      "status": "active"
+    },
+    "SRPT": {
+      "ticker": "SRPT",
+      "status": "active"
+    },
+    "ANAB": {
+      "ticker": "ANAB",
+      "status": "active"
+    },
+    "HUMA": {
+      "ticker": "HUMA",
+      "status": "active"
+    },
+    "DYN": {
+      "ticker": "DYN",
+      "status": "active"
+    },
+    "ERAS": {
+      "ticker": "ERAS",
+      "status": "active"
+    },
+    "VYGR": {
+      "ticker": "VYGR",
+      "status": "active"
+    },
+    "SLDB": {
+      "ticker": "SLDB",
+      "status": "active"
+    },
+    "USD": {
+      "ticker": "USD",
+      "status": "active"
+    },
+    "CHRS": {
+      "ticker": "CHRS",
+      "status": "active"
+    },
+    "FATE": {
+      "ticker": "FATE",
+      "status": "active"
+    },
+    "GERN": {
+      "ticker": "GERN",
+      "status": "active"
+    },
+    "KALA": {
+      "ticker": "KALA",
+      "status": "active"
+    },
+    "QSI": {
+      "ticker": "QSI",
+      "status": "active"
+    },
+    "IONS": {
+      "ticker": "IONS",
+      "status": "active"
+    },
+    "HALO": {
+      "ticker": "HALO",
+      "status": "active"
+    },
+    "MAZE": {
+      "ticker": "MAZE",
+      "status": "active"
+    },
+    "GH": {
+      "ticker": "GH",
+      "status": "active"
+    },
+    "JAZZ": {
+      "ticker": "JAZZ",
+      "status": "active"
+    },
+    "IMVT": {
+      "ticker": "IMVT",
+      "status": "active"
+    },
+    "NAME": {
+      "ticker": "NAME",
+      "status": "active"
+    },
+    "GLUE": {
+      "ticker": "GLUE",
+      "status": "active"
+    },
+    "CMPS": {
+      "ticker": "CMPS",
+      "status": "active"
+    },
+    "EBS": {
+      "ticker": "EBS",
+      "status": "active"
+    },
+    "NBP": {
+      "ticker": "NBP",
+      "status": "active"
+    },
+    "CAI": {
+      "ticker": "CAI",
+      "status": "active"
+    },
+    "CCCC": {
+      "ticker": "CCCC",
+      "status": "active"
+    },
+    "APLS": {
+      "ticker": "APLS",
+      "status": "active"
+    },
+    "HRTX": {
+      "ticker": "HRTX",
+      "status": "active"
+    },
+    "COLL": {
+      "ticker": "COLL",
+      "status": "active"
+    },
+    "ALVO": {
+      "ticker": "ALVO",
+      "status": "active"
+    },
+    "AZN": {
+      "ticker": "AZN",
+      "status": "active"
+    },
+    "TWST": {
+      "ticker": "TWST",
+      "status": "active"
+    },
+    "BIOA": {
+      "ticker": "BIOA",
+      "status": "active"
+    },
+    "ONC": {
+      "ticker": "ONC",
+      "status": "active"
+    },
+    "TECH": {
+      "ticker": "TECH",
+      "status": "active"
+    },
+    "ILMN": {
+      "ticker": "ILMN",
+      "status": "active"
+    },
+    "NAMS": {
+      "ticker": "NAMS",
+      "status": "active"
+    },
+    "MBX": {
+      "ticker": "MBX",
+      "status": "active"
+    },
+    "TGTX": {
+      "ticker": "TGTX",
+      "status": "active"
+    },
+    "KRYS": {
+      "ticker": "KRYS",
+      "status": "active"
+    },
+    "OPK": {
+      "ticker": "OPK",
+      "status": "active"
+    },
+    "PAHC": {
+      "ticker": "PAHC",
+      "status": "active"
+    },
+    "MEDP": {
+      "ticker": "MEDP",
+      "status": "active"
+    },
+    "AKE": {
+      "ticker": "AKE",
+      "status": "active"
+    },
+    "FOLD": {
+      "ticker": "FOLD",
+      "status": "active"
+    },
+    "ACAD": {
+      "ticker": "ACAD",
+      "status": "active"
+    },
+    "ADMA": {
+      "ticker": "ADMA",
+      "status": "active"
+    },
+    "CRMD": {
+      "ticker": "CRMD",
+      "status": "active"
+    },
+    "MIRM": {
+      "ticker": "MIRM",
+      "status": "active"
+    },
+    "CVAC": {
+      "ticker": "CVAC",
+      "status": "active"
+    },
+    "CADL": {
+      "ticker": "CADL",
+      "status": "active"
+    },
+    "INDV": {
+      "ticker": "INDV",
+      "status": "active"
+    },
+    "BIIB": {
+      "ticker": "BIIB",
+      "status": "active"
+    },
+    "KROS": {
+      "ticker": "KROS",
+      "status": "active"
+    },
+    "SIGA": {
+      "ticker": "SIGA",
+      "status": "active"
+    },
+    "IMCR": {
+      "ticker": "IMCR",
+      "status": "active"
+    },
+    "BBOT": {
+      "ticker": "BBOT",
+      "status": "active"
+    },
+    "ALKS": {
+      "ticker": "ALKS",
+      "status": "active"
+    },
+    "NVAX": {
+      "ticker": "NVAX",
+      "status": "active"
+    }
+  }
+}

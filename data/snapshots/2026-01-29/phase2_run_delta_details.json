@@ -1,0 +1,222 @@
+{
+  "generated_at": "2026-02-16T14:17:22Z",
+  "current": {
+    "date": "2026-01-29",
+    "ruleset_id": "96f655ee",
+    "has_native_portfolio": true,
+    "portfolio_size": 20
+  },
+  "prior": {
+    "date": "2026-01-28",
+    "ruleset_id": "96f655ee",
+    "has_native_portfolio": true,
+    "portfolio_size": 20
+  },
+  "portfolio_turnover": {
+    "entrants": [
+      "OLMA"
+    ],
+    "exits": [
+      "ABEO"
+    ],
+    "name_turnover_pct": 5.0,
+    "weight_l1_delta": 13.2
+  },
+  "tier_distribution": {
+    "current": {
+      "A": 34,
+      "B": 42,
+      "C": 51,
+      "D": 55
+    },
+    "prior": {
+      "A": 35,
+      "B": 41,
+      "C": 51,
+      "D": 55
+    }
+  },
+  "tier_in_portfolio": {
+    "current": {
+      "A": 20,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "prior": {
+      "A": 20,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    }
+  },
+  "sizing": {
+    "current": {
+      "L": 16,
+      "M": 3,
+      "S": 1,
+      "XS": 0
+    },
+    "prior": {
+      "L": 15,
+      "M": 4,
+      "S": 1,
+      "XS": 0
+    }
+  },
+  "catalyst_coverage": {
+    "current": {
+      "n_dev": 182,
+      "n_specific": 135,
+      "pct": 74.2,
+      "mode_dist": {
+        "specific_days": 135,
+        "no_upcoming": 42,
+        "blended_window": 5
+      },
+      "backfill_share_pct": 0.0
+    },
+    "prior": {
+      "n_dev": 182,
+      "n_specific": 136,
+      "pct": 74.7,
+      "mode_dist": {
+        "specific_days": 136,
+        "no_upcoming": 41,
+        "blended_window": 5
+      },
+      "backfill_share_pct": 0.0
+    }
+  },
+  "top_catalysts": {
+    "current": [
+      {
+        "ticker": "EWTX",
+        "catalyst_days": 1,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "CCCC",
+        "catalyst_days": 1,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "SMMT",
+        "catalyst_days": 1,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "CNTX",
+        "catalyst_days": 1,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "TBPH",
+        "catalyst_days": 2,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "CGEM",
+        "catalyst_days": 2,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "JANX",
+        "catalyst_days": 2,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "GLUE",
+        "catalyst_days": 2,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "IRON",
+        "catalyst_days": 2,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "TCRX",
+        "catalyst_days": 2,
+        "tier_dev": "D"
+      }
+    ],
+    "prior": [
+      {
+        "ticker": "HRTX",
+        "catalyst_days": 1,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "BEAM",
+        "catalyst_days": 1,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "ALLO",
+        "catalyst_days": 1,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "PRLD",
+        "catalyst_days": 1,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "CRVS",
+        "catalyst_days": 1,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "PEPG",
+        "catalyst_days": 1,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "EWTX",
+        "catalyst_days": 2,
+        "tier_dev": "C"
+      },
+      {
+        "ticker": "CCCC",
+        "catalyst_days": 2,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "SMMT",
+        "catalyst_days": 2,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "CNTX",
+        "catalyst_days": 2,
+        "tier_dev": "D"
+      }
+    ]
+  },
+  "risk_flags": {
+    "current": {
+      "deep_drawdown": 0,
+      "high_vol": 1,
+      "high_beta": 0,
+      "overbought_rsi": 0,
+      "low_confidence": 0
+    },
+    "prior": {
+      "deep_drawdown": 0,
+      "high_vol": 0,
+      "high_beta": 0,
+      "overbought_rsi": 0,
+      "low_confidence": 0
+    }
+  },
+  "guardrails": {
+    "passed": [
+      "Ruleset matches pinned Phase-2 ID (96f655ee)",
+      "A-tier count >= 1 (34)",
+      "Catalyst coverage 74.2% >= 50.0%",
+      "Name turnover 5.0% <= 40.0%"
+    ],
+    "warnings": []
+  }
+}
