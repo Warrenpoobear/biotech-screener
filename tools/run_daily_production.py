@@ -58,6 +58,9 @@ class GateConfig:
     audit_warn_is_gate_warn: bool = True
     """If data_integrity_audit exits 2, treat as gate WARN."""
 
+    market_data_max_age_days: int = 3
+    """Max calendar-day age of market_data.json (collected_at vs as_of_date)."""
+
     @staticmethod
     def from_json(path: Path) -> "GateConfig":
         with open(path) as f:
@@ -425,6 +428,75 @@ def check_inputs_present(data_dir: Path) -> GateResult:
     )
 
 
+def check_market_data_staleness(
+    data_dir: Path,
+    as_of_date: str,
+    max_age_days: int = 3,
+) -> GateResult:
+    """Check that market_data.json is fresh relative to the screen date.
+
+    Reads the ``collected_at`` field from the first record and computes
+    calendar-day age against ``as_of_date``.  FAIL if age > max_age_days.
+    """
+    from datetime import date as _date
+
+    mkt_path = data_dir / "market_data.json"
+    if not mkt_path.exists():
+        # inputs_present gate handles this — don't double-fail
+        return GateResult(
+            name="market_data_staleness", status="PASS",
+            detail="Skipped (file missing; inputs_present gate will catch)",
+        )
+
+    try:
+        with open(mkt_path) as f:
+            records = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(
+            name="market_data_staleness", status="FAIL",
+            detail=f"Cannot read market_data.json: {e}",
+        )
+
+    # Find the most common collected_at date
+    collected_dates = [
+        r.get("collected_at") for r in records
+        if isinstance(r, dict) and r.get("collected_at")
+    ]
+    if not collected_dates:
+        return GateResult(
+            name="market_data_staleness", status="FAIL",
+            detail="No collected_at field found in market_data.json",
+        )
+
+    collected_at = max(collected_dates)  # latest collection date
+    try:
+        collected = _date.fromisoformat(collected_at)
+        as_of = _date.fromisoformat(as_of_date)
+    except ValueError as e:
+        return GateResult(
+            name="market_data_staleness", status="FAIL",
+            detail=f"Bad date format: {e}",
+        )
+
+    age_days = (as_of - collected).days
+    if age_days > max_age_days:
+        return GateResult(
+            name="market_data_staleness", status="FAIL",
+            detail=(
+                f"market_data.json is {age_days}d stale "
+                f"(collected={collected_at}, as_of={as_of_date}, max={max_age_days}d). "
+                f"Run: python collect_market_data.py"
+            ),
+            value=age_days, threshold=max_age_days,
+        )
+
+    return GateResult(
+        name="market_data_staleness", status="PASS",
+        detail=f"market_data.json collected={collected_at}, age={age_days}d",
+        value=age_days, threshold=max_age_days,
+    )
+
+
 # ---------------------------------------------------------------------------
 # Step 5: Run manifest
 # ---------------------------------------------------------------------------
@@ -669,6 +741,22 @@ def run_daily(
     if inputs_gate.status == "FAIL":
         print("\n  FATAL: Required input files missing. Aborting before screen run.")
         print(f"  Hint: publish an inputs bundle or copy market_data.json to {data_dir}/")
+        manifest = build_run_manifest(
+            as_of_date, gate_results, price_stats,
+            subprocess.CompletedProcess(args=[], returncode=-1),
+            None, config,
+            requested_as_of_date=requested_as_of_date,
+            git_pre_run=git_pre_run,
+        )
+        return manifest
+
+    # --- Gate: market data staleness ---
+    mkt_gate = check_market_data_staleness(data_dir, as_of_date, config.market_data_max_age_days)
+    gate_results.append(mkt_gate)
+    print(f"  Market data gate: {mkt_gate.status} — {mkt_gate.detail}")
+    if mkt_gate.status == "FAIL":
+        print("\n  FATAL: Market data too stale. Aborting before screen run.")
+        print(f"  Hint: python collect_market_data.py --universe {data_dir}/universe.json")
         manifest = build_run_manifest(
             as_of_date, gate_results, price_stats,
             subprocess.CompletedProcess(args=[], returncode=-1),

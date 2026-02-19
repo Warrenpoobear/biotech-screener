@@ -31,6 +31,7 @@ from run_daily_production import (
     check_audit_result,
     check_ctgov_cache,
     check_inputs_present,
+    check_market_data_staleness,
     check_missing_reason_fraction,
     check_turnover,
     check_xbi_staleness,
@@ -382,8 +383,10 @@ class TestScreenFailureGate:
         data_dir.mkdir()
         # Write minimal universe so price refresh doesn't error
         (data_dir / "universe.json").write_text(json.dumps([{"ticker": "XBI"}]))
-        # Required by inputs_present gate
-        (data_dir / "market_data.json").write_text("[]")
+        # Required by inputs_present + market_data_staleness gates
+        (data_dir / "market_data.json").write_text(
+            json.dumps([{"ticker": "XBI", "price": 100, "collected_at": "2026-02-19"}])
+        )
 
         final_dir = tmp_path / "snapshots"
         final_dir.mkdir()
@@ -668,3 +671,62 @@ class TestInputsPresentGate:
         assert len(inputs_gates) == 1
         assert inputs_gates[0]["status"] == "FAIL"
         assert "market_data.json" in inputs_gates[0]["detail"]
+
+
+# ---------------------------------------------------------------------------
+# Tests: Market data staleness gate
+# ---------------------------------------------------------------------------
+
+def _write_market_data(path: Path, collected_at: str, n_records: int = 3) -> None:
+    """Write minimal market_data.json with collected_at date."""
+    records = [
+        {"ticker": f"T{i}", "price": 10.0, "collected_at": collected_at}
+        for i in range(n_records)
+    ]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(records, f)
+
+
+class TestMarketDataStalenessGate:
+
+    def test_fresh_data_passes(self, tmp_path):
+        """collected_at == as_of_date → PASS, age=0."""
+        data_dir = tmp_path / "data"
+        _write_market_data(data_dir / "market_data.json", "2026-02-19")
+        result = check_market_data_staleness(data_dir, "2026-02-19", max_age_days=3)
+        assert result.status == "PASS"
+        assert result.value == 0
+
+    def test_stale_data_fails(self, tmp_path):
+        """16 days old → FAIL with max_age=3."""
+        data_dir = tmp_path / "data"
+        _write_market_data(data_dir / "market_data.json", "2026-02-03")
+        result = check_market_data_staleness(data_dir, "2026-02-19", max_age_days=3)
+        assert result.status == "FAIL"
+        assert result.value == 16
+        assert "collect_market_data.py" in result.detail
+
+    def test_at_threshold_passes(self, tmp_path):
+        """Exactly max_age days → PASS (not >)."""
+        data_dir = tmp_path / "data"
+        _write_market_data(data_dir / "market_data.json", "2026-02-16")
+        result = check_market_data_staleness(data_dir, "2026-02-19", max_age_days=3)
+        assert result.status == "PASS"
+        assert result.value == 3
+
+    def test_missing_file_passes(self, tmp_path):
+        """Missing file → PASS (inputs_present gate handles this)."""
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        result = check_market_data_staleness(data_dir, "2026-02-19")
+        assert result.status == "PASS"
+
+    def test_no_collected_at_field_fails(self, tmp_path):
+        """Records without collected_at → FAIL."""
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "market_data.json").write_text('[{"ticker": "A", "price": 10}]')
+        result = check_market_data_staleness(data_dir, "2026-02-19")
+        assert result.status == "FAIL"
+        assert "collected_at" in result.detail
