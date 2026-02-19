@@ -368,6 +368,66 @@ class TestSizingTierFirst:
 # Validation tests
 # =============================================================================
 
+class TestPlatformArchetypes:
+    """Platform archetypes (diagnostics, devices, services) get commercial tiers."""
+
+    @pytest.mark.parametrize("arch", [
+        "platform_diagnostics", "platform_devices", "platform_services",
+    ])
+    def test_platform_gets_commercial_tier(self, arch):
+        """platform_* with quality data → non-empty tier."""
+        tier, reason = _compute_tier_commercial(
+            archetype=arch,
+            eligible=True,
+            quality_pct=0.90,
+            catalyst_in_window="1",
+            catalyst_days=45,
+            ruleset=DEV_FIRST_RS,
+        )
+        assert tier == "A"
+        assert "high_quality" in reason
+
+    @pytest.mark.parametrize("arch", [
+        "platform_diagnostics", "platform_devices", "platform_services",
+    ])
+    def test_platform_ineligible_gets_D(self, arch):
+        """Ineligible platform → D."""
+        tier, reason = _compute_tier_commercial(
+            archetype=arch,
+            eligible=False,
+            quality_pct=0.90,
+            catalyst_in_window="1",
+            catalyst_days=45,
+            ruleset=DEV_FIRST_RS,
+        )
+        assert tier == "D"
+        assert reason == "ineligible"
+
+    def test_platform_tier_any_populated(self):
+        """platform_diagnostics through compute_decision_fields → tier_any set."""
+        rec = _rec(ticker="GH", catalyst_days=60, catalyst_in_window=True)
+        d = compute_decision_fields(
+            rec, "platform_diagnostics", optionality_pct_dev=None,
+            ruleset=DEV_FIRST_RS, commercial_quality_pct=0.75,
+        )
+        assert d["tier_dev"] == ""
+        assert d["tier_commercial"] != ""
+        assert d["tier_any"] == d["tier_commercial"]
+
+    def test_empty_archetype_no_tier(self):
+        """Empty archetype → no tier assigned."""
+        tier, reason = _compute_tier_commercial(
+            archetype="",
+            eligible=True,
+            quality_pct=0.90,
+            catalyst_in_window="1",
+            catalyst_days=45,
+            ruleset=DEV_FIRST_RS,
+        )
+        assert tier == ""
+        assert reason == ""
+
+
 class TestValidation:
     """Validate tiering_priority_mode validation."""
 

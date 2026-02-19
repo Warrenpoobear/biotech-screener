@@ -907,12 +907,14 @@ def _compute_tier_commercial(
 ) -> Tuple[str, str]:
     """Compute commercial tier (A/B/C/D) and tier_reason.
 
-    Only for commercial_* archetypes.  Mirrors _compute_tier_dev structure but
-    uses commercial_quality_pct instead of optionality_pct_dev.
+    For non-drug-developer archetypes (commercial_* and platform_*).
+    Mirrors _compute_tier_dev structure but uses commercial_quality_pct
+    instead of optionality_pct_dev.
 
     Returns (tier_letter, tier_reason).
     """
-    if not str(archetype).startswith("commercial_"):
+    arch = str(archetype)
+    if arch == "drug_developer" or not arch:
         return "", ""
 
     if not eligible:

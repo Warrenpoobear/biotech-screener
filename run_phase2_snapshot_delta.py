@@ -300,17 +300,25 @@ def _top_catalysts(rankings: pd.DataFrame, n: int = 10) -> List[Dict]:
 
 
 def _reconstruct_portfolio(rankings: pd.DataFrame) -> pd.DataFrame:
-    """Reconstruct portfolio from rankings when decision_portfolio.csv is missing.
+    """Reconstruct portfolio from rankings when portfolio_positions.csv is missing.
 
     Mirrors the logic in run_screen.py save_validation_snapshot():
-    filter drug_developer + tier A/B, sort by actionable_rank, take top 20.
+    filter eligible + tier_any A/B, sort by actionable_rank, take top 20.
+    Falls back to drug_developer + tier_dev for old snapshots without tier_any.
     """
-    dev = rankings[
-        (rankings["archetype"] == "drug_developer")
-        & (rankings["tier_dev"].isin(RECON_TIER_FILTER))
-    ].copy()
-    dev["_ar"] = dev["actionable_rank"].apply(lambda v: _safe_int(v, 99999))
-    portfolio = dev.nsmallest(RECON_TOP_K, "_ar").copy()
+    if "tier_any" in rankings.columns:
+        eligible = rankings[
+            (rankings["eligible"].astype(str) == "1")
+            & (rankings["tier_any"].isin(RECON_TIER_FILTER))
+        ].copy()
+    else:
+        # Legacy fallback for old snapshots
+        eligible = rankings[
+            (rankings["archetype"] == "drug_developer")
+            & (rankings["tier_dev"].isin(RECON_TIER_FILTER))
+        ].copy()
+    eligible["_ar"] = eligible["actionable_rank"].apply(lambda v: _safe_int(v, 99999))
+    portfolio = eligible.nsmallest(RECON_TOP_K, "_ar").copy()
     portfolio.drop(columns=["_ar"], inplace=True)
     return portfolio.reset_index(drop=True)
 
@@ -409,13 +417,19 @@ def load_snapshot(snap_path: Path) -> Optional[SnapshotData]:
         if ids:
             ruleset_id = ids[0].strip()
 
-    # Load or reconstruct portfolio
-    portfolio_csv = snap_path / "decision_portfolio.csv"
-    has_native = portfolio_csv.exists()
-    if has_native:
-        portfolio = pd.read_csv(portfolio_csv, dtype=str)
+    # Load portfolio positions (prefer portfolio_positions.csv, fall back to
+    # decision_portfolio.csv for older snapshots, then reconstruct from rankings)
+    positions_csv = snap_path / "portfolio_positions.csv"
+    legacy_csv = snap_path / "decision_portfolio.csv"
+    if positions_csv.exists():
+        portfolio = pd.read_csv(positions_csv, dtype=str)
+        has_native = True
+    elif legacy_csv.exists():
+        portfolio = pd.read_csv(legacy_csv, dtype=str)
+        has_native = True
     else:
         portfolio = _reconstruct_portfolio(rankings)
+        has_native = False
 
     date_str = snap_path.name
 

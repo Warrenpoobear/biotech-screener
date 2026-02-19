@@ -28,6 +28,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from run_screen import (
     SNAPSHOT_COLUMNS,
     PHASE2_PORTFOLIO_COLUMNS,
+    PORTFOLIO_POSITIONS_COLUMNS,
+    PHASE2_DEFAULT_TOP_K,
     save_validation_snapshot,
 )
 from decision_engine import DEFAULT_RULESET
@@ -167,11 +169,16 @@ class TestColumnLayout:
         ]
 
     def test_portfolio_de_first(self):
-        """decision_portfolio.csv: DE output immediately after identity."""
-        assert PHASE2_PORTFOLIO_COLUMNS[:4] == [
+        """decision_portfolio.csv: DE output immediately after identity (no weights)."""
+        assert PHASE2_PORTFOLIO_COLUMNS[:5] == [
             "ticker", "company_name",
-            "actionable_rank", "target_weight_pct",
+            "actionable_rank",
+            "tier_any", "tier_any_reason",
         ]
+
+    def test_portfolio_no_weight_column(self):
+        """decision_portfolio.csv must not include target_weight_pct."""
+        assert "target_weight_pct" not in PHASE2_PORTFOLIO_COLUMNS
 
     def test_portfolio_composite_last(self):
         """decision_portfolio.csv: legacy composite at far right."""
@@ -596,18 +603,18 @@ class TestPortfolioCsvAlwaysDecisionSorted:
             results=results,
             version="test",
             decision_mode="phase2",
-            ranking_mode="composite",
+            ranking_mode="decision",
         )
         assert snap is not None
 
         # decision_portfolio.csv should exist in phase2 mode
         portfolio_path = snap / "decision_portfolio.csv"
-        if portfolio_path.exists():
-            rows = _read_csv(snap, "decision_portfolio.csv")
-            if len(rows) >= 2:
-                # Portfolio should be sorted by DE sort key, not composite_rank
-                # The row with actionable_rank=1 should be first
-                assert rows[0]["actionable_rank"] == "1"
+        assert portfolio_path.exists()
+        rows = _read_csv(snap, "decision_portfolio.csv")
+        assert len(rows) == 2
+        # Portfolio should be sorted by DE sort key
+        # The row with actionable_rank=1 should be first
+        assert rows[0]["actionable_rank"] == "1"
 
 
 class TestPortfolioCsvCompanyName:
@@ -684,3 +691,468 @@ class TestMetadataRankingMode:
 
         meta = json.loads((snap / "metadata.json").read_text())
         assert meta["ranking_mode"] == "composite"
+
+
+# ---------------------------------------------------------------------------
+# Tests: decision_portfolio is full research list (no Top-N, no weights)
+# ---------------------------------------------------------------------------
+
+class TestPortfolioFullResearchList:
+    """decision_portfolio.csv must include all ranked securities, not top-N."""
+
+    def test_portfolio_contains_all_ranked_rows(self, tmp_path):
+        """decision_portfolio row count == rankings row count (full universe)."""
+        secs = [
+            # 4 eligible
+            _make_ranked_security("ELIG_A", 4, 70.0, catalyst_days=30, catalyst_in_window=True),
+            _make_ranked_security("ELIG_B", 5, 60.0, catalyst_days=60),
+            _make_ranked_security("ELIG_C", 6, 50.0, catalyst_days=90),
+            _make_ranked_security("ELIG_D", 7, 40.0, catalyst_days=120),
+            # 2 ineligible
+            _make_ranked_security("INELIG_A", 1, 95.0, fundamental_red_flag=True),
+            _make_ranked_security("INELIG_B", 2, 90.0, fundamental_red_flag=True),
+        ]
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+            ranking_mode="decision",
+        )
+        assert snap is not None
+
+        rankings = _read_csv(snap, "rankings.csv")
+        portfolio = _read_csv(snap, "decision_portfolio.csv")
+
+        assert len(portfolio) == len(rankings) == 6
+        # Eligible rows first, then ineligible
+        elig_tickers = [r["ticker"] for r in portfolio if r["actionable_rank"] != ""]
+        inelig_tickers = [r["ticker"] for r in portfolio if r["actionable_rank"] == ""]
+        assert len(elig_tickers) == 4
+        assert len(inelig_tickers) == 2
+
+    def test_portfolio_ordering_matches_rankings(self, tmp_path):
+        """decision_portfolio ticker order must match rankings ticker order."""
+        secs = [
+            _make_ranked_security("INELIG_A", 1, 95.0, fundamental_red_flag=True),
+            _make_ranked_security("ELIG_X", 3, 70.0, catalyst_days=30, catalyst_in_window=True),
+            _make_ranked_security("ELIG_Y", 5, 50.0, catalyst_days=60),
+            _make_ranked_security("INELIG_B", 2, 85.0, fundamental_red_flag=True),
+        ]
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+            ranking_mode="decision",
+        )
+        assert snap is not None
+
+        rankings = _read_csv(snap, "rankings.csv")
+        portfolio = _read_csv(snap, "decision_portfolio.csv")
+        assert [r["ticker"] for r in rankings] == [r["ticker"] for r in portfolio]
+
+    def test_ineligible_rows_have_blank_actionable_rank(self, tmp_path):
+        """Ineligible rows in decision_portfolio have blank actionable_rank."""
+        secs = [
+            _make_ranked_security("ELIG_X", 2, 80.0, catalyst_days=30, catalyst_in_window=True),
+            _make_ranked_security("INELIG_A", 1, 95.0, fundamental_red_flag=True),
+        ]
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+            ranking_mode="decision",
+        )
+        assert snap is not None
+
+        portfolio = _read_csv(snap, "decision_portfolio.csv")
+        assert len(portfolio) == 2
+        # ELIG_X should be first with actionable_rank
+        assert portfolio[0]["ticker"] == "ELIG_X"
+        assert portfolio[0]["actionable_rank"] == "1"
+        # INELIG_A should be second with blank rank
+        assert portfolio[1]["ticker"] == "INELIG_A"
+        assert portfolio[1]["actionable_rank"] == ""
+
+
+class TestPortfolioNoWeights:
+    """decision_portfolio outputs must not contain target_weight_pct."""
+
+    def test_csv_no_weight_column(self, tmp_path):
+        """decision_portfolio.csv header does not include target_weight_pct."""
+        secs = [
+            _make_ranked_security("ELIG_X", 1, 80.0, catalyst_days=30, catalyst_in_window=True),
+            _make_ranked_security("ELIG_Y", 2, 70.0, catalyst_days=60),
+        ]
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+            ranking_mode="decision",
+        )
+        assert snap is not None
+
+        portfolio = _read_csv(snap, "decision_portfolio.csv")
+        assert len(portfolio) > 0
+        assert "target_weight_pct" not in portfolio[0], \
+            "target_weight_pct should not appear in decision_portfolio.csv"
+
+    def test_json_no_weight_field(self, tmp_path):
+        """decision_portfolio.json positions do not include target_weight_pct."""
+        secs = [
+            _make_ranked_security("ELIG_X", 1, 80.0, catalyst_days=30, catalyst_in_window=True),
+        ]
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+            ranking_mode="decision",
+        )
+        assert snap is not None
+
+        payload = json.loads((snap / "decision_portfolio.json").read_text())
+        assert "target_weight_pct" not in payload, \
+            "top-level target_weight_pct should not be in JSON"
+        assert "total_weight_pct" not in payload, \
+            "total_weight_pct should not be in JSON"
+        assert "top_k" not in payload, \
+            "top_k should not be in JSON (no longer top-N)"
+        for pos in payload["positions"]:
+            assert "target_weight_pct" not in pos, \
+                f"target_weight_pct found in position {pos.get('ticker')}"
+
+    def test_json_has_n_securities_and_n_eligible(self, tmp_path):
+        """decision_portfolio.json has n_securities and n_eligible instead of top_k."""
+        secs = [
+            _make_ranked_security("ELIG_X", 2, 80.0, catalyst_days=30, catalyst_in_window=True),
+            _make_ranked_security("INELIG_A", 1, 95.0, fundamental_red_flag=True),
+        ]
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+            ranking_mode="decision",
+        )
+        assert snap is not None
+
+        payload = json.loads((snap / "decision_portfolio.json").read_text())
+        assert payload["n_securities"] == 2
+        assert payload["n_eligible"] == 1
+
+
+# ---------------------------------------------------------------------------
+# Tests: portfolio_positions (top-K weighted subset)
+# ---------------------------------------------------------------------------
+
+class TestPortfolioPositionsSchema:
+    """Verify PORTFOLIO_POSITIONS_COLUMNS schema."""
+
+    def test_has_weight_column(self):
+        """portfolio_positions must include target_weight_pct."""
+        assert "target_weight_pct" in PORTFOLIO_POSITIONS_COLUMNS
+
+    def test_ticker_first(self):
+        """ticker at index 0, company_name at index 1."""
+        assert PORTFOLIO_POSITIONS_COLUMNS[0] == "ticker"
+        assert PORTFOLIO_POSITIONS_COLUMNS[1] == "company_name"
+
+    def test_composite_last(self):
+        """Legacy composite columns at far right."""
+        assert PORTFOLIO_POSITIONS_COLUMNS[-2:] == [
+            "composite_rank", "composite_score",
+        ]
+
+
+class TestPortfolioPositionsOutput:
+    """Verify portfolio_positions.csv/json are written correctly."""
+
+    def _make_many_eligible(self, n: int = 25):
+        """Build n eligible securities with catalyst and varying composite rank.
+
+        Uses high, distinct clinical_normalized values so that most securities
+        land in tier A or B (optionality percentile is cross-sectional).
+        """
+        return [
+            _make_ranked_security(
+                f"T{i:03d}", i, 95.0 - i * 0.5,
+                catalyst_days=30 + (i % 5), catalyst_in_window=True,
+                clinical_normalized=0.95 - 0.005 * i,
+            )
+            for i in range(1, n + 1)
+        ]
+
+    def test_positions_file_exists(self, tmp_path):
+        """portfolio_positions.csv is created in phase2 mode."""
+        secs = self._make_many_eligible(5)
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+        )
+        assert snap is not None
+        assert (snap / "portfolio_positions.csv").exists()
+        assert (snap / "portfolio_positions.json").exists()
+
+    def test_positions_not_in_observe_mode(self, tmp_path):
+        """portfolio_positions is only written in phase2 mode, not observe."""
+        secs = self._make_many_eligible(3)
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="observe",
+        )
+        assert snap is not None
+        assert not (snap / "portfolio_positions.csv").exists()
+
+    def test_positions_row_count_capped_at_top_k(self, tmp_path):
+        """portfolio_positions has at most PHASE2_DEFAULT_TOP_K rows."""
+        # Create many more than top_k to ensure the cap binds
+        secs = self._make_many_eligible(40)
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+        )
+        assert snap is not None
+
+        # Count actual A/B eligible in rankings
+        rankings = _read_csv(snap, "rankings.csv")
+        n_ab = sum(
+            1 for r in rankings
+            if r.get("eligible") == "1" and r.get("tier_any") in ("A", "B")
+        )
+        assert n_ab > PHASE2_DEFAULT_TOP_K, (
+            f"Need >20 tier A/B to test cap, got {n_ab}"
+        )
+
+        rows = _read_csv(snap, "portfolio_positions.csv")
+        assert len(rows) == PHASE2_DEFAULT_TOP_K
+
+    def test_positions_fewer_than_top_k(self, tmp_path):
+        """When fewer eligible A/B than top_k, all are included."""
+        secs = self._make_many_eligible(5)
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+        )
+        assert snap is not None
+
+        # Count actual A/B eligible
+        rankings = _read_csv(snap, "rankings.csv")
+        n_ab = sum(
+            1 for r in rankings
+            if r.get("eligible") == "1" and r.get("tier_any") in ("A", "B")
+        )
+        assert n_ab < PHASE2_DEFAULT_TOP_K, "Need < top_k A/B for this test"
+
+        rows = _read_csv(snap, "portfolio_positions.csv")
+        assert len(rows) == n_ab
+
+    def test_positions_have_weights(self, tmp_path):
+        """Every position row has a non-empty target_weight_pct."""
+        secs = self._make_many_eligible(5)
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+        )
+        assert snap is not None
+
+        rows = _read_csv(snap, "portfolio_positions.csv")
+        for r in rows:
+            assert r["target_weight_pct"] not in ("", None), (
+                f"Missing weight for {r['ticker']}"
+            )
+            assert float(r["target_weight_pct"]) > 0
+
+    def test_positions_weights_sum_to_100(self, tmp_path):
+        """Weights in portfolio_positions sum to ~100%."""
+        secs = self._make_many_eligible(10)
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+        )
+        assert snap is not None
+
+        rows = _read_csv(snap, "portfolio_positions.csv")
+        total = sum(float(r["target_weight_pct"]) for r in rows)
+        assert abs(total - 100.0) < 0.5, f"Weights sum to {total}, expected ~100"
+
+    def test_positions_only_eligible_tier_ab(self, tmp_path):
+        """All position rows are eligible with tier_any in [A, B]."""
+        secs = [
+            # Eligible with catalyst -> tier A or B
+            _make_ranked_security("ELIG_A", 4, 70.0, catalyst_days=30, catalyst_in_window=True),
+            _make_ranked_security("ELIG_B", 5, 60.0, catalyst_days=60),
+            # Ineligible
+            _make_ranked_security("INELIG", 1, 95.0, fundamental_red_flag=True),
+        ]
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+        )
+        assert snap is not None
+
+        rows = _read_csv(snap, "portfolio_positions.csv")
+        for r in rows:
+            assert r["eligible"] == "1", f"{r['ticker']} not eligible"
+            assert r["tier_any"] in ("A", "B"), (
+                f"{r['ticker']} has tier_any={r['tier_any']}"
+            )
+        # Ineligible ticker must not appear
+        tickers = {r["ticker"] for r in rows}
+        assert "INELIG" not in tickers
+
+    def test_positions_excludes_tier_cd(self, tmp_path):
+        """Tier C/D rows are excluded from portfolio_positions."""
+        secs = [
+            # Has catalyst -> A tier
+            _make_ranked_security("TIER_A", 1, 80.0, catalyst_days=30, catalyst_in_window=True),
+            # No catalyst, low confidence -> lower tier
+            _make_ranked_security("LOW_T", 2, 30.0, catalyst_days=None, confidence_overall=0.30),
+        ]
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+        )
+        assert snap is not None
+
+        rows = _read_csv(snap, "portfolio_positions.csv")
+        tiers = {r["tier_any"] for r in rows}
+        assert "C" not in tiers
+        assert "D" not in tiers
+
+    def test_positions_json_structure(self, tmp_path):
+        """portfolio_positions.json has expected top-level fields."""
+        secs = self._make_many_eligible(10)
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+        )
+        assert snap is not None
+
+        rows = _read_csv(snap, "portfolio_positions.csv")
+        n_pos = len(rows)
+        assert n_pos > 0
+
+        payload = json.loads((snap / "portfolio_positions.json").read_text())
+        assert payload["snapshot_date"] == "2026-01-01"
+        assert payload["top_k"] == PHASE2_DEFAULT_TOP_K
+        assert payload["tier_filter"] == ["A", "B"]
+        assert payload["n_positions"] == n_pos
+        assert payload["total_weight_pct"] == pytest.approx(100.0, abs=0.5)
+        assert len(payload["positions"]) == n_pos
+        # Each position has target_weight_pct
+        for pos in payload["positions"]:
+            assert "target_weight_pct" in pos
+            assert "ticker" in pos
+
+    def test_positions_company_name_populated(self, tmp_path):
+        """portfolio_positions includes company_name from M1."""
+        secs = [
+            _make_ranked_security("ACRS", 1, 80.0, catalyst_days=30, catalyst_in_window=True),
+        ]
+        active = [{"ticker": "ACRS", "company_name": "Aclaris Therapeutics, Inc."}]
+        results = _make_results(secs, active_securities=active)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+        )
+        assert snap is not None
+
+        rows = _read_csv(snap, "portfolio_positions.csv")
+        assert rows[0]["company_name"] == "Aclaris Therapeutics, Inc."
+
+    def test_decision_portfolio_unchanged_by_positions(self, tmp_path):
+        """decision_portfolio.csv still contains all rows (not affected by positions split)."""
+        secs = self._make_many_eligible(25)
+        # Add 2 ineligible
+        secs.append(_make_ranked_security("INELIG_A", 26, 10.0, fundamental_red_flag=True))
+        secs.append(_make_ranked_security("INELIG_B", 27, 5.0, fundamental_red_flag=True))
+        results = _make_results(secs)
+
+        snap = save_validation_snapshot(
+            snapshot_dir=tmp_path / "snap",
+            as_of_date="2026-01-01",
+            results=results,
+            version="test",
+            decision_mode="phase2",
+        )
+        assert snap is not None
+
+        # decision_portfolio has ALL rows
+        dp_rows = _read_csv(snap, "decision_portfolio.csv")
+        assert len(dp_rows) == 27
+
+        # portfolio_positions has only top-K eligible A/B
+        pp_rows = _read_csv(snap, "portfolio_positions.csv")
+        assert len(pp_rows) <= PHASE2_DEFAULT_TOP_K
+        assert len(pp_rows) < len(dp_rows)

@@ -1399,7 +1399,6 @@ PHASE2_PORTFOLIO_COLUMNS = [
     "company_name",
     # DE output first
     "actionable_rank",
-    "target_weight_pct",
     # Tiers + reasons
     "tier_any",
     "tier_any_reason",
@@ -1427,6 +1426,35 @@ PHASE2_PORTFOLIO_COLUMNS = [
     "alpha_cohort_raw",
     "missing_components",
     "archetype",
+    # Legacy composite (far right)
+    "composite_rank",
+    "composite_score",
+]
+
+# Phase-2 portfolio positions output columns (weighted top-K subset)
+PORTFOLIO_POSITIONS_COLUMNS = [
+    "ticker",
+    "company_name",
+    "actionable_rank",
+    "target_weight_pct",
+    # Tiers
+    "tier_any",
+    "tier_any_reason",
+    "tier_dev",
+    "tier_reason",
+    "tier_commercial",
+    # Primary DE drivers
+    "alpha_cohort_pct",
+    "clinical_optionality_pct_dev",
+    "catalyst_days",
+    "catalyst_mode",
+    "mom_state",
+    "risk_flags",
+    "size_band",
+    "size_reasons",
+    # Metadata
+    "archetype",
+    "eligible",
     # Legacy composite (far right)
     "composite_rank",
     "composite_score",
@@ -2552,9 +2580,10 @@ def save_validation_snapshot(
     # --- Compute commercial_quality_pct (percentile within commercial cohort) ---
     _CQ_WEIGHTS = {"financial": 0.45, "valuation": 0.35, "momentum": 0.20}
 
+    _non_dev_arch = lambda a: a and a != "drug_developer"
     comm_rows = [
         (i, r) for i, r in enumerate(csv_rows)
-        if r.get("archetype", "").startswith("commercial_")
+        if _non_dev_arch(r.get("archetype", ""))
         and r.get("financial_score") is not None
         and r.get("valuation_score") is not None
     ]
@@ -2956,52 +2985,13 @@ def save_validation_snapshot(
     except OSError as e:
         logger.warning(f"Could not write decision_ruleset.json: {e}")
 
-    # --- Phase-2 portfolio output (filtered A+B, top-K, sized) ---
+    # --- Phase-2 decision portfolio (full DE-ranked research list) ---
     if decision_mode == "phase2":
-        tier_filter = PHASE2_DEFAULT_TIER_FILTER
-        top_k = PHASE2_DEFAULT_TOP_K
-
-        # Filter to eligible tiered names (mode-dependent), already have actionable_rank from above
         rs = ruleset or DEFAULT_RULESET
-        if rs.tiering_priority_mode == "tier_first":
-            portfolio_rows = [
-                r for r in eligible_rows
-                if r.get("tier_any") in tier_filter
-            ]
-        else:
-            portfolio_rows = [
-                r for r in eligible_rows
-                if r.get("archetype") == "drug_developer"
-                and r.get("tier_dev") in tier_filter
-            ]
-        # Sort by actionable sort key (eligible_rows are already sorted this way
-        # from the sort above, but re-sort to be defensive)
-        portfolio_rows.sort(key=lambda r: compute_actionable_sort_key(
-            decision_fields=r,
-            archetype=r.get("archetype", ""),
-            optionality=float(r["clinical_optionality_pct_dev"])
-                if r.get("clinical_optionality_pct_dev") not in (None, "")
-                else None,
-            composite_rank=r.get("composite_rank"),
-            ticker=r.get("ticker", ""),
-            catalyst_event_type=r.get("catalyst_event_type", ""),
-            catalyst_source=r.get("catalyst_source", ""),
-            ruleset=ruleset,
-            tiebreaker_pct=float(r["commercial_quality_pct"])
-                if r.get("archetype", "").startswith("commercial_")
-                and r.get("commercial_quality_pct") not in (None, "")
-                else (float(r["clinical_optionality_pct_dev"])
-                      if r.get("clinical_optionality_pct_dev") not in (None, "")
-                      else None),
-        ))
-        portfolio_rows = portfolio_rows[:top_k]
 
-        # Re-assign actionable_rank 1..N for the filtered set
-        for i, row in enumerate(portfolio_rows, start=1):
-            row["actionable_rank"] = i
-
-        # Re-compute weights for the filtered portfolio
-        compute_target_weights(portfolio_rows, ruleset=rs)
+        # Use the same ordered list as rankings.csv (eligible first, then
+        # ineligible) — no Top-N truncation, no weight computation.
+        portfolio_rows = list(csv_rows)
 
         # Write decision_portfolio.csv
         portfolio_csv_path = snap_path / "decision_portfolio.csv"
@@ -3014,7 +3004,7 @@ def save_validation_snapshot(
                 for row in portfolio_rows:
                     writer.writerow(row)
             logger.info(
-                f"Phase-2 portfolio: {len(portfolio_rows)} positions -> "
+                f"Phase-2 research list: {len(portfolio_rows)} securities -> "
                 f"{portfolio_csv_path.name}"
             )
         except OSError as e:
@@ -3023,6 +3013,7 @@ def save_validation_snapshot(
         # Write decision_portfolio.json (structured payload)
         portfolio_json_path = snap_path / "decision_portfolio.json"
         try:
+            n_eligible = sum(1 for r in portfolio_rows if r.get("eligible") == "1")
             portfolio_payload = {
                 "snapshot_date": as_of_date,
                 "decision_engine_version": DE_VERSION,
@@ -3032,29 +3023,24 @@ def save_validation_snapshot(
                     if PHASE2_DEFAULT_RULESET_PATH.exists()
                     else "built-in"
                 ),
-                "tier_filter": tier_filter,
-                "top_k": top_k,
-                "n_positions": len(portfolio_rows),
-                "total_weight_pct": round(
-                    sum(
-                        float(r.get("target_weight_pct", 0))
-                        for r in portfolio_rows
-                        if r.get("target_weight_pct") not in (None, "")
-                    ),
-                    2,
-                ),
+                "n_securities": len(portfolio_rows),
+                "n_eligible": n_eligible,
                 "positions": [
                     {
                         "ticker": r.get("ticker", ""),
-                        "tier_dev": r.get("tier_dev", ""),
+                        "company_name": r.get("company_name", ""),
                         "actionable_rank": r.get("actionable_rank", ""),
+                        "tier_any": r.get("tier_any", ""),
+                        "tier_dev": r.get("tier_dev", ""),
+                        "tier_commercial": r.get("tier_commercial", ""),
                         "size_band": r.get("size_band", ""),
-                        "target_weight_pct": r.get("target_weight_pct", ""),
                         "tier_reason": r.get("tier_reason", ""),
                         "catalyst_mode": r.get("catalyst_mode", ""),
                         "catalyst_days": r.get("catalyst_days", ""),
                         "mom_state": r.get("mom_state", ""),
                         "risk_flags": r.get("risk_flags", ""),
+                        "archetype": r.get("archetype", ""),
+                        "eligible": r.get("eligible", ""),
                         "composite_rank": r.get("composite_rank", ""),
                         "composite_score": r.get("composite_score", ""),
                     }
@@ -3064,9 +3050,79 @@ def save_validation_snapshot(
             with open(portfolio_json_path, "w", encoding="utf-8") as f:
                 json.dump(portfolio_payload, f, indent=2, default=str)
                 f.write("\n")
-            logger.info(f"Phase-2 portfolio JSON -> {portfolio_json_path.name}")
+            logger.info(f"Phase-2 research list JSON -> {portfolio_json_path.name}")
         except OSError as e:
             logger.warning(f"Could not write decision_portfolio.json: {e}")
+
+        # --- Portfolio positions (top-K weighted subset for operations/health/delta) ---
+        tier_filter = PHASE2_DEFAULT_TIER_FILTER
+        top_k = PHASE2_DEFAULT_TOP_K
+
+        position_rows = [
+            dict(r) for r in eligible_rows
+            if r.get("tier_any") in tier_filter
+        ][:top_k]
+
+        # Recompute weights for this subset (normalizes to 100%)
+        compute_target_weights(position_rows, ruleset=ruleset)
+
+        # Write portfolio_positions.csv
+        positions_csv_path = snap_path / "portfolio_positions.csv"
+        try:
+            with open(positions_csv_path, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(
+                    f, fieldnames=PORTFOLIO_POSITIONS_COLUMNS, extrasaction="ignore",
+                )
+                writer.writeheader()
+                for row in position_rows:
+                    writer.writerow(row)
+            logger.info(
+                f"Phase-2 positions: {len(position_rows)} securities -> "
+                f"{positions_csv_path.name}"
+            )
+        except OSError as e:
+            logger.warning(f"Could not write portfolio_positions.csv: {e}")
+
+        # Write portfolio_positions.json
+        positions_json_path = snap_path / "portfolio_positions.json"
+        try:
+            total_wt = round(sum(
+                float(r.get("target_weight_pct", 0))
+                for r in position_rows
+                if r.get("target_weight_pct") not in (None, "")
+            ), 2)
+            positions_payload = {
+                "snapshot_date": as_of_date,
+                "decision_engine_version": DE_VERSION,
+                "ruleset_id": rs.ruleset_id,
+                "top_k": top_k,
+                "tier_filter": tier_filter,
+                "n_positions": len(position_rows),
+                "total_weight_pct": total_wt,
+                "positions": [
+                    {
+                        "ticker": r.get("ticker", ""),
+                        "company_name": r.get("company_name", ""),
+                        "actionable_rank": r.get("actionable_rank", ""),
+                        "target_weight_pct": r.get("target_weight_pct", ""),
+                        "tier_any": r.get("tier_any", ""),
+                        "tier_dev": r.get("tier_dev", ""),
+                        "tier_commercial": r.get("tier_commercial", ""),
+                        "size_band": r.get("size_band", ""),
+                        "catalyst_days": r.get("catalyst_days", ""),
+                        "catalyst_mode": r.get("catalyst_mode", ""),
+                        "mom_state": r.get("mom_state", ""),
+                        "archetype": r.get("archetype", ""),
+                    }
+                    for r in position_rows
+                ],
+            }
+            with open(positions_json_path, "w", encoding="utf-8") as f:
+                json.dump(positions_payload, f, indent=2, default=str)
+                f.write("\n")
+            logger.info(f"Phase-2 positions JSON -> {positions_json_path.name}")
+        except OSError as e:
+            logger.warning(f"Could not write portfolio_positions.json: {e}")
 
     # --- Catalyst coverage diagnostics ---
     dev_csv_rows = [r for r in csv_rows if r.get("archetype") == "drug_developer"]
