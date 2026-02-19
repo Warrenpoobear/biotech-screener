@@ -249,16 +249,26 @@ def _compute_alpha_from_prices(
     prices: pd.DataFrame, ticker: str, as_of: str, window: int = 60,
     beta: Optional[float] = None,
 ) -> Optional[float]:
-    """Compute 60-day alpha (excess return vs XBI) from price history."""
+    """Compute 60-day alpha (excess return vs XBI) from price history.
+
+    Uses date-aligned returns (inner-join by date, same as production code)
+    to ensure ticker and XBI windows match exactly.
+    """
     t_sub = prices[(prices["ticker"] == ticker) & (prices["date"] <= as_of)].copy()
-    t_sub = t_sub[t_sub["close"] > 0].sort_values("date").tail(window + 1)
+    t_sub = t_sub[t_sub["close"] > 0].sort_values("date")
     x_sub = prices[(prices["ticker"] == "XBI") & (prices["date"] <= as_of)].copy()
-    x_sub = x_sub[x_sub["close"] > 0].sort_values("date").tail(window + 1)
+    x_sub = x_sub[x_sub["close"] > 0].sort_values("date")
     if len(t_sub) < 2 or len(x_sub) < 2:
         return None
-    # Simple 60d return
-    t_ret = (t_sub["close"].iloc[-1] / t_sub["close"].iloc[0]) - 1.0
-    x_ret = (x_sub["close"].iloc[-1] / x_sub["close"].iloc[0]) - 1.0
+    # Align on dates FIRST, then take the most recent window
+    t_df = t_sub[["date", "close"]].rename(columns={"close": "t_close"})
+    x_df = x_sub[["date", "close"]].rename(columns={"close": "x_close"})
+    merged = t_df.merge(x_df, on="date", how="inner").sort_values("date")
+    if len(merged) < 2:
+        return None
+    merged = merged.tail(min(window + 1, len(merged)))
+    t_ret = (merged["t_close"].iloc[-1] / merged["t_close"].iloc[0]) - 1.0
+    x_ret = (merged["x_close"].iloc[-1] / merged["x_close"].iloc[0]) - 1.0
     b = beta if beta is not None else 1.0
     alpha = t_ret - b * x_ret
     return round(alpha, 6)
@@ -314,6 +324,8 @@ def recompute_price_fields(
 
         # Beta — check missing_reason first (xbi_stale etc. are explained, not FAIL)
         beta_missing_reason = str(row.get("de_beta_xbi_60d_missing_reason", "")).strip()
+        if beta_missing_reason in ("nan", "None"):
+            beta_missing_reason = ""
         recomp_beta = _compute_beta_from_prices(prices, ticker, as_of)
         stored_beta = _safe_float(row.get("de_beta_xbi_60d"))
         entry["beta_stored"] = stored_beta
@@ -327,6 +339,8 @@ def recompute_price_fields(
 
         # Alpha — check missing_reason first
         alpha_missing_reason = str(row.get("de_alpha_60d_missing_reason", "")).strip()
+        if alpha_missing_reason in ("nan", "None"):
+            alpha_missing_reason = ""
         recomp_alpha = _compute_alpha_from_prices(prices, ticker, as_of, beta=recomp_beta)
         stored_alpha = _safe_float(row.get("de_alpha_60d"))
         entry["alpha_stored"] = stored_alpha
