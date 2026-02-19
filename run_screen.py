@@ -129,6 +129,7 @@ from decision_engine import (
     compute_target_weights,
     resolve_catalyst_priority,
     ACTIONABLE_COLUMNS,
+    _safe_float,
 )
 from backtest.cost_model import CostSchedule, estimate_trade_cost
 from archive_snapshot import sha256_file
@@ -515,14 +516,15 @@ def compute_catalyst_decay_weight(
 
     elif decay_mode == "exp":
         # Exponential decay with half-life
+        hl = max(half_life_days, 1)  # guard against division by zero
         if days_to_event < window_start:
             # Too soon - exponential approach
             distance = window_start - days_to_event
-            return math.exp(-0.693 * distance / half_life_days)  # 0.693 = ln(2)
+            return math.exp(-0.693 * distance / hl)  # 0.693 = ln(2)
         else:
             # Beyond window_end - exponential decay
             distance = days_to_event - window_end
-            return math.exp(-0.693 * distance / half_life_days)
+            return math.exp(-0.693 * distance / hl)
 
     else:
         # Unknown mode - fall back to step
@@ -1746,10 +1748,11 @@ def _hydrate_drawdown(
         reason = (rec.get("defensive_features") or {}).get(
             "drawdown_missing_reason", ""
         )
-        assert reason in VALID_DRAWDOWN_MISSING_REASONS, (
-            f"_hydrate_drawdown: ticker {t} has invalid "
-            f"drawdown_missing_reason={reason!r}"
-        )
+        if reason not in VALID_DRAWDOWN_MISSING_REASONS:
+            raise ValueError(
+                f"_hydrate_drawdown: ticker {t} has invalid "
+                f"drawdown_missing_reason={reason!r}"
+            )
 
     return hydrated
 
@@ -2050,11 +2053,15 @@ def _hydrate_beta_rsi(
             rec_by_ticker[ticker]["defensive_features"] = dfe
         old_rsi = dfe.get("rsi_14d")
         new_rsi = round(rsi_val, 4)
-        if old_rsi is not None and abs(float(old_rsi) - new_rsi) > 5.0:
-            logger.debug(
-                "RSI overwrite %s: %.2f -> %.2f (delta=%.2f)",
-                ticker, float(old_rsi), new_rsi, abs(float(old_rsi) - new_rsi),
-            )
+        if old_rsi is not None:
+            try:
+                if abs(float(old_rsi) - new_rsi) > 5.0:
+                    logger.debug(
+                        "RSI overwrite %s: %.2f -> %.2f (delta=%.2f)",
+                        ticker, float(old_rsi), new_rsi, abs(float(old_rsi) - new_rsi),
+                    )
+            except (ValueError, TypeError):
+                pass
         dfe["rsi_14d"] = new_rsi
         hydrated += 1
 
@@ -2920,9 +2927,9 @@ def save_validation_snapshot(
         # Compute raw quality score
         for idx, r in comm_rows:
             cq = (
-                _CQ_WEIGHTS["financial"] * float(r["financial_score"])
-                + _CQ_WEIGHTS["valuation"] * float(r["valuation_score"])
-                + _CQ_WEIGHTS["momentum"] * float(r.get("momentum_score") or 0)
+                _CQ_WEIGHTS["financial"] * (_safe_float(r["financial_score"], default=0.0))
+                + _CQ_WEIGHTS["valuation"] * (_safe_float(r["valuation_score"], default=0.0))
+                + _CQ_WEIGHTS["momentum"] * (_safe_float(r.get("momentum_score"), default=0.0))
             )
             csv_rows[idx]["commercial_quality"] = round(cq, 6)
 
@@ -3217,24 +3224,18 @@ def save_validation_snapshot(
     csv_rows.sort(key=lambda r: compute_actionable_sort_key(
         decision_fields=r,
         archetype=r.get("archetype", ""),
-        optionality=float(r["clinical_optionality_pct_dev"])
-            if r.get("clinical_optionality_pct_dev") not in (None, "")
-            else None,
+        optionality=_safe_float(r.get("clinical_optionality_pct_dev")),
         composite_rank=r.get("composite_rank"),
         ticker=r.get("ticker", ""),
         catalyst_event_type=r.get("catalyst_event_type", ""),
         catalyst_source=r.get("catalyst_source", ""),
         ruleset=ruleset,
         tiebreaker_pct=(
-            float(r["alpha_cohort_pct"])
+            _safe_float(r.get("alpha_cohort_pct"))
             if ruleset and ruleset.sort_anchor == "alpha_cohort"
-            and r.get("alpha_cohort_pct") not in (None, "")
-            else (float(r["commercial_quality_pct"])
+            else (_safe_float(r.get("commercial_quality_pct"))
                   if r.get("archetype", "").startswith("commercial_")
-                  and r.get("commercial_quality_pct") not in (None, "")
-                  else (float(r["clinical_optionality_pct_dev"])
-                        if r.get("clinical_optionality_pct_dev") not in (None, "")
-                        else None))
+                  else _safe_float(r.get("clinical_optionality_pct_dev")))
         ),
     ))
 
@@ -6647,7 +6648,8 @@ def add_bootstrap_analysis(
         results["bootstrap_analysis"] = {"error": "no_composite_scores"}
         return results
 
-    scores = [Decimal(s["composite_score"]) for s in ranked]
+    scores = [Decimal(s["composite_score"]) for s in ranked
+              if s.get("composite_score") not in (None, "")]
     
     # Compute bootstrap CI
     bootstrap_result = compute_bootstrap_ci_decimal(
@@ -7705,7 +7707,13 @@ Module 3 Catalyst Detection:
             snapshot_dir = args.snapshot_dir or (args.data_dir.parent / "data" / "snapshots")
 
             # Load trial_records for clinical_alpha_z computation
-            _ctgov_snap = Path(__file__).parent / "cache" / "ctgov" / f"trial_records_{args.as_of_date}.json"
+            # Use the same ctgov_cache_dir as the pipeline to avoid divergence
+            _ctgov_dir = (
+                Path(args.ctgov_cache_dir)
+                if getattr(args, "ctgov_cache_dir", None)
+                else Path(__file__).parent / "cache" / "ctgov"
+            )
+            _ctgov_snap = _ctgov_dir / f"trial_records_{args.as_of_date}.json"
             if _ctgov_snap.exists():
                 trial_records = json.loads(_ctgov_snap.read_text())
             else:
