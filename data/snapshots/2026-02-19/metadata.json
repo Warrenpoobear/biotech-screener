@@ -1,6 +1,6 @@
 {
   "as_of_date": "2026-02-19",
-  "saved_at": "2026-02-19T18:46:19.707184Z",
+  "saved_at": "2026-02-20T14:18:54.578216Z",
   "decision_mode": "phase2",
   "ranking_mode": "decision",
   "version": "1.6.0",
@@ -37,15 +37,15 @@
     },
     "composite_score": {
       "n_total": 319,
-      "n_unique": 310,
-      "tie_pct": 0.0282
+      "n_unique": 306,
+      "tie_pct": 0.0408
     }
   },
   "score_diagnostics": {
     "composite_score": {
       "n_total": 319,
-      "n_unique": 310,
-      "tie_pct": 0.0282
+      "n_unique": 306,
+      "tie_pct": 0.0408
     },
     "momentum_score": {
       "n_total": 319,
@@ -68,8 +68,8 @@
     },
     "valuation_score": {
       "n_total": 319,
-      "n_unique": 229,
-      "tie_pct": 0.2821
+      "n_unique": 228,
+      "tie_pct": 0.2853
     },
     "clinical_score": {
       "n_total": 319,
@@ -83,13 +83,13 @@
     },
     "financial_score": {
       "n_total": 319,
-      "n_unique": 275,
-      "tie_pct": 0.1379
+      "n_unique": 268,
+      "tie_pct": 0.1599
     },
     "confidence_overall": {
       "n_total": 319,
-      "n_unique": 257,
-      "tie_pct": 0.1944
+      "n_unique": 258,
+      "tie_pct": 0.1912
     },
     "_top_tied": [
       "catalyst_score",
@@ -270,7 +270,7 @@
     "catalyst_events_2026-02-16.json": "7ed12bcee68039ef",
     "catalyst_events_2026-02-17.json": "3980da13594dd0a3",
     "catalyst_events_2026-02-18.json": "e58f60bc63e70ecd",
-    "catalyst_events_2026-02-19.json": "8fab708db1909e66",
+    "catalyst_events_2026-02-19.json": "69c2fc24ae3928fe",
     "catalyst_events_vnext_2023-01-15.json": "5d8698ae7dc05f46",
     "catalyst_events_vnext_2023-04-15.json": "944784087f2f8266",
     "catalyst_events_vnext_2023-07-15.json": "06d4232f61d3ceb7",
@@ -430,7 +430,7 @@
     "catalyst_events_vnext_2026-02-16.json": "214c28595bc30200",
     "catalyst_events_vnext_2026-02-17.json": "afbffa19496f653d",
     "catalyst_events_vnext_2026-02-18.json": "03bcc33c6313f3bf",
-    "catalyst_events_vnext_2026-02-19.json": "9c4b0b195e7ed45a",
+    "catalyst_events_vnext_2026-02-19.json": "43d409121a4831e8",
     "catalyst_overrides.json": "e4c587ce6c537d65",
     "cfo_data_2026-01-08.json": "33e0d93576eff5d0",
     "corporate_catalysts.json": "8e8db689efba18c2",
@@ -454,7 +454,7 @@
     "inputs_manifest.json": "d469b8cbbfb59239",
     "m3_vnext_events_2026-02-07.json": "bb0472147eabc572",
     "manager_registry.json": "f76ba4f3c4cad4f9",
-    "market_data.json": "1d3279e1388e0cd9",
+    "market_data.json": "9aa38921fbf9d217",
     "market_data.momentum_meta.json": "5e8f2cc2ccf8f8be",
     "market_snapshot.json": "7d165d8bb272eec8",
     "morningstar_data_manifest.json": "e553e2edb80abc24",
@@ -514,7 +514,7 @@
   "clinical_sort_telemetry": {
     "n_nonzero_clin_adj_dev": 69,
     "n_nonzero_clin_adj_comm": 61,
-    "ruleset_id": "aa0aaf28",
+    "ruleset_id": "8f99d47e",
     "enable_clinical_sort_signal": true
   },
   "far_window_telemetry": {
@@ -527,6 +527,11 @@
     "composite_engine": "alpha_cohort",
     "table_path": "production_data/alpha_cohort_tables/v1.json",
     "shrink_k": 50.0
+  },
+  "coinvest_coverage": {
+    "tickers_with_signal": 263,
+    "ticker_count": 319,
+    "coverage_pct": 82.4
   },
   "alpha_contract_telemetry": {
     "input": {

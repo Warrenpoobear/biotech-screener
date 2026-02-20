@@ -167,6 +167,9 @@
       1.5
     ]
   ],
+  "coinvest_positive_only": true,
+  "coinvest_score_mode": "tier1_count",
+  "coinvest_sort_weight": 0.05,
   "composite_engine": "alpha_cohort",
   "confidence_low_threshold": 0.3,
   "cost_haircut_buckets": [
@@ -196,6 +199,7 @@
   "enable_catalyst_priority": false,
   "enable_catalyst_tilt": false,
   "enable_clinical_sort_signal": true,
+  "enable_coinvest_sort_signal": true,
   "enable_cost_haircut": true,
   "enable_dd_rel_margin_rescue": false,
   "enable_missingness_size_penalty": false,

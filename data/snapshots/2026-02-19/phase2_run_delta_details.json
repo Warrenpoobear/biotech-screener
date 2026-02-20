@@ -1,35 +1,18 @@
 {
-  "generated_at": "2026-02-19T18:46:19Z",
+  "generated_at": "2026-02-20T14:18:54Z",
   "current": {
     "date": "2026-02-19",
-    "ruleset_id": "aa0aaf28",
+    "ruleset_id": "8f99d47e",
     "has_native_portfolio": true,
     "portfolio_size": 20
   },
-  "prior": {
-    "date": "2026-02-18",
-    "ruleset_id": "aa0aaf28",
-    "has_native_portfolio": true,
-    "portfolio_size": 20
-  },
-  "portfolio_turnover": {
-    "entrants": [],
-    "exits": [],
-    "name_turnover_pct": 0.0,
-    "weight_l1_delta": 4.2
-  },
+  "prior": null,
   "tier_distribution": {
     "current": {
       "A": 32,
       "B": 40,
       "C": 59,
       "D": 52
-    },
-    "prior": {
-      "A": 33,
-      "B": 41,
-      "C": 58,
-      "D": 51
     }
   },
   "tier_in_portfolio": {
@@ -38,40 +21,18 @@
       "B": 0,
       "C": 0,
       "D": 0
-    },
-    "prior": {
-      "A": 20,
-      "B": 0,
-      "C": 0,
-      "D": 0
     }
   },
   "sizing": {
     "current": {
-      "L": 16,
-      "M": 3,
-      "S": 1,
-      "XS": 0
-    },
-    "prior": {
-      "L": 15,
-      "M": 4,
-      "S": 1,
+      "L": 18,
+      "M": 2,
+      "S": 0,
       "XS": 0
     }
   },
   "catalyst_coverage": {
     "current": {
-      "n_dev": 183,
-      "n_specific": 169,
-      "pct": 92.3,
-      "mode_dist": {
-        "specific_days": 169,
-        "no_upcoming": 14
-      },
-      "backfill_share_pct": 0.0
-    },
-    "prior": {
       "n_dev": 183,
       "n_specific": 169,
       "pct": 92.3,
@@ -115,12 +76,12 @@
         "tier_dev": "A"
       },
       {
-        "ticker": "OLMA",
+        "ticker": "NUVL",
         "catalyst_days": 10,
         "tier_dev": "A"
       },
       {
-        "ticker": "NUVL",
+        "ticker": "OLMA",
         "catalyst_days": 10,
         "tier_dev": "A"
       },
@@ -132,58 +93,6 @@
       {
         "ticker": "KYTX",
         "catalyst_days": 10,
-        "tier_dev": "B"
-      }
-    ],
-    "prior": [
-      {
-        "ticker": "DNLI",
-        "catalyst_days": 7,
-        "tier_dev": "B"
-      },
-      {
-        "ticker": "ADCT",
-        "catalyst_days": 10,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "NMRA",
-        "catalyst_days": 11,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "PVLA",
-        "catalyst_days": 11,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "IMVT",
-        "catalyst_days": 11,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "VRDN",
-        "catalyst_days": 11,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "OLMA",
-        "catalyst_days": 11,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "NUVL",
-        "catalyst_days": 11,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "ABVX",
-        "catalyst_days": 11,
-        "tier_dev": "B"
-      },
-      {
-        "ticker": "KYTX",
-        "catalyst_days": 11,
         "tier_dev": "B"
       }
     ]
@@ -191,25 +100,17 @@
   "risk_flags": {
     "current": {
       "deep_drawdown": 1,
-      "high_vol": 2,
-      "high_beta": 3,
+      "high_vol": 3,
+      "high_beta": 1,
       "overbought_rsi": 2,
-      "low_confidence": 0
-    },
-    "prior": {
-      "deep_drawdown": 1,
-      "high_vol": 2,
-      "high_beta": 3,
-      "overbought_rsi": 1,
       "low_confidence": 0
     }
   },
   "guardrails": {
     "passed": [
-      "Ruleset matches pinned Phase-2 ID (aa0aaf28)",
+      "Ruleset matches pinned Phase-2 ID (8f99d47e)",
       "A-tier count >= 1 (32)",
-      "Catalyst coverage 92.3% >= 50.0%",
-      "Name turnover 0.0% <= 40.0%"
+      "Catalyst coverage 92.3% >= 50.0%"
     ],
     "warnings": []
   }
