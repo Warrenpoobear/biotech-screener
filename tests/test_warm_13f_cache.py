@@ -22,11 +22,15 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 
 from sec_13f.edgar_13f import SEC13FFetcher, Filing13F, Holding
 from tools.warm_13f_cache import (
+    SCHEMA_VERSION,
+    CACHE_TYPE,
+    FILINGS_LOOKBACK_N,
     PITFilingSelection,
     RateLimiter,
     build_index,
     check_13f_cache_health,
     select_pit_filing,
+    validate_sec_13f_index_schema,
     warm_one_manager,
     warm_13f_cache,
 )
@@ -72,6 +76,54 @@ def _make_holding(
         investment_discretion="SOLE",
         ticker=ticker,
     )
+
+
+def _make_valid_index(**overrides) -> dict:
+    """Build a minimal valid v1 index dict. Override any field."""
+    base = {
+        "schema_version": SCHEMA_VERSION,
+        "cache_type": CACHE_TYPE,
+        "as_of_date": "2026-02-19",
+        "created_at": "2026-02-19T15:30:00Z",
+        "elite_only": True,
+        "total_managers": 2,
+        "managers_with_filing": 2,
+        "coverage_pct": 100.0,
+        "selection_policy": {
+            "pit_rule": "filing_date<=as_of; latest report_date; prefer 13F-HR/A; latest filing_date",
+            "recent_filings_lookback_n": FILINGS_LOOKBACK_N,
+        },
+        "managers": [
+            {
+                "manager_cik": "0001234567",
+                "manager_name": "Fund A",
+                "selected": True,
+                "period_of_report": "2025-12-31",
+                "filed_at": "2026-02-14",
+                "form_type": "13F-HR",
+                "accession": "A1",
+                "holdings_count": 50,
+                "manager_json_path": "managers/0001234567.json",
+                "raw_xml_path": "raw/0001234567/A1.xml",
+                "rejection_reason": "",
+            },
+            {
+                "manager_cik": "0009876543",
+                "manager_name": "Fund B",
+                "selected": True,
+                "period_of_report": "2025-12-31",
+                "filed_at": "2026-02-14",
+                "form_type": "13F-HR",
+                "accession": "B1",
+                "holdings_count": 30,
+                "manager_json_path": "managers/0009876543.json",
+                "raw_xml_path": "raw/0009876543/B1.xml",
+                "rejection_reason": "",
+            },
+        ],
+    }
+    base.update(overrides)
+    return base
 
 
 # ===================================================================
@@ -201,30 +253,65 @@ class TestSelectPITFiling:
 
 class TestBuildIndex:
 
-    def test_basic_index_schema(self):
+    def test_v1_schema_fields(self):
         results = [
             {"manager_cik": "0001234567", "manager_name": "Fund A", "status": "ok",
              "period_of_report": "2025-12-31", "filed_at": "2026-02-14",
-             "form_type": "13F-HR", "accession": "A1", "holdings_count": 50},
+             "form_type": "13F-HR", "accession": "A1", "holdings_count": 50,
+             "manager_json_path": "managers/0001234567.json",
+             "raw_xml_path": "raw/0001234567/A1.xml"},
             {"manager_cik": "0009876543", "manager_name": "Fund B", "status": "no_filing",
              "rejection_reason": "no_filings"},
         ]
         idx = build_index(date(2026, 2, 19), results, total_managers=2, elite_only=True)
 
+        # v1 required top-level fields
+        assert idx["schema_version"] == SCHEMA_VERSION
+        assert idx["cache_type"] == CACHE_TYPE
         assert idx["as_of_date"] == "2026-02-19"
+        assert idx["created_at"].endswith("Z")
         assert idx["elite_only"] is True
         assert idx["total_managers"] == 2
         assert idx["managers_with_filing"] == 1
-        assert idx["managers_no_filing"] == 1
-        assert idx["managers_error"] == 0
         assert idx["coverage_pct"] == 50.0
+        assert idx["selection_policy"]["recent_filings_lookback_n"] == FILINGS_LOOKBACK_N
         assert len(idx["managers"]) == 2
+
+    def test_selected_manager_has_paths(self):
+        results = [
+            {"manager_cik": "0001234567", "manager_name": "Fund A", "status": "ok",
+             "period_of_report": "2025-12-31", "filed_at": "2026-02-14",
+             "form_type": "13F-HR", "accession": "A1", "holdings_count": 50,
+             "manager_json_path": "managers/0001234567.json",
+             "raw_xml_path": "raw/0001234567/A1.xml"},
+        ]
+        idx = build_index(date(2026, 2, 19), results, total_managers=1, elite_only=True)
+        mgr = idx["managers"][0]
+
+        assert mgr["selected"] is True
+        assert mgr["manager_json_path"] == "managers/0001234567.json"
+        assert mgr["raw_xml_path"] == "raw/0001234567/A1.xml"
+        assert mgr["rejection_reason"] == ""
+
+    def test_unselected_manager_has_rejection_reason(self):
+        results = [
+            {"manager_cik": "0009876543", "manager_name": "Fund B", "status": "no_filing",
+             "rejection_reason": "no_filings"},
+        ]
+        idx = build_index(date(2026, 2, 19), results, total_managers=1, elite_only=True)
+        mgr = idx["managers"][0]
+
+        assert mgr["selected"] is False
+        assert mgr["rejection_reason"] == "no_filings"
+        assert "manager_json_path" not in mgr
 
     def test_coverage_100_percent(self):
         results = [
-            {"manager_cik": f"CIK{i}", "manager_name": f"Fund {i}", "status": "ok",
+            {"manager_cik": f"CIK{i:07d}", "manager_name": f"Fund {i}", "status": "ok",
              "period_of_report": "2025-12-31", "filed_at": "2026-02-14",
-             "form_type": "13F-HR", "accession": f"A{i}", "holdings_count": 10}
+             "form_type": "13F-HR", "accession": f"A{i}", "holdings_count": 10,
+             "manager_json_path": f"managers/CIK{i:07d}.json",
+             "raw_xml_path": f"raw/CIK{i:07d}/A{i}.xml"}
             for i in range(5)
         ]
         idx = build_index(date(2026, 2, 19), results, total_managers=5, elite_only=False)
@@ -234,6 +321,115 @@ class TestBuildIndex:
         idx = build_index(date(2026, 2, 19), [], total_managers=0, elite_only=True)
         assert idx["coverage_pct"] == 0.0
         assert idx["managers_with_filing"] == 0
+
+    def test_validates_against_own_schema(self):
+        """Index produced by build_index must pass the schema validator."""
+        results = [
+            {"manager_cik": "0001234567", "manager_name": "Fund A", "status": "ok",
+             "period_of_report": "2025-12-31", "filed_at": "2026-02-14",
+             "form_type": "13F-HR", "accession": "A1", "holdings_count": 50,
+             "manager_json_path": "managers/0001234567.json",
+             "raw_xml_path": "raw/0001234567/A1.xml"},
+            {"manager_cik": "0009876543", "manager_name": "Fund B", "status": "no_filing",
+             "rejection_reason": "no_filings"},
+        ]
+        idx = build_index(date(2026, 2, 19), results, total_managers=2, elite_only=True)
+        ok, detail = validate_sec_13f_index_schema(idx)
+        assert ok, f"build_index output failed validation: {detail}"
+
+
+# ===================================================================
+# Schema validation tests (pure logic)
+# ===================================================================
+
+class TestValidateSchema:
+
+    def test_valid_index_passes(self):
+        ok, detail = validate_sec_13f_index_schema(_make_valid_index())
+        assert ok, detail
+
+    def test_missing_top_level_field(self):
+        idx = _make_valid_index()
+        del idx["schema_version"]
+        ok, detail = validate_sec_13f_index_schema(idx)
+        assert not ok
+        assert "missing top-level" in detail
+
+    def test_wrong_schema_version(self):
+        idx = _make_valid_index(schema_version="sec_13f_pit_index.v99")
+        ok, detail = validate_sec_13f_index_schema(idx)
+        assert not ok
+        assert "schema_version mismatch" in detail
+
+    def test_wrong_cache_type(self):
+        idx = _make_valid_index(cache_type="something_else")
+        ok, detail = validate_sec_13f_index_schema(idx)
+        assert not ok
+        assert "cache_type mismatch" in detail
+
+    def test_as_of_date_mismatch(self):
+        idx = _make_valid_index(as_of_date="2026-02-19")
+        ok, detail = validate_sec_13f_index_schema(idx, expected_as_of_date="2026-02-20")
+        assert not ok
+        assert "as_of_date mismatch" in detail
+
+    def test_created_at_must_end_with_z(self):
+        idx = _make_valid_index(created_at="2026-02-19T15:30:00+00:00")
+        ok, detail = validate_sec_13f_index_schema(idx)
+        assert not ok
+        assert "created_at" in detail
+
+    def test_managers_with_filing_exceeds_total(self):
+        idx = _make_valid_index(total_managers=1, managers_with_filing=5, coverage_pct=500.0)
+        ok, detail = validate_sec_13f_index_schema(idx)
+        assert not ok
+        assert "managers_with_filing" in detail
+
+    def test_coverage_pct_inconsistent(self):
+        # 2 managers, 2 with filing → should be 100.0, not 50.0
+        idx = _make_valid_index(coverage_pct=50.0)
+        ok, detail = validate_sec_13f_index_schema(idx)
+        assert not ok
+        assert "coverage_pct inconsistent" in detail
+
+    def test_selected_manager_missing_required_fields(self):
+        idx = _make_valid_index()
+        # Remove a required field from a selected manager
+        del idx["managers"][0]["holdings_count"]
+        ok, detail = validate_sec_13f_index_schema(idx)
+        assert not ok
+        assert "missing" in detail
+        assert "holdings_count" in detail
+
+    def test_unselected_manager_empty_rejection_reason(self):
+        idx = _make_valid_index()
+        idx["managers"][1] = {
+            "manager_cik": "0009876543",
+            "manager_name": "Fund B",
+            "selected": False,
+            "rejection_reason": "",  # empty → invalid
+        }
+        idx["managers_with_filing"] = 1
+        idx["coverage_pct"] = 50.0
+        ok, detail = validate_sec_13f_index_schema(idx)
+        assert not ok
+        assert "rejection_reason is empty" in detail
+
+    def test_managers_not_sorted_by_cik(self):
+        idx = _make_valid_index()
+        # Reverse order so CIKs are descending
+        idx["managers"] = list(reversed(idx["managers"]))
+        ok, detail = validate_sec_13f_index_schema(idx)
+        assert not ok
+        assert "not sorted" in detail
+
+    def test_determinism_sorted_ciks_pass(self):
+        """Managers sorted by CIK must pass."""
+        idx = _make_valid_index()
+        ciks = [m["manager_cik"] for m in idx["managers"]]
+        assert ciks == sorted(ciks)
+        ok, _ = validate_sec_13f_index_schema(idx)
+        assert ok
 
 
 # ===================================================================
@@ -298,6 +494,7 @@ class TestWarmOneManager:
 
         assert result["status"] == "ok"
         assert result["holdings_count"] == 1
+        assert result["manager_json_path"] == "managers/0001166559.json"
 
         # Check JSON file written
         cik_padded = "0001166559"
@@ -356,6 +553,7 @@ class TestWarmOneManager:
         result = warm_one_manager(manager, date(2026, 2, 19), out, fetcher, rl)
 
         assert result["status"] == "ok"
+        assert result["raw_xml_path"] == f"raw/0001166559/{filing.accession_number}.xml"
         raw_path = out / "raw" / "0001166559" / f"{filing.accession_number}.xml"
         assert raw_path.exists()
         assert raw_path.read_text() == xml_content
@@ -389,70 +587,74 @@ class TestWarmOneManager:
 
 class TestCheck13FCacheHealth:
 
+    def _write_valid_index(self, cache_dir: Path, as_of: str, **overrides):
+        date_dir = cache_dir / as_of
+        date_dir.mkdir(parents=True, exist_ok=True)
+        idx = _make_valid_index(as_of_date=as_of, **overrides)
+        (date_dir / "index.json").write_text(json.dumps(idx))
+        return idx
+
     def test_pass_when_coverage_adequate(self, tmp_path):
-        cache_dir = tmp_path / "sec_13f" / "PIT"
-        date_dir = cache_dir / "2026-02-19"
-        date_dir.mkdir(parents=True)
-
-        index = {
-            "coverage_pct": 90.0,
-            "managers_with_filing": 18,
-            "total_managers": 20,
-        }
-        (date_dir / "index.json").write_text(json.dumps(index))
-
-        result = check_13f_cache_health(cache_dir, "2026-02-19")
+        self._write_valid_index(tmp_path, "2026-02-19")
+        result = check_13f_cache_health(tmp_path, "2026-02-19")
         assert result["status"] == "PASS"
-        assert "90.0%" in result["detail"]
+        assert "100.0%" in result["detail"]
 
     def test_warn_when_coverage_below_threshold(self, tmp_path):
-        cache_dir = tmp_path / "sec_13f" / "PIT"
-        date_dir = cache_dir / "2026-02-19"
-        date_dir.mkdir(parents=True)
-
-        index = {
-            "coverage_pct": 60.0,
-            "managers_with_filing": 12,
-            "total_managers": 20,
-        }
-        (date_dir / "index.json").write_text(json.dumps(index))
-
-        result = check_13f_cache_health(cache_dir, "2026-02-19")
+        self._write_valid_index(
+            tmp_path, "2026-02-19",
+            managers_with_filing=1, coverage_pct=50.0,
+            managers=[
+                _make_valid_index()["managers"][0],
+                {
+                    "manager_cik": "0009876543",
+                    "manager_name": "Fund B",
+                    "selected": False,
+                    "rejection_reason": "no_filings",
+                },
+            ],
+        )
+        result = check_13f_cache_health(tmp_path, "2026-02-19")
         assert result["status"] == "WARN"
         assert "below" in result["detail"]
 
     def test_warn_when_index_missing(self, tmp_path):
-        cache_dir = tmp_path / "sec_13f" / "PIT"
-        result = check_13f_cache_health(cache_dir, "2026-02-19")
+        result = check_13f_cache_health(tmp_path, "2026-02-19")
         assert result["status"] == "WARN"
         assert "No 13F cache index" in result["detail"]
 
     def test_warn_when_index_malformed(self, tmp_path):
-        cache_dir = tmp_path / "sec_13f" / "PIT"
-        date_dir = cache_dir / "2026-02-19"
+        date_dir = tmp_path / "2026-02-19"
         date_dir.mkdir(parents=True)
         (date_dir / "index.json").write_text("not valid json{{{")
 
-        result = check_13f_cache_health(cache_dir, "2026-02-19")
+        result = check_13f_cache_health(tmp_path, "2026-02-19")
         assert result["status"] == "WARN"
         assert "Cannot read" in result["detail"]
 
-    def test_custom_threshold(self, tmp_path):
-        cache_dir = tmp_path / "sec_13f" / "PIT"
-        date_dir = cache_dir / "2026-02-19"
-        date_dir.mkdir(parents=True)
-
-        index = {
-            "coverage_pct": 85.0,
-            "managers_with_filing": 17,
-            "total_managers": 20,
-        }
-        (date_dir / "index.json").write_text(json.dumps(index))
-
-        # With default 80% threshold → PASS
-        result = check_13f_cache_health(cache_dir, "2026-02-19", warn_coverage_pct=80.0)
-        assert result["status"] == "PASS"
-
-        # With 90% threshold → WARN
-        result = check_13f_cache_health(cache_dir, "2026-02-19", warn_coverage_pct=90.0)
+    def test_warn_when_schema_version_wrong(self, tmp_path):
+        self._write_valid_index(
+            tmp_path, "2026-02-19",
+            schema_version="sec_13f_pit_index.v99",
+        )
+        result = check_13f_cache_health(tmp_path, "2026-02-19")
         assert result["status"] == "WARN"
+        assert "schema invalid" in result["detail"]
+
+    def test_warn_when_as_of_date_mismatch(self, tmp_path):
+        # Write index with wrong as_of_date
+        date_dir = tmp_path / "2026-02-19"
+        date_dir.mkdir(parents=True)
+        idx = _make_valid_index(as_of_date="2026-02-18")
+        (date_dir / "index.json").write_text(json.dumps(idx))
+
+        result = check_13f_cache_health(tmp_path, "2026-02-19")
+        assert result["status"] == "WARN"
+        assert "schema invalid" in result["detail"]
+
+    def test_custom_threshold(self, tmp_path):
+        self._write_valid_index(tmp_path, "2026-02-19")
+
+        # With default 80% threshold → PASS (index has 100% coverage)
+        result = check_13f_cache_health(tmp_path, "2026-02-19", warn_coverage_pct=80.0)
+        assert result["status"] == "PASS"

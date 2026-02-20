@@ -47,6 +47,13 @@ logging.basicConfig(
 logger = logging.getLogger("warm_13f_cache")
 
 # ---------------------------------------------------------------------------
+# Schema contract constants
+# ---------------------------------------------------------------------------
+SCHEMA_VERSION = "sec_13f_pit_index.v1"
+CACHE_TYPE = "sec_13f_pit"
+FILINGS_LOOKBACK_N = 8  # ~2-year lookback for get_recent_filings
+
+# ---------------------------------------------------------------------------
 # Data classes
 # ---------------------------------------------------------------------------
 
@@ -176,9 +183,9 @@ def warm_one_manager(
     }
 
     try:
-        # Fetch recent filings (8 for ~2-year lookback)
+        # Fetch recent filings
         rate_limiter.acquire()
-        filings = fetcher.get_recent_filings(cik, count=8)
+        filings = fetcher.get_recent_filings(cik, count=FILINGS_LOOKBACK_N)
 
         selection = select_pit_filing(filings, as_of_date)
 
@@ -224,13 +231,15 @@ def warm_one_manager(
             json.dump(manager_data, f, indent=2)
 
         # Copy raw XML if cached
+        has_raw_xml = False
         if fetcher.cache_dir:
-            raw_xml_path = fetcher.cache_dir / f"{filing.filing_id}_infotable.xml"
-            if raw_xml_path.exists():
+            raw_xml_src = fetcher.cache_dir / f"{filing.filing_id}_infotable.xml"
+            if raw_xml_src.exists():
                 raw_dir = out_dir / "raw" / cik_padded
                 raw_dir.mkdir(parents=True, exist_ok=True)
                 dest = raw_dir / f"{filing.accession_number}.xml"
-                shutil.copy2(raw_xml_path, dest)
+                shutil.copy2(raw_xml_src, dest)
+                has_raw_xml = True
 
         result["status"] = "ok"
         result["period_of_report"] = selection.period_of_report
@@ -238,6 +247,10 @@ def warm_one_manager(
         result["form_type"] = selection.form_type
         result["accession"] = selection.accession
         result["holdings_count"] = len(holdings)
+        result["manager_json_path"] = f"managers/{cik_padded}.json"
+        result["raw_xml_path"] = (
+            f"raw/{cik_padded}/{filing.accession_number}.xml" if has_raw_xml else ""
+        )
 
         logger.info(
             f"  {name} (CIK {cik}): {len(holdings)} holdings, "
@@ -262,37 +275,47 @@ def build_index(
     total_managers: int,
     elite_only: bool,
 ) -> Dict[str, Any]:
-    """Assemble the index.json manifest."""
+    """Assemble the index.json manifest (schema: sec_13f_pit_index.v1)."""
     ok_results = [r for r in manager_results if r["status"] == "ok"]
-    no_filing = [r for r in manager_results if r["status"] == "no_filing"]
-    errors = [r for r in manager_results if r["status"] == "error"]
 
     coverage_pct = round(len(ok_results) / total_managers * 100, 1) if total_managers else 0.0
 
+    managers_list = []
+    for r in manager_results:
+        selected = r["status"] == "ok"
+        entry: Dict[str, Any] = {
+            "manager_cik": r["manager_cik"],
+            "manager_name": r["manager_name"],
+            "selected": selected,
+        }
+        if selected:
+            entry["period_of_report"] = r.get("period_of_report", "")
+            entry["filed_at"] = r.get("filed_at", "")
+            entry["form_type"] = r.get("form_type", "")
+            entry["accession"] = r.get("accession", "")
+            entry["holdings_count"] = r.get("holdings_count", 0)
+            entry["manager_json_path"] = r.get("manager_json_path", "")
+            entry["raw_xml_path"] = r.get("raw_xml_path", "")
+            entry["rejection_reason"] = ""
+        else:
+            entry["rejection_reason"] = r.get("rejection_reason") or r.get("error") or "unknown"
+
+        managers_list.append(entry)
+
     return {
+        "schema_version": SCHEMA_VERSION,
+        "cache_type": CACHE_TYPE,
         "as_of_date": as_of_date.isoformat(),
         "created_at": datetime.now(tz=timezone.utc).isoformat().replace("+00:00", "Z"),
         "elite_only": elite_only,
         "total_managers": total_managers,
         "managers_with_filing": len(ok_results),
-        "managers_no_filing": len(no_filing),
-        "managers_error": len(errors),
         "coverage_pct": coverage_pct,
-        "managers": [
-            {
-                "cik": r["manager_cik"],
-                "name": r["manager_name"],
-                "status": r["status"],
-                "period_of_report": r.get("period_of_report"),
-                "filed_at": r.get("filed_at"),
-                "form_type": r.get("form_type"),
-                "accession": r.get("accession"),
-                "holdings_count": r.get("holdings_count"),
-                "rejection_reason": r.get("rejection_reason"),
-                "error": r.get("error"),
-            }
-            for r in manager_results
-        ],
+        "selection_policy": {
+            "pit_rule": "filing_date<=as_of; latest report_date; prefer 13F-HR/A; latest filing_date",
+            "recent_filings_lookback_n": FILINGS_LOOKBACK_N,
+        },
+        "managers": managers_list,
     }
 
 
@@ -376,6 +399,125 @@ def warm_13f_cache(
 
 
 # ---------------------------------------------------------------------------
+# Schema validator — pure logic, no I/O
+# ---------------------------------------------------------------------------
+
+_REQUIRED_TOP_LEVEL = {
+    "schema_version", "cache_type", "as_of_date", "created_at",
+    "elite_only", "total_managers", "managers_with_filing",
+    "coverage_pct", "managers",
+}
+
+_SELECTED_REQUIRED = {
+    "period_of_report", "filed_at", "form_type", "accession",
+    "holdings_count", "manager_json_path", "raw_xml_path",
+}
+
+
+def validate_sec_13f_index_schema(
+    index: Dict[str, Any],
+    *,
+    expected_as_of_date: Optional[str] = None,
+) -> tuple[bool, str]:
+    """Validate index.json against the sec_13f_pit_index.v1 contract.
+
+    Returns (ok, detail). Pure function — no I/O.
+    """
+    # --- Top-level required fields ---
+    missing = _REQUIRED_TOP_LEVEL - set(index.keys())
+    if missing:
+        return False, f"missing top-level fields: {sorted(missing)}"
+
+    # --- schema_version ---
+    sv = index["schema_version"]
+    if sv != SCHEMA_VERSION:
+        return False, f"schema_version mismatch: got {sv!r}, expected {SCHEMA_VERSION!r}"
+
+    # --- cache_type ---
+    ct = index["cache_type"]
+    if ct != CACHE_TYPE:
+        return False, f"cache_type mismatch: got {ct!r}, expected {CACHE_TYPE!r}"
+
+    # --- as_of_date format ---
+    aod = index["as_of_date"]
+    if not isinstance(aod, str) or len(aod) != 10:
+        return False, f"as_of_date not ISO date: {aod!r}"
+
+    if expected_as_of_date and aod != expected_as_of_date:
+        return False, f"as_of_date mismatch: index={aod}, expected={expected_as_of_date}"
+
+    # --- created_at format (must end with Z) ---
+    ca = index.get("created_at", "")
+    if not isinstance(ca, str) or not ca.endswith("Z"):
+        return False, f"created_at must end with 'Z': {ca!r}"
+
+    # --- elite_only ---
+    if not isinstance(index["elite_only"], bool):
+        return False, "elite_only must be boolean"
+
+    # --- numeric fields ---
+    tm = index["total_managers"]
+    mwf = index["managers_with_filing"]
+    cov = index["coverage_pct"]
+
+    if not isinstance(tm, int) or tm < 0:
+        return False, f"total_managers must be int >= 0: {tm!r}"
+    if not isinstance(mwf, int) or mwf < 0:
+        return False, f"managers_with_filing must be int >= 0: {mwf!r}"
+    if mwf > tm:
+        return False, f"managers_with_filing ({mwf}) > total_managers ({tm})"
+    if not isinstance(cov, (int, float)) or cov < 0 or cov > 100:
+        return False, f"coverage_pct must be in [0, 100]: {cov!r}"
+
+    # --- coverage_pct consistency (allow ±0.2 rounding tolerance) ---
+    if tm > 0:
+        expected_cov = mwf / tm * 100
+        if abs(cov - expected_cov) > 0.2:
+            return False, (
+                f"coverage_pct inconsistent: {cov} vs expected "
+                f"{expected_cov:.1f} ({mwf}/{tm})"
+            )
+
+    # --- managers list ---
+    managers = index["managers"]
+    if not isinstance(managers, list):
+        return False, "managers must be a list"
+
+    for i, m in enumerate(managers):
+        if not isinstance(m, dict):
+            return False, f"managers[{i}] must be a dict"
+
+        for key in ("manager_cik", "selected"):
+            if key not in m:
+                return False, f"managers[{i}] missing required field: {key}"
+
+        if not isinstance(m["selected"], bool):
+            return False, f"managers[{i}].selected must be boolean"
+
+        if m["selected"]:
+            missing_sel = _SELECTED_REQUIRED - set(m.keys())
+            if missing_sel:
+                return False, (
+                    f"managers[{i}] (cik={m.get('manager_cik', '?')}) "
+                    f"selected=true but missing: {sorted(missing_sel)}"
+                )
+        else:
+            rr = m.get("rejection_reason", "")
+            if not rr:
+                return False, (
+                    f"managers[{i}] (cik={m.get('manager_cik', '?')}) "
+                    f"selected=false but rejection_reason is empty"
+                )
+
+    # --- determinism: managers sorted by manager_cik ---
+    ciks = [m.get("manager_cik", "") for m in managers]
+    if ciks != sorted(ciks):
+        return False, "managers list not sorted by manager_cik"
+
+    return True, "ok"
+
+
+# ---------------------------------------------------------------------------
 # Gate function (for run_daily_production.py)
 # ---------------------------------------------------------------------------
 
@@ -410,29 +552,44 @@ def check_13f_cache_health(
             "threshold": {"warn_coverage_pct": warn_coverage_pct},
         }
 
-    coverage = index.get("coverage_pct", 0.0)
-    managers_ok = index.get("managers_with_filing", 0)
-    total = index.get("total_managers", 0)
+    # Schema validation
+    ok, schema_detail = validate_sec_13f_index_schema(
+        index, expected_as_of_date=as_of_date,
+    )
+    if not ok:
+        return {
+            "status": "WARN",
+            "detail": f"schema invalid: {schema_detail}",
+            "value": None,
+            "threshold": {"warn_coverage_pct": warn_coverage_pct},
+        }
+
+    coverage = index["coverage_pct"]
+    managers_ok = index["managers_with_filing"]
+    total = index["total_managers"]
 
     detail_parts = [
         f"coverage={coverage:.1f}%",
         f"({managers_ok}/{total} managers)",
     ]
 
+    value = {"coverage_pct": coverage, "managers_ok": managers_ok, "total": total}
+    threshold = {"warn_coverage_pct": warn_coverage_pct}
+
     if coverage < warn_coverage_pct:
         detail_parts.append(f"below {warn_coverage_pct:.0f}% threshold")
         return {
             "status": "WARN",
             "detail": ", ".join(detail_parts),
-            "value": {"coverage_pct": coverage, "managers_ok": managers_ok, "total": total},
-            "threshold": {"warn_coverage_pct": warn_coverage_pct},
+            "value": value,
+            "threshold": threshold,
         }
 
     return {
         "status": "PASS",
         "detail": ", ".join(detail_parts),
-        "value": {"coverage_pct": coverage, "managers_ok": managers_ok, "total": total},
-        "threshold": {"warn_coverage_pct": warn_coverage_pct},
+        "value": value,
+        "threshold": threshold,
     }
 
 

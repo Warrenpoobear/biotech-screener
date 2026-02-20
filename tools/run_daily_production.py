@@ -806,7 +806,9 @@ def check_sec_13f_cache(
     cache_base_dir: Optional[Path] = None,
     warn_coverage_pct: float = 80.0,
 ) -> GateResult:
-    """Validate 13F PIT cache coverage. WARN-only — never FAIL."""
+    """Validate 13F PIT cache coverage + schema. WARN-only — never FAIL."""
+    from tools.warm_13f_cache import validate_sec_13f_index_schema
+
     base = cache_base_dir or (REPO_ROOT / "data" / "caches" / "sec_13f" / "PIT")
     index_path = base / as_of_date / "index.json"
 
@@ -827,9 +829,20 @@ def check_sec_13f_cache(
             threshold={"warn_coverage_pct": warn_coverage_pct},
         )
 
-    coverage = index.get("coverage_pct", 0.0)
-    managers_ok = index.get("managers_with_filing", 0)
-    total = index.get("total_managers", 0)
+    # Schema validation
+    ok, schema_detail = validate_sec_13f_index_schema(
+        index, expected_as_of_date=as_of_date,
+    )
+    if not ok:
+        return GateResult(
+            name="sec_13f_cache", status="WARN",
+            detail=f"schema invalid: {schema_detail}",
+            threshold={"warn_coverage_pct": warn_coverage_pct},
+        )
+
+    coverage = index["coverage_pct"]
+    managers_ok = index["managers_with_filing"]
+    total = index["total_managers"]
 
     detail_parts = [
         f"coverage={coverage:.1f}%",
