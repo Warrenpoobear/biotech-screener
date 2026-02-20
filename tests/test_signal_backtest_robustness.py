@@ -1044,7 +1044,8 @@ class TestExtendPriceCsv:
             {"date": "2026-02-15", "ticker": "AAA", "close": "10.0",
              "open": "", "high": "", "low": "", "volume": ""},
         ])
-        result = extend_price_csv(csv_path, through_date="2026-02-15")
+        result = extend_price_csv(csv_path, through_date="2026-02-15",
+                                  include_xbi=False)
         assert result["n_extended"] == 0
         assert result["n_rows_appended"] == 0
         assert result["n_already_current"] == 1
@@ -1076,7 +1077,8 @@ class TestExtendPriceCsv:
         import yfinance
         monkeypatch.setattr(yfinance, "Ticker", MockTicker)
 
-        result = extend_price_csv(csv_path, through_date="2026-02-12")
+        result = extend_price_csv(csv_path, through_date="2026-02-12",
+                                  include_xbi=False)
         assert result["n_extended"] == 1
         assert result["n_rows_appended"] == 2
         assert result["n_failed"] == 0
@@ -1119,7 +1121,8 @@ class TestExtendPriceCsv:
         import yfinance
         monkeypatch.setattr(yfinance, "Ticker", MockTicker)
 
-        result = extend_price_csv(csv_path, through_date="2026-02-11")
+        result = extend_price_csv(csv_path, through_date="2026-02-11",
+                                  include_xbi=False)
         assert result["n_extended"] == 1  # CCC succeeded
         assert result["n_failed"] == 1
         assert "DDD" in result["failed_tickers"]
@@ -1147,7 +1150,8 @@ class TestExtendPriceCsv:
         import yfinance
         monkeypatch.setattr(yfinance, "Ticker", MockTicker)
 
-        result = extend_price_csv(csv_path, through_date="2026-02-12")
+        result = extend_price_csv(csv_path, through_date="2026-02-12",
+                                  include_xbi=False)
         assert captured_kwargs["end"] == "2026-02-13"
         assert captured_kwargs["start"] == "2026-02-11"
         assert result["n_rows_appended"] == 0
@@ -1182,7 +1186,8 @@ class TestExtendPriceCsv:
         monkeypatch.setattr(yfinance, "Ticker", MockTicker)
 
         result = extend_price_csv(csv_path, through_date="2026-02-15",
-                                  tickers=["OLD", "NEW"])
+                                  tickers=["OLD", "NEW"],
+                                  include_xbi=False)
         # OLD is already current — no fetch needed
         assert "OLD" not in captured
         # NEW gets full bootstrap from start_date
@@ -1213,7 +1218,7 @@ class TestExtendPriceCsv:
         monkeypatch.setattr(yfinance, "Ticker", MockTicker)
 
         result = extend_price_csv(csv_path, through_date="2026-02-15",
-                                  tickers=["FRESH"])
+                                  tickers=["FRESH"], include_xbi=False)
         assert csv_path.exists()
         assert result["n_extended"] == 1
         assert result["n_rows_appended"] == 1
@@ -1226,11 +1231,41 @@ class TestExtendPriceCsv:
         assert rows[0]["date"] == "2026-02-15"
 
     def test_no_tickers_warns(self, tmp_path):
-        """Missing CSV + no tickers returns zeros (no error)."""
+        """Missing CSV + no tickers + include_xbi=False returns zeros."""
         csv_path = tmp_path / "prices.csv"
-        result = extend_price_csv(csv_path, through_date="2026-02-15")
+        result = extend_price_csv(csv_path, through_date="2026-02-15",
+                                  include_xbi=False)
         assert result["n_tickers_total"] == 0
         assert result["n_extended"] == 0
+
+    def test_include_xbi_default(self, tmp_path, monkeypatch):
+        """Default include_xbi=True adds XBI even when not in CSV or tickers."""
+        import pandas as pd
+
+        csv_path = tmp_path / "prices.csv"
+        _write_test_csv(csv_path, [
+            {"date": "2026-02-10", "ticker": "AAA", "close": "10.0",
+             "open": "", "high": "", "low": "", "volume": ""},
+        ])
+
+        fetched_tickers = []
+
+        class MockTicker:
+            def __init__(self, ticker):
+                self._ticker = ticker
+            def history(self, **kwargs):
+                fetched_tickers.append(self._ticker)
+                return pd.DataFrame()  # empty — no new data
+
+        import yfinance
+        monkeypatch.setattr(yfinance, "Ticker", MockTicker)
+
+        result = extend_price_csv(csv_path, through_date="2026-02-15")
+        # XBI should be in the ticker set even though it's not in CSV
+        assert "XBI" in fetched_tickers
+        # AAA behind target → also fetched
+        assert "AAA" in fetched_tickers
+        assert result["n_tickers_total"] == 2  # AAA + XBI
 
     def test_provider_sees_extended_data(self, tmp_path, monkeypatch):
         """Ordering: provider built after extension sees the new price_end_date.
@@ -1267,7 +1302,8 @@ class TestExtendPriceCsv:
         import yfinance
         monkeypatch.setattr(yfinance, "Ticker", MockTicker)
 
-        ext = extend_price_csv(csv_path, through_date="2026-02-12")
+        ext = extend_price_csv(csv_path, through_date="2026-02-12",
+                               include_xbi=False)
         assert ext["n_rows_appended"] == 2
 
         # Provider AFTER extension — must see new end date
@@ -1298,7 +1334,8 @@ class TestExtendPriceCsv:
         import yfinance
         monkeypatch.setattr(yfinance, "Ticker", MockTicker)
 
-        extend_price_csv(csv_path, through_date="2026-02-11")
+        extend_price_csv(csv_path, through_date="2026-02-11",
+                         include_xbi=False)
 
         # Simulate post-extension diagnostics where last archive is included
         date_diagnostics = [

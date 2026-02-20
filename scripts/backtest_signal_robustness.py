@@ -482,6 +482,8 @@ def extend_price_csv(
     through_date: str,
     tickers: Optional[List[str]] = None,
     start_date: str = _BOOTSTRAP_START,
+    *,
+    include_xbi: bool = True,
 ) -> Dict[str, Any]:
     """Extend price_history.csv through *through_date*.
 
@@ -489,6 +491,10 @@ def extend_price_csv(
     (max_existing_date+1 .. through_date).  Tickers in *tickers* that
     are absent from the CSV get a full bootstrap fetch from *start_date*.
     Creates the CSV from scratch if it doesn't exist.
+
+    When *include_xbi* is True (default), XBI is always included in the
+    ticker set — it's required for beta/alpha computation in run_screen.py
+    and must stay fresh alongside universe tickers.
 
     Writes atomically via temp file + os.replace() so an interrupted run
     can't corrupt the CSV.
@@ -516,6 +522,8 @@ def extend_price_csv(
     all_tickers = set(max_dates.keys())
     if tickers:
         all_tickers |= set(t.upper() for t in tickers)
+    if include_xbi:
+        all_tickers.add("XBI")
 
     if not all_tickers:
         log.warning("extend_price_csv: no tickers (CSV empty/missing and none provided)")
