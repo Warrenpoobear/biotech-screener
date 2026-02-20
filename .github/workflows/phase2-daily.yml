@@ -1,9 +1,9 @@
-name: phase2-daily
+name: phase2-daily (legacy — superseded by phase2-daily-production)
 
 on:
-  schedule:
-    # Weekdays at 2pm UTC
-    - cron: "0 14 * * 1-5"
+  # Schedule disabled — superseded by phase2-daily-production.yml
+  # schedule:
+  #   - cron: "0 14 * * 1-5"
   workflow_dispatch:
     inputs:
       as_of_date:
