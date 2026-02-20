@@ -1,6 +1,6 @@
 # Data Integrity Audit — Root Cause Summary
 
-Generated: 2026-02-19T12:27:39.442087Z
+Generated: 2026-02-20T11:23:20.041176Z
 
 ## 1. Price-Derived Cross-Validation
 
@@ -17,7 +17,7 @@ No FAIL rows found — all price-derived fields within tolerance.
 
 ## 3. Invariant Violations
 
-- **range_de_alpha_60d** (4): ALMS, IBRX, MRSN, ERAS
+No invariant violations found.
 
 ## 4. Catalyst Spot-Check
 

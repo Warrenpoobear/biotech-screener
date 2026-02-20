@@ -1,0 +1,37 @@
+{
+  "version": "1.0.0",
+  "thresholds_id": "8ee2bbb8",
+  "thresholds": {
+    "warn_top20_overlap_pct": 70.0,
+    "warn_top60_overlap_pct": 80.0,
+    "warn_rank_spearman_rho": 0.9,
+    "warn_mean_abs_rank_delta_top60": 8.0,
+    "warn_tier_migration_count": 10,
+    "warn_eligibility_change_count": 10
+  },
+  "current_date": "2026-02-19",
+  "prior_date": "2026-02-18",
+  "metrics": {
+    "top20_overlap_pct": 73.91,
+    "top60_overlap_pct": 93.55,
+    "rank_spearman_rho": 0.9955,
+    "mean_abs_rank_delta_top60": 1.73,
+    "tier_migration_count": 2,
+    "eligibility_change_count": 2,
+    "top20_entrants": [
+      "CELC",
+      "CGON",
+      "COGT"
+    ],
+    "top20_exits": [
+      "FDMT",
+      "KOD",
+      "OCGN"
+    ],
+    "rank_column_current": "actionable_rank",
+    "rank_column_prior": "actionable_rank",
+    "n_common_tickers": 319
+  },
+  "warn_reasons": [],
+  "status": "PASS"
+}

@@ -1,0 +1,251 @@
+{
+  "manager_cik": "0001587114",
+  "manager_name": "EcoR1 Capital",
+  "as_of_date": "2026-02-19",
+  "period_of_report": "2025-12-31",
+  "filed_at": "2026-02-17",
+  "form_type": "13F-HR",
+  "accession": "000093583626000101",
+  "holdings": [
+    {
+      "cusip": "032724106",
+      "ticker": "ANAB",
+      "issuer": "ANAPTYSBIO INC",
+      "shares": 7880094,
+      "value_usd_thousands": 382026957,
+      "put_call": ""
+    },
+    {
+      "cusip": "03843E104",
+      "ticker": "AQST",
+      "issuer": "AQUESTIVE THERAPEUTICS INC",
+      "shares": 2625000,
+      "value_usd_thousands": 16957500,
+      "put_call": ""
+    },
+    {
+      "cusip": "046513206",
+      "ticker": "",
+      "issuer": "ATARA BIOTHERAPEUTICS INC",
+      "shares": 573183,
+      "value_usd_thousands": 10368880,
+      "put_call": ""
+    },
+    {
+      "cusip": "107924102",
+      "ticker": "BIOR",
+      "issuer": "BRIDGEBIO ONCOLOGY THERAPEUT",
+      "shares": 2823126,
+      "value_usd_thousands": 35345538,
+      "put_call": ""
+    },
+    {
+      "cusip": "13463J101",
+      "ticker": "CAMP",
+      "issuer": "CAMP4 THERAPEUTICS CORP",
+      "shares": 325000,
+      "value_usd_thousands": 1992250,
+      "put_call": ""
+    },
+    {
+      "cusip": "152309100",
+      "ticker": "CNTA",
+      "issuer": "CENTESSA PHARMACEUTICALS PLC",
+      "shares": 3115000,
+      "value_usd_thousands": 77906150,
+      "put_call": ""
+    },
+    {
+      "cusip": "156944100",
+      "ticker": "CGON",
+      "issuer": "CG ONCOLOGY INC",
+      "shares": 772000,
+      "value_usd_thousands": 32053440,
+      "put_call": ""
+    },
+    {
+      "cusip": "156944100",
+      "ticker": "CGON",
+      "issuer": "CG ONCOLOGY INC",
+      "shares": 292800,
+      "value_usd_thousands": 12157056,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "22663K107",
+      "ticker": "CRNX",
+      "issuer": "CRINETICS PHARMACEUTICALS IN",
+      "shares": 4288120,
+      "value_usd_thousands": 199611986,
+      "put_call": ""
+    },
+    {
+      "cusip": "H17182108",
+      "ticker": "CRSP",
+      "issuer": "CRISPR THERAPEUTICS AG",
+      "shares": 1389276,
+      "value_usd_thousands": 72853633,
+      "put_call": ""
+    },
+    {
+      "cusip": "29772L108",
+      "ticker": "ETON",
+      "issuer": "ETON PHARMACEUTICALS INC",
+      "shares": 2030544,
+      "value_usd_thousands": 34336499,
+      "put_call": ""
+    },
+    {
+      "cusip": "30052C107",
+      "ticker": "",
+      "issuer": "EVOLUS INC",
+      "shares": 675000,
+      "value_usd_thousands": 4488750,
+      "put_call": ""
+    },
+    {
+      "cusip": "36315X101",
+      "ticker": "GLPG",
+      "issuer": "GALAPAGOS NV",
+      "shares": 1667119,
+      "value_usd_thousands": 54514791,
+      "put_call": ""
+    },
+    {
+      "cusip": "451033708",
+      "ticker": "IBIO",
+      "issuer": "IBIO INC",
+      "shares": 2228000,
+      "value_usd_thousands": 4300040,
+      "put_call": ""
+    },
+    {
+      "cusip": "45257U108",
+      "ticker": "IMNM",
+      "issuer": "IMMUNOME INC",
+      "shares": 2855590,
+      "value_usd_thousands": 61338073,
+      "put_call": ""
+    },
+    {
+      "cusip": "G50871105",
+      "ticker": "JAZZ",
+      "issuer": "JAZZ PHARMACEUTICALS PLC",
+      "shares": 1706469,
+      "value_usd_thousands": 290099730,
+      "put_call": ""
+    },
+    {
+      "cusip": "56400P706",
+      "ticker": "MNKD",
+      "issuer": "MANNKIND CORP",
+      "shares": 1660000,
+      "value_usd_thousands": 9412200,
+      "put_call": ""
+    },
+    {
+      "cusip": "55287L101",
+      "ticker": "MBX",
+      "issuer": "MBX BIOSCIENCES INC",
+      "shares": 2123604,
+      "value_usd_thousands": 66978470,
+      "put_call": ""
+    },
+    {
+      "cusip": "589492107",
+      "ticker": "MREO",
+      "issuer": "MEREO BIOPHARMA GROUP PLC",
+      "shares": 7856466,
+      "value_usd_thousands": 3273789,
+      "put_call": ""
+    },
+    {
+      "cusip": "64135M105",
+      "ticker": "NGNE",
+      "issuer": "NEUROGENE INC",
+      "shares": 1271342,
+      "value_usd_thousands": 26189645,
+      "put_call": ""
+    },
+    {
+      "cusip": "67080N119",
+      "ticker": "",
+      "issuer": "NUVATION BIO INC",
+      "shares": 963333,
+      "value_usd_thousands": 8631464,
+      "put_call": ""
+    },
+    {
+      "cusip": "68622P109",
+      "ticker": "ORIC",
+      "issuer": "ORIC PHARMACEUTICALS INC",
+      "shares": 6728116,
+      "value_usd_thousands": 55035989,
+      "put_call": ""
+    },
+    {
+      "cusip": "86366E106",
+      "ticker": "GPCR",
+      "issuer": "STRUCTURE THERAPEUTICS INC",
+      "shares": 334380,
+      "value_usd_thousands": 23256129,
+      "put_call": ""
+    },
+    {
+      "cusip": "86889P117",
+      "ticker": "SRZN",
+      "issuer": "SURROZEN INC",
+      "shares": 4444,
+      "value_usd_thousands": 100434,
+      "put_call": ""
+    },
+    {
+      "cusip": "92243G108",
+      "ticker": "PCVX",
+      "issuer": "VAXCYTE INC",
+      "shares": 450000,
+      "value_usd_thousands": 20763000,
+      "put_call": ""
+    },
+    {
+      "cusip": "92915B106",
+      "ticker": "VYGR",
+      "issuer": "VOYAGER THERAPEUTICS INC",
+      "shares": 4002847,
+      "value_usd_thousands": 15731189,
+      "put_call": ""
+    },
+    {
+      "cusip": "98401F105",
+      "ticker": "XNCR",
+      "issuer": "XENCOR INC",
+      "shares": 3251112,
+      "value_usd_thousands": 49774525,
+      "put_call": ""
+    },
+    {
+      "cusip": "98401F105",
+      "ticker": "XNCR",
+      "issuer": "XENCOR INC",
+      "shares": 67500,
+      "value_usd_thousands": 1033425,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "98937L105",
+      "ticker": "ZBIO",
+      "issuer": "ZENAS BIOPHARMA INC",
+      "shares": 789500,
+      "value_usd_thousands": 28666745,
+      "put_call": ""
+    },
+    {
+      "cusip": "98985Y108",
+      "ticker": "ZYME",
+      "issuer": "ZYMEWORKS INC",
+      "shares": 22970388,
+      "value_usd_thousands": 604810316,
+      "put_call": ""
+    }
+  ]
+}
