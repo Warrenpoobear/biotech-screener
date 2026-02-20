@@ -75,8 +75,8 @@ Externalized, frozen dataclass with all tunable parameters. Stored as JSON in `p
 from decision_engine import DecisionRuleset
 
 # Load from JSON (file-content hash becomes ruleset_id)
-ruleset = DecisionRuleset.from_json("production_data/decision_rulesets/v1.4.0_alpha_cohort_candidate.json")
-print(ruleset.ruleset_id)  # e.g. "aa0aaf28"
+ruleset = DecisionRuleset.from_json("production_data/decision_rulesets/v1.5.0_coinvest_candidate.json")
+print(ruleset.ruleset_id)  # e.g. "8f99d47e"
 
 # Key operational parameters
 ruleset.a_floor                  # 0.60 — minimum score_rank_pct for A-tier
@@ -88,12 +88,13 @@ ruleset.catalyst_priority_mode   # "off"|"tiebreaker"|"blended"
 ruleset.composite_engine         # "legacy"|"alpha_cohort"
 ruleset.sort_anchor              # "composite_rank"|"optionality_pct"|"alpha_cohort"
 ruleset.enable_clinical_sort_signal  # True — clinical z blended into sort anchor
+ruleset.enable_coinvest_sort_signal  # True — coinvest z blended into sort anchor
 ruleset.far_window_days          # 0 = off; >0 enables far-horizon PCD catalyst detection
 ```
 
 **Pinned IDs:**
-- `PHASE2_PINNED_RULESET_ID` in `run_screen.py` = `"aa0aaf28"` (must match delta module)
-- `PHASE2_PINNED_RULESET_ID` in `run_phase2_snapshot_delta.py` = `"aa0aaf28"` (must match run_screen)
+- `PHASE2_PINNED_RULESET_ID` in `run_screen.py` = `"8f99d47e"` (must match delta module)
+- `PHASE2_PINNED_RULESET_ID` in `run_phase2_snapshot_delta.py` = `"8f99d47e"` (must match run_screen)
 - Both pins MUST be updated together — `run_screen.py` imports the delta module's pin
 
 ### Ruleset Promotion Pipeline
@@ -113,7 +114,52 @@ Each screen run produces in `data/snapshots/{date}/`:
 - `catalyst_source_mix.json` — event source/confidence/precision distributions
 - `decision_portfolio.csv` — actionable portfolio (tier_filter + top_k applied)
 
-Key CSV columns: `eligible`, `tier_dev`, `actionable_rank`, `target_weight_pct`, `catalyst_mode`, `catalyst_days`, `catalyst_strength`, `catalyst_source`, `catalyst_event_type`, `catalyst_priority`, `de_drawdown_missing_reason`
+Key CSV columns: `eligible`, `tier_dev`, `actionable_rank`, `target_weight_pct`, `catalyst_mode`, `catalyst_days`, `catalyst_strength`, `catalyst_source`, `catalyst_event_type`, `catalyst_priority`, `de_drawdown_missing_reason`, `coinvest_score_z`, `coinvest_tag`, `coinvest_conviction`, `coinvest_tier1_conviction`, `coinvest_max_position_pct`, `coinvest_filing_age_days`
+
+## Coinvest Sort Signal
+
+The coinvest sort signal (`enable_coinvest_sort_signal`) blends elite institutional manager conviction into the actionable sort key as a tie-breaker. It follows the same integration pattern as the clinical sort signal.
+
+### How It Works
+
+1. **Overlay extraction**: `_compute_overlays()` reads `rec["coinvest"]` and extracts conviction fields (`conviction_overlap`, `tier1_conviction_overlap`, `max_tier1_position_pct`, `days_since_latest_filing`)
+2. **Cross-sectional z-score**: `sponsor_tier1_count` (integer count of elite managers holding the name) is z-scored across all tickers (ddof=0) in `run_screen.py`, producing `coinvest_score_z`
+3. **Sort anchor blend**: In `compute_actionable_sort_key()`, `coinvest_adj = weight * clamp(z, 0, 2)` is subtracted from the effective anchor (lower = better rank), alongside `clin_adj`
+4. **Positive-only**: When `coinvest_positive_only=True` (default), negative z is clamped to 0 — high-conviction names get boosted, zero-conviction names are unaffected
+
+### Ruleset Fields
+
+```python
+enable_coinvest_sort_signal: bool = False   # feature flag (default OFF)
+coinvest_sort_weight: float = 0.5           # scale factor (production: 0.05)
+coinvest_positive_only: bool = True         # only boost, never penalize
+coinvest_score_mode: str = "tier1_count"    # only "tier1_count" implemented
+```
+
+### Weight Calibration
+
+Sweep (0.05–0.50) on 2026-02-19 snapshot showed:
+- **w=0.05**: 82% top-20 overlap, 2 name changes — true tie-breaker
+- **w=0.10**: 74% top-20 overlap, 3 name changes — starts overriding composite
+- **w=0.25+**: saturates at 60% overlap, 5 names — natural ceiling on signal information content
+
+### Coverage Gate
+
+`Phase2HealthThresholds.warn_coinvest_coverage_min = 70.0` — WARN-only (never FAIL) if fewer than 70% of tickers have `sponsor_tier1_count > 0`. Current coverage: ~82%.
+
+### Output Columns
+
+Always populated in `rankings.csv` regardless of feature flag:
+- `coinvest_score_z` — cross-sectional z of sponsor_tier1_count
+- `coinvest_tag` — human label: `"elite_7"` means 7 tier-1 managers hold the name
+- `coinvest_conviction` — Baker-style weighted overlap (informational)
+- `coinvest_tier1_conviction` — tier-1-only Baker conviction (informational)
+- `coinvest_max_position_pct` — largest tier-1 position as % of manager's 13F
+- `coinvest_filing_age_days` — days since most recent 13F filing
+
+### Tests
+
+21 tests in `tests/test_coinvest_sort.py` covering overlay extraction, z-scoring, sort key integration, positive-only clamping, clinical+coinvest additivity, ruleset validation, and health gate coverage.
 
 ## Phase-2 Health Gate
 
@@ -125,7 +171,7 @@ The Phase-2 pipeline (`run_phase2_snapshot_delta.py`, ~1220 lines) compares cons
 - **OK** (exit 0): all checks pass
 
 ### Pinned Thresholds
-- `production_data/phase2_health_thresholds/v1.json` (ID: `0dae2ff0`)
+- `production_data/phase2_health_thresholds/v1.json` (ID: `74457e8f`)
 - `Phase2HealthThresholds` frozen dataclass with `thresholds_id` (sha256[:8])
 
 ### Delta Report
@@ -328,7 +374,7 @@ def validate_tickers(tickers: list[str]) -> ValidationResult:
 
 ## Testing
 
-**~6870 tests across 105+ test files.**
+**~7400+ tests across 105+ test files.**
 
 ### Key Test Files
 
@@ -341,6 +387,7 @@ def validate_tickers(tickers: list[str]) -> ValidationResult:
 | `tests/test_fda_regulatory_notices.py` | 25+ | Federal Register, product map, dedup |
 | `tests/test_audit_catalyst_coverage.py` | 8 | Catalyst coverage audit |
 | `tests/test_hydrate_drawdown.py` | 22 | Drawdown hydration, alias resolution |
+| `tests/test_coinvest_sort.py` | 21 | Coinvest overlay, z-score, sort integration, coverage gate |
 | `tests/test_decision_engine_qa_report.py` | 41 | QA gate cascade |
 | `tests/integration/test_run_screen.py` | — | End-to-end pipeline |
 
@@ -376,6 +423,7 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 12. **Don't silently drop invalid data** — Track and report validation failures
 13. **`far_window` is a good catalyst mode** — `_GOOD_CATALYST_MODES = {"specific_days", "blended_window", "far_window"}`; health gating treats it as good
 14. **Alpha cohort composite override order** — alpha scoring → composite override → alpha signal contract validation → far-horizon hydration → DE loop → z_tier computation
+15. **Coinvest z-score timing** — `coinvest_score_z` is computed in `run_screen.py` after overlay extraction but before the DE sort; the column must exist in `csv_rows` before `compute_actionable_sort_key()` is called. When replaying old CSVs that lack `coinvest_score_z`, `_safe_float(None, default=0.0)` → `coinvest_adj=0.0` (zero impact, safe)
 
 ## Important Files Reference
 
@@ -401,7 +449,8 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 
 ### v2.4.0 (February 2026 - Current)
 
-- **Alpha Cohort Composite Engine**: `composite_engine="alpha_cohort"` overwrites composite_score/rank/pct with alpha_cohort_raw-derived values; activated in ruleset v1.4.0 (ID=`aa0aaf28`)
+- **Coinvest Sort Signal**: `enable_coinvest_sort_signal=true` blends z-scored elite manager count into sort anchor as tie-breaker (w=0.05); promoted in ruleset v1.5.0 (ID=`8f99d47e`). 6 new informational columns in rankings.csv. WARN-only coverage gate at 70%.
+- **Alpha Cohort Composite Engine**: `composite_engine="alpha_cohort"` overwrites composite_score/rank/pct with alpha_cohort_raw-derived values; activated in ruleset v1.4.0 (ID=`aa0aaf28`, now retired)
 - **Sort Anchor**: `sort_anchor` field — `"composite_rank"`, `"optionality_pct"`, or `"alpha_cohort"` controls primary actionable sort key
 - **Far-Window Catalyst Mode**: `far_window_days` enables detection of far-horizon PCD (>180d); overrides `no_upcoming`/`missing` → `far_window` with `CTGOV_PCD_FAR` source
 - **Alpha Signal Contract**: `alpha_signal_contract.py` (v1.1.0) — validates required/recommended fields at DE boundary; `validate_alpha_inputs()` / `validate_alpha_outputs()`
