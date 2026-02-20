@@ -1,7 +1,7 @@
 # Biotech Screener Model Documentation
 
-**Version:** 2.4.0
-**Last Updated:** February 18, 2026
+**Version:** 2.4.1
+**Last Updated:** February 20, 2026
 **System:** Wake Robin Capital Biotech Screening Pipeline
 
 ---
@@ -146,7 +146,8 @@ python run_screen.py \
 | `financial_data.json` | SEC EDGAR financial metrics | SEC XBRL API | Quarterly |
 | `defensive_features.json` | Market data: vol, correlation, drawdown | Yahoo Finance | Daily |
 | `short_interest.json` | Short interest data | FINRA / exchanges | Bi-weekly |
-| `institutional_holdings.json` | 13F institutional positions | SEC EDGAR | Quarterly |
+| `institutional_holdings.json` | 13F institutional positions (legacy) | SEC EDGAR | Quarterly |
+| `data/caches/sec_13f/PIT/{date}/` | PIT-safe 13F holdings cache | SEC EDGAR via `warm_13f_cache.py` | Daily (warm step) |
 
 ### Input File Schemas
 
@@ -1111,6 +1112,29 @@ Track these metrics each run to detect data issues, model drift, and unintended 
 - **Risk & overlay**: distribution of `defensive_bucket`, `volatility`, `drawdown`, and `confidence_risk` states.
 - **Red flags / kill switches**: counts of `severe_negative_flag`, `severity=SEV3`, and `fundamental_red_flag`.
 
+### 13F Cache Health Gate
+
+The daily production runner includes a WARN-only gate for the PIT-safe 13F institutional holdings cache:
+
+| Check | Result | Condition |
+|-------|--------|-----------|
+| PASS | Coverage adequate | `coverage_pct >= sec_13f_coverage_warn_pct` (default 80%) |
+| WARN | Low coverage | `coverage_pct < 80%` or cache missing/malformed |
+| WARN | Schema violation | `validate_sec_13f_index_schema()` fails any of 12 invariants |
+
+The gate **never returns FAIL** — 13F data is informational (not consumed by the screen scoring pipeline). Schema validation checks: required fields, version match (`sec_13f_pit_index.v1`), type correctness, count/coverage consistency, per-manager contract (selected managers must have paths, rejected managers must have rejection_reason), and CIK sort determinism.
+
+**Cache warming:**
+```bash
+# Standalone
+python tools/warm_13f_cache.py --as-of-date 2026-02-19 --elite-only --max-workers 4
+
+# Via dispatcher
+python warm_caches.py --as-of-date 2026-02-19 --sources sec_13f
+```
+
+**PIT selection algorithm:** Filter filings where `filing_date <= as_of_date` → latest `report_date` → prefer `13F-HR/A` over `13F-HR` → latest `filing_date` among ties.
+
 ### Catalyst Shadow Metrics (Telemetry)
 
 Each snapshot writes `catalyst_shadow_metrics.json` with KPIs comparing current vs prior snapshot (dev tickers only):
@@ -1337,7 +1361,9 @@ python run_screen.py \
 | Shadow Metrics Rollup | `scripts/rollup_shadow_metrics.py` | Aggregate per-snapshot telemetry into timeseries |
 | IC One-Pager | `scripts/make_ic_onepager.py` | Generate IC summary from snapshot artifacts |
 | Ruleset Compare/Replay | `scripts/compare_rulesets_replay.py` | Re-sort rankings with baseline vs candidate ruleset |
-| Cache Warmer | `warm_caches.py` | Pre-build SEC 8-K and FDA caches before screen run |
+| Cache Warmer | `warm_caches.py` | Pre-build SEC 8-K, FDA, and 13F caches before screen run |
+| 13F Cache Builder | `tools/warm_13f_cache.py` | PIT-safe 13F holdings cache + schema validator |
+| Manager Registry | `elite_managers.py` | Elite (Tier 1) and full manager CIK lists |
 | Flipper Return Attribution | `scripts/diag_flipper_returns.py` | Forward return analysis for catalyst flips |
 | Top Returners Recall | `scripts/diag_top_returners_recall.py` | Multi-horizon signal recall study (clinical + catalyst vs realized returns) |
 | Ablation Comparison | `scripts/compare_ablation_snapshots.py` | Snapshot A/B comparison |
@@ -1352,6 +1378,7 @@ python run_screen.py \
 
 ## Changelog
 
+- **2026-02-20 v2.4.1**: Added PIT-safe 13F institutional holdings warm cache (`tools/warm_13f_cache.py`). Schema-versioned index (`sec_13f_pit_index.v1`) with 12-invariant pure validator. WARN-only `sec_13f_cache` gate in daily production runner. Integrated into `warm_caches.py` dispatcher (`--sources sec_13f`) and CI workflow. 29 elite managers, 100% coverage on 2026-02-19 snapshot.
 - **2026-02-18 v2.4.0**: Alpha cohort composite engine promoted — pinned ruleset `f9842e1f` → `aa0aaf28` (`composite_engine="alpha_cohort"`, `sort_anchor="alpha_cohort"`). Added composite engine override (pre-DE rewrite of composite_score/rank/pct). Added `far_window` catalyst mode for far-horizon PCD detection. Added alpha signal contract v1.1.0 (`alpha_signal_contract.py`). Added PIT event ledger sidecar. Added signal robustness backtest (`backtest_signal_robustness.py`) with forward-return coverage diagnostics, data freshness metadata, and `--extend-prices` auto-fetch. Added `sort_anchor="optionality_pct"` option. Added catalyst coverage bucket telemetry to shadow metrics.
 - **2026-02-17 v2.3.1**: Promoted clinical sort signal — pinned ruleset `e1be5370` → `f9842e1f` (`enable_clinical_sort_signal=True`). Extended clinical z-scores to commercial cohorts. Added `clinical_sort_telemetry` to snapshot metadata (`n_nonzero_clin_adj_dev`, `n_nonzero_clin_adj_comm`). Fixed ctgov cache masking integration PIT tests.
 - **2026-02-16 v2.3.0**: Clinical sort signal — tier-local z-score (`clinical_score_z_tier`) blended into sort key anchor, stage-gated (early=0, mid=1.0, late=1.5), positive-only with ±2.0 clamp. Candidate v1.3.4 (`f9842e1f`). Added `clinical_score_z` (cross-universe) and top returners recall diagnostic.

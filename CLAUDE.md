@@ -268,6 +268,7 @@ python scripts/calibrate_ruleset_from_panel.py --panel output/panel.csv
 | FDA AdCom | `collectors/fda_adcom_collector.py` | PDUFA dates, AdCom meetings, Federal Register notices |
 | Market Data | `market_data_provider.py` | Price history via yfinance |
 | Morningstar | `morningstar_data_provider.py` | Fundamentals (requires SDK) |
+| SEC 13F | `tools/warm_13f_cache.py` | PIT-safe institutional 13F holdings cache |
 
 ### Key Data Files
 | File | Size | Content |
@@ -285,6 +286,10 @@ wake_robin_data_pipeline/cache/sec/8k_catalysts/
   sec_filings_{date}_{PATTERN_VERSION}.json     # SEC multi-form events
 wake_robin_data_pipeline/cache/fda/
   fda_regulatory_{date}.json                    # Federal Register events
+data/caches/sec_13f/PIT/{as_of_date}/
+  index.json                                    # Schema-versioned manifest (sec_13f_pit_index.v1)
+  managers/{CIK}.json                           # Parsed holdings per manager
+  raw/{CIK}/{accession}.xml                     # Raw 13F info table XML
 ```
 
 ## Scripts
@@ -388,6 +393,7 @@ def validate_tickers(tickers: list[str]) -> ValidationResult:
 | `tests/test_audit_catalyst_coverage.py` | 8 | Catalyst coverage audit |
 | `tests/test_hydrate_drawdown.py` | 22 | Drawdown hydration, alias resolution |
 | `tests/test_coinvest_sort.py` | 21 | Coinvest overlay, z-score, sort integration, coverage gate |
+| `tests/test_warm_13f_cache.py` | 42 | PIT selection, schema validation, rate limiter, gate health |
 | `tests/test_decision_engine_qa_report.py` | 41 | QA gate cascade |
 | `tests/integration/test_run_screen.py` | — | End-to-end pipeline |
 
@@ -443,6 +449,8 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 | `alpha_signal_contract.py` | Alpha signal input/output validation (v1.1.0) |
 | `module_5_alpha_cohort.py` | Alpha cohort table-driven scoring |
 | `scripts/backtest_signal_robustness.py` | Signal IC + coverage diagnostics |
+| `tools/warm_13f_cache.py` | PIT-safe 13F cache builder + schema validator |
+| `elite_managers.py` | Manager registry (Tier 1 elite + full list) |
 | `tests/conftest.py` | Shared test fixtures |
 
 ## Recent Changes
@@ -458,6 +466,7 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 - **Signal Robustness Backtest**: `scripts/backtest_signal_robustness.py` — out-of-sample cross-sectional IC, forward-return coverage diagnostics, data freshness metadata, `--extend-prices` auto-fetch, `--fail-if-stale`
 - **Clinical Sort Signal**: Promoted (enabled in v1.4.0); tier-local z-score blended into sort anchor, stage-gated, positive-only
 - **Commercial Tier Promotion**: L4b layer for commercial_* archetypes; `tier_commercial`, `tier_any`, `tiering_priority_mode`
+- **PIT-Safe 13F Warm Cache**: `tools/warm_13f_cache.py` fetches institutional 13F filings from SEC EDGAR with PIT filtering (filing_date <= as_of), schema-versioned index (`sec_13f_pit_index.v1`) with 12-invariant validator, WARN-only `sec_13f_cache` gate in daily production runner, integrated into `warm_caches.py` dispatcher and CI workflow. 42 tests.
 - **Catalyst Coverage Bucket Telemetry**: Shadow metrics now track coverage decomposition + far_window overrides
 
 ### v2.1.0 (February 2026)
