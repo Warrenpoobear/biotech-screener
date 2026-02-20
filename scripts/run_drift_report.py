@@ -112,6 +112,9 @@ class DriftGuardrails:
     warn_ct_unknown_share_high: float = 5.0           # WARN if unknown event type share > 5%
     warn_ct_fda_share_spike: float = 30.0             # WARN if FDA_DECISION + FDA_ADCOM share > 30%
 
+    # Institutional delta coverage
+    warn_inst_delta_nonzero_low: float = 5.0          # WARN if <5% of dev have nonzero z
+
     # Adaptive WARN layer
     warn_iqr_k: float = 2.0             # WARN if |delta| > k * max(IQR, floor)
     warn_iqr_floor: float = 1.0         # minimum IQR (prevents spurious WARN from flat windows)
@@ -1002,6 +1005,43 @@ def _cost_metrics(
     return result
 
 
+def _institutional_metrics(rankings: pd.DataFrame) -> Optional[Dict[str, Any]]:
+    """Institutional delta drift metrics from rankings columns."""
+    dev = rankings[rankings["archetype"] == "drug_developer"]
+    if "inst_delta_z" not in dev.columns:
+        return None
+
+    vals = pd.to_numeric(dev["inst_delta_z"], errors="coerce").dropna()
+    if len(vals) == 0:
+        return None
+
+    result: Dict[str, Any] = {
+        "inst_delta_z_std": round(float(vals.std(ddof=0)), 4),
+        "inst_delta_z_mean": round(float(vals.mean()), 4),
+        "inst_delta_nonzero_pct": round(
+            float((vals != 0).sum()) / len(vals) * 100, 1
+        ),
+    }
+
+    # Coverage: % of dev with net_elite_holders_delta != 0 (active signal)
+    if "inst_delta_net" in dev.columns:
+        net_vals = pd.to_numeric(dev["inst_delta_net"], errors="coerce").dropna()
+        result["inst_delta_active_pct"] = round(
+            float((net_vals != 0).sum()) / len(net_vals) * 100, 1
+        ) if len(net_vals) > 0 else 0.0
+
+    # Top-20 institutional coverage: % of top-20 dev with inst_delta_net > 0
+    top20 = _top_n_tickers(rankings, 20)
+    if top20 and "inst_delta_net" in rankings.columns:
+        top20_rows = rankings[rankings["ticker"].isin(top20)]
+        top20_pos = pd.to_numeric(top20_rows["inst_delta_net"], errors="coerce").fillna(0)
+        result["inst_top20_positive_delta_pct"] = round(
+            float((top20_pos > 0).sum()) / len(top20) * 100, 1
+        )
+
+    return result
+
+
 def compute_snapshot_metrics(
     snap: SnapshotData,
     *,
@@ -1099,6 +1139,11 @@ def compute_snapshot_metrics(
     cp = _catalyst_priority_metrics(rankings)
     if cp is not None:
         metrics.update(cp)
+
+    # Institutional delta metrics
+    inst = _institutional_metrics(rankings)
+    if inst is not None:
+        metrics.update(inst)
 
     # Top-25 tickers (for overlap computation)
     metrics["_top25"] = _top_n_tickers(rankings, 25)
@@ -1436,6 +1481,14 @@ def evaluate_guardrails(
                 f"Catalyst event type FDA share = {ct_fda_combined:.1f}% > "
                 f"{guardrails.warn_ct_fda_share_spike}% ceiling"
             )
+
+    # Institutional delta coverage
+    inst_nz = current.get("inst_delta_nonzero_pct")
+    if inst_nz is not None and inst_nz < guardrails.warn_inst_delta_nonzero_low:
+        warn_reasons.append(
+            f"inst_delta_nonzero_pct={inst_nz:.1f}% < "
+            f"{guardrails.warn_inst_delta_nonzero_low}% floor"
+        )
 
     if warn_reasons:
         return "WARN", warn_reasons, None, "INVESTIGATE"

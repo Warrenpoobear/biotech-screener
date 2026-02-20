@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 from run_daily_production import (
     DriftThresholds,
     _compute_drift_metrics,
@@ -416,3 +417,85 @@ class TestCheckDriftMonitoring:
         gate = check_drift_monitoring(staging, snapshot_dir, "2026-02-19", DriftThresholds())
         assert gate.status == "WARN"
         assert "warn_mean_abs_rank_delta_top60" in gate.detail
+
+
+# ---------------------------------------------------------------------------
+# Institutional drift metrics tests
+# ---------------------------------------------------------------------------
+
+import pandas as pd
+
+from run_drift_report import (
+    DriftGuardrails,
+    _institutional_metrics,
+    evaluate_guardrails,
+)
+
+
+def _make_inst_rankings(n: int = 30, nonzero_z_pct: float = 50.0) -> pd.DataFrame:
+    """Build a minimal DataFrame with institutional delta columns."""
+    import numpy as np
+
+    rows = []
+    n_nonzero = int(n * nonzero_z_pct / 100)
+    for i in range(n):
+        z = round(np.random.default_rng(i).standard_normal(), 4) if i < n_nonzero else 0.0
+        rows.append({
+            "ticker": f"TICK{i+1}",
+            "archetype": "drug_developer",
+            "actionable_rank": str(i + 1),
+            "inst_delta_z": z,
+            "inst_delta_net": 1 if z > 0 else 0,
+        })
+    return pd.DataFrame(rows)
+
+
+class TestInstitutionalMetrics:
+    """_institutional_metrics() helper tests."""
+
+    def test_inst_metrics_present(self):
+        """Metrics returned when columns exist with nonzero values."""
+        df = _make_inst_rankings(30, nonzero_z_pct=50.0)
+        result = _institutional_metrics(df)
+        assert result is not None
+        assert "inst_delta_z_std" in result
+        assert "inst_delta_z_mean" in result
+        assert "inst_delta_nonzero_pct" in result
+        assert result["inst_delta_nonzero_pct"] > 0
+
+    def test_inst_metrics_absent(self):
+        """Returns None when columns missing (old snapshots)."""
+        df = pd.DataFrame({
+            "ticker": ["TICK1"],
+            "archetype": ["drug_developer"],
+            "actionable_rank": ["1"],
+        })
+        result = _institutional_metrics(df)
+        assert result is None
+
+    def test_inst_metrics_all_zero(self):
+        """All-zero z still returns metrics (nonzero_pct = 0)."""
+        df = _make_inst_rankings(10, nonzero_z_pct=0.0)
+        result = _institutional_metrics(df)
+        assert result is not None
+        assert result["inst_delta_nonzero_pct"] == 0.0
+        assert result["inst_delta_z_std"] == 0.0
+
+    def test_inst_warn_low_coverage(self):
+        """WARN when nonzero_pct < threshold."""
+        g = DriftGuardrails(warn_inst_delta_nonzero_low=50.0)
+        # Metrics with 10% nonzero → should WARN
+        metrics = {
+            "current": {"inst_delta_nonzero_pct": 3.0},
+            "rolling": {},
+            "snapshots": [],
+        }
+        status, reasons, _, _ = evaluate_guardrails(metrics, g)
+        assert status == "WARN"
+        assert any("inst_delta_nonzero_pct" in r for r in reasons)
+
+    def test_guardrails_id_updated(self):
+        """New DriftGuardrails field changes the guardrails_id."""
+        g1 = DriftGuardrails()
+        g2 = DriftGuardrails(warn_inst_delta_nonzero_low=99.0)
+        assert g1.guardrails_id != g2.guardrails_id
