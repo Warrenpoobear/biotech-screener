@@ -40,7 +40,7 @@ from archive_snapshot import get_git_info
 # ---------------------------------------------------------------------------
 # Ops contract constants
 # ---------------------------------------------------------------------------
-MANIFEST_VERSION = "1.2.0"
+MANIFEST_VERSION = "1.3.0"
 
 # Canonical gate names — every gate emitted by run_daily() MUST be in this set.
 # Adding a new gate requires updating this allowlist.
@@ -55,6 +55,8 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "audit",
     "missing_reason_fraction",
     "turnover",
+    "drift_monitoring",
+    "ctgov_pit_dates",
 })
 
 # Required fields in each market_data.json record for schema gate
@@ -114,6 +116,35 @@ class GateResult:
     detail: str = ""
     value: Any = None
     threshold: Any = None
+
+
+@dataclass(frozen=True)
+class DriftThresholds:
+    """Versioned thresholds for drift monitoring gate (WARN-only)."""
+    warn_top20_overlap_pct: float = 70.0
+    warn_top60_overlap_pct: float = 80.0
+    warn_rank_spearman_rho: float = 0.90
+    warn_mean_abs_rank_delta_top60: float = 8.0
+    warn_tier_migration_count: int = 10
+    warn_eligibility_change_count: int = 10
+
+    @property
+    def thresholds_id(self) -> str:
+        blob = json.dumps(
+            {k: getattr(self, k) for k in self.__dataclass_fields__},
+            sort_keys=True,
+        )
+        return hashlib.sha256(blob.encode()).hexdigest()[:8]
+
+    def to_json(self) -> dict:
+        return {"thresholds_id": self.thresholds_id, **asdict(self)}
+
+    @classmethod
+    def from_json(cls, path: Path) -> "DriftThresholds":
+        with open(path) as f:
+            d = json.load(f)
+        d.pop("thresholds_id", None)
+        return cls(**{k: v for k, v in d.items() if k in cls.__dataclass_fields__})
 
 
 # ---------------------------------------------------------------------------
@@ -345,6 +376,419 @@ def check_turnover(
         name="turnover", status=status,
         detail=f"Name turnover={turnover:.1f}%",
         value=turnover, threshold=max_pct,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Drift monitoring gate (WARN-only)
+# ---------------------------------------------------------------------------
+
+def _find_prior_snapshot(snapshot_dir: Path, current_date: str) -> Optional[Path]:
+    """Find most recent prior snapshot with valid rankings.csv containing tier_dev."""
+    import re
+    date_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    all_dates = sorted(
+        [d.name for d in snapshot_dir.iterdir() if d.is_dir() and date_re.match(d.name)],
+        reverse=True,
+    )
+    try:
+        idx = all_dates.index(current_date)
+    except ValueError:
+        # current_date not in list — treat all dates before it as candidates
+        all_dates = [d for d in all_dates if d < current_date]
+        idx = -1
+
+    candidates = all_dates[idx + 1:] if idx >= 0 else all_dates
+    for candidate in candidates:
+        rankings_csv = snapshot_dir / candidate / "rankings.csv"
+        if not rankings_csv.exists():
+            continue
+        with open(rankings_csv, "r") as f:
+            header = f.readline().strip()
+        if "tier_dev" in header.split(","):
+            return snapshot_dir / candidate
+    return None
+
+
+def _compute_drift_metrics(
+    current_csv: Path,
+    prior_csv: Path,
+) -> Dict[str, Any]:
+    """Compute drift metrics between two rankings.csv files.
+
+    Returns dict with overlap, rank stability, tier/eligibility changes.
+    """
+    import math
+
+    def _read_rankings(path: Path) -> Dict[str, Dict[str, str]]:
+        rows = {}
+        with open(path, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                ticker = row.get("ticker", "").strip()
+                if ticker:
+                    rows[ticker] = dict(row)
+        return rows
+
+    def _rank_col(sample_row: Dict[str, str]) -> str:
+        return "actionable_rank" if "actionable_rank" in sample_row else "composite_rank"
+
+    cur = _read_rankings(current_csv)
+    pri = _read_rankings(prior_csv)
+
+    cur_rank_col = _rank_col(next(iter(cur.values()))) if cur else "actionable_rank"
+    pri_rank_col = _rank_col(next(iter(pri.values()))) if pri else "actionable_rank"
+
+    # Parse ranks
+    def _get_rank(rows: Dict, ticker: str, col: str) -> Optional[float]:
+        val = rows.get(ticker, {}).get(col, "")
+        try:
+            return float(val)
+        except (ValueError, TypeError):
+            return None
+
+    common = set(cur.keys()) & set(pri.keys())
+
+    # Top-N overlap (Jaccard)
+    def _top_n_overlap(n: int) -> float:
+        cur_ranked = sorted(
+            [(t, _get_rank(cur, t, cur_rank_col)) for t in cur],
+            key=lambda x: (x[1] if x[1] is not None else 1e9),
+        )
+        pri_ranked = sorted(
+            [(t, _get_rank(pri, t, pri_rank_col)) for t in pri],
+            key=lambda x: (x[1] if x[1] is not None else 1e9),
+        )
+        cur_top = {t for t, _ in cur_ranked[:n]}
+        pri_top = {t for t, _ in pri_ranked[:n]}
+        union = cur_top | pri_top
+        if not union:
+            return 100.0
+        return round(100.0 * len(cur_top & pri_top) / len(union), 2)
+
+    top20_overlap = _top_n_overlap(20)
+    top60_overlap = _top_n_overlap(60)
+
+    # Spearman rho (manual Pearson-of-ranks, no scipy)
+    rho = None
+    if common:
+        cur_ranks_list = []
+        pri_ranks_list = []
+        for t in sorted(common):
+            cr = _get_rank(cur, t, cur_rank_col)
+            pr = _get_rank(pri, t, pri_rank_col)
+            if cr is not None and pr is not None:
+                cur_ranks_list.append(cr)
+                pri_ranks_list.append(pr)
+
+        if len(cur_ranks_list) >= 2:
+            n = len(cur_ranks_list)
+            mean_c = sum(cur_ranks_list) / n
+            mean_p = sum(pri_ranks_list) / n
+            cov = sum((c - mean_c) * (p - mean_p) for c, p in zip(cur_ranks_list, pri_ranks_list))
+            var_c = sum((c - mean_c) ** 2 for c in cur_ranks_list)
+            var_p = sum((p - mean_p) ** 2 for p in pri_ranks_list)
+            denom = math.sqrt(var_c * var_p)
+            rho = round(cov / denom, 4) if denom > 0 else 1.0
+
+    # Mean abs rank delta for top-60 (current top-60)
+    cur_ranked_all = sorted(
+        [(t, _get_rank(cur, t, cur_rank_col)) for t in cur],
+        key=lambda x: (x[1] if x[1] is not None else 1e9),
+    )
+    cur_top60 = {t for t, _ in cur_ranked_all[:60]}
+    abs_deltas = []
+    for t in cur_top60:
+        cr = _get_rank(cur, t, cur_rank_col)
+        pr = _get_rank(pri, t, pri_rank_col)
+        if cr is not None and pr is not None:
+            abs_deltas.append(abs(cr - pr))
+    mean_abs_delta = round(sum(abs_deltas) / len(abs_deltas), 2) if abs_deltas else 0.0
+
+    # Tier migration count
+    tier_migrations = 0
+    for t in common:
+        cur_tier = (cur[t].get("tier_dev") or "").strip()
+        pri_tier = (pri[t].get("tier_dev") or "").strip()
+        if cur_tier and pri_tier and cur_tier != pri_tier:
+            tier_migrations += 1
+
+    # Eligibility change count
+    elig_changes = 0
+    for t in common:
+        cur_elig = (cur[t].get("eligible") or "").strip().lower()
+        pri_elig = (pri[t].get("eligible") or "").strip().lower()
+        if cur_elig and pri_elig and cur_elig != pri_elig:
+            elig_changes += 1
+
+    # Top-20 entrants / exits
+    cur_top20 = {t for t, _ in cur_ranked_all[:20]}
+    pri_ranked_all = sorted(
+        [(t, _get_rank(pri, t, pri_rank_col)) for t in pri],
+        key=lambda x: (x[1] if x[1] is not None else 1e9),
+    )
+    pri_top20 = {t for t, _ in pri_ranked_all[:20]}
+    top20_entrants = sorted(cur_top20 - pri_top20)
+    top20_exits = sorted(pri_top20 - cur_top20)
+
+    return {
+        "top20_overlap_pct": top20_overlap,
+        "top60_overlap_pct": top60_overlap,
+        "rank_spearman_rho": rho,
+        "mean_abs_rank_delta_top60": mean_abs_delta,
+        "tier_migration_count": tier_migrations,
+        "eligibility_change_count": elig_changes,
+        "top20_entrants": top20_entrants,
+        "top20_exits": top20_exits,
+        "rank_column_current": cur_rank_col,
+        "rank_column_prior": pri_rank_col,
+        "n_common_tickers": len(common),
+    }
+
+
+def _write_drift_report_md(
+    report: Dict[str, Any],
+    path: Path,
+) -> None:
+    """Write human-readable drift report markdown."""
+    m = report["metrics"]
+    lines = [
+        f"# Drift Report: {report['current_date']} vs {report['prior_date']}",
+        "",
+        f"**Status**: {report['status']}",
+        f"**Thresholds ID**: `{report['thresholds_id']}`",
+        "",
+        "## Metrics",
+        "",
+        "| Metric | Value | Threshold | Status |",
+        "|--------|-------|-----------|--------|",
+    ]
+
+    thresh = report.get("thresholds", {})
+    reasons = set(report.get("warn_reasons", []))
+
+    def _row(label: str, val, th_key: str, invert: bool = False):
+        v = val if val is not None else "N/A"
+        th = thresh.get(th_key, "")
+        triggered = any(th_key in r for r in reasons)
+        st = "WARN" if triggered else "OK"
+        lines.append(f"| {label} | {v} | {th} | {st} |")
+
+    _row("Top-20 overlap %", m.get("top20_overlap_pct"), "warn_top20_overlap_pct")
+    _row("Top-60 overlap %", m.get("top60_overlap_pct"), "warn_top60_overlap_pct")
+    _row("Spearman rho", m.get("rank_spearman_rho"), "warn_rank_spearman_rho")
+    _row("Mean |rank delta| top-60", m.get("mean_abs_rank_delta_top60"), "warn_mean_abs_rank_delta_top60")
+    _row("Tier migrations", m.get("tier_migration_count"), "warn_tier_migration_count")
+    _row("Eligibility changes", m.get("eligibility_change_count"), "warn_eligibility_change_count")
+
+    lines.append("")
+
+    if m.get("top20_entrants"):
+        lines.append(f"**Top-20 entrants**: {', '.join(m['top20_entrants'])}")
+    if m.get("top20_exits"):
+        lines.append(f"**Top-20 exits**: {', '.join(m['top20_exits'])}")
+
+    if report.get("warn_reasons"):
+        lines.append("")
+        lines.append("## Warnings")
+        for r in report["warn_reasons"]:
+            lines.append(f"- {r}")
+
+    lines.append("")
+    path.write_text("\n".join(lines))
+
+
+def check_drift_monitoring(
+    staging_date_dir: Path,
+    snapshot_dir: Path,
+    as_of_date: str,
+    thresholds: DriftThresholds,
+) -> GateResult:
+    """Compare current snapshot vs most recent prior. WARN-only gate (never FAIL).
+
+    Writes drift_report.json + drift_report.md as sidecar artifacts.
+    """
+    prior = _find_prior_snapshot(snapshot_dir, as_of_date)
+    if prior is None:
+        return GateResult(
+            name="drift_monitoring", status="PASS",
+            detail="No prior snapshot; drift check skipped",
+        )
+
+    current_csv = staging_date_dir / "rankings.csv"
+    prior_csv = prior / "rankings.csv"
+
+    if not current_csv.exists():
+        return GateResult(
+            name="drift_monitoring", status="PASS",
+            detail="No rankings.csv in current snapshot; drift check skipped",
+        )
+
+    metrics = _compute_drift_metrics(current_csv, prior_csv)
+
+    # Evaluate thresholds — collect warn reasons
+    warn_reasons: List[str] = []
+    if metrics["top20_overlap_pct"] < thresholds.warn_top20_overlap_pct:
+        warn_reasons.append(
+            f"warn_top20_overlap_pct: {metrics['top20_overlap_pct']:.1f}% < {thresholds.warn_top20_overlap_pct}%"
+        )
+    if metrics["top60_overlap_pct"] < thresholds.warn_top60_overlap_pct:
+        warn_reasons.append(
+            f"warn_top60_overlap_pct: {metrics['top60_overlap_pct']:.1f}% < {thresholds.warn_top60_overlap_pct}%"
+        )
+    if metrics["rank_spearman_rho"] is not None and metrics["rank_spearman_rho"] < thresholds.warn_rank_spearman_rho:
+        warn_reasons.append(
+            f"warn_rank_spearman_rho: {metrics['rank_spearman_rho']:.4f} < {thresholds.warn_rank_spearman_rho}"
+        )
+    if metrics["mean_abs_rank_delta_top60"] > thresholds.warn_mean_abs_rank_delta_top60:
+        warn_reasons.append(
+            f"warn_mean_abs_rank_delta_top60: {metrics['mean_abs_rank_delta_top60']:.1f} > {thresholds.warn_mean_abs_rank_delta_top60}"
+        )
+    if metrics["tier_migration_count"] > thresholds.warn_tier_migration_count:
+        warn_reasons.append(
+            f"warn_tier_migration_count: {metrics['tier_migration_count']} > {thresholds.warn_tier_migration_count}"
+        )
+    if metrics["eligibility_change_count"] > thresholds.warn_eligibility_change_count:
+        warn_reasons.append(
+            f"warn_eligibility_change_count: {metrics['eligibility_change_count']} > {thresholds.warn_eligibility_change_count}"
+        )
+
+    status = "WARN" if warn_reasons else "PASS"
+
+    # Build and write drift report JSON
+    report = {
+        "version": "1.0.0",
+        "thresholds_id": thresholds.thresholds_id,
+        "thresholds": asdict(thresholds),
+        "current_date": as_of_date,
+        "prior_date": prior.name,
+        "metrics": metrics,
+        "warn_reasons": warn_reasons,
+        "status": status,
+    }
+
+    report_json_path = staging_date_dir / "drift_report.json"
+    with open(report_json_path, "w") as f:
+        json.dump(report, f, indent=2, default=str)
+
+    report_md_path = staging_date_dir / "drift_report.md"
+    _write_drift_report_md(report, report_md_path)
+
+    detail = f"vs {prior.name}: "
+    if warn_reasons:
+        detail += "; ".join(warn_reasons)
+    else:
+        detail += (
+            f"top20={metrics['top20_overlap_pct']:.0f}%, "
+            f"top60={metrics['top60_overlap_pct']:.0f}%, "
+            f"rho={metrics['rank_spearman_rho']}"
+        )
+
+    return GateResult(
+        name="drift_monitoring", status=status,
+        detail=detail,
+        value=metrics,
+        threshold=asdict(thresholds),
+    )
+
+
+# ---------------------------------------------------------------------------
+# CTGov PIT dates gate (WARN-only)
+# ---------------------------------------------------------------------------
+
+def check_ctgov_pit_dates(
+    ctgov_cache_dir: Path,
+    as_of_date: str,
+    *,
+    warn_first_posted_min: float = 0.80,
+    warn_last_update_min: float = 0.80,
+) -> GateResult:
+    """Validate PIT-critical date field coverage in trial records cache.
+
+    WARN-only gate — never returns FAIL. Checks first_posted and
+    last_update_posted coverage; results_first_posted is informational only.
+    """
+    # Find cache file — exact match or glob fallback
+    exact = ctgov_cache_dir / f"trial_records_{as_of_date}.json"
+    cache_file = None
+    if exact.exists():
+        cache_file = exact
+    else:
+        # Fallback: find latest file <= as_of_date
+        candidates = sorted(ctgov_cache_dir.glob("trial_records_*.json"))
+        for c in reversed(candidates):
+            stem_date = c.stem.replace("trial_records_", "")
+            if stem_date <= as_of_date:
+                cache_file = c
+                break
+
+    if cache_file is None:
+        return GateResult(
+            name="ctgov_pit_dates", status="WARN",
+            detail=f"No trial_records cache found in {ctgov_cache_dir}",
+        )
+
+    try:
+        with open(cache_file) as f:
+            records = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(
+            name="ctgov_pit_dates", status="WARN",
+            detail=f"Cannot read {cache_file.name}: {e}",
+        )
+
+    if not isinstance(records, list) or len(records) == 0:
+        return GateResult(
+            name="ctgov_pit_dates", status="WARN",
+            detail=f"Empty or invalid trial records in {cache_file.name}",
+        )
+
+    total = len(records)
+    n_first_posted = sum(1 for r in records if (r.get("first_posted") or "").strip())
+    n_last_update = sum(1 for r in records if (r.get("last_update_posted") or "").strip())
+    n_results_posted = sum(1 for r in records if (r.get("results_first_posted") or "").strip())
+
+    cov_first = n_first_posted / total
+    cov_last = n_last_update / total
+    cov_results = n_results_posted / total
+
+    coverage = {
+        "first_posted": round(cov_first, 4),
+        "last_update_posted": round(cov_last, 4),
+        "results_first_posted": round(cov_results, 4),
+        "total_records": total,
+        "cache_file": cache_file.name,
+    }
+    thresholds = {
+        "warn_first_posted_min": warn_first_posted_min,
+        "warn_last_update_min": warn_last_update_min,
+    }
+
+    warn_reasons: List[str] = []
+    if cov_first < warn_first_posted_min:
+        warn_reasons.append(
+            f"first_posted coverage {cov_first:.1%} < {warn_first_posted_min:.0%}"
+        )
+    if cov_last < warn_last_update_min:
+        warn_reasons.append(
+            f"last_update_posted coverage {cov_last:.1%} < {warn_last_update_min:.0%}"
+        )
+
+    status = "WARN" if warn_reasons else "PASS"
+    detail_parts = [
+        f"first_posted={cov_first:.1%}",
+        f"last_update={cov_last:.1%}",
+        f"results={cov_results:.1%}",
+        f"(n={total}, {cache_file.name})",
+    ]
+    if warn_reasons:
+        detail_parts.append("; ".join(warn_reasons))
+
+    return GateResult(
+        name="ctgov_pit_dates", status=status,
+        detail=", ".join(detail_parts),
+        value=coverage,
+        threshold=thresholds,
     )
 
 
@@ -953,6 +1397,8 @@ def run_daily(
     extra_screen_args: Optional[List[str]] = None,
     allow_date_fallback: bool = False,
     ctgov_cache_dir: Optional[Path] = None,
+    drift_thresholds: Optional[DriftThresholds] = None,
+    skip_drift: bool = False,
 ) -> Dict[str, Any]:
     """Execute the full daily Phase-2 pipeline.
 
@@ -1161,6 +1607,22 @@ def run_daily(
     gate_results.append(turnover_gate)
     print(f"  Turnover gate: {turnover_gate.status} — {turnover_gate.detail}")
 
+    # --- Gate: drift monitoring (WARN-only) ---
+    if not skip_drift:
+        _drift_th = drift_thresholds or DriftThresholds()
+        drift_gate = check_drift_monitoring(
+            staging_date_dir, final_snapshots_dir, as_of_date, _drift_th,
+        )
+        gate_results.append(drift_gate)
+        print(f"  Drift gate: {drift_gate.status} — {drift_gate.detail}")
+    else:
+        print("  Drift gate: skipped (--skip-drift)")
+
+    # --- Gate: ctgov PIT dates (WARN-only) ---
+    pit_dates_gate = check_ctgov_pit_dates(_cache_dir, as_of_date)
+    gate_results.append(pit_dates_gate)
+    print(f"  CTGov PIT dates gate: {pit_dates_gate.status} — {pit_dates_gate.detail}")
+
     # --- Step 5: Build manifest ---
     print(f"\n[5/5] Building run manifest ...")
     git_post_run = get_git_info(REPO_ROOT)
@@ -1262,11 +1724,23 @@ def main():
         "--ctgov-cache-dir", type=Path, default=None,
         help="Path to ctgov cache directory (default: cache/ctgov/)",
     )
+    parser.add_argument(
+        "--drift-thresholds", type=Path, default=None,
+        help="Path to drift monitoring thresholds JSON (default: built-in)",
+    )
+    parser.add_argument(
+        "--skip-drift", action="store_true",
+        help="Skip drift monitoring gate",
+    )
     args = parser.parse_args()
 
     config = GateConfig()
     if args.gate_config:
         config = GateConfig.from_json(args.gate_config)
+
+    _drift_th = None
+    if args.drift_thresholds:
+        _drift_th = DriftThresholds.from_json(args.drift_thresholds)
 
     manifest = run_daily(
         as_of_date=args.as_of_date,
@@ -1279,6 +1753,8 @@ def main():
         skip_audit=args.skip_audit,
         allow_date_fallback=args.allow_date_fallback,
         ctgov_cache_dir=args.ctgov_cache_dir,
+        drift_thresholds=_drift_th,
+        skip_drift=args.skip_drift,
     )
 
     # Always write manifest to output/ for CI discoverability
