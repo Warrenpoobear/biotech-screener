@@ -419,7 +419,7 @@ class TestPinnedThresholds:
     def test_default_thresholds_id_pinned(self):
         """Default thresholds must produce the pinned ID."""
         from run_phase2_snapshot_delta import DEFAULT_HEALTH_THRESHOLDS
-        assert DEFAULT_HEALTH_THRESHOLDS.thresholds_id == "0dae2ff0"
+        assert DEFAULT_HEALTH_THRESHOLDS.thresholds_id == "74457e8f"
 
     def test_production_json_matches_defaults(self):
         """Production v1.json must round-trip to the same thresholds as defaults."""

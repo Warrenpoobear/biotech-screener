@@ -108,6 +108,15 @@ class DecisionRuleset:
     clinical_positive_only: bool = True
     clinical_stage_mults: tuple = (("early", 0.0), ("mid", 1.0), ("late", 1.5))
 
+    # Coinvest sort tilt (opt-in, default OFF)
+    # When enabled, blends coinvest conviction score into sort anchor,
+    # following the clinical_sort_signal pattern.  Positive-only: only
+    # boosts high-conviction names, never penalises zero-coinvest.
+    enable_coinvest_sort_signal: bool = False
+    coinvest_sort_weight: float = 0.5          # scale factor (lower than clinical — advisory signal)
+    coinvest_positive_only: bool = True         # only boost, never penalise
+    coinvest_score_mode: str = "tier1_count"   # "tier1_count" (others deferred)
+
     # Far-horizon catalyst (opt-in, off by default; set far_window_days > 0 to enable)
     far_window_days: int = 0                          # max PCD horizon for far_window mode (0 = off)
     far_window_decay_mult: float = 0.15               # catalyst_decay_w for far_window tickers
@@ -244,6 +253,12 @@ class DecisionRuleset:
             raise ValueError(
                 f"tiering_priority_mode must be 'dev_first' or 'tier_first', "
                 f"got '{self.tiering_priority_mode}'"
+            )
+        # Validate coinvest_score_mode (only tier1_count implemented)
+        if self.coinvest_score_mode not in ("tier1_count",):
+            raise ValueError(
+                f"coinvest_score_mode must be 'tier1_count', "
+                f"got '{self.coinvest_score_mode}'"
             )
         # Validate drawdown_gate_mode
         if self.drawdown_gate_mode not in ("hard", "soft"):
@@ -572,6 +587,12 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
             out["sponsor_net_buying"] = "neutral"
     else:
         out["sponsor_net_buying"] = ""
+
+    # Coinvest conviction fields (computed by _convert_holdings_to_coinvest)
+    out["coinvest_conviction"] = _safe_float(coinvest.get("conviction_overlap"), default=0.0)
+    out["coinvest_tier1_conviction"] = _safe_float(coinvest.get("tier1_conviction_overlap"), default=0.0)
+    out["coinvest_max_position_pct"] = _safe_float(coinvest.get("max_tier1_position_pct"), default=0.0)
+    out["coinvest_filing_age_days"] = coinvest.get("days_since_latest_filing") if coinvest.get("days_since_latest_filing") is not None else ""
 
     # --- Catalyst (from top-level rec["catalyst_decay"]) ---
     cd = rec.get("catalyst_decay") or {}
@@ -1146,12 +1167,24 @@ def compute_actionable_sort_key(
             cz_eff = max(-2.0, min(2.0, cz_tier))
         clin_adj = rs.clinical_sort_weight * cz_eff * stage_mult
 
+    # Coinvest sort tilt: blended into anchor (same pattern as clinical).
+    # Uses cross-sectional z-score of tier1_count, positive-only default.
+    # Clamped to ±2.0 to prevent spiky z in small cohorts.
+    coinvest_adj = 0.0
+    if rs.enable_coinvest_sort_signal:
+        cz = _safe_float(decision_fields.get("coinvest_score_z"), default=0.0)
+        if rs.coinvest_positive_only:
+            cz_eff = min(2.0, max(0.0, cz))
+        else:
+            cz_eff = max(-2.0, min(2.0, cz))
+        coinvest_adj = rs.coinvest_sort_weight * cz_eff
+
     # --- Mode dispatch ---
     # prefix is (is_eligible, is_dev, tier_ord) in dev_first mode
     # or (is_eligible, tier_ord, is_dev) in tier_first mode
     if mode == "tiebreaker":
         # anchor dominates after tier; priority only breaks ties
-        effective_comp_rank = anchor - clin_adj
+        effective_comp_rank = anchor - clin_adj - coinvest_adj
         return prefix + (
             effective_comp_rank,  # anchor with clinical tilt
             missing_count,  # fewer missing components first
@@ -1168,7 +1201,7 @@ def compute_actionable_sort_key(
         # Build bonus map from ruleset tuples
         bonus_map = dict(rs.catalyst_priority_rank_bonuses)
         bonus = bonus_map.get(cat_priority, 0.0)
-        effective_comp_rank = anchor - bonus - clin_adj
+        effective_comp_rank = anchor - bonus - clin_adj - coinvest_adj
         return prefix + (
             effective_comp_rank,  # anchor with bonus + clinical tilt
             missing_count,        # fewer missing components first
@@ -1182,7 +1215,7 @@ def compute_actionable_sort_key(
         )
 
     # mode == "off" (default)
-    effective_opt_neg = opt_neg - clin_adj  # higher cz → more negative → sorts earlier
+    effective_opt_neg = opt_neg - clin_adj - coinvest_adj  # higher cz → more negative → sorts earlier
     return prefix + (
         cat_priority,       # 0 (neutral) — no effect on ordering
         cat_mode_ord,       # specific < blended < no_upcoming < missing
@@ -1246,6 +1279,8 @@ DECISION_COLUMNS = [
     "decision_engine_version", "decision_engine_ruleset_id",
     "eligible", "ineligible_reasons",
     "sponsor_tier1_count", "sponsor_overlap_count", "sponsor_net_buying",
+    "coinvest_conviction", "coinvest_tier1_conviction",
+    "coinvest_max_position_pct", "coinvest_filing_age_days",
     "catalyst_days", "catalyst_in_window", "catalyst_mode", "catalyst_strength", "catalyst_decay_w",
     "runway_bucket", "mom_state", "risk_flags",
     "size_band", "size_reasons",

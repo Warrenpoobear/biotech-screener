@@ -1345,6 +1345,12 @@ SNAPSHOT_COLUMNS = [
     "sponsor_tier1_count",
     "sponsor_overlap_count",
     "sponsor_net_buying",
+    "coinvest_score_z",
+    "coinvest_tag",
+    "coinvest_conviction",
+    "coinvest_tier1_conviction",
+    "coinvest_max_position_pct",
+    "coinvest_filing_age_days",
     "catalyst_strength",
     "catalyst_decay_w",
     "runway_bucket",
@@ -1479,7 +1485,7 @@ PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
 )
-PHASE2_PINNED_THRESHOLDS_ID = "0dae2ff0"
+PHASE2_PINNED_THRESHOLDS_ID = "74457e8f"
 
 
 # =============================================================================
@@ -3137,6 +3143,32 @@ def save_validation_snapshot(
             else:
                 csv_rows[idx]["clinical_score_z_tier"] = 0.0
 
+    # --- Coinvest z-score: cross-sectional z of sponsor_tier1_count ---
+    # Computed over all eligible tickers (all archetypes).
+    # When coinvest_score_mode != "tier1_count", this block is skipped.
+    _coinvest_mode = ruleset.coinvest_score_mode if ruleset else "tier1_count"
+    if _coinvest_mode == "tier1_count":
+        _cz_pairs = []  # [(index, raw_value)]
+        for _ci, _cr in enumerate(csv_rows):
+            _t1 = _cr.get("sponsor_tier1_count")
+            if isinstance(_t1, (int, float)):
+                _cz_pairs.append((_ci, float(_t1)))
+            else:
+                _cz_pairs.append((_ci, 0.0))
+        if _cz_pairs:
+            _cz_vals = [v for _, v in _cz_pairs]
+            _cz_mean = sum(_cz_vals) / len(_cz_vals)
+            _cz_var = sum((v - _cz_mean) ** 2 for v in _cz_vals) / len(_cz_vals)
+            _cz_std = _cz_var ** 0.5
+            for _ci, _cv in _cz_pairs:
+                if _cz_std > 0:
+                    csv_rows[_ci]["coinvest_score_z"] = round((_cv - _cz_mean) / _cz_std, 4)
+                else:
+                    csv_rows[_ci]["coinvest_score_z"] = 0.0
+                # Human-readable tag
+                _t1_int = int(_cv) if _cv == _cv else 0
+                csv_rows[_ci]["coinvest_tag"] = f"elite_{_t1_int}" if _t1_int > 0 else ""
+
     # --- Clinical adjustment telemetry (mirrors DE formula, for monitoring) ---
     _clin_adj_dev = 0
     _clin_adj_comm = 0
@@ -3678,6 +3710,21 @@ def save_validation_snapshot(
             "table_path": ruleset.alpha_cohort_table_path if ruleset else None,
             "shrink_k": ruleset.alpha_cohort_shrink_k if ruleset else None,
         } if _run_alpha_cohort else {},
+        "coinvest_coverage": {
+            "tickers_with_signal": sum(
+                1 for r in csv_rows
+                if isinstance(r.get("sponsor_tier1_count"), (int, float))
+                and r["sponsor_tier1_count"] > 0
+            ),
+            "ticker_count": len(csv_rows),
+            "coverage_pct": round(
+                100 * sum(
+                    1 for r in csv_rows
+                    if isinstance(r.get("sponsor_tier1_count"), (int, float))
+                    and r["sponsor_tier1_count"] > 0
+                ) / max(len(csv_rows), 1), 1
+            ),
+        },
         "alpha_contract_telemetry": {
             "input": _alpha_input_diag.to_dict() if _alpha_input_diag else {"skipped": True},
             "output": _alpha_output_diag.to_dict() if _alpha_output_diag else {"skipped": True},

@@ -56,6 +56,9 @@ class Phase2HealthThresholds:
     warn_weight_l1_pct: float = 55.0           # weight turnover (calibrated: P90=50.8, P95=52.7)
     warn_catalyst_drop_pp: float = 5.0         # coverage drop vs prior (calibrated: max=1.9)
 
+    # Coinvest coverage gate (WARN-only, never FAIL)
+    warn_coinvest_coverage_min: float = 70.0   # WARN if < 70% tickers have signal
+
     # Missingness coverage gates (dev-stage component coverage)
     fail_drawdown_coverage_min: float = 95.0   # below this = risk feed broken
     warn_drawdown_coverage_min: float = 99.0   # mild degradation
@@ -735,6 +738,23 @@ def compute_health_gate(
         elif warn_reasons:
             status = "WARN"
             reasons = warn_reasons
+
+    # --- Coinvest coverage gate (WARN-only, non-blocking) ---
+    # Uses sponsor_tier1_count column if available
+    if "sponsor_tier1_count" in current.rankings.columns:
+        _t1 = current.rankings["sponsor_tier1_count"]
+        _n_total = len(_t1)
+        if _n_total > 0:
+            _n_with = int(_t1.apply(
+                lambda x: pd.notna(x) and str(x).strip() not in ("", "0")
+            ).sum())
+            _coinvest_cov = 100.0 * _n_with / _n_total
+            metrics["coinvest_coverage_pct"] = round(_coinvest_cov, 1)
+            if _coinvest_cov < th.warn_coinvest_coverage_min:
+                warn_reasons.append("coinvest_coverage_low")
+                if not fail_reasons:
+                    status = "WARN"
+                    reasons = warn_reasons
 
     return HealthResult(status=status, reasons=reasons, metrics=metrics)
 

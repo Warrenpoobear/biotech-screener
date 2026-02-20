@@ -108,14 +108,14 @@
       "updated_at": "2026-02-14T00:00:00Z"
     },
     {
-      "id": "c1c8c781",
+      "id": "1288ec14",
       "file": "v1.json",
       "created_at": "2024-11-01",
       "engine_version": "v1.0.0",
       "description": "Original defaults (a_floor=0.60) + all schema expansions",
       "status": "retired",
       "requires_replay": false,
-      "notes": "Retired: a_floor=0.60 produces negative tier-A vs tier-C spread. Schema updated with missingness penalty, clinical sort signal, and alpha cohort fields."
+      "notes": "Retired: a_floor=0.60 produces negative tier-A vs tier-C spread. Schema updated with missingness penalty, clinical sort signal, alpha cohort, and coinvest sort fields."
     },
     {
       "id": "96f655ee",
@@ -164,6 +164,18 @@
       "notes": "Same params as v1.3.3 + enable_clinical_sort_signal=true, clinical_sort_weight=1.0, clinical_positive_only=true, clinical_stage_mults early=0/mid=1/late=1.5. Replay shows: 100% top-20/60 overlap, max churn 2, zero tier changes. Clinical affects within-tier ordering only.",
       "updated_by": "manual_bootstrap",
       "updated_at": "2026-02-16T00:00:00Z"
+    },
+    {
+      "id": "f28acba7",
+      "file": "v1.5.0_coinvest_candidate.json",
+      "created_at": "2026-02-20",
+      "engine_version": "v1.3.0",
+      "description": "Coinvest sort tie-breaker: z-scored tier1_count blended into sort anchor (w=0.5, pos-only)",
+      "status": "candidate",
+      "requires_replay": true,
+      "notes": "Same params as v1.4.0 + enable_coinvest_sort_signal=true, coinvest_sort_weight=0.5, coinvest_positive_only=true, coinvest_score_mode=tier1_count. Candidate — no promotion until replay + review.",
+      "updated_by": "manual_bootstrap",
+      "updated_at": "2026-02-20T00:00:00Z"
     }
   ]
 }

@@ -1082,7 +1082,7 @@ class TestGoldenOutputFingerprint:
       4. Bump VERSION in decision_engine.py if the change is material
     """
 
-    EXPECTED_FINGERPRINT = "32e7ad5e7dfa"
+    EXPECTED_FINGERPRINT = "f767cd9a08b0"
 
     def test_golden_output_fingerprint_pinned(self):
         actual = _compute_golden_output_fingerprint()
