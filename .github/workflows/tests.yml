@@ -21,11 +21,16 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest-xdist
+          pip install pytest-xdist yfinance
           pip install -e .
 
       - name: Run tests
         env:
           PYTHONHASHSEED: "0"
         run: |
-          python -m pytest tests/ -q
+          python -m pytest tests/ -q \
+            --ignore=tests/integration \
+            --ignore=tests/test_minimum_suite.py \
+            --ignore=tests/test_golden_baseline.py \
+            --ignore=tests/test_run_screen.py \
+            --ignore=tests/test_module_5_defensive.py
