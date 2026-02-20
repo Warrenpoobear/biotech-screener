@@ -8,12 +8,14 @@ from __future__ import annotations
 import json
 import logging
 import math
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
 logger = logging.getLogger(__name__)
 
 VERSION = "1.0.0"
+SCHEMA_VERSION = "institutional_summary.v1"
 
 _DEFAULT_CACHE_REL = Path("data") / "caches" / "sec_13f" / "PIT"
 
@@ -146,7 +148,9 @@ def build_institutional_summary(
     )
 
     return {
+        "schema_version": SCHEMA_VERSION,
         "version": VERSION,
+        "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "as_of_date": as_of_date,
         "cache_as_of_date": index.get("as_of_date", as_of_date),
         "cache_schema_version": index.get("schema_version", ""),

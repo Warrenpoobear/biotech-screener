@@ -971,6 +971,7 @@ class TestOpsContract:
             "market_data_schema", "market_data_staleness", "market_data_coverage",
             "screen", "audit", "missing_reason_fraction", "turnover",
             "drift_monitoring", "ctgov_pit_dates", "sec_13f_cache",
+            "institutional_summary",
         }
         assert expected == GATE_ALLOWLIST
 

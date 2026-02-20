@@ -11,7 +11,7 @@ import pytest
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from institutional_summary import build_institutional_summary, _pad_cik
+from institutional_summary import build_institutional_summary, _pad_cik, SCHEMA_VERSION
 
 
 # ---------------------------------------------------------------------------
@@ -99,12 +99,15 @@ class TestSchemaContract:
         result = build_institutional_summary("2026-01-01", {"AAAA", "BBBB"}, cache_base_dir=tmp_path)
         assert result is not None
         expected_keys = {
-            "version", "as_of_date", "cache_as_of_date", "cache_schema_version",
+            "schema_version", "version", "created_at",
+            "as_of_date", "cache_as_of_date", "cache_schema_version",
             "elite_managers_total", "elite_managers_with_filing",
             "tickers_with_signal", "tickers_in_universe", "signal_coverage_pct",
             "tickers",
         }
         assert set(result.keys()) == expected_keys
+        assert result["schema_version"] == SCHEMA_VERSION
+        assert result["created_at"].endswith("Z")
 
     def test_required_per_ticker_keys(self, tmp_path):
         _write_cache(tmp_path, "2026-01-01", [
@@ -122,7 +125,7 @@ class TestSchemaContract:
 class TestDeterminism:
     """Same inputs produce byte-identical JSON output."""
 
-    def test_byte_identical_output(self, tmp_path):
+    def test_deterministic_output(self, tmp_path):
         _write_cache(tmp_path, "2026-01-01", [
             ("0000000002", "Mgr B", [_holding("BBBB"), _holding("AAAA")]),
             ("0000000001", "Mgr A", [_holding("AAAA"), _holding("CCCC")]),
@@ -130,6 +133,8 @@ class TestDeterminism:
         uni = {"AAAA", "BBBB", "CCCC"}
         r1 = build_institutional_summary("2026-01-01", uni, cache_base_dir=tmp_path)
         r2 = build_institutional_summary("2026-01-01", uni, cache_base_dir=tmp_path)
+        # Exclude created_at (timestamp differs between calls)
+        r1.pop("created_at"); r2.pop("created_at")
         j1 = json.dumps(r1, indent=2, sort_keys=False)
         j2 = json.dumps(r2, indent=2, sort_keys=False)
         assert j1 == j2
@@ -285,3 +290,81 @@ class TestPadCik:
 
     def test_pad_leading_zeros(self):
         assert _pad_cik("0000001") == "0000000001"
+
+
+# ---------------------------------------------------------------------------
+# Gate tests (check_institutional_summary)
+# ---------------------------------------------------------------------------
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
+from run_daily_production import check_institutional_summary
+
+
+def _write_sidecar(snap_dir, *, coverage_pct=57.0, tickers_with=201,
+                   tickers_total=353, managers_used=29, managers_total=29,
+                   schema_version=None):
+    """Write a minimal institutional_summary.json sidecar for gate testing."""
+    if schema_version is None:
+        schema_version = SCHEMA_VERSION
+    data = {
+        "schema_version": schema_version,
+        "version": "1.0.0",
+        "created_at": "2026-02-20T12:00:00Z",
+        "as_of_date": "2026-02-20",
+        "cache_as_of_date": "2026-02-20",
+        "cache_schema_version": "sec_13f_pit_index.v1",
+        "elite_managers_total": managers_total,
+        "elite_managers_with_filing": managers_used,
+        "tickers_with_signal": tickers_with,
+        "tickers_in_universe": tickers_total,
+        "signal_coverage_pct": coverage_pct,
+        "tickers": {},
+    }
+    snap_dir.mkdir(parents=True, exist_ok=True)
+    with open(snap_dir / "institutional_summary.json", "w") as f:
+        json.dump(data, f)
+
+
+class TestInstitutionalSummaryGate:
+    """check_institutional_summary() gate function."""
+
+    def test_pass_above_threshold(self, tmp_path):
+        _write_sidecar(tmp_path, coverage_pct=57.0)
+        result = check_institutional_summary(tmp_path, warn_coverage_pct=50.0)
+        assert result.status == "PASS"
+        assert result.name == "institutional_summary"
+        assert result.value["coverage_pct"] == 57.0
+
+    def test_warn_below_threshold(self, tmp_path):
+        _write_sidecar(tmp_path, coverage_pct=45.0)
+        result = check_institutional_summary(tmp_path, warn_coverage_pct=50.0)
+        assert result.status == "WARN"
+        assert "below" in result.detail
+
+    def test_warn_missing_sidecar(self, tmp_path):
+        tmp_path.mkdir(parents=True, exist_ok=True)
+        result = check_institutional_summary(tmp_path)
+        assert result.status == "WARN"
+        assert "No institutional_summary.json" in result.detail
+
+    def test_warn_malformed_json(self, tmp_path):
+        tmp_path.mkdir(parents=True, exist_ok=True)
+        (tmp_path / "institutional_summary.json").write_text("NOT JSON")
+        result = check_institutional_summary(tmp_path)
+        assert result.status == "WARN"
+        assert "Cannot read" in result.detail
+
+    def test_warn_schema_mismatch(self, tmp_path):
+        _write_sidecar(tmp_path, schema_version="wrong.v99")
+        result = check_institutional_summary(tmp_path)
+        assert result.status == "WARN"
+        assert "schema mismatch" in result.detail
+
+    def test_value_fields(self, tmp_path):
+        _write_sidecar(tmp_path, coverage_pct=60.0, tickers_with=200,
+                       tickers_total=350, managers_used=28, managers_total=29)
+        result = check_institutional_summary(tmp_path, warn_coverage_pct=50.0)
+        assert result.value["tickers_with_signal"] == 200
+        assert result.value["tickers_in_universe"] == 350
+        assert result.value["managers_used"] == 28
+        assert result.value["expected_managers"] == 29

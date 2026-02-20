@@ -58,6 +58,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "drift_monitoring",
     "ctgov_pit_dates",
     "sec_13f_cache",
+    "institutional_summary",
 })
 
 # Required fields in each market_data.json record for schema gate
@@ -101,6 +102,9 @@ class GateConfig:
 
     sec_13f_coverage_warn_pct: float = 80.0
     """Min 13F manager coverage (%) before WARN. Never FAIL."""
+
+    institutional_summary_warn_coverage_pct: float = 50.0
+    """Min institutional summary ticker coverage (%) before WARN. Never FAIL."""
 
     @staticmethod
     def from_json(path: Path) -> "GateConfig":
@@ -862,6 +866,81 @@ def check_sec_13f_cache(
 
     return GateResult(
         name="sec_13f_cache", status="PASS",
+        detail=", ".join(detail_parts),
+        value=value, threshold=threshold,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Institutional summary gate (WARN-only, post-screen)
+# ---------------------------------------------------------------------------
+
+def check_institutional_summary(
+    snapshot_date_dir: Path,
+    *,
+    warn_coverage_pct: float = 50.0,
+) -> GateResult:
+    """Validate institutional_summary.json sidecar. WARN-only — never FAIL."""
+    from institutional_summary import SCHEMA_VERSION as INST_SCHEMA
+
+    sidecar_path = snapshot_date_dir / "institutional_summary.json"
+
+    if not sidecar_path.exists():
+        return GateResult(
+            name="institutional_summary", status="WARN",
+            detail=f"No institutional_summary.json at {sidecar_path}",
+            threshold={"warn_coverage_pct": warn_coverage_pct},
+        )
+
+    try:
+        with open(sidecar_path, encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(
+            name="institutional_summary", status="WARN",
+            detail=f"Cannot read institutional_summary.json: {e}",
+            threshold={"warn_coverage_pct": warn_coverage_pct},
+        )
+
+    # Schema check
+    if data.get("schema_version") != INST_SCHEMA:
+        return GateResult(
+            name="institutional_summary", status="WARN",
+            detail=f"schema mismatch: got {data.get('schema_version')!r}, expected {INST_SCHEMA!r}",
+            threshold={"warn_coverage_pct": warn_coverage_pct},
+        )
+
+    coverage = data.get("signal_coverage_pct", 0.0)
+    tickers_with = data.get("tickers_with_signal", 0)
+    tickers_total = data.get("tickers_in_universe", 0)
+    managers_used = data.get("elite_managers_with_filing", 0)
+    managers_total = data.get("elite_managers_total", 0)
+
+    detail_parts = [
+        f"coverage={coverage:.1f}%",
+        f"({tickers_with}/{tickers_total} tickers)",
+        f"({managers_used}/{managers_total} managers)",
+    ]
+
+    value = {
+        "coverage_pct": coverage,
+        "tickers_with_signal": tickers_with,
+        "tickers_in_universe": tickers_total,
+        "managers_used": managers_used,
+        "expected_managers": managers_total,
+    }
+    threshold = {"warn_coverage_pct": warn_coverage_pct}
+
+    if coverage < warn_coverage_pct:
+        detail_parts.append(f"below {warn_coverage_pct:.0f}% threshold")
+        return GateResult(
+            name="institutional_summary", status="WARN",
+            detail=", ".join(detail_parts),
+            value=value, threshold=threshold,
+        )
+
+    return GateResult(
+        name="institutional_summary", status="PASS",
         detail=", ".join(detail_parts),
         value=value, threshold=threshold,
     )
@@ -1704,6 +1783,14 @@ def run_daily(
     )
     gate_results.append(sec_13f_gate)
     print(f"  13F cache gate: {sec_13f_gate.status} — {sec_13f_gate.detail}")
+
+    # --- Gate: institutional_summary (WARN-only, post-screen) ---
+    inst_gate = check_institutional_summary(
+        staging_date_dir,
+        warn_coverage_pct=config.institutional_summary_warn_coverage_pct,
+    )
+    gate_results.append(inst_gate)
+    print(f"  Institutional summary gate: {inst_gate.status} — {inst_gate.detail}")
 
     # --- Step 5: Build manifest ---
     print(f"\n[5/5] Building run manifest ...")
