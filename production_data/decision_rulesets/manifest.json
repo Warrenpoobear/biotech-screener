@@ -166,14 +166,14 @@
       "updated_at": "2026-02-16T00:00:00Z"
     },
     {
-      "id": "f28acba7",
+      "id": "8f99d47e",
       "file": "v1.5.0_coinvest_candidate.json",
       "created_at": "2026-02-20",
       "engine_version": "v1.3.0",
-      "description": "Coinvest sort tie-breaker: z-scored tier1_count blended into sort anchor (w=0.5, pos-only)",
+      "description": "Coinvest sort tie-breaker: z-scored tier1_count blended into sort anchor (w=0.05, pos-only)",
       "status": "candidate",
       "requires_replay": true,
-      "notes": "Same params as v1.4.0 + enable_coinvest_sort_signal=true, coinvest_sort_weight=0.5, coinvest_positive_only=true, coinvest_score_mode=tier1_count. Candidate — no promotion until replay + review.",
+      "notes": "Same params as v1.4.0 + enable_coinvest_sort_signal=true, coinvest_sort_weight=0.05, coinvest_positive_only=true, coinvest_score_mode=tier1_count. Calibrated from 0.05-0.50 sweep: w=0.05 gives 82% top-20 overlap (2 name changes), saturation at w=0.25 (5 names). Candidate — no promotion until replay + review.",
       "updated_by": "manual_bootstrap",
       "updated_at": "2026-02-20T00:00:00Z"
     }

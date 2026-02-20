@@ -439,7 +439,7 @@ class TestCoinvestRulesetValidation:
         if path.exists():
             rs = DecisionRuleset.from_json(str(path))
             assert rs.enable_coinvest_sort_signal is True
-            assert rs.coinvest_sort_weight == 0.5
+            assert rs.coinvest_sort_weight == 0.05
 
 
 # =============================================================================
