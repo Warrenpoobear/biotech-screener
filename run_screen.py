@@ -3353,6 +3353,24 @@ def save_validation_snapshot(
     except Exception as e:
         logger.warning("Could not write catalyst_shadow_metrics.json: %s", e)
 
+    # --- Write institutional summary sidecar (phase2 only) ---
+    if decision_mode == "phase2":
+        try:
+            from institutional_summary import build_institutional_summary
+            _uni_tickers = {r.get("ticker", "") for r in csv_rows if r.get("ticker")}
+            inst_summary = build_institutional_summary(as_of_date, _uni_tickers)
+            if inst_summary:
+                with open(snap_path / "institutional_summary.json", "w", encoding="utf-8") as f:
+                    json.dump(inst_summary, f, indent=2, sort_keys=False)
+                    f.write("\n")
+                logger.info(
+                    "[INST] Institutional summary: %d/%d tickers",
+                    inst_summary["tickers_with_signal"],
+                    inst_summary["tickers_in_universe"],
+                )
+        except Exception as e:
+            logger.warning("Could not write institutional_summary.json: %s", e)
+
     # --- Write decision ruleset sidecar JSON for reproducibility ---
     rs = ruleset or DEFAULT_RULESET
     try:
