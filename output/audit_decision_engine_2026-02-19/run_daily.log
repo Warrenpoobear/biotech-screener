@@ -1,0 +1,45 @@
+$AKRO: possibly delisted; no price data found  (1d 2025-12-10 -> 2026-02-20) (Yahoo error = "No data found, symbol may be delisted")
+$ATXS: possibly delisted; no price data found  (1d 2026-01-24 -> 2026-02-20)
+$BLUE: possibly delisted; no timezone found
+$CDTX: possibly delisted; no price data found  (1d 2026-01-09 -> 2026-02-20)
+$CVAC: possibly delisted; no price data found  (1d 2026-01-07 -> 2026-02-20)
+$DVAX: possibly delisted; no price data found  (1d 2026-02-11 -> 2026-02-20)
+$GBIO: possibly delisted; no price data found  (1d 2026-02-11 -> 2026-02-20)
+$MRSN: possibly delisted; no price data found  (1d 2026-01-07 -> 2026-02-20)
+$MRUS: possibly delisted; no price data found  (1d 2026-01-03 -> 2026-02-20)
+$VERV: possibly delisted; no timezone found
+$_XBI_BENCHMARK_: possibly delisted; no timezone found
+======================================================================
+PHASE-2 DAILY RUN — 2026-02-19
+======================================================================
+
+[1/5] Refreshing price_history.csv ...
+  Extended 11 tickers, 0 rows appended, 0 failures
+  XBI gate: PASS — XBI last=2026-02-19, gap=0 trading days
+  CTGov cache gate: PASS — PIT cache found: trial_records_2026-02-19.json
+  Inputs gate: PASS — All required inputs found in production_data/
+  Market data schema gate: PASS — 349 records, all valid
+  Market data staleness gate: PASS — market_data.json collected=2026-02-19, age=0d
+  Market data coverage gate: PASS — 349/352 (99.1%) coverage, 3 missing: AKRO, BLUE, VERV
+
+[2/5] Running screen (phase2, ranking_mode=decision) ...
+  Screen completed OK
+
+[3/5] Running data integrity audit ...
+  Audit gate: PASS — Audit OK
+
+[4/5] Evaluating gates ...
+  Missing-reason gate: PASS — 0/319 tickers (0.0%) have missing_reason
+  Turnover gate: PASS — Could not parse turnover from delta report; skipped
+  Drift gate: PASS — vs 2026-02-18: top20=82%, top60=97%, rho=0.9977
+  CTGov PIT dates gate: PASS — first_posted=100.0%, last_update=100.0%, results=26.6%, (n=18662, trial_records_2026-02-19.json)
+  13F cache gate: PASS — coverage=100.0%, (29/29 managers)
+  Institutional summary gate: PASS — coverage=58.6%, (187/319 tickers), (29/29 managers)
+  Institutional delta gate: PASS — No prior institutional summary with elite_holder_shares — cold-start OK
+
+[5/5] Building run manifest ...
+  Manifest → /tmp/phase2_staging_2026-02-19_224gusuo/2026-02-19/run_manifest.json
+
+======================================================================
+RESULT: PASS — snapshot promoted to /mnt/c/Projects/biotech_screener/biotech-screener/data/snapshots/2026-02-19
+======================================================================

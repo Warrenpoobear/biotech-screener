@@ -1,0 +1,107 @@
+{
+  "audit_date": "2026-02-20",
+  "snapshot_date": "2026-02-19",
+  "git_sha": "f7168b54b945783fc7a223d244cb032f7659394d",
+  "python_version": "3.12.3",
+  "steps": {
+    "0_environment": {
+      "status": "PASS",
+      "python": "3.12.3",
+      "git_sha": "f7168b54b945783fc7a223d244cb032f7659394d"
+    },
+    "1_production_run": {
+      "status": "PASS",
+      "exit_code": 0,
+      "overall_status": "PASS",
+      "gates_total": 14,
+      "gates_pass": 14,
+      "gates_warn": 0,
+      "gates_fail": 0
+    },
+    "2_snapshot_manifest": {
+      "status": "PASS",
+      "snapshot_files": 20,
+      "manifest_version": "1.3.0",
+      "ruleset_hash": "8f99d47e",
+      "overall_status": "PASS"
+    },
+    "3_hard_contracts": {
+      "status": "PASS",
+      "gates_complete": true,
+      "ruleset_pinned": true,
+      "thresholds_pinned": true,
+      "missing_gates": []
+    },
+    "4_rankings_integrity": {
+      "status": "PASS",
+      "rows": 319,
+      "columns": 98,
+      "universe_tickers": 353,
+      "rankings_tickers": 319,
+      "no_duplicates": true,
+      "eligible_binary": true,
+      "single_de_version": "v1.3.0",
+      "single_ruleset_id": "8f99d47e",
+      "actionable_rank_unique_ab": true,
+      "tier_distribution": {
+        "A": 32,
+        "B": 41,
+        "C": 58,
+        "D": 52
+      },
+      "tier_any_consistent": true,
+      "notes": [
+        "14 negative composite_score (expected: alpha_cohort mode)",
+        "inst_delta_z all zero (expected: first snapshot with inst_delta)",
+        "34 tickers filtered out by pipeline (353-319=34)"
+      ]
+    },
+    "5_sidecar_checks": {
+      "status": "PASS",
+      "decision_ruleset": {
+        "composite_engine": "alpha_cohort",
+        "catalyst_priority_mode": "tiebreaker",
+        "coinvest_sort": true,
+        "clinical_sort": true,
+        "institutional_sort": false,
+        "all_fields_match": true
+      },
+      "phase2_health": {
+        "status": "OK",
+        "thresholds_id": "74457e8f",
+        "thresholds_pinned": true
+      },
+      "metadata": {
+        "as_of_date": "2026-02-19",
+        "ticker_count": 319,
+        "coinvest_coverage_pct": 82.4,
+        "clinical_sort_active": true
+      },
+      "eligibility_debug": {
+        "tickers": 319,
+        "gate_mode": "hard"
+      },
+      "institutional_summary": {
+        "cache_as_of_date": "2026-02-19",
+        "tickers": 319,
+        "enriched": true
+      },
+      "portfolio_positions": {
+        "n_positions": 20,
+        "top_k": 20,
+        "total_weight_pct": 99.97,
+        "all_tier_a": true
+      },
+      "catalyst_shadow_metrics": true,
+      "drift_report": true
+    },
+    "6_determinism": {
+      "status": "PASS",
+      "input_hashes_present": true,
+      "input_hash_count": 274,
+      "note": "Ruleset hash from file differs from manifest (serialization difference \u2014 DecisionRuleset uses frozen dataclass fields, file is full JSON). Pinned ID check in Step 3 is authoritative."
+    }
+  },
+  "overall_status": "PASS",
+  "generated_at": "2026-02-20T22:12:00Z"
+}
