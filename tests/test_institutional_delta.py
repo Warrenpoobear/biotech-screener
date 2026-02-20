@@ -172,6 +172,23 @@ class TestComputeDelta:
         delta = compute_institutional_delta(current, prior)
         assert delta["schema_version"] == DELTA_SCHEMA_VERSION
 
+    def test_pit_provenance_in_delta(self):
+        """Delta output includes PIT provenance fields."""
+        current = _make_summary(
+            {"AAAA": _ticker_data(1, {"FundA": 100}, 100, 10)},
+            as_of_date="2026-02-20",
+        )
+        current["cache_as_of_date"] = "2026-02-20"
+        prior = _make_summary(
+            {"AAAA": _ticker_data(1, {"FundA": 100}, 100, 10)},
+            as_of_date="2026-02-19",
+        )
+        prior["cache_as_of_date"] = "2026-02-19"
+        delta = compute_institutional_delta(current, prior)
+        assert delta is not None
+        assert delta["current_cache_as_of_date"] == "2026-02-20"
+        assert delta["prior_cache_as_of_date"] == "2026-02-19"
+
     def test_top_level_counts(self):
         current = _make_summary({
             "AAAA": _ticker_data(1, {"FundA": 100}, 100, 10),
@@ -254,6 +271,32 @@ class TestFindPrior:
         result2 = _find_prior_institutional_summary(tmp_path, "2026-02-20", max_candidates=15)
         assert result2 is not None
         assert result2["as_of_date"] == "2026-02-03"
+
+    def test_skips_pit_mismatch(self, tmp_path):
+        """Prior with cache_as_of_date != snapshot date → skipped."""
+        date_dir = tmp_path / "2026-02-15"
+        date_dir.mkdir(parents=True, exist_ok=True)
+        tickers = {"AAAA": _ticker_data(1, {"FundA": 100}, 100, 10)}
+        data = _make_summary(tickers, as_of_date="2026-02-15")
+        # Inject mismatched cache_as_of_date
+        data["cache_as_of_date"] = "2026-01-15"
+        with open(date_dir / "institutional_summary.json", "w") as f:
+            json.dump(data, f)
+        result = _find_prior_institutional_summary(tmp_path, "2026-02-20")
+        assert result is None
+
+    def test_accepts_matching_pit(self, tmp_path):
+        """Prior with cache_as_of_date matching snapshot date → returned."""
+        date_dir = tmp_path / "2026-02-15"
+        date_dir.mkdir(parents=True, exist_ok=True)
+        tickers = {"AAAA": _ticker_data(1, {"FundA": 100}, 100, 10)}
+        data = _make_summary(tickers, as_of_date="2026-02-15")
+        data["cache_as_of_date"] = "2026-02-15"
+        with open(date_dir / "institutional_summary.json", "w") as f:
+            json.dump(data, f)
+        result = _find_prior_institutional_summary(tmp_path, "2026-02-20")
+        assert result is not None
+        assert result["as_of_date"] == "2026-02-15"
 
 
 # ---------------------------------------------------------------------------

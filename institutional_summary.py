@@ -467,6 +467,8 @@ def compute_institutional_delta(
         "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "as_of_date": current.get("as_of_date", ""),
         "prior_date": prior.get("as_of_date", ""),
+        "current_cache_as_of_date": current.get("cache_as_of_date", ""),
+        "prior_cache_as_of_date": prior.get("cache_as_of_date", ""),
         "tickers_in_current": len(cur_tk_set),
         "tickers_in_prior": len(pri_tk_set),
         "tickers_common": len(cur_tk_set & pri_tk_set),
@@ -511,6 +513,14 @@ def _find_prior_institutional_summary(
             continue
         first_ticker_data = next(iter(tickers.values()))
         if "elite_holder_shares" not in first_ticker_data:
+            continue
+        # PIT guard — cache_as_of_date should match the snapshot date
+        cache_date = data.get("cache_as_of_date", "")
+        if cache_date and cache_date != date_str:
+            logger.warning(
+                "[INST] Prior %s has cache_as_of_date=%s (expected %s) — skipping (PIT mismatch)",
+                date_str, cache_date, date_str,
+            )
             continue
         return data
 
