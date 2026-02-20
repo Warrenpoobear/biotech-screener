@@ -1,15 +1,15 @@
 ========================================================================
 PHASE-2 RUN DELTA REPORT
 ========================================================================
-Generated: 2026-02-19T17:16:21Z
-Current:   2026-01-20 (ruleset aa0aaf28)
+Generated: 2026-02-20T21:16:37Z
+Current:   2026-01-20 (ruleset 8f99d47e)
 Prior:     2026-01-19 (ruleset 96f655ee)
 
 HEALTH: WARN [high_weight_churn]
-  turnover=50.0%  catalyst=84.5%  A=25  ruleset=aa0aaf28
+  turnover=50.0%  catalyst=84.5%  A=25  ruleset=8f99d47e
 
 WARNINGS:
-  - Ruleset changed: 96f655ee -> aa0aaf28
+  - Ruleset changed: 96f655ee -> 8f99d47e
   - Name turnover 50.0% > 40.0% threshold
 
 1. PORTFOLIO TURNOVER
@@ -19,7 +19,7 @@ WARNINGS:
   Entrants (10):  ALMS, CNTA, ERAS, IRON, KOD, NUVB, OCGN, PRAX, RVMD, SION
   Exits (10):  AARD, ABEO, ACLX, ALLO, ATXS, AURA, NUVL, PRTA, RAPP, TENX
   Name turnover: 50.0%
-  Weight L1 delta: 107.2%
+  Weight L1 delta: 109.1%
 
 2. TIER DISTRIBUTION (dev-stage universe)
 ------------------------------------------------------------------------
@@ -66,7 +66,7 @@ WARNINGS:
 
 6. GUARDRAILS
 ------------------------------------------------------------------------
-  [PASS] Ruleset matches pinned Phase-2 ID (aa0aaf28)
+  [PASS] Ruleset matches pinned Phase-2 ID (8f99d47e)
   [PASS] A-tier count > 0 (25)
   [PASS] Catalyst specific_days coverage > 50.0% (84.5%)
   [WARN] Name turnover 50.0% > 40.0%

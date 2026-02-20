@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-02-19T17:16:20Z",
+  "generated_at": "2026-02-20T21:16:34Z",
   "current": {
     "date": "2026-01-15",
-    "ruleset_id": "aa0aaf28",
+    "ruleset_id": "8f99d47e",
     "has_native_portfolio": true,
     "portfolio_size": 20
   },
@@ -25,9 +25,9 @@
   },
   "sizing": {
     "current": {
-      "L": 16,
+      "L": 17,
       "M": 2,
-      "S": 1,
+      "S": 0,
       "XS": 1
     }
   },
@@ -108,7 +108,7 @@
   },
   "guardrails": {
     "passed": [
-      "Ruleset matches pinned Phase-2 ID (aa0aaf28)",
+      "Ruleset matches pinned Phase-2 ID (8f99d47e)",
       "A-tier count >= 1 (25)",
       "Catalyst coverage 84.5% >= 50.0%"
     ],

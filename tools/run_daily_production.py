@@ -59,6 +59,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "ctgov_pit_dates",
     "sec_13f_cache",
     "institutional_summary",
+    "institutional_delta",
 })
 
 # Required fields in each market_data.json record for schema gate
@@ -881,7 +882,7 @@ def check_institutional_summary(
     warn_coverage_pct: float = 50.0,
 ) -> GateResult:
     """Validate institutional_summary.json sidecar. WARN-only — never FAIL."""
-    from institutional_summary import SCHEMA_VERSION as INST_SCHEMA
+    from institutional_summary import validate_institutional_summary_schema_v1
 
     sidecar_path = snapshot_date_dir / "institutional_summary.json"
 
@@ -902,11 +903,12 @@ def check_institutional_summary(
             threshold={"warn_coverage_pct": warn_coverage_pct},
         )
 
-    # Schema check
-    if data.get("schema_version") != INST_SCHEMA:
+    # Run pure schema validator
+    ok, schema_detail = validate_institutional_summary_schema_v1(data)
+    if not ok:
         return GateResult(
             name="institutional_summary", status="WARN",
-            detail=f"schema mismatch: got {data.get('schema_version')!r}, expected {INST_SCHEMA!r}",
+            detail=f"schema invalid: {schema_detail}",
             threshold={"warn_coverage_pct": warn_coverage_pct},
         )
 
@@ -943,6 +945,70 @@ def check_institutional_summary(
         name="institutional_summary", status="PASS",
         detail=", ".join(detail_parts),
         value=value, threshold=threshold,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Institutional delta gate (WARN-only, post-screen)
+# ---------------------------------------------------------------------------
+
+def check_institutional_delta(
+    snapshot_date_dir: Path,
+    snapshot_dir: Path,
+    current_date: str,
+) -> GateResult:
+    """Validate institutional_summary_delta.json sidecar. WARN-only — never FAIL.
+
+    - Delta file exists + valid → PASS
+    - Delta file exists + invalid → WARN
+    - No delta + no prior with elite_holder_shares → PASS (cold-start)
+    - No delta + prior with elite_holder_shares exists → WARN
+    """
+    delta_path = snapshot_date_dir / "institutional_summary_delta.json"
+    if delta_path.exists():
+        # Validate the delta sidecar
+        try:
+            with open(delta_path, encoding="utf-8") as f:
+                delta_data = json.load(f)
+        except (json.JSONDecodeError, OSError) as e:
+            return GateResult(
+                name="institutional_delta", status="WARN",
+                detail=f"Cannot read institutional_summary_delta.json: {e}",
+            )
+
+        from institutional_summary import validate_institutional_summary_delta_schema_v1
+        ok, detail = validate_institutional_summary_delta_schema_v1(delta_data)
+        if not ok:
+            return GateResult(
+                name="institutional_delta", status="WARN",
+                detail=f"schema invalid: {detail}",
+            )
+
+        return GateResult(
+            name="institutional_delta", status="PASS",
+            detail=(
+                f"institutional_summary_delta.json valid: "
+                f"{delta_data.get('as_of_date', '?')} vs {delta_data.get('prior_date', '?')}, "
+                f"{delta_data.get('tickers_common', 0)} common tickers"
+            ),
+        )
+
+    # No delta — check if a prior with elite_holder_shares exists
+    try:
+        from institutional_summary import _find_prior_institutional_summary
+        prior = _find_prior_institutional_summary(snapshot_dir, current_date)
+    except Exception:
+        prior = None
+
+    if prior is not None:
+        return GateResult(
+            name="institutional_delta", status="WARN",
+            detail="Delta expected (prior with elite_holder_shares found) but not written",
+        )
+
+    return GateResult(
+        name="institutional_delta", status="PASS",
+        detail="No prior institutional summary with elite_holder_shares — cold-start OK",
     )
 
 
@@ -1791,6 +1857,13 @@ def run_daily(
     )
     gate_results.append(inst_gate)
     print(f"  Institutional summary gate: {inst_gate.status} — {inst_gate.detail}")
+
+    # --- Gate: institutional_delta (WARN-only, post-screen) ---
+    inst_delta_gate = check_institutional_delta(
+        staging_date_dir, final_snapshots_dir, as_of_date,
+    )
+    gate_results.append(inst_delta_gate)
+    print(f"  Institutional delta gate: {inst_delta_gate.status} — {inst_delta_gate.detail}")
 
     # --- Step 5: Build manifest ---
     print(f"\n[5/5] Building run manifest ...")

@@ -117,6 +117,14 @@ class DecisionRuleset:
     coinvest_positive_only: bool = True         # only boost, never penalise
     coinvest_score_mode: str = "tier1_count"   # "tier1_count" (others deferred)
 
+    # Institutional delta sort tilt (opt-in, default OFF)
+    # When enabled, blends net_elite_holders_delta z-score into sort anchor,
+    # following the coinvest pattern.  Positive-only: only boosts names with
+    # increasing institutional ownership, never penalises decreasing.
+    enable_institutional_sort_signal: bool = False
+    institutional_sort_weight: float = 0.3
+    institutional_positive_only: bool = True
+
     # Far-horizon catalyst (opt-in, off by default; set far_window_days > 0 to enable)
     far_window_days: int = 0                          # max PCD horizon for far_window mode (0 = off)
     far_window_decay_mult: float = 0.15               # catalyst_decay_w for far_window tickers
@@ -1179,12 +1187,24 @@ def compute_actionable_sort_key(
             cz_eff = max(-2.0, min(2.0, cz))
         coinvest_adj = rs.coinvest_sort_weight * cz_eff
 
+    # Institutional delta sort tilt: blended into anchor (same pattern).
+    # Uses cross-sectional z-score of net_elite_holders_delta.
+    # Clamped to ±2.0; positive-only default avoids penalising decreases.
+    inst_adj = 0.0
+    if rs.enable_institutional_sort_signal:
+        iz = _safe_float(decision_fields.get("inst_delta_z"), default=0.0)
+        if rs.institutional_positive_only:
+            iz_eff = min(2.0, max(0.0, iz))
+        else:
+            iz_eff = max(-2.0, min(2.0, iz))
+        inst_adj = rs.institutional_sort_weight * iz_eff
+
     # --- Mode dispatch ---
     # prefix is (is_eligible, is_dev, tier_ord) in dev_first mode
     # or (is_eligible, tier_ord, is_dev) in tier_first mode
     if mode == "tiebreaker":
         # anchor dominates after tier; priority only breaks ties
-        effective_comp_rank = anchor - clin_adj - coinvest_adj
+        effective_comp_rank = anchor - clin_adj - coinvest_adj - inst_adj
         return prefix + (
             effective_comp_rank,  # anchor with clinical tilt
             missing_count,  # fewer missing components first
@@ -1201,7 +1221,7 @@ def compute_actionable_sort_key(
         # Build bonus map from ruleset tuples
         bonus_map = dict(rs.catalyst_priority_rank_bonuses)
         bonus = bonus_map.get(cat_priority, 0.0)
-        effective_comp_rank = anchor - bonus - clin_adj - coinvest_adj
+        effective_comp_rank = anchor - bonus - clin_adj - coinvest_adj - inst_adj
         return prefix + (
             effective_comp_rank,  # anchor with bonus + clinical tilt
             missing_count,        # fewer missing components first
@@ -1215,7 +1235,7 @@ def compute_actionable_sort_key(
         )
 
     # mode == "off" (default)
-    effective_opt_neg = opt_neg - clin_adj - coinvest_adj  # higher cz → more negative → sorts earlier
+    effective_opt_neg = opt_neg - clin_adj - coinvest_adj - inst_adj  # higher z → more negative → sorts earlier
     return prefix + (
         cat_priority,       # 0 (neutral) — no effect on ordering
         cat_mode_ord,       # specific < blended < no_upcoming < missing

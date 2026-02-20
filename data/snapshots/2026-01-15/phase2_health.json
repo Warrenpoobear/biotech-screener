@@ -5,14 +5,15 @@
     "a_count": 25,
     "catalyst_coverage_pct": 84.5,
     "portfolio_size": 20,
-    "ruleset_id": "aa0aaf28",
-    "thresholds_id": "0dae2ff0",
+    "ruleset_id": "8f99d47e",
+    "thresholds_id": "74457e8f",
     "coverage_catalyst_pct": 100.0,
     "coverage_sponsor_pct": 100.0,
     "coverage_drawdown_pct": 99.4,
-    "portfolio_missing_count": 0
+    "portfolio_missing_count": 0,
+    "coinvest_coverage_pct": 82.3
   },
-  "thresholds_id": "0dae2ff0",
+  "thresholds_id": "74457e8f",
   "thresholds": {
     "fail_catalyst_coverage_min": 20.0,
     "fail_a_count_min": 1,

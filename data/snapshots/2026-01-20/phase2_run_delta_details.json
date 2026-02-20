@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-02-19T17:16:21Z",
+  "generated_at": "2026-02-20T21:16:37Z",
   "current": {
     "date": "2026-01-20",
-    "ruleset_id": "aa0aaf28",
+    "ruleset_id": "8f99d47e",
     "has_native_portfolio": true,
     "portfolio_size": 20
   },
@@ -38,7 +38,7 @@
       "TENX"
     ],
     "name_turnover_pct": 50.0,
-    "weight_l1_delta": 107.2
+    "weight_l1_delta": 109.1
   },
   "tier_distribution": {
     "current": {
@@ -228,13 +228,13 @@
   },
   "guardrails": {
     "passed": [
-      "Ruleset matches pinned Phase-2 ID (aa0aaf28)",
+      "Ruleset matches pinned Phase-2 ID (8f99d47e)",
       "A-tier count >= 1 (25)",
       "Catalyst coverage 84.5% >= 50.0%"
     ],
     "warnings": [
       "Name turnover 50.0% > 40.0%",
-      "Ruleset changed: 96f655ee -> aa0aaf28",
+      "Ruleset changed: 96f655ee -> 8f99d47e",
       "Name turnover 50.0% > 40.0% threshold"
     ]
   }

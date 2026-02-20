@@ -1,7 +1,7 @@
 {
   "snapshot_date": "2026-01-20",
   "decision_engine_version": "v1.3.0",
-  "ruleset_id": "aa0aaf28",
+  "ruleset_id": "8f99d47e",
   "top_k": 20,
   "tier_filter": [
     "A",
@@ -28,7 +28,7 @@
       "ticker": "CRVS",
       "company_name": "Corvus Pharmaceuticals, Inc.",
       "actionable_rank": 2,
-      "target_weight_pct": 6.45,
+      "target_weight_pct": 5.48,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -123,8 +123,8 @@
       "archetype": "drug_developer"
     },
     {
-      "ticker": "SION",
-      "company_name": "Sionna Therapeutics, Inc.",
+      "ticker": "ORKA",
+      "company_name": "Oruka Therapeutics, Inc.",
       "actionable_rank": 9,
       "target_weight_pct": 5.48,
       "tier_any": "A",
@@ -137,8 +137,8 @@
       "archetype": "drug_developer"
     },
     {
-      "ticker": "ORKA",
-      "company_name": "Oruka Therapeutics, Inc.",
+      "ticker": "SION",
+      "company_name": "Sionna Therapeutics, Inc.",
       "actionable_rank": 10,
       "target_weight_pct": 5.48,
       "tier_any": "A",
@@ -151,23 +151,9 @@
       "archetype": "drug_developer"
     },
     {
-      "ticker": "FDMT",
-      "company_name": "4D Molecular Therapeutics, Inc.",
-      "actionable_rank": 11,
-      "target_weight_pct": 0.68,
-      "tier_any": "A",
-      "tier_dev": "A",
-      "tier_commercial": "",
-      "size_band": "XS",
-      "catalyst_days": 132,
-      "catalyst_mode": "specific_days",
-      "mom_state": "headwind",
-      "archetype": "drug_developer"
-    },
-    {
       "ticker": "DNTH",
       "company_name": "Dianthus Therapeutics, Inc.",
-      "actionable_rank": 12,
+      "actionable_rank": 11,
       "target_weight_pct": 5.48,
       "tier_any": "A",
       "tier_dev": "A",
@@ -179,23 +165,9 @@
       "archetype": "drug_developer"
     },
     {
-      "ticker": "OCGN",
-      "company_name": "Ocugen, Inc.",
-      "actionable_rank": 13,
-      "target_weight_pct": 1.35,
-      "tier_any": "A",
-      "tier_dev": "A",
-      "tier_commercial": "",
-      "size_band": "S",
-      "catalyst_days": 28,
-      "catalyst_mode": "specific_days",
-      "mom_state": "neutral",
-      "archetype": "drug_developer"
-    },
-    {
       "ticker": "CNTA",
       "company_name": "Centessa Pharmaceuticals plc",
-      "actionable_rank": 14,
+      "actionable_rank": 12,
       "target_weight_pct": 5.48,
       "tier_any": "A",
       "tier_dev": "A",
@@ -209,7 +181,7 @@
     {
       "ticker": "CGON",
       "company_name": "CG Oncology, Inc.",
-      "actionable_rank": 15,
+      "actionable_rank": 13,
       "target_weight_pct": 5.48,
       "tier_any": "A",
       "tier_dev": "A",
@@ -218,6 +190,34 @@
       "catalyst_days": 132,
       "catalyst_mode": "specific_days",
       "mom_state": "tailwind",
+      "archetype": "drug_developer"
+    },
+    {
+      "ticker": "FDMT",
+      "company_name": "4D Molecular Therapeutics, Inc.",
+      "actionable_rank": 14,
+      "target_weight_pct": 0.68,
+      "tier_any": "A",
+      "tier_dev": "A",
+      "tier_commercial": "",
+      "size_band": "XS",
+      "catalyst_days": 132,
+      "catalyst_mode": "specific_days",
+      "mom_state": "headwind",
+      "archetype": "drug_developer"
+    },
+    {
+      "ticker": "OCGN",
+      "company_name": "Ocugen, Inc.",
+      "actionable_rank": 15,
+      "target_weight_pct": 1.35,
+      "tier_any": "A",
+      "tier_dev": "A",
+      "tier_commercial": "",
+      "size_band": "S",
+      "catalyst_days": 28,
+      "catalyst_mode": "specific_days",
+      "mom_state": "neutral",
       "archetype": "drug_developer"
     },
     {
@@ -280,7 +280,7 @@
       "ticker": "ERAS",
       "company_name": "Erasca, Inc.",
       "actionable_rank": 20,
-      "target_weight_pct": 5.48,
+      "target_weight_pct": 6.45,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",

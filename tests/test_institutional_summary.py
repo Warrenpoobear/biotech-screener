@@ -115,7 +115,7 @@ class TestSchemaContract:
         ])
         result = build_institutional_summary("2026-01-01", {"AAAA"}, cache_base_dir=tmp_path)
         per_ticker_keys = {
-            "elite_holders_count", "elite_holder_names",
+            "elite_holders_count", "elite_holder_names", "elite_holder_shares",
             "elite_total_shares", "elite_total_value_usd_thousands",
             "inst_score_raw", "inst_score_z",
         }
@@ -300,12 +300,42 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
 from run_daily_production import check_institutional_summary
 
 
-def _write_sidecar(snap_dir, *, coverage_pct=57.0, tickers_with=201,
+def _write_sidecar(snap_dir, *, coverage_pct=None, tickers_with=201,
                    tickers_total=353, managers_used=29, managers_total=29,
                    schema_version=None):
-    """Write a minimal institutional_summary.json sidecar for gate testing."""
+    """Write a valid institutional_summary.json sidecar for gate testing.
+
+    Generates synthetic per-ticker data matching the specified counts.
+    If coverage_pct is None, auto-compute from tickers_with/tickers_total.
+    """
     if schema_version is None:
         schema_version = SCHEMA_VERSION
+    if coverage_pct is None:
+        coverage_pct = round(tickers_with / tickers_total * 100, 2) if tickers_total > 0 else 0.0
+    # Build synthetic tickers dict matching the counts
+    tickers = {}
+    for i in range(tickers_total):
+        tk = f"T{i:04d}"
+        if i < tickers_with:
+            tickers[tk] = {
+                "elite_holders_count": 1,
+                "elite_holder_names": ["SynFund"],
+                "elite_holder_shares": {"SynFund": 100},
+                "elite_total_shares": 100,
+                "elite_total_value_usd_thousands": 10,
+                "inst_score_raw": 1,
+                "inst_score_z": 0.0,
+            }
+        else:
+            tickers[tk] = {
+                "elite_holders_count": 0,
+                "elite_holder_names": [],
+                "elite_holder_shares": {},
+                "elite_total_shares": 0,
+                "elite_total_value_usd_thousands": 0,
+                "inst_score_raw": 0,
+                "inst_score_z": 0.0,
+            }
     data = {
         "schema_version": schema_version,
         "version": "1.0.0",
@@ -318,7 +348,7 @@ def _write_sidecar(snap_dir, *, coverage_pct=57.0, tickers_with=201,
         "tickers_with_signal": tickers_with,
         "tickers_in_universe": tickers_total,
         "signal_coverage_pct": coverage_pct,
-        "tickers": {},
+        "tickers": tickers,
     }
     snap_dir.mkdir(parents=True, exist_ok=True)
     with open(snap_dir / "institutional_summary.json", "w") as f:
@@ -329,14 +359,14 @@ class TestInstitutionalSummaryGate:
     """check_institutional_summary() gate function."""
 
     def test_pass_above_threshold(self, tmp_path):
-        _write_sidecar(tmp_path, coverage_pct=57.0)
+        _write_sidecar(tmp_path)  # defaults: 201/353 → ~56.94%
         result = check_institutional_summary(tmp_path, warn_coverage_pct=50.0)
         assert result.status == "PASS"
         assert result.name == "institutional_summary"
-        assert result.value["coverage_pct"] == 57.0
+        assert result.value["coverage_pct"] > 50.0
 
     def test_warn_below_threshold(self, tmp_path):
-        _write_sidecar(tmp_path, coverage_pct=45.0)
+        _write_sidecar(tmp_path, tickers_with=100, tickers_total=353)
         result = check_institutional_summary(tmp_path, warn_coverage_pct=50.0)
         assert result.status == "WARN"
         assert "below" in result.detail
@@ -358,13 +388,62 @@ class TestInstitutionalSummaryGate:
         _write_sidecar(tmp_path, schema_version="wrong.v99")
         result = check_institutional_summary(tmp_path)
         assert result.status == "WARN"
-        assert "schema mismatch" in result.detail
+        assert "schema invalid" in result.detail
 
     def test_value_fields(self, tmp_path):
-        _write_sidecar(tmp_path, coverage_pct=60.0, tickers_with=200,
+        _write_sidecar(tmp_path, tickers_with=200,
                        tickers_total=350, managers_used=28, managers_total=29)
         result = check_institutional_summary(tmp_path, warn_coverage_pct=50.0)
         assert result.value["tickers_with_signal"] == 200
         assert result.value["tickers_in_universe"] == 350
         assert result.value["managers_used"] == 28
         assert result.value["expected_managers"] == 29
+
+
+class TestEliteHolderShares:
+    """elite_holder_shares field: all holders, sorted by name."""
+
+    def test_field_present_and_sorted(self, tmp_path):
+        _write_cache(tmp_path, "2026-01-01", [
+            ("0000000001", "Zeta Fund", [_holding("AAAA", shares=500)]),
+            ("0000000002", "Alpha Fund", [_holding("AAAA", shares=300)]),
+        ])
+        result = build_institutional_summary("2026-01-01", {"AAAA"}, cache_base_dir=tmp_path)
+        shares = result["tickers"]["AAAA"]["elite_holder_shares"]
+        assert isinstance(shares, dict)
+        # Sorted by name → Alpha Fund before Zeta Fund
+        assert list(shares.keys()) == ["Alpha Fund", "Zeta Fund"]
+        assert shares["Zeta Fund"] == 500
+        assert shares["Alpha Fund"] == 300
+
+    def test_all_holders_not_capped_at_10(self, tmp_path):
+        managers = []
+        for i in range(15):
+            cik = f"{i + 1:010d}"
+            managers.append((cik, f"Manager {i:02d}", [_holding("AAAA", shares=100 * (i + 1))]))
+        _write_cache(tmp_path, "2026-01-01", managers)
+        result = build_institutional_summary("2026-01-01", {"AAAA"}, cache_base_dir=tmp_path)
+        shares = result["tickers"]["AAAA"]["elite_holder_shares"]
+        # All 15 holders present (not capped at 10 like elite_holder_names)
+        assert len(shares) == 15
+        # But names ARE capped at 10
+        assert len(result["tickers"]["AAAA"]["elite_holder_names"]) == 10
+
+    def test_unheld_ticker_empty_dict(self, tmp_path):
+        _write_cache(tmp_path, "2026-01-01", [
+            ("0000000001", "Mgr A", [_holding("AAAA")]),
+        ])
+        result = build_institutional_summary("2026-01-01", {"AAAA", "XXXX"}, cache_base_dir=tmp_path)
+        assert result["tickers"]["XXXX"]["elite_holder_shares"] == {}
+
+    def test_multi_line_shares_aggregated(self, tmp_path):
+        holdings = [
+            _holding("AAAA", shares=500, value=50),
+            _holding("AAAA", shares=300, value=30),
+        ]
+        _write_cache(tmp_path, "2026-01-01", [
+            ("0000000001", "Mgr A", holdings),
+        ])
+        result = build_institutional_summary("2026-01-01", {"AAAA"}, cache_base_dir=tmp_path)
+        shares = result["tickers"]["AAAA"]["elite_holder_shares"]
+        assert shares["Mgr A"] == 800

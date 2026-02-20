@@ -1351,6 +1351,10 @@ SNAPSHOT_COLUMNS = [
     "coinvest_tier1_conviction",
     "coinvest_max_position_pct",
     "coinvest_filing_age_days",
+    "inst_delta_z",       # z of net_elite_holders_delta (cross-sectional, ddof=0)
+    "inst_delta_net",     # raw net_elite_holders_delta
+    "inst_delta_new",     # elite_new_count
+    "inst_delta_exit",    # elite_exit_count
     "catalyst_strength",
     "catalyst_decay_w",
     "runway_bucket",
@@ -3169,6 +3173,50 @@ def save_validation_snapshot(
                 _t1_int = int(_cv) if _cv == _cv else 0
                 csv_rows[_ci]["coinvest_tag"] = f"elite_{_t1_int}" if _t1_int > 0 else ""
 
+    # --- Compute institutional summary + delta (for z-score, written as sidecar later) ---
+    inst_summary = None
+    inst_delta = None
+    if decision_mode == "phase2":
+        try:
+            from institutional_summary import (
+                build_institutional_summary,
+                compute_institutional_delta,
+                _find_prior_institutional_summary,
+            )
+            _uni_tickers = {r.get("ticker", "") for r in csv_rows if r.get("ticker")}
+            inst_summary = build_institutional_summary(as_of_date, _uni_tickers)
+            if inst_summary:
+                prior_inst = _find_prior_institutional_summary(snapshot_dir, as_of_date)
+                if prior_inst:
+                    inst_delta = compute_institutional_delta(inst_summary, prior_inst)
+        except Exception as e:
+            logger.warning("Could not compute institutional summary/delta: %s", e)
+
+    # --- Institutional delta z-score: cross-sectional z of net_elite_holders_delta ---
+    if inst_delta:
+        _id_pairs = []
+        for _di, _dr in enumerate(csv_rows):
+            _tk = _dr.get("ticker", "")
+            _tk_delta = inst_delta.get("tickers", {}).get(_tk, {})
+            _net = _tk_delta.get("net_elite_holders_delta", 0)
+            csv_rows[_di]["inst_delta_net"] = _net
+            csv_rows[_di]["inst_delta_new"] = _tk_delta.get("elite_new_count", 0)
+            csv_rows[_di]["inst_delta_exit"] = _tk_delta.get("elite_exit_count", 0)
+            _id_pairs.append((_di, float(_net)))
+        # z-score (ddof=0)
+        _id_vals = [v for _, v in _id_pairs]
+        _id_mean = sum(_id_vals) / len(_id_vals)
+        _id_var = sum((v - _id_mean) ** 2 for v in _id_vals) / len(_id_vals)
+        _id_std = _id_var ** 0.5
+        for _di, _dv in _id_pairs:
+            csv_rows[_di]["inst_delta_z"] = round((_dv - _id_mean) / _id_std, 4) if _id_std > 0 else 0.0
+    else:
+        for _dr in csv_rows:
+            _dr.setdefault("inst_delta_z", 0.0)
+            _dr.setdefault("inst_delta_net", 0)
+            _dr.setdefault("inst_delta_new", 0)
+            _dr.setdefault("inst_delta_exit", 0)
+
     # --- Clinical adjustment telemetry (mirrors DE formula, for monitoring) ---
     _clin_adj_dev = 0
     _clin_adj_comm = 0
@@ -3354,22 +3402,32 @@ def save_validation_snapshot(
         logger.warning("Could not write catalyst_shadow_metrics.json: %s", e)
 
     # --- Write institutional summary sidecar (phase2 only) ---
-    if decision_mode == "phase2":
+    # inst_summary and inst_delta already computed above (before sort)
+    if decision_mode == "phase2" and inst_summary:
         try:
-            from institutional_summary import build_institutional_summary
-            _uni_tickers = {r.get("ticker", "") for r in csv_rows if r.get("ticker")}
-            inst_summary = build_institutional_summary(as_of_date, _uni_tickers)
-            if inst_summary:
-                with open(snap_path / "institutional_summary.json", "w", encoding="utf-8") as f:
-                    json.dump(inst_summary, f, indent=2, sort_keys=False)
-                    f.write("\n")
-                logger.info(
-                    "[INST] Institutional summary: %d/%d tickers",
-                    inst_summary["tickers_with_signal"],
-                    inst_summary["tickers_in_universe"],
-                )
+            with open(snap_path / "institutional_summary.json", "w", encoding="utf-8") as f:
+                json.dump(inst_summary, f, indent=2, sort_keys=False)
+                f.write("\n")
+            logger.info(
+                "[INST] Institutional summary: %d/%d tickers",
+                inst_summary["tickers_with_signal"],
+                inst_summary["tickers_in_universe"],
+            )
         except Exception as e:
             logger.warning("Could not write institutional_summary.json: %s", e)
+        if inst_delta:
+            try:
+                with open(snap_path / "institutional_summary_delta.json", "w", encoding="utf-8") as f:
+                    json.dump(inst_delta, f, indent=2, sort_keys=False)
+                    f.write("\n")
+                logger.info(
+                    "[INST] Delta: %s → %s, %d common tickers",
+                    inst_delta.get("prior_date", "?"),
+                    inst_delta.get("as_of_date", "?"),
+                    inst_delta.get("tickers_common", 0),
+                )
+            except Exception as e:
+                logger.warning("Could not write institutional_summary_delta.json: %s", e)
 
     # --- Write decision ruleset sidecar JSON for reproducibility ---
     rs = ruleset or DEFAULT_RULESET
