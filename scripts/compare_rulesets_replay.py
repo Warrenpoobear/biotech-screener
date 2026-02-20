@@ -424,6 +424,13 @@ def main(argv=None) -> int:
         if n_comm_filled:
             print(f"[INFO] Backfilled clinical_score_z_tier for {n_comm_filled} commercial tickers (ddof=0)")
 
+    # Backfill institutional delta columns (cold-start: 0 when no delta sidecar)
+    for col, default in [("inst_delta_z", 0.0), ("inst_delta_net", 0),
+                         ("inst_delta_new", 0), ("inst_delta_exit", 0)]:
+        if col not in rankings.columns:
+            rankings[col] = default
+            print(f"[INFO] Backfilled {col} with {default} (no delta sidecar)")
+
     baseline_rs = DecisionRuleset.from_json(args.baseline_ruleset)
     candidate_rs = DecisionRuleset.from_json(args.candidate_ruleset)
 
