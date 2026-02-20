@@ -447,6 +447,7 @@ class TestPipelineIntegration:
             enable_coinvest=False,
             enable_enhancements=False,
             enable_short_interest=False,
+            ctgov_cache_dir=False,
         )
 
         # Second run with identical inputs
@@ -456,6 +457,7 @@ class TestPipelineIntegration:
             enable_coinvest=False,
             enable_enhancements=False,
             enable_short_interest=False,
+            ctgov_cache_dir=False,
         )
 
         # NOTE: The first run creates output files (catalyst_events_*.json) in data_dir.
@@ -508,6 +510,7 @@ class TestPipelineIntegration:
             enable_coinvest=False,
             enable_enhancements=False,
             enable_short_interest=False,
+            ctgov_cache_dir=False,
         )
 
         # Verify checkpoint files were created
@@ -527,6 +530,7 @@ class TestPipelineIntegration:
             enable_coinvest=False,
             enable_enhancements=False,
             enable_short_interest=False,
+            ctgov_cache_dir=False,
         )
 
         # Verify module_1 and module_2 results match (reused from checkpoints)

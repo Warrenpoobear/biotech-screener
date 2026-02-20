@@ -21,12 +21,29 @@ Usage:
 import hashlib
 import json
 import logging
+import re
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
+
+_YYYY_MM_RE = re.compile(r"^\d{4}-\d{2}$")
+
+
+def _normalize_iso_date(raw: str) -> str:
+    """Normalize a date string to YYYY-MM-DD.
+
+    ClinicalTrials.gov sometimes provides month-precision dates like
+    '2028-11' instead of '2028-11-01'.  Append '-01' for these so that
+    ``date.fromisoformat()`` can parse them.  Full YYYY-MM-DD strings
+    are returned unchanged.
+    """
+    s = raw.strip()[:10]
+    if _YYYY_MM_RE.match(s):
+        s = s + "-01"
+    return s
 
 # Project root (where this script lives)
 _PROJECT_ROOT = Path(__file__).parent
@@ -110,8 +127,11 @@ class LedgerConfig:
     strict_ctgov: bool = False
 
     def __post_init__(self):
+        # ctgov_cache_dir=False means "disabled" — skip auto-detection
         if self.ctgov_cache_dir is None:
             self.ctgov_cache_dir = _PROJECT_ROOT / "cache" / "ctgov"
+        elif self.ctgov_cache_dir is False:
+            self.ctgov_cache_dir = None
         if self.sec_cache_dir is None:
             self.sec_cache_dir = _PROJECT_ROOT / "cache" / "sec" / "8k_catalysts"
         if self.fda_cache_dir is None:
@@ -170,7 +190,7 @@ def _load_ctgov_events(
             continue
 
         # Primary completion date
-        pcd = (rec.get("primary_completion_date") or "")[:10]
+        pcd = _normalize_iso_date(rec.get("primary_completion_date") or "")
         if pcd:
             eid = compute_event_id(
                 "CTGOV", nct_id, ticker, "CLINICAL_PCD",
@@ -188,7 +208,7 @@ def _load_ctgov_events(
             ))
 
         # Completion date fallback
-        cd = (rec.get("completion_date") or "")[:10]
+        cd = _normalize_iso_date(rec.get("completion_date") or "")
         if cd and cd != pcd:
             eid = compute_event_id(
                 "CTGOV", nct_id, ticker, "CLINICAL_CD",
@@ -502,15 +522,18 @@ def build_event_ledger(
     as_of_str = as_of_date.isoformat()
     all_entries: List[LedgerEntry] = []
 
-    # 1. CTGov trials
-    try:
-        ctgov = _load_ctgov_events(as_of_date, config.ctgov_cache_dir, config.strict_ctgov, config.data_dir)
-        all_entries.extend(ctgov)
-        logger.info("Ledger: %d CTGov entries loaded", len(ctgov))
-    except FileNotFoundError:
-        raise  # strict mode — let it propagate
-    except Exception as e:
-        logger.warning("Ledger: CTGov load failed: %s", e)
+    # 1. CTGov trials (skipped when ctgov_cache_dir was disabled)
+    if config.ctgov_cache_dir is not None:
+        try:
+            ctgov = _load_ctgov_events(as_of_date, config.ctgov_cache_dir, config.strict_ctgov, config.data_dir)
+            all_entries.extend(ctgov)
+            logger.info("Ledger: %d CTGov entries loaded", len(ctgov))
+        except FileNotFoundError:
+            raise  # strict mode — let it propagate
+        except Exception as e:
+            logger.warning("Ledger: CTGov load failed: %s", e)
+    else:
+        logger.info("Ledger: CTGov cache disabled, skipping")
 
     # 2. SEC 8-K
     try:
@@ -594,12 +617,14 @@ def query_nearest_catalyst(
         if entry.date_precision == "DAY":
             if not entry.event_date or entry.event_date <= as_of_str:
                 continue
-            days = (date.fromisoformat(entry.event_date) - as_of_date).days
+            ed = _normalize_iso_date(entry.event_date)
+            days = (date.fromisoformat(ed) - as_of_date).days
         else:
             # QUARTER/MONTH/HALF_YEAR: use event_date_end
             end = entry.event_date_end or entry.event_date
             if not end or end < as_of_str:
                 continue
+            end = _normalize_iso_date(end)
             days = (date.fromisoformat(end) - as_of_date).days
 
         candidates.append((days, entry))

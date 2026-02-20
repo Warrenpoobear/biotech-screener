@@ -5140,12 +5140,14 @@ def _build_m3_config(
     sec_8k_mode: str = "cache_only",
     sec_multi_form_mode: str = "cache_only",
     fda_regulatory_mode: str = "cache_only",
+    ctgov_cache_dir=None,
 ) -> 'Module3Config':
     """Build Module3Config, optionally overriding SEC 8-K mode."""
     cfg = Module3Config()
     cfg.enable_sec_8k_catalysts = sec_8k_mode
     cfg.enable_sec_multi_form = sec_multi_form_mode
     cfg.enable_fda_regulatory = fda_regulatory_mode
+    cfg.ctgov_cache_dir = ctgov_cache_dir
     return cfg
 
 
@@ -5737,7 +5739,7 @@ def run_screening_pipeline(
             active_tickers=full_universe_tickers,  # FULL universe, not filtered active_tickers
             as_of_date=as_of_date_obj,  # Date object
             market_calendar=SimpleMarketCalendar(),  # Market calendar for weekends
-            config=_build_m3_config(sec_8k_mode, sec_multi_form_mode, fda_regulatory_mode),
+            config=_build_m3_config(sec_8k_mode, sec_multi_form_mode, fda_regulatory_mode, ctgov_cache_dir=ctgov_cache_dir),
             output_dir=output_dir,  # Output directory for catalyst_events_*.json
             pit_mode=pit_mode,
         )

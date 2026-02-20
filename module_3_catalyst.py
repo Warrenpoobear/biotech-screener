@@ -137,6 +137,9 @@ class Module3Config:
         # FDA regulatory notices config (approvals, CRLs, etc. from Federal Register)
         self.enable_fda_regulatory: str = "off"
 
+        # CTGov cache override: None=auto-detect from repo, False=disable
+        self.ctgov_cache_dir: Optional[Any] = None
+
     @classmethod
     def from_dict(cls, config_dict: Dict[str, Any]) -> 'Module3Config':
         """Create config from dict"""
@@ -1820,9 +1823,15 @@ def compute_module_3_catalyst(
     _event_ledger = None
     try:
         from event_ledger import build_event_ledger, LedgerConfig
-        _ctgov_dir = Path(__file__).parent / "cache" / "ctgov"
+        if config.ctgov_cache_dir is False:
+            _ctgov_dir = False  # sentinel: disable ctgov cache in LedgerConfig
+        elif config.ctgov_cache_dir:
+            _ctgov_dir = Path(config.ctgov_cache_dir)
+        else:
+            _auto = Path(__file__).parent / "cache" / "ctgov"
+            _ctgov_dir = _auto if _auto.exists() else None
         _ledger_config = LedgerConfig(
-            ctgov_cache_dir=_ctgov_dir if _ctgov_dir.exists() else None,
+            ctgov_cache_dir=_ctgov_dir,
             sec_cache_dir=Path(config.sec_8k_cache_dir),
             fda_cache_dir=Path(config.fda_adcom_cache_dir),
             data_dir=data_dir,
