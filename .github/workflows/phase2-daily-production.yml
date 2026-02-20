@@ -156,6 +156,8 @@ jobs:
             ARGS="$ARGS --allow-date-fallback"
           fi
 
+          ARGS="$ARGS --drift-thresholds production_data/drift_thresholds/v1_drift_monitoring.json"
+
           set +e
           python tools/run_daily_production.py $ARGS 2>&1 | tee "$LOG"
           RC=${PIPESTATUS[0]}
@@ -260,6 +262,10 @@ jobs:
               for g in gates:
                   icon = {'PASS': ':white_check_mark:', 'WARN': ':warning:', 'FAIL': ':x:'}.get(g['status'], '')
                   print(f'| {g[\"name\"]} | {icon} {g[\"status\"]} | {g.get(\"detail\", \"\")} |')
+          # Emit per-gate ::warning:: for any WARN gates
+          for g in gates:
+              if g['status'] == 'WARN':
+                  print(f'::warning::{g[\"name\"]}: {g.get(\"detail\", \"\")}')
           # Emit status on stderr for shell to capture
           print(ms, file=sys.stderr)
           " >> "$GITHUB_STEP_SUMMARY" 2>/tmp/_manifest_status)

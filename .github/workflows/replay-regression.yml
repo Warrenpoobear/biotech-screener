@@ -132,7 +132,21 @@ jobs:
           # Don't fail yet — routing step handles exit code
           exit 0
 
-      # ── Upload diff report ─────────────────────────────────────────
+      # ── Run drift check vs golden baseline ────────────────────────
+      - name: Run drift check vs golden baseline
+        if: steps.bundle.outputs.skip != 'true'
+        id: drift
+        run: |
+          set +e
+          python tools/check_drift_cli.py \
+            --current-csv "/tmp/candidate/${{ steps.bundle.outputs.as_of_date }}/rankings.csv" \
+            --prior-csv "${{ steps.baseline.outputs.baseline_dir }}/rankings.csv" \
+            --output-dir output/ \
+            --thresholds production_data/drift_thresholds/v1_drift_monitoring.json
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      # ── Upload diff + drift reports ─────────────────────────────────
       - name: Upload diff artifacts
         if: steps.bundle.outputs.skip != 'true' && always()
         uses: actions/upload-artifact@v4
@@ -141,6 +155,8 @@ jobs:
           path: |
             output/diff_report.json
             output/diff_report.md
+            output/drift_report.json
+            output/drift_report.md
           retention-days: 30
 
       # ── Exit code routing ──────────────────────────────────────────
@@ -148,6 +164,16 @@ jobs:
         if: steps.bundle.outputs.skip != 'true'
         run: |
           RC=${{ steps.diff.outputs.exit_code }}
+          DRIFT_RC=${{ steps.drift.outputs.exit_code }}
+
+          # Drift is advisory — WARN only, never fail the PR
+          if [ "$DRIFT_RC" = "2" ]; then
+            echo "::warning::Drift check: WARN — review drift_report.md artifact for details"
+          elif [ "$DRIFT_RC" = "0" ]; then
+            echo "Drift check: OK"
+          else
+            echo "::warning::Drift check: unexpected exit code $DRIFT_RC"
+          fi
 
           if [ "$RC" = "0" ]; then
             echo "Replay regression: OK"
