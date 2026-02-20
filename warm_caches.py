@@ -12,6 +12,7 @@ Usage:
     python warm_caches.py --sources fda_adcom      # warm only FDA ADCOM
     python warm_caches.py --sources sec_8k         # warm only SEC 8-K
     python warm_caches.py --sources ctgov          # warm only CTGov PIT cache
+    python warm_caches.py --sources sec_13f               # warm only SEC 13F
     python warm_caches.py --sources fda_adcom,sec_8k,ctgov  # all three
 
 Cache files are written to:
@@ -262,6 +263,15 @@ def warm_sec_8k_delta(
     return len(final)
 
 
+def warm_sec_13f(as_of_date: date, data_dir: Path, cache_dir: Path | None = None) -> int:
+    """Warm SEC 13F cache for elite managers. Returns count of managers with filings."""
+    from tools.warm_13f_cache import warm_13f_cache
+
+    out_dir = cache_dir or (PROJECT_ROOT / "data" / "caches" / "sec_13f" / "PIT" / as_of_date.isoformat())
+    result = warm_13f_cache(as_of_date=as_of_date, out_dir=out_dir, elite_only=True)
+    return result.get("managers_with_filing", 0)
+
+
 def warm_event_ledger(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
     """Build and write event_ledger_{as_of_date}.jsonl from existing caches.
 
@@ -301,7 +311,7 @@ def main():
         "--sources",
         type=str,
         default="fda_adcom,sec_8k",
-        help="Comma-separated sources to warm: fda_adcom,sec_8k,ctgov,event_ledger (default: fda_adcom,sec_8k)",
+        help="Comma-separated sources to warm: fda_adcom,sec_8k,ctgov,sec_13f,event_ledger (default: fda_adcom,sec_8k)",
     )
     parser.add_argument(
         "--data-dir",
@@ -326,6 +336,12 @@ def main():
         type=str,
         default=None,
         help="Path to prior date's 8-K cache for delta warming",
+    )
+    parser.add_argument(
+        "--sec-13f-cache-dir",
+        type=str,
+        default=None,
+        help="SEC 13F PIT cache output directory (default: data/caches/sec_13f/PIT/{date})",
     )
 
     args = parser.parse_args()
@@ -356,6 +372,14 @@ def main():
         except Exception as e:
             logger.error(f"SEC 8-K warm failed: {e}")
 
+    sec_13f_count = 0
+    if "sec_13f" in sources:
+        try:
+            cache_dir_13f = Path(args.sec_13f_cache_dir) if args.sec_13f_cache_dir else None
+            sec_13f_count = warm_sec_13f(as_of, data_dir, cache_dir=cache_dir_13f)
+        except Exception as e:
+            logger.error(f"SEC 13F warm failed: {e}")
+
     ctgov_records = 0
     if "ctgov" in sources:
         try:
@@ -373,6 +397,8 @@ def main():
             logger.error(f"Event ledger warm failed: {e}")
 
     parts = [f"{total} events"]
+    if sec_13f_count:
+        parts.append(f"{sec_13f_count} 13F managers")
     if ctgov_records:
         parts.append(f"{ctgov_records} CTGov records")
     if ledger_entries:

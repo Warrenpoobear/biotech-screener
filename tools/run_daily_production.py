@@ -57,6 +57,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "turnover",
     "drift_monitoring",
     "ctgov_pit_dates",
+    "sec_13f_cache",
 })
 
 # Required fields in each market_data.json record for schema gate
@@ -97,6 +98,9 @@ class GateConfig:
 
     market_data_min_coverage: float = 0.90
     """Min fraction of universe tickers that must have market_data records."""
+
+    sec_13f_coverage_warn_pct: float = 80.0
+    """Min 13F manager coverage (%) before WARN. Never FAIL."""
 
     @staticmethod
     def from_json(path: Path) -> "GateConfig":
@@ -789,6 +793,64 @@ def check_ctgov_pit_dates(
         detail=", ".join(detail_parts),
         value=coverage,
         threshold=thresholds,
+    )
+
+
+# ---------------------------------------------------------------------------
+# SEC 13F cache gate (WARN-only)
+# ---------------------------------------------------------------------------
+
+def check_sec_13f_cache(
+    as_of_date: str,
+    *,
+    cache_base_dir: Optional[Path] = None,
+    warn_coverage_pct: float = 80.0,
+) -> GateResult:
+    """Validate 13F PIT cache coverage. WARN-only — never FAIL."""
+    base = cache_base_dir or (REPO_ROOT / "data" / "caches" / "sec_13f" / "PIT")
+    index_path = base / as_of_date / "index.json"
+
+    if not index_path.exists():
+        return GateResult(
+            name="sec_13f_cache", status="WARN",
+            detail=f"No 13F cache index at {index_path}",
+            threshold={"warn_coverage_pct": warn_coverage_pct},
+        )
+
+    try:
+        with open(index_path) as f:
+            index = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(
+            name="sec_13f_cache", status="WARN",
+            detail=f"Cannot read 13F cache index: {e}",
+            threshold={"warn_coverage_pct": warn_coverage_pct},
+        )
+
+    coverage = index.get("coverage_pct", 0.0)
+    managers_ok = index.get("managers_with_filing", 0)
+    total = index.get("total_managers", 0)
+
+    detail_parts = [
+        f"coverage={coverage:.1f}%",
+        f"({managers_ok}/{total} managers)",
+    ]
+
+    value = {"coverage_pct": coverage, "managers_ok": managers_ok, "total": total}
+    threshold = {"warn_coverage_pct": warn_coverage_pct}
+
+    if coverage < warn_coverage_pct:
+        detail_parts.append(f"below {warn_coverage_pct:.0f}% threshold")
+        return GateResult(
+            name="sec_13f_cache", status="WARN",
+            detail=", ".join(detail_parts),
+            value=value, threshold=threshold,
+        )
+
+    return GateResult(
+        name="sec_13f_cache", status="PASS",
+        detail=", ".join(detail_parts),
+        value=value, threshold=threshold,
     )
 
 
@@ -1622,6 +1684,13 @@ def run_daily(
     pit_dates_gate = check_ctgov_pit_dates(_cache_dir, as_of_date)
     gate_results.append(pit_dates_gate)
     print(f"  CTGov PIT dates gate: {pit_dates_gate.status} — {pit_dates_gate.detail}")
+
+    # --- Gate: sec_13f_cache (WARN-only) ---
+    sec_13f_gate = check_sec_13f_cache(
+        as_of_date, warn_coverage_pct=config.sec_13f_coverage_warn_pct,
+    )
+    gate_results.append(sec_13f_gate)
+    print(f"  13F cache gate: {sec_13f_gate.status} — {sec_13f_gate.detail}")
 
     # --- Step 5: Build manifest ---
     print(f"\n[5/5] Building run manifest ...")

@@ -124,6 +124,20 @@ jobs:
             }
           fi
 
+      # ── Warm 13F cache ──────────────────────────────────────────
+      - name: Warm 13F cache
+        run: |
+          DATE="${{ steps.date.outputs.as_of_date }}"
+          INDEX="data/caches/sec_13f/PIT/${DATE}/index.json"
+          if [ -f "$INDEX" ]; then
+            echo "13F cache already exists for ${DATE}"
+          else
+            echo "Warming 13F cache for ${DATE}..."
+            python tools/warm_13f_cache.py --as-of-date "$DATE" --elite-only --max-workers 2 || {
+              echo "::warning::13F cache warming failed — sec_13f_cache gate will WARN"
+            }
+          fi
+
       # ── Production daily run (includes audit + all gates) ──────
       # NOTE: nothing above this step should create files in-repo,
       # otherwise git_pre_run will report dirty=true from CI artifacts.
