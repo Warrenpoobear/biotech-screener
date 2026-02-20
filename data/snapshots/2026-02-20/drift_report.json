@@ -13,16 +13,16 @@
   "prior_date": "2026-02-19",
   "metrics": {
     "top20_overlap_pct": 90.48,
-    "top60_overlap_pct": 96.72,
-    "rank_spearman_rho": 0.9979,
-    "mean_abs_rank_delta_top60": 1.67,
-    "tier_migration_count": 1,
-    "eligibility_change_count": 0,
+    "top60_overlap_pct": 93.55,
+    "rank_spearman_rho": 0.9989,
+    "mean_abs_rank_delta_top60": 0.78,
+    "tier_migration_count": 6,
+    "eligibility_change_count": 7,
     "top20_entrants": [
-      "OCGN"
+      "CCCC"
     ],
     "top20_exits": [
-      "CELC"
+      "ZBIO"
     ],
     "rank_column_current": "actionable_rank",
     "rank_column_prior": "actionable_rank",

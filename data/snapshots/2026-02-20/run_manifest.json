@@ -3,13 +3,13 @@
   "requested_as_of_date": "2026-02-20",
   "effective_as_of_date": "2026-02-20",
   "as_of_date": "2026-02-20",
-  "generated_at": "2026-02-20T15:24:24.818442+00:00",
+  "generated_at": "2026-02-20T22:32:39.495681+00:00",
   "git": {
     "branch": "main",
-    "commit_sha": "3de132bf6dca3146c9f43bfecd75f4d278b9dcec",
-    "dirty": false,
-    "dirty_pre_run": false,
-    "dirty_post_run": false
+    "commit_sha": "120ad53560ff0f391c2a478f0db281ce7e26a92e",
+    "dirty": true,
+    "dirty_pre_run": true,
+    "dirty_post_run": true
   },
   "ruleset": {
     "ruleset_version": "1.6.0",
@@ -23,11 +23,11 @@
     "active_universe": 327
   },
   "price_refresh": {
-    "n_extended": null,
-    "n_rows_appended": null,
-    "n_failed": null,
+    "n_extended": 355,
+    "n_rows_appended": 343,
+    "n_failed": 0,
     "failed_tickers": [],
-    "xbi_last_date": "2026-02-19"
+    "xbi_last_date": "2026-02-20"
   },
   "market_data_refresh": {
     "collected_at": "2026-02-19",
@@ -41,8 +41,8 @@
     {
       "name": "xbi_staleness",
       "status": "PASS",
-      "detail": "XBI last=2026-02-19, gap=1 trading days",
-      "value": 1,
+      "detail": "XBI last=2026-02-20, gap=0 trading days",
+      "value": 0,
       "threshold": 3
     },
     {
@@ -81,6 +81,13 @@
       "threshold": 0.9
     },
     {
+      "name": "audit",
+      "status": "PASS",
+      "detail": "Audit OK",
+      "value": null,
+      "threshold": null
+    },
+    {
       "name": "missing_reason_fraction",
       "status": "PASS",
       "detail": "0/319 tickers (0.0%) have missing_reason",
@@ -97,19 +104,19 @@
     {
       "name": "drift_monitoring",
       "status": "PASS",
-      "detail": "vs 2026-02-19: top20=90%, top60=97%, rho=0.9979",
+      "detail": "vs 2026-02-19: top20=90%, top60=94%, rho=0.9989",
       "value": {
         "top20_overlap_pct": 90.48,
-        "top60_overlap_pct": 96.72,
-        "rank_spearman_rho": 0.9979,
-        "mean_abs_rank_delta_top60": 1.67,
-        "tier_migration_count": 1,
-        "eligibility_change_count": 0,
+        "top60_overlap_pct": 93.55,
+        "rank_spearman_rho": 0.9989,
+        "mean_abs_rank_delta_top60": 0.78,
+        "tier_migration_count": 6,
+        "eligibility_change_count": 7,
         "top20_entrants": [
-          "OCGN"
+          "CCCC"
         ],
         "top20_exits": [
-          "CELC"
+          "ZBIO"
         ],
         "rank_column_current": "actionable_rank",
         "rank_column_prior": "actionable_rank",
@@ -139,11 +146,46 @@
         "warn_first_posted_min": 0.8,
         "warn_last_update_min": 0.8
       }
+    },
+    {
+      "name": "sec_13f_cache",
+      "status": "PASS",
+      "detail": "coverage=100.0%, (29/29 managers)",
+      "value": {
+        "coverage_pct": 100.0,
+        "managers_ok": 29,
+        "total": 29
+      },
+      "threshold": {
+        "warn_coverage_pct": 80.0
+      }
+    },
+    {
+      "name": "institutional_summary",
+      "status": "PASS",
+      "detail": "coverage=58.6%, (187/319 tickers), (29/29 managers)",
+      "value": {
+        "coverage_pct": 58.62,
+        "tickers_with_signal": 187,
+        "tickers_in_universe": 319,
+        "managers_used": 29,
+        "expected_managers": 29
+      },
+      "threshold": {
+        "warn_coverage_pct": 50.0
+      }
+    },
+    {
+      "name": "institutional_delta",
+      "status": "WARN",
+      "detail": "Delta expected (prior with elite_holder_shares found) but not written",
+      "value": null,
+      "threshold": null
     }
   ],
-  "overall_status": "PASS",
+  "overall_status": "WARN",
   "screen_exit_code": 0,
-  "audit_exit_code": null,
+  "audit_exit_code": 0,
   "gate_config": {
     "xbi_stale_days": 3,
     "missing_reason_max_frac": 0.05,
@@ -151,6 +193,8 @@
     "audit_fail_is_gate_fail": true,
     "audit_warn_is_gate_warn": true,
     "market_data_max_age_days": 3,
-    "market_data_min_coverage": 0.9
+    "market_data_min_coverage": 0.9,
+    "sec_13f_coverage_warn_pct": 80.0,
+    "institutional_summary_warn_coverage_pct": 50.0
   }
 }
