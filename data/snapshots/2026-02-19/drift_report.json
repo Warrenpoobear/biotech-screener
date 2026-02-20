@@ -12,21 +12,19 @@
   "current_date": "2026-02-19",
   "prior_date": "2026-02-18",
   "metrics": {
-    "top20_overlap_pct": 73.91,
-    "top60_overlap_pct": 93.55,
-    "rank_spearman_rho": 0.9955,
-    "mean_abs_rank_delta_top60": 1.73,
-    "tier_migration_count": 2,
+    "top20_overlap_pct": 81.82,
+    "top60_overlap_pct": 96.72,
+    "rank_spearman_rho": 0.9977,
+    "mean_abs_rank_delta_top60": 1.28,
+    "tier_migration_count": 1,
     "eligibility_change_count": 2,
     "top20_entrants": [
-      "CELC",
       "CGON",
       "COGT"
     ],
     "top20_exits": [
       "FDMT",
-      "KOD",
-      "OCGN"
+      "KOD"
     ],
     "rank_column_current": "actionable_rank",
     "rank_column_prior": "actionable_rank",

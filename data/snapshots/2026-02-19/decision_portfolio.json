@@ -21,7 +21,7 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 53,
+      "composite_rank": 54,
       "composite_score": 0.1
     },
     {
@@ -39,7 +39,7 @@
       "risk_flags": "overbought_rsi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 183,
+      "composite_rank": 185,
       "composite_score": 0.09254273684210526
     },
     {
@@ -57,7 +57,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 185,
+      "composite_rank": 187,
       "composite_score": 0.09254273684210526
     },
     {
@@ -75,7 +75,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 79,
+      "composite_rank": 81,
       "composite_score": 0.1
     },
     {
@@ -86,9 +86,9 @@
       "tier_dev": "A",
       "tier_commercial": "",
       "size_band": "L",
-      "tier_reason": "high_opt+catalyst_mid",
+      "tier_reason": "high_opt+catalyst_near",
       "catalyst_mode": "specific_days",
-      "catalyst_days": 132,
+      "catalyst_days": 40,
       "mom_state": "tailwind",
       "risk_flags": "high_vol|high_beta|overbought_rsi",
       "archetype": "drug_developer",
@@ -111,7 +111,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 74,
+      "composite_rank": 75,
       "composite_score": 0.1
     },
     {
@@ -129,7 +129,7 @@
       "risk_flags": "high_vol|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 99,
+      "composite_rank": 102,
       "composite_score": 0.1
     },
     {
@@ -147,7 +147,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 90,
+      "composite_rank": 92,
       "composite_score": 0.1
     },
     {
@@ -165,7 +165,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 178,
+      "composite_rank": 180,
       "composite_score": 0.09254273684210526
     },
     {
@@ -183,7 +183,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 73,
+      "composite_rank": 74,
       "composite_score": 0.1
     },
     {
@@ -201,7 +201,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 81,
+      "composite_rank": 83,
       "composite_score": 0.1
     },
     {
@@ -219,7 +219,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 58,
+      "composite_rank": 59,
       "composite_score": 0.1
     },
     {
@@ -291,7 +291,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 192,
+      "composite_rank": 194,
       "composite_score": 0.09254273684210526
     },
     {
@@ -309,7 +309,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 215,
+      "composite_rank": 216,
       "composite_score": 0.0743638577586207
     },
     {
@@ -327,7 +327,7 @@
       "risk_flags": "high_vol",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 213,
+      "composite_rank": 214,
       "composite_score": 0.0743638577586207
     },
     {
@@ -345,31 +345,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 212,
-      "composite_score": 0.0743638577586207
-    },
-    {
-      "ticker": "CELC",
-      "company_name": "Celcuity Inc.",
-      "actionable_rank": 20,
-      "tier_any": "A",
-      "tier_dev": "A",
-      "tier_commercial": "",
-      "size_band": "L",
-      "tier_reason": "high_opt+catalyst_mid",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 131,
-      "mom_state": "tailwind",
-      "risk_flags": "",
-      "archetype": "drug_developer",
-      "eligible": "1",
-      "composite_rank": 210,
+      "composite_rank": 213,
       "composite_score": 0.0743638577586207
     },
     {
       "ticker": "OCGN",
       "company_name": "Ocugen, Inc.",
-      "actionable_rank": 21,
+      "actionable_rank": 20,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -381,13 +363,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 224,
+      "composite_rank": 225,
       "composite_score": 0.0743638577586207
     },
     {
       "ticker": "KOD",
       "company_name": "Kodiak Sciences Inc",
-      "actionable_rank": 22,
+      "actionable_rank": 21,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -399,13 +381,13 @@
       "risk_flags": "high_beta",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 222,
+      "composite_rank": 223,
       "composite_score": 0.0743638577586207
     },
     {
       "ticker": "FDMT",
       "company_name": "4D Molecular Therapeutics, Inc.",
-      "actionable_rank": 23,
+      "actionable_rank": 22,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -417,13 +399,13 @@
       "risk_flags": "high_beta",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 217,
+      "composite_rank": 218,
       "composite_score": 0.0743638577586207
     },
     {
       "ticker": "CLYM",
       "company_name": "Climb Bio, Inc.",
-      "actionable_rank": 24,
+      "actionable_rank": 23,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -435,13 +417,13 @@
       "risk_flags": "high_beta",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 28,
+      "composite_rank": 29,
       "composite_score": 0.1
     },
     {
       "ticker": "VERA",
       "company_name": "Vera Therapeutics, Inc.",
-      "actionable_rank": 25,
+      "actionable_rank": 24,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -453,13 +435,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 131,
+      "composite_rank": 133,
       "composite_score": 0.09603160592255125
     },
     {
       "ticker": "NUVL",
       "company_name": "Nuvalent, Inc.",
-      "actionable_rank": 26,
+      "actionable_rank": 25,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -471,13 +453,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 125,
+      "composite_rank": 127,
       "composite_score": 0.09603160592255125
     },
     {
       "ticker": "CRSP",
       "company_name": "CRISPR Therapeutics AG",
-      "actionable_rank": 27,
+      "actionable_rank": 26,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -489,13 +471,13 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 32,
+      "composite_rank": 33,
       "composite_score": 0.1
     },
     {
       "ticker": "OLMA",
       "company_name": "Olema Pharmaceuticals, Inc.",
-      "actionable_rank": 28,
+      "actionable_rank": 27,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -507,13 +489,13 @@
       "risk_flags": "high_vol|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 127,
+      "composite_rank": 129,
       "composite_score": 0.09603160592255125
     },
     {
       "ticker": "IBRX",
       "company_name": "ImmunityBio, Inc.",
-      "actionable_rank": 29,
+      "actionable_rank": 28,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -525,13 +507,13 @@
       "risk_flags": "high_vol",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 120,
+      "composite_rank": 122,
       "composite_score": 0.09603160592255125
     },
     {
       "ticker": "ADCT",
       "company_name": "ADC Therapeutics SA",
-      "actionable_rank": 30,
+      "actionable_rank": 29,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -543,13 +525,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 111,
+      "composite_rank": 113,
       "composite_score": 0.09603160592255125
     },
     {
       "ticker": "ARTV",
       "company_name": "Artiva Biotherapeutics, Inc.",
-      "actionable_rank": 31,
+      "actionable_rank": 30,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -567,7 +549,7 @@
     {
       "ticker": "CNTA",
       "company_name": "Centessa Pharmaceuticals plc",
-      "actionable_rank": 32,
+      "actionable_rank": 31,
       "tier_any": "A",
       "tier_dev": "A",
       "tier_commercial": "",
@@ -579,7 +561,25 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 30,
+      "composite_rank": 31,
+      "composite_score": 0.1
+    },
+    {
+      "ticker": "CELC",
+      "company_name": "Celcuity Inc.",
+      "actionable_rank": 32,
+      "tier_any": "A",
+      "tier_dev": "A",
+      "tier_commercial": "",
+      "size_band": "L",
+      "tier_reason": "high_opt+catalyst_near",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 40,
+      "mom_state": "tailwind",
+      "risk_flags": "",
+      "archetype": "drug_developer",
+      "eligible": "1",
+      "composite_rank": 27,
       "composite_score": 0.1
     },
     {
@@ -597,7 +597,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 163,
+      "composite_rank": 165,
       "composite_score": 0.09254273684210526
     },
     {
@@ -615,7 +615,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 34,
+      "composite_rank": 35,
       "composite_score": 0.1
     },
     {
@@ -633,7 +633,7 @@
       "risk_flags": "high_vol|high_beta",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 208,
+      "composite_rank": 210,
       "composite_score": 0.07679787341772153
     },
     {
@@ -651,7 +651,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 75,
+      "composite_rank": 76,
       "composite_score": 0.1
     },
     {
@@ -669,7 +669,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 173,
+      "composite_rank": 175,
       "composite_score": 0.09254273684210526
     },
     {
@@ -687,7 +687,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 190,
+      "composite_rank": 192,
       "composite_score": 0.09254273684210526
     },
     {
@@ -705,7 +705,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 98,
+      "composite_rank": 101,
       "composite_score": 0.1
     },
     {
@@ -723,7 +723,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 171,
+      "composite_rank": 173,
       "composite_score": 0.09254273684210526
     },
     {
@@ -741,7 +741,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 40,
+      "composite_rank": 41,
       "composite_score": 0.1
     },
     {
@@ -759,7 +759,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 48,
+      "composite_rank": 49,
       "composite_score": 0.1
     },
     {
@@ -777,7 +777,7 @@
       "risk_flags": "high_beta|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 33,
+      "composite_rank": 34,
       "composite_score": 0.1
     },
     {
@@ -795,25 +795,25 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 162,
+      "composite_rank": 164,
       "composite_score": 0.09254273684210526
     },
     {
-      "ticker": "IMMP",
-      "company_name": "Immutep Limited",
+      "ticker": "RAPP",
+      "company_name": "Rapport Therapeutics, Inc.",
       "actionable_rank": 45,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
-      "size_band": "M",
-      "tier_reason": "mod_opt+catalyst_near",
+      "size_band": "L",
+      "tier_reason": "mod_opt+catalyst_mid",
       "catalyst_mode": "specific_days",
-      "catalyst_days": 41,
+      "catalyst_days": 131,
       "mom_state": "tailwind",
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 47,
+      "composite_rank": 78,
       "composite_score": 0.1
     },
     {
@@ -835,9 +835,27 @@
       "composite_score": -0.012862136363636364
     },
     {
+      "ticker": "IMMP",
+      "company_name": "Immutep Limited",
+      "actionable_rank": 47,
+      "tier_any": "B",
+      "tier_dev": "B",
+      "tier_commercial": "",
+      "size_band": "M",
+      "tier_reason": "mod_opt+catalyst_near",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 41,
+      "mom_state": "tailwind",
+      "risk_flags": "",
+      "archetype": "drug_developer",
+      "eligible": "1",
+      "composite_rank": 48,
+      "composite_score": 0.1
+    },
+    {
       "ticker": "RAPT",
       "company_name": "RAPT Therapeutics, Inc.",
-      "actionable_rank": 47,
+      "actionable_rank": 48,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -855,7 +873,7 @@
     {
       "ticker": "BCAX",
       "company_name": "Bicara Therapeutics Inc.",
-      "actionable_rank": 48,
+      "actionable_rank": 49,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -873,7 +891,7 @@
     {
       "ticker": "WVE",
       "company_name": "Wave Life Sciences Ltd.",
-      "actionable_rank": 49,
+      "actionable_rank": 50,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -885,13 +903,13 @@
       "risk_flags": "high_vol|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 97,
+      "composite_rank": 100,
       "composite_score": 0.1
     },
     {
       "ticker": "APGE",
       "company_name": "Apogee Therapeutics, Inc.",
-      "actionable_rank": 50,
+      "actionable_rank": 51,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -909,7 +927,7 @@
     {
       "ticker": "CLLS",
       "company_name": "Cellectis S.A.",
-      "actionable_rank": 51,
+      "actionable_rank": 52,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -921,13 +939,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 284,
+      "composite_rank": 283,
       "composite_score": 0.0
     },
     {
       "ticker": "TECX",
       "company_name": "Tectonic Therapeutic, Inc.",
-      "actionable_rank": 52,
+      "actionable_rank": 53,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -939,13 +957,13 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 278,
+      "composite_rank": 277,
       "composite_score": 0.00506
     },
     {
       "ticker": "NAUT",
       "company_name": "Nautilus Biotechnology, Inc.",
-      "actionable_rank": 53,
+      "actionable_rank": 54,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -963,7 +981,7 @@
     {
       "ticker": "KALV",
       "company_name": "KalVista Pharmaceuticals, Inc.",
-      "actionable_rank": 54,
+      "actionable_rank": 55,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -975,13 +993,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 56,
+      "composite_rank": 57,
       "composite_score": 0.1
     },
     {
       "ticker": "SLDB",
       "company_name": "Solid Biosciences Inc.",
-      "actionable_rank": 55,
+      "actionable_rank": 56,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -993,13 +1011,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 203,
+      "composite_rank": 205,
       "composite_score": 0.08571638372093023
     },
     {
       "ticker": "TSHA",
       "company_name": "Taysha Gene Therapies, Inc.",
-      "actionable_rank": 56,
+      "actionable_rank": 57,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -1011,13 +1029,13 @@
       "risk_flags": "high_beta",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 157,
+      "composite_rank": 159,
       "composite_score": 0.0930939801980198
     },
     {
       "ticker": "PCVX",
       "company_name": "Vaxcyte, Inc.",
-      "actionable_rank": 57,
+      "actionable_rank": 58,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -1029,13 +1047,13 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 153,
+      "composite_rank": 155,
       "composite_score": 0.0930939801980198
     },
     {
       "ticker": "ZVRA",
       "company_name": "Zevra Therapeutics, Inc.",
-      "actionable_rank": 58,
+      "actionable_rank": 59,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -1047,13 +1065,13 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 160,
+      "composite_rank": 162,
       "composite_score": 0.0930939801980198
     },
     {
       "ticker": "ACLX",
       "company_name": "Arcellx, Inc.",
-      "actionable_rank": 59,
+      "actionable_rank": 60,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -1065,26 +1083,8 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 135,
+      "composite_rank": 137,
       "composite_score": 0.0930939801980198
-    },
-    {
-      "ticker": "ABUS",
-      "company_name": "Arbutus Biopharma Corporation",
-      "actionable_rank": 60,
-      "tier_any": "B",
-      "tier_dev": "B",
-      "tier_commercial": "",
-      "size_band": "XS",
-      "tier_reason": "mod_opt+catalyst_near",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 41,
-      "mom_state": "headwind",
-      "risk_flags": "",
-      "archetype": "drug_developer",
-      "eligible": "1",
-      "composite_rank": 1,
-      "composite_score": 0.1
     },
     {
       "ticker": "MRSN",
@@ -1101,7 +1101,7 @@
       "risk_flags": "high_vol|overbought_rsi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 151,
+      "composite_rank": 153,
       "composite_score": 0.0930939801980198
     },
     {
@@ -1119,7 +1119,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 150,
+      "composite_rank": 152,
       "composite_score": 0.0930939801980198
     },
     {
@@ -1137,7 +1137,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 149,
+      "composite_rank": 151,
       "composite_score": 0.0930939801980198
     },
     {
@@ -1155,25 +1155,25 @@
       "risk_flags": "drawdown_data_missing",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 148,
+      "composite_rank": 150,
       "composite_score": 0.0930939801980198
     },
     {
-      "ticker": "SRRK",
-      "company_name": "Scholar Rock Holding Corporatio",
+      "ticker": "ABUS",
+      "company_name": "Arbutus Biopharma Corporation",
       "actionable_rank": 65,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
-      "size_band": "L",
-      "tier_reason": "high_opt+catalyst_far",
+      "size_band": "XS",
+      "tier_reason": "mod_opt+catalyst_near",
       "catalyst_mode": "specific_days",
-      "catalyst_days": 255,
-      "mom_state": "tailwind",
+      "catalyst_days": 41,
+      "mom_state": "headwind",
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 88,
+      "composite_rank": 1,
       "composite_score": 0.1
     },
     {
@@ -1191,7 +1191,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 138,
+      "composite_rank": 140,
       "composite_score": 0.0930939801980198
     },
     {
@@ -1209,7 +1209,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 143,
+      "composite_rank": 145,
       "composite_score": 0.0930939801980198
     },
     {
@@ -1227,7 +1227,7 @@
       "risk_flags": "high_vol|overbought_rsi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 142,
+      "composite_rank": 144,
       "composite_score": 0.0930939801980198
     },
     {
@@ -1245,7 +1245,7 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 137,
+      "composite_rank": 139,
       "composite_score": 0.0930939801980198
     },
     {
@@ -1263,13 +1263,31 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 136,
+      "composite_rank": 138,
       "composite_score": 0.0930939801980198
+    },
+    {
+      "ticker": "SRRK",
+      "company_name": "Scholar Rock Holding Corporatio",
+      "actionable_rank": 71,
+      "tier_any": "B",
+      "tier_dev": "B",
+      "tier_commercial": "",
+      "size_band": "L",
+      "tier_reason": "high_opt+catalyst_far",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 255,
+      "mom_state": "tailwind",
+      "risk_flags": "",
+      "archetype": "drug_developer",
+      "eligible": "1",
+      "composite_rank": 90,
+      "composite_score": 0.1
     },
     {
       "ticker": "ABEO",
       "company_name": "Abeona Therapeutics Inc.",
-      "actionable_rank": 71,
+      "actionable_rank": 72,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -1281,13 +1299,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 133,
+      "composite_rank": 135,
       "composite_score": 0.0930939801980198
     },
     {
       "ticker": "VTYX",
       "company_name": "Ventyx Biosciences, Inc.",
-      "actionable_rank": 72,
+      "actionable_rank": 73,
       "tier_any": "B",
       "tier_dev": "B",
       "tier_commercial": "",
@@ -1299,13 +1317,13 @@
       "risk_flags": "high_vol|high_beta|overbought_rsi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 96,
+      "composite_rank": 99,
       "composite_score": 0.1
     },
     {
       "ticker": "GLPG",
       "company_name": "Galapagos NV",
-      "actionable_rank": 73,
+      "actionable_rank": 74,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1317,31 +1335,31 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 176,
+      "composite_rank": 178,
       "composite_score": 0.09254273684210526
     },
     {
       "ticker": "TBPH",
       "company_name": "Theravance Biopharma, Inc.",
-      "actionable_rank": 74,
+      "actionable_rank": 75,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
-      "size_band": "M",
+      "size_band": "S",
       "tier_reason": "low_opt",
       "catalyst_mode": "specific_days",
-      "catalyst_days": 681,
+      "catalyst_days": 40,
       "mom_state": "neutral",
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 108,
-      "composite_score": 0.0961064745762712
+      "composite_rank": 95,
+      "composite_score": 0.1
     },
     {
       "ticker": "CTNM",
       "company_name": "Contineum Therapeutics, Inc.",
-      "actionable_rank": 75,
+      "actionable_rank": 76,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1359,7 +1377,7 @@
     {
       "ticker": "AGIO",
       "company_name": "Agios Pharmaceuticals, Inc.",
-      "actionable_rank": 76,
+      "actionable_rank": 77,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1371,13 +1389,13 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 164,
+      "composite_rank": 166,
       "composite_score": 0.09254273684210526
     },
     {
       "ticker": "SLN",
       "company_name": "Silence Therapeutics Plc - Amer",
-      "actionable_rank": 77,
+      "actionable_rank": 78,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1395,7 +1413,7 @@
     {
       "ticker": "TRVI",
       "company_name": "Trevi Therapeutics, Inc.",
-      "actionable_rank": 78,
+      "actionable_rank": 79,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1407,13 +1425,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 197,
+      "composite_rank": 199,
       "composite_score": 0.08701244092219021
     },
     {
       "ticker": "ENTA",
       "company_name": "Enanta Pharmaceuticals, Inc.",
-      "actionable_rank": 79,
+      "actionable_rank": 80,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1425,13 +1443,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 195,
+      "composite_rank": 197,
       "composite_score": 0.08701244092219021
     },
     {
       "ticker": "ACRS",
       "company_name": "Aclaris Therapeutics, Inc.",
-      "actionable_rank": 80,
+      "actionable_rank": 81,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1449,7 +1467,7 @@
     {
       "ticker": "KYMR",
       "company_name": "Kymera Therapeutics, Inc.",
-      "actionable_rank": 81,
+      "actionable_rank": 82,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1467,7 +1485,7 @@
     {
       "ticker": "XNCR",
       "company_name": "Xencor, Inc.",
-      "actionable_rank": 82,
+      "actionable_rank": 83,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1485,7 +1503,7 @@
     {
       "ticker": "SABS",
       "company_name": "SAB Biotherapeutics, Inc.",
-      "actionable_rank": 83,
+      "actionable_rank": 84,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1503,7 +1521,7 @@
     {
       "ticker": "EWTX",
       "company_name": "Edgewise Therapeutics, Inc.",
-      "actionable_rank": 84,
+      "actionable_rank": 85,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1515,13 +1533,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 38,
+      "composite_rank": 39,
       "composite_score": 0.1
     },
     {
       "ticker": "ACIU",
       "company_name": "AC Immune SA",
-      "actionable_rank": 85,
+      "actionable_rank": 86,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1533,13 +1551,13 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 207,
+      "composite_rank": 209,
       "composite_score": 0.07679787341772153
     },
     {
       "ticker": "ASMB",
       "company_name": "Assembly Biosciences, Inc.",
-      "actionable_rank": 86,
+      "actionable_rank": 87,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1551,13 +1569,13 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 194,
+      "composite_rank": 196,
       "composite_score": 0.08701244092219021
     },
     {
       "ticker": "STRO",
       "company_name": "Sutro Biopharma, Inc.",
-      "actionable_rank": 87,
+      "actionable_rank": 88,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1575,7 +1593,7 @@
     {
       "ticker": "EPRX",
       "company_name": "Eupraxia Pharmaceuticals Inc.",
-      "actionable_rank": 88,
+      "actionable_rank": 89,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1593,25 +1611,25 @@
     {
       "ticker": "DYN",
       "company_name": "Dyne Therapeutics, Inc.",
-      "actionable_rank": 89,
+      "actionable_rank": 90,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
-      "size_band": "L",
+      "size_band": "M",
       "tier_reason": "low_opt",
       "catalyst_mode": "specific_days",
-      "catalyst_days": 1228,
+      "catalyst_days": 131,
       "mom_state": "headwind",
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 286,
+      "composite_rank": 285,
       "composite_score": 0.0
     },
     {
       "ticker": "CABA",
       "company_name": "Cabaletta Bio, Inc.",
-      "actionable_rank": 90,
+      "actionable_rank": 91,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1629,7 +1647,7 @@
     {
       "ticker": "TNGX",
       "company_name": "Tango Therapeutics, Inc.",
-      "actionable_rank": 91,
+      "actionable_rank": 92,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1647,7 +1665,7 @@
     {
       "ticker": "ALLO",
       "company_name": "Allogene Therapeutics, Inc.",
-      "actionable_rank": 92,
+      "actionable_rank": 93,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1665,7 +1683,7 @@
     {
       "ticker": "VYGR",
       "company_name": "Voyager Therapeutics, Inc.",
-      "actionable_rank": 93,
+      "actionable_rank": 94,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1678,24 +1696,6 @@
       "archetype": "drug_developer",
       "eligible": "1",
       "composite_rank": 305,
-      "composite_score": 0.0
-    },
-    {
-      "ticker": "ELVN",
-      "company_name": "Enliven Therapeutics, Inc.",
-      "actionable_rank": 94,
-      "tier_any": "C",
-      "tier_dev": "C",
-      "tier_commercial": "",
-      "size_band": "L",
-      "tier_reason": "low_opt",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 132,
-      "mom_state": "tailwind",
-      "risk_flags": "high_vol",
-      "archetype": "drug_developer",
-      "eligible": "1",
-      "composite_rank": 287,
       "composite_score": 0.0
     },
     {
@@ -1717,9 +1717,27 @@
       "composite_score": 0.0
     },
     {
+      "ticker": "ELVN",
+      "company_name": "Enliven Therapeutics, Inc.",
+      "actionable_rank": 96,
+      "tier_any": "C",
+      "tier_dev": "C",
+      "tier_commercial": "",
+      "size_band": "L",
+      "tier_reason": "low_opt",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 132,
+      "mom_state": "tailwind",
+      "risk_flags": "high_vol",
+      "archetype": "drug_developer",
+      "eligible": "1",
+      "composite_rank": 286,
+      "composite_score": 0.0
+    },
+    {
       "ticker": "SANA",
       "company_name": "Sana Biotechnology, Inc.",
-      "actionable_rank": 96,
+      "actionable_rank": 97,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1737,7 +1755,7 @@
     {
       "ticker": "ORIC",
       "company_name": "Oric Pharmaceuticals, Inc.",
-      "actionable_rank": 97,
+      "actionable_rank": 98,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1755,7 +1773,7 @@
     {
       "ticker": "NKTX",
       "company_name": "Nkarta, Inc.",
-      "actionable_rank": 98,
+      "actionable_rank": 99,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1773,7 +1791,7 @@
     {
       "ticker": "LCTX",
       "company_name": "Lineage Cell Therapeutics, Inc.",
-      "actionable_rank": 99,
+      "actionable_rank": 100,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1787,24 +1805,6 @@
       "eligible": "1",
       "composite_rank": 293,
       "composite_score": 0.0
-    },
-    {
-      "ticker": "BNTX",
-      "company_name": "BioNTech SE",
-      "actionable_rank": 100,
-      "tier_any": "C",
-      "tier_dev": "C",
-      "tier_commercial": "",
-      "size_band": "M",
-      "tier_reason": "low_opt",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 10,
-      "mom_state": "headwind",
-      "risk_flags": "",
-      "archetype": "drug_developer",
-      "eligible": "1",
-      "composite_rank": 169,
-      "composite_score": 0.09254273684210526
     },
     {
       "ticker": "GPCR",
@@ -1843,45 +1843,9 @@
       "composite_score": 0.0
     },
     {
-      "ticker": "CGEM",
-      "company_name": "Cullinan Therapeutics, Inc.",
-      "actionable_rank": 103,
-      "tier_any": "C",
-      "tier_dev": "C",
-      "tier_commercial": "",
-      "size_band": "L",
-      "tier_reason": "low_opt",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 10,
-      "mom_state": "tailwind",
-      "risk_flags": "high_beta",
-      "archetype": "drug_developer",
-      "eligible": "1",
-      "composite_rank": 283,
-      "composite_score": 0.0
-    },
-    {
-      "ticker": "RAPP",
-      "company_name": "Rapport Therapeutics, Inc.",
-      "actionable_rank": 104,
-      "tier_any": "C",
-      "tier_dev": "C",
-      "tier_commercial": "",
-      "size_band": "L",
-      "tier_reason": "mod_opt+catalyst_far",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 224,
-      "mom_state": "tailwind",
-      "risk_flags": "",
-      "archetype": "drug_developer",
-      "eligible": "1",
-      "composite_rank": 277,
-      "composite_score": 0.00506
-    },
-    {
       "ticker": "FHTX",
       "company_name": "Foghorn Therapeutics Inc.",
-      "actionable_rank": 105,
+      "actionable_rank": 103,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1897,9 +1861,27 @@
       "composite_score": 0.0
     },
     {
+      "ticker": "CGEM",
+      "company_name": "Cullinan Therapeutics, Inc.",
+      "actionable_rank": 104,
+      "tier_any": "C",
+      "tier_dev": "C",
+      "tier_commercial": "",
+      "size_band": "L",
+      "tier_reason": "low_opt",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 10,
+      "mom_state": "tailwind",
+      "risk_flags": "high_beta",
+      "archetype": "drug_developer",
+      "eligible": "1",
+      "composite_rank": 282,
+      "composite_score": 0.0
+    },
+    {
       "ticker": "BEAM",
       "company_name": "Beam Therapeutics Inc.",
-      "actionable_rank": 106,
+      "actionable_rank": 105,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1911,13 +1893,13 @@
       "risk_flags": "high_beta",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 281,
+      "composite_rank": 280,
       "composite_score": 0.0
     },
     {
       "ticker": "BBOT",
       "company_name": "BridgeBio Oncology Therapeutics",
-      "actionable_rank": 107,
+      "actionable_rank": 106,
       "tier_any": "C",
       "tier_dev": "C",
       "tier_commercial": "",
@@ -1929,8 +1911,26 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 280,
+      "composite_rank": 279,
       "composite_score": 0.0
+    },
+    {
+      "ticker": "BNTX",
+      "company_name": "BioNTech SE",
+      "actionable_rank": 107,
+      "tier_any": "C",
+      "tier_dev": "C",
+      "tier_commercial": "",
+      "size_band": "M",
+      "tier_reason": "low_opt",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 10,
+      "mom_state": "headwind",
+      "risk_flags": "",
+      "archetype": "drug_developer",
+      "eligible": "1",
+      "composite_rank": 171,
+      "composite_score": 0.09254273684210526
     },
     {
       "ticker": "DSGN",
@@ -1965,7 +1965,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 279,
+      "composite_rank": 278,
       "composite_score": 0.00506
     },
     {
@@ -2032,12 +2032,12 @@
       "size_band": "M",
       "tier_reason": "low_opt",
       "catalyst_mode": "specific_days",
-      "catalyst_days": 163,
+      "catalyst_days": 40,
       "mom_state": "neutral",
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 39,
+      "composite_rank": 40,
       "composite_score": 0.1
     },
     {
@@ -2055,7 +2055,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 100,
+      "composite_rank": 103,
       "composite_score": 0.0961064745762712
     },
     {
@@ -2073,7 +2073,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 202,
+      "composite_rank": 204,
       "composite_score": 0.08571638372093023
     },
     {
@@ -2091,7 +2091,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 206,
+      "composite_rank": 208,
       "composite_score": 0.08571638372093023
     },
     {
@@ -2109,7 +2109,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 200,
+      "composite_rank": 202,
       "composite_score": 0.08571638372093023
     },
     {
@@ -2127,7 +2127,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 199,
+      "composite_rank": 201,
       "composite_score": 0.08571638372093023
     },
     {
@@ -2145,7 +2145,7 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 204,
+      "composite_rank": 206,
       "composite_score": 0.08571638372093023
     },
     {
@@ -2163,7 +2163,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 201,
+      "composite_rank": 203,
       "composite_score": 0.08571638372093023
     },
     {
@@ -2181,7 +2181,7 @@
       "risk_flags": "high_beta",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 60,
+      "composite_rank": 61,
       "composite_score": 0.1
     },
     {
@@ -2199,7 +2199,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 158,
+      "composite_rank": 160,
       "composite_score": 0.0930939801980198
     },
     {
@@ -2217,7 +2217,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 156,
+      "composite_rank": 158,
       "composite_score": 0.0930939801980198
     },
     {
@@ -2235,7 +2235,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 146,
+      "composite_rank": 148,
       "composite_score": 0.0930939801980198
     },
     {
@@ -2253,7 +2253,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 140,
+      "composite_rank": 142,
       "composite_score": 0.0930939801980198
     },
     {
@@ -2271,7 +2271,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 139,
+      "composite_rank": 141,
       "composite_score": 0.0930939801980198
     },
     {
@@ -2289,7 +2289,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 72,
+      "composite_rank": 73,
       "composite_score": 0.1
     },
     {
@@ -2307,7 +2307,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 114,
+      "composite_rank": 116,
       "composite_score": 0.09603160592255125
     },
     {
@@ -2325,7 +2325,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 80,
+      "composite_rank": 82,
       "composite_score": 0.1
     },
     {
@@ -2343,7 +2343,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 65,
+      "composite_rank": 66,
       "composite_score": 0.1
     },
     {
@@ -2361,7 +2361,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "1",
-      "composite_rank": 41,
+      "composite_rank": 42,
       "composite_score": 0.1
     },
     {
@@ -2379,7 +2379,7 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 191,
+      "composite_rank": 193,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2397,7 +2397,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 68,
+      "composite_rank": 69,
       "composite_score": 0.1
     },
     {
@@ -2415,7 +2415,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 193,
+      "composite_rank": 195,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2433,7 +2433,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 186,
+      "composite_rank": 188,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2451,7 +2451,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 82,
+      "composite_rank": 84,
       "composite_score": 0.1
     },
     {
@@ -2469,7 +2469,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 188,
+      "composite_rank": 190,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2487,7 +2487,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 189,
+      "composite_rank": 191,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2505,7 +2505,7 @@
       "risk_flags": "overbought_rsi",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 167,
+      "composite_rank": 169,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2523,7 +2523,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 104,
+      "composite_rank": 107,
       "composite_score": 0.0961064745762712
     },
     {
@@ -2541,7 +2541,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 64,
+      "composite_rank": 65,
       "composite_score": 0.1
     },
     {
@@ -2577,13 +2577,31 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 110,
+      "composite_rank": 112,
       "composite_score": 0.0961064745762712
+    },
+    {
+      "ticker": "TARS",
+      "company_name": "Tarsus Pharmaceuticals, Inc.",
+      "actionable_rank": 144,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "M",
+      "tier_reason": "",
+      "catalyst_mode": "no_upcoming",
+      "catalyst_days": "",
+      "mom_state": "headwind",
+      "risk_flags": "",
+      "archetype": "commercial_biotech",
+      "eligible": "1",
+      "composite_rank": 94,
+      "composite_score": 0.1
     },
     {
       "ticker": "ALKS",
       "company_name": "Alkermes plc",
-      "actionable_rank": 144,
+      "actionable_rank": 145,
       "tier_any": "A",
       "tier_dev": "",
       "tier_commercial": "A",
@@ -2596,24 +2614,6 @@
       "archetype": "commercial_pharma",
       "eligible": "1",
       "composite_rank": 6,
-      "composite_score": 0.1
-    },
-    {
-      "ticker": "TARS",
-      "company_name": "Tarsus Pharmaceuticals, Inc.",
-      "actionable_rank": 145,
-      "tier_any": "C",
-      "tier_dev": "",
-      "tier_commercial": "C",
-      "size_band": "M",
-      "tier_reason": "",
-      "catalyst_mode": "no_upcoming",
-      "catalyst_days": "",
-      "mom_state": "headwind",
-      "risk_flags": "",
-      "archetype": "commercial_biotech",
-      "eligible": "1",
-      "composite_rank": 92,
       "composite_score": 0.1
     },
     {
@@ -2631,7 +2631,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 102,
+      "composite_rank": 105,
       "composite_score": 0.0961064745762712
     },
     {
@@ -2649,7 +2649,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 179,
+      "composite_rank": 181,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2667,7 +2667,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 182,
+      "composite_rank": 184,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2685,31 +2685,13 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 55,
-      "composite_score": 0.1
-    },
-    {
-      "ticker": "INDV",
-      "company_name": "Indivior PLC",
-      "actionable_rank": 150,
-      "tier_any": "C",
-      "tier_dev": "",
-      "tier_commercial": "C",
-      "size_band": "M",
-      "tier_reason": "",
-      "catalyst_mode": "no_upcoming",
-      "catalyst_days": "",
-      "mom_state": "neutral",
-      "risk_flags": "",
-      "archetype": "commercial_pharma",
-      "eligible": "1",
-      "composite_rank": 49,
+      "composite_rank": 56,
       "composite_score": 0.1
     },
     {
       "ticker": "ARGX",
       "company_name": "argenx SE",
-      "actionable_rank": 151,
+      "actionable_rank": 150,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2721,8 +2703,26 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 166,
+      "composite_rank": 168,
       "composite_score": 0.09254273684210526
+    },
+    {
+      "ticker": "INDV",
+      "company_name": "Indivior PLC",
+      "actionable_rank": 151,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "M",
+      "tier_reason": "",
+      "catalyst_mode": "no_upcoming",
+      "catalyst_days": "",
+      "mom_state": "neutral",
+      "risk_flags": "",
+      "archetype": "commercial_pharma",
+      "eligible": "1",
+      "composite_rank": 50,
+      "composite_score": 0.1
     },
     {
       "ticker": "ESPR",
@@ -2739,7 +2739,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 37,
+      "composite_rank": 38,
       "composite_score": 0.1
     },
     {
@@ -2757,7 +2757,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 89,
+      "composite_rank": 91,
       "composite_score": 0.1
     },
     {
@@ -2775,7 +2775,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 175,
+      "composite_rank": 177,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2793,7 +2793,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 105,
+      "composite_rank": 108,
       "composite_score": 0.0961064745762712
     },
     {
@@ -2811,7 +2811,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 62,
+      "composite_rank": 63,
       "composite_score": 0.1
     },
     {
@@ -2829,7 +2829,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 174,
+      "composite_rank": 176,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2883,7 +2883,7 @@
       "risk_flags": "high_vol",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 54,
+      "composite_rank": 55,
       "composite_score": 0.1
     },
     {
@@ -2901,7 +2901,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 27,
+      "composite_rank": 28,
       "composite_score": 0.1
     },
     {
@@ -2919,7 +2919,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 184,
+      "composite_rank": 186,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2937,7 +2937,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 35,
+      "composite_rank": 36,
       "composite_score": 0.1
     },
     {
@@ -2955,7 +2955,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 180,
+      "composite_rank": 182,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2973,7 +2973,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 165,
+      "composite_rank": 167,
       "composite_score": 0.09254273684210526
     },
     {
@@ -2995,27 +2995,9 @@
       "composite_score": 0.1
     },
     {
-      "ticker": "BIIB",
-      "company_name": "Biogen Inc.",
-      "actionable_rank": 167,
-      "tier_any": "A",
-      "tier_dev": "",
-      "tier_commercial": "A",
-      "size_band": "L",
-      "tier_reason": "",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 6,
-      "mom_state": "tailwind",
-      "risk_flags": "",
-      "archetype": "commercial_pharma",
-      "eligible": "1",
-      "composite_rank": 168,
-      "composite_score": 0.09254273684210526
-    },
-    {
       "ticker": "TVTX",
       "company_name": "Travere Therapeutics, Inc.",
-      "actionable_rank": 168,
+      "actionable_rank": 167,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3027,8 +3009,26 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 93,
+      "composite_rank": 96,
       "composite_score": 0.1
+    },
+    {
+      "ticker": "BIIB",
+      "company_name": "Biogen Inc.",
+      "actionable_rank": 168,
+      "tier_any": "A",
+      "tier_dev": "",
+      "tier_commercial": "A",
+      "size_band": "L",
+      "tier_reason": "",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 6,
+      "mom_state": "tailwind",
+      "risk_flags": "",
+      "archetype": "commercial_pharma",
+      "eligible": "1",
+      "composite_rank": 170,
+      "composite_score": 0.09254273684210526
     },
     {
       "ticker": "MDGL",
@@ -3045,7 +3045,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 181,
+      "composite_rank": 183,
       "composite_score": 0.09254273684210526
     },
     {
@@ -3063,7 +3063,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 177,
+      "composite_rank": 179,
       "composite_score": 0.09254273684210526
     },
     {
@@ -3081,7 +3081,7 @@
       "risk_flags": "high_beta",
       "archetype": "platform_devices",
       "eligible": "1",
-      "composite_rank": 282,
+      "composite_rank": 281,
       "composite_score": 0.0
     },
     {
@@ -3153,7 +3153,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 221,
+      "composite_rank": 222,
       "composite_score": 0.0743638577586207
     },
     {
@@ -3171,7 +3171,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 226,
+      "composite_rank": 227,
       "composite_score": 0.0743638577586207
     },
     {
@@ -3189,7 +3189,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 220,
+      "composite_rank": 221,
       "composite_score": 0.0743638577586207
     },
     {
@@ -3207,7 +3207,7 @@
       "risk_flags": "overbought_rsi",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 218,
+      "composite_rank": 219,
       "composite_score": 0.0743638577586207
     },
     {
@@ -3225,7 +3225,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 51,
+      "composite_rank": 52,
       "composite_score": 0.1
     },
     {
@@ -3243,7 +3243,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 228,
+      "composite_rank": 229,
       "composite_score": 0.0743638577586207
     },
     {
@@ -3261,7 +3261,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 225,
+      "composite_rank": 226,
       "composite_score": 0.0743638577586207
     },
     {
@@ -3279,7 +3279,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 109,
+      "composite_rank": 111,
       "composite_score": 0.0961064745762712
     },
     {
@@ -3315,7 +3315,7 @@
       "risk_flags": "overbought_rsi",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 219,
+      "composite_rank": 220,
       "composite_score": 0.0743638577586207
     },
     {
@@ -3333,7 +3333,7 @@
       "risk_flags": "overbought_rsi",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 216,
+      "composite_rank": 217,
       "composite_score": 0.0743638577586207
     },
     {
@@ -3351,7 +3351,7 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "platform_diagnostics",
       "eligible": "1",
-      "composite_rank": 214,
+      "composite_rank": 215,
       "composite_score": 0.0743638577586207
     },
     {
@@ -3369,7 +3369,7 @@
       "risk_flags": "",
       "archetype": "platform_devices",
       "eligible": "1",
-      "composite_rank": 211,
+      "composite_rank": 212,
       "composite_score": 0.0743638577586207
     },
     {
@@ -3387,7 +3387,7 @@
       "risk_flags": "overbought_rsi",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 209,
+      "composite_rank": 211,
       "composite_score": 0.0743638577586207
     },
     {
@@ -3405,7 +3405,7 @@
       "risk_flags": "",
       "archetype": "platform_services",
       "eligible": "1",
-      "composite_rank": 205,
+      "composite_rank": 207,
       "composite_score": 0.08571638372093023
     },
     {
@@ -3423,31 +3423,13 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 161,
+      "composite_rank": 163,
       "composite_score": 0.0930939801980198
-    },
-    {
-      "ticker": "SIGA",
-      "company_name": "SIGA Technologies Inc.",
-      "actionable_rank": 191,
-      "tier_any": "C",
-      "tier_dev": "",
-      "tier_commercial": "C",
-      "size_band": "XS",
-      "tier_reason": "",
-      "catalyst_mode": "no_upcoming",
-      "catalyst_days": "",
-      "mom_state": "headwind",
-      "risk_flags": "deep_drawdown_rel_xbi",
-      "archetype": "commercial_pharma",
-      "eligible": "1",
-      "composite_rank": 84,
-      "composite_score": 0.1
     },
     {
       "ticker": "APLS",
       "company_name": "Apellis Pharmaceuticals, Inc.",
-      "actionable_rank": 192,
+      "actionable_rank": 191,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3459,8 +3441,26 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 101,
+      "composite_rank": 104,
       "composite_score": 0.0961064745762712
+    },
+    {
+      "ticker": "SIGA",
+      "company_name": "SIGA Technologies Inc.",
+      "actionable_rank": 192,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "XS",
+      "tier_reason": "",
+      "catalyst_mode": "no_upcoming",
+      "catalyst_days": "",
+      "mom_state": "headwind",
+      "risk_flags": "deep_drawdown_rel_xbi",
+      "archetype": "commercial_pharma",
+      "eligible": "1",
+      "composite_rank": 86,
+      "composite_score": 0.1
     },
     {
       "ticker": "STOK",
@@ -3477,7 +3477,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 155,
+      "composite_rank": 157,
       "composite_score": 0.0930939801980198
     },
     {
@@ -3513,7 +3513,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 43,
+      "composite_rank": 44,
       "composite_score": 0.1
     },
     {
@@ -3531,7 +3531,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 117,
+      "composite_rank": 119,
       "composite_score": 0.09603160592255125
     },
     {
@@ -3549,7 +3549,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 147,
+      "composite_rank": 149,
       "composite_score": 0.0930939801980198
     },
     {
@@ -3567,7 +3567,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 113,
+      "composite_rank": 115,
       "composite_score": 0.09603160592255125
     },
     {
@@ -3585,7 +3585,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 141,
+      "composite_rank": 143,
       "composite_score": 0.0930939801980198
     },
     {
@@ -3603,7 +3603,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 44,
+      "composite_rank": 45,
       "composite_score": 0.1
     },
     {
@@ -3621,7 +3621,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 128,
+      "composite_rank": 130,
       "composite_score": 0.09603160592255125
     },
     {
@@ -3639,7 +3639,7 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 112,
+      "composite_rank": 114,
       "composite_score": 0.09603160592255125
     },
     {
@@ -3657,7 +3657,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 122,
+      "composite_rank": 124,
       "composite_score": 0.09603160592255125
     },
     {
@@ -3675,7 +3675,7 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "platform_devices",
       "eligible": "1",
-      "composite_rank": 123,
+      "composite_rank": 125,
       "composite_score": 0.09603160592255125
     },
     {
@@ -3693,31 +3693,13 @@
       "risk_flags": "deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 115,
-      "composite_score": 0.09603160592255125
-    },
-    {
-      "ticker": "GH",
-      "company_name": "Guardant Health, Inc.",
-      "actionable_rank": 206,
-      "tier_any": "C",
-      "tier_dev": "",
-      "tier_commercial": "C",
-      "size_band": "L",
-      "tier_reason": "",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 6,
-      "mom_state": "neutral",
-      "risk_flags": "",
-      "archetype": "platform_diagnostics",
-      "eligible": "1",
-      "composite_rank": 119,
+      "composite_rank": 117,
       "composite_score": 0.09603160592255125
     },
     {
       "ticker": "UTHR",
       "company_name": "United Therapeutics Corporation",
-      "actionable_rank": 207,
+      "actionable_rank": 206,
       "tier_any": "A",
       "tier_dev": "",
       "tier_commercial": "A",
@@ -3729,8 +3711,26 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 95,
+      "composite_rank": 98,
       "composite_score": 0.1
+    },
+    {
+      "ticker": "GH",
+      "company_name": "Guardant Health, Inc.",
+      "actionable_rank": 207,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "L",
+      "tier_reason": "",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 6,
+      "mom_state": "neutral",
+      "risk_flags": "",
+      "archetype": "platform_diagnostics",
+      "eligible": "1",
+      "composite_rank": 121,
+      "composite_score": 0.09603160592255125
     },
     {
       "ticker": "CDNA",
@@ -3747,7 +3747,7 @@
       "risk_flags": "",
       "archetype": "platform_diagnostics",
       "eligible": "1",
-      "composite_rank": 118,
+      "composite_rank": 120,
       "composite_score": 0.09603160592255125
     },
     {
@@ -3765,7 +3765,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 116,
+      "composite_rank": 118,
       "composite_score": 0.09603160592255125
     },
     {
@@ -3783,7 +3783,7 @@
       "risk_flags": "",
       "archetype": "platform_diagnostics",
       "eligible": "1",
-      "composite_rank": 67,
+      "composite_rank": 68,
       "composite_score": 0.1
     },
     {
@@ -3819,7 +3819,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "1",
-      "composite_rank": 71,
+      "composite_rank": 72,
       "composite_score": 0.1
     },
     {
@@ -3837,7 +3837,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "platform_diagnostics",
       "eligible": "1",
-      "composite_rank": 70,
+      "composite_rank": 71,
       "composite_score": 0.1
     },
     {
@@ -3855,7 +3855,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 57,
+      "composite_rank": 58,
       "composite_score": 0.1
     },
     {
@@ -3873,7 +3873,7 @@
       "risk_flags": "overbought_rsi",
       "archetype": "commercial_biotech",
       "eligible": "1",
-      "composite_rank": 50,
+      "composite_rank": 51,
       "composite_score": 0.1
     },
     {
@@ -3909,13 +3909,31 @@
       "risk_flags": "",
       "archetype": "platform_services",
       "eligible": "1",
-      "composite_rank": 29,
+      "composite_rank": 30,
+      "composite_score": 0.1
+    },
+    {
+      "ticker": "COLL",
+      "company_name": "Collegium Pharmaceutical, Inc.",
+      "actionable_rank": 218,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "S",
+      "tier_reason": "",
+      "catalyst_mode": "no_upcoming",
+      "catalyst_days": "",
+      "mom_state": "headwind",
+      "risk_flags": "",
+      "archetype": "commercial_pharma",
+      "eligible": "1",
+      "composite_rank": 32,
       "composite_score": 0.1
     },
     {
       "ticker": "BBIO",
       "company_name": "BridgeBio Pharma, Inc.",
-      "actionable_rank": 218,
+      "actionable_rank": 219,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3928,24 +3946,6 @@
       "archetype": "commercial_biotech",
       "eligible": "1",
       "composite_rank": 20,
-      "composite_score": 0.1
-    },
-    {
-      "ticker": "COLL",
-      "company_name": "Collegium Pharmaceutical, Inc.",
-      "actionable_rank": 219,
-      "tier_any": "C",
-      "tier_dev": "",
-      "tier_commercial": "C",
-      "size_band": "S",
-      "tier_reason": "",
-      "catalyst_mode": "no_upcoming",
-      "catalyst_days": "",
-      "mom_state": "headwind",
-      "risk_flags": "",
-      "archetype": "commercial_pharma",
-      "eligible": "1",
-      "composite_rank": 31,
       "composite_score": 0.1
     },
     {
@@ -4179,7 +4179,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_pharma",
       "eligible": "0",
-      "composite_rank": 36,
+      "composite_rank": 37,
       "composite_score": 0.1
     },
     {
@@ -4197,7 +4197,7 @@
       "risk_flags": "",
       "archetype": "commercial_pharma",
       "eligible": "0",
-      "composite_rank": 42,
+      "composite_rank": 43,
       "composite_score": 0.1
     },
     {
@@ -4215,7 +4215,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 45,
+      "composite_rank": 46,
       "composite_score": 0.1
     },
     {
@@ -4233,7 +4233,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 46,
+      "composite_rank": 47,
       "composite_score": 0.1
     },
     {
@@ -4251,7 +4251,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "0",
-      "composite_rank": 52,
+      "composite_rank": 53,
       "composite_score": 0.1
     },
     {
@@ -4269,7 +4269,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 59,
+      "composite_rank": 60,
       "composite_score": 0.1
     },
     {
@@ -4287,7 +4287,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 61,
+      "composite_rank": 62,
       "composite_score": 0.1
     },
     {
@@ -4305,7 +4305,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 63,
+      "composite_rank": 64,
       "composite_score": 0.1
     },
     {
@@ -4323,7 +4323,7 @@
       "risk_flags": "high_vol|high_beta|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 66,
+      "composite_rank": 67,
       "composite_score": 0.1
     },
     {
@@ -4341,7 +4341,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 69,
+      "composite_rank": 70,
       "composite_score": 0.1
     },
     {
@@ -4359,7 +4359,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "platform_devices",
       "eligible": "0",
-      "composite_rank": 76,
+      "composite_rank": 77,
       "composite_score": 0.1
     },
     {
@@ -4377,7 +4377,7 @@
       "risk_flags": "high_vol|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "0",
-      "composite_rank": 77,
+      "composite_rank": 79,
       "composite_score": 0.1
     },
     {
@@ -4395,7 +4395,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 78,
+      "composite_rank": 80,
       "composite_score": 0.1
     },
     {
@@ -4413,7 +4413,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 83,
+      "composite_rank": 85,
       "composite_score": 0.1
     },
     {
@@ -4431,7 +4431,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 85,
+      "composite_rank": 87,
       "composite_score": 0.1
     },
     {
@@ -4449,7 +4449,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 86,
+      "composite_rank": 88,
       "composite_score": 0.1
     },
     {
@@ -4467,7 +4467,7 @@
       "risk_flags": "high_beta|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "0",
-      "composite_rank": 87,
+      "composite_rank": 89,
       "composite_score": 0.1
     },
     {
@@ -4485,7 +4485,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 91,
+      "composite_rank": 93,
       "composite_score": 0.1
     },
     {
@@ -4503,7 +4503,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 94,
+      "composite_rank": 97,
       "composite_score": 0.1
     },
     {
@@ -4521,7 +4521,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "0",
-      "composite_rank": 103,
+      "composite_rank": 106,
       "composite_score": 0.0961064745762712
     },
     {
@@ -4539,7 +4539,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 106,
+      "composite_rank": 109,
       "composite_score": 0.0961064745762712
     },
     {
@@ -4557,7 +4557,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "0",
-      "composite_rank": 107,
+      "composite_rank": 110,
       "composite_score": 0.0961064745762712
     },
     {
@@ -4575,7 +4575,7 @@
       "risk_flags": "high_vol|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 121,
+      "composite_rank": 123,
       "composite_score": 0.09603160592255125
     },
     {
@@ -4593,7 +4593,7 @@
       "risk_flags": "",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 124,
+      "composite_rank": 126,
       "composite_score": 0.09603160592255125
     },
     {
@@ -4611,7 +4611,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "platform_devices",
       "eligible": "0",
-      "composite_rank": 126,
+      "composite_rank": 128,
       "composite_score": 0.09603160592255125
     },
     {
@@ -4629,7 +4629,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 129,
+      "composite_rank": 131,
       "composite_score": 0.09603160592255125
     },
     {
@@ -4647,7 +4647,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "platform_services",
       "eligible": "0",
-      "composite_rank": 130,
+      "composite_rank": 132,
       "composite_score": 0.09603160592255125
     },
     {
@@ -4665,7 +4665,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "0",
-      "composite_rank": 132,
+      "composite_rank": 134,
       "composite_score": 0.09603160592255125
     },
     {
@@ -4683,7 +4683,7 @@
       "risk_flags": "high_beta|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 134,
+      "composite_rank": 136,
       "composite_score": 0.0930939801980198
     },
     {
@@ -4701,7 +4701,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 144,
+      "composite_rank": 146,
       "composite_score": 0.0930939801980198
     },
     {
@@ -4719,7 +4719,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 145,
+      "composite_rank": 147,
       "composite_score": 0.0930939801980198
     },
     {
@@ -4737,7 +4737,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 152,
+      "composite_rank": 154,
       "composite_score": 0.0930939801980198
     },
     {
@@ -4755,7 +4755,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 154,
+      "composite_rank": 156,
       "composite_score": 0.0930939801980198
     },
     {
@@ -4773,7 +4773,7 @@
       "risk_flags": "high_vol|high_beta|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 159,
+      "composite_rank": 161,
       "composite_score": 0.0930939801980198
     },
     {
@@ -4791,7 +4791,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "0",
-      "composite_rank": 170,
+      "composite_rank": 172,
       "composite_score": 0.09254273684210526
     },
     {
@@ -4809,7 +4809,7 @@
       "risk_flags": "high_beta|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "0",
-      "composite_rank": 172,
+      "composite_rank": 174,
       "composite_score": 0.09254273684210526
     },
     {
@@ -4827,7 +4827,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "0",
-      "composite_rank": 187,
+      "composite_rank": 189,
       "composite_score": 0.09254273684210526
     },
     {
@@ -4845,7 +4845,7 @@
       "risk_flags": "high_beta|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 196,
+      "composite_rank": 198,
       "composite_score": 0.08701244092219021
     },
     {
@@ -4863,7 +4863,7 @@
       "risk_flags": "high_beta|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 198,
+      "composite_rank": 200,
       "composite_score": 0.08571638372093023
     },
     {
@@ -4881,7 +4881,7 @@
       "risk_flags": "high_vol|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 223,
+      "composite_rank": 224,
       "composite_score": 0.0743638577586207
     },
     {
@@ -4899,7 +4899,7 @@
       "risk_flags": "high_beta|deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "commercial_biotech",
       "eligible": "0",
-      "composite_rank": 227,
+      "composite_rank": 228,
       "composite_score": 0.0743638577586207
     },
     {
@@ -4917,7 +4917,7 @@
       "risk_flags": "",
       "archetype": "commercial_biotech",
       "eligible": "0",
-      "composite_rank": 229,
+      "composite_rank": 230,
       "composite_score": 0.06969944897959185
     },
     {
@@ -4935,7 +4935,7 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "platform_devices",
       "eligible": "0",
-      "composite_rank": 230,
+      "composite_rank": 231,
       "composite_score": 0.06969944897959185
     },
     {
@@ -4953,7 +4953,7 @@
       "risk_flags": "",
       "archetype": "platform_devices",
       "eligible": "0",
-      "composite_rank": 231,
+      "composite_rank": 232,
       "composite_score": 0.06969944897959185
     },
     {
@@ -4971,7 +4971,7 @@
       "risk_flags": "",
       "archetype": "platform_diagnostics",
       "eligible": "0",
-      "composite_rank": 232,
+      "composite_rank": 233,
       "composite_score": 0.06969944897959185
     },
     {
@@ -4988,24 +4988,6 @@
       "mom_state": "headwind",
       "risk_flags": "",
       "archetype": "platform_devices",
-      "eligible": "0",
-      "composite_rank": 233,
-      "composite_score": 0.06969944897959185
-    },
-    {
-      "ticker": "ETON",
-      "company_name": "Eton Pharmaceuticals, Inc.",
-      "actionable_rank": "",
-      "tier_any": "D",
-      "tier_dev": "",
-      "tier_commercial": "D",
-      "size_band": "XS",
-      "tier_reason": "",
-      "catalyst_mode": "no_upcoming",
-      "catalyst_days": "",
-      "mom_state": "neutral",
-      "risk_flags": "overbought_rsi",
-      "archetype": "commercial_pharma",
       "eligible": "0",
       "composite_rank": 234,
       "composite_score": 0.06969944897959185
@@ -5493,7 +5475,25 @@
       "risk_flags": "deep_drawdown|deep_drawdown_rel_xbi",
       "archetype": "drug_developer",
       "eligible": "0",
-      "composite_rank": 285,
+      "composite_rank": 284,
+      "composite_score": 0.0
+    },
+    {
+      "ticker": "ETON",
+      "company_name": "Eton Pharmaceuticals, Inc.",
+      "actionable_rank": "",
+      "tier_any": "D",
+      "tier_dev": "",
+      "tier_commercial": "D",
+      "size_band": "XS",
+      "tier_reason": "",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 6,
+      "mom_state": "neutral",
+      "risk_flags": "overbought_rsi",
+      "archetype": "commercial_pharma",
+      "eligible": "0",
+      "composite_rank": 287,
       "composite_score": 0.0
     },
     {

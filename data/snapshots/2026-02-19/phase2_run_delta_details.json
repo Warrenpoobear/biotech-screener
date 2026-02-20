@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-20T16:22:08Z",
+  "generated_at": "2026-02-20T16:57:51Z",
   "current": {
     "date": "2026-02-19",
     "ruleset_id": "8f99d47e",
@@ -10,8 +10,8 @@
   "tier_distribution": {
     "current": {
       "A": 32,
-      "B": 40,
-      "C": 59,
+      "B": 41,
+      "C": 58,
       "D": 52
     }
   },
@@ -25,8 +25,8 @@
   },
   "sizing": {
     "current": {
-      "L": 18,
-      "M": 2,
+      "L": 17,
+      "M": 3,
       "S": 0,
       "XS": 0
     }

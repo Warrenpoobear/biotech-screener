@@ -2,42 +2,16 @@
   "schema_version": "sec_13f_pit_index.v1",
   "cache_type": "sec_13f_pit",
   "as_of_date": "2026-02-19",
-  "created_at": "2026-02-20T16:47:07.442605Z",
-  "elite_only": false,
-  "total_managers": 35,
-  "managers_with_filing": 35,
+  "created_at": "2026-02-20T16:55:33.267214Z",
+  "elite_only": true,
+  "total_managers": 29,
+  "managers_with_filing": 29,
   "coverage_pct": 100.0,
   "selection_policy": {
     "pit_rule": "filing_date<=as_of; latest report_date; prefer 13F-HR/A; latest filing_date",
     "recent_filings_lookback_n": 8
   },
   "managers": [
-    {
-      "manager_cik": "0000909661",
-      "manager_name": "Farallon Capital",
-      "selected": true,
-      "period_of_report": "2025-12-31",
-      "filed_at": "2026-02-17",
-      "form_type": "13F-HR",
-      "accession": "000090883426000087",
-      "holdings_count": 151,
-      "manager_json_path": "managers/0000909661.json",
-      "raw_xml_path": "raw/0000909661/000090883426000087.xml",
-      "rejection_reason": ""
-    },
-    {
-      "manager_cik": "0001009207",
-      "manager_name": "D.E. Shaw",
-      "selected": true,
-      "period_of_report": "2025-12-31",
-      "filed_at": "2026-02-17",
-      "form_type": "13F-HR",
-      "accession": "000110465926016332",
-      "holdings_count": 5839,
-      "manager_json_path": "managers/0001009207.json",
-      "raw_xml_path": "raw/0001009207/000110465926016332.xml",
-      "rejection_reason": ""
-    },
     {
       "manager_cik": "0001009258",
       "manager_name": "Deerfield Management",
@@ -52,19 +26,6 @@
       "rejection_reason": ""
     },
     {
-      "manager_cik": "0001037389",
-      "manager_name": "Renaissance Technologies",
-      "selected": true,
-      "period_of_report": "2025-12-31",
-      "filed_at": "2026-02-12",
-      "form_type": "13F-HR",
-      "accession": "000103738926000023",
-      "holdings_count": 3185,
-      "manager_json_path": "managers/0001037389.json",
-      "raw_xml_path": "raw/0001037389/000103738926000023.xml",
-      "rejection_reason": ""
-    },
-    {
       "manager_cik": "0001055951",
       "manager_name": "Orbimed Advisors",
       "selected": true,
@@ -75,32 +36,6 @@
       "holdings_count": 108,
       "manager_json_path": "managers/0001055951.json",
       "raw_xml_path": "raw/0001055951/000117266126001119.xml",
-      "rejection_reason": ""
-    },
-    {
-      "manager_cik": "0001103804",
-      "manager_name": "Viking Global",
-      "selected": true,
-      "period_of_report": "2025-12-31",
-      "filed_at": "2026-02-17",
-      "form_type": "13F-HR",
-      "accession": "000110380426000002",
-      "holdings_count": 76,
-      "manager_json_path": "managers/0001103804.json",
-      "raw_xml_path": "raw/0001103804/000110380426000002.xml",
-      "rejection_reason": ""
-    },
-    {
-      "manager_cik": "0001218710",
-      "manager_name": "Balyasny Asset Management",
-      "selected": true,
-      "period_of_report": "2025-12-31",
-      "filed_at": "2026-02-17",
-      "form_type": "13F-HR",
-      "accession": "000119312526054303",
-      "holdings_count": 3338,
-      "manager_json_path": "managers/0001218710.json",
-      "raw_xml_path": "raw/0001218710/000119312526054303.xml",
       "rejection_reason": ""
     },
     {
@@ -140,19 +75,6 @@
       "holdings_count": 86,
       "manager_json_path": "managers/0001263508.json",
       "raw_xml_path": "raw/0001263508/000110465926016374.xml",
-      "rejection_reason": ""
-    },
-    {
-      "manager_cik": "0001273087",
-      "manager_name": "Millennium Management",
-      "selected": true,
-      "period_of_report": "2025-12-31",
-      "filed_at": "2026-02-17",
-      "form_type": "13F-HR",
-      "accession": "000127308726000002",
-      "holdings_count": 5950,
-      "manager_json_path": "managers/0001273087.json",
-      "raw_xml_path": "raw/0001273087/000127308726000002.xml",
       "rejection_reason": ""
     },
     {

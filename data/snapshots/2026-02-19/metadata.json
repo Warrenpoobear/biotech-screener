@@ -1,6 +1,6 @@
 {
   "as_of_date": "2026-02-19",
-  "saved_at": "2026-02-20T16:22:08.517324Z",
+  "saved_at": "2026-02-20T16:57:51.299589Z",
   "decision_mode": "phase2",
   "ranking_mode": "decision",
   "version": "1.6.0",
@@ -37,15 +37,15 @@
     },
     "composite_score": {
       "n_total": 319,
-      "n_unique": 306,
-      "tie_pct": 0.0408
+      "n_unique": 309,
+      "tie_pct": 0.0313
     }
   },
   "score_diagnostics": {
     "composite_score": {
       "n_total": 319,
-      "n_unique": 306,
-      "tie_pct": 0.0408
+      "n_unique": 309,
+      "tie_pct": 0.0313
     },
     "momentum_score": {
       "n_total": 319,
@@ -54,17 +54,17 @@
     },
     "catalyst_score": {
       "n_total": 319,
-      "n_unique": 184,
-      "tie_pct": 0.4232,
-      "zero_signal_count": 94,
-      "signal_n": 225,
-      "signal_unique": 196,
-      "signal_tie_pct": 0.1289
+      "n_unique": 202,
+      "tie_pct": 0.3668,
+      "zero_signal_count": 78,
+      "signal_n": 241,
+      "signal_unique": 217,
+      "signal_tie_pct": 0.0996
     },
     "smart_money_score": {
       "n_total": 263,
-      "n_unique": 204,
-      "tie_pct": 0.2243
+      "n_unique": 205,
+      "tie_pct": 0.2205
     },
     "valuation_score": {
       "n_total": 319,
@@ -431,7 +431,7 @@
     "catalyst_events_vnext_2026-02-16.json": "214c28595bc30200",
     "catalyst_events_vnext_2026-02-17.json": "afbffa19496f653d",
     "catalyst_events_vnext_2026-02-18.json": "03bcc33c6313f3bf",
-    "catalyst_events_vnext_2026-02-19.json": "43d409121a4831e8",
+    "catalyst_events_vnext_2026-02-19.json": "96e0e93ef1807acb",
     "catalyst_events_vnext_2026-02-20.json": "efb315ec8ed7ac36",
     "catalyst_overrides.json": "e4c587ce6c537d65",
     "cfo_data_2026-01-08.json": "33e0d93576eff5d0",
@@ -514,7 +514,7 @@
     "universe_mapped.json": "15f9c56365b4bad7"
   },
   "clinical_sort_telemetry": {
-    "n_nonzero_clin_adj_dev": 69,
+    "n_nonzero_clin_adj_dev": 70,
     "n_nonzero_clin_adj_comm": 61,
     "ruleset_id": "8f99d47e",
     "enable_clinical_sort_signal": true
