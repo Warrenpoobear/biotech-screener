@@ -33,6 +33,8 @@ DRAWDOWN_WINDOW = 252
 RSI_PERIOD = 14
 MIN_BARS_DD = 126
 MIN_BARS_RSI = RSI_PERIOD + 1
+# Must match run_screen.py MIN_OVERLAP_BARS
+MIN_OVERLAP_BARS = 30
 
 TOLERANCES = {
     "drawdown": 0.02,
@@ -207,7 +209,7 @@ def _compute_drawdown_from_prices(
 ) -> Optional[float]:
     """Compute drawdown from price history CSV data."""
     sub = prices[(prices["ticker"] == ticker) & (prices["date"] <= as_of)].copy()
-    sub = sub[sub["close"] > 0].sort_values("date")
+    sub = sub[sub["close"] > 0].sort_values("date").drop_duplicates("date", keep="last")
     if len(sub) < MIN_BARS_DD:
         return None
     recent = sub.tail(window)
@@ -223,7 +225,7 @@ def _compute_rsi_from_prices(
 ) -> Optional[float]:
     """Compute Wilder-smoothed RSI from price history CSV data."""
     sub = prices[(prices["ticker"] == ticker) & (prices["date"] <= as_of)].copy()
-    sub = sub[sub["close"] > 0].sort_values("date")
+    sub = sub[sub["close"] > 0].sort_values("date").drop_duplicates("date", keep="last")
     if len(sub) < period + 1:
         return None
     closes = sub["close"].values
@@ -248,20 +250,26 @@ def _compute_rsi_from_prices(
 def _compute_beta_from_prices(
     prices: pd.DataFrame, ticker: str, as_of: str, window: int = 60,
 ) -> Optional[float]:
-    """Compute 60-day beta vs XBI from price history."""
+    """Compute 60-day beta vs XBI from price history.
+
+    Mirrors run_screen.py _hydrate_beta_rsi() logic:
+    - MIN_OVERLAP_BARS + 1 minimum aligned bars (not window + 1)
+    - Deduplicate on date (keep last) to match dict-based XBI lookup
+    - Take last min(window+1, len) aligned bars
+    """
     t_sub = prices[(prices["ticker"] == ticker) & (prices["date"] <= as_of)].copy()
-    t_sub = t_sub[t_sub["close"] > 0].sort_values("date")
+    t_sub = t_sub[t_sub["close"] > 0].sort_values("date").drop_duplicates("date", keep="last")
     x_sub = prices[(prices["ticker"] == "XBI") & (prices["date"] <= as_of)].copy()
-    x_sub = x_sub[x_sub["close"] > 0].sort_values("date")
+    x_sub = x_sub[x_sub["close"] > 0].sort_values("date").drop_duplicates("date", keep="last")
     if len(t_sub) < 2 or len(x_sub) < 2:
         return None
     # Align on dates FIRST, then take the most recent window
     t_df = t_sub[["date", "close"]].rename(columns={"close": "t_close"})
     x_df = x_sub[["date", "close"]].rename(columns={"close": "x_close"})
     merged = t_df.merge(x_df, on="date", how="inner").sort_values("date")
-    if len(merged) < window + 1:
+    if len(merged) < MIN_OVERLAP_BARS + 1:
         return None
-    merged = merged.tail(window + 1)
+    merged = merged.tail(min(window + 1, len(merged)))
     t_rets = merged["t_close"].pct_change().dropna().values
     x_rets = merged["x_close"].pct_change().dropna().values
     if len(t_rets) < 10:
@@ -284,11 +292,12 @@ def _compute_alpha_from_prices(
 
     Uses date-aligned returns (inner-join by date, same as production code)
     to ensure ticker and XBI windows match exactly.
+    Deduplicates on date (keep last) to match production dict-based lookup.
     """
     t_sub = prices[(prices["ticker"] == ticker) & (prices["date"] <= as_of)].copy()
-    t_sub = t_sub[t_sub["close"] > 0].sort_values("date")
+    t_sub = t_sub[t_sub["close"] > 0].sort_values("date").drop_duplicates("date", keep="last")
     x_sub = prices[(prices["ticker"] == "XBI") & (prices["date"] <= as_of)].copy()
-    x_sub = x_sub[x_sub["close"] > 0].sort_values("date")
+    x_sub = x_sub[x_sub["close"] > 0].sort_values("date").drop_duplicates("date", keep="last")
     if len(t_sub) < 2 or len(x_sub) < 2:
         return None
     # Align on dates FIRST, then take the most recent window

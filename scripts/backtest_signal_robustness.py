@@ -576,18 +576,27 @@ def extend_price_csv(
                 "volume": str(int(row["Volume"])) if row.get("Volume") == row.get("Volume") else "",
             })
 
-    # Atomic write: existing + new → temp → os.replace()
-    if new_rows or not csv_path.exists():
+    # Deduplicate: keep last occurrence per (ticker, date)
+    all_rows = existing_rows + new_rows
+    seen: Dict[Tuple[str, str], int] = {}
+    for i, row in enumerate(all_rows):
+        key = ((row.get("ticker") or "").upper(), (row.get("date") or "")[:10])
+        seen[key] = i  # last write wins
+    deduped = [all_rows[i] for i in sorted(seen.values())]
+    n_removed = len(all_rows) - len(deduped)
+    if n_removed > 0:
+        log.info("extend_price_csv: removed %d duplicate (ticker,date) rows", n_removed)
+
+    # Atomic write: deduped → temp → os.replace()
+    if new_rows or n_removed > 0 or not csv_path.exists():
         csv_path.parent.mkdir(parents=True, exist_ok=True)
         fd, tmp_path = tempfile.mkstemp(suffix=".csv", dir=csv_path.parent)
         try:
             with open(fd, "w", newline="", encoding="utf-8") as f:
                 writer = csv.DictWriter(f, fieldnames=_PRICE_FIELDNAMES)
                 writer.writeheader()
-                for row in existing_rows:
+                for row in deduped:
                     writer.writerow({k: row.get(k, "") for k in _PRICE_FIELDNAMES})
-                for row in new_rows:
-                    writer.writerow(row)
             Path(tmp_path).replace(csv_path)
         except BaseException:
             Path(tmp_path).unlink(missing_ok=True)
