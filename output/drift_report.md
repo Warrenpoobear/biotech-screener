@@ -1,5 +1,5 @@
 # Daily Drift Report
-Date: 2026-02-20 | Ruleset: 8f99d47e | Window: 5 snapshots
+Date: 2026-02-21 | Ruleset: 8f99d47e | Window: 5 snapshots
 
 ## Current Snapshot
 
@@ -13,7 +13,7 @@ Date: 2026-02-20 | Ruleset: 8f99d47e | Window: 5 snapshots
 | Backfill share (elig)     |   0.0% |
 | Drawdown coverage (dev)   |   0.0% |
 | Rel DD coverage (dev)     |  99.5% |
-| Top-25 overlap (vs prior) |  92.0% |
+| Top-25 overlap (vs prior) | 100.0% |
 | Optionality std           |   0.29 |
 | Composite IQR             |    0.1 |
 
@@ -74,16 +74,16 @@ Dated-catalyst tickers with missing or unrecognized source.
 
 | Ticker | Catalyst Mode  | Days | Event Type     | Reason         |
 |--------|----------------|------|----------------|----------------|
-| ABEO   | specific_days  |  496 | —              | missing        |
-| ABSI   | specific_days  |  527 | —              | missing        |
-| ACLX   | specific_days  |  284 | —              | missing        |
-| ALDX   | specific_days  |  284 | —              | missing        |
-| ALLO   | specific_days  |  550 | —              | missing        |
-| ATXS   | specific_days  |  374 | —              | missing        |
-| AURA   | specific_days  |  283 | —              | missing        |
-| AVBP   | specific_days  |  725 | —              | missing        |
-| BBOT   | specific_days  |  527 | —              | missing        |
-| BCAX   | specific_days  |  314 | —              | missing        |
+| ABEO   | specific_days  |  495 | —              | missing        |
+| ABSI   | specific_days  |  526 | —              | missing        |
+| ACLX   | specific_days  |  283 | —              | missing        |
+| ALDX   | specific_days  |  283 | —              | missing        |
+| ALLO   | specific_days  |  549 | —              | missing        |
+| ATXS   | specific_days  |  373 | —              | missing        |
+| AURA   | specific_days  |  282 | —              | missing        |
+| AVBP   | specific_days  |  724 | —              | missing        |
+| BBOT   | specific_days  |  526 | —              | missing        |
+| BCAX   | specific_days  |  313 | —              | missing        |
 | ...    | (42 more)               |      |                |                |
 
 _Non-CTGOV dated catalysts: 7 ticker(s). CTGOV floor not breached (60.1% >= 37.0%)._
@@ -116,16 +116,16 @@ Dated-catalyst tickers with missing or unrecognized event type.
 
 | Ticker | Catalyst Mode  | Days | Catalyst Source      | Reason         |
 |--------|----------------|------|----------------------|----------------|
-| ABEO   | specific_days  |  496 | —                    | missing        |
-| ABSI   | specific_days  |  527 | —                    | missing        |
-| ACLX   | specific_days  |  284 | —                    | missing        |
-| ALDX   | specific_days  |  284 | —                    | missing        |
-| ALLO   | specific_days  |  550 | —                    | missing        |
-| ATXS   | specific_days  |  374 | —                    | missing        |
-| AURA   | specific_days  |  283 | —                    | missing        |
-| AVBP   | specific_days  |  725 | —                    | missing        |
-| BBOT   | specific_days  |  527 | —                    | missing        |
-| BCAX   | specific_days  |  314 | —                    | missing        |
+| ABEO   | specific_days  |  495 | —                    | missing        |
+| ABSI   | specific_days  |  526 | —                    | missing        |
+| ACLX   | specific_days  |  283 | —                    | missing        |
+| ALDX   | specific_days  |  283 | —                    | missing        |
+| ALLO   | specific_days  |  549 | —                    | missing        |
+| ATXS   | specific_days  |  373 | —                    | missing        |
+| AURA   | specific_days  |  282 | —                    | missing        |
+| AVBP   | specific_days  |  724 | —                    | missing        |
+| BBOT   | specific_days  |  526 | —                    | missing        |
+| BCAX   | specific_days  |  313 | —                    | missing        |
 | ...    | (42 more)               |      |                      |                |
 
 ## Catalyst Priority Distribution
@@ -144,14 +144,14 @@ Eligible dev tickers: 133
 
 | Metric              | Min   | Max   | Mean  | Median | IQR   | Delta | Current |
 |---------------------|-------|-------|-------|--------|-------|-------|---------|
-| A Pct               |  15.8 |  20.2 |  17.9 |   18.0 |   2.5 |   0.0 |    18.0 |
+| A Pct               |  15.8 |  18.0 | 17.46 |   18.0 |   1.4 |   0.0 |    18.0 |
 | Catalyst Missing Pct |   0.0 |   0.0 |   0.0 |    0.0 |   0.0 |   0.0 |     0.0 |
-| Top25 Overlap Pct   |  52.0 |  96.0 |  81.0 |   88.0 |  35.0 |   4.0 |    92.0 |
+| Top25 Overlap Pct   |  84.0 | 100.0 |  93.0 |   94.0 |  13.0 |   6.0 |   100.0 |
 | Optionality Std     |  0.29 |  0.29 |  0.29 |    0.3 |   0.0 |  -0.0 |     0.3 |
-| Catalyst Strength Near Pct |  35.8 |  56.6 | 44.08 |   42.7 |  10.7 |   0.2 |    42.9 |
+| Catalyst Strength Near Pct |  35.8 |  42.9 | 41.34 |   42.7 |   3.8 |   0.2 |    42.9 |
 
 ## Warning: Mixed Rulesets in Window
-Rulesets observed: 8f99d47e, aa0aaf28, e1be5370
+Rulesets observed: 8f99d47e, aa0aaf28
 
 ## Adaptive Warnings
 
@@ -162,7 +162,7 @@ Rulesets observed: 8f99d47e, aa0aaf28, e1be5370
 - inst_delta_nonzero_pct=0.0% < 5.0% floor
 
 ## Drift Attribution
-Comparing 2026-02-19 → 2026-02-20
+Comparing 2026-02-20 → 2026-02-21
 
 ### Eligibility Gate Changes
 
@@ -170,34 +170,20 @@ Comparing 2026-02-19 → 2026-02-20
 |------|-------|---------|-------|
 | fundamental_red_flag | 10 | 10 | 0 |
 | sev3 | 0 | 0 | 0 |
-| deep_drawdown | 46 | 44 | -2 |
+| deep_drawdown | 44 | 44 | 0 |
 | adv_fail | 0 | 0 | 0 |
 
 ### Catalyst Strength Shifts
 
 | Band | Prior | Current | Delta |
 |------|-------|---------|-------|
-| near | 56 | 57 | +1 |
+| near | 57 | 57 | 0 |
 | mid | 14 | 14 | 0 |
 | far | 55 | 55 | 0 |
-| missing | 6 | 7 | +1 |
+| missing | 7 | 7 | 0 |
 
 ### Portfolio Churn
-Top-25 overlap: 23/25
-
-**Dropped:**
-
-| Ticker | Tier | Band | Reason |
-|--------|------|------|--------|
-| NUVL | A | L | high_opt+catalyst_near |
-| ZBIO | A | L | high_opt+catalyst_near |
-
-**Added:**
-
-| Ticker | Tier | Band | Reason |
-|--------|------|------|--------|
-| CCCC | A | M | high_opt+catalyst_near |
-| CRSP | A | L | high_opt+catalyst_near |
+Top-25 overlap: 25/25
 
 ### Gate Margin Shifts
 
@@ -259,11 +245,11 @@ These are **informational only** and do not affect drift status.
 
 | Metric | N | Median | IQR | Suggested | Current | Tighter? |
 |--------|---|--------|-----|-----------|---------|----------|
-| A-tier % | 4 | 17.8% | 3.4 | 10.9% | 1.5% | **yes** |
+| A-tier % | 4 | 17.8% | 1.8 | 14.2% | 1.5% | **yes** |
 | Catalyst eligible share | 4 | 100.0% | 0.0 | 100.0% | 95.0% | **yes** |
-| Specific-days share | 4 | 92.3% | 11.0 | 70.2% | 40.0% | **yes** |
+| Specific-days share | 4 | 92.3% | 0.0 | 92.3% | 40.0% | **yes** |
 | Morningstar share | 4 | 100.0% | 0.0 | 100.0% | 85.0% | **yes** |
 | Returns unknown share | 4 | 0.0% | 0.0 | 0.0% | 8.5% | **yes** |
-| CTGOV calendar share | 4 | 60.1% | 10.6 | 38.8% | 37.0% | **yes** |
-| Unknown source share | 4 | 28.7% | 4.7 | 38.2% | 5.0% |  |
-| Unknown event type share | 4 | 28.7% | 4.7 | 38.2% | 5.0% |  |
+| CTGOV calendar share | 4 | 60.1% | 1.6 | 56.8% | 37.0% | **yes** |
+| Unknown source share | 4 | 28.7% | 1.4 | 31.6% | 5.0% |  |
+| Unknown event type share | 4 | 28.7% | 1.4 | 31.6% | 5.0% |  |
