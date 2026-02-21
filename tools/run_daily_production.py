@@ -106,8 +106,10 @@ class GateConfig:
     """Min 13F manager coverage (%) before WARN. Never FAIL."""
 
     institutional_summary_warn_coverage_pct: float = 50.0
-    pnl_attribution_min_coverage_pct: float = 80.0
     """Min institutional summary ticker coverage (%) before WARN. Never FAIL."""
+
+    pnl_attribution_min_coverage_pct: float = 80.0
+    """Min PnL attribution price coverage (%) before WARN. Never FAIL."""
 
     @staticmethod
     def from_json(path: Path) -> "GateConfig":
@@ -1036,7 +1038,7 @@ def check_pnl_attribution(
             compute_attribution,
             write_attribution_json,
             write_attribution_md,
-            _find_prior_date,
+            find_prior_date,
         )
     except ImportError as e:
         return GateResult(
@@ -1045,7 +1047,7 @@ def check_pnl_attribution(
         )
 
     # Find prior snapshot
-    prior_date = _find_prior_date(snapshot_dir, current_date)
+    prior_date = find_prior_date(snapshot_dir, current_date)
     if prior_date is None:
         return GateResult(
             name="pnl_attribution", status="PASS",

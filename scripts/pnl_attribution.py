@@ -491,7 +491,7 @@ def main() -> None:
     if args.prior_date:
         prior_date = args.prior_date
     else:
-        prior_date = _find_prior_date(args.snapshot_root, args.as_of_date)
+        prior_date = find_prior_date(args.snapshot_root, args.as_of_date)
         if prior_date is None:
             print("ERROR: No prior snapshot found")
             sys.exit(1)
@@ -531,7 +531,7 @@ def main() -> None:
     print(f"  Output → {out_dir}")
 
 
-def _find_prior_date(snapshot_root: Path, current_date: str) -> Optional[str]:
+def find_prior_date(snapshot_root: Path, current_date: str) -> Optional[str]:
     """Find the most recent snapshot date before current_date."""
     if not snapshot_root.exists():
         return None

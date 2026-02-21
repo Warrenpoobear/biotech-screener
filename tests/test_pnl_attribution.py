@@ -21,7 +21,7 @@ from scripts.pnl_attribution import (
     PositionPnL,
     _bucket_catalyst,
     _bucket_inst_delta,
-    _find_prior_date,
+    find_prior_date,
     build_portfolio,
     check_pnl_attribution_file,
     compute_attribution,
@@ -294,14 +294,14 @@ class TestFindPriorDate:
         _make_snapshot(snap_root, "2025-01-02", ["A"])
         _make_snapshot(snap_root, "2025-01-03", ["A"])
 
-        prior = _find_prior_date(snap_root, "2025-01-03")
+        prior = find_prior_date(snap_root, "2025-01-03")
         assert prior == "2025-01-02"
 
     def test_no_prior(self, tmp_dir):
         snap_root = tmp_dir / "snapshots"
         _make_snapshot(snap_root, "2025-01-01", ["A"])
 
-        prior = _find_prior_date(snap_root, "2025-01-01")
+        prior = find_prior_date(snap_root, "2025-01-01")
         assert prior is None
 
 
