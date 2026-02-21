@@ -2722,6 +2722,7 @@ def save_validation_snapshot(
     alpha_schema_mode: str = "warn",
     inputs_manifest_mode: str = "off",
     ranking_mode: str = "decision",
+    prior_snapshot_dir: Optional[Path] = None,
 ) -> Optional[Path]:
     """
     Save a lightweight validation snapshot for future forward-looking backtests.
@@ -2757,6 +2758,8 @@ def save_validation_snapshot(
     except OSError as e:
         logger.warning(f"Could not create snapshot directory {snap_path}: {e}")
         return None
+
+    _prior_dir = prior_snapshot_dir or snapshot_dir
 
     ranked = results.get("module_5_composite", {}).get("ranked_securities", [])
     if not ranked:
@@ -3186,7 +3189,7 @@ def save_validation_snapshot(
             _uni_tickers = {r.get("ticker", "") for r in csv_rows if r.get("ticker")}
             inst_summary = build_institutional_summary(as_of_date, _uni_tickers)
             if inst_summary:
-                prior_inst = _find_prior_institutional_summary(snapshot_dir, as_of_date)
+                prior_inst = _find_prior_institutional_summary(_prior_dir, as_of_date)
                 if prior_inst:
                     inst_delta = compute_institutional_delta(inst_summary, prior_inst)
         except Exception as e:
@@ -3391,7 +3394,7 @@ def save_validation_snapshot(
         shadow = _compute_shadow_metrics(
             csv_rows=csv_rows,
             as_of_date=as_of_date,
-            snapshot_dir=snapshot_dir,
+            snapshot_dir=_prior_dir,
             source_mix=source_mix,
             trial_records=trial_records,
         )
@@ -7035,6 +7038,14 @@ Module 3 Catalyst Detection:
     )
 
     parser.add_argument(
+        "--prior-snapshot-dir",
+        type=Path,
+        default=None,
+        help="Directory to search for prior snapshots (for delta/shadow metrics). "
+             "Defaults to --snapshot-dir. Useful when snapshot-dir is a staging dir.",
+    )
+
+    parser.add_argument(
         "--no-snapshot",
         action="store_true",
         default=False,
@@ -7831,6 +7842,7 @@ Module 3 Catalyst Detection:
         # Save validation snapshot for future forward-looking backtests
         if not args.no_snapshot:
             snapshot_dir = args.snapshot_dir or (args.data_dir.parent / "data" / "snapshots")
+            prior_snapshot_dir = getattr(args, "prior_snapshot_dir", None) or snapshot_dir
 
             # Load trial_records for clinical_alpha_z computation
             # Use the same ctgov_cache_dir as the pipeline to avoid divergence
@@ -7892,6 +7904,7 @@ Module 3 Catalyst Detection:
                 alpha_schema_mode=args.alpha_schema_mode,
                 inputs_manifest_mode=args.inputs_manifest,
                 ranking_mode=args.ranking_mode,
+                prior_snapshot_dir=prior_snapshot_dir,
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")

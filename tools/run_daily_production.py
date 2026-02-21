@@ -225,6 +225,7 @@ def run_screen(
     *,
     ruleset_path: Optional[Path] = None,
     extra_args: Optional[List[str]] = None,
+    prior_snapshot_dir: Optional[Path] = None,
 ) -> subprocess.CompletedProcess:
     """Run run_screen.py in phase2 mode with decision ranking."""
     # run_screen.py requires --output for the raw JSON results
@@ -242,6 +243,8 @@ def run_screen(
     ]
     if ruleset_path:
         cmd.extend(["--ruleset", str(ruleset_path)])
+    if prior_snapshot_dir:
+        cmd.extend(["--prior-snapshot-dir", str(prior_snapshot_dir)])
     if extra_args:
         cmd.extend(extra_args)
 
@@ -1764,6 +1767,7 @@ def run_daily(
         as_of_date, data_dir, staging_dir, price_csv,
         ruleset_path=ruleset_path,
         extra_args=extra_screen_args,
+        prior_snapshot_dir=final_snapshots_dir,
     )
     staging_date_dir = staging_dir / as_of_date
 

@@ -298,6 +298,25 @@ class TestFindPrior:
         assert result is not None
         assert result["as_of_date"] == "2026-02-15"
 
+    def test_prior_found_in_separate_dir(self, tmp_path):
+        """Prior found when pointed at production dir (not staging dir)."""
+        production_dir = tmp_path / "production"
+        staging_dir = tmp_path / "staging"
+        staging_dir.mkdir(parents=True, exist_ok=True)
+        # Write prior into production dir
+        self._write_summary(production_dir, "2026-02-19")
+        # Searching production dir finds the prior
+        result = _find_prior_institutional_summary(production_dir, "2026-02-21")
+        assert result is not None
+        assert result["as_of_date"] == "2026-02-19"
+
+    def test_staging_dir_returns_none(self, tmp_path):
+        """Empty staging dir has no prior — demonstrates the production bug."""
+        staging_dir = tmp_path / "staging"
+        staging_dir.mkdir(parents=True, exist_ok=True)
+        result = _find_prior_institutional_summary(staging_dir, "2026-02-21")
+        assert result is None
+
 
 # ---------------------------------------------------------------------------
 # TestDeltaGate
