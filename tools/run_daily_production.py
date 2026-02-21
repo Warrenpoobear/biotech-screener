@@ -60,6 +60,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "sec_13f_cache",
     "institutional_summary",
     "institutional_delta",
+    "pnl_attribution",
 })
 
 # Required fields in each market_data.json record for schema gate
@@ -105,6 +106,7 @@ class GateConfig:
     """Min 13F manager coverage (%) before WARN. Never FAIL."""
 
     institutional_summary_warn_coverage_pct: float = 50.0
+    pnl_attribution_min_coverage_pct: float = 80.0
     """Min institutional summary ticker coverage (%) before WARN. Never FAIL."""
 
     @staticmethod
@@ -1015,6 +1017,73 @@ def check_institutional_delta(
     )
 
 
+def check_pnl_attribution(
+    snapshot_date_dir: Path,
+    snapshot_dir: Path,
+    current_date: str,
+    price_csv: Path,
+    min_coverage_pct: float = 80.0,
+    cost_bps: float = 30.0,
+) -> GateResult:
+    """Generate and validate PnL attribution sidecar. WARN-only — never FAIL.
+
+    Runs pnl_attribution between the prior snapshot and the current one,
+    writes pnl_attribution.json + .md into the staging dir, then validates.
+    """
+    try:
+        from scripts.pnl_attribution import (
+            check_pnl_attribution_file,
+            compute_attribution,
+            write_attribution_json,
+            write_attribution_md,
+            _find_prior_date,
+        )
+    except ImportError as e:
+        return GateResult(
+            name="pnl_attribution", status="WARN",
+            detail=f"Cannot import pnl_attribution module: {e}",
+        )
+
+    # Find prior snapshot
+    prior_date = _find_prior_date(snapshot_dir, current_date)
+    if prior_date is None:
+        return GateResult(
+            name="pnl_attribution", status="PASS",
+            detail="No prior snapshot — cold-start OK",
+        )
+
+    prior_dir = snapshot_dir / prior_date
+    if not prior_dir.exists() or not (prior_dir / "rankings.csv").exists():
+        return GateResult(
+            name="pnl_attribution", status="PASS",
+            detail=f"Prior snapshot {prior_date} not usable — cold-start OK",
+        )
+
+    try:
+        result = compute_attribution(
+            d0_dir=prior_dir,
+            d1_dir=snapshot_date_dir,
+            price_csv=price_csv,
+            cost_bps=cost_bps,
+        )
+        write_attribution_json(result, snapshot_date_dir / "pnl_attribution.json")
+        write_attribution_md(result, snapshot_date_dir / "pnl_attribution.md")
+    except Exception as e:
+        return GateResult(
+            name="pnl_attribution", status="WARN",
+            detail=f"PnL attribution failed: {e}",
+        )
+
+    # Validate the written file
+    status, detail, value, threshold = check_pnl_attribution_file(
+        snapshot_date_dir, min_coverage_pct=min_coverage_pct,
+    )
+    return GateResult(
+        name="pnl_attribution", status=status,
+        detail=detail, value=value, threshold=threshold,
+    )
+
+
 def _read_invariants_summary(audit_output_dir: Path) -> Optional[Dict[str, Any]]:
     """Read invariants_summary.json written by the audit tool."""
     p = audit_output_dir / "invariants_summary.json"
@@ -1868,6 +1937,15 @@ def run_daily(
     )
     gate_results.append(inst_delta_gate)
     print(f"  Institutional delta gate: {inst_delta_gate.status} — {inst_delta_gate.detail}")
+
+    # --- Gate: pnl_attribution (WARN-only, post-screen) ---
+    pnl_gate = check_pnl_attribution(
+        staging_date_dir, final_snapshots_dir, as_of_date,
+        price_csv,
+        min_coverage_pct=config.pnl_attribution_min_coverage_pct,
+    )
+    gate_results.append(pnl_gate)
+    print(f"  PnL attribution gate: {pnl_gate.status} — {pnl_gate.detail}")
 
     # --- Step 5: Build manifest ---
     print(f"\n[5/5] Building run manifest ...")

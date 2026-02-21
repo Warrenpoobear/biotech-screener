@@ -972,6 +972,7 @@ class TestOpsContract:
             "screen", "audit", "missing_reason_fraction", "turnover",
             "drift_monitoring", "ctgov_pit_dates", "sec_13f_cache",
             "institutional_summary", "institutional_delta",
+            "pnl_attribution",
         }
         assert expected == GATE_ALLOWLIST
 
