@@ -973,6 +973,7 @@ class TestOpsContract:
             "drift_monitoring", "ctgov_pit_dates", "sec_13f_cache",
             "institutional_summary", "institutional_delta",
             "pnl_attribution",
+            "price_pit_cache", "forward_eval",
         }
         assert expected == GATE_ALLOWLIST
 

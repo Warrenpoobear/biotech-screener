@@ -183,6 +183,41 @@ jobs:
             echo "::warning::No run_manifest.json found — runner may have crashed before writing it"
           fi
 
+      # ── PIT price cache (post-production, non-blocking) ────────
+      - name: Create PIT price cache anchor
+        if: always() && steps.runner.outputs.exit_code != '1'
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          RANKINGS="data/snapshots/${DATE}/rankings.csv"
+          if [ ! -f "$RANKINGS" ]; then
+            echo "No rankings.csv for ${DATE} — skipping PIT price cache"
+            exit 0
+          fi
+          INDEX="data/caches/price_pit/PIT/${DATE}/index.json"
+          if [ -f "$INDEX" ]; then
+            echo "PIT price cache already exists for ${DATE}"
+          else
+            echo "Creating PIT price cache anchor for ${DATE}..."
+            python tools/warm_price_cache.py --snapshot \
+              --as-of-date "$DATE" \
+              --rankings-csv "$RANKINGS" \
+              --price-csv production_data/price_history.csv || {
+              echo "::warning::PIT price cache creation failed"
+            }
+          fi
+
+      - name: Backfill PIT price forward returns
+        if: always() && steps.runner.outputs.exit_code != '1'
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          echo "Backfilling PIT price forward returns through ${DATE}..."
+          python tools/warm_price_cache.py --backfill-all \
+            --price-csv production_data/price_history.csv \
+            --cache-base data/caches/price_pit/PIT/ \
+            --through-date "$DATE" || {
+            echo "::warning::PIT price backfill failed"
+          }
+
       # ── Upload snapshot artifacts ───────────────────────────────
       - name: Upload snapshot
         if: always()

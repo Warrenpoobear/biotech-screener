@@ -297,6 +297,38 @@ def warm_event_ledger(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
     return len(ledger)
 
 
+def warm_price_pit(
+    as_of_date: date,
+    data_dir: Path,
+    cache_dir: Path | None = None,
+    snapshot_dir: Path | None = None,
+) -> int:
+    """Create PIT price cache anchor for today's snapshot. Returns ticker count."""
+    from tools.warm_price_cache import snapshot_price_cache
+
+    snap_dir = snapshot_dir or (PROJECT_ROOT / "data" / "snapshots")
+    rankings_csv = snap_dir / as_of_date.isoformat() / "rankings.csv"
+    if not rankings_csv.exists():
+        logger.warning(f"rankings.csv not found at {rankings_csv} — skipping price_pit")
+        return 0
+
+    out_dir = cache_dir or (
+        PROJECT_ROOT / "data" / "caches" / "price_pit" / "PIT" / as_of_date.isoformat()
+    )
+    price_csv = data_dir / "price_history.csv"
+    if not price_csv.exists():
+        # Fallback to production_data
+        price_csv = PROJECT_ROOT / "production_data" / "price_history.csv"
+
+    index = snapshot_price_cache(
+        as_of_date=as_of_date.isoformat(),
+        price_csv=price_csv,
+        rankings_csv=rankings_csv,
+        out_dir=out_dir,
+    )
+    return index.get("ticker_count", 0)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Pre-populate catalyst data caches for production screening runs.",
@@ -311,7 +343,7 @@ def main():
         "--sources",
         type=str,
         default="fda_adcom,sec_8k",
-        help="Comma-separated sources to warm: fda_adcom,sec_8k,ctgov,sec_13f,event_ledger (default: fda_adcom,sec_8k)",
+        help="Comma-separated sources to warm: fda_adcom,sec_8k,ctgov,sec_13f,event_ledger,price_pit (default: fda_adcom,sec_8k)",
     )
     parser.add_argument(
         "--data-dir",
@@ -396,6 +428,13 @@ def main():
         except Exception as e:
             logger.error(f"Event ledger warm failed: {e}")
 
+    price_pit_count = 0
+    if "price_pit" in sources:
+        try:
+            price_pit_count = warm_price_pit(as_of, data_dir)
+        except Exception as e:
+            logger.error(f"Price PIT warm failed: {e}")
+
     parts = [f"{total} events"]
     if sec_13f_count:
         parts.append(f"{sec_13f_count} 13F managers")
@@ -403,6 +442,8 @@ def main():
         parts.append(f"{ctgov_records} CTGov records")
     if ledger_entries:
         parts.append(f"{ledger_entries} ledger entries")
+    if price_pit_count:
+        parts.append(f"{price_pit_count} price PIT tickers")
     logger.info(f"Cache warm complete: {', '.join(parts)}")
     return 0
 

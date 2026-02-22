@@ -61,6 +61,8 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "institutional_summary",
     "institutional_delta",
     "pnl_attribution",
+    "price_pit_cache",
+    "forward_eval",
 })
 
 # Required fields in each market_data.json record for schema gate
@@ -110,6 +112,15 @@ class GateConfig:
 
     pnl_attribution_min_coverage_pct: float = 80.0
     """Min PnL attribution price coverage (%) before WARN. Never FAIL."""
+
+    forward_eval_ic_warn_floor: float = 0.00
+    """Mean IC floor for forward-eval gate. Any positive signal passes."""
+
+    forward_eval_lookback_n: int = 10
+    """Rolling window size (number of prior snapshot dates) for forward-eval."""
+
+    forward_eval_horizon: int = 20
+    """Forward-return horizon in trading days for the gate."""
 
     @staticmethod
     def from_json(path: Path) -> "GateConfig":
@@ -1086,6 +1097,87 @@ def check_pnl_attribution(
     )
 
 
+def check_price_pit_cache(
+    cache_dir: Path,
+    as_of_date: str,
+) -> GateResult:
+    """Validate PIT price cache index for today's snapshot. WARN-only — never FAIL."""
+    from tools.warm_price_cache import validate_price_pit_index
+
+    index_path = cache_dir / "index.json"
+    if not index_path.exists():
+        return GateResult(
+            name="price_pit_cache", status="WARN",
+            detail=f"No PIT price cache at {cache_dir}",
+        )
+
+    try:
+        with open(index_path, encoding="utf-8") as f:
+            index = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(
+            name="price_pit_cache", status="WARN",
+            detail=f"Cannot read PIT price cache index: {e}",
+        )
+
+    ok, schema_detail = validate_price_pit_index(index, expected_as_of_date=as_of_date)
+    if not ok:
+        return GateResult(
+            name="price_pit_cache", status="WARN",
+            detail=f"schema invalid: {schema_detail}",
+        )
+
+    coverage = index.get("coverage_pct", 0)
+    ticker_count = index.get("ticker_count", 0)
+    n_missing = len(index.get("tickers_missing_anchor", []))
+    anchor_date = index.get("anchor_date", "?")
+
+    return GateResult(
+        name="price_pit_cache", status="PASS",
+        detail=(
+            f"coverage={coverage:.1f}%, "
+            f"{ticker_count - n_missing}/{ticker_count} tickers, "
+            f"anchor={anchor_date}"
+        ),
+        value={
+            "coverage_pct": coverage,
+            "ticker_count": ticker_count,
+            "missing": n_missing,
+            "anchor_date": anchor_date,
+        },
+    )
+
+
+def check_forward_eval(
+    snapshot_dir: Path,
+    price_cache_base: Path,
+    current_date: str,
+    config: GateConfig,
+) -> GateResult:
+    """Forward-return rolling IC gate. WARN-only — never FAIL."""
+    try:
+        from tools.forward_eval_gate import evaluate_rolling_ic
+    except ImportError as e:
+        return GateResult(
+            name="forward_eval", status="WARN",
+            detail=f"Cannot import forward_eval_gate: {e}",
+        )
+
+    status, detail, value, threshold = evaluate_rolling_ic(
+        snapshot_dir=snapshot_dir,
+        price_cache_base=price_cache_base,
+        current_date=current_date,
+        horizon=config.forward_eval_horizon,
+        lookback_n=config.forward_eval_lookback_n,
+        ic_warn_floor=config.forward_eval_ic_warn_floor,
+    )
+
+    return GateResult(
+        name="forward_eval", status=status,
+        detail=detail, value=value, threshold=threshold,
+    )
+
+
 def _read_invariants_summary(audit_output_dir: Path) -> Optional[Dict[str, Any]]:
     """Read invariants_summary.json written by the audit tool."""
     p = audit_output_dir / "invariants_summary.json"
@@ -1693,6 +1785,8 @@ def run_daily(
     ctgov_cache_dir: Optional[Path] = None,
     drift_thresholds: Optional[DriftThresholds] = None,
     skip_drift: bool = False,
+    skip_forward_eval: bool = False,
+    price_cache_dir: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """Execute the full daily Phase-2 pipeline.
 
@@ -1949,6 +2043,22 @@ def run_daily(
     gate_results.append(pnl_gate)
     print(f"  PnL attribution gate: {pnl_gate.status} — {pnl_gate.detail}")
 
+    # --- Gate: price_pit_cache (WARN-only) ---
+    _price_cache_base = price_cache_dir or (REPO_ROOT / "data" / "caches" / "price_pit" / "PIT")
+    pit_price_gate = check_price_pit_cache(_price_cache_base / as_of_date, as_of_date)
+    gate_results.append(pit_price_gate)
+    print(f"  PIT price cache gate: {pit_price_gate.status} — {pit_price_gate.detail}")
+
+    # --- Gate: forward_eval (WARN-only) ---
+    if not skip_forward_eval:
+        fwd_gate = check_forward_eval(
+            final_snapshots_dir, _price_cache_base, as_of_date, config,
+        )
+        gate_results.append(fwd_gate)
+        print(f"  Forward eval gate: {fwd_gate.status} — {fwd_gate.detail}")
+    else:
+        print("  Forward eval gate: skipped (--skip-forward-eval)")
+
     # --- Step 5: Build manifest ---
     print(f"\n[5/5] Building run manifest ...")
     git_post_run = get_git_info(REPO_ROOT)
@@ -2058,6 +2168,14 @@ def main():
         "--skip-drift", action="store_true",
         help="Skip drift monitoring gate",
     )
+    parser.add_argument(
+        "--skip-forward-eval", action="store_true",
+        help="Skip forward-return rolling IC gate",
+    )
+    parser.add_argument(
+        "--price-cache-dir", type=Path, default=None,
+        help="Base dir for PIT price caches (default: data/caches/price_pit/PIT/)",
+    )
     args = parser.parse_args()
 
     config = GateConfig()
@@ -2081,6 +2199,8 @@ def main():
         ctgov_cache_dir=args.ctgov_cache_dir,
         drift_thresholds=_drift_th,
         skip_drift=args.skip_drift,
+        skip_forward_eval=args.skip_forward_eval,
+        price_cache_dir=args.price_cache_dir,
     )
 
     # Always write manifest to output/ for CI discoverability
