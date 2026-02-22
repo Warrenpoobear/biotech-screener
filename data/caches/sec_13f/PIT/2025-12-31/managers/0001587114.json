@@ -1,0 +1,251 @@
+{
+  "manager_cik": "0001587114",
+  "manager_name": "EcoR1 Capital",
+  "as_of_date": "2025-12-31",
+  "period_of_report": "2025-09-30",
+  "filed_at": "2025-11-14",
+  "form_type": "13F-HR",
+  "accession": "000093583625000671",
+  "holdings": [
+    {
+      "cusip": "G01767105",
+      "ticker": "ALKS",
+      "issuer": "ALKERMES PLC",
+      "shares": 500000,
+      "value_usd_thousands": 15000000,
+      "put_call": ""
+    },
+    {
+      "cusip": "032724106",
+      "ticker": "ANAB",
+      "issuer": "ANAPTYSBIO INC",
+      "shares": 7880094,
+      "value_usd_thousands": 241288478,
+      "put_call": ""
+    },
+    {
+      "cusip": "03753U106",
+      "ticker": "APLS",
+      "issuer": "APELLIS PHARMACEUTICALS INC",
+      "shares": 3447156,
+      "value_usd_thousands": 78009140,
+      "put_call": ""
+    },
+    {
+      "cusip": "03843E104",
+      "ticker": "AQST",
+      "issuer": "AQUESTIVE THERAPEUTICS INC",
+      "shares": 2625000,
+      "value_usd_thousands": 14673750,
+      "put_call": ""
+    },
+    {
+      "cusip": "046513206",
+      "ticker": "",
+      "issuer": "ATARA BIOTHERAPEUTICS INC",
+      "shares": 573183,
+      "value_usd_thousands": 8213712,
+      "put_call": ""
+    },
+    {
+      "cusip": "05370A108",
+      "ticker": "",
+      "issuer": "AVIDITY BIOSCIENCES INC",
+      "shares": 765000,
+      "value_usd_thousands": 33331050,
+      "put_call": ""
+    },
+    {
+      "cusip": "107924102",
+      "ticker": "BIOR",
+      "issuer": "BRIDGEBIO ONCOLOGY THERAPEUT",
+      "shares": 2823126,
+      "value_usd_thousands": 32691799,
+      "put_call": ""
+    },
+    {
+      "cusip": "152309100",
+      "ticker": "CNTA",
+      "issuer": "CENTESSA PHARMACEUTICALS PLC",
+      "shares": 550000,
+      "value_usd_thousands": 13337500,
+      "put_call": ""
+    },
+    {
+      "cusip": "20451W101",
+      "ticker": "CMPS",
+      "issuer": "COMPASS PATHWAYS PLC",
+      "shares": 265137,
+      "value_usd_thousands": 1519235,
+      "put_call": ""
+    },
+    {
+      "cusip": "22663K107",
+      "ticker": "CRNX",
+      "issuer": "CRINETICS PHARMACEUTICALS IN",
+      "shares": 4288120,
+      "value_usd_thousands": 178600198,
+      "put_call": ""
+    },
+    {
+      "cusip": "H17182108",
+      "ticker": "CRSP",
+      "issuer": "CRISPR THERAPEUTICS AG",
+      "shares": 1389276,
+      "value_usd_thousands": 90038978,
+      "put_call": ""
+    },
+    {
+      "cusip": "29772L108",
+      "ticker": "ETON",
+      "issuer": "ETON PHARMACEUTICALS INC",
+      "shares": 2030544,
+      "value_usd_thousands": 44123721,
+      "put_call": ""
+    },
+    {
+      "cusip": "36315X101",
+      "ticker": "GLPG",
+      "issuer": "GALAPAGOS NV",
+      "shares": 1667119,
+      "value_usd_thousands": 57749002,
+      "put_call": ""
+    },
+    {
+      "cusip": "45257U108",
+      "ticker": "IMNM",
+      "issuer": "IMMUNOME INC",
+      "shares": 4079415,
+      "value_usd_thousands": 47769950,
+      "put_call": ""
+    },
+    {
+      "cusip": "G50871105",
+      "ticker": "JAZZ",
+      "issuer": "JAZZ PHARMACEUTICALS PLC",
+      "shares": 1706469,
+      "value_usd_thousands": 224912614,
+      "put_call": ""
+    },
+    {
+      "cusip": "50127T109",
+      "ticker": "",
+      "issuer": "KURA ONCOLOGY INC",
+      "shares": 872500,
+      "value_usd_thousands": 7721625,
+      "put_call": ""
+    },
+    {
+      "cusip": "558868105",
+      "ticker": "MDGL",
+      "issuer": "MADRIGAL PHARMACEUTICALS INC",
+      "shares": 75000,
+      "value_usd_thousands": 34399500,
+      "put_call": ""
+    },
+    {
+      "cusip": "55287L101",
+      "ticker": "MBX",
+      "issuer": "MBX BIOSCIENCES INC",
+      "shares": 2123604,
+      "value_usd_thousands": 37163070,
+      "put_call": ""
+    },
+    {
+      "cusip": "59267L107",
+      "ticker": "MTSR",
+      "issuer": "METSERA INC",
+      "shares": 271529,
+      "value_usd_thousands": 14209113,
+      "put_call": ""
+    },
+    {
+      "cusip": "64135M105",
+      "ticker": "NGNE",
+      "issuer": "NEUROGENE INC",
+      "shares": 1271342,
+      "value_usd_thousands": 22032357,
+      "put_call": ""
+    },
+    {
+      "cusip": "67080N119",
+      "ticker": "",
+      "issuer": "NUVATION BIO INC",
+      "shares": 963333,
+      "value_usd_thousands": 3564332,
+      "put_call": ""
+    },
+    {
+      "cusip": "68622P109",
+      "ticker": "ORIC",
+      "issuer": "ORIC PHARMACEUTICALS INC",
+      "shares": 6728116,
+      "value_usd_thousands": 80737392,
+      "put_call": ""
+    },
+    {
+      "cusip": "713317105",
+      "ticker": "PEPG",
+      "issuer": "PEPGEN INC",
+      "shares": 800000,
+      "value_usd_thousands": 3696000,
+      "put_call": ""
+    },
+    {
+      "cusip": "74168J101",
+      "ticker": "",
+      "issuer": "PRIME MEDICINE INC",
+      "shares": 1543326,
+      "value_usd_thousands": 8550026,
+      "put_call": ""
+    },
+    {
+      "cusip": "86889P117",
+      "ticker": "SRZN",
+      "issuer": "SURROZEN INC",
+      "shares": 66665,
+      "value_usd_thousands": 859312,
+      "put_call": ""
+    },
+    {
+      "cusip": "87583X109",
+      "ticker": "TNGX",
+      "issuer": "TANGO THERAPEUTICS INC",
+      "shares": 10630736,
+      "value_usd_thousands": 89298182,
+      "put_call": ""
+    },
+    {
+      "cusip": "N90064101",
+      "ticker": "QURE",
+      "issuer": "UNIQURE NV",
+      "shares": 3988971,
+      "value_usd_thousands": 232836237,
+      "put_call": ""
+    },
+    {
+      "cusip": "92915B106",
+      "ticker": "",
+      "issuer": "VOYAGER THERAPEUTICS INC",
+      "shares": 670303,
+      "value_usd_thousands": 3130315,
+      "put_call": ""
+    },
+    {
+      "cusip": "98401F105",
+      "ticker": "XNCR",
+      "issuer": "XENCOR INC",
+      "shares": 6144767,
+      "value_usd_thousands": 72078117,
+      "put_call": ""
+    },
+    {
+      "cusip": "98985Y108",
+      "ticker": "ZYME",
+      "issuer": "ZYMEWORKS INC",
+      "shares": 22970388,
+      "value_usd_thousands": 392334227,
+      "put_call": ""
+    }
+  ]
+}

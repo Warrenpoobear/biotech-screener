@@ -1,0 +1,123 @@
+{
+  "manager_cik": "0001609251",
+  "manager_name": "Krensavage Asset Management",
+  "as_of_date": "2022-09-30",
+  "period_of_report": "2022-06-30",
+  "filed_at": "2022-08-16",
+  "form_type": "13F-HR",
+  "accession": "000160925122000004",
+  "holdings": [
+    {
+      "cusip": "G01767105",
+      "ticker": "ALKS",
+      "issuer": "ALKERMES PLC",
+      "shares": 1398159,
+      "value_usd_thousands": 41651,
+      "put_call": ""
+    },
+    {
+      "cusip": "045396108",
+      "ticker": "",
+      "issuer": "ASSEMBLY BIOSCIENCES INC",
+      "shares": 9985,
+      "value_usd_thousands": 21,
+      "put_call": ""
+    },
+    {
+      "cusip": "09062X103",
+      "ticker": "BIIB",
+      "issuer": "BIOGEN INC",
+      "shares": 117248,
+      "value_usd_thousands": 23912,
+      "put_call": ""
+    },
+    {
+      "cusip": "14149Y108",
+      "ticker": "",
+      "issuer": "CARDINAL HEALTH INC",
+      "shares": 178839,
+      "value_usd_thousands": 9348,
+      "put_call": ""
+    },
+    {
+      "cusip": "269796108",
+      "ticker": "",
+      "issuer": "EAGLE PHARMACEUTICALS INC",
+      "shares": 121014,
+      "value_usd_thousands": 5377,
+      "put_call": ""
+    },
+    {
+      "cusip": "29082K105",
+      "ticker": "",
+      "issuer": "EMBECTA CORP",
+      "shares": 1017194,
+      "value_usd_thousands": 25755,
+      "put_call": ""
+    },
+    {
+      "cusip": "29251M106",
+      "ticker": "",
+      "issuer": "ENANTA PHARMACEUTICALS INC",
+      "shares": 624768,
+      "value_usd_thousands": 29533,
+      "put_call": ""
+    },
+    {
+      "cusip": "30161Q104",
+      "ticker": "EXEL",
+      "issuer": "EXELIXIS INC",
+      "shares": 1506885,
+      "value_usd_thousands": 31373,
+      "put_call": ""
+    },
+    {
+      "cusip": "50015M109",
+      "ticker": "KOD",
+      "issuer": "KODIAK SCIENCES INC",
+      "shares": 554192,
+      "value_usd_thousands": 4234,
+      "put_call": ""
+    },
+    {
+      "cusip": "58155Q103",
+      "ticker": "",
+      "issuer": "MCKESSON CORP",
+      "shares": 82894,
+      "value_usd_thousands": 27041,
+      "put_call": ""
+    },
+    {
+      "cusip": "65343E108",
+      "ticker": "",
+      "issuer": "NEXTCURE INC",
+      "shares": 30999,
+      "value_usd_thousands": 146,
+      "put_call": ""
+    },
+    {
+      "cusip": "75886F107",
+      "ticker": "REGN",
+      "issuer": "REGENERON PHARMACEUTICALS",
+      "shares": 60384,
+      "value_usd_thousands": 35695,
+      "put_call": ""
+    },
+    {
+      "cusip": "M8737E108",
+      "ticker": "",
+      "issuer": "TARO PHARMACEUTICAL INDUS",
+      "shares": 580524,
+      "value_usd_thousands": 20992,
+      "put_call": ""
+    },
+    {
+      "cusip": "91307C102",
+      "ticker": "UTHR",
+      "issuer": "UNITED THERAPEUTICS CORP",
+      "shares": 201228,
+      "value_usd_thousands": 47417,
+      "put_call": ""
+    }
+  ]
+}

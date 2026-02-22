@@ -1,0 +1,75 @@
+{
+  "manager_cik": "0001776382",
+  "manager_name": "Venbio Partners",
+  "as_of_date": "2020-12-31",
+  "period_of_report": "2020-09-30",
+  "filed_at": "2020-11-16",
+  "form_type": "13F-HR",
+  "accession": "000156761920019877",
+  "holdings": [
+    {
+      "cusip": "00973Y108",
+      "ticker": "AKRO",
+      "issuer": "AKERO THERAPEUTICS INC",
+      "shares": 2444311,
+      "value_usd_thousands": 75260,
+      "put_call": ""
+    },
+    {
+      "cusip": "00166B105",
+      "ticker": "ALXO",
+      "issuer": "ALX ONCOLOGY HLDGS INC",
+      "shares": 9699925,
+      "value_usd_thousands": 366075,
+      "put_call": ""
+    },
+    {
+      "cusip": "03753U106",
+      "ticker": "APLS",
+      "issuer": "APELLIS PHARMACEUTICALS INC",
+      "shares": 501584,
+      "value_usd_thousands": 15133,
+      "put_call": ""
+    },
+    {
+      "cusip": "162818108",
+      "ticker": "",
+      "issuer": "CHECKMATE PHARMACEUTICALS IN",
+      "shares": 3673374,
+      "value_usd_thousands": 42281,
+      "put_call": ""
+    },
+    {
+      "cusip": "413197104",
+      "ticker": "HRMY",
+      "issuer": "HARMONY BIOSCIENCES HLDGS IN",
+      "shares": 3504624,
+      "value_usd_thousands": 118807,
+      "put_call": ""
+    },
+    {
+      "cusip": "59101E103",
+      "ticker": "",
+      "issuer": "METACRINE INC",
+      "shares": 3059123,
+      "value_usd_thousands": 31234,
+      "put_call": ""
+    },
+    {
+      "cusip": "74019P108",
+      "ticker": "",
+      "issuer": "PRECISION BIOSCIENCES INC",
+      "shares": 1298191,
+      "value_usd_thousands": 7997,
+      "put_call": ""
+    },
+    {
+      "cusip": "925050106",
+      "ticker": "VRNA",
+      "issuer": "VERONA PHARMA PLC",
+      "shares": 199075,
+      "value_usd_thousands": 1242,
+      "put_call": ""
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "manager_cik": "0001776382",
+  "manager_name": "Venbio Partners",
+  "as_of_date": "2023-06-30",
+  "period_of_report": "2023-03-31",
+  "filed_at": "2023-05-15",
+  "form_type": "13F-HR",
+  "accession": "000090514823000447",
+  "holdings": [
+    {
+      "cusip": "00166B105",
+      "ticker": "",
+      "issuer": "ALX ONCOLOGY HLDGS INC",
+      "shares": 9699925,
+      "value_usd_thousands": 43843661,
+      "put_call": ""
+    },
+    {
+      "cusip": "28623U101",
+      "ticker": "",
+      "issuer": "ELEVATION ONCOLOGY INC",
+      "shares": 1866339,
+      "value_usd_thousands": 3546044,
+      "put_call": ""
+    },
+    {
+      "cusip": "413197104",
+      "ticker": "HRMY",
+      "issuer": "HARMONY BIOSCIENCES HLDGS IN",
+      "shares": 1035396,
+      "value_usd_thousands": 33805679,
+      "put_call": ""
+    },
+    {
+      "cusip": "45258K109",
+      "ticker": "",
+      "issuer": "IMPEL PHARMACEUTICALS INC",
+      "shares": 2759791,
+      "value_usd_thousands": 3863707,
+      "put_call": ""
+    },
+    {
+      "cusip": "N69605108",
+      "ticker": "PHVS",
+      "issuer": "PHARVARIS N V",
+      "shares": 2278575,
+      "value_usd_thousands": 18353922,
+      "put_call": ""
+    },
+    {
+      "cusip": "92332V107",
+      "ticker": "VTYX",
+      "issuer": "VENTYX BIOSCIENCES INC",
+      "shares": 2298833,
+      "value_usd_thousands": 77010906,
+      "put_call": ""
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "manager_cik": "0001822947",
+  "manager_name": "Ally Bridge Group",
+  "as_of_date": "2023-06-30",
+  "period_of_report": "2023-03-31",
+  "filed_at": "2023-05-15",
+  "form_type": "13F-HR",
+  "accession": "000095012323004992",
+  "holdings": [
+    {
+      "cusip": "07987C204",
+      "ticker": "",
+      "issuer": "BELLUS HEALTH INC NEW",
+      "shares": 1131827,
+      "value_usd_thousands": 8149154,
+      "put_call": ""
+    },
+    {
+      "cusip": "12648L601",
+      "ticker": "",
+      "issuer": "CTI BIOPHARMA CORP",
+      "shares": 550000,
+      "value_usd_thousands": 2310000,
+      "put_call": ""
+    },
+    {
+      "cusip": "23282W605",
+      "ticker": "",
+      "issuer": "CYTOKINETICS INC",
+      "shares": 223382,
+      "value_usd_thousands": 7860813,
+      "put_call": ""
+    },
+    {
+      "cusip": "29668H708",
+      "ticker": "",
+      "issuer": "ESSA PHARMA INC",
+      "shares": 236583,
+      "value_usd_thousands": 702652,
+      "put_call": ""
+    },
+    {
+      "cusip": "46583P102",
+      "ticker": "",
+      "issuer": "IVERIC BIO INC",
+      "shares": 255310,
+      "value_usd_thousands": 6211692,
+      "put_call": ""
+    },
+    {
+      "cusip": "471871103",
+      "ticker": "",
+      "issuer": "JASPER THERAPEUTICS INC",
+      "shares": 2517232,
+      "value_usd_thousands": 4556190,
+      "put_call": ""
+    },
+    {
+      "cusip": "49705R105",
+      "ticker": "",
+      "issuer": "KINNATE BIOPHARMA INC",
+      "shares": 109393,
+      "value_usd_thousands": 683706,
+      "put_call": ""
+    },
+    {
+      "cusip": "558868105",
+      "ticker": "MDGL",
+      "issuer": "MADRIGAL PHARMACEUTICALS INC",
+      "shares": 29614,
+      "value_usd_thousands": 7174288,
+      "put_call": ""
+    },
+    {
+      "cusip": "58406B103",
+      "ticker": "",
+      "issuer": "MEDAVAIL HOLDINGS INC",
+      "shares": 5894897,
+      "value_usd_thousands": 1689477,
+      "put_call": ""
+    },
+    {
+      "cusip": "58286E102",
+      "ticker": "",
+      "issuer": "MDXHEALTH SA",
+      "shares": 500000,
+      "value_usd_thousands": 1620000,
+      "put_call": ""
+    },
+    {
+      "cusip": "61559X104",
+      "ticker": "MLTX",
+      "issuer": "MOONLAKE IMMUNOTHERAPEUTICS",
+      "shares": 72850,
+      "value_usd_thousands": 1558262,
+      "put_call": ""
+    },
+    {
+      "cusip": "59045L106",
+      "ticker": "",
+      "issuer": "MERSANA THERAPEUTICS INC",
+      "shares": 1191271,
+      "value_usd_thousands": 4896124,
+      "put_call": ""
+    },
+    {
+      "cusip": "N5749R100",
+      "ticker": "MRUS",
+      "issuer": "MERUS NV",
+      "shares": 275970,
+      "value_usd_thousands": 5077848,
+      "put_call": ""
+    },
+    {
+      "cusip": "75340L104",
+      "ticker": "RPID",
+      "issuer": "RAPID MICRO BIOSYSTEMS INC",
+      "shares": 699664,
+      "value_usd_thousands": 916560,
+      "put_call": ""
+    },
+    {
+      "cusip": "803607100",
+      "ticker": "SRPT",
+      "issuer": "SAREPTA THERAPEUTICS INC",
+      "shares": 20830,
+      "value_usd_thousands": 2870999,
+      "put_call": ""
+    },
+    {
+      "cusip": "87184Q206",
+      "ticker": "SYRS",
+      "issuer": "SYROS PHARMACEUTICALS INC",
+      "shares": 249126,
+      "value_usd_thousands": 665166,
+      "put_call": ""
+    },
+    {
+      "cusip": "925050106",
+      "ticker": "VRNA",
+      "issuer": "VERONA PHARMA PLC",
+      "shares": 487631,
+      "value_usd_thousands": 9791630,
+      "put_call": ""
+    },
+    {
+      "cusip": "98420N105",
+      "ticker": "XENE",
+      "issuer": "XENON PHARMACEUTICALS INC",
+      "shares": 266961,
+      "value_usd_thousands": 9554534,
+      "put_call": ""
+    }
+  ]
+}

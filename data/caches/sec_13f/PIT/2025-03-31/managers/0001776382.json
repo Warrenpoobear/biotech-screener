@@ -1,0 +1,67 @@
+{
+  "manager_cik": "0001776382",
+  "manager_name": "Venbio Partners",
+  "as_of_date": "2025-03-31",
+  "period_of_report": "2024-12-31",
+  "filed_at": "2025-02-14",
+  "form_type": "13F-HR",
+  "accession": "000090514825000652",
+  "holdings": [
+    {
+      "cusip": "00445A100",
+      "ticker": "",
+      "issuer": "ACELYRIN INC",
+      "shares": 3806410,
+      "value_usd_thousands": 11952127,
+      "put_call": ""
+    },
+    {
+      "cusip": "022307102",
+      "ticker": "ALMS",
+      "issuer": "ALUMIS INC",
+      "shares": 2787398,
+      "value_usd_thousands": 21908948,
+      "put_call": ""
+    },
+    {
+      "cusip": "00166B105",
+      "ticker": "",
+      "issuer": "ALX ONCOLOGY HLDGS INC",
+      "shares": 9699925,
+      "value_usd_thousands": 16198875,
+      "put_call": ""
+    },
+    {
+      "cusip": "04317A107",
+      "ticker": "ARTV",
+      "issuer": "ARTIVA BIOTHERAPEUTICS INC",
+      "shares": 1519971,
+      "value_usd_thousands": 15321308,
+      "put_call": ""
+    },
+    {
+      "cusip": "413197104",
+      "ticker": "HRMY",
+      "issuer": "HARMONY BIOSCIENCES HLDGS IN",
+      "shares": 539194,
+      "value_usd_thousands": 18553666,
+      "put_call": ""
+    },
+    {
+      "cusip": "55083R104",
+      "ticker": "",
+      "issuer": "LYELL IMMUNOPHARMA INC",
+      "shares": 7102190,
+      "value_usd_thousands": 4545402,
+      "put_call": ""
+    },
+    {
+      "cusip": "N69605108",
+      "ticker": "PHVS",
+      "issuer": "PHARVARIS N V",
+      "shares": 4289304,
+      "value_usd_thousands": 82225958,
+      "put_call": ""
+    }
+  ]
+}

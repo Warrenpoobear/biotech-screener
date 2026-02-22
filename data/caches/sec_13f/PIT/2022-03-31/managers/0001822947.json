@@ -1,0 +1,251 @@
+{
+  "manager_cik": "0001822947",
+  "manager_name": "Ally Bridge Group",
+  "as_of_date": "2022-03-31",
+  "period_of_report": "2021-12-31",
+  "filed_at": "2022-02-14",
+  "form_type": "13F-HR",
+  "accession": "000095012322002404",
+  "holdings": [
+    {
+      "cusip": "04335A105",
+      "ticker": "ARVN",
+      "issuer": "ARVINAS INC",
+      "shares": 230000,
+      "value_usd_thousands": 18892,
+      "put_call": ""
+    },
+    {
+      "cusip": "19240Q201",
+      "ticker": "",
+      "issuer": "COGENT BIOSCIENCES INC",
+      "shares": 1501591,
+      "value_usd_thousands": 12884,
+      "put_call": ""
+    },
+    {
+      "cusip": "23284P103",
+      "ticker": "",
+      "issuer": "CYTEIR THERAPEUTICS INC",
+      "shares": 319538,
+      "value_usd_thousands": 3633,
+      "put_call": ""
+    },
+    {
+      "cusip": "31189P102",
+      "ticker": "",
+      "issuer": "FATE THERAPEUTICS INC",
+      "shares": 270000,
+      "value_usd_thousands": 15798,
+      "put_call": ""
+    },
+    {
+      "cusip": "40131M109",
+      "ticker": "",
+      "issuer": "GUARDANT HEALTH INC",
+      "shares": 105000,
+      "value_usd_thousands": 10502,
+      "put_call": ""
+    },
+    {
+      "cusip": "38341P102",
+      "ticker": "GOSS",
+      "issuer": "GOSSAMER BIO INC",
+      "shares": 475000,
+      "value_usd_thousands": 5372,
+      "put_call": ""
+    },
+    {
+      "cusip": "45166A102",
+      "ticker": "IDYA",
+      "issuer": "IDEAYA BIOSCIENCES INC",
+      "shares": 430000,
+      "value_usd_thousands": 10165,
+      "put_call": ""
+    },
+    {
+      "cusip": "462260100",
+      "ticker": "IOVA",
+      "issuer": "IOVANCE BIOTHERAPEUTICS INC",
+      "shares": 406986,
+      "value_usd_thousands": 7769,
+      "put_call": ""
+    },
+    {
+      "cusip": "46583P102",
+      "ticker": "",
+      "issuer": "IVERIC BIO INC",
+      "shares": 550000,
+      "value_usd_thousands": 9196,
+      "put_call": ""
+    },
+    {
+      "cusip": "465005106",
+      "ticker": "",
+      "issuer": "ISOPLEXIS CORP",
+      "shares": 1770118,
+      "value_usd_thousands": 16267,
+      "put_call": ""
+    },
+    {
+      "cusip": "481116101",
+      "ticker": "",
+      "issuer": "JOUNCE THERAPEUTICS INC",
+      "shares": 575000,
+      "value_usd_thousands": 4801,
+      "put_call": ""
+    },
+    {
+      "cusip": "516544103",
+      "ticker": "",
+      "issuer": "LANTHEUS HLDGS INC",
+      "shares": 330000,
+      "value_usd_thousands": 9534,
+      "put_call": ""
+    },
+    {
+      "cusip": "52187K101",
+      "ticker": "",
+      "issuer": "LEAP THERAPEUTICS INC",
+      "shares": 1815000,
+      "value_usd_thousands": 5881,
+      "put_call": ""
+    },
+    {
+      "cusip": "58406B103",
+      "ticker": "",
+      "issuer": "MEDAVAIL HOLDINGS INC",
+      "shares": 2920780,
+      "value_usd_thousands": 4089,
+      "put_call": ""
+    },
+    {
+      "cusip": "556099109",
+      "ticker": "",
+      "issuer": "MACROGENICS INC",
+      "shares": 30000,
+      "value_usd_thousands": 482,
+      "put_call": ""
+    },
+    {
+      "cusip": "60468T105",
+      "ticker": "",
+      "issuer": "MIRATI THERAPEUTICS INC",
+      "shares": 85000,
+      "value_usd_thousands": 12469,
+      "put_call": ""
+    },
+    {
+      "cusip": "63909J108",
+      "ticker": "NAUT",
+      "issuer": "NAUTILUS BIOTECHNOLOGY INC",
+      "shares": 1225060,
+      "value_usd_thousands": 6346,
+      "put_call": ""
+    },
+    {
+      "cusip": "63009R109",
+      "ticker": "",
+      "issuer": "NANOSTRING TECHNOLOGIES INC",
+      "shares": 185000,
+      "value_usd_thousands": 7813,
+      "put_call": ""
+    },
+    {
+      "cusip": "45826J105",
+      "ticker": "NTLA",
+      "issuer": "INTELLIA THERAPEUTICS INC",
+      "shares": 65000,
+      "value_usd_thousands": 7686,
+      "put_call": ""
+    },
+    {
+      "cusip": "632307104",
+      "ticker": "NTRA",
+      "issuer": "NATERA INC",
+      "shares": 268000,
+      "value_usd_thousands": 25029,
+      "put_call": ""
+    },
+    {
+      "cusip": "67080N101",
+      "ticker": "NUVB",
+      "issuer": "NUVATION BIO INC",
+      "shares": 1197152,
+      "value_usd_thousands": 10176,
+      "put_call": ""
+    },
+    {
+      "cusip": "759916109",
+      "ticker": "",
+      "issuer": "REPLIGEN CORP",
+      "shares": 70000,
+      "value_usd_thousands": 18539,
+      "put_call": ""
+    },
+    {
+      "cusip": "75340L104",
+      "ticker": "",
+      "issuer": "RAPID MICRO BIOSYSTEMS INC",
+      "shares": 437960,
+      "value_usd_thousands": 4660,
+      "put_call": ""
+    },
+    {
+      "cusip": "82657M105",
+      "ticker": "",
+      "issuer": "SIGHT SCIENCES INC",
+      "shares": 342304,
+      "value_usd_thousands": 6014,
+      "put_call": ""
+    },
+    {
+      "cusip": "83444K105",
+      "ticker": "",
+      "issuer": "SOMALOGIC INC",
+      "shares": 800000,
+      "value_usd_thousands": 9312,
+      "put_call": ""
+    },
+    {
+      "cusip": "803607100",
+      "ticker": "SRPT",
+      "issuer": "SAREPTA THERAPEUTICS INC",
+      "shares": 120000,
+      "value_usd_thousands": 10806,
+      "put_call": ""
+    },
+    {
+      "cusip": "86150R107",
+      "ticker": "STOK",
+      "issuer": "STOKE THERAPEUTICS INC",
+      "shares": 185000,
+      "value_usd_thousands": 4438,
+      "put_call": ""
+    },
+    {
+      "cusip": "87184Q107",
+      "ticker": "",
+      "issuer": "SYROS PHARMACEUTICALS INC",
+      "shares": 3539895,
+      "value_usd_thousands": 11540,
+      "put_call": ""
+    },
+    {
+      "cusip": "92539P101",
+      "ticker": "VERV",
+      "issuer": "VERVE THERAPEUTICS INC",
+      "shares": 110360,
+      "value_usd_thousands": 4069,
+      "put_call": ""
+    },
+    {
+      "cusip": "92790C104",
+      "ticker": "VRDN",
+      "issuer": "VIRIDIAN THERAPEUTICS INC",
+      "shares": 604774,
+      "value_usd_thousands": 11956,
+      "put_call": ""
+    }
+  ]
+}

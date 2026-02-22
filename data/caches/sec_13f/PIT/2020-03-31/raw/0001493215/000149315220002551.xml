@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<informationTable xsi:schemaLocation="http://www.sec.gov/edgar/document/thirteenf/informationtable eis_13FDocument.xsd" xmlns="http://www.sec.gov/edgar/document/thirteenf/informationtable" xmlns:n1="http://www.sec.gov/edgar/document/thirteenf/informationtable" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <infoTable>
+    <nameOfIssuer>MiMedx Group Inc</nameOfIssuer>
+    <titleOfClass>COM</titleOfClass>
+    <cusip>602496101</cusip>
+    <value>20485</value>
+    <shrsOrPrnAmt>
+      <sshPrnamt>2702539</sshPrnamt>
+      <sshPrnamtType>SH</sshPrnamtType>
+    </shrsOrPrnAmt>
+    <investmentDiscretion>SOLE</investmentDiscretion>
+    <otherManager>1,2,3</otherManager>
+    <votingAuthority>
+      <Sole>2702539</Sole>
+      <Shared>0</Shared>
+      <None>0</None>
+    </votingAuthority>
+  </infoTable>
+</informationTable>

@@ -1,0 +1,67 @@
+{
+  "manager_cik": "0001776382",
+  "manager_name": "Venbio Partners",
+  "as_of_date": "2023-03-31",
+  "period_of_report": "2022-12-31",
+  "filed_at": "2023-02-14",
+  "form_type": "13F-HR",
+  "accession": "000090514823000261",
+  "holdings": [
+    {
+      "cusip": "00166B105",
+      "ticker": "",
+      "issuer": "ALX ONCOLOGY HLDGS INC",
+      "shares": 9699925,
+      "value_usd_thousands": 109318155,
+      "put_call": ""
+    },
+    {
+      "cusip": "17240Y109",
+      "ticker": "",
+      "issuer": "CINCOR PHARMA INC",
+      "shares": 383390,
+      "value_usd_thousands": 4711863,
+      "put_call": ""
+    },
+    {
+      "cusip": "28623U101",
+      "ticker": "",
+      "issuer": "ELEVATION ONCOLOGY INC",
+      "shares": 1866339,
+      "value_usd_thousands": 1773022,
+      "put_call": ""
+    },
+    {
+      "cusip": "413197104",
+      "ticker": "HRMY",
+      "issuer": "HARMONY BIOSCIENCES HLDGS IN",
+      "shares": 1035396,
+      "value_usd_thousands": 57050320,
+      "put_call": ""
+    },
+    {
+      "cusip": "45258K109",
+      "ticker": "",
+      "issuer": "IMPEL PHARMACEUTICALS INC",
+      "shares": 2759791,
+      "value_usd_thousands": 10349216,
+      "put_call": ""
+    },
+    {
+      "cusip": "N69605108",
+      "ticker": "PHVS",
+      "issuer": "PHARVARIS N V",
+      "shares": 2296710,
+      "value_usd_thousands": 25837988,
+      "put_call": ""
+    },
+    {
+      "cusip": "92332V107",
+      "ticker": "VTYX",
+      "issuer": "VENTYX BIOSCIENCES INC",
+      "shares": 3461536,
+      "value_usd_thousands": 113503765,
+      "put_call": ""
+    }
+  ]
+}

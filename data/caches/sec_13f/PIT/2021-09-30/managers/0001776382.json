@@ -1,0 +1,91 @@
+{
+  "manager_cik": "0001776382",
+  "manager_name": "Venbio Partners",
+  "as_of_date": "2021-09-30",
+  "period_of_report": "2021-06-30",
+  "filed_at": "2021-08-16",
+  "form_type": "13F-HR",
+  "accession": "000156761921015901",
+  "holdings": [
+    {
+      "cusip": "00973Y108",
+      "ticker": "AKRO",
+      "issuer": "AKERO THERAPEUTICS INC",
+      "shares": 2200778,
+      "value_usd_thousands": 54601,
+      "put_call": ""
+    },
+    {
+      "cusip": "00166B105",
+      "ticker": "ALXO",
+      "issuer": "ALX ONCOLOGY HLDGS INC",
+      "shares": 9699925,
+      "value_usd_thousands": 530392,
+      "put_call": ""
+    },
+    {
+      "cusip": "03753U106",
+      "ticker": "APLS",
+      "issuer": "APELLIS PHARMACEUTICALS INC",
+      "shares": 411471,
+      "value_usd_thousands": 26005,
+      "put_call": ""
+    },
+    {
+      "cusip": "162818108",
+      "ticker": "",
+      "issuer": "CHECKMATE PHARMACEUTICALS IN",
+      "shares": 3673374,
+      "value_usd_thousands": 21893,
+      "put_call": ""
+    },
+    {
+      "cusip": "28623U101",
+      "ticker": "",
+      "issuer": "ELEVATION ONCOLOGY INC",
+      "shares": 2608167,
+      "value_usd_thousands": 35393,
+      "put_call": ""
+    },
+    {
+      "cusip": "413197104",
+      "ticker": "HRMY",
+      "issuer": "HARMONY BIOSCIENCES HLDGS IN",
+      "shares": 3504624,
+      "value_usd_thousands": 98936,
+      "put_call": ""
+    },
+    {
+      "cusip": "45258K109",
+      "ticker": "",
+      "issuer": "IMPEL NEUROPHARMA INC",
+      "shares": 2759791,
+      "value_usd_thousands": 24424,
+      "put_call": ""
+    },
+    {
+      "cusip": "59101E103",
+      "ticker": "",
+      "issuer": "METACRINE INC",
+      "shares": 3059123,
+      "value_usd_thousands": 11625,
+      "put_call": ""
+    },
+    {
+      "cusip": "N69605108",
+      "ticker": "PHVS",
+      "issuer": "PHARVARIS N V",
+      "shares": 2303310,
+      "value_usd_thousands": 42911,
+      "put_call": ""
+    },
+    {
+      "cusip": "925050106",
+      "ticker": "VRNA",
+      "issuer": "VERONA PHARMA PLC",
+      "shares": 161897,
+      "value_usd_thousands": 1059,
+      "put_call": ""
+    }
+  ]
+}

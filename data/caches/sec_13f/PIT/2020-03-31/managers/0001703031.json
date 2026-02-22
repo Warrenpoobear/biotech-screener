@@ -1,0 +1,91 @@
+{
+  "manager_cik": "0001703031",
+  "manager_name": "Bain Capital Life Sciences",
+  "as_of_date": "2020-03-31",
+  "period_of_report": "2019-12-31",
+  "filed_at": "2020-02-14",
+  "form_type": "13F-HR",
+  "accession": "000095012320002136",
+  "holdings": [
+    {
+      "cusip": "253031108",
+      "ticker": "DRNAUSD",
+      "issuer": "DICERNA PHARMACEUTICALS INC",
+      "shares": 4080237,
+      "value_usd_thousands": 89888,
+      "put_call": ""
+    },
+    {
+      "cusip": "56854Q101",
+      "ticker": "MRNSUSD",
+      "issuer": "MARINUS PHARMACEUTICALS INC",
+      "shares": 5942735,
+      "value_usd_thousands": 12836,
+      "put_call": ""
+    },
+    {
+      "cusip": "76029N106",
+      "ticker": "",
+      "issuer": "REPLIMUNE GROUP INC",
+      "shares": 2838968,
+      "value_usd_thousands": 40739,
+      "put_call": ""
+    },
+    {
+      "cusip": "83422E105",
+      "ticker": "",
+      "issuer": "SOLID BIOSCIENCES INC",
+      "shares": 3871164,
+      "value_usd_thousands": 17227,
+      "put_call": ""
+    },
+    {
+      "cusip": "03836N103",
+      "ticker": "",
+      "issuer": "APTINYX INC",
+      "shares": 2225092,
+      "value_usd_thousands": 7610,
+      "put_call": ""
+    },
+    {
+      "cusip": "85205L107",
+      "ticker": "",
+      "issuer": "SPRINGWORKS THERAPEUTICS INC",
+      "shares": 7281307,
+      "value_usd_thousands": 280258,
+      "put_call": ""
+    },
+    {
+      "cusip": "268158201",
+      "ticker": "",
+      "issuer": "DYNAVAX TECHNOLOGIES CORP.",
+      "shares": 8452235,
+      "value_usd_thousands": 48347,
+      "put_call": ""
+    },
+    {
+      "cusip": "210373106",
+      "ticker": "",
+      "issuer": "CONSTELLATION PHARMACEUTICALS INC.",
+      "shares": 2823529,
+      "value_usd_thousands": 133016,
+      "put_call": ""
+    },
+    {
+      "cusip": "98420X103",
+      "ticker": "",
+      "issuer": "X4 PHARMACEUTICALS INC",
+      "shares": 1648485,
+      "value_usd_thousands": 17639,
+      "put_call": ""
+    },
+    {
+      "cusip": "805111101",
+      "ticker": "SVRA",
+      "issuer": "SAVARA INC",
+      "shares": 5128593,
+      "value_usd_thousands": 22976,
+      "put_call": ""
+    }
+  ]
+}

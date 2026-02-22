@@ -1,0 +1,355 @@
+{
+  "manager_cik": "0001744967",
+  "manager_name": "Samsara BioCapital",
+  "as_of_date": "2021-03-31",
+  "period_of_report": "2020-12-31",
+  "filed_at": "2021-02-17",
+  "form_type": "13F-HR",
+  "accession": "000110465921024479",
+  "holdings": [
+    {
+      "cusip": "00461U105",
+      "ticker": "ACRS",
+      "issuer": "Aclaris Therapeutics, Inc.",
+      "shares": 1362612,
+      "value_usd_thousands": 8816,
+      "put_call": ""
+    },
+    {
+      "cusip": "00773J103",
+      "ticker": "",
+      "issuer": "Aeglea BioTherapeutics, Inc.",
+      "shares": 883720,
+      "value_usd_thousands": 6955,
+      "put_call": ""
+    },
+    {
+      "cusip": "01345P106",
+      "ticker": "",
+      "issuer": "Albireo Pharma, Inc.",
+      "shares": 100000,
+      "value_usd_thousands": 3751,
+      "put_call": ""
+    },
+    {
+      "cusip": "01671P100",
+      "ticker": "",
+      "issuer": "Allakos Inc",
+      "shares": 146259,
+      "value_usd_thousands": 20476,
+      "put_call": ""
+    },
+    {
+      "cusip": "019818103",
+      "ticker": "",
+      "issuer": "Allovir, Inc",
+      "shares": 82336,
+      "value_usd_thousands": 3165,
+      "put_call": ""
+    },
+    {
+      "cusip": "02083G100",
+      "ticker": "",
+      "issuer": "Alpine Immune Sciences Inc",
+      "shares": 399190,
+      "value_usd_thousands": 5030,
+      "put_call": ""
+    },
+    {
+      "cusip": "023111206",
+      "ticker": "",
+      "issuer": "Amarin Corp PLC",
+      "shares": 25000,
+      "value_usd_thousands": 122,
+      "put_call": ""
+    },
+    {
+      "cusip": "04965G109",
+      "ticker": "",
+      "issuer": "Atreca Inc",
+      "shares": 474943,
+      "value_usd_thousands": 7670,
+      "put_call": ""
+    },
+    {
+      "cusip": "05337M104",
+      "ticker": "",
+      "issuer": "Avadel Pharmaceuticals PLC",
+      "shares": 434250,
+      "value_usd_thousands": 2901,
+      "put_call": ""
+    },
+    {
+      "cusip": "G0904B105",
+      "ticker": "",
+      "issuer": "BCLS Acquisition Corp",
+      "shares": 300000,
+      "value_usd_thousands": 3342,
+      "put_call": ""
+    },
+    {
+      "cusip": "05492W103",
+      "ticker": "",
+      "issuer": "BCTG Acquisition Corp",
+      "shares": 500000,
+      "value_usd_thousands": 5720,
+      "put_call": ""
+    },
+    {
+      "cusip": "09075V102",
+      "ticker": "BNTX",
+      "issuer": "BioNTech SE",
+      "shares": 10795,
+      "value_usd_thousands": 880,
+      "put_call": ""
+    },
+    {
+      "cusip": "14875P206",
+      "ticker": "CATBEUR",
+      "issuer": "Catabasis Pharmaceuticals Inc",
+      "shares": 300000,
+      "value_usd_thousands": 642,
+      "put_call": ""
+    },
+    {
+      "cusip": "16961L106",
+      "ticker": "",
+      "issuer": "Chinook Therapeutics Inc",
+      "shares": 3168388,
+      "value_usd_thousands": 50251,
+      "put_call": ""
+    },
+    {
+      "cusip": "19240Q201",
+      "ticker": "",
+      "issuer": "Cogent Biosciences Inc",
+      "shares": 588961,
+      "value_usd_thousands": 6614,
+      "put_call": ""
+    },
+    {
+      "cusip": "G2445M129",
+      "ticker": "",
+      "issuer": "Consonance HFW Acquisition Co",
+      "shares": 300000,
+      "value_usd_thousands": 3141,
+      "put_call": ""
+    },
+    {
+      "cusip": "N2451R105",
+      "ticker": "CVAC",
+      "issuer": "CureVac N.V.",
+      "shares": 95318,
+      "value_usd_thousands": 7727,
+      "put_call": ""
+    },
+    {
+      "cusip": "29446K106",
+      "ticker": "",
+      "issuer": "Equillium, Inc.",
+      "shares": 1074285,
+      "value_usd_thousands": 5747,
+      "put_call": ""
+    },
+    {
+      "cusip": "34633R104",
+      "ticker": "",
+      "issuer": "Forma Therapeutics Holdings, Inc.",
+      "shares": 1418529,
+      "value_usd_thousands": 49507,
+      "put_call": ""
+    },
+    {
+      "cusip": "359616109",
+      "ticker": "FULC",
+      "issuer": "Fulcrum Therapeutics, Inc.",
+      "shares": 294118,
+      "value_usd_thousands": 3444,
+      "put_call": ""
+    },
+    {
+      "cusip": "374163103",
+      "ticker": "",
+      "issuer": "Genron Corporation",
+      "shares": 1224870,
+      "value_usd_thousands": 1948,
+      "put_call": ""
+    },
+    {
+      "cusip": "43906K100",
+      "ticker": "",
+      "issuer": "Hookipa Pharma Inc",
+      "shares": 129660,
+      "value_usd_thousands": 1438,
+      "put_call": ""
+    },
+    {
+      "cusip": "45845P108",
+      "ticker": "",
+      "issuer": "Intercept Pharmaceuticals Inc",
+      "shares": 403688,
+      "value_usd_thousands": 9971,
+      "put_call": ""
+    },
+    {
+      "cusip": "46583P102",
+      "ticker": "",
+      "issuer": "Iveric Bio, Inc.",
+      "shares": 2372476,
+      "value_usd_thousands": 16396,
+      "put_call": ""
+    },
+    {
+      "cusip": "47760M102",
+      "ticker": "",
+      "issuer": "Jiya Acquisition Corp",
+      "shares": 5223,
+      "value_usd_thousands": 507041,
+      "put_call": ""
+    },
+    {
+      "cusip": "48283N106",
+      "ticker": "KDMN",
+      "issuer": "Kadmon Hldgs Inc",
+      "shares": 165000,
+      "value_usd_thousands": 685,
+      "put_call": ""
+    },
+    {
+      "cusip": "483119103",
+      "ticker": "",
+      "issuer": "Kala Pharmaceuticals Inc",
+      "shares": 601162,
+      "value_usd_thousands": 4076,
+      "put_call": ""
+    },
+    {
+      "cusip": "483497103",
+      "ticker": "",
+      "issuer": "KalVista Pharmaceuticals Inc",
+      "shares": 67270,
+      "value_usd_thousands": 1277,
+      "put_call": ""
+    },
+    {
+      "cusip": "50107A104",
+      "ticker": "",
+      "issuer": "Kronos Bio Inc",
+      "shares": 166250,
+      "value_usd_thousands": 4966,
+      "put_call": ""
+    },
+    {
+      "cusip": "53229E103",
+      "ticker": "",
+      "issuer": "Lifesci Acquisition II Corp",
+      "shares": 200000,
+      "value_usd_thousands": 2134,
+      "put_call": ""
+    },
+    {
+      "cusip": "62921N105",
+      "ticker": "",
+      "issuer": "NGM Biopharmaceuticals, Inc.",
+      "shares": 18225,
+      "value_usd_thousands": 552,
+      "put_call": ""
+    },
+    {
+      "cusip": "65487U108",
+      "ticker": "NKTX",
+      "issuer": "Nkarta, Inc.",
+      "shares": 2034703,
+      "value_usd_thousands": 125073,
+      "put_call": ""
+    },
+    {
+      "cusip": "670002401",
+      "ticker": "",
+      "issuer": "Novavax, Inc.",
+      "shares": 30160,
+      "value_usd_thousands": 3363,
+      "put_call": ""
+    },
+    {
+      "cusip": "676079106",
+      "ticker": "",
+      "issuer": "Odonate Therapeutics Inc",
+      "shares": 815421,
+      "value_usd_thousands": 15656,
+      "put_call": ""
+    },
+    {
+      "cusip": "698102209",
+      "ticker": "",
+      "issuer": "Panacea Acquisition Corp.",
+      "shares": 400000,
+      "value_usd_thousands": 5104,
+      "put_call": ""
+    },
+    {
+      "cusip": "76243J105",
+      "ticker": "RYTM",
+      "issuer": "Rhythm Pharmaceuticals Inc",
+      "shares": 201046,
+      "value_usd_thousands": 5977,
+      "put_call": ""
+    },
+    {
+      "cusip": "77313F106",
+      "ticker": "RCKT",
+      "issuer": "Rocket Pharmaceuticals Inc",
+      "shares": 63770,
+      "value_usd_thousands": 3497,
+      "put_call": ""
+    },
+    {
+      "cusip": "82835W108",
+      "ticker": "SPRY",
+      "issuer": "Silverback Therapeutics Inc",
+      "shares": 25000,
+      "value_usd_thousands": 1159,
+      "put_call": ""
+    },
+    {
+      "cusip": "85205L107",
+      "ticker": "",
+      "issuer": "Springworks Therapeutics Inc",
+      "shares": 262572,
+      "value_usd_thousands": 19042,
+      "put_call": ""
+    },
+    {
+      "cusip": "869367102",
+      "ticker": "",
+      "issuer": "Sutro BioPharma Inc",
+      "shares": 1675579,
+      "value_usd_thousands": 36377,
+      "put_call": ""
+    },
+    {
+      "cusip": "87184Q107",
+      "ticker": "",
+      "issuer": "Syros Pharmaceuticals Inc",
+      "shares": 2189199,
+      "value_usd_thousands": 21837,
+      "put_call": ""
+    },
+    {
+      "cusip": "92840H202",
+      "ticker": "",
+      "issuer": "Vistagen Therapeutics Inc",
+      "shares": 1640368,
+      "value_usd_thousands": 3182,
+      "put_call": ""
+    },
+    {
+      "cusip": "925050106",
+      "ticker": "VRNA",
+      "issuer": "Verona Pharma PLC.",
+      "shares": 1111112,
+      "value_usd_thousands": 7778,
+      "put_call": ""
+    }
+  ]
+}

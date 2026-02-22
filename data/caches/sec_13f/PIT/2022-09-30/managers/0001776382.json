@@ -1,0 +1,83 @@
+{
+  "manager_cik": "0001776382",
+  "manager_name": "Venbio Partners",
+  "as_of_date": "2022-09-30",
+  "period_of_report": "2022-06-30",
+  "filed_at": "2022-08-15",
+  "form_type": "13F-HR",
+  "accession": "000156761922016227",
+  "holdings": [
+    {
+      "cusip": "00973Y108",
+      "ticker": "AKRO",
+      "issuer": "AKERO THERAPEUTICS INC",
+      "shares": 2171664,
+      "value_usd_thousands": 20522,
+      "put_call": ""
+    },
+    {
+      "cusip": "00166B105",
+      "ticker": "ALXO",
+      "issuer": "ALX ONCOLOGY HLDGS INC",
+      "shares": 9699925,
+      "value_usd_thousands": 78472,
+      "put_call": ""
+    },
+    {
+      "cusip": "17240Y109",
+      "ticker": "",
+      "issuer": "CINCOR PHARMA INC",
+      "shares": 2145035,
+      "value_usd_thousands": 40412,
+      "put_call": ""
+    },
+    {
+      "cusip": "28623U101",
+      "ticker": "",
+      "issuer": "ELEVATION ONCOLOGY INC",
+      "shares": 1866339,
+      "value_usd_thousands": 2613,
+      "put_call": ""
+    },
+    {
+      "cusip": "413197104",
+      "ticker": "",
+      "issuer": "HARMONY BIOSCIENCES HLDGS IN",
+      "shares": 1448720,
+      "value_usd_thousands": 70654,
+      "put_call": ""
+    },
+    {
+      "cusip": "45258K109",
+      "ticker": "",
+      "issuer": "IMPEL PHARMACEUTICALS INC",
+      "shares": 2759791,
+      "value_usd_thousands": 25721,
+      "put_call": ""
+    },
+    {
+      "cusip": "N69605108",
+      "ticker": "PHVS",
+      "issuer": "PHARVARIS N V",
+      "shares": 2301451,
+      "value_usd_thousands": 50862,
+      "put_call": ""
+    },
+    {
+      "cusip": "92332V107",
+      "ticker": "VTYX",
+      "issuer": "VENTYX BIOSCIENCES INC",
+      "shares": 5011536,
+      "value_usd_thousands": 61291,
+      "put_call": ""
+    },
+    {
+      "cusip": "925050106",
+      "ticker": "VRNA",
+      "issuer": "VERONA PHARMA PLC",
+      "shares": 161897,
+      "value_usd_thousands": 678,
+      "put_call": ""
+    }
+  ]
+}

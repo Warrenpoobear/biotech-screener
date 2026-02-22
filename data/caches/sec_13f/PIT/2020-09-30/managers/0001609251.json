@@ -1,0 +1,99 @@
+{
+  "manager_cik": "0001609251",
+  "manager_name": "Krensavage Asset Management",
+  "as_of_date": "2020-09-30",
+  "period_of_report": "2020-06-30",
+  "filed_at": "2020-08-20",
+  "form_type": "13F-HR/A",
+  "accession": "000160925120000006",
+  "holdings": [
+    {
+      "cusip": "G01767105",
+      "ticker": "ALKS",
+      "issuer": "ALKERMES PLC",
+      "shares": 1564665,
+      "value_usd_thousands": 30362,
+      "put_call": ""
+    },
+    {
+      "cusip": "015351109",
+      "ticker": "",
+      "issuer": "ALEXION PHARMACEUTICALS INC",
+      "shares": 493170,
+      "value_usd_thousands": 55353,
+      "put_call": ""
+    },
+    {
+      "cusip": "032724106",
+      "ticker": "ANAB",
+      "issuer": "ANAPTYSBIO INC",
+      "shares": 184846,
+      "value_usd_thousands": 4129,
+      "put_call": ""
+    },
+    {
+      "cusip": "09062X103",
+      "ticker": "BIIB",
+      "issuer": "BIOGEN INC",
+      "shares": 151420,
+      "value_usd_thousands": 40512,
+      "put_call": ""
+    },
+    {
+      "cusip": "29251M106",
+      "ticker": "ENTA",
+      "issuer": "ENANTA PHARMACEUTICALS INC",
+      "shares": 763103,
+      "value_usd_thousands": 38315,
+      "put_call": ""
+    },
+    {
+      "cusip": "461203101",
+      "ticker": "IVCUSD",
+      "issuer": "INVACARE CORP",
+      "shares": 876421,
+      "value_usd_thousands": 5583,
+      "put_call": ""
+    },
+    {
+      "cusip": "58155Q103",
+      "ticker": "MCK",
+      "issuer": "MCKESSON CORP",
+      "shares": 216142,
+      "value_usd_thousands": 33161,
+      "put_call": ""
+    },
+    {
+      "cusip": "75886F107",
+      "ticker": "REGN",
+      "issuer": "REGENERON PHARMACEUTICALS",
+      "shares": 79691,
+      "value_usd_thousands": 49699,
+      "put_call": ""
+    },
+    {
+      "cusip": "74975N105",
+      "ticker": "RTIXEUR",
+      "issuer": "RTI SURGICAL HDS INC",
+      "shares": 5851572,
+      "value_usd_thousands": 18608,
+      "put_call": ""
+    },
+    {
+      "cusip": "M8737E108",
+      "ticker": "",
+      "issuer": "TARO PHARMACEUTICAL INDUS",
+      "shares": 521507,
+      "value_usd_thousands": 34675,
+      "put_call": ""
+    },
+    {
+      "cusip": "91307C102",
+      "ticker": "UTHR",
+      "issuer": "UNITED THERAPEUTICS CORP",
+      "shares": 472548,
+      "value_usd_thousands": 57178,
+      "put_call": ""
+    }
+  ]
+}

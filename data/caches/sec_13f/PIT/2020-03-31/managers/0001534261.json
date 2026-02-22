@@ -1,0 +1,267 @@
+{
+  "manager_cik": "0001534261",
+  "manager_name": "Casdin Capital",
+  "as_of_date": "2020-03-31",
+  "period_of_report": "2019-12-31",
+  "filed_at": "2020-02-14",
+  "form_type": "13F-HR",
+  "accession": "000153426120000005",
+  "holdings": [
+    {
+      "cusip": "00650F109",
+      "ticker": "",
+      "issuer": "ADAPTIVE BIOTECHNOLOGIES COR",
+      "shares": 463125,
+      "value_usd_thousands": 13857,
+      "put_call": ""
+    },
+    {
+      "cusip": "00847X104",
+      "ticker": "AGIO",
+      "issuer": "AGIOS PHARMACEUTICALS INC",
+      "shares": 825000,
+      "value_usd_thousands": 39394,
+      "put_call": ""
+    },
+    {
+      "cusip": "014442107",
+      "ticker": "",
+      "issuer": "ALECTOR INC",
+      "shares": 1076039,
+      "value_usd_thousands": 18540,
+      "put_call": ""
+    },
+    {
+      "cusip": "02043Q107",
+      "ticker": "ALNY",
+      "issuer": "ALNYLAM PHARMACEUTICALS INC",
+      "shares": 515000,
+      "value_usd_thousands": 59313,
+      "put_call": ""
+    },
+    {
+      "cusip": "09062W204",
+      "ticker": "BLFS",
+      "issuer": "BIOLIFE SOLUTIONS INC",
+      "shares": 2468571,
+      "value_usd_thousands": 39941,
+      "put_call": ""
+    },
+    {
+      "cusip": "09609G100",
+      "ticker": "",
+      "issuer": "BLUEBIRD BIO INC",
+      "shares": 970000,
+      "value_usd_thousands": 85118,
+      "put_call": ""
+    },
+    {
+      "cusip": "110122157",
+      "ticker": "",
+      "issuer": "BRISTOL MYERS SQUIBB CO",
+      "shares": 1500000,
+      "value_usd_thousands": 4515,
+      "put_call": ""
+    },
+    {
+      "cusip": "05070R104",
+      "ticker": "",
+      "issuer": "AUDENTES THERAPEUTICS INC",
+      "shares": 860000,
+      "value_usd_thousands": 51462,
+      "put_call": ""
+    },
+    {
+      "cusip": "09627Y109",
+      "ticker": "",
+      "issuer": "BLUEPRINT MEDICINES CORP",
+      "shares": 940000,
+      "value_usd_thousands": 75303,
+      "put_call": ""
+    },
+    {
+      "cusip": "14167L103",
+      "ticker": "CDNA",
+      "issuer": "CAREDX INC",
+      "shares": 1200000,
+      "value_usd_thousands": 25884,
+      "put_call": ""
+    },
+    {
+      "cusip": "192005106",
+      "ticker": "CDXS",
+      "issuer": "CODEXIS INC",
+      "shares": 5073780,
+      "value_usd_thousands": 81130,
+      "put_call": ""
+    },
+    {
+      "cusip": "210373106",
+      "ticker": "",
+      "issuer": "CONSTELLATION PHARMCETICLS I",
+      "shares": 1212734,
+      "value_usd_thousands": 57132,
+      "put_call": ""
+    },
+    {
+      "cusip": "24344T101",
+      "ticker": "",
+      "issuer": "DECIPHERA PHARMACEUTICALS IN",
+      "shares": 255000,
+      "value_usd_thousands": 15871,
+      "put_call": ""
+    },
+    {
+      "cusip": "24823R105",
+      "ticker": "DNLI",
+      "issuer": "DENALI THERAPEUTICS INC",
+      "shares": 1250000,
+      "value_usd_thousands": 21775,
+      "put_call": ""
+    },
+    {
+      "cusip": "31189P102",
+      "ticker": "",
+      "issuer": "FATE THERAPEUTICS INC",
+      "shares": 2550000,
+      "value_usd_thousands": 49904,
+      "put_call": ""
+    },
+    {
+      "cusip": "359616109",
+      "ticker": "FULC",
+      "issuer": "FULCRUM THERAPEUTICS INC",
+      "shares": 1239285,
+      "value_usd_thousands": 20622,
+      "put_call": ""
+    },
+    {
+      "cusip": "37890U108",
+      "ticker": "",
+      "issuer": "GLOBAL BLOOD THERAPEUTICS IN",
+      "shares": 300000,
+      "value_usd_thousands": 23847,
+      "put_call": ""
+    },
+    {
+      "cusip": "375558103",
+      "ticker": "GILD",
+      "issuer": "GILEAD SCIENCES INC",
+      "shares": 200000,
+      "value_usd_thousands": 12996,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "372309104",
+      "ticker": "GNMK",
+      "issuer": "GENMARK DIAGNOSTICS INC",
+      "shares": 3365000,
+      "value_usd_thousands": 16186,
+      "put_call": ""
+    },
+    {
+      "cusip": "39868T105",
+      "ticker": "",
+      "issuer": "GRITSTONE ONCOLOGY INC",
+      "shares": 2160000,
+      "value_usd_thousands": 19375,
+      "put_call": ""
+    },
+    {
+      "cusip": "452327109",
+      "ticker": "ILMN",
+      "issuer": "ILLUMINA INC",
+      "shares": 60000,
+      "value_usd_thousands": 19904,
+      "put_call": ""
+    },
+    {
+      "cusip": "55910K108",
+      "ticker": "",
+      "issuer": "MAGENTA THERAPEUTICS INC",
+      "shares": 3098121,
+      "value_usd_thousands": 46968,
+      "put_call": ""
+    },
+    {
+      "cusip": "62857M105",
+      "ticker": "",
+      "issuer": "MYOKARDIA INC",
+      "shares": 1005000,
+      "value_usd_thousands": 73249,
+      "put_call": ""
+    },
+    {
+      "cusip": "46185L103",
+      "ticker": "",
+      "issuer": "INVITAE CORP",
+      "shares": 3638388,
+      "value_usd_thousands": 58687,
+      "put_call": ""
+    },
+    {
+      "cusip": "68570P101",
+      "ticker": "",
+      "issuer": "ORCHARD THERAPEUTICS PLC",
+      "shares": 820000,
+      "value_usd_thousands": 11275,
+      "put_call": ""
+    },
+    {
+      "cusip": "78667J108",
+      "ticker": "SG7",
+      "issuer": "SAGE THERAPEUTICS INC",
+      "shares": 230000,
+      "value_usd_thousands": 16604,
+      "put_call": ""
+    },
+    {
+      "cusip": "800677106",
+      "ticker": "",
+      "issuer": "SANGAMO THERAPEUTICS INC",
+      "shares": 1455000,
+      "value_usd_thousands": 12178,
+      "put_call": ""
+    },
+    {
+      "cusip": "803607100",
+      "ticker": "SRPT",
+      "issuer": "SAREPTA THERAPEUTICS INC",
+      "shares": 670000,
+      "value_usd_thousands": 86457,
+      "put_call": ""
+    },
+    {
+      "cusip": "86150R107",
+      "ticker": "STOK",
+      "issuer": "STOKE THERAPEUTICS INC",
+      "shares": 130000,
+      "value_usd_thousands": 3682,
+      "put_call": ""
+    },
+    {
+      "cusip": "90041T108",
+      "ticker": "",
+      "issuer": "TURNING POINT THERAPEUTICS I",
+      "shares": 75000,
+      "value_usd_thousands": 4672,
+      "put_call": ""
+    },
+    {
+      "cusip": "90184D100",
+      "ticker": "TWST",
+      "issuer": "TWIST BIOSCIENCE CORP",
+      "shares": 300000,
+      "value_usd_thousands": 6300,
+      "put_call": ""
+    },
+    {
+      "cusip": "92915B106",
+      "ticker": "VYGR",
+      "issuer": "VOYAGER THERAPEUTICS INC",
+      "shares": 1095075,
+      "value_usd_thousands": 15276,
+      "put_call": ""
+    }
+  ]
+}

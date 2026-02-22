@@ -1,0 +1,115 @@
+{
+  "manager_cik": "0001609251",
+  "manager_name": "Krensavage Asset Management",
+  "as_of_date": "2024-09-30",
+  "period_of_report": "2024-06-30",
+  "filed_at": "2024-08-15",
+  "form_type": "13F-HR",
+  "accession": "000160925124000006",
+  "holdings": [
+    {
+      "cusip": "G01767105",
+      "ticker": "ALKS",
+      "issuer": "ALKERMES PLC",
+      "shares": 257554,
+      "value_usd_thousands": 6207,
+      "put_call": ""
+    },
+    {
+      "cusip": "09062X103",
+      "ticker": "BIIB",
+      "issuer": "BIOGEN INC",
+      "shares": 123785,
+      "value_usd_thousands": 28696,
+      "put_call": ""
+    },
+    {
+      "cusip": "09075V102",
+      "ticker": "BNTX",
+      "issuer": "BIONTECH SE-ADR",
+      "shares": 132293,
+      "value_usd_thousands": 10631,
+      "put_call": ""
+    },
+    {
+      "cusip": "14149Y108",
+      "ticker": "",
+      "issuer": "CARDINAL HEALTH INC",
+      "shares": 217656,
+      "value_usd_thousands": 21400,
+      "put_call": ""
+    },
+    {
+      "cusip": "29251M106",
+      "ticker": "",
+      "issuer": "ENANTA PHARMACEUTICALS INC",
+      "shares": 1251338,
+      "value_usd_thousands": 16230,
+      "put_call": ""
+    },
+    {
+      "cusip": "30161Q104",
+      "ticker": "EXEL",
+      "issuer": "EXELIXIS INC",
+      "shares": 1677393,
+      "value_usd_thousands": 37691,
+      "put_call": ""
+    },
+    {
+      "cusip": "G50871105",
+      "ticker": "JAZZ",
+      "issuer": "JAZZ PHARMACEUTICALS PLC",
+      "shares": 109076,
+      "value_usd_thousands": 11642,
+      "put_call": ""
+    },
+    {
+      "cusip": "G63365103",
+      "ticker": "",
+      "issuer": "MURAL ONCOLOGY PLC",
+      "shares": 75057,
+      "value_usd_thousands": 236,
+      "put_call": ""
+    },
+    {
+      "cusip": "75886F107",
+      "ticker": "REGN",
+      "issuer": "REGENERON PHARMACEUTICALS",
+      "shares": 7853,
+      "value_usd_thousands": 8254,
+      "put_call": ""
+    },
+    {
+      "cusip": "80105N105",
+      "ticker": "",
+      "issuer": "SANOFI-ADR",
+      "shares": 153832,
+      "value_usd_thousands": 7464,
+      "put_call": ""
+    },
+    {
+      "cusip": "M8737E108",
+      "ticker": "",
+      "issuer": "TARO PHARMACEUTICAL INDUS",
+      "shares": 650089,
+      "value_usd_thousands": 27954,
+      "put_call": ""
+    },
+    {
+      "cusip": "91307C102",
+      "ticker": "UTHR",
+      "issuer": "UNITED THERAPEUTICS CORP",
+      "shares": 118208,
+      "value_usd_thousands": 37655,
+      "put_call": ""
+    },
+    {
+      "cusip": "921659108",
+      "ticker": "",
+      "issuer": "VANDA PHARMACEUTICALS INC",
+      "shares": 662166,
+      "value_usd_thousands": 3741,
+      "put_call": ""
+    }
+  ]
+}

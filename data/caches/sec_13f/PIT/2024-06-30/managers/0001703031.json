@@ -1,0 +1,219 @@
+{
+  "manager_cik": "0001703031",
+  "manager_name": "Bain Capital Life Sciences",
+  "as_of_date": "2024-06-30",
+  "period_of_report": "2024-03-31",
+  "filed_at": "2024-05-15",
+  "form_type": "13F-HR",
+  "accession": "000095012324005471",
+  "holdings": [
+    {
+      "cusip": "00461U105",
+      "ticker": "ACRS",
+      "issuer": "ACLARIS THERAPEUTICS INC",
+      "shares": 3000000,
+      "value_usd_thousands": 3720000,
+      "put_call": ""
+    },
+    {
+      "cusip": "03589W102",
+      "ticker": "",
+      "issuer": "ANNEXON INC",
+      "shares": 8703268,
+      "value_usd_thousands": 62402432,
+      "put_call": ""
+    },
+    {
+      "cusip": "03969K108",
+      "ticker": "ARQT",
+      "issuer": "ARCUTIS BIOTHERAPEUTICS INC",
+      "shares": 2011687,
+      "value_usd_thousands": 19935818,
+      "put_call": ""
+    },
+    {
+      "cusip": "04683R106",
+      "ticker": "AVIR",
+      "issuer": "ATEA PHARMACEUTICALS INC",
+      "shares": 2485638,
+      "value_usd_thousands": 10041978,
+      "put_call": ""
+    },
+    {
+      "cusip": "12529R107",
+      "ticker": "",
+      "issuer": "C4 THERAPEUTICS INC",
+      "shares": 1142210,
+      "value_usd_thousands": 9331856,
+      "put_call": ""
+    },
+    {
+      "cusip": "12674W109",
+      "ticker": "CABA",
+      "issuer": "CABALETTA BIO INC",
+      "shares": 1617364,
+      "value_usd_thousands": 27592230,
+      "put_call": ""
+    },
+    {
+      "cusip": "252828108",
+      "ticker": "DNTH",
+      "issuer": "DIANTHUS THERAPEUTICS INC",
+      "shares": 2992028,
+      "value_usd_thousands": 89760840,
+      "put_call": ""
+    },
+    {
+      "cusip": "254604101",
+      "ticker": "IRON",
+      "issuer": "DISC MEDICINE INC",
+      "shares": 1317213,
+      "value_usd_thousands": 82009681,
+      "put_call": ""
+    },
+    {
+      "cusip": "00534A102",
+      "ticker": "",
+      "issuer": "INVIVYD INC",
+      "shares": 1799595,
+      "value_usd_thousands": 7990202,
+      "put_call": ""
+    },
+    {
+      "cusip": "501976104",
+      "ticker": "KYTX",
+      "issuer": "KYVERNA THERAPEUTICS INC",
+      "shares": 3163868,
+      "value_usd_thousands": 78590481,
+      "put_call": ""
+    },
+    {
+      "cusip": "558868105",
+      "ticker": "MDGL",
+      "issuer": "MADRIGAL PHARMACEUTICALS INC",
+      "shares": 196995,
+      "value_usd_thousands": 52605545,
+      "put_call": ""
+    },
+    {
+      "cusip": "56854Q200",
+      "ticker": "",
+      "issuer": "MARINUS PHARMACEUTICALS INC",
+      "shares": 1393380,
+      "value_usd_thousands": 12596155,
+      "put_call": ""
+    },
+    {
+      "cusip": "59045L106",
+      "ticker": "",
+      "issuer": "MERSANA THERAPEUTICS INC",
+      "shares": 8663673,
+      "value_usd_thousands": 38813255,
+      "put_call": ""
+    },
+    {
+      "cusip": "63909J108",
+      "ticker": "NAUT",
+      "issuer": "NAUTILUS BIOTECHNOLOGY INC",
+      "shares": 2000000,
+      "value_usd_thousands": 5880000,
+      "put_call": ""
+    },
+    {
+      "cusip": "N62509109",
+      "ticker": "NAMS",
+      "issuer": "NEWAMSTERDAM PHARMA COMPANY",
+      "shares": 10473913,
+      "value_usd_thousands": 247708042,
+      "put_call": ""
+    },
+    {
+      "cusip": "N62509117",
+      "ticker": "",
+      "issuer": "NEWAMSTERDAM PHARMA COMPANY",
+      "shares": 100000,
+      "value_usd_thousands": 1104000,
+      "put_call": ""
+    },
+    {
+      "cusip": "67080M103",
+      "ticker": "NRIX",
+      "issuer": "NURIX THERAPEUTICS INC",
+      "shares": 1132397,
+      "value_usd_thousands": 16646236,
+      "put_call": ""
+    },
+    {
+      "cusip": "670703107",
+      "ticker": "NUVL",
+      "issuer": "NUVALENT INC",
+      "shares": 2697267,
+      "value_usd_thousands": 202537779,
+      "put_call": ""
+    },
+    {
+      "cusip": "N69605108",
+      "ticker": "PHVS",
+      "issuer": "PHARVARIS N V",
+      "shares": 3303381,
+      "value_usd_thousands": 76341135,
+      "put_call": ""
+    },
+    {
+      "cusip": "75340L104",
+      "ticker": "RPID",
+      "issuer": "RAPID MICRO BIOSYSTEMS INC",
+      "shares": 8434560,
+      "value_usd_thousands": 8181523,
+      "put_call": ""
+    },
+    {
+      "cusip": "805111101",
+      "ticker": "SVRA",
+      "issuer": "SAVARA INC",
+      "shares": 14565457,
+      "value_usd_thousands": 72535976,
+      "put_call": ""
+    },
+    {
+      "cusip": "83422E204",
+      "ticker": "SLDB",
+      "issuer": "SOLID BIOSCIENCES INC",
+      "shares": 4034582,
+      "value_usd_thousands": 53740632,
+      "put_call": ""
+    },
+    {
+      "cusip": "87184Q206",
+      "ticker": "SYRS",
+      "issuer": "SYROS PHARMACEUTICALS INC",
+      "shares": 2749808,
+      "value_usd_thousands": 14711473,
+      "put_call": ""
+    },
+    {
+      "cusip": "87583X109",
+      "ticker": "TNGX",
+      "issuer": "TANGO THERAPEUTICS INC",
+      "shares": 2892663,
+      "value_usd_thousands": 22967744,
+      "put_call": ""
+    },
+    {
+      "cusip": "98420X103",
+      "ticker": "ASNSUSD",
+      "issuer": "X4 PHARMACEUTICALS INC",
+      "shares": 16915784,
+      "value_usd_thousands": 23512940,
+      "put_call": ""
+    },
+    {
+      "cusip": "98422T100",
+      "ticker": "",
+      "issuer": "XILIO THERAPEUTICS INC",
+      "shares": 2805413,
+      "value_usd_thousands": 3029846,
+      "put_call": ""
+    }
+  ]
+}

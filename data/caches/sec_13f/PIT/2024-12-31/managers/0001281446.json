@@ -1,0 +1,251 @@
+{
+  "manager_cik": "0001281446",
+  "manager_name": "Great Point Partners",
+  "as_of_date": "2024-12-31",
+  "period_of_report": "2024-09-30",
+  "filed_at": "2024-11-13",
+  "form_type": "13F-HR",
+  "accession": "000117266124004656",
+  "holdings": [
+    {
+      "cusip": "00370M103",
+      "ticker": "ABVX",
+      "issuer": "ABIVAX SA",
+      "shares": 2128773,
+      "value_usd_thousands": 24523465,
+      "put_call": ""
+    },
+    {
+      "cusip": "03940C100",
+      "ticker": "ACLX",
+      "issuer": "ARCELLX INC",
+      "shares": 100000,
+      "value_usd_thousands": 8351000,
+      "put_call": ""
+    },
+    {
+      "cusip": "03940C100",
+      "ticker": "ACLX",
+      "issuer": "ARCELLX INC",
+      "shares": 100000,
+      "value_usd_thousands": 8351000,
+      "put_call": "Put"
+    },
+    {
+      "cusip": "05280R100",
+      "ticker": "AUTL",
+      "issuer": "AUTOLUS THERAPEUTICS PLC",
+      "shares": 2811955,
+      "value_usd_thousands": 10207397,
+      "put_call": ""
+    },
+    {
+      "cusip": "816212302",
+      "ticker": "",
+      "issuer": "CARTESIAN THERAPEUTICS INC",
+      "shares": 200000,
+      "value_usd_thousands": 3224000,
+      "put_call": ""
+    },
+    {
+      "cusip": "21077P108",
+      "ticker": "",
+      "issuer": "CONTEXT THERAPEUTICS INC",
+      "shares": 6934982,
+      "value_usd_thousands": 13592565,
+      "put_call": ""
+    },
+    {
+      "cusip": "23282W605",
+      "ticker": "",
+      "issuer": "CYTOKINETICS INC",
+      "shares": 316000,
+      "value_usd_thousands": 16684800,
+      "put_call": ""
+    },
+    {
+      "cusip": "252828108",
+      "ticker": "DNTH",
+      "issuer": "DIANTHUS THERAPEUTICS INC",
+      "shares": 275000,
+      "value_usd_thousands": 7529500,
+      "put_call": ""
+    },
+    {
+      "cusip": "268158201",
+      "ticker": "DVAX",
+      "issuer": "DYNAVAX TECHNOLOGIES CORP",
+      "shares": 1326234,
+      "value_usd_thousands": 14774247,
+      "put_call": ""
+    },
+    {
+      "cusip": "28658R106",
+      "ticker": "CLYM",
+      "issuer": "ELIEM THERAPEUTICS INC",
+      "shares": 248168,
+      "value_usd_thousands": 1263175,
+      "put_call": ""
+    },
+    {
+      "cusip": "30052C107",
+      "ticker": "",
+      "issuer": "EVOLUS INC",
+      "shares": 1170000,
+      "value_usd_thousands": 18954000,
+      "put_call": ""
+    },
+    {
+      "cusip": "G4444H101",
+      "ticker": "",
+      "issuer": "HELIX ACQUISITION CORP II",
+      "shares": 500000,
+      "value_usd_thousands": 5224950,
+      "put_call": ""
+    },
+    {
+      "cusip": "462222100",
+      "ticker": "IONS",
+      "issuer": "IONIS PHARMACEUTICALS INC",
+      "shares": 255000,
+      "value_usd_thousands": 10215300,
+      "put_call": ""
+    },
+    {
+      "cusip": "471871202",
+      "ticker": "JSPR",
+      "issuer": "JASPER THERAPEUTICS INC",
+      "shares": 322380,
+      "value_usd_thousands": 6063968,
+      "put_call": ""
+    },
+    {
+      "cusip": "483497103",
+      "ticker": "",
+      "issuer": "KALVISTA PHARMACEUTICALS INC",
+      "shares": 1299503,
+      "value_usd_thousands": 15048245,
+      "put_call": ""
+    },
+    {
+      "cusip": "N5749R100",
+      "ticker": "MRUS",
+      "issuer": "MERUS N V",
+      "shares": 250000,
+      "value_usd_thousands": 12490000,
+      "put_call": ""
+    },
+    {
+      "cusip": "64135M105",
+      "ticker": "NGNE",
+      "issuer": "NEUROGENE INC",
+      "shares": 1004291,
+      "value_usd_thousands": 42140050,
+      "put_call": ""
+    },
+    {
+      "cusip": "68062P106",
+      "ticker": "OLMA",
+      "issuer": "OLEMA PHARMACEUTICALS INC",
+      "shares": 1000000,
+      "value_usd_thousands": 11940000,
+      "put_call": ""
+    },
+    {
+      "cusip": "68404V100",
+      "ticker": "",
+      "issuer": "OPTINOSE INC",
+      "shares": 12861136,
+      "value_usd_thousands": 8616961,
+      "put_call": ""
+    },
+    {
+      "cusip": "687604108",
+      "ticker": "ORKA",
+      "issuer": "ORUKA THERAPEUTICS INC",
+      "shares": 514659,
+      "value_usd_thousands": 12614292,
+      "put_call": ""
+    },
+    {
+      "cusip": "69012T305",
+      "ticker": "",
+      "issuer": "OUTLOOK THERAPEUTICS INC",
+      "shares": 1293028,
+      "value_usd_thousands": 6904770,
+      "put_call": ""
+    },
+    {
+      "cusip": "729139105",
+      "ticker": "",
+      "issuer": "PLIANT THERAPEUTICS INC",
+      "shares": 1910121,
+      "value_usd_thousands": 21412456,
+      "put_call": ""
+    },
+    {
+      "cusip": "74346M406",
+      "ticker": "",
+      "issuer": "PROMIS NEUROSCIENCES INC",
+      "shares": 2790698,
+      "value_usd_thousands": 3488373,
+      "put_call": ""
+    },
+    {
+      "cusip": "89854M101",
+      "ticker": "",
+      "issuer": "TSCAN THERAPEUTICS INC",
+      "shares": 1016375,
+      "value_usd_thousands": 5061548,
+      "put_call": ""
+    },
+    {
+      "cusip": "90466Y103",
+      "ticker": "",
+      "issuer": "UNICYCIVE THERAPEUTICS INC",
+      "shares": 8559000,
+      "value_usd_thousands": 3491216,
+      "put_call": ""
+    },
+    {
+      "cusip": "M96088105",
+      "ticker": "URGN",
+      "issuer": "UROGEN PHARMA LTD",
+      "shares": 758786,
+      "value_usd_thousands": 9636582,
+      "put_call": ""
+    },
+    {
+      "cusip": "92790C104",
+      "ticker": "VRDN",
+      "issuer": "VIRIDIAN THERAPEUTICS INC",
+      "shares": 750000,
+      "value_usd_thousands": 17062500,
+      "put_call": ""
+    },
+    {
+      "cusip": "92840H400",
+      "ticker": "",
+      "issuer": "VISTAGEN THERAPEUTICS INC",
+      "shares": 674075,
+      "value_usd_thousands": 2028966,
+      "put_call": ""
+    },
+    {
+      "cusip": "92915B106",
+      "ticker": "",
+      "issuer": "VOYAGER THERAPEUTICS INC",
+      "shares": 959953,
+      "value_usd_thousands": 5615725,
+      "put_call": ""
+    },
+    {
+      "cusip": "G9TY5A101",
+      "ticker": "",
+      "issuer": "ZURA BIO LTD",
+      "shares": 3263672,
+      "value_usd_thousands": 13250508,
+      "put_call": ""
+    }
+  ]
+}

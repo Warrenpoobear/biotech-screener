@@ -1,0 +1,211 @@
+{
+  "manager_cik": "0001822947",
+  "manager_name": "Ally Bridge Group",
+  "as_of_date": "2025-12-31",
+  "period_of_report": "2025-09-30",
+  "filed_at": "2025-11-14",
+  "form_type": "13F-HR",
+  "accession": "000119312525283054",
+  "holdings": [
+    {
+      "cusip": "03237H101",
+      "ticker": "AMLX",
+      "issuer": "AMYLYX PHARMACEUTICALS INC",
+      "shares": 437391,
+      "value_usd_thousands": 5944144,
+      "put_call": ""
+    },
+    {
+      "cusip": "03969K108",
+      "ticker": "ARQT",
+      "issuer": "ARCUTIS BIOTHERAPEUTICS INC",
+      "shares": 233220,
+      "value_usd_thousands": 4396197,
+      "put_call": ""
+    },
+    {
+      "cusip": "04351P101",
+      "ticker": "ASND",
+      "issuer": "ASCENDIS PHARMA A/S - ADR",
+      "shares": 51080,
+      "value_usd_thousands": 10155215,
+      "put_call": ""
+    },
+    {
+      "cusip": "N0731H103",
+      "ticker": "",
+      "issuer": "ATAI BECKLEY NV",
+      "shares": 2287005,
+      "value_usd_thousands": 12098256,
+      "put_call": ""
+    },
+    {
+      "cusip": "002120202",
+      "ticker": "",
+      "issuer": "ATYR PHARMA INC",
+      "shares": 600000,
+      "value_usd_thousands": 432840,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "05338F306",
+      "ticker": "AVLO",
+      "issuer": "AVALO THERAPEUTICS INC",
+      "shares": 178100,
+      "value_usd_thousands": 2263651,
+      "put_call": ""
+    },
+    {
+      "cusip": "20451W101",
+      "ticker": "CMPS",
+      "issuer": "COMPASS PATHWAYS PLC",
+      "shares": 1026382,
+      "value_usd_thousands": 5881169,
+      "put_call": ""
+    },
+    {
+      "cusip": "20451W101",
+      "ticker": "CMPS",
+      "issuer": "COMPASS PATHWAYS PLC",
+      "shares": 1145700,
+      "value_usd_thousands": 6564861,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "29842P105",
+      "ticker": "",
+      "issuer": "EUPRAXIA PHARMACEUTICALS INC",
+      "shares": 915000,
+      "value_usd_thousands": 5398500,
+      "put_call": ""
+    },
+    {
+      "cusip": "52635N103",
+      "ticker": "LENZ",
+      "issuer": "LENZ THERAPEUTICS INC",
+      "shares": 175363,
+      "value_usd_thousands": 8168409,
+      "put_call": ""
+    },
+    {
+      "cusip": "558868105",
+      "ticker": "MDGL",
+      "issuer": "MADRIGAL PHARMACEUTICALS INC",
+      "shares": 32662,
+      "value_usd_thousands": 14980753,
+      "put_call": ""
+    },
+    {
+      "cusip": "60255C885",
+      "ticker": "",
+      "issuer": "MIND MEDICINE MINDMED INC",
+      "shares": 361444,
+      "value_usd_thousands": 4261425,
+      "put_call": ""
+    },
+    {
+      "cusip": "61023L207",
+      "ticker": "MNPR",
+      "issuer": "MONOPAR THERAPEUTICS INC",
+      "shares": 64455,
+      "value_usd_thousands": 5264040,
+      "put_call": ""
+    },
+    {
+      "cusip": "61559X104",
+      "ticker": "MLTX",
+      "issuer": "MOONLAKE IMMUNOTHERAPEUTICS",
+      "shares": 69000,
+      "value_usd_thousands": 494730,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "74006W207",
+      "ticker": "PRAX",
+      "issuer": "PRAXIS PRECISION MEDICINES I",
+      "shares": 100000,
+      "value_usd_thousands": 5300000,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "74346M406",
+      "ticker": "",
+      "issuer": "PROMIS NEUROSCIENCES INC",
+      "shares": 6233497,
+      "value_usd_thousands": 2649236,
+      "put_call": ""
+    },
+    {
+      "cusip": "76029N106",
+      "ticker": "",
+      "issuer": "REPLIMUNE GROUP INC",
+      "shares": 1750000,
+      "value_usd_thousands": 7332500,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "76029N106",
+      "ticker": "",
+      "issuer": "REPLIMUNE GROUP INC",
+      "shares": 1850000,
+      "value_usd_thousands": 7751500,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "834203309",
+      "ticker": "",
+      "issuer": "SOLENO THERAPEUTICS INC",
+      "shares": 302483,
+      "value_usd_thousands": 20447851,
+      "put_call": ""
+    },
+    {
+      "cusip": "834203309",
+      "ticker": "",
+      "issuer": "SOLENO THERAPEUTICS INC",
+      "shares": 250000,
+      "value_usd_thousands": 16900000,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "83422E204",
+      "ticker": "SLDB",
+      "issuer": "SOLID BIOSCIENCES INC",
+      "shares": 549182,
+      "value_usd_thousands": 3388453,
+      "put_call": ""
+    },
+    {
+      "cusip": "87650L103",
+      "ticker": "TARS",
+      "issuer": "TARSUS PHARMACEUTICALS INC",
+      "shares": 70778,
+      "value_usd_thousands": 4206337,
+      "put_call": ""
+    },
+    {
+      "cusip": "877619106",
+      "ticker": "",
+      "issuer": "TAYSHA GENE THERAPIES INC",
+      "shares": 1898112,
+      "value_usd_thousands": 6206826,
+      "put_call": ""
+    },
+    {
+      "cusip": "878972108",
+      "ticker": "",
+      "issuer": "TECTONIC THERAPEUTIC INC",
+      "shares": 138595,
+      "value_usd_thousands": 2174556,
+      "put_call": ""
+    },
+    {
+      "cusip": "00032Q104",
+      "ticker": "WHWK",
+      "issuer": "WHITEHAWK THERAPEUTICS INC",
+      "shares": 817939,
+      "value_usd_thousands": 1554084,
+      "put_call": ""
+    }
+  ]
+}

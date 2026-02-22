@@ -1,0 +1,787 @@
+{
+  "manager_cik": "0001274413",
+  "manager_name": "Sectoral Asset Management",
+  "as_of_date": "2024-09-30",
+  "period_of_report": "2024-06-30",
+  "filed_at": "2024-08-13",
+  "form_type": "13F-HR",
+  "accession": "000110465924088729",
+  "holdings": [
+    {
+      "cusip": "002824100",
+      "ticker": "ABT",
+      "issuer": "ABBOTT LABS",
+      "shares": 66248,
+      "value_usd_thousands": 6883830,
+      "put_call": ""
+    },
+    {
+      "cusip": "00287Y109",
+      "ticker": "ABBV",
+      "issuer": "ABBVIE INC",
+      "shares": 44950,
+      "value_usd_thousands": 7709824,
+      "put_call": ""
+    },
+    {
+      "cusip": "02043Q107",
+      "ticker": "ALNY",
+      "issuer": "ALNYLAM PHARMACUETCL",
+      "shares": 12480,
+      "value_usd_thousands": 3032640,
+      "put_call": ""
+    },
+    {
+      "cusip": "031162100",
+      "ticker": "AMGN",
+      "issuer": "AMGEN INC",
+      "shares": 14700,
+      "value_usd_thousands": 4593015,
+      "put_call": ""
+    },
+    {
+      "cusip": "03152W109",
+      "ticker": "FOLD",
+      "issuer": "AMICUS THERAPEUTICS",
+      "shares": 216844,
+      "value_usd_thousands": 2151092,
+      "put_call": ""
+    },
+    {
+      "cusip": "036752103",
+      "ticker": "",
+      "issuer": "ELEVANCE HEALTH INC",
+      "shares": 4500,
+      "value_usd_thousands": 2438370,
+      "put_call": ""
+    },
+    {
+      "cusip": "03753U106",
+      "ticker": "APLS",
+      "issuer": "APELLIS PHARMACEUTIC",
+      "shares": 10460,
+      "value_usd_thousands": 401246,
+      "put_call": ""
+    },
+    {
+      "cusip": "03969F109",
+      "ticker": "RCUS",
+      "issuer": "ARCUS BIOSCIENCES",
+      "shares": 78385,
+      "value_usd_thousands": 1193804,
+      "put_call": ""
+    },
+    {
+      "cusip": "04016X101",
+      "ticker": "ARGX",
+      "issuer": "ARGENX SE",
+      "shares": 6522,
+      "value_usd_thousands": 2804721,
+      "put_call": ""
+    },
+    {
+      "cusip": "04280A100",
+      "ticker": "ARWR",
+      "issuer": "ARROWHEAD PHARMACEUT",
+      "shares": 7522,
+      "value_usd_thousands": 195497,
+      "put_call": ""
+    },
+    {
+      "cusip": "04335A105",
+      "ticker": "ARVN",
+      "issuer": "ARVINAS INC",
+      "shares": 34830,
+      "value_usd_thousands": 927175,
+      "put_call": ""
+    },
+    {
+      "cusip": "04351P101",
+      "ticker": "ASND",
+      "issuer": "ASCENDIS PHARMA A S",
+      "shares": 2666,
+      "value_usd_thousands": 363589,
+      "put_call": ""
+    },
+    {
+      "cusip": "046353108",
+      "ticker": "AZN",
+      "issuer": "ASTRAZENECA",
+      "shares": 21650,
+      "value_usd_thousands": 1688484,
+      "put_call": ""
+    },
+    {
+      "cusip": "075887109",
+      "ticker": "",
+      "issuer": "BECTON DICKINSON",
+      "shares": 4000,
+      "value_usd_thousands": 934840,
+      "put_call": ""
+    },
+    {
+      "cusip": "07725L102",
+      "ticker": "BEONE",
+      "issuer": "BEIGENE LIMITED",
+      "shares": 2447,
+      "value_usd_thousands": 349113,
+      "put_call": ""
+    },
+    {
+      "cusip": "09061G101",
+      "ticker": "BMRN",
+      "issuer": "BIOMARIN PHARMAC INC",
+      "shares": 41260,
+      "value_usd_thousands": 3396936,
+      "put_call": ""
+    },
+    {
+      "cusip": "09062X103",
+      "ticker": "BIIB",
+      "issuer": "BIOGEN INC",
+      "shares": 6137,
+      "value_usd_thousands": 1422679,
+      "put_call": ""
+    },
+    {
+      "cusip": "09075V102",
+      "ticker": "BNTX",
+      "issuer": "BIONTECH SE",
+      "shares": 27265,
+      "value_usd_thousands": 2191015,
+      "put_call": ""
+    },
+    {
+      "cusip": "09627Y109",
+      "ticker": "2L9",
+      "issuer": "BLUEPRINT MEDICINES",
+      "shares": 3850,
+      "value_usd_thousands": 414953,
+      "put_call": ""
+    },
+    {
+      "cusip": "101137107",
+      "ticker": "BSX",
+      "issuer": "BOSTON SCIENTIFIC",
+      "shares": 71476,
+      "value_usd_thousands": 5504367,
+      "put_call": ""
+    },
+    {
+      "cusip": "10170A100",
+      "ticker": "",
+      "issuer": "BOUNDLESS BIO INC",
+      "shares": 682274,
+      "value_usd_thousands": 2640400,
+      "put_call": ""
+    },
+    {
+      "cusip": "10806X102",
+      "ticker": "BBIO",
+      "issuer": "BRIDGEBIO PHARMA INC",
+      "shares": 15535,
+      "value_usd_thousands": 393502,
+      "put_call": ""
+    },
+    {
+      "cusip": "110122108",
+      "ticker": "",
+      "issuer": "BRISTOL MYERS SQUIBB",
+      "shares": 30000,
+      "value_usd_thousands": 1245900,
+      "put_call": ""
+    },
+    {
+      "cusip": "125523100",
+      "ticker": "",
+      "issuer": "THE CIGNA GROUP",
+      "shares": 3500,
+      "value_usd_thousands": 1156995,
+      "put_call": ""
+    },
+    {
+      "cusip": "126650100",
+      "ticker": "",
+      "issuer": "CVS HEALTH CORP",
+      "shares": 39000,
+      "value_usd_thousands": 2303340,
+      "put_call": ""
+    },
+    {
+      "cusip": "19240Q201",
+      "ticker": "",
+      "issuer": "COGENT BIOSCIENCES I",
+      "shares": 85600,
+      "value_usd_thousands": 721608,
+      "put_call": ""
+    },
+    {
+      "cusip": "21217B100",
+      "ticker": "CTNM",
+      "issuer": "CONTINEUM THERA",
+      "shares": 800887,
+      "value_usd_thousands": 14103620,
+      "put_call": ""
+    },
+    {
+      "cusip": "22663K107",
+      "ticker": "CRNX",
+      "issuer": "CRINETICS PHARMACE",
+      "shares": 5800,
+      "value_usd_thousands": 259782,
+      "put_call": ""
+    },
+    {
+      "cusip": "23282W605",
+      "ticker": "",
+      "issuer": "CYTOKINETICS INC",
+      "shares": 36883,
+      "value_usd_thousands": 1998321,
+      "put_call": ""
+    },
+    {
+      "cusip": "235851102",
+      "ticker": "",
+      "issuer": "DANAHER CORP",
+      "shares": 17725,
+      "value_usd_thousands": 4428591,
+      "put_call": ""
+    },
+    {
+      "cusip": "252131107",
+      "ticker": "DXCM",
+      "issuer": "DEXCOM INC",
+      "shares": 32150,
+      "value_usd_thousands": 3645167,
+      "put_call": ""
+    },
+    {
+      "cusip": "256135203",
+      "ticker": "",
+      "issuer": "DR REDDYS LABS LTD",
+      "shares": 4500,
+      "value_usd_thousands": 342855,
+      "put_call": ""
+    },
+    {
+      "cusip": "28176E108",
+      "ticker": "",
+      "issuer": "EDWARDS LIFESCIENCE",
+      "shares": 15650,
+      "value_usd_thousands": 1445591,
+      "put_call": ""
+    },
+    {
+      "cusip": "30050B101",
+      "ticker": "",
+      "issuer": "EVOLENT HEALTH INC",
+      "shares": 84000,
+      "value_usd_thousands": 1606080,
+      "put_call": ""
+    },
+    {
+      "cusip": "30161Q104",
+      "ticker": "EXEL",
+      "issuer": "EXELIXIS INC",
+      "shares": 11460,
+      "value_usd_thousands": 257506,
+      "put_call": ""
+    },
+    {
+      "cusip": "375558103",
+      "ticker": "GILD",
+      "issuer": "GILEAD SCIENCES INC",
+      "shares": 68825,
+      "value_usd_thousands": 4722083,
+      "put_call": ""
+    },
+    {
+      "cusip": "38246G108",
+      "ticker": "",
+      "issuer": "GOODRX HLDGS INC",
+      "shares": 265000,
+      "value_usd_thousands": 2067000,
+      "put_call": ""
+    },
+    {
+      "cusip": "384747101",
+      "ticker": "GRAL",
+      "issuer": "GRAIL INC",
+      "shares": 240,
+      "value_usd_thousands": 3689,
+      "put_call": ""
+    },
+    {
+      "cusip": "40637H109",
+      "ticker": "HALO",
+      "issuer": "HALOZYME THERAPEUTIC",
+      "shares": 3815,
+      "value_usd_thousands": 199753,
+      "put_call": ""
+    },
+    {
+      "cusip": "444859102",
+      "ticker": "",
+      "issuer": "HUMANA INC",
+      "shares": 4751,
+      "value_usd_thousands": 1775211,
+      "put_call": ""
+    },
+    {
+      "cusip": "452327109",
+      "ticker": "",
+      "issuer": "ILLUMINA INC",
+      "shares": 5810,
+      "value_usd_thousands": 606448,
+      "put_call": ""
+    },
+    {
+      "cusip": "45332Y109",
+      "ticker": "",
+      "issuer": "INARI MED INC",
+      "shares": 40500,
+      "value_usd_thousands": 1950075,
+      "put_call": ""
+    },
+    {
+      "cusip": "45337C102",
+      "ticker": "INCY",
+      "issuer": "INCYTE CORPORATION",
+      "shares": 8905,
+      "value_usd_thousands": 539821,
+      "put_call": ""
+    },
+    {
+      "cusip": "457669307",
+      "ticker": "INSM",
+      "issuer": "INSMED INC",
+      "shares": 9821,
+      "value_usd_thousands": 658007,
+      "put_call": ""
+    },
+    {
+      "cusip": "45784P101",
+      "ticker": "",
+      "issuer": "INSULET CORP",
+      "shares": 7350,
+      "value_usd_thousands": 1483230,
+      "put_call": ""
+    },
+    {
+      "cusip": "46116X101",
+      "ticker": "",
+      "issuer": "INTRA CELLULAR THERA",
+      "shares": 6530,
+      "value_usd_thousands": 447240,
+      "put_call": ""
+    },
+    {
+      "cusip": "46120E602",
+      "ticker": "ISRG",
+      "issuer": "INTUITIVE SURGIC INC",
+      "shares": 5400,
+      "value_usd_thousands": 2402190,
+      "put_call": ""
+    },
+    {
+      "cusip": "462222100",
+      "ticker": "IONS",
+      "issuer": "IONIS PHARMACEUTICAL",
+      "shares": 9660,
+      "value_usd_thousands": 460396,
+      "put_call": ""
+    },
+    {
+      "cusip": "46266C105",
+      "ticker": "IRWD",
+      "issuer": "IQVIA HOLDINGS INC",
+      "shares": 15600,
+      "value_usd_thousands": 3298464,
+      "put_call": ""
+    },
+    {
+      "cusip": "46489V302",
+      "ticker": "",
+      "issuer": "PERSPECTIVE THERAPEU",
+      "shares": 11000,
+      "value_usd_thousands": 109670,
+      "put_call": ""
+    },
+    {
+      "cusip": "46565G104",
+      "ticker": "",
+      "issuer": "ITEOS THERAPEUTICS",
+      "shares": 96966,
+      "value_usd_thousands": 1438975,
+      "put_call": ""
+    },
+    {
+      "cusip": "478160104",
+      "ticker": "JNJ",
+      "issuer": "JOHNSON & JOHNSON",
+      "shares": 56850,
+      "value_usd_thousands": 8309196,
+      "put_call": ""
+    },
+    {
+      "cusip": "501976104",
+      "ticker": "KYTX",
+      "issuer": "KYVERNA THERAPEUTICS",
+      "shares": 7000,
+      "value_usd_thousands": 52500,
+      "put_call": ""
+    },
+    {
+      "cusip": "52490G102",
+      "ticker": "",
+      "issuer": "LEGEND BIOTECH CORP",
+      "shares": 2000,
+      "value_usd_thousands": 88580,
+      "put_call": ""
+    },
+    {
+      "cusip": "52635N103",
+      "ticker": "LENZ",
+      "issuer": "LENZ THERAPEUTICS",
+      "shares": 1084404,
+      "value_usd_thousands": 18749345,
+      "put_call": ""
+    },
+    {
+      "cusip": "532457108",
+      "ticker": "LLY",
+      "issuer": "LILLY ELI & CO",
+      "shares": 23415,
+      "value_usd_thousands": 21199473,
+      "put_call": ""
+    },
+    {
+      "cusip": "558868105",
+      "ticker": "MDGL",
+      "issuer": "MADRIGAL PHARMACEUTI",
+      "shares": 1065,
+      "value_usd_thousands": 298370,
+      "put_call": ""
+    },
+    {
+      "cusip": "58506Q109",
+      "ticker": "",
+      "issuer": "MEDPACE HOLDINGS",
+      "shares": 1106,
+      "value_usd_thousands": 455506,
+      "put_call": ""
+    },
+    {
+      "cusip": "58933Y105",
+      "ticker": "MRK",
+      "issuer": "MERCK & CO INC",
+      "shares": 86500,
+      "value_usd_thousands": 10708700,
+      "put_call": ""
+    },
+    {
+      "cusip": "603170101",
+      "ticker": "MLYS",
+      "issuer": "MINERALYS THERAPEUTI",
+      "shares": 438748,
+      "value_usd_thousands": 5133352,
+      "put_call": ""
+    },
+    {
+      "cusip": "60770K107",
+      "ticker": "MRNA",
+      "issuer": "MODERNA INC",
+      "shares": 22110,
+      "value_usd_thousands": 2625563,
+      "put_call": ""
+    },
+    {
+      "cusip": "61559X104",
+      "ticker": "MLTX",
+      "issuer": "MOONLAKE IMMUNOTHERA",
+      "shares": 21428,
+      "value_usd_thousands": 942189,
+      "put_call": ""
+    },
+    {
+      "cusip": "64125C109",
+      "ticker": "NBIX",
+      "issuer": "NEUROCRINE BIOSCIENC",
+      "shares": 3935,
+      "value_usd_thousands": 541731,
+      "put_call": ""
+    },
+    {
+      "cusip": "68062P106",
+      "ticker": "OLMA",
+      "issuer": "OLEMA PHARMACEUTICAL",
+      "shares": 118480,
+      "value_usd_thousands": 1281954,
+      "put_call": ""
+    },
+    {
+      "cusip": "68404L201",
+      "ticker": "",
+      "issuer": "OPTION CARE HEALTH",
+      "shares": 65000,
+      "value_usd_thousands": 1800500,
+      "put_call": ""
+    },
+    {
+      "cusip": "69366J200",
+      "ticker": "PTCT",
+      "issuer": "PTC THERAPEUTICS I",
+      "shares": 4300,
+      "value_usd_thousands": 131494,
+      "put_call": ""
+    },
+    {
+      "cusip": "717081103",
+      "ticker": "PFE",
+      "issuer": "PFIZER INC",
+      "shares": 181400,
+      "value_usd_thousands": 5075572,
+      "put_call": ""
+    },
+    {
+      "cusip": "74340E103",
+      "ticker": "PRTA",
+      "issuer": "PROGYNY INC",
+      "shares": 70000,
+      "value_usd_thousands": 2002700,
+      "put_call": ""
+    },
+    {
+      "cusip": "75886F107",
+      "ticker": "REGN",
+      "issuer": "REGENERON PHARMCTCLS",
+      "shares": 6040,
+      "value_usd_thousands": 6348221,
+      "put_call": ""
+    },
+    {
+      "cusip": "76155X100",
+      "ticker": "RVMD",
+      "issuer": "REVOLUTION MEDICIN",
+      "shares": 6600,
+      "value_usd_thousands": 256146,
+      "put_call": ""
+    },
+    {
+      "cusip": "77313F106",
+      "ticker": "RCKT",
+      "issuer": "ROCKET PHARMACEUTICA",
+      "shares": 12530,
+      "value_usd_thousands": 269771,
+      "put_call": ""
+    },
+    {
+      "cusip": "80105N105",
+      "ticker": "",
+      "issuer": "SANOFI",
+      "shares": 7330,
+      "value_usd_thousands": 355652,
+      "put_call": ""
+    },
+    {
+      "cusip": "803607100",
+      "ticker": "SRPT",
+      "issuer": "SAREPTA THERAPEUTICS",
+      "shares": 13496,
+      "value_usd_thousands": 2132368,
+      "put_call": ""
+    },
+    {
+      "cusip": "80706P103",
+      "ticker": "",
+      "issuer": "SCHOLAR ROCK HLDG",
+      "shares": 15030,
+      "value_usd_thousands": 125200,
+      "put_call": ""
+    },
+    {
+      "cusip": "82835W108",
+      "ticker": "SPRY",
+      "issuer": "ARS PHARMACEUTICALS",
+      "shares": 236937,
+      "value_usd_thousands": 2016334,
+      "put_call": ""
+    },
+    {
+      "cusip": "863667101",
+      "ticker": "",
+      "issuer": "STRYKER CORP",
+      "shares": 12850,
+      "value_usd_thousands": 4372213,
+      "put_call": ""
+    },
+    {
+      "cusip": "86366E106",
+      "ticker": "GPCR",
+      "issuer": "STRUCTURE THERAPEU",
+      "shares": 13365,
+      "value_usd_thousands": 524844,
+      "put_call": ""
+    },
+    {
+      "cusip": "86627T108",
+      "ticker": "SMMT",
+      "issuer": "SUMMIT THERAPEUTICS",
+      "shares": 25000,
+      "value_usd_thousands": 195000,
+      "put_call": ""
+    },
+    {
+      "cusip": "883556102",
+      "ticker": "",
+      "issuer": "THERMO FISHER SCI",
+      "shares": 10515,
+      "value_usd_thousands": 5814795,
+      "put_call": ""
+    },
+    {
+      "cusip": "90042W100",
+      "ticker": "",
+      "issuer": "TURNSTONE BIOLOGICS",
+      "shares": 517648,
+      "value_usd_thousands": 1356238,
+      "put_call": ""
+    },
+    {
+      "cusip": "91307C102",
+      "ticker": "UTHR",
+      "issuer": "UNITED THERAPEUTICS",
+      "shares": 1820,
+      "value_usd_thousands": 579761,
+      "put_call": ""
+    },
+    {
+      "cusip": "91324P102",
+      "ticker": "UNH",
+      "issuer": "UNITEDHEALTH GRP INC",
+      "shares": 26675,
+      "value_usd_thousands": 13584511,
+      "put_call": ""
+    },
+    {
+      "cusip": "92243G108",
+      "ticker": "PCVX",
+      "issuer": "VAXCYTE INC",
+      "shares": 33730,
+      "value_usd_thousands": 2546952,
+      "put_call": ""
+    },
+    {
+      "cusip": "92337R101",
+      "ticker": "VERA",
+      "issuer": "VERA THERAPEUTICS",
+      "shares": 7718,
+      "value_usd_thousands": 279237,
+      "put_call": ""
+    },
+    {
+      "cusip": "92532F100",
+      "ticker": "VRTX",
+      "issuer": "VERTEX PHARMA",
+      "shares": 8650,
+      "value_usd_thousands": 4054428,
+      "put_call": ""
+    },
+    {
+      "cusip": "92556V106",
+      "ticker": "VKTX",
+      "issuer": "VIATRIS INC",
+      "shares": 22500,
+      "value_usd_thousands": 239175,
+      "put_call": ""
+    },
+    {
+      "cusip": "98887Q104",
+      "ticker": "ZLAB",
+      "issuer": "ZAI LAB LTD",
+      "shares": 2000,
+      "value_usd_thousands": 34660,
+      "put_call": ""
+    },
+    {
+      "cusip": "98956P102",
+      "ticker": "ZNTL",
+      "issuer": "ZIMMER BIOMET HLDS",
+      "shares": 26650,
+      "value_usd_thousands": 2892325,
+      "put_call": ""
+    },
+    {
+      "cusip": "G01767105",
+      "ticker": "ALKS",
+      "issuer": "ALKERMES PLC",
+      "shares": 16730,
+      "value_usd_thousands": 403193,
+      "put_call": ""
+    },
+    {
+      "cusip": "G1110E107",
+      "ticker": "BHVN",
+      "issuer": "BIOHAVEN LTD",
+      "shares": 3900,
+      "value_usd_thousands": 135369,
+      "put_call": ""
+    },
+    {
+      "cusip": "G4705A100",
+      "ticker": "",
+      "issuer": "ICON PLC",
+      "shares": 8028,
+      "value_usd_thousands": 2516537,
+      "put_call": ""
+    },
+    {
+      "cusip": "G50871105",
+      "ticker": "JAZZ",
+      "issuer": "JAZZ PHARMA PLC",
+      "shares": 3334,
+      "value_usd_thousands": 355838,
+      "put_call": ""
+    },
+    {
+      "cusip": "G5960L103",
+      "ticker": "",
+      "issuer": "MEDTRONIC PLC",
+      "shares": 59551,
+      "value_usd_thousands": 4687259,
+      "put_call": ""
+    },
+    {
+      "cusip": "G76279101",
+      "ticker": "ROIV",
+      "issuer": "ROIVANT SCIENCES LTD",
+      "shares": 45957,
+      "value_usd_thousands": 485765,
+      "put_call": ""
+    },
+    {
+      "cusip": "G7709Q104",
+      "ticker": "",
+      "issuer": "ROYALTY PHARMA PLC",
+      "shares": 16650,
+      "value_usd_thousands": 439061,
+      "put_call": ""
+    },
+    {
+      "cusip": "H0036K147",
+      "ticker": "ADCT",
+      "issuer": "ADC THERAPEUTICS SA",
+      "shares": 228102,
+      "value_usd_thousands": 720802,
+      "put_call": ""
+    },
+    {
+      "cusip": "T9224W109",
+      "ticker": "",
+      "issuer": "STEVANATO GROUP SPA",
+      "shares": 89000,
+      "value_usd_thousands": 1632260,
+      "put_call": ""
+    }
+  ]
+}

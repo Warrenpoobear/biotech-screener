@@ -1,0 +1,123 @@
+{
+  "manager_cik": "0001609251",
+  "manager_name": "Krensavage Asset Management",
+  "as_of_date": "2025-06-30",
+  "period_of_report": "2025-03-31",
+  "filed_at": "2025-05-15",
+  "form_type": "13F-HR",
+  "accession": "000160925125000004",
+  "holdings": [
+    {
+      "cusip": "G01767105",
+      "ticker": "ALKS",
+      "issuer": "ALKERMES PLC",
+      "shares": 207822,
+      "value_usd_thousands": 6862,
+      "put_call": ""
+    },
+    {
+      "cusip": "G29687103",
+      "ticker": "",
+      "issuer": "AVADEL PHARMACEUTICALS",
+      "shares": 950000,
+      "value_usd_thousands": 7439,
+      "put_call": ""
+    },
+    {
+      "cusip": "09075V102",
+      "ticker": "BNTX",
+      "issuer": "BIONTECH SE-ADR",
+      "shares": 87563,
+      "value_usd_thousands": 7973,
+      "put_call": ""
+    },
+    {
+      "cusip": "14149Y108",
+      "ticker": "",
+      "issuer": "CARDINAL HEALTH INC",
+      "shares": 188745,
+      "value_usd_thousands": 26003,
+      "put_call": ""
+    },
+    {
+      "cusip": "29251M106",
+      "ticker": "",
+      "issuer": "ENANTA PHARMACEUTICALS INC",
+      "shares": 2116586,
+      "value_usd_thousands": 11684,
+      "put_call": ""
+    },
+    {
+      "cusip": "30161Q104",
+      "ticker": "EXEL",
+      "issuer": "EXELIXIS INC",
+      "shares": 878533,
+      "value_usd_thousands": 32435,
+      "put_call": ""
+    },
+    {
+      "cusip": "37733W204",
+      "ticker": "GSK",
+      "issuer": "GSK PLC-SPON ADR",
+      "shares": 272000,
+      "value_usd_thousands": 10537,
+      "put_call": ""
+    },
+    {
+      "cusip": "G4766E116",
+      "ticker": "",
+      "issuer": "INDIVIOR PLC",
+      "shares": 965368,
+      "value_usd_thousands": 9200,
+      "put_call": ""
+    },
+    {
+      "cusip": "G50871105",
+      "ticker": "JAZZ",
+      "issuer": "JAZZ PHARMACEUTICALS PLC",
+      "shares": 100703,
+      "value_usd_thousands": 12502,
+      "put_call": ""
+    },
+    {
+      "cusip": "G63365103",
+      "ticker": "",
+      "issuer": "MURAL ONCOLOGY PLC",
+      "shares": 70263,
+      "value_usd_thousands": 89,
+      "put_call": ""
+    },
+    {
+      "cusip": "80105N105",
+      "ticker": "",
+      "issuer": "SANOFI-ADR",
+      "shares": 149096,
+      "value_usd_thousands": 8269,
+      "put_call": ""
+    },
+    {
+      "cusip": "868459108",
+      "ticker": "",
+      "issuer": "SUPERNUS PHARMACEUTICALS INC",
+      "shares": 431986,
+      "value_usd_thousands": 14148,
+      "put_call": ""
+    },
+    {
+      "cusip": "91307C102",
+      "ticker": "UTHR",
+      "issuer": "UNITED THERAPEUTICS CORP",
+      "shares": 98228,
+      "value_usd_thousands": 30281,
+      "put_call": ""
+    },
+    {
+      "cusip": "921659108",
+      "ticker": "",
+      "issuer": "VANDA PHARMACEUTICALS INC",
+      "shares": 754381,
+      "value_usd_thousands": 3463,
+      "put_call": ""
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "manager_cik": "0001232621",
+  "manager_name": "Tang Capital Partners",
+  "as_of_date": "2020-06-30",
+  "period_of_report": "2020-03-31",
+  "filed_at": "2020-05-15",
+  "form_type": "13F-HR",
+  "accession": "000121465920004698",
+  "holdings": [
+    {
+      "cusip": "032724106",
+      "ticker": "ANAB",
+      "issuer": "ANAPTYSBIO INC",
+      "shares": 2290827,
+      "value_usd_thousands": 32369,
+      "put_call": ""
+    },
+    {
+      "cusip": "05455M100",
+      "ticker": "",
+      "issuer": "AVROBIO INC",
+      "shares": 1000000,
+      "value_usd_thousands": 15560,
+      "put_call": ""
+    },
+    {
+      "cusip": "090572207",
+      "ticker": "",
+      "issuer": "BIO RAD LABS INC",
+      "shares": 80000,
+      "value_usd_thousands": 28045,
+      "put_call": ""
+    },
+    {
+      "cusip": "16934W106",
+      "ticker": "",
+      "issuer": "CHIMERIX INC",
+      "shares": 431273,
+      "value_usd_thousands": 621,
+      "put_call": ""
+    },
+    {
+      "cusip": "19249H103",
+      "ticker": "",
+      "issuer": "COHERUS BIOSCIENCES INC",
+      "shares": 350000,
+      "value_usd_thousands": 5677,
+      "put_call": ""
+    },
+    {
+      "cusip": "23284F105",
+      "ticker": "CTMX",
+      "issuer": "CYTOMX THERAPEUTICS INC",
+      "shares": 300000,
+      "value_usd_thousands": 2301,
+      "put_call": ""
+    },
+    {
+      "cusip": "269796108",
+      "ticker": "",
+      "issuer": "EAGLE PHARMACEUTICALS INC",
+      "shares": 255616,
+      "value_usd_thousands": 11758,
+      "put_call": ""
+    },
+    {
+      "cusip": "29251M106",
+      "ticker": "ENTA",
+      "issuer": "ENANTA PHARMACEUTICALS INC",
+      "shares": 13483,
+      "value_usd_thousands": 693,
+      "put_call": ""
+    },
+    {
+      "cusip": "30052C107",
+      "ticker": "EOLS",
+      "issuer": "EVOLUS INC",
+      "shares": 3295000,
+      "value_usd_thousands": 13674,
+      "put_call": ""
+    },
+    {
+      "cusip": "3621LQ109",
+      "ticker": "",
+      "issuer": "G1 THERAPEUTICS INC",
+      "shares": 170000,
+      "value_usd_thousands": 1873,
+      "put_call": ""
+    },
+    {
+      "cusip": "427746102",
+      "ticker": "",
+      "issuer": "HERON THERAPEUTICS INC",
+      "shares": 2896904,
+      "value_usd_thousands": 34010,
+      "put_call": ""
+    },
+    {
+      "cusip": "46116X101",
+      "ticker": "",
+      "issuer": "INTRA CELLULAR THERAPIES INC",
+      "shares": 41444,
+      "value_usd_thousands": 637,
+      "put_call": ""
+    },
+    {
+      "cusip": "503459604",
+      "ticker": "LJPC",
+      "issuer": "LA JOLLA PHARMACEUTICAL CO",
+      "shares": 8080345,
+      "value_usd_thousands": 33937,
+      "put_call": ""
+    },
+    {
+      "cusip": "53228P208",
+      "ticker": "",
+      "issuer": "LIFESCI ACQUISITION CORP",
+      "shares": 500000,
+      "value_usd_thousands": 4999,
+      "put_call": ""
+    },
+    {
+      "cusip": "67022C106",
+      "ticker": "",
+      "issuer": "NUCANA PLC",
+      "shares": 100000,
+      "value_usd_thousands": 583,
+      "put_call": ""
+    },
+    {
+      "cusip": "676079106",
+      "ticker": "",
+      "issuer": "ODONATE THERAPEUTICS INC",
+      "shares": 14075269,
+      "value_usd_thousands": 388618,
+      "put_call": ""
+    },
+    {
+      "cusip": "G72800108",
+      "ticker": "PRTA",
+      "issuer": "PROTHENA CORP PLC",
+      "shares": 423823,
+      "value_usd_thousands": 4535,
+      "put_call": ""
+    },
+    {
+      "cusip": "74587V107",
+      "ticker": "PTCT",
+      "issuer": "PUMA BIOTECHNOLOGY INC",
+      "shares": 800000,
+      "value_usd_thousands": 6752,
+      "put_call": ""
+    },
+    {
+      "cusip": "750469207",
+      "ticker": "",
+      "issuer": "RADIUS HEALTH INC",
+      "shares": 300000,
+      "value_usd_thousands": 3900,
+      "put_call": ""
+    },
+    {
+      "cusip": "75955J402",
+      "ticker": "",
+      "issuer": "RELMADA THERAPEUTICS INC",
+      "shares": 1300000,
+      "value_usd_thousands": 44343,
+      "put_call": ""
+    },
+    {
+      "cusip": "77313F106",
+      "ticker": "RCKT",
+      "issuer": "ROCKET PHARMACEUTICALS INC",
+      "shares": 2965485,
+      "value_usd_thousands": 41369,
+      "put_call": ""
+    },
+    {
+      "cusip": "800677106",
+      "ticker": "",
+      "issuer": "SANGAMO THERAPEUTICS INC",
+      "shares": 2032980,
+      "value_usd_thousands": 12950,
+      "put_call": ""
+    },
+    {
+      "cusip": "911312106",
+      "ticker": "",
+      "issuer": "UNITED PARCEL SERVICE INC",
+      "shares": 1000,
+      "value_usd_thousands": 93,
+      "put_call": ""
+    },
+    {
+      "cusip": "91307C102",
+      "ticker": "UTHR",
+      "issuer": "UNITED THERAPEUTICS CORP DEL",
+      "shares": 208415,
+      "value_usd_thousands": 19763,
+      "put_call": ""
+    },
+    {
+      "cusip": "921659108",
+      "ticker": "",
+      "issuer": "VANDA PHARMACEUTICALS INC",
+      "shares": 299800,
+      "value_usd_thousands": 3106,
+      "put_call": ""
+    }
+  ]
+}

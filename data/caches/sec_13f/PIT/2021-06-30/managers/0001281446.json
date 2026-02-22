@@ -1,0 +1,235 @@
+{
+  "manager_cik": "0001281446",
+  "manager_name": "Great Point Partners",
+  "as_of_date": "2021-06-30",
+  "period_of_report": "2021-03-31",
+  "filed_at": "2021-05-17",
+  "form_type": "13F-HR",
+  "accession": "000117266121001313",
+  "holdings": [
+    {
+      "cusip": "004225108",
+      "ticker": "ACAD",
+      "issuer": "ACADIA PHARMACEUTICALS INC",
+      "shares": 311217,
+      "value_usd_thousands": 8029,
+      "put_call": ""
+    },
+    {
+      "cusip": "00773J103",
+      "ticker": "",
+      "issuer": "AEGLEA BIOTHERAPEUTICS INC",
+      "shares": 502900,
+      "value_usd_thousands": 3983,
+      "put_call": ""
+    },
+    {
+      "cusip": "040047607",
+      "ticker": "",
+      "issuer": "ARENA PHARMACEUTICALS INC",
+      "shares": 375870,
+      "value_usd_thousands": 26082,
+      "put_call": ""
+    },
+    {
+      "cusip": "09062X103",
+      "ticker": "BIIB",
+      "issuer": "BIOGEN INC",
+      "shares": 75000,
+      "value_usd_thousands": 20981,
+      "put_call": ""
+    },
+    {
+      "cusip": "19459J104",
+      "ticker": "",
+      "issuer": "COLLEGIUM PHARMACEUTICAL INC",
+      "shares": 861410,
+      "value_usd_thousands": 20415,
+      "put_call": ""
+    },
+    {
+      "cusip": "210373106",
+      "ticker": "",
+      "issuer": "CONSTELLATION PHARMCETICLS I",
+      "shares": 872415,
+      "value_usd_thousands": 20406,
+      "put_call": ""
+    },
+    {
+      "cusip": "30161Q104",
+      "ticker": "EXEL",
+      "issuer": "EXELIXIS INC",
+      "shares": 1201100,
+      "value_usd_thousands": 27133,
+      "put_call": ""
+    },
+    {
+      "cusip": "374163103",
+      "ticker": "",
+      "issuer": "GERON CORP",
+      "shares": 2610000,
+      "value_usd_thousands": 4124,
+      "put_call": ""
+    },
+    {
+      "cusip": "N44821101",
+      "ticker": "",
+      "issuer": "INFLARX NV",
+      "shares": 2200000,
+      "value_usd_thousands": 8580,
+      "put_call": ""
+    },
+    {
+      "cusip": "45784P101",
+      "ticker": "",
+      "issuer": "INSULET CORP",
+      "shares": 89600,
+      "value_usd_thousands": 23378,
+      "put_call": ""
+    },
+    {
+      "cusip": "46071F103",
+      "ticker": "",
+      "issuer": "INTERSECT ENT INC",
+      "shares": 1332773,
+      "value_usd_thousands": 27828,
+      "put_call": ""
+    },
+    {
+      "cusip": "462260100",
+      "ticker": "IOVA",
+      "issuer": "IOVANCE BIOTHERAPEUTICS INC",
+      "shares": 930000,
+      "value_usd_thousands": 29444,
+      "put_call": ""
+    },
+    {
+      "cusip": "48283N106",
+      "ticker": "KDMN",
+      "issuer": "KADMON HLDGS INC",
+      "shares": 4755000,
+      "value_usd_thousands": 18497,
+      "put_call": ""
+    },
+    {
+      "cusip": "516544103",
+      "ticker": "",
+      "issuer": "LANTHEUS HLDGS INC",
+      "shares": 649516,
+      "value_usd_thousands": 13880,
+      "put_call": ""
+    },
+    {
+      "cusip": "556099109",
+      "ticker": "",
+      "issuer": "MACROGENICS INC",
+      "shares": 1350000,
+      "value_usd_thousands": 42998,
+      "put_call": ""
+    },
+    {
+      "cusip": "60468T105",
+      "ticker": "",
+      "issuer": "MIRATI THERAPEUTICS INC",
+      "shares": 135000,
+      "value_usd_thousands": 23126,
+      "put_call": ""
+    },
+    {
+      "cusip": "64157F103",
+      "ticker": "",
+      "issuer": "NEVRO CORP",
+      "shares": 80000,
+      "value_usd_thousands": 11160,
+      "put_call": ""
+    },
+    {
+      "cusip": "67576A100",
+      "ticker": "OCUL",
+      "issuer": "OCULAR THERAPEUTIX INC",
+      "shares": 1007012,
+      "value_usd_thousands": 16525,
+      "put_call": ""
+    },
+    {
+      "cusip": "74349U108",
+      "ticker": "",
+      "issuer": "PROMETHEUS BIOSCIENCES INC",
+      "shares": 250000,
+      "value_usd_thousands": 4565,
+      "put_call": ""
+    },
+    {
+      "cusip": "745848101",
+      "ticker": "",
+      "issuer": "PULMONX CORP",
+      "shares": 114345,
+      "value_usd_thousands": 5230,
+      "put_call": ""
+    },
+    {
+      "cusip": "74587V107",
+      "ticker": "PTCT",
+      "issuer": "PUMA BIOTECHNOLOGY INC",
+      "shares": 1300000,
+      "value_usd_thousands": 12636,
+      "put_call": ""
+    },
+    {
+      "cusip": "757468103",
+      "ticker": "",
+      "issuer": "REDHILL BIOPHARMA LTD",
+      "shares": 705305,
+      "value_usd_thousands": 5163,
+      "put_call": ""
+    },
+    {
+      "cusip": "77313F106",
+      "ticker": "RCKT",
+      "issuer": "ROCKET PHARMACEUTICALS INC",
+      "shares": 760000,
+      "value_usd_thousands": 33721,
+      "put_call": ""
+    },
+    {
+      "cusip": "78667J108",
+      "ticker": "SG7",
+      "issuer": "SAGE THERAPEUTICS INC",
+      "shares": 382085,
+      "value_usd_thousands": 28599,
+      "put_call": ""
+    },
+    {
+      "cusip": "89422G107",
+      "ticker": "TVTX",
+      "issuer": "TRAVERE THERAPEUTICS INC",
+      "shares": 593712,
+      "value_usd_thousands": 14825,
+      "put_call": ""
+    },
+    {
+      "cusip": "89610F101",
+      "ticker": "",
+      "issuer": "TRICIDA INC",
+      "shares": 349600,
+      "value_usd_thousands": 1849,
+      "put_call": ""
+    },
+    {
+      "cusip": "91307C102",
+      "ticker": "UTHR",
+      "issuer": "UNITED THERAPEUTICS CORP DEL",
+      "shares": 156406,
+      "value_usd_thousands": 26162,
+      "put_call": ""
+    },
+    {
+      "cusip": "984241109",
+      "ticker": "",
+      "issuer": "Y-MABS THERAPEUTICS INC",
+      "shares": 150000,
+      "value_usd_thousands": 4536,
+      "put_call": ""
+    }
+  ]
+}

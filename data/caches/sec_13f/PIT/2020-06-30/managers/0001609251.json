@@ -1,0 +1,115 @@
+{
+  "manager_cik": "0001609251",
+  "manager_name": "Krensavage Asset Management",
+  "as_of_date": "2020-06-30",
+  "period_of_report": "2020-03-31",
+  "filed_at": "2020-05-18",
+  "form_type": "13F-HR",
+  "accession": "000160925120000003",
+  "holdings": [
+    {
+      "cusip": "G01767105",
+      "ticker": "ALKS",
+      "issuer": "ALKERMES PLC",
+      "shares": 1167631,
+      "value_usd_thousands": 16837,
+      "put_call": ""
+    },
+    {
+      "cusip": "015351109",
+      "ticker": "",
+      "issuer": "ALEXION PHARMACEUTICALS INC",
+      "shares": 462138,
+      "value_usd_thousands": 41495,
+      "put_call": ""
+    },
+    {
+      "cusip": "032724106",
+      "ticker": "ANAB",
+      "issuer": "ANAPTYSBIO INC",
+      "shares": 443877,
+      "value_usd_thousands": 6272,
+      "put_call": ""
+    },
+    {
+      "cusip": "09062X103",
+      "ticker": "BIIB",
+      "issuer": "BIOGEN INC",
+      "shares": 110771,
+      "value_usd_thousands": 35046,
+      "put_call": ""
+    },
+    {
+      "cusip": "15912K100",
+      "ticker": "",
+      "issuer": "CHANGE HEALTHCARE INC",
+      "shares": 3639,
+      "value_usd_thousands": 36,
+      "put_call": ""
+    },
+    {
+      "cusip": "29251M106",
+      "ticker": "ENTA",
+      "issuer": "ENANTA PHARMACEUTICALS INC",
+      "shares": 700318,
+      "value_usd_thousands": 36017,
+      "put_call": ""
+    },
+    {
+      "cusip": "375558103",
+      "ticker": "GILD",
+      "issuer": "GILEAD SCIENCES INC",
+      "shares": 117755,
+      "value_usd_thousands": 8803,
+      "put_call": ""
+    },
+    {
+      "cusip": "461203101",
+      "ticker": "IVCUSD",
+      "issuer": "INVACARE CORP",
+      "shares": 887246,
+      "value_usd_thousands": 6592,
+      "put_call": ""
+    },
+    {
+      "cusip": "58155Q103",
+      "ticker": "MCK",
+      "issuer": "MCKESSON CORP",
+      "shares": 218306,
+      "value_usd_thousands": 29528,
+      "put_call": ""
+    },
+    {
+      "cusip": "75886F107",
+      "ticker": "REGN",
+      "issuer": "REGENERON PHARMACEUTICALS",
+      "shares": 86817,
+      "value_usd_thousands": 42392,
+      "put_call": ""
+    },
+    {
+      "cusip": "74975N105",
+      "ticker": "RTIXEUR",
+      "issuer": "RTI SURGICAL HDS INC",
+      "shares": 4027772,
+      "value_usd_thousands": 6887,
+      "put_call": ""
+    },
+    {
+      "cusip": "M8737E108",
+      "ticker": "",
+      "issuer": "TARO PHARMACEUTICAL INDUS",
+      "shares": 487275,
+      "value_usd_thousands": 29821,
+      "put_call": ""
+    },
+    {
+      "cusip": "91307C102",
+      "ticker": "UTHR",
+      "issuer": "UNITED THERAPEUTICS CORP",
+      "shares": 539646,
+      "value_usd_thousands": 51172,
+      "put_call": ""
+    }
+  ]
+}

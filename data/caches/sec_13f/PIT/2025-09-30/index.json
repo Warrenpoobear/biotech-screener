@@ -1,0 +1,49 @@
+{
+  "schema_version": "sec_13f_pit_index.v1",
+  "cache_type": "sec_13f_pit",
+  "as_of_date": "2025-09-30",
+  "created_at": "2026-02-22T15:09:35.689941Z",
+  "elite_only": false,
+  "total_managers": 2,
+  "managers_with_filing": 2,
+  "coverage_pct": 100.0,
+  "selection_policy": {
+    "pit_rule": "filing_date<=as_of; latest report_date; prefer 13F-HR/A; latest filing_date",
+    "recent_filings_lookback_n": 16
+  },
+  "managers": [
+    {
+      "manager_cik": "0001263508",
+      "manager_name": "Baker Bros Advisors",
+      "selected": true,
+      "period_of_report": "2025-06-30",
+      "filed_at": "2025-08-14",
+      "form_type": "13F-HR",
+      "accession": "000110465925078573",
+      "holdings_count": 89,
+      "manager_json_path": "managers/0001263508.json",
+      "raw_xml_path": "raw/0001263508/000110465925078573.xml",
+      "rejection_reason": ""
+    },
+    {
+      "manager_cik": "0001346824",
+      "manager_name": "RA Capital Management",
+      "selected": true,
+      "period_of_report": "2025-06-30",
+      "filed_at": "2025-08-14",
+      "form_type": "13F-HR",
+      "accession": "000110465925078691",
+      "holdings_count": 64,
+      "manager_json_path": "managers/0001346824.json",
+      "raw_xml_path": "raw/0001346824/000110465925078691.xml",
+      "rejection_reason": ""
+    }
+  ],
+  "backfill": {
+    "tool_version": "1.0.0",
+    "cadence": "quarterly",
+    "manager_set": "coinvest",
+    "lookback_filings": 16,
+    "generated_at": "2026-02-22T15:09:35.689963Z"
+  }
+}

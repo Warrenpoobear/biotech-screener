@@ -1,0 +1,251 @@
+{
+  "manager_cik": "0001281446",
+  "manager_name": "Great Point Partners",
+  "as_of_date": "2025-12-31",
+  "period_of_report": "2025-09-30",
+  "filed_at": "2025-11-14",
+  "form_type": "13F-HR",
+  "accession": "000181455425000164",
+  "holdings": [
+    {
+      "cusip": "00091E109",
+      "ticker": "",
+      "issuer": "ABSCI CORPORATION",
+      "shares": 796438,
+      "value_usd_thousands": 2421172,
+      "put_call": ""
+    },
+    {
+      "cusip": "00370M103",
+      "ticker": "ABVX",
+      "issuer": "ABIVAX SA SPONSORED ADS",
+      "shares": 150000,
+      "value_usd_thousands": 12735000,
+      "put_call": ""
+    },
+    {
+      "cusip": "00973Y108",
+      "ticker": "AKRO",
+      "issuer": "AKERO THERAPEUTICS INC",
+      "shares": 103848,
+      "value_usd_thousands": 4930703,
+      "put_call": ""
+    },
+    {
+      "cusip": "03237H101",
+      "ticker": "AMLX",
+      "issuer": "AMYLYX PHARMACEUTICALS INC",
+      "shares": 1700000,
+      "value_usd_thousands": 23103000,
+      "put_call": ""
+    },
+    {
+      "cusip": "03770N101",
+      "ticker": "APGE",
+      "issuer": "APOGEE THERAPEUTICS INC",
+      "shares": 304000,
+      "value_usd_thousands": 12077920,
+      "put_call": ""
+    },
+    {
+      "cusip": "04351P101",
+      "ticker": "ASND",
+      "issuer": "ASCENDIS PHARMA A/S SPONSORED ADR",
+      "shares": 75000,
+      "value_usd_thousands": 14910750,
+      "put_call": ""
+    },
+    {
+      "cusip": "14070B309",
+      "ticker": "",
+      "issuer": "CAPR 12/19/2025 7.5 Put",
+      "shares": 87700,
+      "value_usd_thousands": 632317,
+      "put_call": "Put"
+    },
+    {
+      "cusip": "21077P108",
+      "ticker": "",
+      "issuer": "CONTEXT THERAPEUTICS INC",
+      "shares": 4683711,
+      "value_usd_thousands": 4537579,
+      "put_call": ""
+    },
+    {
+      "cusip": "23282W605",
+      "ticker": "",
+      "issuer": "CYTOKINETICS INC COM NEW",
+      "shares": 150000,
+      "value_usd_thousands": 8244000,
+      "put_call": ""
+    },
+    {
+      "cusip": "23306J309",
+      "ticker": "",
+      "issuer": "DBV TECHNOLOGIES S A SPONSORED ADS",
+      "shares": 378594,
+      "value_usd_thousands": 3785940,
+      "put_call": ""
+    },
+    {
+      "cusip": "252828108",
+      "ticker": "DNTH",
+      "issuer": "DIANTHUS THERAPEUTICS INC",
+      "shares": 265803,
+      "value_usd_thousands": 10459348,
+      "put_call": ""
+    },
+    {
+      "cusip": "29842P105",
+      "ticker": "",
+      "issuer": "EUPRAXIA PHARMACEUTICALS INC",
+      "shares": 1200000,
+      "value_usd_thousands": 7080000,
+      "put_call": ""
+    },
+    {
+      "cusip": "413197104",
+      "ticker": "HRMY",
+      "issuer": "HRMY 10/17/2025 40 Call",
+      "shares": 85000,
+      "value_usd_thousands": 2342600,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "45258J102",
+      "ticker": "IMVT",
+      "issuer": "IMMUNOVANT INC",
+      "shares": 500000,
+      "value_usd_thousands": 8060000,
+      "put_call": ""
+    },
+    {
+      "cusip": "462222100",
+      "ticker": "IONS",
+      "issuer": "IONIS PHARMACEUTICALS INC",
+      "shares": 80000,
+      "value_usd_thousands": 5233600,
+      "put_call": ""
+    },
+    {
+      "cusip": "008064206",
+      "ticker": "JBIO",
+      "issuer": "JADE BIOSCIENCES INC COM NEW",
+      "shares": 632599,
+      "value_usd_thousands": 5459329,
+      "put_call": ""
+    },
+    {
+      "cusip": "52490G102",
+      "ticker": "",
+      "issuer": "LEGEND BIOTECH CORP SPONSORED ADS",
+      "shares": 113460,
+      "value_usd_thousands": 3699931,
+      "put_call": ""
+    },
+    {
+      "cusip": "64135M105",
+      "ticker": "NGNE",
+      "issuer": "NEUROGENE INC",
+      "shares": 446814,
+      "value_usd_thousands": 7743287,
+      "put_call": ""
+    },
+    {
+      "cusip": "640268306",
+      "ticker": "NKTR",
+      "issuer": "NEKTAR THERAPEUTICS COM NEW",
+      "shares": 300000,
+      "value_usd_thousands": 17070000,
+      "put_call": ""
+    },
+    {
+      "cusip": "687604108",
+      "ticker": "ORKA",
+      "issuer": "ORUKA THERAPEUTICS INC",
+      "shares": 183330,
+      "value_usd_thousands": 3525436,
+      "put_call": ""
+    },
+    {
+      "cusip": "N69605108",
+      "ticker": "PHVS",
+      "issuer": "PHARVARIS N V",
+      "shares": 155105,
+      "value_usd_thousands": 3869870,
+      "put_call": ""
+    },
+    {
+      "cusip": "729139105",
+      "ticker": "",
+      "issuer": "PLIANT THERAPEUTICS INC",
+      "shares": 850000,
+      "value_usd_thousands": 1258000,
+      "put_call": ""
+    },
+    {
+      "cusip": "76200L309",
+      "ticker": "RZLT",
+      "issuer": "REZOLUTE INC COM NEW",
+      "shares": 2451809,
+      "value_usd_thousands": 23047005,
+      "put_call": ""
+    },
+    {
+      "cusip": "799566104",
+      "ticker": "",
+      "issuer": "SANA BIOTECHNOLOGY INC",
+      "shares": 700000,
+      "value_usd_thousands": 2485000,
+      "put_call": ""
+    },
+    {
+      "cusip": "834203309",
+      "ticker": "",
+      "issuer": "SOLENO THERAPEUTICS INC",
+      "shares": 225000,
+      "value_usd_thousands": 15210000,
+      "put_call": ""
+    },
+    {
+      "cusip": "877619106",
+      "ticker": "",
+      "issuer": "TAYSHA GENE THERAPIES INC COM SHS",
+      "shares": 1500000,
+      "value_usd_thousands": 4905000,
+      "put_call": ""
+    },
+    {
+      "cusip": "90466Y202",
+      "ticker": "UNCY",
+      "issuer": "UNICYCIVE THERAPEUTICS INC COM NEW",
+      "shares": 796558,
+      "value_usd_thousands": 3472993,
+      "put_call": ""
+    },
+    {
+      "cusip": "91678A107",
+      "ticker": "",
+      "issuer": "UPSTREAM BIO INC",
+      "shares": 300000,
+      "value_usd_thousands": 5643000,
+      "put_call": ""
+    },
+    {
+      "cusip": "98420N105",
+      "ticker": "XENE",
+      "issuer": "XENON PHARMACEUTICALS INC",
+      "shares": 200000,
+      "value_usd_thousands": 8030000,
+      "put_call": ""
+    },
+    {
+      "cusip": "G9TY5A101",
+      "ticker": "",
+      "issuer": "ZURA BIO LTD CLASS A ORD SHS",
+      "shares": 3815930,
+      "value_usd_thousands": 16522977,
+      "put_call": ""
+    }
+  ]
+}

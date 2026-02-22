@@ -1,0 +1,131 @@
+{
+  "manager_cik": "0001703031",
+  "manager_name": "Bain Capital Life Sciences",
+  "as_of_date": "2020-09-30",
+  "period_of_report": "2020-06-30",
+  "filed_at": "2020-08-14",
+  "form_type": "13F-HR",
+  "accession": "000095012320008777",
+  "holdings": [
+    {
+      "cusip": "253031108",
+      "ticker": "DRNAUSD",
+      "issuer": "DICERNA PHARMACEUTICALS INC",
+      "shares": 4080237,
+      "value_usd_thousands": 103638,
+      "put_call": ""
+    },
+    {
+      "cusip": "56854Q101",
+      "ticker": "MRNSUSD",
+      "issuer": "MARINUS PHARMACEUTICALS INC",
+      "shares": 5724235,
+      "value_usd_thousands": 14540,
+      "put_call": ""
+    },
+    {
+      "cusip": "76029N106",
+      "ticker": "",
+      "issuer": "REPLIMUNE GROUP INC",
+      "shares": 2162598,
+      "value_usd_thousands": 53741,
+      "put_call": ""
+    },
+    {
+      "cusip": "83422E105",
+      "ticker": "",
+      "issuer": "SOLID BIOSCIENCES INC",
+      "shares": 3871164,
+      "value_usd_thousands": 11343,
+      "put_call": ""
+    },
+    {
+      "cusip": "03836N103",
+      "ticker": "",
+      "issuer": "APTINYX INC",
+      "shares": 5558425,
+      "value_usd_thousands": 23179,
+      "put_call": ""
+    },
+    {
+      "cusip": "85205L107",
+      "ticker": "",
+      "issuer": "SPRINGWORKS THERAPEUTICS INC",
+      "shares": 7281307,
+      "value_usd_thousands": 305815,
+      "put_call": ""
+    },
+    {
+      "cusip": "268158201",
+      "ticker": "",
+      "issuer": "DYNAVAX TECHNOLOGIES CORP.",
+      "shares": 10895773,
+      "value_usd_thousands": 96646,
+      "put_call": ""
+    },
+    {
+      "cusip": "210373106",
+      "ticker": "",
+      "issuer": "CONSTELLATION PHARMACEUTICALS INC.",
+      "shares": 1400000,
+      "value_usd_thousands": 42070,
+      "put_call": ""
+    },
+    {
+      "cusip": "98420X103",
+      "ticker": "",
+      "issuer": "X4 PHARMACEUTICALS INC",
+      "shares": 1648485,
+      "value_usd_thousands": 15364,
+      "put_call": ""
+    },
+    {
+      "cusip": "805111101",
+      "ticker": "SVRA",
+      "issuer": "SAVARA INC",
+      "shares": 5128593,
+      "value_usd_thousands": 22976,
+      "put_call": ""
+    },
+    {
+      "cusip": "03969K108",
+      "ticker": "ARQT",
+      "issuer": "ARCUTIS BIOTHERAPEUTICS, INC.",
+      "shares": 3979292,
+      "value_usd_thousands": 120334,
+      "put_call": ""
+    },
+    {
+      "cusip": "59045L106",
+      "ticker": "",
+      "issuer": "MERSANA THERAPEUTICS, INC.",
+      "shares": 3445667,
+      "value_usd_thousands": 80629,
+      "put_call": ""
+    },
+    {
+      "cusip": "22663K107",
+      "ticker": "CRNX",
+      "issuer": "CRINETICS PHARMACEUTICALS, INC.",
+      "shares": 1071428,
+      "value_usd_thousands": 18771,
+      "put_call": ""
+    },
+    {
+      "cusip": "78667J108",
+      "ticker": "SG7",
+      "issuer": "SAGE THERAPEUTICS, INC.",
+      "shares": 499100,
+      "value_usd_thousands": 20753,
+      "put_call": ""
+    },
+    {
+      "cusip": "00773J103",
+      "ticker": "",
+      "issuer": "AEGLEA BIOTHERAPEUTICS, INC.",
+      "shares": 2700000,
+      "value_usd_thousands": 24975,
+      "put_call": ""
+    }
+  ]
+}

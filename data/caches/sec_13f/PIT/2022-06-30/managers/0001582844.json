@@ -1,0 +1,339 @@
+{
+  "manager_cik": "0001582844",
+  "manager_name": "Acuta Capital Partners",
+  "as_of_date": "2022-06-30",
+  "period_of_report": "2022-03-31",
+  "filed_at": "2022-05-16",
+  "form_type": "13F-HR",
+  "accession": "000110465922060917",
+  "holdings": [
+    {
+      "cusip": "00032Q104",
+      "ticker": "",
+      "issuer": "AADI BIOSCIENCES INC",
+      "shares": 1529402,
+      "value_usd_thousands": 25954,
+      "put_call": ""
+    },
+    {
+      "cusip": "00461U105",
+      "ticker": "ACRS",
+      "issuer": "ACLARIS THERAPEU",
+      "shares": 217600,
+      "value_usd_thousands": 3751,
+      "put_call": ""
+    },
+    {
+      "cusip": "03753U106",
+      "ticker": "APLS",
+      "issuer": "APELLIS PHARMACEUTICALS INC",
+      "shares": 554000,
+      "value_usd_thousands": 28149,
+      "put_call": ""
+    },
+    {
+      "cusip": "04280A100",
+      "ticker": "ARWR",
+      "issuer": "ARROWHEAD PHARMACEUTICALS INC",
+      "shares": 82500,
+      "value_usd_thousands": 3794,
+      "put_call": ""
+    },
+    {
+      "cusip": "04746L104",
+      "ticker": "",
+      "issuer": "ATHIRA PHARMA INC",
+      "shares": 140030,
+      "value_usd_thousands": 1890,
+      "put_call": ""
+    },
+    {
+      "cusip": "05337M104",
+      "ticker": "",
+      "issuer": "AVADEL PHARMACEUTICALS PLC",
+      "shares": 580000,
+      "value_usd_thousands": 3961,
+      "put_call": ""
+    },
+    {
+      "cusip": "G0904B105",
+      "ticker": "",
+      "issuer": "BCLS ACQUISITION CORP- CL A",
+      "shares": 843122,
+      "value_usd_thousands": 8322,
+      "put_call": ""
+    },
+    {
+      "cusip": "07987C204",
+      "ticker": "",
+      "issuer": "BELLUS HEALTH INC",
+      "shares": 816000,
+      "value_usd_thousands": 5614,
+      "put_call": ""
+    },
+    {
+      "cusip": "H00263105",
+      "ticker": "",
+      "issuer": "CALL- ACIU 100@7 1/2EXP 08/19/2022",
+      "shares": 100000,
+      "value_usd_thousands": 400,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "04746L104",
+      "ticker": "",
+      "issuer": "CALL- ATHA 100@12 1/2 EXP 07/15/2022",
+      "shares": 100000,
+      "value_usd_thousands": 1350,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "69353Y103",
+      "ticker": "",
+      "issuer": "CALL- PMVP 100 @ 20 EXP 06/17/2022",
+      "shares": 100000,
+      "value_usd_thousands": 2082,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "15117B202",
+      "ticker": "CLDX",
+      "issuer": "CELLDEX THERAPEUTICS INC",
+      "shares": 322898,
+      "value_usd_thousands": 10998,
+      "put_call": ""
+    },
+    {
+      "cusip": "23345J104",
+      "ticker": "",
+      "issuer": "DICE THERAPEUTICS INC",
+      "shares": 37500,
+      "value_usd_thousands": 717,
+      "put_call": ""
+    },
+    {
+      "cusip": "29251M106",
+      "ticker": "",
+      "issuer": "ENANTA PHARMACEUTICALS INC",
+      "shares": 2300,
+      "value_usd_thousands": 164,
+      "put_call": ""
+    },
+    {
+      "cusip": "30233G209",
+      "ticker": "EYPT",
+      "issuer": "EYEPOINT PHARMACEUTICALS INC",
+      "shares": 307944,
+      "value_usd_thousands": 3742,
+      "put_call": ""
+    },
+    {
+      "cusip": "359616109",
+      "ticker": "FULC",
+      "issuer": "FULCRUM THERAPEUTICS INC",
+      "shares": 200000,
+      "value_usd_thousands": 4730,
+      "put_call": ""
+    },
+    {
+      "cusip": "G3855L106",
+      "ticker": "GHRS",
+      "issuer": "GH RESEARCH PLC",
+      "shares": 419632,
+      "value_usd_thousands": 7675,
+      "put_call": ""
+    },
+    {
+      "cusip": "41358P106",
+      "ticker": "",
+      "issuer": "HARPOON THERAPEUTICS INC",
+      "shares": 497500,
+      "value_usd_thousands": 2473,
+      "put_call": ""
+    },
+    {
+      "cusip": "G4411D109",
+      "ticker": "",
+      "issuer": "HEALTH SCIENCES ACQUISITIONS",
+      "shares": 392500,
+      "value_usd_thousands": 3890,
+      "put_call": ""
+    },
+    {
+      "cusip": "G46188101",
+      "ticker": "",
+      "issuer": "HORIZON THERAPEUTICS PLC",
+      "shares": 33200,
+      "value_usd_thousands": 3493,
+      "put_call": ""
+    },
+    {
+      "cusip": "45253H101",
+      "ticker": "",
+      "issuer": "IMMUNOGEN INC",
+      "shares": 55000,
+      "value_usd_thousands": 262,
+      "put_call": ""
+    },
+    {
+      "cusip": "462260100",
+      "ticker": "IOVA",
+      "issuer": "IOVANCE BIOTHERAPEUTICS INC",
+      "shares": 118856,
+      "value_usd_thousands": 1979,
+      "put_call": ""
+    },
+    {
+      "cusip": "46583P102",
+      "ticker": "",
+      "issuer": "IVERIC BIO INC",
+      "shares": 539500,
+      "value_usd_thousands": 9080,
+      "put_call": ""
+    },
+    {
+      "cusip": "47760M102",
+      "ticker": "",
+      "issuer": "JIYA ACQUISITION CORP -CL A",
+      "shares": 562500,
+      "value_usd_thousands": 5524,
+      "put_call": ""
+    },
+    {
+      "cusip": "481116101",
+      "ticker": "",
+      "issuer": "JOUNCE THERAPEUTICS INC",
+      "shares": 813500,
+      "value_usd_thousands": 5524,
+      "put_call": ""
+    },
+    {
+      "cusip": "50127T109",
+      "ticker": "",
+      "issuer": "KURA ONCOLOGY INC. COMMON STOCK",
+      "shares": 473969,
+      "value_usd_thousands": 7621,
+      "put_call": ""
+    },
+    {
+      "cusip": "N5749R100",
+      "ticker": "MRUS",
+      "issuer": "MERUS NV",
+      "shares": 235500,
+      "value_usd_thousands": 6227,
+      "put_call": ""
+    },
+    {
+      "cusip": "59935V107",
+      "ticker": "",
+      "issuer": "MILESTONE PHARMACEUTICALS IN",
+      "shares": 380000,
+      "value_usd_thousands": 2440,
+      "put_call": ""
+    },
+    {
+      "cusip": "60468T105",
+      "ticker": "",
+      "issuer": "MIRATI THERAPEUTICS",
+      "shares": 52500,
+      "value_usd_thousands": 4317,
+      "put_call": ""
+    },
+    {
+      "cusip": "608550109",
+      "ticker": "",
+      "issuer": "MOLECULAR TEMPLATES INC",
+      "shares": 307125,
+      "value_usd_thousands": 1060,
+      "put_call": ""
+    },
+    {
+      "cusip": "67080N101",
+      "ticker": "NUVB",
+      "issuer": "NUVATION WARRANTS",
+      "shares": 90832,
+      "value_usd_thousands": 69,
+      "put_call": ""
+    },
+    {
+      "cusip": "69353Y103",
+      "ticker": "",
+      "issuer": "PMV PHARMACEUTICALS INC",
+      "shares": 135500,
+      "value_usd_thousands": 2821,
+      "put_call": ""
+    },
+    {
+      "cusip": "747324101",
+      "ticker": "",
+      "issuer": "PYXIS ONCOLOGY INC",
+      "shares": 200000,
+      "value_usd_thousands": 808,
+      "put_call": ""
+    },
+    {
+      "cusip": "75955J402",
+      "ticker": "",
+      "issuer": "RELMADA THERAPEUTICS INC",
+      "shares": 342000,
+      "value_usd_thousands": 9231,
+      "put_call": ""
+    },
+    {
+      "cusip": "81577F109",
+      "ticker": "",
+      "issuer": "SEELOS THERAPEUTICS INC",
+      "shares": 295896,
+      "value_usd_thousands": 248,
+      "put_call": ""
+    },
+    {
+      "cusip": "87164F105",
+      "ticker": "",
+      "issuer": "SYNDAX PHARMACEUTICALS INC",
+      "shares": 206126,
+      "value_usd_thousands": 3582,
+      "put_call": ""
+    },
+    {
+      "cusip": "92332V107",
+      "ticker": "VTYX",
+      "issuer": "VENTYX BIOSCIENCES INC",
+      "shares": 70877,
+      "value_usd_thousands": 962,
+      "put_call": ""
+    },
+    {
+      "cusip": "92337C104",
+      "ticker": "",
+      "issuer": "VERASTEM INC",
+      "shares": 996951,
+      "value_usd_thousands": 1406,
+      "put_call": ""
+    },
+    {
+      "cusip": "92790C104",
+      "ticker": "VRDN",
+      "issuer": "VIRIDIAN THERAPEUTICS INC",
+      "shares": 340000,
+      "value_usd_thousands": 6287,
+      "put_call": ""
+    },
+    {
+      "cusip": "92840H202",
+      "ticker": "",
+      "issuer": "VISTAGEN THERAPEUTICS INC",
+      "shares": 11736283,
+      "value_usd_thousands": 14553,
+      "put_call": ""
+    },
+    {
+      "cusip": "98420N105",
+      "ticker": "XENE",
+      "issuer": "XENON PHARMACEUTICALS INC",
+      "shares": 225000,
+      "value_usd_thousands": 6878,
+      "put_call": ""
+    }
+  ]
+}

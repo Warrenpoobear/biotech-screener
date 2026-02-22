@@ -1,0 +1,323 @@
+{
+  "manager_cik": "0001569064",
+  "manager_name": "Suvretta Capital Management",
+  "as_of_date": "2020-03-31",
+  "period_of_report": "2019-12-31",
+  "filed_at": "2020-02-14",
+  "form_type": "13F-HR",
+  "accession": "000117266120000543",
+  "holdings": [
+    {
+      "cusip": "88579Y101",
+      "ticker": "",
+      "issuer": "3M CO",
+      "shares": 430000,
+      "value_usd_thousands": 75860,
+      "put_call": "Put"
+    },
+    {
+      "cusip": "00507V109",
+      "ticker": "",
+      "issuer": "ACTIVISION BLIZZARD INC",
+      "shares": 2617740,
+      "value_usd_thousands": 155546,
+      "put_call": ""
+    },
+    {
+      "cusip": "00724F101",
+      "ticker": "ADBE",
+      "issuer": "ADOBE INC",
+      "shares": 981755,
+      "value_usd_thousands": 323793,
+      "put_call": ""
+    },
+    {
+      "cusip": "02209S103",
+      "ticker": "",
+      "issuer": "ALTRIA GROUP INC",
+      "shares": 2861740,
+      "value_usd_thousands": 142829,
+      "put_call": ""
+    },
+    {
+      "cusip": "023135106",
+      "ticker": "AMZN",
+      "issuer": "AMAZON COM INC",
+      "shares": 140000,
+      "value_usd_thousands": 258698,
+      "put_call": ""
+    },
+    {
+      "cusip": "036752103",
+      "ticker": "",
+      "issuer": "ANTHEM INC",
+      "shares": 411750,
+      "value_usd_thousands": 124361,
+      "put_call": ""
+    },
+    {
+      "cusip": "071813109",
+      "ticker": "",
+      "issuer": "BAXTER INTL INC",
+      "shares": 1259570,
+      "value_usd_thousands": 105325,
+      "put_call": ""
+    },
+    {
+      "cusip": "101137107",
+      "ticker": "BSX",
+      "issuer": "BOSTON SCIENTIFIC CORP",
+      "shares": 1675510,
+      "value_usd_thousands": 75767,
+      "put_call": ""
+    },
+    {
+      "cusip": "13645T100",
+      "ticker": "",
+      "issuer": "CANADIAN PAC RY LTD",
+      "shares": 522110,
+      "value_usd_thousands": 133112,
+      "put_call": ""
+    },
+    {
+      "cusip": "15135B101",
+      "ticker": "",
+      "issuer": "CENTENE CORP DEL",
+      "shares": 1505181,
+      "value_usd_thousands": 94631,
+      "put_call": ""
+    },
+    {
+      "cusip": "26614N102",
+      "ticker": "",
+      "issuer": "DUPONT DE NEMOURS INC",
+      "shares": 1070560,
+      "value_usd_thousands": 68730,
+      "put_call": ""
+    },
+    {
+      "cusip": "23355L106",
+      "ticker": "",
+      "issuer": "DXC TECHNOLOGY CO",
+      "shares": 2031220,
+      "value_usd_thousands": 76354,
+      "put_call": ""
+    },
+    {
+      "cusip": "29415F104",
+      "ticker": "",
+      "issuer": "ENVISTA HLDGS CORP",
+      "shares": 1537500,
+      "value_usd_thousands": 45572,
+      "put_call": ""
+    },
+    {
+      "cusip": "303250104",
+      "ticker": "",
+      "issuer": "FAIR ISAAC CORP",
+      "shares": 130170,
+      "value_usd_thousands": 48772,
+      "put_call": ""
+    },
+    {
+      "cusip": "30734W117",
+      "ticker": "",
+      "issuer": "FAR PT ACQUISITION CORP",
+      "shares": 232042,
+      "value_usd_thousands": 299,
+      "put_call": ""
+    },
+    {
+      "cusip": "31620M106",
+      "ticker": "",
+      "issuer": "FIDELITY NATL INFORMATION SV",
+      "shares": 1853008,
+      "value_usd_thousands": 257735,
+      "put_call": ""
+    },
+    {
+      "cusip": "37940X102",
+      "ticker": "",
+      "issuer": "GLOBAL PMTS INC",
+      "shares": 1006953,
+      "value_usd_thousands": 183829,
+      "put_call": ""
+    },
+    {
+      "cusip": "G47791101",
+      "ticker": "",
+      "issuer": "INGERSOLL-RAND PLC",
+      "shares": 509970,
+      "value_usd_thousands": 67785,
+      "put_call": ""
+    },
+    {
+      "cusip": "469814107",
+      "ticker": "",
+      "issuer": "JACOBS ENGR GROUP INC",
+      "shares": 982370,
+      "value_usd_thousands": 88246,
+      "put_call": ""
+    },
+    {
+      "cusip": "478160104",
+      "ticker": "JNJ",
+      "issuer": "JOHNSON & JOHNSON",
+      "shares": 1215480,
+      "value_usd_thousands": 177302,
+      "put_call": ""
+    },
+    {
+      "cusip": "48666K109",
+      "ticker": "KRTX",
+      "issuer": "KB HOME",
+      "shares": 506417,
+      "value_usd_thousands": 17355,
+      "put_call": ""
+    },
+    {
+      "cusip": "48242W106",
+      "ticker": "",
+      "issuer": "KBR INC",
+      "shares": 3163330,
+      "value_usd_thousands": 96482,
+      "put_call": ""
+    },
+    {
+      "cusip": "502431109",
+      "ticker": "",
+      "issuer": "L3HARRIS TECHNOLOGIES INC",
+      "shares": 682730,
+      "value_usd_thousands": 135092,
+      "put_call": ""
+    },
+    {
+      "cusip": "548661107",
+      "ticker": "",
+      "issuer": "LOWES COS INC",
+      "shares": 1188380,
+      "value_usd_thousands": 142320,
+      "put_call": ""
+    },
+    {
+      "cusip": "55087P104",
+      "ticker": "",
+      "issuer": "LYFT INC",
+      "shares": 1798060,
+      "value_usd_thousands": 77353,
+      "put_call": ""
+    },
+    {
+      "cusip": "G5960L103",
+      "ticker": "",
+      "issuer": "MEDTRONIC PLC",
+      "shares": 874650,
+      "value_usd_thousands": 99229,
+      "put_call": ""
+    },
+    {
+      "cusip": "654106103",
+      "ticker": "",
+      "issuer": "NIKE INC",
+      "shares": 1234220,
+      "value_usd_thousands": 125039,
+      "put_call": ""
+    },
+    {
+      "cusip": "655844108",
+      "ticker": "",
+      "issuer": "NORFOLK SOUTHERN CORP",
+      "shares": 541820,
+      "value_usd_thousands": 105184,
+      "put_call": ""
+    },
+    {
+      "cusip": "62944T105",
+      "ticker": "",
+      "issuer": "NVR INC",
+      "shares": 9020,
+      "value_usd_thousands": 34352,
+      "put_call": ""
+    },
+    {
+      "cusip": "70450Y103",
+      "ticker": "",
+      "issuer": "PAYPAL HLDGS INC",
+      "shares": 1116660,
+      "value_usd_thousands": 120789,
+      "put_call": ""
+    },
+    {
+      "cusip": "755111507",
+      "ticker": "",
+      "issuer": "RAYTHEON CO",
+      "shares": 392100,
+      "value_usd_thousands": 86160,
+      "put_call": ""
+    },
+    {
+      "cusip": "79466L302",
+      "ticker": "",
+      "issuer": "SALESFORCE COM INC",
+      "shares": 1573631,
+      "value_usd_thousands": 255935,
+      "put_call": ""
+    },
+    {
+      "cusip": "835699307",
+      "ticker": "",
+      "issuer": "SONY CORP",
+      "shares": 2320562,
+      "value_usd_thousands": 157798,
+      "put_call": ""
+    },
+    {
+      "cusip": "902494103",
+      "ticker": "",
+      "issuer": "TYSON FOODS INC",
+      "shares": 1569520,
+      "value_usd_thousands": 142889,
+      "put_call": ""
+    },
+    {
+      "cusip": "902494103",
+      "ticker": "",
+      "issuer": "TYSON FOODS INC",
+      "shares": 360000,
+      "value_usd_thousands": 32774,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "91324P102",
+      "ticker": "UNH",
+      "issuer": "UNITEDHEALTH GROUP INC",
+      "shares": 442040,
+      "value_usd_thousands": 129951,
+      "put_call": ""
+    },
+    {
+      "cusip": "92766K114",
+      "ticker": "",
+      "issuer": "VIRGIN GALACTIC HOLDINGS INC",
+      "shares": 1171693,
+      "value_usd_thousands": 3925,
+      "put_call": ""
+    },
+    {
+      "cusip": "92766K106",
+      "ticker": "",
+      "issuer": "VIRGIN GALACTIC HOLDINGS INC",
+      "shares": 5500000,
+      "value_usd_thousands": 63525,
+      "put_call": ""
+    },
+    {
+      "cusip": "98956P102",
+      "ticker": "ZNTL",
+      "issuer": "ZIMMER BIOMET HLDGS INC",
+      "shares": 454560,
+      "value_usd_thousands": 68039,
+      "put_call": ""
+    }
+  ]
+}

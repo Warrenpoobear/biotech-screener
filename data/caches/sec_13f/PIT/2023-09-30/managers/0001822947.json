@@ -1,0 +1,147 @@
+{
+  "manager_cik": "0001822947",
+  "manager_name": "Ally Bridge Group",
+  "as_of_date": "2023-09-30",
+  "period_of_report": "2023-06-30",
+  "filed_at": "2023-08-14",
+  "form_type": "13F-HR",
+  "accession": "000095012323008083",
+  "holdings": [
+    {
+      "cusip": "09203E105",
+      "ticker": "",
+      "issuer": "BLACK DIAMOND THERAPEUTICS I",
+      "shares": 800000,
+      "value_usd_thousands": 4040000,
+      "put_call": ""
+    },
+    {
+      "cusip": "20454B104",
+      "ticker": "",
+      "issuer": "COMPASS THERAPEUTICS INC",
+      "shares": 914630,
+      "value_usd_thousands": 2908523,
+      "put_call": ""
+    },
+    {
+      "cusip": "21077P108",
+      "ticker": "",
+      "issuer": "CONTEXT THERAPEUTICS INC",
+      "shares": 653396,
+      "value_usd_thousands": 1045434,
+      "put_call": ""
+    },
+    {
+      "cusip": "23282W605",
+      "ticker": "",
+      "issuer": "CYTOKINETICS INC",
+      "shares": 223382,
+      "value_usd_thousands": 7286721,
+      "put_call": ""
+    },
+    {
+      "cusip": "374163103",
+      "ticker": "",
+      "issuer": "GERON CORP",
+      "shares": 2123162,
+      "value_usd_thousands": 6815350,
+      "put_call": ""
+    },
+    {
+      "cusip": "471871103",
+      "ticker": "",
+      "issuer": "JASPER THERAPEUTICS INC",
+      "shares": 2517232,
+      "value_usd_thousands": 3448608,
+      "put_call": ""
+    },
+    {
+      "cusip": "56854Q200",
+      "ticker": "",
+      "issuer": "MARINUS PHARMACEUTICALS INC",
+      "shares": 390418,
+      "value_usd_thousands": 4239939,
+      "put_call": ""
+    },
+    {
+      "cusip": "58286E102",
+      "ticker": "",
+      "issuer": "MDXHEALTH SA-ADR",
+      "shares": 349552,
+      "value_usd_thousands": 1191972,
+      "put_call": ""
+    },
+    {
+      "cusip": "58406B103",
+      "ticker": "",
+      "issuer": "MEDAVAIL HOLDINGS INC",
+      "shares": 5894897,
+      "value_usd_thousands": 1444839,
+      "put_call": ""
+    },
+    {
+      "cusip": "N5749R100",
+      "ticker": "MRUS",
+      "issuer": "MERUS NV",
+      "shares": 199221,
+      "value_usd_thousands": 5245489,
+      "put_call": ""
+    },
+    {
+      "cusip": "61559X104",
+      "ticker": "MLTX",
+      "issuer": "MOONLAKE IMMUNOTHERAPEUTICS",
+      "shares": 91413,
+      "value_usd_thousands": 4662063,
+      "put_call": ""
+    },
+    {
+      "cusip": "74006W108",
+      "ticker": "PRAX",
+      "issuer": "PRAXIS PRECISION MEDICINES I",
+      "shares": 3200000,
+      "value_usd_thousands": 3680000,
+      "put_call": ""
+    },
+    {
+      "cusip": "75340L104",
+      "ticker": "RPID",
+      "issuer": "RAPID MICRO BIOSYSTEMS INC-A",
+      "shares": 403284,
+      "value_usd_thousands": 403284,
+      "put_call": ""
+    },
+    {
+      "cusip": "75615P103",
+      "ticker": "RETAEUR",
+      "issuer": "REATA PHARMACEUTICALS INC-A",
+      "shares": 105558,
+      "value_usd_thousands": 10762694,
+      "put_call": ""
+    },
+    {
+      "cusip": "925050106",
+      "ticker": "VRNA",
+      "issuer": "VERONA PHARMA PLC - ADR",
+      "shares": 487631,
+      "value_usd_thousands": 10308519,
+      "put_call": ""
+    },
+    {
+      "cusip": "92790C104",
+      "ticker": "VRDN",
+      "issuer": "VIRIDIAN THERAPEUTICS INC",
+      "shares": 201752,
+      "value_usd_thousands": 4799680,
+      "put_call": ""
+    },
+    {
+      "cusip": "98420N105",
+      "ticker": "XENE",
+      "issuer": "XENON PHARMACEUTICALS INC",
+      "shares": 266961,
+      "value_usd_thousands": 10277999,
+      "put_call": ""
+    }
+  ]
+}

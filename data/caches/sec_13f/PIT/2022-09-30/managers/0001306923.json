@@ -1,0 +1,275 @@
+{
+  "manager_cik": "0001306923",
+  "manager_name": "Palo Alto Investors",
+  "as_of_date": "2022-09-30",
+  "period_of_report": "2022-06-30",
+  "filed_at": "2022-08-15",
+  "form_type": "13F-HR",
+  "accession": "000130692322000015",
+  "holdings": [
+    {
+      "cusip": "003654100",
+      "ticker": "ABMDEUR",
+      "issuer": "ABIOMED INC",
+      "shares": 494397,
+      "value_usd_thousands": 122368,
+      "put_call": ""
+    },
+    {
+      "cusip": "004225108",
+      "ticker": "ACAD",
+      "issuer": "ACADIA PHARMACEUTICALS INC",
+      "shares": 1678196,
+      "value_usd_thousands": 23646,
+      "put_call": ""
+    },
+    {
+      "cusip": "01438T106",
+      "ticker": "ALDX",
+      "issuer": "ALDEYRA THERAPEUTICS INC",
+      "shares": 160800,
+      "value_usd_thousands": 642,
+      "put_call": ""
+    },
+    {
+      "cusip": "016255101",
+      "ticker": "",
+      "issuer": "ALIGN TECHNOLOGY INC",
+      "shares": 44305,
+      "value_usd_thousands": 10486,
+      "put_call": ""
+    },
+    {
+      "cusip": "016259202",
+      "ticker": "",
+      "issuer": "ALIMERA SCIENCES INC",
+      "shares": 200919,
+      "value_usd_thousands": 1099,
+      "put_call": ""
+    },
+    {
+      "cusip": "G01767105",
+      "ticker": "ALKS",
+      "issuer": "ALKERMES PLC",
+      "shares": 603400,
+      "value_usd_thousands": 17975,
+      "put_call": ""
+    },
+    {
+      "cusip": "03152W109",
+      "ticker": "FOLD",
+      "issuer": "AMICUS THERAPEUTICS INC",
+      "shares": 9847774,
+      "value_usd_thousands": 105765,
+      "put_call": ""
+    },
+    {
+      "cusip": "032724106",
+      "ticker": "ANAB",
+      "issuer": "ANAPTYSBIO INC",
+      "shares": 431024,
+      "value_usd_thousands": 8750,
+      "put_call": ""
+    },
+    {
+      "cusip": "09062X103",
+      "ticker": "BIIB",
+      "issuer": "BIOGEN INC",
+      "shares": 360981,
+      "value_usd_thousands": 73618,
+      "put_call": ""
+    },
+    {
+      "cusip": "09061G101",
+      "ticker": "BMRN",
+      "issuer": "BIOMARIN PHARMACEUTICAL INC",
+      "shares": 2061373,
+      "value_usd_thousands": 170826,
+      "put_call": ""
+    },
+    {
+      "cusip": "189464100",
+      "ticker": "CLVSEUR",
+      "issuer": "CLOVIS ONCOLOGY INC",
+      "shares": 4473967,
+      "value_usd_thousands": 8053,
+      "put_call": ""
+    },
+    {
+      "cusip": "23282W605",
+      "ticker": "",
+      "issuer": "CYTOKINETICS INC",
+      "shares": 111717,
+      "value_usd_thousands": 4389,
+      "put_call": ""
+    },
+    {
+      "cusip": "28238P109",
+      "ticker": "EHTH",
+      "issuer": "EHEALTH INC",
+      "shares": 1654693,
+      "value_usd_thousands": 15438,
+      "put_call": ""
+    },
+    {
+      "cusip": "29428V104",
+      "ticker": "",
+      "issuer": "EPIZYME INC",
+      "shares": 6774541,
+      "value_usd_thousands": 9959,
+      "put_call": ""
+    },
+    {
+      "cusip": "38341P102",
+      "ticker": "GOSS",
+      "issuer": "GOSSAMER BIO INC",
+      "shares": 1750651,
+      "value_usd_thousands": 14653,
+      "put_call": ""
+    },
+    {
+      "cusip": "39868T105",
+      "ticker": "",
+      "issuer": "GRITSTONE ONCOLOGY INC",
+      "shares": 2330504,
+      "value_usd_thousands": 5640,
+      "put_call": ""
+    },
+    {
+      "cusip": "457669307",
+      "ticker": "INSM",
+      "issuer": "INSMED INC",
+      "shares": 5840398,
+      "value_usd_thousands": 115173,
+      "put_call": ""
+    },
+    {
+      "cusip": "48576U106",
+      "ticker": "KPTIEUR",
+      "issuer": "KARYOPHARM THERAPEUTICS INC",
+      "shares": 5621533,
+      "value_usd_thousands": 25353,
+      "put_call": ""
+    },
+    {
+      "cusip": "49372L100",
+      "ticker": "",
+      "issuer": "KEZAR LIFE SCIENCES INC",
+      "shares": 656200,
+      "value_usd_thousands": 5427,
+      "put_call": ""
+    },
+    {
+      "cusip": "55910K108",
+      "ticker": "",
+      "issuer": "MAGENTA THERAPEUTICS INC",
+      "shares": 432300,
+      "value_usd_thousands": 519,
+      "put_call": ""
+    },
+    {
+      "cusip": "56854Q200",
+      "ticker": "",
+      "issuer": "MARINUS PHARMACEUTICALS INC",
+      "shares": 31330,
+      "value_usd_thousands": 152,
+      "put_call": ""
+    },
+    {
+      "cusip": "604749101",
+      "ticker": "MIRM",
+      "issuer": "MIRUM PHARMACEUTICALS INC",
+      "shares": 64700,
+      "value_usd_thousands": 1259,
+      "put_call": ""
+    },
+    {
+      "cusip": "670002401",
+      "ticker": "",
+      "issuer": "NOVAVAX INC",
+      "shares": 12500,
+      "value_usd_thousands": 643,
+      "put_call": ""
+    },
+    {
+      "cusip": "G72800108",
+      "ticker": "PRTA",
+      "issuer": "PROTHENA CORP PLC",
+      "shares": 1681477,
+      "value_usd_thousands": 45652,
+      "put_call": ""
+    },
+    {
+      "cusip": "761330109",
+      "ticker": "",
+      "issuer": "REVANCE THERAPEUTICS INC",
+      "shares": 4405039,
+      "value_usd_thousands": 60878,
+      "put_call": ""
+    },
+    {
+      "cusip": "78667J108",
+      "ticker": "SG7",
+      "issuer": "SAGE THERAPEUTICS INC",
+      "shares": 851409,
+      "value_usd_thousands": 27501,
+      "put_call": ""
+    },
+    {
+      "cusip": "852312305",
+      "ticker": "STAA",
+      "issuer": "STAAR SURGICAL CO",
+      "shares": 1106567,
+      "value_usd_thousands": 78489,
+      "put_call": ""
+    },
+    {
+      "cusip": "87164F105",
+      "ticker": "",
+      "issuer": "SYNDAX PHARMACEUTICALS INC",
+      "shares": 612600,
+      "value_usd_thousands": 11786,
+      "put_call": ""
+    },
+    {
+      "cusip": "87357P100",
+      "ticker": "TCMD",
+      "issuer": "TACTILE SYSTEMS TECHNOLOGY I",
+      "shares": 27100,
+      "value_usd_thousands": 198,
+      "put_call": ""
+    },
+    {
+      "cusip": "89422G107",
+      "ticker": "TVTX",
+      "issuer": "TRAVERE THERAPEUTICS INC",
+      "shares": 166069,
+      "value_usd_thousands": 4024,
+      "put_call": ""
+    },
+    {
+      "cusip": "91307C102",
+      "ticker": "UTHR",
+      "issuer": "UNITED THERAPEUTICS CORP",
+      "shares": 634806,
+      "value_usd_thousands": 149586,
+      "put_call": ""
+    },
+    {
+      "cusip": "M96088105",
+      "ticker": "URGN",
+      "issuer": "UROGEN PHARMA LTD",
+      "shares": 24500,
+      "value_usd_thousands": 201,
+      "put_call": ""
+    },
+    {
+      "cusip": "921659108",
+      "ticker": "",
+      "issuer": "VANDA PHARMACEUTICALS INC",
+      "shares": 2491200,
+      "value_usd_thousands": 27154,
+      "put_call": ""
+    }
+  ]
+}

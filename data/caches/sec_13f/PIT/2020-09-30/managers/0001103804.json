@@ -1,0 +1,587 @@
+{
+  "manager_cik": "0001103804",
+  "manager_name": "Viking Global",
+  "as_of_date": "2020-09-30",
+  "period_of_report": "2020-06-30",
+  "filed_at": "2020-08-07",
+  "form_type": "13F-HR",
+  "accession": "000110380420000007",
+  "holdings": [
+    {
+      "cusip": "00650F109",
+      "ticker": "",
+      "issuer": "ADAPTIVE BIOTECHNOLOGIES COR",
+      "shares": 33493708,
+      "value_usd_thousands": 1620426,
+      "put_call": ""
+    },
+    {
+      "cusip": "00851L103",
+      "ticker": "API",
+      "issuer": "AGORA INC",
+      "shares": 400000,
+      "value_usd_thousands": 17668,
+      "put_call": ""
+    },
+    {
+      "cusip": "01609W102",
+      "ticker": "",
+      "issuer": "ALIBABA GROUP HLDG LTD",
+      "shares": 695536,
+      "value_usd_thousands": 150027,
+      "put_call": ""
+    },
+    {
+      "cusip": "016255101",
+      "ticker": "",
+      "issuer": "ALIGN TECHNOLOGY INC",
+      "shares": 539343,
+      "value_usd_thousands": 148017,
+      "put_call": ""
+    },
+    {
+      "cusip": "020002101",
+      "ticker": "",
+      "issuer": "ALLSTATE CORP",
+      "shares": 1769570,
+      "value_usd_thousands": 171631,
+      "put_call": ""
+    },
+    {
+      "cusip": "023135106",
+      "ticker": "AMZN",
+      "issuer": "AMAZON COM INC",
+      "shares": 612886,
+      "value_usd_thousands": 1690842,
+      "put_call": ""
+    },
+    {
+      "cusip": "025816109",
+      "ticker": "",
+      "issuer": "AMERICAN EXPRESS CO",
+      "shares": 10497498,
+      "value_usd_thousands": 999362,
+      "put_call": ""
+    },
+    {
+      "cusip": "032654105",
+      "ticker": "",
+      "issuer": "ANALOG DEVICES INC",
+      "shares": 1959943,
+      "value_usd_thousands": 240367,
+      "put_call": ""
+    },
+    {
+      "cusip": "03272L108",
+      "ticker": "",
+      "issuer": "ANAPLAN INC",
+      "shares": 5746829,
+      "value_usd_thousands": 260389,
+      "put_call": ""
+    },
+    {
+      "cusip": "G0403H108",
+      "ticker": "",
+      "issuer": "AON PLC",
+      "shares": 2956029,
+      "value_usd_thousands": 569331,
+      "put_call": ""
+    },
+    {
+      "cusip": "00187Y100",
+      "ticker": "APG",
+      "issuer": "API GROUP CORP",
+      "shares": 33333333,
+      "value_usd_thousands": 405000,
+      "put_call": ""
+    },
+    {
+      "cusip": "04621X108",
+      "ticker": "ATXS",
+      "issuer": "ASSURANT INC",
+      "shares": 2826277,
+      "value_usd_thousands": 291926,
+      "put_call": ""
+    },
+    {
+      "cusip": "002120202",
+      "ticker": "",
+      "issuer": "ATYR PHARMA INC",
+      "shares": 587444,
+      "value_usd_thousands": 2608,
+      "put_call": ""
+    },
+    {
+      "cusip": "05352A100",
+      "ticker": "",
+      "issuer": "AVANTOR INC",
+      "shares": 5475379,
+      "value_usd_thousands": 93081,
+      "put_call": ""
+    },
+    {
+      "cusip": "09627Y109",
+      "ticker": "",
+      "issuer": "BLUEPRINT MEDICINES CORP",
+      "shares": 1629716,
+      "value_usd_thousands": 127118,
+      "put_call": ""
+    },
+    {
+      "cusip": "09857L108",
+      "ticker": "BPMC",
+      "issuer": "BOOKING HOLDINGS INC",
+      "shares": 202747,
+      "value_usd_thousands": 322842,
+      "put_call": ""
+    },
+    {
+      "cusip": "101137107",
+      "ticker": "BSX",
+      "issuer": "BOSTON SCIENTIFIC CORP",
+      "shares": 18457273,
+      "value_usd_thousands": 648035,
+      "put_call": ""
+    },
+    {
+      "cusip": "10806X102",
+      "ticker": "BBIO",
+      "issuer": "BRIDGEBIO PHARMA INC",
+      "shares": 26620991,
+      "value_usd_thousands": 868111,
+      "put_call": ""
+    },
+    {
+      "cusip": "110122157",
+      "ticker": "",
+      "issuer": "BRISTOL-MYERS SQUIBB CO",
+      "shares": 18968019,
+      "value_usd_thousands": 67906,
+      "put_call": ""
+    },
+    {
+      "cusip": "148806102",
+      "ticker": "",
+      "issuer": "CATALENT INC",
+      "shares": 1493703,
+      "value_usd_thousands": 109488,
+      "put_call": ""
+    },
+    {
+      "cusip": "15135B101",
+      "ticker": "",
+      "issuer": "CENTENE CORP DEL",
+      "shares": 16106578,
+      "value_usd_thousands": 1023573,
+      "put_call": ""
+    },
+    {
+      "cusip": "15912K100",
+      "ticker": "",
+      "issuer": "CHANGE HEALTHCARE INC",
+      "shares": 4326999,
+      "value_usd_thousands": 48462,
+      "put_call": ""
+    },
+    {
+      "cusip": "H1467J104",
+      "ticker": "",
+      "issuer": "CHUBB LIMITED",
+      "shares": 2202033,
+      "value_usd_thousands": 278821,
+      "put_call": ""
+    },
+    {
+      "cusip": "125523100",
+      "ticker": "",
+      "issuer": "CIGNA CORP NEW",
+      "shares": 2949644,
+      "value_usd_thousands": 553501,
+      "put_call": ""
+    },
+    {
+      "cusip": "12572Q105",
+      "ticker": "CDMO",
+      "issuer": "CME GROUP INC",
+      "shares": 482679,
+      "value_usd_thousands": 78455,
+      "put_call": ""
+    },
+    {
+      "cusip": "20030N101",
+      "ticker": "",
+      "issuer": "COMCAST CORP NEW",
+      "shares": 28523676,
+      "value_usd_thousands": 1111853,
+      "put_call": ""
+    },
+    {
+      "cusip": "216648402",
+      "ticker": "",
+      "issuer": "COOPER COS INC",
+      "shares": 345523,
+      "value_usd_thousands": 98004,
+      "put_call": ""
+    },
+    {
+      "cusip": "235851102",
+      "ticker": "",
+      "issuer": "DANAHER CORPORATION",
+      "shares": 903929,
+      "value_usd_thousands": 159842,
+      "put_call": ""
+    },
+    {
+      "cusip": "237194105",
+      "ticker": "",
+      "issuer": "DARDEN RESTAURANTS INC",
+      "shares": 2991636,
+      "value_usd_thousands": 226676,
+      "put_call": ""
+    },
+    {
+      "cusip": "28106W103",
+      "ticker": "EDIT",
+      "issuer": "EDITAS MEDICINE INC",
+      "shares": 413000,
+      "value_usd_thousands": 12217,
+      "put_call": ""
+    },
+    {
+      "cusip": "29261A100",
+      "ticker": "",
+      "issuer": "ENCOMPASS HEALTH CORP",
+      "shares": 2677612,
+      "value_usd_thousands": 165825,
+      "put_call": ""
+    },
+    {
+      "cusip": "29415F104",
+      "ticker": "",
+      "issuer": "ENVISTA HOLDINGS CORPORATION",
+      "shares": 4524346,
+      "value_usd_thousands": 95418,
+      "put_call": ""
+    },
+    {
+      "cusip": "G3223R108",
+      "ticker": "",
+      "issuer": "EVEREST RE GROUP LTD",
+      "shares": 418223,
+      "value_usd_thousands": 86238,
+      "put_call": ""
+    },
+    {
+      "cusip": "30063P105",
+      "ticker": "EXAS",
+      "issuer": "EXACT SCIENCES CORP",
+      "shares": 2182534,
+      "value_usd_thousands": 189750,
+      "put_call": ""
+    },
+    {
+      "cusip": "31620M106",
+      "ticker": "",
+      "issuer": "FIDELITY NATL INFORMATION SV",
+      "shares": 6714021,
+      "value_usd_thousands": 900283,
+      "put_call": ""
+    },
+    {
+      "cusip": "34959J108",
+      "ticker": "",
+      "issuer": "FORTIVE CORP",
+      "shares": 8760046,
+      "value_usd_thousands": 592705,
+      "put_call": ""
+    },
+    {
+      "cusip": "372303206",
+      "ticker": "",
+      "issuer": "GENMAB A/S",
+      "shares": 575086,
+      "value_usd_thousands": 19490,
+      "put_call": ""
+    },
+    {
+      "cusip": "40131M109",
+      "ticker": "",
+      "issuer": "GUARDANT HEALTH INC",
+      "shares": 3068173,
+      "value_usd_thousands": 248921,
+      "put_call": ""
+    },
+    {
+      "cusip": "43300A203",
+      "ticker": "",
+      "issuer": "HILTON WORLDWIDE HLDGS INC",
+      "shares": 7272455,
+      "value_usd_thousands": 534162,
+      "put_call": ""
+    },
+    {
+      "cusip": "G46188101",
+      "ticker": "",
+      "issuer": "HORIZON THERAPEUTICS PUB LTD",
+      "shares": 1471419,
+      "value_usd_thousands": 81781,
+      "put_call": ""
+    },
+    {
+      "cusip": "45687V106",
+      "ticker": "",
+      "issuer": "INGERSOLL RAND INC",
+      "shares": 10196427,
+      "value_usd_thousands": 286724,
+      "put_call": ""
+    },
+    {
+      "cusip": "47215P106",
+      "ticker": "",
+      "issuer": "JD.COM INC",
+      "shares": 8266459,
+      "value_usd_thousands": 497476,
+      "put_call": ""
+    },
+    {
+      "cusip": "46625H100",
+      "ticker": "",
+      "issuer": "JPMORGAN CHASE & CO",
+      "shares": 6411486,
+      "value_usd_thousands": 603064,
+      "put_call": ""
+    },
+    {
+      "cusip": "517834107",
+      "ticker": "",
+      "issuer": "LAS VEGAS SANDS CORP",
+      "shares": 11125343,
+      "value_usd_thousands": 506648,
+      "put_call": ""
+    },
+    {
+      "cusip": "531229854",
+      "ticker": "",
+      "issuer": "LIBERTY MEDIA CORP DEL",
+      "shares": 1923501,
+      "value_usd_thousands": 60994,
+      "put_call": ""
+    },
+    {
+      "cusip": "G5494J103",
+      "ticker": "",
+      "issuer": "LINDE PLC",
+      "shares": 803694,
+      "value_usd_thousands": 170472,
+      "put_call": ""
+    },
+    {
+      "cusip": "548661107",
+      "ticker": "",
+      "issuer": "LOWES COS INC",
+      "shares": 1710360,
+      "value_usd_thousands": 231104,
+      "put_call": ""
+    },
+    {
+      "cusip": "58733R102",
+      "ticker": "",
+      "issuer": "MERCADOLIBRE INC",
+      "shares": 69344,
+      "value_usd_thousands": 68357,
+      "put_call": ""
+    },
+    {
+      "cusip": "595112103",
+      "ticker": "",
+      "issuer": "MICRON TECHNOLOGY INC",
+      "shares": 3392745,
+      "value_usd_thousands": 174794,
+      "put_call": ""
+    },
+    {
+      "cusip": "594918104",
+      "ticker": "MSFT",
+      "issuer": "MICROSOFT CORP",
+      "shares": 3710674,
+      "value_usd_thousands": 755159,
+      "put_call": ""
+    },
+    {
+      "cusip": "60855R100",
+      "ticker": "",
+      "issuer": "MOLINA HEALTHCARE INC",
+      "shares": 1013668,
+      "value_usd_thousands": 180413,
+      "put_call": ""
+    },
+    {
+      "cusip": "60877T100",
+      "ticker": "",
+      "issuer": "MOMENTA PHARMACEUTICALS INC",
+      "shares": 946220,
+      "value_usd_thousands": 31481,
+      "put_call": ""
+    },
+    {
+      "cusip": "615369105",
+      "ticker": "",
+      "issuer": "MOODYS CORP",
+      "shares": 977348,
+      "value_usd_thousands": 268507,
+      "put_call": ""
+    },
+    {
+      "cusip": "64110L106",
+      "ticker": "",
+      "issuer": "NETFLIX INC",
+      "shares": 356549,
+      "value_usd_thousands": 162244,
+      "put_call": ""
+    },
+    {
+      "cusip": "67020Y100",
+      "ticker": "",
+      "issuer": "NUANCE COMMUNICATIONS INC",
+      "shares": 12799556,
+      "value_usd_thousands": 323893,
+      "put_call": ""
+    },
+    {
+      "cusip": "701094104",
+      "ticker": "",
+      "issuer": "PARKER HANNIFIN CORP",
+      "shares": 1442793,
+      "value_usd_thousands": 264421,
+      "put_call": ""
+    },
+    {
+      "cusip": "693656100",
+      "ticker": "",
+      "issuer": "PVH CORPORATION",
+      "shares": 1522984,
+      "value_usd_thousands": 73179,
+      "put_call": ""
+    },
+    {
+      "cusip": "G7709Q104",
+      "ticker": "",
+      "issuer": "ROYALTY PHARMA PLC",
+      "shares": 2514985,
+      "value_usd_thousands": 122103,
+      "put_call": ""
+    },
+    {
+      "cusip": "79466L302",
+      "ticker": "",
+      "issuer": "SALESFORCE COM INC",
+      "shares": 2145463,
+      "value_usd_thousands": 401910,
+      "put_call": ""
+    },
+    {
+      "cusip": "81141R100",
+      "ticker": "",
+      "issuer": "SEA LTD",
+      "shares": 1727380,
+      "value_usd_thousands": 185244,
+      "put_call": ""
+    },
+    {
+      "cusip": "824348106",
+      "ticker": "",
+      "issuer": "SHERWIN WILLIAMS CO",
+      "shares": 397835,
+      "value_usd_thousands": 229889,
+      "put_call": ""
+    },
+    {
+      "cusip": "872590104",
+      "ticker": "",
+      "issuer": "T-MOBILE US INC",
+      "shares": 3799550,
+      "value_usd_thousands": 395723,
+      "put_call": ""
+    },
+    {
+      "cusip": "872590112",
+      "ticker": "TMUSREUR",
+      "issuer": "T-MOBILE US INC",
+      "shares": 1799550,
+      "value_usd_thousands": 302,
+      "put_call": ""
+    },
+    {
+      "cusip": "883556102",
+      "ticker": "",
+      "issuer": "THERMO FISHER SCIENTIFIC INC",
+      "shares": 1734144,
+      "value_usd_thousands": 628350,
+      "put_call": ""
+    },
+    {
+      "cusip": "872540109",
+      "ticker": "",
+      "issuer": "TJX COS INC NEW",
+      "shares": 1519986,
+      "value_usd_thousands": 76850,
+      "put_call": ""
+    },
+    {
+      "cusip": "90353T100",
+      "ticker": "",
+      "issuer": "UBER TECHNOLOGIES INC",
+      "shares": 16470839,
+      "value_usd_thousands": 511914,
+      "put_call": ""
+    },
+    {
+      "cusip": "N90064101",
+      "ticker": "QURE",
+      "issuer": "UNIQURE NV",
+      "shares": 62396,
+      "value_usd_thousands": 2812,
+      "put_call": ""
+    },
+    {
+      "cusip": "92220P105",
+      "ticker": "",
+      "issuer": "VARIAN MED SYS INC",
+      "shares": 365827,
+      "value_usd_thousands": 44821,
+      "put_call": ""
+    },
+    {
+      "cusip": "926613100",
+      "ticker": "",
+      "issuer": "VIELA BIO INC",
+      "shares": 1049000,
+      "value_usd_thousands": 45443,
+      "put_call": ""
+    },
+    {
+      "cusip": "92826C839",
+      "ticker": "",
+      "issuer": "VISA INC",
+      "shares": 164889,
+      "value_usd_thousands": 31852,
+      "put_call": ""
+    },
+    {
+      "cusip": "98138H101",
+      "ticker": "",
+      "issuer": "WORKDAY INC",
+      "shares": 1490882,
+      "value_usd_thousands": 279332,
+      "put_call": ""
+    },
+    {
+      "cusip": "98943L107",
+      "ticker": "",
+      "issuer": "ZENTALIS PHARMACEUTICALS INC",
+      "shares": 4443284,
+      "value_usd_thousands": 213366,
+      "put_call": ""
+    }
+  ]
+}

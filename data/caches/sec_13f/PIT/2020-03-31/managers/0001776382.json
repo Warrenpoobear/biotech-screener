@@ -1,0 +1,59 @@
+{
+  "manager_cik": "0001776382",
+  "manager_name": "Venbio Partners",
+  "as_of_date": "2020-03-31",
+  "period_of_report": "2019-12-31",
+  "filed_at": "2020-02-13",
+  "form_type": "13F-HR",
+  "accession": "000176568120000001",
+  "holdings": [
+    {
+      "cusip": "00973Y108",
+      "ticker": "AKRO",
+      "issuer": "Akero Therapeutics, Inc",
+      "shares": 3940543,
+      "value_usd_thousands": 87460,
+      "put_call": ""
+    },
+    {
+      "cusip": "037530106",
+      "ticker": "",
+      "issuer": "Apellis Pharmaceuticals, Inc",
+      "shares": 1000000,
+      "value_usd_thousands": 30620,
+      "put_call": ""
+    },
+    {
+      "cusip": "586858102",
+      "ticker": "",
+      "issuer": "Menlo Therapeutics Inc.",
+      "shares": 1461552,
+      "value_usd_thousands": 6782,
+      "put_call": ""
+    },
+    {
+      "cusip": "74019P108",
+      "ticker": "",
+      "issuer": "Precision Biosciences Inc.",
+      "shares": 4265141,
+      "value_usd_thousands": 59243,
+      "put_call": ""
+    },
+    {
+      "cusip": "90041T108",
+      "ticker": "",
+      "issuer": "Turning Point Therapeutics Inc.",
+      "shares": 708233,
+      "value_usd_thousands": 44116,
+      "put_call": ""
+    },
+    {
+      "cusip": "925050106",
+      "ticker": "VRNA",
+      "issuer": "Verona Pharma PLC",
+      "shares": 875000,
+      "value_usd_thousands": 5031,
+      "put_call": ""
+    }
+  ]
+}

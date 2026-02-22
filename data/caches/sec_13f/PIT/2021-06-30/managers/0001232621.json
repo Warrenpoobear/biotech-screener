@@ -1,0 +1,99 @@
+{
+  "manager_cik": "0001232621",
+  "manager_name": "Tang Capital Partners",
+  "as_of_date": "2021-06-30",
+  "period_of_report": "2021-03-31",
+  "filed_at": "2021-05-17",
+  "form_type": "13F-HR",
+  "accession": "000121465921005555",
+  "holdings": [
+    {
+      "cusip": "032724106",
+      "ticker": "ANAB",
+      "issuer": "ANAPTYSBIO INC",
+      "shares": 2628678,
+      "value_usd_thousands": 56648,
+      "put_call": ""
+    },
+    {
+      "cusip": "03835L207",
+      "ticker": "",
+      "issuer": "APTEVO THERAPEUTICS INC",
+      "shares": 1760000,
+      "value_usd_thousands": 53715,
+      "put_call": ""
+    },
+    {
+      "cusip": "05492W103",
+      "ticker": "",
+      "issuer": "BCTG ACQUISITION CORP",
+      "shares": 468750,
+      "value_usd_thousands": 5213,
+      "put_call": ""
+    },
+    {
+      "cusip": "19249H103",
+      "ticker": "",
+      "issuer": "COHERUS BIOSCIENCES INC",
+      "shares": 650000,
+      "value_usd_thousands": 9497,
+      "put_call": ""
+    },
+    {
+      "cusip": "29446K106",
+      "ticker": "",
+      "issuer": "EQUILLIUM INC",
+      "shares": 600000,
+      "value_usd_thousands": 4290,
+      "put_call": ""
+    },
+    {
+      "cusip": "503459604",
+      "ticker": "LJPC",
+      "issuer": "LA JOLLA PHARMACEUTICAL CO",
+      "shares": 9405490,
+      "value_usd_thousands": 39879,
+      "put_call": ""
+    },
+    {
+      "cusip": "676079106",
+      "ticker": "",
+      "issuer": "ODONATE THERAPEUTICS INC",
+      "shares": 15514566,
+      "value_usd_thousands": 53060,
+      "put_call": ""
+    },
+    {
+      "cusip": "75955J402",
+      "ticker": "",
+      "issuer": "RELMADA THERAPEUTICS INC",
+      "shares": 200000,
+      "value_usd_thousands": 7042,
+      "put_call": ""
+    },
+    {
+      "cusip": "77313F106",
+      "ticker": "RCKT",
+      "issuer": "ROCKET PHARMACEUTICALS INC",
+      "shares": 2531800,
+      "value_usd_thousands": 112336,
+      "put_call": ""
+    },
+    {
+      "cusip": "92731L106",
+      "ticker": "",
+      "issuer": "VINCERX PHARMA INC",
+      "shares": 500000,
+      "value_usd_thousands": 9650,
+      "put_call": ""
+    },
+    {
+      "cusip": "92731L114",
+      "ticker": "",
+      "issuer": "VINCERX PHARMA INC",
+      "shares": 1014368,
+      "value_usd_thousands": 4098,
+      "put_call": ""
+    }
+  ]
+}

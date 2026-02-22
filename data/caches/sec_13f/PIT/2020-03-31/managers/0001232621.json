@@ -1,0 +1,147 @@
+{
+  "manager_cik": "0001232621",
+  "manager_name": "Tang Capital Partners",
+  "as_of_date": "2020-03-31",
+  "period_of_report": "2019-12-31",
+  "filed_at": "2020-02-14",
+  "form_type": "13F-HR",
+  "accession": "000121465920001509",
+  "holdings": [
+    {
+      "cusip": "032724106",
+      "ticker": "ANAB",
+      "issuer": "ANAPTYSBIO INC",
+      "shares": 1843814,
+      "value_usd_thousands": 29962,
+      "put_call": ""
+    },
+    {
+      "cusip": "05455M100",
+      "ticker": "",
+      "issuer": "AVROBIO INC",
+      "shares": 1000000,
+      "value_usd_thousands": 20130,
+      "put_call": ""
+    },
+    {
+      "cusip": "110122108",
+      "ticker": "",
+      "issuer": "BRISTOL MYERS SQUIBB CO",
+      "shares": 111844,
+      "value_usd_thousands": 7179,
+      "put_call": ""
+    },
+    {
+      "cusip": "110122157",
+      "ticker": "",
+      "issuer": "BRISTOL MYERS SQUIBB CO",
+      "shares": 111844,
+      "value_usd_thousands": 337,
+      "put_call": ""
+    },
+    {
+      "cusip": "28249H104",
+      "ticker": "",
+      "issuer": "EIDOS THERAPEUTICS INC",
+      "shares": 3783,
+      "value_usd_thousands": 217,
+      "put_call": ""
+    },
+    {
+      "cusip": "30052C107",
+      "ticker": "EOLS",
+      "issuer": "EVOLUS INC",
+      "shares": 2635000,
+      "value_usd_thousands": 32068,
+      "put_call": ""
+    },
+    {
+      "cusip": "3621LQ109",
+      "ticker": "",
+      "issuer": "G1 THERAPEUTICS INC",
+      "shares": 170000,
+      "value_usd_thousands": 4493,
+      "put_call": ""
+    },
+    {
+      "cusip": "427746102",
+      "ticker": "",
+      "issuer": "HERON THERAPEUTICS INC",
+      "shares": 5017203,
+      "value_usd_thousands": 117904,
+      "put_call": ""
+    },
+    {
+      "cusip": "46583P102",
+      "ticker": "",
+      "issuer": "IVERIC BIO INC",
+      "shares": 250000,
+      "value_usd_thousands": 2145,
+      "put_call": ""
+    },
+    {
+      "cusip": "503459604",
+      "ticker": "LJPC",
+      "issuer": "LA JOLLA PHARMACEUTICAL CO",
+      "shares": 4938893,
+      "value_usd_thousands": 19410,
+      "put_call": ""
+    },
+    {
+      "cusip": "67022C106",
+      "ticker": "",
+      "issuer": "NUCANA PLC",
+      "shares": 250000,
+      "value_usd_thousands": 1525,
+      "put_call": ""
+    },
+    {
+      "cusip": "676079106",
+      "ticker": "",
+      "issuer": "ODONATE THERAPEUTICS INC",
+      "shares": 14075269,
+      "value_usd_thousands": 456742,
+      "put_call": ""
+    },
+    {
+      "cusip": "G72800108",
+      "ticker": "PRTA",
+      "issuer": "PROTHENA CORP PLC",
+      "shares": 423823,
+      "value_usd_thousands": 6709,
+      "put_call": ""
+    },
+    {
+      "cusip": "74587V107",
+      "ticker": "PTCT",
+      "issuer": "PUMA BIOTECHNOLOGY INC",
+      "shares": 349400,
+      "value_usd_thousands": 3057,
+      "put_call": ""
+    },
+    {
+      "cusip": "75886F107",
+      "ticker": "REGN",
+      "issuer": "REGENERON PHARMACEUTICALS",
+      "shares": 45000,
+      "value_usd_thousands": 16897,
+      "put_call": ""
+    },
+    {
+      "cusip": "75955J402",
+      "ticker": "",
+      "issuer": "RELMADA THERAPEUTICS INC",
+      "shares": 1300000,
+      "value_usd_thousands": 50700,
+      "put_call": ""
+    },
+    {
+      "cusip": "77313F106",
+      "ticker": "RCKT",
+      "issuer": "ROCKET PHARMACEUTICALS INC",
+      "shares": 2965485,
+      "value_usd_thousands": 67494,
+      "put_call": ""
+    }
+  ]
+}

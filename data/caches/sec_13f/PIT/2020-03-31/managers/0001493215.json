@@ -1,0 +1,19 @@
+{
+  "manager_cik": "0001493215",
+  "manager_name": "RTW Investments",
+  "as_of_date": "2020-03-31",
+  "period_of_report": "2019-12-31",
+  "filed_at": "2020-02-14",
+  "form_type": "13F-HR/A",
+  "accession": "000149315220002551",
+  "holdings": [
+    {
+      "cusip": "602496101",
+      "ticker": "MDXG",
+      "issuer": "MiMedx Group Inc",
+      "shares": 2702539,
+      "value_usd_thousands": 20485,
+      "put_call": ""
+    }
+  ]
+}
