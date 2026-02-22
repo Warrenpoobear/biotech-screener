@@ -49,15 +49,20 @@ DEFAULT_WARN_TIE_PCT = 0.02
 # Each rule is a callable(row) -> bool; True means the field is N/A
 # (expected missing) for that row.
 # ---------------------------------------------------------------------------
-_is_empty = lambda r, k: not (r.get(k) or "").strip()
+
+
+def _is_flag_true(v) -> bool:
+    """Robust boolean parsing for flag columns from CSV."""
+    return str(v).strip() in ("1", "1.0", "True", "true")
+
 
 NA_FIELD_RULES: Dict[str, Any] = {
-    "commercial_quality_pct": lambda r: r.get("has_commercial_quality", "") not in ("1", 1),
-    "commercial_quality": lambda r: r.get("has_commercial_quality", "") not in ("1", 1),
-    "clinical_optionality_pct_dev": lambda r: r.get("has_clinical_optionality_dev", "") not in ("1", 1),
-    "clinical_rank_pct_dev": lambda r: r.get("has_clinical_optionality_dev", "") not in ("1", 1),
-    "actionable_rank": lambda r: r.get("eligible", "") != "1",
-    "target_weight_pct": lambda r: r.get("eligible", "") != "1",
+    "commercial_quality_pct": lambda r: not _is_flag_true(r.get("has_commercial_quality", "")),
+    "commercial_quality": lambda r: not _is_flag_true(r.get("has_commercial_quality", "")),
+    "clinical_optionality_pct_dev": lambda r: not _is_flag_true(r.get("has_clinical_optionality_dev", "")),
+    "clinical_rank_pct_dev": lambda r: not _is_flag_true(r.get("has_clinical_optionality_dev", "")),
+    "actionable_rank": lambda r: not _is_flag_true(r.get("eligible", "")),
+    "target_weight_pct": lambda r: not _is_flag_true(r.get("eligible", "")),
     "catalyst_days": lambda r: (r.get("catalyst_mode") or "").strip() in ("no_upcoming", "missing", ""),
     "coinvest_filing_age_days": lambda r: (r.get("coinvest_recency_state") or "").strip() == "",
 }
@@ -339,11 +344,11 @@ def check_required_columns(rows: List[Dict[str, str]]) -> CheckResult:
 # ---------------------------------------------------------------------------
 
 def _build_archetype_breakdown(rows: List[Dict[str, str]], miss_cols: List[str]) -> List[str]:
-    """Build NaN hotspot breakdown by archetype."""
+    """Build real-missingness breakdown by archetype (count + rate)."""
     if not rows or not miss_cols:
         return []
     archetypes = sorted(set(r.get("archetype", "?") for r in rows))
-    lines = ["", "## NaN Hotspots by Archetype", "",
+    lines = ["", "## Real Missingness by Archetype", "",
              "| Archetype | N | " + " | ".join(miss_cols) + " |",
              "|-----------|---|" + "|".join("---" for _ in miss_cols) + "|"]
     for arch in archetypes:
@@ -351,20 +356,24 @@ def _build_archetype_breakdown(rows: List[Dict[str, str]], miss_cols: List[str])
         n_arch = len(arch_rows)
         if n_arch == 0:
             continue
-        counts = []
+        cells = []
         for col in miss_cols:
-            cnt = sum(1 for r in arch_rows if _is_missing(r.get(col, "")))
-            counts.append(str(cnt))
-        lines.append(f"| {arch} | {n_arch} | " + " | ".join(counts) + " |")
+            na_rule = NA_FIELD_RULES.get(col)
+            cnt = sum(1 for r in arch_rows
+                      if _is_missing(r.get(col, ""))
+                      and not (na_rule and na_rule(r)))
+            pct = cnt / n_arch
+            cells.append(f"{cnt} ({pct:.0%})")
+        lines.append(f"| {arch} | {n_arch} | " + " | ".join(cells) + " |")
     return lines
 
 
 def _build_tier_breakdown(rows: List[Dict[str, str]], miss_cols: List[str]) -> List[str]:
-    """Build NaN hotspot breakdown by tier_dev."""
+    """Build real-missingness breakdown by tier_dev (count + rate)."""
     if not rows or not miss_cols:
         return []
     tiers = sorted(set((r.get("tier_dev") or "").strip() or "(none)" for r in rows))
-    lines = ["", "## NaN Hotspots by Tier", "",
+    lines = ["", "## Real Missingness by Tier", "",
              "| Tier | N | " + " | ".join(miss_cols) + " |",
              "|------|---|" + "|".join("---" for _ in miss_cols) + "|"]
     for tier in tiers:
@@ -373,11 +382,15 @@ def _build_tier_breakdown(rows: List[Dict[str, str]], miss_cols: List[str]) -> L
         n_tier = len(tier_rows)
         if n_tier == 0:
             continue
-        counts = []
+        cells = []
         for col in miss_cols:
-            cnt = sum(1 for r in tier_rows if _is_missing(r.get(col, "")))
-            counts.append(str(cnt))
-        lines.append(f"| {tier} | {n_tier} | " + " | ".join(counts) + " |")
+            na_rule = NA_FIELD_RULES.get(col)
+            cnt = sum(1 for r in tier_rows
+                      if _is_missing(r.get(col, ""))
+                      and not (na_rule and na_rule(r)))
+            pct = cnt / n_tier
+            cells.append(f"{cnt} ({pct:.0%})")
+        lines.append(f"| {tier} | {n_tier} | " + " | ".join(cells) + " |")
     return lines
 
 
@@ -507,9 +520,9 @@ def write_scorecard_md(sc: Scorecard, out_dir: Path) -> Path:
     # Breakdown tables (only if we have rows)
     rows = sc.rows
     if rows:
-        # Columns with any total missingness > 5%
-        miss_cols = [c for c, r in sorted(sc.missingness_detail.items(), key=lambda x: -x[1])
-                     if r > 0.05][:8]
+        # Columns with real (unexpected) missingness > 5%
+        real_cols = sorted(sc.real_missingness_detail.items(), key=lambda x: -x[1])
+        miss_cols = [c for c, r in real_cols if r > 0.05][:8]
         if miss_cols:
             lines.extend(_build_archetype_breakdown(rows, miss_cols))
             lines.extend(_build_tier_breakdown(rows, miss_cols))

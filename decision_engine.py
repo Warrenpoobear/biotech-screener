@@ -600,7 +600,17 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
     out["coinvest_conviction"] = _safe_float(coinvest.get("conviction_overlap"), default=0.0)
     out["coinvest_tier1_conviction"] = _safe_float(coinvest.get("tier1_conviction_overlap"), default=0.0)
     out["coinvest_max_position_pct"] = _safe_float(coinvest.get("max_tier1_position_pct"), default=0.0)
-    filing_age = coinvest.get("days_since_latest_filing")
+    filing_age_raw = coinvest.get("days_since_latest_filing")
+    # Guard: treat non-finite / non-numeric as absent
+    if filing_age_raw is not None:
+        try:
+            filing_age = int(filing_age_raw)
+            if filing_age != filing_age:  # NaN check
+                filing_age = None
+        except (ValueError, TypeError):
+            filing_age = None
+    else:
+        filing_age = None
     out["coinvest_filing_age_days"] = filing_age if filing_age is not None else ""
     if filing_age is None:
         out["coinvest_recency_state"] = ""

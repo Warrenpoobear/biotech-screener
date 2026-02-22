@@ -20,6 +20,7 @@ from scripts.internal_consistency_scorecard import (
     NA_FIELD_RULES,
     CheckResult,
     Scorecard,
+    _is_flag_true,
     check_duplicate_tickers,
     check_eligibility_tier_consistency,
     check_missingness,
@@ -352,6 +353,39 @@ class TestNAAwareMissingness:
 
 
 # ---------------------------------------------------------------------------
+# _is_flag_true robustness
+# ---------------------------------------------------------------------------
+
+class TestIsFlagTrue:
+    def test_string_one(self):
+        assert _is_flag_true("1") is True
+
+    def test_string_one_point_zero(self):
+        assert _is_flag_true("1.0") is True
+
+    def test_string_true_lower(self):
+        assert _is_flag_true("true") is True
+
+    def test_string_true_title(self):
+        assert _is_flag_true("True") is True
+
+    def test_int_one(self):
+        assert _is_flag_true(1) is True
+
+    def test_string_zero(self):
+        assert _is_flag_true("0") is False
+
+    def test_empty_string(self):
+        assert _is_flag_true("") is False
+
+    def test_none(self):
+        assert _is_flag_true(None) is False
+
+    def test_whitespace(self):
+        assert _is_flag_true(" 1 ") is True
+
+
+# ---------------------------------------------------------------------------
 # Breakdown tables tests
 # ---------------------------------------------------------------------------
 
@@ -371,7 +405,7 @@ class TestBreakdownTables:
 
         md_path = out_dir / "scorecard_2025-06-01.md"
         content = md_path.read_text()
-        assert "NaN Hotspots by Archetype" in content
+        assert "Real Missingness by Archetype" in content
 
     def test_md_output_contains_tier_breakdown(self, tmp_dir):
         rows = _make_rows(10)
@@ -387,7 +421,7 @@ class TestBreakdownTables:
 
         md_path = out_dir / "scorecard_2025-06-01.md"
         content = md_path.read_text()
-        assert "NaN Hotspots by Tier" in content
+        assert "Real Missingness by Tier" in content
 
     def test_md_output_contains_catalyst_breakdown(self, tmp_dir):
         rows = _make_rows(10)

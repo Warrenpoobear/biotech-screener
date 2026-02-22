@@ -152,8 +152,17 @@ class TestCatalystDaysSemantics:
 class TestCoinvestRecencyState:
     """Test coinvest_recency_state logic from decision_engine overlay."""
 
-    def _compute_recency(self, filing_age):
-        """Replicate the DE logic for testing."""
+    def _compute_recency(self, filing_age_raw):
+        """Replicate the DE logic (with NaN/type guard) for testing."""
+        if filing_age_raw is not None:
+            try:
+                filing_age = int(filing_age_raw)
+                if filing_age != filing_age:  # NaN check
+                    filing_age = None
+            except (ValueError, TypeError):
+                filing_age = None
+        else:
+            filing_age = None
         if filing_age is None:
             return ""
         elif filing_age <= 90:
@@ -180,3 +189,15 @@ class TestCoinvestRecencyState:
 
     def test_boundary_91_is_stale(self):
         assert self._compute_recency(91) == "stale"
+
+    def test_nan_float_returns_empty(self):
+        """float('nan') should be treated as absent."""
+        assert self._compute_recency(float("nan")) == ""
+
+    def test_non_numeric_string_returns_empty(self):
+        """Non-numeric string should be treated as absent."""
+        assert self._compute_recency("not_a_number") == ""
+
+    def test_string_int_returns_fresh(self):
+        """String '45' should parse and return 'fresh'."""
+        assert self._compute_recency("45") == "fresh"
