@@ -308,6 +308,7 @@ data/caches/sec_13f/PIT/{as_of_date}/
 | `scripts/run_phase2_health_calibration.py` | Replay archives to calibrate health thresholds |
 | `scripts/backtest_signal_robustness.py` | Out-of-sample signal IC + forward-return coverage |
 | `scripts/compare_rulesets_replay.py` | Re-sort rankings with baseline vs candidate ruleset |
+| `scripts/build_coinvest_features_from_13f.py` | PIT-safe coinvest features from 13F cache |
 | `scripts/diag_flipper_returns.py` | Forward return analysis for catalyst flips |
 | `scripts/diag_top_returners_recall.py` | Multi-horizon signal recall study |
 
@@ -394,6 +395,7 @@ def validate_tickers(tickers: list[str]) -> ValidationResult:
 | `tests/test_hydrate_drawdown.py` | 22 | Drawdown hydration, alias resolution |
 | `tests/test_coinvest_sort.py` | 21 | Coinvest overlay, z-score, sort integration, coverage gate |
 | `tests/test_warm_13f_cache.py` | 42 | PIT selection, schema validation, rate limiter, gate health |
+| `tests/test_build_coinvest_features.py` | 39 | PIT coinvest features: conviction, changes, prior quarter, schema |
 | `tests/test_decision_engine_qa_report.py` | 41 | QA gate cascade |
 | `tests/integration/test_run_screen.py` | — | End-to-end pipeline |
 
@@ -449,6 +451,7 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 | `alpha_signal_contract.py` | Alpha signal input/output validation (v1.1.0) |
 | `module_5_alpha_cohort.py` | Alpha cohort table-driven scoring |
 | `scripts/backtest_signal_robustness.py` | Signal IC + coverage diagnostics |
+| `scripts/build_coinvest_features_from_13f.py` | PIT-safe coinvest features from 13F cache (conviction formula, position changes) |
 | `tools/warm_13f_cache.py` | PIT-safe 13F cache builder + schema validator |
 | `elite_managers.py` | Manager registry (Tier 1 elite + full list) |
 | `tests/conftest.py` | Shared test fixtures |
@@ -467,6 +470,7 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 - **Clinical Sort Signal**: Promoted (enabled in v1.4.0); tier-local z-score blended into sort anchor, stage-gated, positive-only
 - **Commercial Tier Promotion**: L4b layer for commercial_* archetypes; `tier_commercial`, `tier_any`, `tiering_priority_mode`
 - **PIT-Safe 13F Warm Cache**: `tools/warm_13f_cache.py` fetches institutional 13F filings from SEC EDGAR with PIT filtering (filing_date <= as_of), schema-versioned index (`sec_13f_pit_index.v1`) with 12-invariant validator, WARN-only `sec_13f_cache` gate in daily production runner, integrated into `warm_caches.py` dispatcher and CI workflow. 42 tests.
+- **PIT-Safe Coinvest Features Builder**: `scripts/build_coinvest_features_from_13f.py` reads ONLY from quarterly PIT 13F caches to produce deterministic per-ticker coinvest features. Replicates `run_screen.py` conviction formula exactly (`tier_w × pos_w × chg_w × recency_w`). Prior-quarter position change classification (NEW/INCREASE/HOLD/DECREASE/EXIT). CUSIP fallback ticker resolution. Output schema `coinvest_features.v1`. 39 tests.
 - **Catalyst Coverage Bucket Telemetry**: Shadow metrics now track coverage decomposition + far_window overrides
 
 ### v2.1.0 (February 2026)

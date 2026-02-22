@@ -1,7 +1,7 @@
 # Biotech Screener Model Documentation
 
-**Version:** 2.4.1
-**Last Updated:** February 20, 2026
+**Version:** 2.4.2
+**Last Updated:** February 22, 2026
 **System:** Wake Robin Capital Biotech Screening Pipeline
 
 ---
@@ -1112,6 +1112,58 @@ Track these metrics each run to detect data issues, model drift, and unintended 
 - **Risk & overlay**: distribution of `defensive_bucket`, `volatility`, `drawdown`, and `confidence_risk` states.
 - **Red flags / kill switches**: counts of `severe_negative_flag`, `severity=SEV3`, and `fundamental_red_flag`.
 
+### PIT-Safe Coinvest Features Builder
+
+**File:** `scripts/build_coinvest_features_from_13f.py`
+**Purpose:** Produce deterministic, PIT-safe per-ticker coinvest features from quarterly 13F caches, eliminating lookahead bias from the smart-money factor during historical simulation.
+
+**Design:** Reads ONLY from PIT 13F caches (`data/caches/sec_13f/PIT/{as_of_date}/`). Replicates the `run_screen.py` conviction formula exactly. Compares current vs prior quarter holdings for position change classification (NEW/INCREASE/HOLD/DECREASE/EXIT).
+
+**Conviction formula** (replicates `run_screen.py:802-967`):
+```
+holder_conviction = tier_w × pos_w × chg_w × recency_w
+```
+
+| Component | Formula | Constants |
+|-----------|---------|-----------|
+| `tier_w` | Manager tier weight | `{1: 1.0, 2: 0.6, 3: 0.2, 0: 0.2}` |
+| `pos_w` | `clamp(sqrt(position_pct), 0.5, 2.0)` | `position_pct = holding_value / total_value × 100` |
+| `chg_w` | Position change weight | `{NEW: 1.25, INCREASE: 1.25, HOLD: 1.0, DECREASE: 0.75, EXIT: 0.5}` |
+| `recency_w` | `clamp(1.5 - days_since_filing / 180, 0.7, 1.5)` | Change threshold: 10% |
+
+**Prior quarter detection:** Scans cache dirs to find one whose dominant `period_of_report` matches the prior quarter-end (Dec→Sep, Sep→Jun, Jun→Mar, Mar→Dec). Override with `--prior-cache-dir` or skip with `--no-prior`.
+
+**Ticker resolution:** Embedded `ticker` field preferred; falls back to `production_data/cusip_static_map.json` (CUSIP→ticker). Non-universe tickers excluded from output but count toward manager's total portfolio value.
+
+**PIT safety:** Future filings (`filed_at > as_of_date`) are skipped. EXIT positions tracked in provenance `change_summary` but excluded from per-ticker features.
+
+**Output schema** (`coinvest_features.v1`):
+
+| Top-level field | Description |
+|----------------|-------------|
+| `as_of_date`, `cache_as_of_date` | Date alignment |
+| `period_of_report`, `prior_period_of_report` | Quarterly report periods |
+| `tickers_with_signal`, `signal_coverage_pct` | Coverage metrics |
+| `tickers` | Per-ticker features (see below) |
+| `provenance` | Builder version, managers used, change summary |
+
+Per-ticker fields: `tier1_count`, `sponsor_tier1_count`, `sponsor_overlap_count`, `coinvest_overlap_count`, `conviction_overlap`, `tier1_conviction_overlap`, `max_tier1_position_pct`, `days_since_latest_filing`, `coinvest_recency_state` (fresh ≤90d / stale), `coinvest_holders`, `holder_tiers`, `position_changes`.
+
+**CLI:**
+```bash
+python3 scripts/build_coinvest_features_from_13f.py \
+  --as-of-date 2025-12-31 \
+  --cache-root data/caches/sec_13f/PIT \
+  --out production_data/coinvest_features/2025-12-31.json \
+  --universe production_data/universe.json
+```
+
+Additional flags: `--cusip-map`, `--prior-cache-dir`, `--no-prior`
+
+**Live run (2026-02-21):** 29/29 managers, 277/353 tickers (78.5% coverage), prior Q3 2025 auto-detected. Change summary: 193 NEW, 512 INCREASE, 179 HOLD, 197 DECREASE, 236 EXIT.
+
+**Tests:** 39 tests in `tests/test_build_coinvest_features.py` covering cache loading, per-ticker features, position change classification, prior quarter finding, schema validation, and edge cases.
+
 ### 13F Cache Health Gate
 
 The daily production runner includes a WARN-only gate for the PIT-safe 13F institutional holdings cache:
@@ -1370,6 +1422,7 @@ python run_screen.py \
 | Alpha Cohort Scoring | `module_5_alpha_cohort.py` | Table-driven alternative ranking signal |
 | Alpha Signal Contract | `alpha_signal_contract.py` | DE boundary validation (v1.1.0) |
 | Signal Robustness Backtest | `scripts/backtest_signal_robustness.py` | Out-of-sample IC + coverage diagnostics |
+| PIT Coinvest Features | `scripts/build_coinvest_features_from_13f.py` | PIT-safe coinvest features from 13F cache |
 | CSV export | `export_results_csv.py` | JSON to CSV conversion |
 | Production validation | `production_validation.py` | Output validation |
 | Date backfill | `backfill_ctgov_dates.py` | PIT date enhancement |
@@ -1378,6 +1431,7 @@ python run_screen.py \
 
 ## Changelog
 
+- **2026-02-22 v2.4.2**: Added PIT-safe coinvest features builder (`scripts/build_coinvest_features_from_13f.py`). Standalone script reads ONLY from quarterly PIT 13F caches to produce deterministic per-ticker coinvest features (conviction formula, position changes, tier counts). Eliminates lookahead bias from smart-money factor during historical simulation. Output schema `coinvest_features.v1` with provenance tracking. Live run: 29/29 managers, 277/353 tickers (78.5% coverage). 39 tests.
 - **2026-02-20 v2.4.1**: Added PIT-safe 13F institutional holdings warm cache (`tools/warm_13f_cache.py`). Schema-versioned index (`sec_13f_pit_index.v1`) with 12-invariant pure validator. WARN-only `sec_13f_cache` gate in daily production runner. Integrated into `warm_caches.py` dispatcher (`--sources sec_13f`) and CI workflow. 29 elite managers, 100% coverage on 2026-02-19 snapshot.
 - **2026-02-18 v2.4.0**: Alpha cohort composite engine promoted — pinned ruleset `f9842e1f` → `aa0aaf28` (`composite_engine="alpha_cohort"`, `sort_anchor="alpha_cohort"`). Added composite engine override (pre-DE rewrite of composite_score/rank/pct). Added `far_window` catalyst mode for far-horizon PCD detection. Added alpha signal contract v1.1.0 (`alpha_signal_contract.py`). Added PIT event ledger sidecar. Added signal robustness backtest (`backtest_signal_robustness.py`) with forward-return coverage diagnostics, data freshness metadata, and `--extend-prices` auto-fetch. Added `sort_anchor="optionality_pct"` option. Added catalyst coverage bucket telemetry to shadow metrics.
 - **2026-02-17 v2.3.1**: Promoted clinical sort signal — pinned ruleset `e1be5370` → `f9842e1f` (`enable_clinical_sort_signal=True`). Extended clinical z-scores to commercial cohorts. Added `clinical_sort_telemetry` to snapshot metadata (`n_nonzero_clin_adj_dev`, `n_nonzero_clin_adj_comm`). Fixed ctgov cache masking integration PIT tests.
