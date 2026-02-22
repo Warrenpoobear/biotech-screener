@@ -1315,7 +1315,9 @@ SNAPSHOT_COLUMNS = [
     "tier_commercial",
     "alpha_cohort_pct",
     "commercial_quality_pct",
+    "has_commercial_quality",
     "clinical_optionality_pct_dev",
+    "has_clinical_optionality_dev",
     "clinical_rank_pct_dev",
     "catalyst_days",
     "catalyst_in_window",
@@ -1351,6 +1353,7 @@ SNAPSHOT_COLUMNS = [
     "coinvest_tier1_conviction",
     "coinvest_max_position_pct",
     "coinvest_filing_age_days",
+    "coinvest_recency_state",
     "inst_delta_z",       # z of net_elite_holders_delta (cross-sectional, ddof=0)
     "inst_delta_net",     # raw net_elite_holders_delta
     "inst_delta_new",     # elite_new_count
@@ -2709,6 +2712,31 @@ def _compute_shadow_metrics(
     return metrics
 
 
+# ---------------------------------------------------------------------------
+# Output hygiene: deterministic defaults for z-score / continuous columns
+# ---------------------------------------------------------------------------
+_ALWAYS_NUMERIC_DEFAULTS = {
+    "clinical_score_z_tier": 0.0,
+    "coinvest_score_z": 0.0,
+    "inst_delta_z": 0.0,
+    "catalyst_decay_w": 0.0,
+}
+
+
+def _ensure_defaults(csv_rows, defaults=_ALWAYS_NUMERIC_DEFAULTS):
+    """Fill missing/empty/NaN values with deterministic defaults.
+
+    This is a safety net — the z-score blocks should populate these for most
+    tickers, but platform_* archetypes (devices, diagnostics, services) can
+    fall through the clinical_score_z_tier cohort logic.
+    """
+    for row in csv_rows:
+        for field, default in defaults.items():
+            val = row.get(field)
+            if val is None or str(val).strip() == "" or str(val).strip().lower() == "nan":
+                row[field] = default
+
+
 def save_validation_snapshot(
     snapshot_dir: Path,
     as_of_date: str,
@@ -3302,6 +3330,15 @@ def save_validation_snapshot(
     except Exception as _aso_err:
         logger.warning(f"Alpha contract output validation error: {_aso_err}")
         _alpha_output_diag = None
+
+    # --- Output hygiene: fill deterministic defaults for z-score fields ---
+    _ensure_defaults(csv_rows)
+
+    # --- Applicability flags (for scorecard N/A-aware missingness) ---
+    for _r in csv_rows:
+        _arch = _r.get("archetype", "")
+        _r["has_commercial_quality"] = 1 if _arch != "drug_developer" else 0
+        _r["has_clinical_optionality_dev"] = 1 if _arch == "drug_developer" else 0
 
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key

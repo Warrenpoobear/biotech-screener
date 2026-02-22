@@ -600,7 +600,14 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
     out["coinvest_conviction"] = _safe_float(coinvest.get("conviction_overlap"), default=0.0)
     out["coinvest_tier1_conviction"] = _safe_float(coinvest.get("tier1_conviction_overlap"), default=0.0)
     out["coinvest_max_position_pct"] = _safe_float(coinvest.get("max_tier1_position_pct"), default=0.0)
-    out["coinvest_filing_age_days"] = coinvest.get("days_since_latest_filing") if coinvest.get("days_since_latest_filing") is not None else ""
+    filing_age = coinvest.get("days_since_latest_filing")
+    out["coinvest_filing_age_days"] = filing_age if filing_age is not None else ""
+    if filing_age is None:
+        out["coinvest_recency_state"] = ""
+    elif filing_age <= 90:
+        out["coinvest_recency_state"] = "fresh"
+    else:
+        out["coinvest_recency_state"] = "stale"
 
     # --- Catalyst (from top-level rec["catalyst_decay"]) ---
     cd = rec.get("catalyst_decay") or {}

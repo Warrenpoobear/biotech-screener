@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Internal consistency scorecard for snapshot quality monitoring.
 
-Checks: missingness rates, NaN hotspots, tie density, rank/tier invariants,
-duplicate tickers, eligibility consistency.
+Checks: missingness rates (N/A-aware), NaN hotspots, tie density,
+rank/tier invariants, duplicate tickers, eligibility consistency.
 
 Outputs: scorecard_{date}.json + scorecard_{date}.md
 """
@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Tuple
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-SCHEMA_VERSION = "internal_consistency_scorecard.v1"
+SCHEMA_VERSION = "internal_consistency_scorecard.v2"
 
 # Columns that must be present and non-empty for every eligible ticker
 REQUIRED_COLUMNS = [
@@ -28,11 +28,12 @@ REQUIRED_COLUMNS = [
     "composite_rank", "composite_score", "archetype",
 ]
 
-# Numeric columns to check for NaN hotspots
+# Numeric columns to check for NaN hotspots (only should-be-present fields)
 NUMERIC_COLUMNS = [
-    "actionable_rank", "composite_score", "score_rank_pct",
-    "clinical_optionality_pct_dev", "alpha_cohort_pct",
+    "composite_score", "score_rank_pct", "alpha_cohort_pct",
     "de_drawdown", "de_rsi_14d", "de_beta_xbi_60d", "de_alpha_60d",
+    "clinical_score_z_tier", "coinvest_score_z", "inst_delta_z",
+    "catalyst_decay_w",
 ]
 
 # Rank columns that should have zero or near-zero ties
@@ -41,6 +42,25 @@ RANK_COLUMNS = ["actionable_rank", "composite_rank"]
 # Maximum acceptable missingness fraction before WARN
 DEFAULT_WARN_MISSINGNESS = 0.05
 DEFAULT_WARN_TIE_PCT = 0.02
+
+# ---------------------------------------------------------------------------
+# N/A field classification: fields that are expected to be empty for
+# certain subsets of rows (not data quality failures).
+# Each rule is a callable(row) -> bool; True means the field is N/A
+# (expected missing) for that row.
+# ---------------------------------------------------------------------------
+_is_empty = lambda r, k: not (r.get(k) or "").strip()
+
+NA_FIELD_RULES: Dict[str, Any] = {
+    "commercial_quality_pct": lambda r: r.get("has_commercial_quality", "") not in ("1", 1),
+    "commercial_quality": lambda r: r.get("has_commercial_quality", "") not in ("1", 1),
+    "clinical_optionality_pct_dev": lambda r: r.get("has_clinical_optionality_dev", "") not in ("1", 1),
+    "clinical_rank_pct_dev": lambda r: r.get("has_clinical_optionality_dev", "") not in ("1", 1),
+    "actionable_rank": lambda r: r.get("eligible", "") != "1",
+    "target_weight_pct": lambda r: r.get("eligible", "") != "1",
+    "catalyst_days": lambda r: (r.get("catalyst_mode") or "").strip() in ("no_upcoming", "missing", ""),
+    "coinvest_filing_age_days": lambda r: (r.get("coinvest_recency_state") or "").strip() == "",
+}
 
 
 # ---------------------------------------------------------------------------
@@ -74,27 +94,53 @@ def check_duplicate_tickers(rows: List[Dict[str, str]]) -> CheckResult:
     )
 
 
+def _is_missing(val: str) -> bool:
+    """Return True if a cell value is missing/empty/NaN."""
+    s = (val or "").strip()
+    return not s or s.lower() in ("nan", "none")
+
+
 def check_missingness(
     rows: List[Dict[str, str]],
     warn_threshold: float = DEFAULT_WARN_MISSINGNESS,
-) -> Tuple[CheckResult, Dict[str, float]]:
-    """Check missingness rate across all columns."""
+) -> Tuple[CheckResult, Dict[str, float], Dict[str, float]]:
+    """Check missingness rate across all columns (N/A-aware).
+
+    Returns (CheckResult, total_miss_rates, real_miss_rates).
+    real_miss_rates excludes expected N/A rows per NA_FIELD_RULES.
+    """
     if not rows:
         return CheckResult(
             name="missingness", status="WARN",
             detail="No rows to check",
-        ), {}
+        ), {}, {}
 
     n = len(rows)
     all_cols = list(rows[0].keys()) if rows else []
-    miss_rates: Dict[str, float] = {}
+    total_miss_rates: Dict[str, float] = {}
+    real_miss_rates: Dict[str, float] = {}
 
     for col in all_cols:
-        missing = sum(1 for r in rows if not (r.get(col) or "").strip()
-                      or (r.get(col) or "").strip().lower() == "nan")
-        miss_rates[col] = missing / n
+        total_missing = 0
+        real_missing = 0
+        na_rule = NA_FIELD_RULES.get(col)
 
-    high_miss = {col: rate for col, rate in miss_rates.items()
+        for r in rows:
+            val = r.get(col, "")
+            if _is_missing(val):
+                total_missing += 1
+                # If there's an N/A rule and it says this row is expected N/A,
+                # don't count it as real missingness
+                if na_rule and na_rule(r):
+                    pass  # expected N/A
+                else:
+                    real_missing += 1
+
+        total_miss_rates[col] = total_missing / n
+        real_miss_rates[col] = real_missing / n
+
+    # WARN only on real (unexpected) missingness
+    high_miss = {col: rate for col, rate in real_miss_rates.items()
                  if rate > warn_threshold}
 
     if high_miss:
@@ -102,15 +148,15 @@ def check_missingness(
                            sorted(high_miss.items(), key=lambda x: -x[1])[:5])
         return CheckResult(
             name="missingness", status="WARN",
-            detail=f"{len(high_miss)} columns above {warn_threshold:.0%}: {sample}",
+            detail=f"{len(high_miss)} columns above {warn_threshold:.0%} (real): {sample}",
             value=len(high_miss), threshold=warn_threshold,
-        ), miss_rates
+        ), total_miss_rates, real_miss_rates
 
     return CheckResult(
         name="missingness", status="PASS",
-        detail=f"All {len(all_cols)} columns below {warn_threshold:.0%} missingness",
+        detail=f"All {len(all_cols)} columns below {warn_threshold:.0%} real missingness",
         threshold=warn_threshold,
-    ), miss_rates
+    ), total_miss_rates, real_miss_rates
 
 
 def check_nan_hotspots(rows: List[Dict[str, str]]) -> CheckResult:
@@ -289,6 +335,71 @@ def check_required_columns(rows: List[Dict[str, str]]) -> CheckResult:
 
 
 # ---------------------------------------------------------------------------
+# Breakdown helpers (for markdown output)
+# ---------------------------------------------------------------------------
+
+def _build_archetype_breakdown(rows: List[Dict[str, str]], miss_cols: List[str]) -> List[str]:
+    """Build NaN hotspot breakdown by archetype."""
+    if not rows or not miss_cols:
+        return []
+    archetypes = sorted(set(r.get("archetype", "?") for r in rows))
+    lines = ["", "## NaN Hotspots by Archetype", "",
+             "| Archetype | N | " + " | ".join(miss_cols) + " |",
+             "|-----------|---|" + "|".join("---" for _ in miss_cols) + "|"]
+    for arch in archetypes:
+        arch_rows = [r for r in rows if r.get("archetype", "?") == arch]
+        n_arch = len(arch_rows)
+        if n_arch == 0:
+            continue
+        counts = []
+        for col in miss_cols:
+            cnt = sum(1 for r in arch_rows if _is_missing(r.get(col, "")))
+            counts.append(str(cnt))
+        lines.append(f"| {arch} | {n_arch} | " + " | ".join(counts) + " |")
+    return lines
+
+
+def _build_tier_breakdown(rows: List[Dict[str, str]], miss_cols: List[str]) -> List[str]:
+    """Build NaN hotspot breakdown by tier_dev."""
+    if not rows or not miss_cols:
+        return []
+    tiers = sorted(set((r.get("tier_dev") or "").strip() or "(none)" for r in rows))
+    lines = ["", "## NaN Hotspots by Tier", "",
+             "| Tier | N | " + " | ".join(miss_cols) + " |",
+             "|------|---|" + "|".join("---" for _ in miss_cols) + "|"]
+    for tier in tiers:
+        tier_rows = [r for r in rows
+                     if ((r.get("tier_dev") or "").strip() or "(none)") == tier]
+        n_tier = len(tier_rows)
+        if n_tier == 0:
+            continue
+        counts = []
+        for col in miss_cols:
+            cnt = sum(1 for r in tier_rows if _is_missing(r.get(col, "")))
+            counts.append(str(cnt))
+        lines.append(f"| {tier} | {n_tier} | " + " | ".join(counts) + " |")
+    return lines
+
+
+def _build_catalyst_mode_breakdown(rows: List[Dict[str, str]]) -> List[str]:
+    """Catalyst missingness breakdown by catalyst_mode."""
+    if not rows:
+        return []
+    modes = Counter((r.get("catalyst_mode") or "").strip() or "(empty)" for r in rows)
+    if not modes:
+        return []
+    lines = ["", "## Catalyst Days Missingness by Mode", "",
+             "| catalyst_mode | N | catalyst_days missing |",
+             "|---------------|---|----------------------|"]
+    for mode, n_mode in sorted(modes.items(), key=lambda x: -x[1]):
+        mode_rows = [r for r in rows
+                     if ((r.get("catalyst_mode") or "").strip() or "(empty)") == mode]
+        miss = sum(1 for r in mode_rows if _is_missing(r.get("catalyst_days", "")))
+        lines.append(f"| {mode} | {n_mode} | {miss} |")
+    return lines
+
+
+# ---------------------------------------------------------------------------
 # Scorecard orchestrator
 # ---------------------------------------------------------------------------
 
@@ -301,9 +412,13 @@ class Scorecard:
     verdict: str = "PASS"
     checks: List[Dict[str, Any]] = field(default_factory=list)
     missingness_detail: Dict[str, float] = field(default_factory=dict)
+    real_missingness_detail: Dict[str, float] = field(default_factory=dict)
+    rows: List[Dict[str, str]] = field(default_factory=list, repr=False)
 
     def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+        d = asdict(self)
+        d.pop("rows", None)  # don't serialize raw rows
+        return d
 
 
 def run_scorecard(
@@ -322,6 +437,7 @@ def run_scorecard(
 
     sc = Scorecard(snapshot_date=snap_date, n_rows=len(rows))
     sc.n_eligible = sum(1 for r in rows if r.get("eligible", "0") == "1")
+    sc.rows = rows
 
     # Run checks
     check_results: List[CheckResult] = []
@@ -329,10 +445,12 @@ def run_scorecard(
     check_results.append(check_required_columns(rows))
     check_results.append(check_duplicate_tickers(rows))
 
-    miss_check, miss_detail = check_missingness(rows, warn_missingness)
+    miss_check, total_miss, real_miss = check_missingness(rows, warn_missingness)
     check_results.append(miss_check)
-    sc.missingness_detail = {k: round(v, 4) for k, v in miss_detail.items()
+    sc.missingness_detail = {k: round(v, 4) for k, v in total_miss.items()
                             if v > 0}
+    sc.real_missingness_detail = {k: round(v, 4) for k, v in real_miss.items()
+                                  if v > 0}
 
     check_results.append(check_nan_hotspots(rows))
     check_results.append(check_tie_density(rows, warn_tie_pct))
@@ -379,8 +497,23 @@ def write_scorecard_md(sc: Scorecard, out_dir: Path) -> Path:
 
     if sc.missingness_detail:
         lines.extend(["", "## Missingness Detail (columns with missing values)", ""])
-        for col, rate in sorted(sc.missingness_detail.items(), key=lambda x: -x[1])[:20]:
-            lines.append(f"- `{col}`: {rate:.1%}")
+        lines.append("| Column | Total Miss | Real Miss | Expected N/A |")
+        lines.append("|--------|-----------|-----------|--------------|")
+        for col, total_rate in sorted(sc.missingness_detail.items(), key=lambda x: -x[1])[:20]:
+            real_rate = sc.real_missingness_detail.get(col, 0.0)
+            na_rate = total_rate - real_rate
+            lines.append(f"| `{col}` | {total_rate:.1%} | {real_rate:.1%} | {na_rate:.1%} |")
+
+    # Breakdown tables (only if we have rows)
+    rows = sc.rows
+    if rows:
+        # Columns with any total missingness > 5%
+        miss_cols = [c for c, r in sorted(sc.missingness_detail.items(), key=lambda x: -x[1])
+                     if r > 0.05][:8]
+        if miss_cols:
+            lines.extend(_build_archetype_breakdown(rows, miss_cols))
+            lines.extend(_build_tier_breakdown(rows, miss_cols))
+        lines.extend(_build_catalyst_mode_breakdown(rows))
 
     lines.append("")
     with open(path, "w", encoding="utf-8") as f:
