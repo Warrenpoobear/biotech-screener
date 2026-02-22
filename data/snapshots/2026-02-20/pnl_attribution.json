@@ -1,0 +1,399 @@
+{
+  "schema": "pnl_attribution.v1",
+  "as_of_date": "2026-02-20",
+  "prior_date": "2026-02-19",
+  "n_positions_d0": 20,
+  "n_positions_d1": 20,
+  "n_priced": 21,
+  "coverage_pct": 1.05,
+  "gross_return": 0.01129496,
+  "turnover": 0.05,
+  "cost_bps": 30.0,
+  "net_return": 0.01114496,
+  "by_action": {
+    "entry": {
+      "count": 1,
+      "total_contribution": 0.0,
+      "mean_return": 0.061425
+    },
+    "exit": {
+      "count": 1,
+      "total_contribution": -0.00126177,
+      "mean_return": -0.025235
+    },
+    "hold": {
+      "count": 19,
+      "total_contribution": 0.01255673,
+      "mean_return": 0.013218
+    }
+  },
+  "by_tier": {
+    "A": {
+      "count": 20,
+      "total_contribution": 0.01255673,
+      "mean_return": 0.015628
+    },
+    "D": {
+      "count": 1,
+      "total_contribution": -0.00126177,
+      "mean_return": -0.025235
+    }
+  },
+  "by_catalyst": {
+    "specific_days": {
+      "count": 21,
+      "total_contribution": 0.01129496,
+      "mean_return": 0.013682
+    }
+  },
+  "by_coinvest": {
+    "elite_1": {
+      "count": 1,
+      "total_contribution": 0.00027585,
+      "mean_return": 0.005517
+    },
+    "elite_11": {
+      "count": 1,
+      "total_contribution": 3.434e-05,
+      "mean_return": 0.000687
+    },
+    "elite_3": {
+      "count": 2,
+      "total_contribution": -0.00126177,
+      "mean_return": 0.018095
+    },
+    "elite_4": {
+      "count": 3,
+      "total_contribution": 0.00319543,
+      "mean_return": 0.021303
+    },
+    "elite_6": {
+      "count": 4,
+      "total_contribution": 0.00786931,
+      "mean_return": 0.039347
+    },
+    "elite_7": {
+      "count": 4,
+      "total_contribution": -0.00495881,
+      "mean_return": -0.024794
+    },
+    "elite_8": {
+      "count": 4,
+      "total_contribution": 0.00091057,
+      "mean_return": 0.004553
+    },
+    "elite_9": {
+      "count": 1,
+      "total_contribution": 0.00224991,
+      "mean_return": 0.044998
+    },
+    "none": {
+      "count": 1,
+      "total_contribution": 0.00298013,
+      "mean_return": 0.059603
+    }
+  },
+  "by_inst_delta": {
+    "neutral": {
+      "count": 21,
+      "total_contribution": 0.01129496,
+      "mean_return": 0.013682
+    }
+  },
+  "positions": [
+    {
+      "ticker": "ALMS",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 29.864999771118164,
+      "price_d1": 27.969999313354492,
+      "return_pct": -0.063452,
+      "pnl_contribution": -0.00317261,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_7",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "CCCC",
+      "weight_d0": 0.0,
+      "weight_d1": 0.05,
+      "price_d0": 2.0350000858306885,
+      "price_d1": 2.1600000858306885,
+      "return_pct": 0.061425,
+      "pnl_contribution": 0.0,
+      "action": "entry",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_3",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "CGON",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 55.584999084472656,
+      "price_d1": 57.630001068115234,
+      "return_pct": 0.036791,
+      "pnl_contribution": 0.00183953,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_6",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "COGT",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 37.95500183105469,
+      "price_d1": 37.34000015258789,
+      "return_pct": -0.016203,
+      "pnl_contribution": -0.00081017,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_7",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "DNTH",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 49.2400016784668,
+      "price_d1": 49.560001373291016,
+      "return_pct": 0.006499,
+      "pnl_contribution": 0.00032494,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_8",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "IMVT",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 26.290000915527344,
+      "price_d1": 26.600000381469727,
+      "return_pct": 0.011792,
+      "pnl_contribution": 0.00058958,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_6",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "IRON",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 64.0,
+      "price_d1": 61.36000061035156,
+      "return_pct": -0.04125,
+      "pnl_contribution": -0.0020625,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_8",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "KURA",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 8.515000343322754,
+      "price_d1": 8.460000038146973,
+      "return_pct": -0.006459,
+      "pnl_contribution": -0.00032296,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_4",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "NMRA",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 3.3714001178741455,
+      "price_d1": 3.390000104904175,
+      "return_pct": 0.005517,
+      "pnl_contribution": 0.00027585,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_1",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "OCGN",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 1.5099999904632568,
+      "price_d1": 1.600000023841858,
+      "return_pct": 0.059603,
+      "pnl_contribution": 0.00298013,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "none",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "ORKA",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 32.040000915527344,
+      "price_d1": 32.34000015258789,
+      "return_pct": 0.009363,
+      "pnl_contribution": 0.00046816,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_7",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "PEPG",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 6.40500020980835,
+      "price_d1": 6.21999979019165,
+      "return_pct": -0.028884,
+      "pnl_contribution": -0.00144419,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_7",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "PHVS",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 26.889999389648438,
+      "price_d1": 28.100000381469727,
+      "return_pct": 0.044998,
+      "pnl_contribution": 0.00224991,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_9",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "PRAX",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 322.5,
+      "price_d1": 335.2799987792969,
+      "return_pct": 0.039628,
+      "pnl_contribution": 0.0019814,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_8",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "PVLA",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 78.43499755859375,
+      "price_d1": 85.66000366210938,
+      "return_pct": 0.092115,
+      "pnl_contribution": 0.00460573,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_4",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "RNA",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 72.80999755859375,
+      "price_d1": 72.86000061035156,
+      "return_pct": 0.000687,
+      "pnl_contribution": 3.434e-05,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_11",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "RVMD",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 100.48999786376953,
+      "price_d1": 101.83000183105469,
+      "return_pct": 0.013335,
+      "pnl_contribution": 0.00066673,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_8",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "SION",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 37.779998779296875,
+      "price_d1": 35.4900016784668,
+      "return_pct": -0.060614,
+      "pnl_contribution": -0.0030307,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_6",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "SYRE",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 36.95000076293945,
+      "price_d1": 43.209999084472656,
+      "return_pct": 0.169418,
+      "pnl_contribution": 0.0084709,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_6",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "VRDN",
+      "weight_d0": 0.05,
+      "weight_d1": 0.05,
+      "price_d0": 28.049999237060547,
+      "price_d1": 27.440000534057617,
+      "return_pct": -0.021747,
+      "pnl_contribution": -0.00108734,
+      "action": "hold",
+      "tier": "A",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_4",
+      "inst_delta_bucket": "neutral"
+    },
+    {
+      "ticker": "ZBIO",
+      "weight_d0": 0.05,
+      "weight_d1": 0.0,
+      "price_d0": 26.549999237060547,
+      "price_d1": 25.8799991607666,
+      "return_pct": -0.025235,
+      "pnl_contribution": -0.00126177,
+      "action": "exit",
+      "tier": "D",
+      "catalyst_bucket": "specific_days",
+      "coinvest_tag": "elite_3",
+      "inst_delta_bucket": "neutral"
+    }
+  ]
+}

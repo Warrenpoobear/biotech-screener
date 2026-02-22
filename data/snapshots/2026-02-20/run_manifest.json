@@ -3,10 +3,10 @@
   "requested_as_of_date": "2026-02-20",
   "effective_as_of_date": "2026-02-20",
   "as_of_date": "2026-02-20",
-  "generated_at": "2026-02-20T22:32:39.495681+00:00",
+  "generated_at": "2026-02-22T05:18:27.322798+00:00",
   "git": {
     "branch": "main",
-    "commit_sha": "120ad53560ff0f391c2a478f0db281ce7e26a92e",
+    "commit_sha": "04ac7274e4c2539b3e28c0a801e7ea297ac9d67f",
     "dirty": true,
     "dirty_pre_run": true,
     "dirty_post_run": true
@@ -23,8 +23,8 @@
     "active_universe": 327
   },
   "price_refresh": {
-    "n_extended": 355,
-    "n_rows_appended": 343,
+    "n_extended": 11,
+    "n_rows_appended": 1,
     "n_failed": 0,
     "failed_tickers": [],
     "xbi_last_date": "2026-02-20"
@@ -177,13 +177,20 @@
     },
     {
       "name": "institutional_delta",
-      "status": "WARN",
-      "detail": "Delta expected (prior with elite_holder_shares found) but not written",
+      "status": "PASS",
+      "detail": "institutional_summary_delta.json valid: 2026-02-20 vs 2026-02-19, 319 common tickers",
+      "value": null,
+      "threshold": null
+    },
+    {
+      "name": "pnl_attribution",
+      "status": "PASS",
+      "detail": "PnL OK: 2026-02-19\u21922026-02-20, gross=1.1295%, turnover=0.05",
       "value": null,
       "threshold": null
     }
   ],
-  "overall_status": "WARN",
+  "overall_status": "PASS",
   "screen_exit_code": 0,
   "audit_exit_code": 0,
   "gate_config": {
@@ -195,6 +202,7 @@
     "market_data_max_age_days": 3,
     "market_data_min_coverage": 0.9,
     "sec_13f_coverage_warn_pct": 80.0,
-    "institutional_summary_warn_coverage_pct": 50.0
+    "institutional_summary_warn_coverage_pct": 50.0,
+    "pnl_attribution_min_coverage_pct": 80.0
   }
 }
