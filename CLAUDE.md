@@ -14,6 +14,41 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Decimal-Only Arithmetic**: All financial calculations use `Decimal` (never floats)
 - **Stdlib-Only Core**: Zero external dependencies in scoring modules
 
+## Workflow Orchestration
+
+### Plan Node Default
+Always start non-trivial tasks (>3 files, new feature, architectural change) by entering plan mode. Explore the codebase, read relevant files, and produce a concrete implementation plan before writing any code.
+
+### Subagent Strategy
+Use Task agents for parallelizable work: independent searches, test runs, file explorations. Do not duplicate work between parent and subagent. Prefer the Explore agent for broad codebase discovery and direct Glob/Grep for targeted lookups.
+
+### Self-Improvement Loop
+After completing a task, check whether stable patterns, conventions, or debugging insights emerged that should be saved to memory. Update MEMORY.md or topic files — do not save session-specific or speculative information.
+
+### Verification Before Done
+Never mark a task complete without verifying the result. Run tests, re-read modified files, or execute the script to confirm correctness. If verification fails, fix the issue before reporting success.
+
+### Demand Elegance (Balanced)
+Prefer clean, minimal solutions over clever ones. Refactor only when directly needed by the task. Three similar lines are better than a premature abstraction. But when a pattern repeats across multiple call sites, extract it.
+
+### Autonomous Bug Fixing
+When a test or script fails, diagnose the root cause rather than retrying blindly. Read error messages carefully, check types, verify assumptions. If blocked after two attempts, surface the issue to the user with context.
+
+## Task Management
+
+1. **Plan First** — Break the task into steps before writing code. For non-trivial work, use plan mode.
+2. **Verify Plan** — Check that the plan covers edge cases, test strategy, and affected files.
+3. **Track Progress** — Use TaskCreate/TaskUpdate for multi-step work. Mark tasks in_progress before starting, completed only after verification.
+4. **Explain Changes** — When modifying code, state what changed and why in the response text.
+5. **Document Results** — After running scripts or tests, summarize outputs concisely.
+6. **Capture Lessons** — If a debugging session reveals a gotcha or pattern, add it to Common Gotchas or memory.
+
+## Core Principles
+
+- **Simplicity First**: Choose the simplest solution that meets the requirement. Avoid over-engineering, feature flags for hypothetical futures, or backwards-compatibility shims when you can just change the code.
+- **No Laziness**: Do not skip steps, omit error handling at system boundaries, or leave TODO comments for known issues. Finish the work.
+- **Minimal Impact**: Touch only the files and lines required by the task. Do not add docstrings, type annotations, or comments to unchanged code. Do not refactor adjacent code unless asked.
+
 ## Quick Start
 
 ```bash
