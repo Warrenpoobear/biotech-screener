@@ -163,7 +163,10 @@ def build_single_bundle(
                 # PIT validation on the trial input
                 try:
                     from scripts.validate_pit_inputs import validate_ctgov_pit
-                    vr = validate_ctgov_pit(trial_data, as_of_date, pit_mode)
+                    vr = validate_ctgov_pit(
+                        trial_data, as_of_date, pit_mode,
+                        max_examples=999_999,
+                    )
                     pit_violations["ctgov_first_posted"] = vr["first_posted_violations"]
                 except Exception:
                     pass
