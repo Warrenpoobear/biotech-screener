@@ -216,30 +216,52 @@ def build_single_bundle(
             from scripts.build_coinvest_features_from_13f import (
                 build_coinvest_features,
                 validate_coinvest_features_schema,
+                _load_cusip_map,
+                _pad_cik,
             )
+            from elite_managers import get_all_managers
+
             if cache_13f_root is None:
                 cache_13f_root = _PROJECT_ROOT / "data" / "caches" / "sec_13f" / "PIT"
 
-            cache_dir = cache_13f_root / as_of_date
-            if cache_dir.exists():
-                coinv = build_coinvest_features(
-                    as_of_date=as_of_date,
-                    cache_dir=cache_dir,
-                    universe_tickers=universe_tickers,
+            cache_date_dir = cache_13f_root / as_of_date
+            if cache_date_dir.exists():
+                # Build CIK -> tier/name maps from elite_managers
+                manager_tiers: Dict[str, int] = {}
+                manager_names: Dict[str, str] = {}
+                for m in get_all_managers():
+                    padded = _pad_cik(m["cik"])
+                    manager_tiers[padded] = m.get("tier", 0)
+                    manager_names[padded] = m.get("short_name", m.get("name", padded))
+
+                cusip_map = _load_cusip_map(
+                    _PROJECT_ROOT / "production_data" / "cusip_static_map.json"
                 )
 
-                out_path = bundle_dir / "coinvest_features.json"
-                with open(out_path, "w") as f:
-                    json.dump(coinv, f, indent=2)
+                coinv = build_coinvest_features(
+                    as_of_date=as_of_date,
+                    cache_root=cache_13f_root,
+                    universe_tickers=universe_tickers,
+                    manager_tiers=manager_tiers,
+                    manager_names=manager_names,
+                    cusip_map=cusip_map,
+                )
 
-                components["coinvest_features"] = {
-                    "file": "coinvest_features.json",
-                    "schema_version": coinv["schema_version"],
-                    "sha256": _sha256_file(out_path),
-                    "coverage_pct": coinv["signal_coverage_pct"],
-                }
+                if coinv is not None:
+                    out_path = bundle_dir / "coinvest_features.json"
+                    with open(out_path, "w") as f:
+                        json.dump(coinv, f, indent=2)
+
+                    components["coinvest_features"] = {
+                        "file": "coinvest_features.json",
+                        "schema_version": coinv["schema_version"],
+                        "sha256": _sha256_file(out_path),
+                        "coverage_pct": coinv["signal_coverage_pct"],
+                    }
+                else:
+                    print(f"  SKIP coinvest: build returned None", file=sys.stderr)
             else:
-                print(f"  SKIP coinvest: no cache at {cache_dir}", file=sys.stderr)
+                print(f"  SKIP coinvest: no cache at {cache_date_dir}", file=sys.stderr)
         except Exception as e:
             print(f"  SKIP coinvest: {e}", file=sys.stderr)
 
