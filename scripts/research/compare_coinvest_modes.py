@@ -19,6 +19,7 @@ from typing import Any, Dict, List, Optional
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from decision_engine import DecisionRuleset
 from scripts.eval_forward_returns import (
     DEFAULT_COST_BPS,
     DEFAULT_MIN_PRICE_COVERAGE,
@@ -53,8 +54,14 @@ def run_comparison(
     component_eval: bool = False,
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
+    ruleset: Optional[DecisionRuleset] = None,
 ) -> Dict[str, EvalSummary]:
-    """Run evaluate() for each coinvest mode and return summaries."""
+    """Run evaluate() for each coinvest mode and return summaries.
+
+    Args:
+        ruleset: DecisionRuleset for faithful rescore (required for off/contra modes).
+            If None, off/contra modes will skip rescore (backward-compatible).
+    """
     results: Dict[str, EvalSummary] = {}
 
     for mode in MODES:
@@ -79,6 +86,7 @@ def run_comparison(
             coinvest_eval_mode=mode,
             date_from=date_from,
             date_to=date_to,
+            ruleset=ruleset if mode != "default" else None,
         )
         results[mode] = summary
 
@@ -229,10 +237,20 @@ def main() -> None:
     parser.add_argument("--component-eval", action="store_true", default=False)
     parser.add_argument("--date-from", type=str, default=None)
     parser.add_argument("--date-to", type=str, default=None)
+    parser.add_argument(
+        "--ruleset", type=Path, default=None,
+        help="DecisionRuleset JSON for faithful rescore (required for off/contra modes)",
+    )
     args = parser.parse_args()
 
     horizons = [int(h.strip()) for h in args.horizons.split(",")]
     args.out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Load ruleset if provided
+    rs = DecisionRuleset.from_json(str(args.ruleset)) if args.ruleset else None
+    if rs is None:
+        print("WARNING: No --ruleset provided. Off/contra modes will skip rescore.",
+              file=sys.stderr)
 
     results = run_comparison(
         snapshot_root=args.snapshot_root,
@@ -248,6 +266,7 @@ def main() -> None:
         component_eval=args.component_eval,
         date_from=args.date_from,
         date_to=args.date_to,
+        ruleset=rs,
     )
 
     path = write_diagnosis(results, horizons, args.out_dir)

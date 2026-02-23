@@ -17,13 +17,16 @@ import json
 import math
 import statistics
 import sys
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace as dc_replace
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+
+from decision_engine import DecisionRuleset, compute_actionable_sort_key
+from scripts.research.rerank_snapshots import backfill_columns, _safe_float as _rerank_safe_float
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -671,85 +674,151 @@ def check_pit_metadata(snapshot_dir: Path, snap_date: str) -> Tuple[bool, str]:
 def rescore_rankings(
     rankings: List[Dict[str, str]],
     coinvest_eval_mode: str,
+    ruleset: DecisionRuleset,
 ) -> List[Dict[str, str]]:
-    """Re-sort rankings with modified coinvest signal.
+    """Re-sort rankings with modified coinvest signal using the full production sort key.
 
-    Reconstructs a **simplified** sort key from CSV columns and re-assigns
-    actionable_rank.  Uses a 3-tuple (eligible, effective_anchor, ticker)
-    instead of the full 12-position sort tuple from
-    ``decision_engine.compute_actionable_sort_key()``.
+    Uses ``compute_actionable_sort_key()`` from ``decision_engine`` via a
+    temporarily modified ``DecisionRuleset``, matching the pattern in
+    ``scripts/research/rerank_snapshots.py:rerank()``.
 
-    .. warning:: DIRECTIONAL USE ONLY
-
-       This function does NOT replicate the actual production sort key.
-       It omits the (eligible, archetype, tier) prefix, catalyst priority,
-       missing-count penalty, optionality, sponsor count, and momentum
-       ordering.  Confirmation eval (2026-02-23) showed that eval-time
-       rescore overstated the coinvest-off IC improvement by 83-128%
-       compared to a ruleset-level run on the same 70-date grid.
-
-       Use this for **sign-of-effect** (does removing coinvest help or
-       hurt?) but never for **magnitude** comparisons.  Any A/B decision
-       must be confirmed by a ruleset-level eval.
+    This replaced the old simplified 3-tuple sort key (pre-v1.8) which
+    omitted prefix ordering, catalyst priority, missingness, etc. and
+    overstated coinvest-off IC improvements by 83-128%.
 
     Args:
         rankings: list of ranking dicts (from rankings.csv).
-        coinvest_eval_mode: "off" (zero coinvest_adj), "contra" (flip sign).
+        coinvest_eval_mode: "off" (disable coinvest signal),
+            "contra" (flip coinvest_score_z sign before sorting).
+        ruleset: DecisionRuleset to use as the base for rescoring.
 
     Returns:
         rankings list re-sorted with updated actionable_rank.
     """
-    stage_mults = {"late": 1.0, "mid": 0.5, "early": 0.0}
+    # Build modified ruleset for this eval mode
+    if coinvest_eval_mode == "off":
+        rs = dc_replace(ruleset, enable_coinvest_sort_signal=False)
+    else:
+        rs = ruleset  # "contra" flips values, not the ruleset
 
-    def _sf(val: str) -> float:
-        if not val:
-            return 0.0
-        try:
-            return float(val)
-        except (ValueError, TypeError):
-            return 0.0
+    # For "contra" mode: negate coinvest_score_z values before sorting,
+    # then restore after.  The production sort key's positive-only clamping
+    # will naturally handle flipped signs (negative originals become positive,
+    # positive become negative → clamped to 0).
+    saved_coinvest: Dict[str, str] = {}  # keyed by ticker
+    if coinvest_eval_mode == "contra":
+        for r in rankings:
+            ticker = r.get("ticker", "")
+            orig = r.get("coinvest_score_z", "0")
+            saved_coinvest[ticker] = orig
+            v = _rerank_safe_float(orig)
+            r["coinvest_score_z"] = str(-v) if v is not None else "0"
 
+    # Backfill missing columns for historical snapshots
+    backfill_columns(rankings)
+
+    # Sort using production-identical logic (same pattern as rerank_snapshots.py:177-193)
+    rankings.sort(key=lambda r: compute_actionable_sort_key(
+        decision_fields=r,
+        archetype=r.get("archetype", ""),
+        optionality=_rerank_safe_float(r.get("clinical_optionality_pct_dev")),
+        composite_rank=r.get("composite_rank"),
+        ticker=r.get("ticker", ""),
+        catalyst_event_type=r.get("catalyst_event_type", ""),
+        catalyst_source=r.get("catalyst_source", ""),
+        ruleset=rs,
+        tiebreaker_pct=(
+            _rerank_safe_float(r.get("alpha_cohort_pct"))
+            if rs.sort_anchor == "alpha_cohort"
+            else (_rerank_safe_float(r.get("commercial_quality_pct"))
+                  if r.get("archetype", "").startswith("commercial_")
+                  else _rerank_safe_float(r.get("clinical_optionality_pct_dev")))
+        ),
+    ))
+
+    # Assign actionable_rank for eligible rows
+    rank = 1
     for r in rankings:
-        # Negate: higher pct → more negative → sorts first (ascending)
-        # Matches decision_engine.py:1171: anchor = -(tiebreaker_pct)
-        anchor = -_sf(r.get("alpha_cohort_pct") or r.get("composite_pct") or "0.5")
-        cz_tier = _sf(r.get("clinical_score_z_tier", ""))
-        cz_coinvest = _sf(r.get("coinvest_score_z", ""))
-        iz = _sf(r.get("inst_delta_z", ""))
-        stage = r.get("stage_bucket", "")
-        eligible = r.get("eligible", "").lower() in ("true", "1")
-
-        # Clinical: positive-only, clamped ±2, weight=1.0, stage_mult
-        stage_mult = stage_mults.get(stage, 0.0)
-        clin_adj = 1.0 * min(2.0, max(0.0, cz_tier)) * stage_mult
-
-        # Coinvest: mode-dependent
-        if coinvest_eval_mode == "off":
-            coinvest_adj = 0.0
-        elif coinvest_eval_mode == "contra":
-            cz_contra = min(2.0, max(0.0, -cz_coinvest))
-            coinvest_adj = 0.05 * cz_contra
-        else:
-            coinvest_adj = 0.05 * min(2.0, max(0.0, cz_coinvest))
-
-        # Inst delta: positive-only, weight=0.3
-        inst_adj = 0.3 * min(2.0, max(0.0, iz))
-
-        effective = anchor - clin_adj - coinvest_adj - inst_adj
-        r["_rescore_key"] = (not eligible, effective, r.get("ticker", ""))
-
-    rankings.sort(key=lambda r: r["_rescore_key"])
-
-    rank_counter = 0
-    for r in rankings:
-        if r.get("eligible", "").lower() in ("true", "1"):
-            rank_counter += 1
-            r["actionable_rank"] = str(rank_counter)
+        if r.get("eligible") == "1" or r.get("eligible", "").lower() == "true":
+            r["actionable_rank"] = str(rank)
+            rank += 1
         else:
             r["actionable_rank"] = ""
-        del r["_rescore_key"]
+
+    # Restore original coinvest_score_z values for "contra" mode
+    if coinvest_eval_mode == "contra":
+        for r in rankings:
+            ticker = r.get("ticker", "")
+            if ticker in saved_coinvest:
+                r["coinvest_score_z"] = saved_coinvest[ticker]
 
     return rankings
+
+
+# ---------------------------------------------------------------------------
+# Coinvest signal diagnostics
+# ---------------------------------------------------------------------------
+
+def _coinvest_signal_diagnostics(
+    rankings: List[Dict[str, str]],
+    top_k: int,
+) -> Dict[str, Any]:
+    """Compute per-date coinvest signal existence diagnostics.
+
+    Returns:
+        Dict with pct_with_signal, tier1_distribution, n_eligible, and
+        the top-K ticker set for Jaccard comparison.
+    """
+    eligible = [r for r in rankings
+                if r.get("eligible", "").lower() in ("true", "1")]
+    n_eligible = len(eligible)
+
+    tier1_vals: List[int] = []
+    for r in eligible:
+        raw = r.get("sponsor_tier1_count", "") or r.get("de_tier1_count", "")
+        try:
+            tier1_vals.append(int(float(raw)) if raw else 0)
+        except (ValueError, TypeError):
+            tier1_vals.append(0)
+
+    n_nonzero = sum(1 for v in tier1_vals if v > 0)
+    pct_with_signal = (n_nonzero / n_eligible * 100) if n_eligible else 0.0
+
+    # Distribution percentiles (manual, no numpy)
+    if tier1_vals:
+        sorted_vals = sorted(tier1_vals)
+        n = len(sorted_vals)
+
+        def _pctl(p: float) -> int:
+            idx = int(p / 100.0 * (n - 1))
+            return sorted_vals[min(idx, n - 1)]
+
+        distribution = {
+            "p50": _pctl(50),
+            "p90": _pctl(90),
+            "p99": _pctl(99),
+            "max": sorted_vals[-1] if sorted_vals else 0,
+            "n_nonzero": n_nonzero,
+        }
+    else:
+        distribution = {"p50": 0, "p90": 0, "p99": 0, "max": 0, "n_nonzero": 0}
+
+    # Capture top-K set for Jaccard comparison
+    def _safe_rank(r: Dict[str, str]) -> int:
+        try:
+            return int(r.get("actionable_rank") or 9999)
+        except (ValueError, TypeError):
+            return 9999
+
+    ranked = sorted(eligible, key=_safe_rank)
+    topk_tickers = set(r.get("ticker", "") for r in ranked[:top_k])
+
+    return {
+        "pct_with_signal": round(pct_with_signal, 2),
+        "tier1_distribution": distribution,
+        "n_eligible": n_eligible,
+        "_topk_set": topk_tickers,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -811,6 +880,7 @@ class EvalSummary:
     benchmark: str = "none"
     split_mode: str = "none"
     universe_mode: str = "current"
+    coinvest_signal_diagnostics: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -843,6 +913,7 @@ def evaluate(
     top_quantile: float = 0.0,
     coinvest_eval_mode: str = "default",
     catalyst_eval_mode: str = "default",
+    ruleset: Optional[DecisionRuleset] = None,
 ) -> Tuple[EvalSummary, List[DateResult], List[Dict[str, str]]]:
     """Run the full walk-forward evaluation.
 
@@ -914,6 +985,11 @@ def evaluate(
     component_results: List[Dict[str, Any]] = []  # per-date per-horizon per-component
     coinvest_audit_rows: List[Dict[str, Any]] = []  # per-date ticker-level audit
 
+    # Coinvest signal diagnostics accumulators
+    coinvest_diag_per_date: List[Dict[str, Any]] = []
+    coinvest_topk_default_sets: List[set] = []  # top-K sets before rescore
+    coinvest_topk_rescored_sets: List[set] = []  # top-K sets after rescore
+
     n_evaluated = 0
 
     for snap_date in snap_dates:
@@ -955,9 +1031,19 @@ def evaluate(
                     date_results.append(dr)
                 skips.append({"date": snap_date, "reason": "EMPTY_RANKINGS"})
                 continue
+            # Coinvest signal diagnostics (before any rescore)
+            diag = _coinvest_signal_diagnostics(rankings, top_k)
+            coinvest_diag_per_date.append(diag)
+            default_topk = diag["_topk_set"]
+
             # Re-sort with modified coinvest signal if requested
-            if coinvest_eval_mode != "default":
-                rankings = rescore_rankings(rankings, coinvest_eval_mode)
+            if coinvest_eval_mode != "default" and ruleset is not None:
+                coinvest_topk_default_sets.append(default_topk)
+                rankings = rescore_rankings(rankings, coinvest_eval_mode, ruleset)
+                # Capture rescored top-K for Jaccard comparison
+                diag_post = _coinvest_signal_diagnostics(rankings, top_k)
+                coinvest_topk_rescored_sets.append(diag_post["_topk_set"])
+
             # Sort by actionable_rank ascending (per-row safe parse)
             def _safe_rank(r):
                 try:
@@ -1413,6 +1499,52 @@ def evaluate(
         split_mode=split_mode,
         universe_mode=universe_mode,
     )
+
+    # Aggregate coinvest signal diagnostics
+    if coinvest_diag_per_date:
+        pct_vals = [d["pct_with_signal"] for d in coinvest_diag_per_date]
+        # Aggregate tier1 distribution across all dates (pool all values)
+        all_tier1: List[int] = []
+        for d in coinvest_diag_per_date:
+            dist = d["tier1_distribution"]
+            # We don't have raw values, so use per-date distribution summaries
+            # For a precise cross-date distribution, collect max/p99 across dates
+            all_tier1.append(dist["max"])
+
+        cross_date_dist = {
+            "p50": coinvest_diag_per_date[len(coinvest_diag_per_date) // 2]["tier1_distribution"]["p50"],
+            "p90": coinvest_diag_per_date[min(int(0.9 * len(coinvest_diag_per_date)),
+                                               len(coinvest_diag_per_date) - 1)]["tier1_distribution"]["p90"],
+            "p99": coinvest_diag_per_date[min(int(0.99 * len(coinvest_diag_per_date)),
+                                               len(coinvest_diag_per_date) - 1)]["tier1_distribution"]["p99"],
+            "max": max(d["tier1_distribution"]["max"] for d in coinvest_diag_per_date),
+        }
+
+        diag_summary: Dict[str, Any] = {
+            "mean_pct_with_signal": round(statistics.mean(pct_vals), 2) if pct_vals else 0.0,
+            "tier1_distribution_across_dates": cross_date_dist,
+        }
+
+        # Top-K impact: Jaccard overlap when rescore is active
+        if coinvest_topk_default_sets and coinvest_topk_rescored_sets:
+            n_changed = 0
+            overlaps: List[float] = []
+            for default_set, rescored_set in zip(
+                coinvest_topk_default_sets, coinvest_topk_rescored_sets
+            ):
+                if default_set != rescored_set:
+                    n_changed += 1
+                union = default_set | rescored_set
+                inter = default_set & rescored_set
+                jaccard = len(inter) / len(union) if union else 1.0
+                overlaps.append(jaccard)
+            diag_summary["topk_impact"] = {
+                "changed_dates": n_changed,
+                "total_dates": len(coinvest_topk_default_sets),
+                "mean_overlap": round(statistics.mean(overlaps), 4) if overlaps else 1.0,
+            }
+
+        summary.coinvest_signal_diagnostics = diag_summary
 
     # Write component eval outputs if enabled
     if component_eval and component_results and out_dir is not None:
@@ -2080,9 +2212,26 @@ def main() -> None:
         default="default",
         help="Catalyst decay: default (CSV values) or logistic (recompute from catalyst_days)",
     )
+    parser.add_argument(
+        "--ruleset", type=Path, default=None,
+        help="DecisionRuleset JSON for faithful rescore (required when --coinvest-eval-mode != default)",
+    )
     args = parser.parse_args()
 
     horizons = [int(h.strip()) for h in args.horizons.split(",")]
+
+    # Load ruleset if provided or required
+    eval_ruleset: Optional[DecisionRuleset] = None
+    if args.ruleset:
+        eval_ruleset = DecisionRuleset.from_json(str(args.ruleset))
+    elif args.coinvest_eval_mode != "default":
+        print("ERROR: --ruleset is required when --coinvest-eval-mode is not 'default'.",
+              file=sys.stderr)
+        print("  The eval script cannot infer which ruleset to use for faithful rescore.",
+              file=sys.stderr)
+        print("  Provide the ruleset JSON that matches the snapshots being evaluated.",
+              file=sys.stderr)
+        sys.exit(1)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -2103,6 +2252,8 @@ def main() -> None:
         print(f"  Top quantile: {args.top_quantile:.0%}")
     if args.coinvest_eval_mode != "default":
         print(f"  Coinvest eval mode: {args.coinvest_eval_mode}")
+        if eval_ruleset:
+            print(f"  Ruleset: {args.ruleset} (ID: {eval_ruleset.ruleset_id})")
     if args.catalyst_eval_mode != "default":
         print(f"  Catalyst eval mode: {args.catalyst_eval_mode}")
 
@@ -2133,6 +2284,7 @@ def main() -> None:
         top_quantile=args.top_quantile,
         coinvest_eval_mode=args.coinvest_eval_mode,
         catalyst_eval_mode=args.catalyst_eval_mode,
+        ruleset=eval_ruleset,
     )
 
     write_summary_json(summary, args.out_dir)

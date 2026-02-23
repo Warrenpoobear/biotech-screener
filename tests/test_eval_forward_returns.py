@@ -23,6 +23,7 @@ from scripts.eval_forward_returns import (
     EvalSummary,
     SIGNAL_FLAG_MAP,
     _avg_ranks,
+    _coinvest_signal_diagnostics,
     _cumulative,
     _decile_spread,
     _beta_hedged_return,
@@ -50,6 +51,9 @@ from scripts.eval_forward_returns import (
     write_summary_json,
     write_summary_md,
 )
+
+from decision_engine import DecisionRuleset
+from dataclasses import replace as dc_replace
 
 
 # ---------------------------------------------------------------------------
@@ -1864,29 +1868,50 @@ class TestEnhancedComponentDiag:
 # ---------------------------------------------------------------------------
 
 class TestRescoreRankings:
-    """Unit tests for rescore_rankings()."""
+    """Unit tests for rescore_rankings() — faithful rescore via compute_actionable_sort_key()."""
+
+    @staticmethod
+    def _base_ruleset(**overrides) -> DecisionRuleset:
+        """Build a minimal ruleset with coinvest ON by default."""
+        defaults = dict(
+            sort_anchor="alpha_cohort",
+            catalyst_priority_mode="tiebreaker",
+            enable_coinvest_sort_signal=True,
+            coinvest_sort_weight=0.5,
+            coinvest_positive_only=True,
+            enable_clinical_sort_signal=True,
+            clinical_sort_weight=1.0,
+            clinical_positive_only=True,
+            enable_institutional_sort_signal=False,
+        )
+        defaults.update(overrides)
+        return DecisionRuleset(**defaults)
 
     def _make_rankings(self, n=10, coinvest_z=None, alpha_pct=None, stage="late"):
-        """Helper to build ranking dicts."""
+        """Helper to build ranking dicts with production-compatible fields."""
         rankings = []
         for i in range(n):
             r = {
                 "ticker": f"T{i:02d}",
                 "actionable_rank": str(i + 1),
-                "eligible": "True",
+                "eligible": "1",
+                "tier_dev": "A",
+                "composite_rank": str(i + 1),
+                "archetype": "drug_developer",
                 "alpha_cohort_pct": str(alpha_pct[i]) if alpha_pct else str(0.5 - 0.05 * i),
                 "composite_pct": "",
                 "clinical_score_z_tier": str(0.5),
                 "coinvest_score_z": str(coinvest_z[i]) if coinvest_z else "0.0",
                 "inst_delta_z": "0.0",
                 "stage_bucket": stage,
+                "clinical_optionality_pct_dev": str(0.5 - 0.05 * i),
             }
             rankings.append(r)
         return rankings
 
     def test_rescore_off_removes_coinvest_tilt(self):
         """With coinvest_score_z > 0, off mode changes rank order."""
-        # Ticker T09 has huge coinvest, T00 has zero
+        rs = self._base_ruleset()
         coinvest = [0.0] * 10
         coinvest[9] = 2.0  # Last ticker gets big coinvest boost
         alpha_pct = [0.5 - 0.04 * i for i in range(10)]
@@ -1894,10 +1919,9 @@ class TestRescoreRankings:
         r_off = self._make_rankings(coinvest_z=coinvest, alpha_pct=alpha_pct)
 
         # In default mode with positive coinvest, T09 gets a small rank boost
-        rescore_rankings(r_default, "default")
-        rescore_rankings(r_off, "off")
+        rescore_rankings(r_default, "default", rs)
+        rescore_rankings(r_off, "off", rs)
 
-        # Without coinvest boost, T09 should be last (worst alpha_pct)
         ranks_default = {r["ticker"]: int(r["actionable_rank"]) for r in r_default}
         ranks_off = {r["ticker"]: int(r["actionable_rank"]) for r in r_off}
         # T09 should rank better in default than in off (coinvest boost)
@@ -1905,22 +1929,23 @@ class TestRescoreRankings:
 
     def test_rescore_contra_flips_coinvest(self):
         """Ticker with negative coinvest_score_z moves up in contra mode."""
+        rs = self._base_ruleset()
         coinvest = [0.0] * 10
         coinvest[9] = -2.0  # Negative coinvest → becomes positive in contra
         alpha_pct = [0.5] * 10  # All same anchor → tilt determines order
         r = self._make_rankings(coinvest_z=coinvest, alpha_pct=alpha_pct, stage="late")
-        rescore_rankings(r, "contra")
-        # T09 with -2.0 coinvest → in contra, cz_contra = min(2, max(0, 2.0)) = 2.0
-        # Gets boost → should rank high
-        ranks = {r["ticker"]: int(r["actionable_rank"]) for r in r}
+        rescore_rankings(r, "contra", rs)
+        # T09 with -2.0 coinvest → in contra, negated to +2.0 → gets boost
+        ranks = {r_["ticker"]: int(r_["actionable_rank"]) for r_ in r}
         # T09 should be boosted relative to middle tickers
         assert ranks["T09"] < 10
 
     def test_rescore_default_noop(self):
         """Default mode preserves original actionable_rank order (approx)."""
+        rs = self._base_ruleset()
         r = self._make_rankings()
         original_order = [r_["ticker"] for r_ in r]
-        rescore_rankings(r, "default")
+        rescore_rankings(r, "default", rs)
         new_order = sorted(r, key=lambda x: int(x.get("actionable_rank") or 9999))
         new_tickers = [x["ticker"] for x in new_order]
         # With zero coinvest/inst, sort should approximately follow alpha_pct
@@ -1928,52 +1953,131 @@ class TestRescoreRankings:
 
     def test_rescore_ineligible_stays_last(self):
         """Ineligible tickers always sort after eligible."""
+        rs = self._base_ruleset()
         r = self._make_rankings(n=5)
-        r[0]["eligible"] = "False"  # Make best-anchor ticker ineligible
-        rescore_rankings(r, "off")
+        r[0]["eligible"] = "0"  # Make best-anchor ticker ineligible
+        rescore_rankings(r, "off", rs)
         # Ineligible ticker should have empty rank
-        inelig = [x for x in r if x["eligible"] == "False"]
+        inelig = [x for x in r if x["eligible"] == "0"]
         assert inelig[0]["actionable_rank"] == ""
 
     def test_rescore_missing_columns_safe(self):
-        """Empty/missing columns default to 0."""
-        r = [{"ticker": "A", "actionable_rank": "1", "eligible": "True"},
-             {"ticker": "B", "actionable_rank": "2", "eligible": "True"}]
-        result = rescore_rankings(r, "off")
+        """Empty/missing columns default to 0 (backfill_columns handles this)."""
+        rs = self._base_ruleset()
+        r = [{"ticker": "A", "actionable_rank": "1", "eligible": "1",
+              "archetype": "drug_developer", "tier_dev": "A", "composite_rank": "1"},
+             {"ticker": "B", "actionable_rank": "2", "eligible": "1",
+              "archetype": "drug_developer", "tier_dev": "A", "composite_rank": "2"}]
+        result = rescore_rankings(r, "off", rs)
         assert len(result) == 2
         assert all(x["actionable_rank"] != "" for x in result)
 
     def test_rescore_alpha_cohort_pct_used(self):
-        """Uses alpha_cohort_pct when present."""
-        r = [{"ticker": "A", "actionable_rank": "2", "eligible": "True",
-               "alpha_cohort_pct": "0.9", "composite_pct": "0.1"},
-             {"ticker": "B", "actionable_rank": "1", "eligible": "True",
-               "alpha_cohort_pct": "0.1", "composite_pct": "0.9"}]
-        rescore_rankings(r, "off")
+        """Uses alpha_cohort_pct when sort_anchor is alpha_cohort."""
+        rs = self._base_ruleset(sort_anchor="alpha_cohort")
+        r = [{"ticker": "A", "actionable_rank": "2", "eligible": "1",
+              "alpha_cohort_pct": "0.9", "composite_pct": "0.1",
+              "archetype": "drug_developer", "tier_dev": "A", "composite_rank": "2"},
+             {"ticker": "B", "actionable_rank": "1", "eligible": "1",
+              "alpha_cohort_pct": "0.1", "composite_pct": "0.9",
+              "archetype": "drug_developer", "tier_dev": "A", "composite_rank": "1"}]
+        rescore_rankings(r, "off", rs)
         ranks = {x["ticker"]: int(x["actionable_rank"]) for x in r}
         # A has higher alpha_cohort_pct (0.9) → anchor=-0.9 → sorts first
-        assert ranks["A"] < ranks["B"]
-
-    def test_rescore_composite_pct_fallback(self):
-        """Falls back to composite_pct when alpha_cohort_pct missing."""
-        r = [{"ticker": "A", "actionable_rank": "2", "eligible": "True",
-               "alpha_cohort_pct": "", "composite_pct": "0.9"},
-             {"ticker": "B", "actionable_rank": "1", "eligible": "True",
-               "alpha_cohort_pct": "", "composite_pct": "0.1"}]
-        rescore_rankings(r, "off")
-        ranks = {x["ticker"]: int(x["actionable_rank"]) for x in r}
         assert ranks["A"] < ranks["B"]
 
     def test_rescore_deterministic(self):
         """Same input → same output."""
         import copy
+        rs = self._base_ruleset()
         r1 = self._make_rankings()
         r2 = copy.deepcopy(r1)
-        rescore_rankings(r1, "off")
-        rescore_rankings(r2, "off")
+        rescore_rankings(r1, "off", rs)
+        rescore_rankings(r2, "off", rs)
         order1 = [x["ticker"] for x in r1]
         order2 = [x["ticker"] for x in r2]
         assert order1 == order2
+
+    def test_rescore_contra_restores_original_values(self):
+        """Contra mode restores original coinvest_score_z after sorting."""
+        rs = self._base_ruleset()
+        coinvest = [1.5, -0.5, 0.0]
+        r = self._make_rankings(n=3, coinvest_z=coinvest)
+        original_czs = [r_["coinvest_score_z"] for r_ in r]
+        rescore_rankings(r, "contra", rs)
+        # Values should be restored (order may differ)
+        restored_czs = {r_["ticker"]: r_["coinvest_score_z"] for r_ in r}
+        for i, orig in enumerate(original_czs):
+            assert restored_czs[f"T{i:02d}"] == orig
+
+    def test_rescore_faithful_matches_rerank(self):
+        """Faithful rescore produces same ranking as direct rerank() call."""
+        import copy
+        from scripts.research.rerank_snapshots import rerank
+
+        rs = self._base_ruleset()
+        rs_off = dc_replace(rs, enable_coinvest_sort_signal=False)
+
+        coinvest = [0.0, 1.5, 0.5, -0.3, 2.0]
+        alpha_pct = [0.45, 0.40, 0.35, 0.30, 0.25]
+        r_rescore = self._make_rankings(n=5, coinvest_z=coinvest, alpha_pct=alpha_pct)
+        r_rerank = copy.deepcopy(r_rescore)
+
+        # Rescore with "off" mode
+        rescore_rankings(r_rescore, "off", rs)
+        # Direct rerank with coinvest-off ruleset
+        rerank(r_rerank, rs_off)
+
+        order_rescore = [x["ticker"] for x in
+                         sorted(r_rescore, key=lambda x: int(x.get("actionable_rank") or 9999))]
+        order_rerank = [x["ticker"] for x in
+                        sorted(r_rerank, key=lambda x: int(x.get("actionable_rank") or 9999))]
+        assert order_rescore == order_rerank
+
+
+# ---------------------------------------------------------------------------
+# Part B: Coinvest signal diagnostics
+# ---------------------------------------------------------------------------
+
+class TestCoinvestSignalDiagnostics:
+    """Unit tests for _coinvest_signal_diagnostics()."""
+
+    def test_basic_diagnostics(self):
+        """Computes correct percentages and distribution."""
+        rankings = [
+            {"ticker": "A", "eligible": "1", "actionable_rank": "1",
+             "sponsor_tier1_count": "3"},
+            {"ticker": "B", "eligible": "1", "actionable_rank": "2",
+             "sponsor_tier1_count": "0"},
+            {"ticker": "C", "eligible": "1", "actionable_rank": "3",
+             "sponsor_tier1_count": "1"},
+            {"ticker": "D", "eligible": "0", "actionable_rank": "",
+             "sponsor_tier1_count": "2"},  # ineligible — excluded
+        ]
+        diag = _coinvest_signal_diagnostics(rankings, top_k=2)
+        assert diag["n_eligible"] == 3
+        # 2 out of 3 eligible have tier1_count > 0
+        assert abs(diag["pct_with_signal"] - 66.67) < 0.1
+        assert diag["tier1_distribution"]["max"] == 3
+        assert diag["tier1_distribution"]["n_nonzero"] == 2
+        # Top-K set should be {A, B} (ranks 1, 2)
+        assert diag["_topk_set"] == {"A", "B"}
+
+    def test_empty_rankings(self):
+        """Handles empty input."""
+        diag = _coinvest_signal_diagnostics([], top_k=5)
+        assert diag["n_eligible"] == 0
+        assert diag["pct_with_signal"] == 0.0
+
+    def test_no_signal_column(self):
+        """Defaults to 0 when sponsor_tier1_count is missing."""
+        rankings = [
+            {"ticker": "A", "eligible": "1", "actionable_rank": "1"},
+            {"ticker": "B", "eligible": "1", "actionable_rank": "2"},
+        ]
+        diag = _coinvest_signal_diagnostics(rankings, top_k=2)
+        assert diag["pct_with_signal"] == 0.0
+        assert diag["tier1_distribution"]["n_nonzero"] == 0
 
 
 # ---------------------------------------------------------------------------
@@ -1982,6 +2086,20 @@ class TestRescoreRankings:
 
 class TestCoinvestEvalMode:
     """Integration tests for coinvest_eval_mode in evaluate()."""
+
+    @staticmethod
+    def _eval_ruleset() -> DecisionRuleset:
+        """Minimal ruleset for integration tests."""
+        return DecisionRuleset(
+            sort_anchor="alpha_cohort",
+            catalyst_priority_mode="tiebreaker",
+            enable_coinvest_sort_signal=True,
+            coinvest_sort_weight=0.5,
+            coinvest_positive_only=True,
+            enable_clinical_sort_signal=True,
+            clinical_sort_weight=1.0,
+            clinical_positive_only=True,
+        )
 
     def _setup_eval_data(self, tmp_dir, n=20):
         """Helper: create evaluation data with coinvest scores."""
@@ -2018,6 +2136,7 @@ class TestCoinvestEvalMode:
     def test_evaluate_coinvest_off_changes_ic(self, tmp_dir):
         """IC differs between default and off modes."""
         price_csv = self._setup_eval_data(tmp_dir)
+        rs = self._eval_ruleset()
         s_default, _, _ = evaluate(
             snapshot_root=tmp_dir / "snapshots",
             price_csv=price_csv,
@@ -2029,6 +2148,7 @@ class TestCoinvestEvalMode:
             price_csv=price_csv,
             horizons=[1],
             coinvest_eval_mode="off",
+            ruleset=rs,
         )
         # Both should produce results
         assert s_default.n_evaluated >= 1
@@ -2042,6 +2162,7 @@ class TestCoinvestEvalMode:
     def test_evaluate_coinvest_contra_changes_ic(self, tmp_dir):
         """IC differs between default and contra modes."""
         price_csv = self._setup_eval_data(tmp_dir)
+        rs = self._eval_ruleset()
         s_default, _, _ = evaluate(
             snapshot_root=tmp_dir / "snapshots",
             price_csv=price_csv,
@@ -2053,6 +2174,7 @@ class TestCoinvestEvalMode:
             price_csv=price_csv,
             horizons=[1],
             coinvest_eval_mode="contra",
+            ruleset=rs,
         )
         assert s_default.n_evaluated >= 1
         assert s_contra.n_evaluated >= 1
@@ -2087,6 +2209,40 @@ class TestCoinvestEvalMode:
         ic1 = s1.by_horizon.get(1, {}).get("mean_ic")
         ic2 = s2.by_horizon.get(1, {}).get("mean_ic")
         assert ic1 == ic2
+
+    def test_coinvest_diagnostics_in_summary(self, tmp_dir):
+        """Coinvest signal diagnostics appear in summary."""
+        price_csv = self._setup_eval_data(tmp_dir)
+        rs = self._eval_ruleset()
+        s_off, _, _ = evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            coinvest_eval_mode="off",
+            ruleset=rs,
+        )
+        assert s_off.coinvest_signal_diagnostics is not None
+        diag = s_off.coinvest_signal_diagnostics
+        assert "mean_pct_with_signal" in diag
+        assert "tier1_distribution_across_dates" in diag
+        # Should have topk_impact since rescore was active
+        assert "topk_impact" in diag
+        assert diag["topk_impact"]["total_dates"] >= 1
+
+    def test_coinvest_diagnostics_default_mode(self, tmp_dir):
+        """Diagnostics present even in default mode (no topk_impact)."""
+        price_csv = self._setup_eval_data(tmp_dir)
+        s, _, _ = evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            coinvest_eval_mode="default",
+        )
+        assert s.coinvest_signal_diagnostics is not None
+        diag = s.coinvest_signal_diagnostics
+        assert "mean_pct_with_signal" in diag
+        # No topk_impact in default mode
+        assert "topk_impact" not in diag
 
 
 # ---------------------------------------------------------------------------
