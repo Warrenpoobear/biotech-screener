@@ -1927,15 +1927,16 @@ class TestRescoreRankings:
         # T09 should rank better in default than in off (coinvest boost)
         assert ranks_default["T09"] <= ranks_off["T09"]
 
-    def test_rescore_contra_flips_coinvest(self):
-        """Ticker with negative coinvest_score_z moves up in contra mode."""
+    def test_rescore_contra_inverts_signal(self):
+        """Contra mode truly inverts: positive z penalises, negative z boosts."""
         rs = self._base_ruleset()
+        # T09 has negative coinvest → in contra (negative weight, no positive-only clamp),
+        # the negative z * negative weight = positive adjustment → boost.
         coinvest = [0.0] * 10
-        coinvest[9] = -2.0  # Negative coinvest → becomes positive in contra
+        coinvest[9] = -2.0
         alpha_pct = [0.5] * 10  # All same anchor → tilt determines order
         r = self._make_rankings(coinvest_z=coinvest, alpha_pct=alpha_pct, stage="late")
         rescore_rankings(r, "contra", rs)
-        # T09 with -2.0 coinvest → in contra, negated to +2.0 → gets boost
         ranks = {r_["ticker"]: int(r_["actionable_rank"]) for r_ in r}
         # T09 should be boosted relative to middle tickers
         assert ranks["T09"] < 10
@@ -1998,17 +1999,15 @@ class TestRescoreRankings:
         order2 = [x["ticker"] for x in r2]
         assert order1 == order2
 
-    def test_rescore_contra_restores_original_values(self):
-        """Contra mode restores original coinvest_score_z after sorting."""
+    def test_rescore_contra_does_not_mutate_values(self):
+        """Contra mode via negative weight never mutates coinvest_score_z."""
         rs = self._base_ruleset()
         coinvest = [1.5, -0.5, 0.0]
         r = self._make_rankings(n=3, coinvest_z=coinvest)
-        original_czs = [r_["coinvest_score_z"] for r_ in r]
+        original_czs = {r_["ticker"]: r_["coinvest_score_z"] for r_ in r}
         rescore_rankings(r, "contra", rs)
-        # Values should be restored (order may differ)
-        restored_czs = {r_["ticker"]: r_["coinvest_score_z"] for r_ in r}
-        for i, orig in enumerate(original_czs):
-            assert restored_czs[f"T{i:02d}"] == orig
+        for r_ in r:
+            assert r_["coinvest_score_z"] == original_czs[r_["ticker"]]
 
     def test_rescore_faithful_matches_rerank(self):
         """Faithful rescore produces same ranking as direct rerank() call."""

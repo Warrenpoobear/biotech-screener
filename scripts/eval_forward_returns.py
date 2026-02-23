@@ -25,8 +25,8 @@ from typing import Any, Dict, List, Optional, Tuple
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from common.ranking_utils import backfill_columns, safe_float as _ranking_safe_float
 from decision_engine import DecisionRuleset, compute_actionable_sort_key
-from scripts.research.rerank_snapshots import backfill_columns, _safe_float as _rerank_safe_float
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -686,10 +686,15 @@ def rescore_rankings(
     omitted prefix ordering, catalyst priority, missingness, etc. and
     overstated coinvest-off IC improvements by 83-128%.
 
+    Mode semantics:
+        - "off":    ``enable_coinvest_sort_signal=False`` — coinvest has zero effect.
+        - "contra": negate ``coinvest_sort_weight`` and disable ``coinvest_positive_only``
+                    so the sort key truly inverts the signal (positive z penalises,
+                    negative z boosts).
+
     Args:
         rankings: list of ranking dicts (from rankings.csv).
-        coinvest_eval_mode: "off" (disable coinvest signal),
-            "contra" (flip coinvest_score_z sign before sorting).
+        coinvest_eval_mode: "off" or "contra".
         ruleset: DecisionRuleset to use as the base for rescoring.
 
     Returns:
@@ -698,41 +703,39 @@ def rescore_rankings(
     # Build modified ruleset for this eval mode
     if coinvest_eval_mode == "off":
         rs = dc_replace(ruleset, enable_coinvest_sort_signal=False)
+    elif coinvest_eval_mode == "contra":
+        # True sign-flip: negate the weight and disable positive-only clamp
+        # so that originally-positive z values penalise and originally-negative
+        # z values boost.  No value mutation needed.
+        rs = dc_replace(
+            ruleset,
+            coinvest_sort_weight=-abs(ruleset.coinvest_sort_weight),
+            coinvest_positive_only=False,
+        )
     else:
-        rs = ruleset  # "contra" flips values, not the ruleset
+        rs = ruleset
 
-    # For "contra" mode: negate coinvest_score_z values before sorting,
-    # then restore after.  The production sort key's positive-only clamping
-    # will naturally handle flipped signs (negative originals become positive,
-    # positive become negative → clamped to 0).
-    saved_coinvest: Dict[str, str] = {}  # keyed by ticker
-    if coinvest_eval_mode == "contra":
-        for r in rankings:
-            ticker = r.get("ticker", "")
-            orig = r.get("coinvest_score_z", "0")
-            saved_coinvest[ticker] = orig
-            v = _rerank_safe_float(orig)
-            r["coinvest_score_z"] = str(-v) if v is not None else "0"
-
-    # Backfill missing columns for historical snapshots
+    # Backfill missing columns FIRST (before any sort) so that
+    # compute_actionable_sort_key() sees all required fields and
+    # no downstream backfill can overwrite eval-mode mutations.
     backfill_columns(rankings)
 
-    # Sort using production-identical logic (same pattern as rerank_snapshots.py:177-193)
+    # Sort using production-identical logic (same pattern as rerank_snapshots.py:rerank())
     rankings.sort(key=lambda r: compute_actionable_sort_key(
         decision_fields=r,
         archetype=r.get("archetype", ""),
-        optionality=_rerank_safe_float(r.get("clinical_optionality_pct_dev")),
+        optionality=_ranking_safe_float(r.get("clinical_optionality_pct_dev")),
         composite_rank=r.get("composite_rank"),
         ticker=r.get("ticker", ""),
         catalyst_event_type=r.get("catalyst_event_type", ""),
         catalyst_source=r.get("catalyst_source", ""),
         ruleset=rs,
         tiebreaker_pct=(
-            _rerank_safe_float(r.get("alpha_cohort_pct"))
+            _ranking_safe_float(r.get("alpha_cohort_pct"))
             if rs.sort_anchor == "alpha_cohort"
-            else (_rerank_safe_float(r.get("commercial_quality_pct"))
+            else (_ranking_safe_float(r.get("commercial_quality_pct"))
                   if r.get("archetype", "").startswith("commercial_")
-                  else _rerank_safe_float(r.get("clinical_optionality_pct_dev")))
+                  else _ranking_safe_float(r.get("clinical_optionality_pct_dev")))
         ),
     ))
 
@@ -744,13 +747,6 @@ def rescore_rankings(
             rank += 1
         else:
             r["actionable_rank"] = ""
-
-    # Restore original coinvest_score_z values for "contra" mode
-    if coinvest_eval_mode == "contra":
-        for r in rankings:
-            ticker = r.get("ticker", "")
-            if ticker in saved_coinvest:
-                r["coinvest_score_z"] = saved_coinvest[ticker]
 
     return rankings
 
@@ -818,6 +814,7 @@ def _coinvest_signal_diagnostics(
         "tier1_distribution": distribution,
         "n_eligible": n_eligible,
         "_topk_set": topk_tickers,
+        "_raw_tier1_vals": tier1_vals,
     }
 
 
@@ -1503,22 +1500,30 @@ def evaluate(
     # Aggregate coinvest signal diagnostics
     if coinvest_diag_per_date:
         pct_vals = [d["pct_with_signal"] for d in coinvest_diag_per_date]
-        # Aggregate tier1 distribution across all dates (pool all values)
-        all_tier1: List[int] = []
-        for d in coinvest_diag_per_date:
-            dist = d["tier1_distribution"]
-            # We don't have raw values, so use per-date distribution summaries
-            # For a precise cross-date distribution, collect max/p99 across dates
-            all_tier1.append(dist["max"])
 
-        cross_date_dist = {
-            "p50": coinvest_diag_per_date[len(coinvest_diag_per_date) // 2]["tier1_distribution"]["p50"],
-            "p90": coinvest_diag_per_date[min(int(0.9 * len(coinvest_diag_per_date)),
-                                               len(coinvest_diag_per_date) - 1)]["tier1_distribution"]["p90"],
-            "p99": coinvest_diag_per_date[min(int(0.99 * len(coinvest_diag_per_date)),
-                                               len(coinvest_diag_per_date) - 1)]["tier1_distribution"]["p99"],
-            "max": max(d["tier1_distribution"]["max"] for d in coinvest_diag_per_date),
-        }
+        # Pool raw tier1_count values across all dates for true percentiles
+        pooled_tier1: List[int] = []
+        for d in coinvest_diag_per_date:
+            pooled_tier1.extend(d.get("_raw_tier1_vals", []))
+
+        if pooled_tier1:
+            pooled_sorted = sorted(pooled_tier1)
+            n_pooled = len(pooled_sorted)
+
+            def _pooled_pctl(p: float) -> int:
+                idx = int(p / 100.0 * (n_pooled - 1))
+                return pooled_sorted[min(idx, n_pooled - 1)]
+
+            cross_date_dist = {
+                "p50": _pooled_pctl(50),
+                "p90": _pooled_pctl(90),
+                "p99": _pooled_pctl(99),
+                "max": pooled_sorted[-1],
+                "n_total": n_pooled,
+                "n_nonzero": sum(1 for v in pooled_tier1 if v > 0),
+            }
+        else:
+            cross_date_dist = {"p50": 0, "p90": 0, "p99": 0, "max": 0, "n_total": 0, "n_nonzero": 0}
 
         diag_summary: Dict[str, Any] = {
             "mean_pct_with_signal": round(statistics.mean(pct_vals), 2) if pct_vals else 0.0,
