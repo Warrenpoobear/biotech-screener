@@ -128,8 +128,8 @@ ruleset.far_window_days          # 0 = off; >0 enables far-horizon PCD catalyst 
 ```
 
 **Pinned IDs:**
-- `PHASE2_PINNED_RULESET_ID` in `run_screen.py` = `"8f99d47e"` (must match delta module)
-- `PHASE2_PINNED_RULESET_ID` in `run_phase2_snapshot_delta.py` = `"8f99d47e"` (must match run_screen)
+- `PHASE2_PINNED_RULESET_ID` in `run_screen.py` = `"88d7ae9a"` (must match delta module)
+- `PHASE2_PINNED_RULESET_ID` in `run_phase2_snapshot_delta.py` = `"88d7ae9a"` (must match run_screen)
 - Both pins MUST be updated together — `run_screen.py` imports the delta module's pin
 
 ### Ruleset Promotion Pipeline

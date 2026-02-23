@@ -1486,11 +1486,11 @@ PORTFOLIO_POSITIONS_COLUMNS = [
 # Phase-2 operational defaults
 PHASE2_DEFAULT_RULESET_PATH = (
     Path(__file__).resolve().parent
-    / "production_data" / "decision_rulesets" / "v1.5.0_coinvest_candidate.json"
+    / "production_data" / "decision_rulesets" / "v1.5.1_coinvest_off.json"
 )
 PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
 PHASE2_DEFAULT_TOP_K = 20
-PHASE2_PINNED_RULESET_ID = "8f99d47e"
+PHASE2_PINNED_RULESET_ID = "88d7ae9a"
 PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
