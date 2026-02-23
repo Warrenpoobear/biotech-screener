@@ -974,6 +974,7 @@ class TestOpsContract:
             "institutional_summary", "institutional_delta",
             "pnl_attribution",
             "price_pit_cache", "forward_eval",
+            "pit_bundle_health",
         }
         assert expected == GATE_ALLOWLIST
 

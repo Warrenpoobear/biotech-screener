@@ -63,6 +63,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "pnl_attribution",
     "price_pit_cache",
     "forward_eval",
+    "pit_bundle_health",
 })
 
 # Required fields in each market_data.json record for schema gate
@@ -1178,6 +1179,53 @@ def check_forward_eval(
     )
 
 
+def check_pit_bundle_health(
+    as_of_date: str,
+    bundle_root: Optional[Path] = None,
+    ctgov_cache_dir: Optional[Path] = None,
+    cache_13f_root: Optional[Path] = None,
+) -> GateResult:
+    """Check that a PIT bundle is buildable from available caches. WARN-only — never FAIL.
+
+    Checks existence of required cache inputs (CTgov cache, 13F cache).
+    Does NOT actually build the bundle — just validates prerequisites.
+    """
+    issues: List[str] = []
+
+    # Check CTgov cache
+    _ctgov_dir = ctgov_cache_dir or (REPO_ROOT / "cache" / "ctgov")
+    ctgov_path = _ctgov_dir / f"trial_records_{as_of_date}.json"
+    if not ctgov_path.exists():
+        # Check for any prior date file
+        candidates = sorted(_ctgov_dir.glob("trial_records_*.json"))
+        if candidates:
+            issues.append(f"CTgov cache missing for {as_of_date} (latest: {candidates[-1].stem})")
+        else:
+            issues.append(f"No CTgov cache files in {_ctgov_dir}")
+
+    # Check 13F cache
+    _13f_root = cache_13f_root or (REPO_ROOT / "data" / "caches" / "sec_13f" / "PIT")
+    index_path = _13f_root / as_of_date / "index.json"
+    if not index_path.exists():
+        issues.append(f"13F PIT cache missing for {as_of_date}")
+
+    # Check trial_records.json (needed by clinical builder)
+    trial_path = REPO_ROOT / "production_data" / "trial_records.json"
+    if not trial_path.exists():
+        issues.append("production_data/trial_records.json not found")
+
+    if issues:
+        return GateResult(
+            name="pit_bundle_health", status="WARN",
+            detail="; ".join(issues),
+        )
+
+    return GateResult(
+        name="pit_bundle_health", status="PASS",
+        detail=f"PIT bundle prerequisites available for {as_of_date}",
+    )
+
+
 def _read_invariants_summary(audit_output_dir: Path) -> Optional[Dict[str, Any]]:
     """Read invariants_summary.json written by the audit tool."""
     p = audit_output_dir / "invariants_summary.json"
@@ -2058,6 +2106,14 @@ def run_daily(
         print(f"  Forward eval gate: {fwd_gate.status} — {fwd_gate.detail}")
     else:
         print("  Forward eval gate: skipped (--skip-forward-eval)")
+
+    # --- Gate: pit_bundle_health (WARN-only) ---
+    pit_bundle_gate = check_pit_bundle_health(
+        as_of_date,
+        ctgov_cache_dir=ctgov_cache_dir or (REPO_ROOT / "cache" / "ctgov"),
+    )
+    gate_results.append(pit_bundle_gate)
+    print(f"  PIT bundle health gate: {pit_bundle_gate.status} — {pit_bundle_gate.detail}")
 
     # --- Step 5: Build manifest ---
     print(f"\n[5/5] Building run manifest ...")

@@ -103,6 +103,7 @@ def build_single_bundle(
     skip_catalyst: bool = False,
     skip_coinvest: bool = False,
     ledger_config: Optional[Any] = None,
+    pit_mode: str = "strict",
 ) -> dict:
     """Build one date's PIT feature bundle.
 
@@ -116,6 +117,8 @@ def build_single_bundle(
         skip_catalyst: Skip catalyst features.
         skip_coinvest: Skip coinvest features.
         ledger_config: LedgerConfig for catalyst builder.
+        pit_mode: "strict" or "degrade". In strict mode, missing components
+            are recorded as errors. In degrade, they are skipped gracefully.
 
     Returns:
         Manifest dict.
@@ -125,6 +128,7 @@ def build_single_bundle(
     bundle_dir.mkdir(parents=True, exist_ok=True)
 
     components: Dict[str, dict] = {}
+    pit_violations: Dict[str, int] = {}
 
     # 1. Clinical features
     if not skip_clinical:
@@ -155,6 +159,14 @@ def build_single_bundle(
                     "sha256": _sha256_file(out_path),
                     "coverage_pct": clin["signal_coverage_pct"],
                 }
+
+                # PIT validation on the trial input
+                try:
+                    from scripts.validate_pit_inputs import validate_ctgov_pit
+                    vr = validate_ctgov_pit(trial_data, as_of_date, pit_mode)
+                    pit_violations["ctgov_first_posted"] = vr["first_posted_violations"]
+                except Exception:
+                    pass
             else:
                 print(f"  SKIP clinical: trial_records not a list", file=sys.stderr)
         except Exception as e:
@@ -183,6 +195,15 @@ def build_single_bundle(
                 "sha256": _sha256_file(out_path),
                 "coverage_pct": cat["catalyst_coverage_pct"],
             }
+
+            # PIT validation on catalyst events
+            try:
+                from scripts.validate_pit_inputs import validate_catalyst_pit
+                vr = validate_catalyst_pit(cat, as_of_date, pit_mode)
+                pit_violations["catalyst_missing_disclosed_at"] = vr["missing_disclosed_at"]
+                pit_violations["catalyst_future_disclosed_at"] = vr["future_disclosed_at"]
+            except Exception:
+                pass
         except Exception as e:
             print(f"  SKIP catalyst: {e}", file=sys.stderr)
 
@@ -227,7 +248,9 @@ def build_single_bundle(
         "as_of_date": as_of_date,
         "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "bundle_root": str(bundle_root),
+        "pit_mode": pit_mode,
         "components": components,
+        "pit_violations": pit_violations,
         "universe_size": len(universe_tickers),
         "build_duration_seconds": round(elapsed, 2),
     }
@@ -377,6 +400,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         "--validate", action="store_true",
         help="Validate an existing bundle instead of building",
     )
+    parser.add_argument(
+        "--pit-mode", default="strict",
+        choices=["strict", "degrade"],
+        help="PIT mode: strict (default) or degrade",
+    )
     args = parser.parse_args(argv)
 
     # Import project modules (add project root to path).
@@ -434,6 +462,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             skip_clinical=args.skip_clinical,
             skip_catalyst=args.skip_catalyst,
             skip_coinvest=args.skip_coinvest,
+            pit_mode=args.pit_mode,
         )
         print(f"\nBuilt {len(results)} bundles")
         return 0
@@ -448,6 +477,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             skip_clinical=args.skip_clinical,
             skip_catalyst=args.skip_catalyst,
             skip_coinvest=args.skip_coinvest,
+            pit_mode=args.pit_mode,
         )
         n = len(manifest["components"])
         print(f"\nBundle: {n} components, "
