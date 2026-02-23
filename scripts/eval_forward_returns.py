@@ -674,9 +674,23 @@ def rescore_rankings(
 ) -> List[Dict[str, str]]:
     """Re-sort rankings with modified coinvest signal.
 
-    Reconstructs the tiebreaker sort key from CSV columns and re-assigns
-    actionable_rank.  Mirrors decision_engine.py sort key assembly
-    (active ruleset weights: clinical=1.0, coinvest=0.05, inst=0.3).
+    Reconstructs a **simplified** sort key from CSV columns and re-assigns
+    actionable_rank.  Uses a 3-tuple (eligible, effective_anchor, ticker)
+    instead of the full 12-position sort tuple from
+    ``decision_engine.compute_actionable_sort_key()``.
+
+    .. warning:: DIRECTIONAL USE ONLY
+
+       This function does NOT replicate the actual production sort key.
+       It omits the (eligible, archetype, tier) prefix, catalyst priority,
+       missing-count penalty, optionality, sponsor count, and momentum
+       ordering.  Confirmation eval (2026-02-23) showed that eval-time
+       rescore overstated the coinvest-off IC improvement by 83-128%
+       compared to a ruleset-level run on the same 70-date grid.
+
+       Use this for **sign-of-effect** (does removing coinvest help or
+       hurt?) but never for **magnitude** comparisons.  Any A/B decision
+       must be confirmed by a ruleset-level eval.
 
     Args:
         rankings: list of ranking dicts (from rankings.csv).
