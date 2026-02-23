@@ -28,6 +28,7 @@ from scripts.run_screen_from_bundle import (
     _safe_float,
     _winsorize,
     _z_score_by_group,
+    _z_score_sparse,
     classify_company_archetype,
     discover_bundle_dates,
     load_bundle,
@@ -806,3 +807,82 @@ class TestDiscoverDates:
     def test_discover_empty_root(self, tmp_path):
         dates = discover_bundle_dates(tmp_path / "nonexistent")
         assert dates == []
+
+
+# ===================================================================
+# Sparse signal z-score
+# ===================================================================
+
+class TestZScoreSparse:
+    """Tests for _z_score_sparse with legacy vs exclude_missing modes."""
+
+    def test_legacy_mode_includes_all_rows(self):
+        """In legacy mode, all rows contribute to mean/std (missing → 0)."""
+        rows = [
+            {"val": 10.0, "flag": "True"},
+            {"val": 10.0, "flag": "True"},
+            {"val": None, "flag": "False"},
+            {"val": None, "flag": "False"},
+        ]
+        _z_score_sparse(rows, "val", "z", flag_col="flag", sparse_mode="legacy")
+        # 4 rows: vals=[10, 10, 0, 0], mean=5, std=5
+        # z(10) = (10-5)/5 = 1.0, z(0) = (0-5)/5 = -1.0
+        assert rows[0]["z"] == 1.0
+        assert rows[2]["z"] == -1.0
+
+    def test_exclude_missing_uses_only_real_signal(self):
+        """In exclude_missing, only flagged rows contribute to stats."""
+        rows = [
+            {"val": 10.0, "flag": "True"},
+            {"val": 20.0, "flag": "True"},
+            {"val": None, "flag": "False"},
+            {"val": None, "flag": "False"},
+        ]
+        _z_score_sparse(rows, "val", "z", flag_col="flag", sparse_mode="exclude_missing")
+        # Only real=[10, 20], mean=15, std=5
+        # z(10) = (10-15)/5 = -1.0, z(20) = 1.0
+        assert rows[0]["z"] == -1.0
+        assert rows[1]["z"] == 1.0
+        # Missing tickers get z=0 (neutral)
+        assert rows[2]["z"] == 0.0
+        assert rows[3]["z"] == 0.0
+
+    def test_exclude_missing_80pct_missing(self):
+        """When 80% of tickers are missing, z-scores use only 20% real data."""
+        rows = [{"val": float(i), "flag": "True"} for i in range(4)]
+        rows += [{"val": None, "flag": "False"} for _ in range(16)]
+        _z_score_sparse(rows, "val", "z", flag_col="flag", sparse_mode="exclude_missing")
+        # 4 real values: [0, 1, 2, 3], mean=1.5, std=~1.118
+        for r in rows[4:]:
+            assert r["z"] == 0.0
+        # Real rows should have non-zero z
+        zvals = [rows[i]["z"] for i in range(4)]
+        assert any(z != 0.0 for z in zvals)
+
+    def test_determinism(self):
+        """Same input → same output for both modes."""
+        import copy
+        rows_a = [
+            {"val": 5.0, "flag": "True"},
+            {"val": 15.0, "flag": "True"},
+            {"val": None, "flag": "False"},
+        ]
+        rows_b = copy.deepcopy(rows_a)
+        _z_score_sparse(rows_a, "val", "z", flag_col="flag", sparse_mode="exclude_missing")
+        _z_score_sparse(rows_b, "val", "z", flag_col="flag", sparse_mode="exclude_missing")
+        for a, b in zip(rows_a, rows_b):
+            assert a["z"] == b["z"]
+
+    def test_no_flag_col_legacy_compat(self):
+        """Without flag_col, behaves like legacy (all rows contribute)."""
+        rows = [{"val": 0.0}, {"val": 10.0}]
+        _z_score_sparse(rows, "val", "z", sparse_mode="legacy")
+        # mean=5, std=5 → z(0)=-1, z(10)=1
+        assert rows[0]["z"] == -1.0
+        assert rows[1]["z"] == 1.0
+
+    def test_has_signal_flags_in_snapshot_columns(self):
+        """Signal flags are present in SNAPSHOT_COLUMNS."""
+        assert "has_coinvest_signal" in SNAPSHOT_COLUMNS
+        assert "has_inst_delta" in SNAPSHOT_COLUMNS
+        assert "has_catalyst_signal" in SNAPSHOT_COLUMNS

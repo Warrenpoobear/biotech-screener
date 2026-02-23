@@ -594,6 +594,52 @@ def _z_score_by_group(rows: List[Dict[str, Any]], value_col: str, group_col: str
                 rows[i][out_col] = ""
 
 
+def _z_score_sparse(
+    rows: List[Dict[str, Any]],
+    value_col: str,
+    out_col: str,
+    flag_col: str = "",
+    sparse_mode: str = "legacy",
+) -> None:
+    """Cross-sectional z-score (ddof=0) with sparse signal handling.
+
+    When sparse_mode="exclude_missing" and flag_col is provided, only rows
+    where row[flag_col] == "True" contribute to mean/std.  Rows without signal
+    get z=0 (neutral).  In "legacy" mode, all rows contribute (missing → 0).
+    """
+    pairs: List[Tuple[int, float, bool]] = []
+    for i, r in enumerate(rows):
+        v = _safe_float(r.get(value_col))
+        has_signal = (r.get(flag_col, "") == "True") if flag_col else True
+        if v is not None:
+            pairs.append((i, v, has_signal))
+        else:
+            pairs.append((i, 0.0, False))
+
+    if not pairs:
+        return
+
+    if sparse_mode == "exclude_missing":
+        real = [v for _, v, has in pairs if has]
+    else:
+        real = [v for _, v, _ in pairs]
+
+    if real:
+        mu = sum(real) / len(real)
+        var = sum((x - mu) ** 2 for x in real) / len(real)
+        std = var ** 0.5
+    else:
+        mu, std = 0.0, 0.0
+
+    for idx, val, has in pairs:
+        if sparse_mode == "exclude_missing" and not has:
+            rows[idx][out_col] = 0.0
+        elif std > 0:
+            rows[idx][out_col] = round((val - mu) / std, 4)
+        else:
+            rows[idx][out_col] = 0.0
+
+
 def _winsorize(values: List[float], lower_pct: float = 5.0, upper_pct: float = 95.0) -> Tuple[float, float]:
     """Return (p_lower, p_upper) cutoff values for winsorization."""
     if not values:
@@ -854,6 +900,13 @@ def run_screen_for_date(
             "est_cost_bps": "",
             "top_3_drivers": "",
             "cat_priority": "",
+            # Signal presence flags
+            "has_coinvest_signal": str(bool(coinvest.get(ticker, {}).get("tier1_count") is not None
+                                            and ticker in coinvest)),
+            "has_inst_delta": "False",  # bundles don't carry institutional delta
+            "has_catalyst_signal": str(
+                catalyst.get(ticker, {}).get("catalyst_mode", "missing") != "missing"
+            ),
             # Institutional delta (not available from bundles)
             "inst_delta_z": "0",
             "inst_delta_net": "0",
@@ -921,13 +974,11 @@ def run_screen_for_date(
         r.pop("_tier_group", None)
 
     # --- Coinvest score z (cross-sectional z of sponsor_tier1_count, ddof=0) ---
-    _z_score_by_group(rows, "sponsor_tier1_count", "_const", "coinvest_score_z")
-    # _const doesn't exist, so everyone goes to "unknown" → single group. Fix:
-    for r in rows:
-        r["_all"] = "all"
-    _z_score_by_group(rows, "sponsor_tier1_count", "_all", "coinvest_score_z")
-    for r in rows:
-        r.pop("_all", None)
+    _sparse_mode = getattr(ruleset, "sparse_signal_mode", "legacy")
+    _coinvest_z_scored = _z_score_sparse(
+        rows, "sponsor_tier1_count", "coinvest_score_z",
+        flag_col="has_coinvest_signal", sparse_mode=_sparse_mode,
+    )
 
     # --- Alpha cohort scoring ---
     try:
@@ -1034,6 +1085,7 @@ SNAPSHOT_COLUMNS = [
     "coinvest_score_z", "coinvest_tag", "coinvest_conviction", "coinvest_tier1_conviction",
     "coinvest_max_position_pct", "coinvest_filing_age_days", "coinvest_recency_state",
     "inst_delta_z", "inst_delta_net", "inst_delta_new", "inst_delta_exit",
+    "has_coinvest_signal", "has_inst_delta", "has_catalyst_signal",
     "catalyst_strength", "catalyst_decay_w", "runway_bucket",
     "cost_bucket", "est_cost_bps", "cost_mult", "cost_haircut_applied",
     "dd_rel_margin_rescued",
