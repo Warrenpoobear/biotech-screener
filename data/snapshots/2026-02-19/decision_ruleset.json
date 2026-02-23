@@ -202,11 +202,14 @@
   "enable_coinvest_sort_signal": true,
   "enable_cost_haircut": true,
   "enable_dd_rel_margin_rescue": false,
+  "enable_institutional_sort_signal": false,
   "enable_missingness_size_penalty": false,
   "enable_missingness_sort_penalty": true,
   "enable_mom_state_tilt": false,
   "far_window_days": 0,
   "far_window_decay_mult": 0.15,
+  "institutional_positive_only": true,
+  "institutional_sort_weight": 0.3,
   "mom_state_tilt_mults": [
     [
       "tailwind",

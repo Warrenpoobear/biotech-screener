@@ -36,7 +36,7 @@ import json
 import re
 import sys
 import time
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
@@ -93,6 +93,22 @@ def _sha256_file(path: Path) -> str:
 # Bundle building
 # ---------------------------------------------------------------------------
 
+def _find_latest_cache_date(cache_root: Path, as_of_date: str) -> Optional[str]:
+    """Find the latest 13F cache date <= as_of_date (for carry-forward).
+
+    Returns the date string, or None if no valid cache exists.
+    """
+    if not cache_root.exists():
+        return None
+    candidates = []
+    for d in cache_root.iterdir():
+        if d.is_dir() and _DATE_DIR_RE.match(d.name) and d.name <= as_of_date:
+            candidates.append(d.name)
+    if not candidates:
+        return None
+    return max(candidates)
+
+
 def build_single_bundle(
     as_of_date: str,
     bundle_root: Path,
@@ -104,6 +120,7 @@ def build_single_bundle(
     skip_coinvest: bool = False,
     ledger_config: Optional[Any] = None,
     pit_mode: str = "strict",
+    coinvest_carry_forward: str = "off",
 ) -> dict:
     """Build one date's PIT feature bundle.
 
@@ -119,6 +136,8 @@ def build_single_bundle(
         ledger_config: LedgerConfig for catalyst builder.
         pit_mode: "strict" or "degrade". In strict mode, missing components
             are recorded as errors. In degrade, they are skipped gracefully.
+        coinvest_carry_forward: "off" (exact date only) or "last_available"
+            (use latest 13F cache date <= as_of_date).
 
     Returns:
         Manifest dict.
@@ -128,7 +147,7 @@ def build_single_bundle(
     bundle_dir.mkdir(parents=True, exist_ok=True)
 
     components: Dict[str, dict] = {}
-    pit_violations: Dict[str, int] = {}
+    pit_quality: Dict[str, int] = {}
 
     # 1. Clinical features
     if not skip_clinical:
@@ -167,7 +186,7 @@ def build_single_bundle(
                         trial_data, as_of_date, pit_mode,
                         max_examples=999_999,
                     )
-                    pit_violations["ctgov_first_posted"] = vr["first_posted_violations"]
+                    pit_quality["ctgov_trials_filtered_future_posted"] = vr["first_posted_violations"]
                 except Exception:
                     pass
             else:
@@ -203,8 +222,8 @@ def build_single_bundle(
             try:
                 from scripts.validate_pit_inputs import validate_catalyst_pit
                 vr = validate_catalyst_pit(cat, as_of_date, pit_mode)
-                pit_violations["catalyst_missing_disclosed_at"] = vr["missing_disclosed_at"]
-                pit_violations["catalyst_future_disclosed_at"] = vr["future_disclosed_at"]
+                pit_quality["catalyst_tickers_missing_disclosed_at"] = vr["missing_disclosed_at"]
+                pit_quality["catalyst_tickers_future_disclosed_at"] = vr["future_disclosed_at"]
             except Exception:
                 pass
         except Exception as e:
@@ -224,7 +243,16 @@ def build_single_bundle(
             if cache_13f_root is None:
                 cache_13f_root = _PROJECT_ROOT / "data" / "caches" / "sec_13f" / "PIT"
 
+            # Resolve cache date: exact match or carry-forward
+            coinvest_source_date = as_of_date
             cache_date_dir = cache_13f_root / as_of_date
+            if not cache_date_dir.exists() and coinvest_carry_forward == "last_available":
+                carried = _find_latest_cache_date(cache_13f_root, as_of_date)
+                if carried:
+                    coinvest_source_date = carried
+                    cache_date_dir = cache_13f_root / carried
+                    print(f"  coinvest carry-forward: {carried} (target: {as_of_date})", file=sys.stderr)
+
             if cache_date_dir.exists():
                 # Build CIK -> tier/name maps from elite_managers
                 manager_tiers: Dict[str, int] = {}
@@ -239,7 +267,7 @@ def build_single_bundle(
                 )
 
                 coinv = build_coinvest_features(
-                    as_of_date=as_of_date,
+                    as_of_date=coinvest_source_date,
                     cache_root=cache_13f_root,
                     universe_tickers=universe_tickers,
                     manager_tiers=manager_tiers,
@@ -252,12 +280,15 @@ def build_single_bundle(
                     with open(out_path, "w") as f:
                         json.dump(coinv, f, indent=2)
 
-                    components["coinvest_features"] = {
+                    comp_meta = {
                         "file": "coinvest_features.json",
                         "schema_version": coinv["schema_version"],
                         "sha256": _sha256_file(out_path),
                         "coverage_pct": coinv["signal_coverage_pct"],
                     }
+                    if coinvest_source_date != as_of_date:
+                        comp_meta["source_date"] = coinvest_source_date
+                    components["coinvest_features"] = comp_meta
                 else:
                     print(f"  SKIP coinvest: build returned None", file=sys.stderr)
             else:
@@ -275,7 +306,7 @@ def build_single_bundle(
         "bundle_root": str(bundle_root),
         "pit_mode": pit_mode,
         "components": components,
-        "pit_violations": pit_violations,
+        "pit_quality": pit_quality,
         "universe_size": len(universe_tickers),
         "build_duration_seconds": round(elapsed, 2),
     }
@@ -331,22 +362,59 @@ def validate_bundle(bundle_dir: Path) -> Tuple[bool, str]:
     return True, "OK"
 
 
+def _is_month_end(d: date) -> bool:
+    """Return True if d is the last day of its month."""
+    if d.month == 12:
+        return d.day == 31
+    return d == date(d.year, d.month + 1, 1) - timedelta(days=1)
+
+
+def _is_quarter_end(d: date) -> bool:
+    """Return True if d is a quarter-end (Mar 31, Jun 30, Sep 30, Dec 31)."""
+    return (d.month, d.day) in ((3, 31), (6, 30), (9, 30), (12, 31))
+
+
+def filter_dates_by_cadence(date_strs: List[str], cadence: str) -> List[str]:
+    """Filter date strings to those matching the given cadence boundary."""
+    if cadence == "quarterly":
+        return [d for d in date_strs if _is_quarter_end(date.fromisoformat(d))]
+    elif cadence == "monthly":
+        return [d for d in date_strs if _is_month_end(date.fromisoformat(d))]
+    return date_strs
+
+
 def discover_buildable_dates(
     cache_13f_root: Optional[Path] = None,
+    ctgov_cache_root: Optional[Path] = None,
 ) -> List[str]:
     """Find dates with at least one cache available.
 
     Scans 13F cache dirs for date-named subdirectories.
+    When ctgov_cache_root is provided, also discovers dates from
+    trial_records_YYYY-MM-DD.json filenames.
+
+    Returns sorted, deduplicated list of date strings.
     """
     if cache_13f_root is None:
         cache_13f_root = _PROJECT_ROOT / "data" / "caches" / "sec_13f" / "PIT"
 
-    dates: List[str] = []
+    dates_set: Set[str] = set()
     if cache_13f_root.exists():
-        for d in sorted(cache_13f_root.iterdir()):
+        for d in cache_13f_root.iterdir():
             if d.is_dir() and _DATE_DIR_RE.match(d.name):
-                dates.append(d.name)
-    return dates
+                dates_set.add(d.name)
+
+    # Also discover from CTgov PIT caches
+    if ctgov_cache_root is not None and ctgov_cache_root.exists():
+        for f in ctgov_cache_root.iterdir():
+            if f.is_file() and f.name.startswith("trial_records_") and f.name.endswith(".json"):
+                # Extract date from trial_records_YYYY-MM-DD.json
+                stem = f.stem  # trial_records_YYYY-MM-DD
+                parts = stem.split("_", 2)
+                if len(parts) == 3 and _DATE_DIR_RE.match(parts[2]):
+                    dates_set.add(parts[2])
+
+    return sorted(dates_set)
 
 
 def build_batch_bundles(
@@ -394,6 +462,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="Build bundles for all discoverable dates",
     )
     parser.add_argument(
+        "--cadence", choices=["quarterly", "monthly"], default="quarterly",
+        help="Date cadence for batch mode (default: quarterly). "
+             "Filters discovered dates to cadence boundaries.",
+    )
+    parser.add_argument(
         "--bundle-root", default="data/bundles/PIT",
         help="Bundle output root directory",
     )
@@ -429,6 +502,20 @@ def main(argv: Optional[List[str]] = None) -> int:
         "--pit-mode", default="strict",
         choices=["strict", "degrade"],
         help="PIT mode: strict (default) or degrade",
+    )
+    parser.add_argument(
+        "--coinvest-carry-forward",
+        dest="coinvest_carry_forward",
+        default="off",
+        choices=["off", "last_available"],
+        help="Coinvest 13F carry-forward: off (exact date only) or last_available",
+    )
+    parser.add_argument(
+        "--date-grid-from-ctgov-cache",
+        dest="ctgov_cache_root",
+        default=None,
+        help="Discover additional dates from CTgov PIT cache directory "
+             "(e.g. cache/ctgov). Scans trial_records_*.json filenames.",
     )
     args = parser.parse_args(argv)
 
@@ -474,12 +561,24 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     print(f"Universe: {len(universe)} tickers")
 
+    # Resolve CTgov cache root
+    ctgov_root = None
+    if args.ctgov_cache_root:
+        ctgov_root = Path(args.ctgov_cache_root)
+        if not ctgov_root.is_absolute():
+            ctgov_root = _PROJECT_ROOT / ctgov_root
+
     if args.batch:
-        dates = discover_buildable_dates(cache_root)
+        dates = discover_buildable_dates(cache_root, ctgov_cache_root=ctgov_root)
         if not dates:
             print("No buildable dates found", file=sys.stderr)
             return 1
-        print(f"Discovered {len(dates)} dates")
+        if args.cadence != "quarterly":
+            dates = filter_dates_by_cadence(dates, args.cadence)
+            if not dates:
+                print(f"No {args.cadence} dates found after filtering", file=sys.stderr)
+                return 1
+        print(f"Discovered {len(dates)} dates (cadence={args.cadence})")
         results = build_batch_bundles(
             dates, bundle_root, universe,
             trial_records_path=trial_path,
@@ -488,6 +587,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             skip_catalyst=args.skip_catalyst,
             skip_coinvest=args.skip_coinvest,
             pit_mode=args.pit_mode,
+            coinvest_carry_forward=args.coinvest_carry_forward,
         )
         print(f"\nBuilt {len(results)} bundles")
         return 0
@@ -503,6 +603,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             skip_catalyst=args.skip_catalyst,
             skip_coinvest=args.skip_coinvest,
             pit_mode=args.pit_mode,
+            coinvest_carry_forward=args.coinvest_carry_forward,
         )
         n = len(manifest["components"])
         print(f"\nBundle: {n} components, "

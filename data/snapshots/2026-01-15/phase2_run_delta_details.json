@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-20T21:16:34Z",
+  "generated_at": "2026-02-22T20:06:58Z",
   "current": {
     "date": "2026-01-15",
     "ruleset_id": "8f99d47e",
@@ -10,9 +10,9 @@
   "tier_distribution": {
     "current": {
       "A": 25,
-      "B": 47,
-      "C": 62,
-      "D": 47
+      "B": 46,
+      "C": 61,
+      "D": 49
     }
   },
   "tier_in_portfolio": {
@@ -25,9 +25,9 @@
   },
   "sizing": {
     "current": {
-      "L": 17,
+      "L": 16,
       "M": 2,
-      "S": 0,
+      "S": 1,
       "XS": 1
     }
   },
@@ -86,12 +86,12 @@
         "tier_dev": "A"
       },
       {
-        "ticker": "ANRO",
+        "ticker": "NAMS",
         "catalyst_days": 17,
         "tier_dev": "B"
       },
       {
-        "ticker": "NAMS",
+        "ticker": "XENE",
         "catalyst_days": 17,
         "tier_dev": "B"
       }

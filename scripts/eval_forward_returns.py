@@ -33,6 +33,26 @@ DEFAULT_TOP_K = 20
 DEFAULT_COST_BPS = 30
 DEFAULT_MIN_PRICE_COVERAGE = 0.50
 
+# Map component score columns to their signal-presence flag columns.
+# When the flag is "False" or absent, the ticker is excluded from component IC.
+SIGNAL_FLAG_MAP = {
+    "coinvest_score_z": "has_coinvest_signal",
+    "inst_delta_z": "has_inst_delta",
+    "catalyst_decay_w": "has_catalyst_signal",
+}
+
+
+# ---------------------------------------------------------------------------
+# Logistic decay (copied from decision_engine.py:435-440 for eval-time use)
+# ---------------------------------------------------------------------------
+
+def _logistic_decay(days: float, midpoint: float = 150.0, scale: float = 30.0) -> float:
+    """Continuous proximity weight: 1.0 (imminent) -> 0.0 (distant). Midpoint -> 0.5."""
+    if days is None or days < 0:
+        return 0.0
+    from math import exp
+    return 1.0 / (1.0 + exp((days - midpoint) / max(scale, 1e-6)))
+
 
 # ---------------------------------------------------------------------------
 # Price loader  (lightweight, no pandas dependency)
@@ -645,6 +665,80 @@ def check_pit_metadata(snapshot_dir: Path, snap_date: str) -> Tuple[bool, str]:
 
 
 # ---------------------------------------------------------------------------
+# Coinvest eval-mode rescoring
+# ---------------------------------------------------------------------------
+
+def rescore_rankings(
+    rankings: List[Dict[str, str]],
+    coinvest_eval_mode: str,
+) -> List[Dict[str, str]]:
+    """Re-sort rankings with modified coinvest signal.
+
+    Reconstructs the tiebreaker sort key from CSV columns and re-assigns
+    actionable_rank.  Mirrors decision_engine.py sort key assembly
+    (active ruleset weights: clinical=1.0, coinvest=0.05, inst=0.3).
+
+    Args:
+        rankings: list of ranking dicts (from rankings.csv).
+        coinvest_eval_mode: "off" (zero coinvest_adj), "contra" (flip sign).
+
+    Returns:
+        rankings list re-sorted with updated actionable_rank.
+    """
+    stage_mults = {"late": 1.0, "mid": 0.5, "early": 0.0}
+
+    def _sf(val: str) -> float:
+        if not val:
+            return 0.0
+        try:
+            return float(val)
+        except (ValueError, TypeError):
+            return 0.0
+
+    for r in rankings:
+        # Negate: higher pct → more negative → sorts first (ascending)
+        # Matches decision_engine.py:1171: anchor = -(tiebreaker_pct)
+        anchor = -_sf(r.get("alpha_cohort_pct") or r.get("composite_pct") or "0.5")
+        cz_tier = _sf(r.get("clinical_score_z_tier", ""))
+        cz_coinvest = _sf(r.get("coinvest_score_z", ""))
+        iz = _sf(r.get("inst_delta_z", ""))
+        stage = r.get("stage_bucket", "")
+        eligible = r.get("eligible", "").lower() in ("true", "1")
+
+        # Clinical: positive-only, clamped ±2, weight=1.0, stage_mult
+        stage_mult = stage_mults.get(stage, 0.0)
+        clin_adj = 1.0 * min(2.0, max(0.0, cz_tier)) * stage_mult
+
+        # Coinvest: mode-dependent
+        if coinvest_eval_mode == "off":
+            coinvest_adj = 0.0
+        elif coinvest_eval_mode == "contra":
+            cz_contra = min(2.0, max(0.0, -cz_coinvest))
+            coinvest_adj = 0.05 * cz_contra
+        else:
+            coinvest_adj = 0.05 * min(2.0, max(0.0, cz_coinvest))
+
+        # Inst delta: positive-only, weight=0.3
+        inst_adj = 0.3 * min(2.0, max(0.0, iz))
+
+        effective = anchor - clin_adj - coinvest_adj - inst_adj
+        r["_rescore_key"] = (not eligible, effective, r.get("ticker", ""))
+
+    rankings.sort(key=lambda r: r["_rescore_key"])
+
+    rank_counter = 0
+    for r in rankings:
+        if r.get("eligible", "").lower() in ("true", "1"):
+            rank_counter += 1
+            r["actionable_rank"] = str(rank_counter)
+        else:
+            r["actionable_rank"] = ""
+        del r["_rescore_key"]
+
+    return rankings
+
+
+# ---------------------------------------------------------------------------
 # Core evaluation
 # ---------------------------------------------------------------------------
 
@@ -733,6 +827,8 @@ def evaluate(
     rebalance_buffer_ranks: int = 0,
     turnover_cap: float = 0.0,
     top_quantile: float = 0.0,
+    coinvest_eval_mode: str = "default",
+    catalyst_eval_mode: str = "default",
 ) -> Tuple[EvalSummary, List[DateResult], List[Dict[str, str]]]:
     """Run the full walk-forward evaluation.
 
@@ -742,6 +838,7 @@ def evaluate(
             "prev_trading_day" (last date <= snap_date).
         benchmark: "XBI", "SPY", or "none" — compute excess returns.
         long_short_deciles: compute top-decile minus bottom-decile spread.
+        catalyst_eval_mode: "default" (use CSV values) or "logistic" (recompute from catalyst_days).
         split_mode: "none", "fixed", or "walk_forward".
         train_end: last date in training set (fixed split).
         test_start: first date in test set (fixed split).
@@ -796,10 +893,12 @@ def evaluate(
 
     # Component eval accumulators
     COMPONENT_COLS = [
-        "clinical_score_z_tier", "coinvest_score_z", "catalyst_strength",
+        "clinical_score_z_tier", "coinvest_score_z", "catalyst_decay_w",
         "clinical_alpha_z", "inst_delta_z", "alpha_cohort_raw",
+        "de_alpha_60d",
     ]
     component_results: List[Dict[str, Any]] = []  # per-date per-horizon per-component
+    coinvest_audit_rows: List[Dict[str, Any]] = []  # per-date ticker-level audit
 
     n_evaluated = 0
 
@@ -842,6 +941,9 @@ def evaluate(
                     date_results.append(dr)
                 skips.append({"date": snap_date, "reason": "EMPTY_RANKINGS"})
                 continue
+            # Re-sort with modified coinvest signal if requested
+            if coinvest_eval_mode != "default":
+                rankings = rescore_rankings(rankings, coinvest_eval_mode)
             # Sort by actionable_rank ascending (per-row safe parse)
             def _safe_rank(r):
                 try:
@@ -886,6 +988,10 @@ def evaluate(
 
         # Build component score lookups (for --component-eval)
         comp_by_ticker: Dict[str, Dict[str, float]] = {}
+        # Signal flags per ticker (for sparse signal filtering)
+        signal_flags_by_ticker: Dict[str, Dict[str, str]] = {}
+        # Coinvest staleness diagnostic
+        _coinvest_age_vals: List[float] = []
         if component_eval and not use_positions:
             for r in rankings:
                 t = r.get("ticker", "")
@@ -899,8 +1005,34 @@ def evaluate(
                             scores[col] = float(v)
                         except (ValueError, TypeError):
                             pass
+                # Logistic catalyst override: recompute catalyst_decay_w from catalyst_days
+                if catalyst_eval_mode == "logistic":
+                    days_str = r.get("catalyst_days", "")
+                    if days_str and str(days_str).strip():
+                        try:
+                            days_val = float(days_str)
+                            scores["catalyst_decay_w"] = round(
+                                _logistic_decay(days_val), 4
+                            )
+                        except (ValueError, TypeError):
+                            pass
                 if scores:
                     comp_by_ticker[t] = scores
+                # Capture signal flags
+                flags: Dict[str, str] = {}
+                for flag_col in SIGNAL_FLAG_MAP.values():
+                    fv = r.get(flag_col, "")
+                    if fv:
+                        flags[flag_col] = fv
+                if flags:
+                    signal_flags_by_ticker[t] = flags
+                # Coinvest staleness
+                _age_str = r.get("coinvest_filing_age_days", "")
+                if _age_str and str(_age_str).strip():
+                    try:
+                        _coinvest_age_vals.append(float(_age_str))
+                    except (ValueError, TypeError):
+                        pass
 
         date_evaluated = False
         for h in horizons:
@@ -1098,14 +1230,42 @@ def evaluate(
                 for col in COMPONENT_COLS:
                     comp_signal = []
                     comp_returns = []
+                    _flag_col = SIGNAL_FLAG_MAP.get(col)
+                    _n_with_signal = 0
                     for t in signal_tickers:
                         if t in comp_by_ticker and col in comp_by_ticker[t]:
+                            # Filter by signal flag when available
+                            if _flag_col:
+                                _fv = signal_flags_by_ticker.get(t, {}).get(_flag_col, "")
+                                if _fv == "True":
+                                    _n_with_signal += 1
+                                else:
+                                    continue  # skip tickers without real signal
                             comp_signal.append(comp_by_ticker[t][col])
                             comp_returns.append(fwd_rets[t])
+
+                    # Dispersion diagnostics
+                    comp_stdev = None
+                    comp_pct_ties = None
+                    flat_signal = True  # assume flat until proven otherwise
+                    n_sig = len(comp_signal)
+                    if n_sig >= 2:
+                        comp_stdev = statistics.stdev(comp_signal)
+                        # Count ties: values that appear more than once
+                        from collections import Counter as _Counter
+                        val_counts = _Counter(comp_signal)
+                        n_tied = sum(c for c in val_counts.values() if c > 1)
+                        comp_pct_ties = n_tied / n_sig
+                        flat_signal = comp_stdev < 1e-9 or comp_pct_ties > 0.95
+
                     comp_ic = spearman_ic(comp_signal, comp_returns)
-                    # Component L/S: top vs bottom decile by this component
+
+                    # Component L/S: only compute if signal has real dispersion
                     comp_ls = None
-                    if len(comp_signal) >= 10:
+                    comp_top_decile_ret = None
+                    comp_bot_decile_ret = None
+                    comp_mono_slope = None
+                    if n_sig >= 10 and not flat_signal:
                         # Sort tickers by component score descending
                         comp_sorted = sorted(
                             [(t, comp_by_ticker[t][col]) for t in signal_tickers
@@ -1115,16 +1275,64 @@ def evaluate(
                         d_size = max(1, len(comp_sorted) // 10)
                         top_comp = [t for t, _ in comp_sorted[:d_size]]
                         bot_comp = [t for t, _ in comp_sorted[-d_size:]]
-                        top_ret = statistics.mean(fwd_rets[t] for t in top_comp if t in fwd_rets) if top_comp else None
-                        bot_ret = statistics.mean(fwd_rets[t] for t in bot_comp if t in fwd_rets) if bot_comp else None
+                        top_ret = statistics.mean(fwd_rets[t] for t in top_comp) if top_comp else None
+                        bot_ret = statistics.mean(fwd_rets[t] for t in bot_comp) if bot_comp else None
                         if top_ret is not None and bot_ret is not None:
                             comp_ls = top_ret - bot_ret
-                    component_results.append({
+                        comp_top_decile_ret = top_ret
+                        comp_bot_decile_ret = bot_ret
+                        # Monotonic slope: split into 10 deciles, regress mean return vs decile index
+                        n_comp = len(comp_sorted)
+                        comp_d_size = n_comp // 10
+                        comp_remainder = n_comp % 10
+                        decile_means = []
+                        pos = 0
+                        for d_idx in range(10):
+                            bucket_sz = comp_d_size + (1 if d_idx < comp_remainder else 0)
+                            bucket_tickers = [t for t, _ in comp_sorted[pos:pos + bucket_sz]]
+                            pos += bucket_sz
+                            bucket_rets = [fwd_rets[t] for t in bucket_tickers if t in fwd_rets]
+                            if bucket_rets:
+                                decile_means.append(statistics.mean(bucket_rets))
+                        if len(decile_means) >= 3:
+                            # Signal proxy: decile 1 (best) → 10, decile 10 → 1
+                            xs = [float(len(decile_means) - i) for i in range(len(decile_means))]
+                            comp_mono_slope = spearman_ic(xs, decile_means)
+                    _comp_row = {
                         "date": snap_date, "horizon": h, "component": col,
                         "ic": _round_opt(comp_ic, 4),
                         "ls_return": _round_opt(comp_ls, 6),
-                        "n_signal": len(comp_signal),
-                    })
+                        "n_signal": n_sig,
+                        "n_with_signal": _n_with_signal if _flag_col else n_sig,
+                        "mean_return_top_decile": _round_opt(comp_top_decile_ret, 6),
+                        "mean_return_bottom_decile": _round_opt(comp_bot_decile_ret, 6),
+                        "monotonic_slope": _round_opt(comp_mono_slope, 4),
+                        "signal_stdev": _round_opt(comp_stdev, 4),
+                        "pct_ties": _round_opt(comp_pct_ties, 4),
+                        "flat_signal": flat_signal,
+                    }
+                    # Coinvest staleness diagnostic
+                    if col == "coinvest_score_z" and _coinvest_age_vals:
+                        _comp_row["coinvest_staleness_days"] = _round_opt(
+                            statistics.mean(_coinvest_age_vals), 1
+                        )
+                    component_results.append(_comp_row)
+
+            # Coinvest audit: ticker-level view of top-20 for coinvest forensics
+            if component_eval and not use_positions:
+                audit_k = min(20, len(eval_tickers))
+                for idx_a, t_a in enumerate(eval_tickers[:audit_k]):
+                    audit_row: Dict[str, Any] = {
+                        "date": snap_date,
+                        "horizon": h,
+                        "actionable_rank": idx_a + 1,
+                        "ticker": t_a,
+                        "coinvest_score_z": comp_by_ticker.get(t_a, {}).get("coinvest_score_z"),
+                        "clinical_score_z_tier": comp_by_ticker.get(t_a, {}).get("clinical_score_z_tier"),
+                        "alpha_cohort_raw": comp_by_ticker.get(t_a, {}).get("alpha_cohort_raw"),
+                        f"fwd_return_{h}d": _round_opt(fwd_rets.get(t_a), 6),
+                    }
+                    coinvest_audit_rows.append(audit_row)
 
             # Split assignment for this date
             s_id, s_train, s_test = split_map.get(snap_date, (0, False, False))
@@ -1195,6 +1403,8 @@ def evaluate(
     # Write component eval outputs if enabled
     if component_eval and component_results and out_dir is not None:
         _write_component_eval(component_results, horizons, out_dir)
+        if coinvest_audit_rows:
+            _write_coinvest_audit(coinvest_audit_rows, horizons, out_dir)
 
     for h in horizons:
         ics = horizon_ics[h]
@@ -1303,9 +1513,13 @@ def _write_component_eval(
     """Write component eval CSV and summary markdown."""
     # by_date CSV
     csv_path = out_dir / "component_eval_by_date.csv"
-    fieldnames = ["date", "horizon", "component", "ic", "ls_return", "n_signal"]
+    fieldnames = ["date", "horizon", "component", "ic", "ls_return", "n_signal",
+                  "n_with_signal",
+                  "mean_return_top_decile", "mean_return_bottom_decile", "monotonic_slope",
+                  "signal_stdev", "pct_ties", "flat_signal",
+                  "coinvest_staleness_days"]
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, restval="")
         writer.writeheader()
         for row in component_results:
             writer.writerow(row)
@@ -1323,8 +1537,10 @@ def _write_component_eval(
         "",
         "Per-component Spearman IC and decile L/S spread.",
         "",
-        "| Horizon | Component | N dates | Mean IC | Median IC | Mean L/S |",
-        "|---------|-----------|---------|---------|-----------|----------|",
+        "| Horizon | Component | N dates | Mean IC | Median IC | Mean L/S "
+        "| Mean Top-D | Mean Bot-D | Mean Slope | Mean Stdev | Mean %Ties | Flat? |",
+        "|---------|-----------|---------|---------|-----------|----------"
+        "|------------|------------|------------|------------|------------|-------|",
     ]
     for h in horizons:
         # Get all unique components for this horizon
@@ -1333,17 +1549,52 @@ def _write_component_eval(
             rows = agg[(h, comp)]
             ics = [r["ic"] for r in rows if r["ic"] is not None]
             ls_rets = [r["ls_return"] for r in rows if r["ls_return"] is not None]
+            top_d = [r["mean_return_top_decile"] for r in rows if r.get("mean_return_top_decile") is not None]
+            bot_d = [r["mean_return_bottom_decile"] for r in rows if r.get("mean_return_bottom_decile") is not None]
+            slopes = [r["monotonic_slope"] for r in rows if r.get("monotonic_slope") is not None]
+            stdevs = [r["signal_stdev"] for r in rows if r.get("signal_stdev") is not None]
+            pct_ties_list = [r["pct_ties"] for r in rows if r.get("pct_ties") is not None]
+            n_flat = sum(1 for r in rows if r.get("flat_signal"))
             mean_ic = statistics.mean(ics) if ics else None
             median_ic = statistics.median(ics) if ics else None
             mean_ls = statistics.mean(ls_rets) if ls_rets else None
+            mean_top_d = statistics.mean(top_d) if top_d else None
+            mean_bot_d = statistics.mean(bot_d) if bot_d else None
+            mean_slope = statistics.mean(slopes) if slopes else None
+            mean_stdev = statistics.mean(stdevs) if stdevs else None
+            mean_pct_ties = statistics.mean(pct_ties_list) if pct_ties_list else None
+            flat_flag = f"{n_flat}/{len(rows)}" if rows else "\u2014"
             lines.append(
                 f"| {h}d | {comp} | {len(ics)} "
                 f"| {_fmt(mean_ic)} | {_fmt(median_ic)} "
-                f"| {_fmt_pct(mean_ls)} |"
+                f"| {_fmt_pct(mean_ls)} "
+                f"| {_fmt_pct(mean_top_d)} | {_fmt_pct(mean_bot_d)} "
+                f"| {_fmt(mean_slope)} "
+                f"| {_fmt(mean_stdev)} | {_fmt_pct(mean_pct_ties)} "
+                f"| {flat_flag} |"
             )
     lines.append("")
     with open(md_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
+
+
+def _write_coinvest_audit(
+    audit_rows: List[Dict[str, Any]],
+    horizons: List[int],
+    out_dir: Path,
+) -> None:
+    """Write coinvest_audit.csv — ticker-level view of top-20 per date."""
+    csv_path = out_dir / "coinvest_audit.csv"
+    # Build fieldnames: fixed cols + per-horizon fwd return cols
+    base_fields = ["date", "horizon", "actionable_rank", "ticker",
+                   "coinvest_score_z", "clinical_score_z_tier", "alpha_cohort_raw"]
+    fwd_fields = [f"fwd_return_{h}d" for h in horizons]
+    fieldnames = base_fields + fwd_fields
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+        writer.writeheader()
+        for row in audit_rows:
+            writer.writerow(row)
 
 
 def _round_opt(v: Optional[float], d: int) -> Optional[float]:
@@ -1803,6 +2054,18 @@ def main() -> None:
         "--top-quantile", type=float, default=0.0,
         help="Use top N%% instead of top-K, 0=use top_k (research-only)",
     )
+    parser.add_argument(
+        "--coinvest-eval-mode",
+        choices=["default", "off", "contra"],
+        default="default",
+        help="Coinvest signal mode: default (as-is), off (zero), contra (flip sign)",
+    )
+    parser.add_argument(
+        "--catalyst-eval-mode",
+        choices=["default", "logistic"],
+        default="default",
+        help="Catalyst decay: default (CSV values) or logistic (recompute from catalyst_days)",
+    )
     args = parser.parse_args()
 
     horizons = [int(h.strip()) for h in args.horizons.split(",")]
@@ -1824,6 +2087,10 @@ def main() -> None:
         print(f"  Turnover cap: {args.turnover_cap:.0%}")
     if args.top_quantile > 0:
         print(f"  Top quantile: {args.top_quantile:.0%}")
+    if args.coinvest_eval_mode != "default":
+        print(f"  Coinvest eval mode: {args.coinvest_eval_mode}")
+    if args.catalyst_eval_mode != "default":
+        print(f"  Catalyst eval mode: {args.catalyst_eval_mode}")
 
     summary, date_results, skips = evaluate(
         snapshot_root=args.snapshot_root,
@@ -1850,6 +2117,8 @@ def main() -> None:
         rebalance_buffer_ranks=args.rebalance_buffer_ranks,
         turnover_cap=args.turnover_cap,
         top_quantile=args.top_quantile,
+        coinvest_eval_mode=args.coinvest_eval_mode,
+        catalyst_eval_mode=args.catalyst_eval_mode,
     )
 
     write_summary_json(summary, args.out_dir)

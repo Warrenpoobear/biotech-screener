@@ -27,7 +27,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict, dataclass, field
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -597,12 +597,64 @@ def check_13f_cache_health(
 # CLI
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Date generation (for batch/cadence mode)
+# ---------------------------------------------------------------------------
+
+def generate_quarter_end_dates(date_from: date, date_to: date) -> list:
+    """Return ascending list of quarter-end dates within [date_from, date_to]."""
+    if date_from > date_to:
+        return []
+    quarter_ends = []
+    qe_specs = [(3, 31), (6, 30), (9, 30), (12, 31)]
+    year = date_from.year
+    while year <= date_to.year:
+        for month, day in qe_specs:
+            d = date(year, month, day)
+            if date_from <= d <= date_to:
+                quarter_ends.append(d)
+        year += 1
+    return quarter_ends
+
+
+def generate_month_end_dates(date_from: date, date_to: date) -> list:
+    """Return ascending list of month-end dates within [date_from, date_to]."""
+    if date_from > date_to:
+        return []
+    dates = []
+    year, month = date_from.year, date_from.month
+    while True:
+        if month == 12:
+            eom = date(year, 12, 31)
+        else:
+            eom = date(year, month + 1, 1) - timedelta(days=1)
+        if eom > date_to:
+            break
+        if eom >= date_from:
+            dates.append(eom)
+        month += 1
+        if month > 12:
+            month = 1
+            year += 1
+    return dates
+
+
+def generate_cadence_dates(date_from: date, date_to: date, cadence: str) -> list:
+    """Generate dates for the given cadence ('quarterly' or 'monthly')."""
+    if cadence == "quarterly":
+        return generate_quarter_end_dates(date_from, date_to)
+    elif cadence == "monthly":
+        return generate_month_end_dates(date_from, date_to)
+    else:
+        raise ValueError(f"Unknown cadence: {cadence!r}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Build PIT-safe 13F cache from SEC EDGAR filings.",
     )
     parser.add_argument(
-        "--as-of-date", required=True,
+        "--as-of-date", default=None,
         help="PIT cutoff date (YYYY-MM-DD). Only filings filed on or before this date are included.",
     )
     parser.add_argument(
@@ -625,24 +677,65 @@ def main():
         "--fetcher-cache-dir", type=Path, default=None,
         help="SEC13FFetcher XML cache directory (default: data/13f_cache)",
     )
-
-    args = parser.parse_args()
-    as_of = date.fromisoformat(args.as_of_date)
-    out_dir = args.out or (REPO_ROOT / "data" / "caches" / "sec_13f" / "PIT" / as_of.isoformat())
-
-    index = warm_13f_cache(
-        as_of_date=as_of,
-        out_dir=out_dir,
-        elite_only=args.elite_only,
-        max_managers=args.max_managers,
-        max_workers=args.max_workers,
-        fetcher_cache_dir=args.fetcher_cache_dir,
+    parser.add_argument(
+        "--cadence", choices=["quarterly", "monthly"], default="quarterly",
+        help="Date cadence for batch mode (default: quarterly)",
+    )
+    parser.add_argument(
+        "--date-from", default=None,
+        help="Start date for batch mode (YYYY-MM-DD)",
+    )
+    parser.add_argument(
+        "--date-to", default=None,
+        help="End date for batch mode (YYYY-MM-DD)",
     )
 
-    ok = index["managers_with_filing"]
-    total = index["total_managers"]
-    print(f"\nDone: {ok}/{total} managers cached → {out_dir}")
-    return 0
+    args = parser.parse_args()
+
+    # Batch mode: --date-from + --date-to generate multiple dates
+    if args.date_from and args.date_to:
+        d_from = date.fromisoformat(args.date_from)
+        d_to = date.fromisoformat(args.date_to)
+        dates = generate_cadence_dates(d_from, d_to, args.cadence)
+        if not dates:
+            print(f"No {args.cadence} dates in [{d_from}, {d_to}]")
+            return 1
+        print(f"Batch: {len(dates)} {args.cadence} dates from {dates[0]} to {dates[-1]}")
+        for as_of in dates:
+            out_dir = args.out or (REPO_ROOT / "data" / "caches" / "sec_13f" / "PIT" / as_of.isoformat())
+            print(f"\n--- {as_of} ---")
+            index = warm_13f_cache(
+                as_of_date=as_of,
+                out_dir=out_dir,
+                elite_only=args.elite_only,
+                max_managers=args.max_managers,
+                max_workers=args.max_workers,
+                fetcher_cache_dir=args.fetcher_cache_dir,
+            )
+            ok = index["managers_with_filing"]
+            total = index["total_managers"]
+            print(f"  {ok}/{total} managers cached → {out_dir}")
+        return 0
+
+    elif args.as_of_date:
+        as_of = date.fromisoformat(args.as_of_date)
+        out_dir = args.out or (REPO_ROOT / "data" / "caches" / "sec_13f" / "PIT" / as_of.isoformat())
+        index = warm_13f_cache(
+            as_of_date=as_of,
+            out_dir=out_dir,
+            elite_only=args.elite_only,
+            max_managers=args.max_managers,
+            max_workers=args.max_workers,
+            fetcher_cache_dir=args.fetcher_cache_dir,
+        )
+        ok = index["managers_with_filing"]
+        total = index["total_managers"]
+        print(f"\nDone: {ok}/{total} managers cached → {out_dir}")
+        return 0
+
+    else:
+        print("ERROR: specify --as-of-date or --date-from + --date-to", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":

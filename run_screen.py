@@ -1358,6 +1358,9 @@ SNAPSHOT_COLUMNS = [
     "inst_delta_net",     # raw net_elite_holders_delta
     "inst_delta_new",     # elite_new_count
     "inst_delta_exit",    # elite_exit_count
+    "has_coinvest_signal",   # True when sponsor_tier1_count is real data
+    "has_inst_delta",        # True when institutional delta is available
+    "has_catalyst_signal",   # True when catalyst_mode != "missing"
     "catalyst_strength",
     "catalyst_decay_w",
     "runway_bucket",
@@ -2722,6 +2725,13 @@ _ALWAYS_NUMERIC_DEFAULTS = {
     "catalyst_decay_w": 0.0,
 }
 
+# Signal presence flags — written as string booleans for CSV compatibility
+_SIGNAL_FLAG_DEFAULTS = {
+    "has_coinvest_signal": "False",
+    "has_inst_delta": "False",
+    "has_catalyst_signal": "False",
+}
+
 
 def _ensure_defaults(csv_rows, defaults=_ALWAYS_NUMERIC_DEFAULTS):
     """Fill missing/empty/NaN values with deterministic defaults.
@@ -2735,6 +2745,9 @@ def _ensure_defaults(csv_rows, defaults=_ALWAYS_NUMERIC_DEFAULTS):
             val = row.get(field)
             if val is None or str(val).strip() == "" or str(val).strip().lower() == "nan":
                 row[field] = default
+        # Signal presence flags (string booleans, never overwrite if already set)
+        for flag, flag_default in _SIGNAL_FLAG_DEFAULTS.items():
+            row.setdefault(flag, flag_default)
 
 
 def save_validation_snapshot(
@@ -3046,6 +3059,8 @@ def save_validation_snapshot(
         )
         row.update(decision)
         row["est_cost_bps"] = est_cost_bps if est_cost_bps is not None else ""
+        # Signal presence flag for catalyst
+        row["has_catalyst_signal"] = str(decision.get("catalyst_mode", "missing") != "missing")
 
         # Persist decision engine INPUT fields for archive self-containment.
         # These de_-prefixed columns capture the raw inputs the engine read,
@@ -3182,21 +3197,33 @@ def save_validation_snapshot(
     # Computed over all eligible tickers (all archetypes).
     # When coinvest_score_mode != "tier1_count", this block is skipped.
     _coinvest_mode = ruleset.coinvest_score_mode if ruleset else "tier1_count"
+    _sparse_mode = ruleset.sparse_signal_mode if ruleset else "legacy"
     if _coinvest_mode == "tier1_count":
-        _cz_pairs = []  # [(index, raw_value)]
+        _cz_pairs = []  # [(index, raw_value, has_signal)]
         for _ci, _cr in enumerate(csv_rows):
             _t1 = _cr.get("sponsor_tier1_count")
             if isinstance(_t1, (int, float)):
-                _cz_pairs.append((_ci, float(_t1)))
+                _cz_pairs.append((_ci, float(_t1), True))
             else:
-                _cz_pairs.append((_ci, 0.0))
+                _cz_pairs.append((_ci, 0.0, False))
+            # Set has_coinvest_signal flag
+            csv_rows[_ci]["has_coinvest_signal"] = str(isinstance(_t1, (int, float)))
         if _cz_pairs:
-            _cz_vals = [v for _, v in _cz_pairs]
-            _cz_mean = sum(_cz_vals) / len(_cz_vals)
-            _cz_var = sum((v - _cz_mean) ** 2 for v in _cz_vals) / len(_cz_vals)
-            _cz_std = _cz_var ** 0.5
-            for _ci, _cv in _cz_pairs:
-                if _cz_std > 0:
+            # Compute mean/std: in exclude_missing mode, only tickers with real data
+            if _sparse_mode == "exclude_missing":
+                _cz_real = [v for _, v, has in _cz_pairs if has]
+            else:
+                _cz_real = [v for _, v, _ in _cz_pairs]
+            if _cz_real:
+                _cz_mean = sum(_cz_real) / len(_cz_real)
+                _cz_var = sum((v - _cz_mean) ** 2 for v in _cz_real) / len(_cz_real)
+                _cz_std = _cz_var ** 0.5
+            else:
+                _cz_mean, _cz_std = 0.0, 0.0
+            for _ci, _cv, _has in _cz_pairs:
+                if _sparse_mode == "exclude_missing" and not _has:
+                    csv_rows[_ci]["coinvest_score_z"] = 0.0
+                elif _cz_std > 0:
                     csv_rows[_ci]["coinvest_score_z"] = round((_cv - _cz_mean) / _cz_std, 4)
                 else:
                     csv_rows[_ci]["coinvest_score_z"] = 0.0
@@ -3225,22 +3252,36 @@ def save_validation_snapshot(
 
     # --- Institutional delta z-score: cross-sectional z of net_elite_holders_delta ---
     if inst_delta:
-        _id_pairs = []
+        _id_pairs = []  # [(index, value, has_signal)]
+        _inst_tickers = inst_delta.get("tickers", {})
         for _di, _dr in enumerate(csv_rows):
             _tk = _dr.get("ticker", "")
-            _tk_delta = inst_delta.get("tickers", {}).get(_tk, {})
+            _tk_delta = _inst_tickers.get(_tk, {})
+            _has_inst = _tk in _inst_tickers
             _net = _tk_delta.get("net_elite_holders_delta", 0)
             csv_rows[_di]["inst_delta_net"] = _net
             csv_rows[_di]["inst_delta_new"] = _tk_delta.get("elite_new_count", 0)
             csv_rows[_di]["inst_delta_exit"] = _tk_delta.get("elite_exit_count", 0)
-            _id_pairs.append((_di, float(_net)))
+            csv_rows[_di]["has_inst_delta"] = str(_has_inst)
+            _id_pairs.append((_di, float(_net), _has_inst))
         # z-score (ddof=0)
-        _id_vals = [v for _, v in _id_pairs]
-        _id_mean = sum(_id_vals) / len(_id_vals)
-        _id_var = sum((v - _id_mean) ** 2 for v in _id_vals) / len(_id_vals)
-        _id_std = _id_var ** 0.5
-        for _di, _dv in _id_pairs:
-            csv_rows[_di]["inst_delta_z"] = round((_dv - _id_mean) / _id_std, 4) if _id_std > 0 else 0.0
+        if _sparse_mode == "exclude_missing":
+            _id_real = [v for _, v, has in _id_pairs if has]
+        else:
+            _id_real = [v for _, v, _ in _id_pairs]
+        if _id_real:
+            _id_mean = sum(_id_real) / len(_id_real)
+            _id_var = sum((v - _id_mean) ** 2 for v in _id_real) / len(_id_real)
+            _id_std = _id_var ** 0.5
+        else:
+            _id_mean, _id_std = 0.0, 0.0
+        for _di, _dv, _has_i in _id_pairs:
+            if _sparse_mode == "exclude_missing" and not _has_i:
+                csv_rows[_di]["inst_delta_z"] = 0.0
+            elif _id_std > 0:
+                csv_rows[_di]["inst_delta_z"] = round((_dv - _id_mean) / _id_std, 4)
+            else:
+                csv_rows[_di]["inst_delta_z"] = 0.0
     else:
         for _dr in csv_rows:
             _dr.setdefault("inst_delta_z", 0.0)

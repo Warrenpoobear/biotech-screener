@@ -61,6 +61,7 @@ class DecisionRuleset:
     catalyst_near_days: int = 90
     catalyst_mid_days: int = 180
     catalyst_time_decay_mode: str = "hard"           # "hard" | "logistic"
+    sparse_signal_mode: str = "legacy"               # "legacy" | "exclude_missing"
     catalyst_logistic_midpoint_days: int = 150        # sigmoid center
     catalyst_logistic_scale_days: float = 30.0        # sigmoid steepness
     sponsor_confirm_threshold: int = 2
@@ -237,6 +238,12 @@ class DecisionRuleset:
             raise ValueError(
                 f"catalyst_logistic_scale_days must be > 0, "
                 f"got {self.catalyst_logistic_scale_days}"
+            )
+        # Validate sparse_signal_mode
+        if self.sparse_signal_mode not in ("legacy", "exclude_missing"):
+            raise ValueError(
+                f"sparse_signal_mode must be 'legacy' or 'exclude_missing', "
+                f"got '{self.sparse_signal_mode}'"
             )
         # Validate catalyst_priority_mode
         if self.catalyst_priority_mode not in ("off", "tiebreaker", "blended"):

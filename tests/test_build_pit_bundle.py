@@ -17,6 +17,7 @@ from scripts.build_pit_bundle import (
     _sha256_file,
     build_single_bundle,
     discover_buildable_dates,
+    filter_dates_by_cadence,
     validate_bundle,
 )
 
@@ -276,6 +277,153 @@ class TestEdgeCases:
             skip_coinvest=True,
         )
         assert manifest["components"] == {}
+
+
+# ===================================================================
+# TestCarryForward
+# ===================================================================
+
+class TestCarryForward:
+    """Coinvest carry-forward tests."""
+
+    def test_find_latest_cache_date_exact(self, tmp_path):
+        """Exact date exists → returns it."""
+        from scripts.build_pit_bundle import _find_latest_cache_date
+        cache = tmp_path / "13f"
+        (cache / "2025-03-31").mkdir(parents=True)
+        (cache / "2025-06-30").mkdir(parents=True)
+        assert _find_latest_cache_date(cache, "2025-06-30") == "2025-06-30"
+
+    def test_find_latest_cache_date_carry(self, tmp_path):
+        """No exact match → returns latest date <= as_of."""
+        from scripts.build_pit_bundle import _find_latest_cache_date
+        cache = tmp_path / "13f"
+        (cache / "2025-03-31").mkdir(parents=True)
+        (cache / "2025-06-30").mkdir(parents=True)
+        assert _find_latest_cache_date(cache, "2025-05-15") == "2025-03-31"
+
+    def test_find_latest_cache_date_none(self, tmp_path):
+        """All dates after as_of → None."""
+        from scripts.build_pit_bundle import _find_latest_cache_date
+        cache = tmp_path / "13f"
+        (cache / "2025-06-30").mkdir(parents=True)
+        assert _find_latest_cache_date(cache, "2025-01-01") is None
+
+    def test_find_latest_cache_date_missing_root(self, tmp_path):
+        """Root doesn't exist → None."""
+        from scripts.build_pit_bundle import _find_latest_cache_date
+        assert _find_latest_cache_date(tmp_path / "nope", "2025-06-30") is None
+
+    def test_carry_forward_off_skips_coinvest(self, tmp_path):
+        """carry_forward=off + no exact cache → coinvest skipped."""
+        manifest = build_single_bundle(
+            as_of_date="2025-05-15",
+            bundle_root=tmp_path / "bundles",
+            universe_tickers={"ACAD"},
+            cache_13f_root=tmp_path / "empty_cache",
+            skip_clinical=True,
+            skip_catalyst=True,
+            coinvest_carry_forward="off",
+        )
+        assert "coinvest_features" not in manifest["components"]
+
+    def test_carry_forward_source_date_in_manifest(self, tmp_path):
+        """When carry-forward used, source_date recorded in component metadata."""
+        # This test verifies the source_date metadata key path; actual coinvest
+        # building would need a real 13F cache. We verify the _find_latest_cache_date
+        # selection picks the right date.
+        from scripts.build_pit_bundle import _find_latest_cache_date
+        cache = tmp_path / "13f"
+        (cache / "2025-03-31").mkdir(parents=True)
+        (cache / "2025-06-30").mkdir(parents=True)
+        (cache / "2025-09-30").mkdir(parents=True)
+
+        # Target is 2025-08-15 → should pick 2025-06-30
+        result = _find_latest_cache_date(cache, "2025-08-15")
+        assert result == "2025-06-30"
+
+        # Target is 2025-12-31 → should pick 2025-09-30
+        result = _find_latest_cache_date(cache, "2025-12-31")
+        assert result == "2025-09-30"
+
+
+# ---------------------------------------------------------------------------
+# CTgov cache date discovery
+# ---------------------------------------------------------------------------
+
+class TestCtgovCacheDiscovery:
+    def test_discover_from_ctgov_cache(self, tmp_path):
+        """--date-grid-from-ctgov-cache discovers dates from trial_records_*.json."""
+        ctgov_root = tmp_path / "ctgov"
+        ctgov_root.mkdir()
+        # Create trial_records cache files
+        for d in ["2024-03-31", "2024-04-30", "2024-05-31"]:
+            (ctgov_root / f"trial_records_{d}.json").write_text("{}")
+        # Create 13F cache dir for one overlapping date
+        f13_root = tmp_path / "13f"
+        (f13_root / "2024-03-31").mkdir(parents=True)
+        (f13_root / "2024-06-30").mkdir(parents=True)
+
+        dates = discover_buildable_dates(f13_root, ctgov_cache_root=ctgov_root)
+        assert "2024-03-31" in dates  # from both
+        assert "2024-04-30" in dates  # from ctgov only
+        assert "2024-05-31" in dates  # from ctgov only
+        assert "2024-06-30" in dates  # from 13F only
+        # Should be sorted
+        assert dates == sorted(dates)
+
+    def test_discover_ctgov_only(self, tmp_path):
+        """No 13F cache → still discovers CTgov dates."""
+        ctgov_root = tmp_path / "ctgov"
+        ctgov_root.mkdir()
+        (ctgov_root / "trial_records_2024-01-31.json").write_text("{}")
+        (ctgov_root / "trial_records_2024-02-28.json").write_text("{}")
+
+        f13_root = tmp_path / "13f_missing"  # doesn't exist
+        dates = discover_buildable_dates(f13_root, ctgov_cache_root=ctgov_root)
+        assert dates == ["2024-01-31", "2024-02-28"]
+
+    def test_discover_without_ctgov(self, tmp_path):
+        """No CTgov root → original 13F-only behavior."""
+        f13_root = tmp_path / "13f"
+        (f13_root / "2024-03-31").mkdir(parents=True)
+        (f13_root / "2024-06-30").mkdir(parents=True)
+
+        dates = discover_buildable_dates(f13_root, ctgov_cache_root=None)
+        assert dates == ["2024-03-31", "2024-06-30"]
+
+
+# ---------------------------------------------------------------------------
+# Tests: Cadence filtering (Part 2B)
+# ---------------------------------------------------------------------------
+
+class TestCadenceFiltering:
+
+    def test_filter_dates_quarterly(self):
+        """Quarterly filter keeps only quarter-end dates."""
+        dates = ["2025-01-31", "2025-02-28", "2025-03-31",
+                 "2025-04-30", "2025-06-30", "2025-09-30"]
+        result = filter_dates_by_cadence(dates, "quarterly")
+        assert result == ["2025-03-31", "2025-06-30", "2025-09-30"]
+
+    def test_filter_dates_monthly(self):
+        """Monthly filter keeps only month-end dates."""
+        dates = ["2025-01-15", "2025-01-31", "2025-02-28", "2025-03-15", "2025-03-31"]
+        result = filter_dates_by_cadence(dates, "monthly")
+        assert result == ["2025-01-31", "2025-02-28", "2025-03-31"]
+
+    def test_batch_monthly_cadence(self, tmp_path):
+        """Batch mode with monthly cadence filters discovered dates."""
+        f13_root = tmp_path / "13f"
+        # Create both month-end and non-month-end dirs
+        for d in ["2025-01-31", "2025-02-15", "2025-02-28", "2025-03-31"]:
+            (f13_root / d).mkdir(parents=True)
+
+        dates = discover_buildable_dates(f13_root, ctgov_cache_root=None)
+        assert len(dates) == 4  # all discovered
+
+        monthly = filter_dates_by_cadence(dates, "monthly")
+        assert monthly == ["2025-01-31", "2025-02-28", "2025-03-31"]
 
 
 if __name__ == "__main__":

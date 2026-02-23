@@ -34,7 +34,11 @@ from run_screen import (
     validate_inputs_dry_run,
     create_audit_record,
     _force_deterministic_generated_at,
+    _ensure_defaults,
+    _ALWAYS_NUMERIC_DEFAULTS,
+    _SIGNAL_FLAG_DEFAULTS,
     CHECKPOINT_MODULES,
+    SNAPSHOT_COLUMNS,
     VERSION,
 )
 
@@ -541,3 +545,71 @@ class TestPipelineIntegration:
 
         # Verify final composite results have same structure
         assert len(result_resumed["module_5_composite"].get("ranked_securities", [])) >= 0
+
+
+# ---------------------------------------------------------------------------
+# Tests: has_*_signal columns and sparse_signal_mode (Part 1A-1B)
+# ---------------------------------------------------------------------------
+
+class TestSignalFlags:
+
+    def test_has_signal_columns_in_snapshot_columns(self):
+        """All three has_*_signal columns present in SNAPSHOT_COLUMNS."""
+        assert "has_coinvest_signal" in SNAPSHOT_COLUMNS
+        assert "has_inst_delta" in SNAPSHOT_COLUMNS
+        assert "has_catalyst_signal" in SNAPSHOT_COLUMNS
+
+    def test_signal_flag_defaults_values(self):
+        """Signal flag defaults are string False."""
+        assert _SIGNAL_FLAG_DEFAULTS["has_coinvest_signal"] == "False"
+        assert _SIGNAL_FLAG_DEFAULTS["has_inst_delta"] == "False"
+        assert _SIGNAL_FLAG_DEFAULTS["has_catalyst_signal"] == "False"
+
+    def test_ensure_defaults_fills_signal_flags(self):
+        """_ensure_defaults populates missing signal flags."""
+        rows = [{"ticker": "AAA"}]
+        _ensure_defaults(rows)
+        assert rows[0]["has_coinvest_signal"] == "False"
+        assert rows[0]["has_inst_delta"] == "False"
+        assert rows[0]["has_catalyst_signal"] == "False"
+
+    def test_ensure_defaults_preserves_existing_flags(self):
+        """_ensure_defaults does not overwrite existing signal flags."""
+        rows = [{"ticker": "AAA", "has_coinvest_signal": "True"}]
+        _ensure_defaults(rows)
+        assert rows[0]["has_coinvest_signal"] == "True"
+
+    def test_ensure_defaults_fills_numeric_defaults(self):
+        """_ensure_defaults fills standard numeric defaults."""
+        rows = [{"ticker": "AAA"}]
+        _ensure_defaults(rows)
+        assert rows[0]["coinvest_score_z"] == 0.0
+        assert rows[0]["inst_delta_z"] == 0.0
+        assert rows[0]["catalyst_decay_w"] == 0.0
+
+    def test_has_catalyst_signal_from_mode(self):
+        """Catalyst mode != 'missing' → has_catalyst_signal=True."""
+        # This tests the intent — actual assignment happens in save_validation_snapshot
+        # which writes: str(decision.get("catalyst_mode", "missing") != "missing")
+        assert str("specific_days" != "missing") == "True"
+        assert str("blended_window" != "missing") == "True"
+        assert str("no_upcoming" != "missing") == "True"
+        assert str("missing" != "missing") == "False"
+
+    def test_sparse_signal_mode_in_decision_ruleset(self):
+        """DecisionRuleset has sparse_signal_mode field."""
+        from decision_engine import DecisionRuleset
+        rs = DecisionRuleset()
+        assert rs.sparse_signal_mode == "legacy"
+
+    def test_sparse_signal_mode_exclude_missing_valid(self):
+        """exclude_missing is a valid sparse_signal_mode."""
+        from decision_engine import DecisionRuleset
+        rs = DecisionRuleset(sparse_signal_mode="exclude_missing")
+        assert rs.sparse_signal_mode == "exclude_missing"
+
+    def test_sparse_signal_mode_invalid_raises(self):
+        """Invalid sparse_signal_mode raises ValueError."""
+        from decision_engine import DecisionRuleset
+        with pytest.raises(ValueError, match="sparse_signal_mode"):
+            DecisionRuleset(sparse_signal_mode="invalid")

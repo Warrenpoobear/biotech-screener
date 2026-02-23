@@ -658,3 +658,52 @@ class TestCheck13FCacheHealth:
         # With default 80% threshold → PASS (index has 100% coverage)
         result = check_13f_cache_health(tmp_path, "2026-02-19", warn_coverage_pct=80.0)
         assert result["status"] == "PASS"
+
+
+# ---------------------------------------------------------------------------
+# Tests: Monthly cadence date generation (Part 2A)
+# ---------------------------------------------------------------------------
+
+from tools.warm_13f_cache import (
+    generate_quarter_end_dates,
+    generate_month_end_dates,
+    generate_cadence_dates,
+)
+
+
+class TestCadenceDateGeneration:
+
+    def test_cadence_monthly_generates_month_ends(self):
+        """Monthly cadence generates correct month-end dates."""
+        dates = generate_month_end_dates(date(2025, 1, 1), date(2025, 6, 30))
+        assert len(dates) == 6
+        assert dates[0] == date(2025, 1, 31)
+        assert dates[1] == date(2025, 2, 28)
+        assert dates[2] == date(2025, 3, 31)
+        assert dates[-1] == date(2025, 6, 30)
+
+    def test_cadence_quarterly_default(self):
+        """Quarterly cadence generates quarter-end dates."""
+        dates = generate_quarter_end_dates(date(2025, 1, 1), date(2025, 12, 31))
+        assert len(dates) == 4
+        assert dates[0] == date(2025, 3, 31)
+        assert dates[1] == date(2025, 6, 30)
+        assert dates[2] == date(2025, 9, 30)
+        assert dates[3] == date(2025, 12, 31)
+
+    def test_generate_cadence_dates_dispatch(self):
+        """generate_cadence_dates dispatches correctly."""
+        q = generate_cadence_dates(date(2025, 1, 1), date(2025, 6, 30), "quarterly")
+        m = generate_cadence_dates(date(2025, 1, 1), date(2025, 6, 30), "monthly")
+        assert len(q) == 2  # Mar 31, Jun 30
+        assert len(m) == 6  # Jan-Jun
+
+    def test_monthly_empty_range(self):
+        """Empty range returns empty list."""
+        dates = generate_month_end_dates(date(2025, 6, 1), date(2025, 5, 1))
+        assert dates == []
+
+    def test_unknown_cadence_raises(self):
+        """Unknown cadence raises ValueError."""
+        with pytest.raises(ValueError):
+            generate_cadence_dates(date(2025, 1, 1), date(2025, 12, 31), "weekly")

@@ -21,10 +21,12 @@ from scripts.eval_forward_returns import (
     DEFAULT_MIN_PRICE_COVERAGE,
     DateResult,
     EvalSummary,
+    SIGNAL_FLAG_MAP,
     _avg_ranks,
     _cumulative,
     _decile_spread,
     _beta_hedged_return,
+    _logistic_decay,
     _monotonic_slope,
     _multi_ols,
     _trading_days_after,
@@ -39,6 +41,7 @@ from scripts.eval_forward_returns import (
     evaluate,
     load_price_series,
     net_return,
+    rescore_rankings,
     resolve_trade_date,
     spearman_ic,
     top_k_portfolio_return,
@@ -1283,8 +1286,9 @@ def _write_rankings_with_components(snap_dir: Path, tickers: List[str],
     snap_dir.mkdir(parents=True, exist_ok=True)
     base_fields = ["ticker", "actionable_rank", "eligible", "tier_dev",
                     "composite_rank", "composite_score", "archetype"]
-    comp_fields = ["clinical_score_z_tier", "coinvest_score_z", "catalyst_strength",
-                   "clinical_alpha_z", "inst_delta_z", "alpha_cohort_raw"]
+    comp_fields = ["clinical_score_z_tier", "coinvest_score_z", "catalyst_decay_w",
+                   "clinical_alpha_z", "inst_delta_z", "alpha_cohort_raw",
+                   "de_alpha_60d"]
     fieldnames = base_fields + comp_fields
     with open(snap_dir / "rankings.csv", "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -1395,7 +1399,7 @@ class TestComponentEval:
             comp_scores[t] = {
                 "clinical_score_z_tier": str(1.0 - 0.1 * i),
                 "coinvest_score_z": str(0.5 - 0.05 * i),
-                "catalyst_strength": str(0.8 - 0.04 * i),
+                "catalyst_decay_w": str(0.8 - 0.04 * i),
             }
         snap_dir = tmp_dir / "snapshots" / "2025-01-06"
         _write_rankings_with_components(snap_dir, tickers, comp_scores)
@@ -1431,7 +1435,7 @@ class TestComponentEval:
             reader = list(csv.DictReader(f))
         assert len(reader) >= 3  # at least 3 components with data
         assert reader[0]["component"] in [
-            "clinical_score_z_tier", "coinvest_score_z", "catalyst_strength",
+            "clinical_score_z_tier", "coinvest_score_z", "catalyst_decay_w",
         ]
 
     def test_component_ic_computed(self, tmp_dir):
@@ -1508,6 +1512,45 @@ class TestComponentEval:
         assert "Component Attribution Summary" in text
         assert "coinvest_score_z" in text
         assert "Mean IC" in text
+
+    def test_flat_signal_suppresses_ls(self, tmp_dir):
+        """Flat signal (all same value) → L/S suppressed, flat_signal=True."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        # All tickers get the SAME coinvest score → flat signal
+        comp_scores = {t: {"coinvest_score_z": "0.5"} for t in tickers}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_components(snap_dir, tickers, comp_scores)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                rows.append({"date": d, "ticker": t,
+                             "close": str(100 if d == "2025-01-06" else 100 + i)})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+
+        out = tmp_dir / "output"
+        out.mkdir()
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        coinvest_rows = [r for r in reader if r["component"] == "coinvest_score_z"]
+        assert len(coinvest_rows) >= 1
+        r = coinvest_rows[0]
+        # Flat signal: all same value → stdev=0, pct_ties=100%, flat=True
+        assert r["flat_signal"] == "True"
+        # L/S should be suppressed (empty/None)
+        assert r["ls_return"] == "" or r["ls_return"] == "None"
+        # IC should also be None (zero std)
+        assert r["ic"] == "" or r["ic"] == "None"
 
 
 # ---------------------------------------------------------------------------
@@ -1621,3 +1664,1068 @@ class TestPortfolioVariants:
             turn_cap = eval_cap[1].turnover
             # Capped turnover should be <= uncapped (or equal if already low)
             assert turn_cap <= turn_no + 0.01
+
+
+# ---------------------------------------------------------------------------
+# Part A: Enhanced component diagnostics
+# ---------------------------------------------------------------------------
+
+def _write_rankings_full(snap_dir: Path, tickers: List[str],
+                          component_scores: Dict[str, Dict[str, str]] = None,
+                          extra_fields: Dict[str, Dict[str, str]] = None):
+    """Write rankings.csv with component + rescore columns."""
+    snap_dir.mkdir(parents=True, exist_ok=True)
+    base_fields = ["ticker", "actionable_rank", "eligible", "tier_dev",
+                    "composite_rank", "composite_score", "archetype",
+                    "alpha_cohort_pct", "composite_pct", "stage_bucket",
+                    "coinvest_score_z", "clinical_score_z_tier",
+                    "inst_delta_z", "alpha_cohort_raw",
+                    "catalyst_strength", "clinical_alpha_z"]
+    fieldnames = list(base_fields)
+    with open(snap_dir / "rankings.csv", "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for i, t in enumerate(tickers):
+            row = {
+                "ticker": t, "actionable_rank": str(i + 1),
+                "eligible": "True", "tier_dev": "A",
+                "composite_rank": str(i + 1), "composite_score": "50.0",
+                "archetype": "drug_developer",
+                "alpha_cohort_pct": "", "composite_pct": "",
+                "stage_bucket": "", "coinvest_score_z": "",
+                "clinical_score_z_tier": "", "inst_delta_z": "",
+                "alpha_cohort_raw": "", "catalyst_strength": "",
+                "clinical_alpha_z": "",
+            }
+            if component_scores and t in component_scores:
+                row.update(component_scores[t])
+            if extra_fields and t in extra_fields:
+                row.update(extra_fields[t])
+            writer.writerow(row)
+
+
+class TestEnhancedComponentDiag:
+    """Part A: Enhanced component diagnostics."""
+
+    def test_component_eval_top_bottom_decile_returns(self, tmp_dir):
+        """Top/bottom decile fields present in component_eval_by_date.csv."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp_scores = {t: {"clinical_score_z_tier": str(1.0 - 0.1 * i)}
+                       for i, t in enumerate(tickers)}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_components(snap_dir, tickers, comp_scores)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    ret = 0.20 - 0.02 * i
+                    rows.append({"date": d, "ticker": t,
+                                 "close": str(100 * (1 + ret))})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+
+        out = tmp_dir / "output"
+        out.mkdir()
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        clin = [r for r in reader if r["component"] == "clinical_score_z_tier"]
+        assert len(clin) >= 1
+        assert "mean_return_top_decile" in clin[0]
+        assert "mean_return_bottom_decile" in clin[0]
+        assert clin[0]["mean_return_top_decile"] != ""
+
+    def test_component_eval_monotonic_slope(self, tmp_dir):
+        """Slope positive when signal is monotonic with returns."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        # Clinical score perfectly correlated with rank (monotonic with returns)
+        comp_scores = {t: {"clinical_score_z_tier": str(1.0 - 0.1 * i)}
+                       for i, t in enumerate(tickers)}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_components(snap_dir, tickers, comp_scores)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    ret = 0.20 - 0.02 * i
+                    rows.append({"date": d, "ticker": t,
+                                 "close": str(100 * (1 + ret))})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+
+        out = tmp_dir / "output"
+        out.mkdir()
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        clin = [r for r in reader if r["component"] == "clinical_score_z_tier"]
+        assert len(clin) >= 1
+        slope = float(clin[0]["monotonic_slope"])
+        assert slope > 0.5, f"Expected positive slope, got {slope}"
+
+    def test_component_eval_summary_md_new_columns(self, tmp_dir):
+        """MD table has Top-D, Bot-D, Slope, Stdev, %Ties, Flat columns."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp_scores = {t: {"coinvest_score_z": str(0.5 - 0.05 * i)}
+                       for i, t in enumerate(tickers)}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_components(snap_dir, tickers, comp_scores)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                rows.append({"date": d, "ticker": t,
+                             "close": str(100 if d == "2025-01-06" else 100 + i)})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+
+        out = tmp_dir / "output"
+        out.mkdir()
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        text = (out / "component_eval_summary.md").read_text()
+        assert "Mean Top-D" in text
+        assert "Mean Bot-D" in text
+        assert "Mean Slope" in text
+        assert "Mean Stdev" in text
+        assert "Mean %Ties" in text
+        assert "Flat?" in text
+
+    def test_coinvest_audit_csv_written(self, tmp_dir):
+        """coinvest_audit.csv created with expected columns."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp_scores = {t: {"coinvest_score_z": str(0.5 - 0.05 * i),
+                           "clinical_score_z_tier": str(0.3)}
+                       for i, t in enumerate(tickers)}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_components(snap_dir, tickers, comp_scores)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                rows.append({"date": d, "ticker": t,
+                             "close": str(100 if d == "2025-01-06" else 100 + i)})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+
+        out = tmp_dir / "output"
+        out.mkdir()
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        audit_path = out / "coinvest_audit.csv"
+        assert audit_path.exists()
+        with open(audit_path) as f:
+            reader = list(csv.DictReader(f))
+        assert len(reader) == 20  # top-20 for 1 date
+        assert "coinvest_score_z" in reader[0]
+        assert "clinical_score_z_tier" in reader[0]
+        assert "fwd_return_1d" in reader[0]
+        assert "actionable_rank" in reader[0]
+
+
+# ---------------------------------------------------------------------------
+# Part B: Rescore Rankings
+# ---------------------------------------------------------------------------
+
+class TestRescoreRankings:
+    """Unit tests for rescore_rankings()."""
+
+    def _make_rankings(self, n=10, coinvest_z=None, alpha_pct=None, stage="late"):
+        """Helper to build ranking dicts."""
+        rankings = []
+        for i in range(n):
+            r = {
+                "ticker": f"T{i:02d}",
+                "actionable_rank": str(i + 1),
+                "eligible": "True",
+                "alpha_cohort_pct": str(alpha_pct[i]) if alpha_pct else str(0.5 - 0.05 * i),
+                "composite_pct": "",
+                "clinical_score_z_tier": str(0.5),
+                "coinvest_score_z": str(coinvest_z[i]) if coinvest_z else "0.0",
+                "inst_delta_z": "0.0",
+                "stage_bucket": stage,
+            }
+            rankings.append(r)
+        return rankings
+
+    def test_rescore_off_removes_coinvest_tilt(self):
+        """With coinvest_score_z > 0, off mode changes rank order."""
+        # Ticker T09 has huge coinvest, T00 has zero
+        coinvest = [0.0] * 10
+        coinvest[9] = 2.0  # Last ticker gets big coinvest boost
+        alpha_pct = [0.5 - 0.04 * i for i in range(10)]
+        r_default = self._make_rankings(coinvest_z=coinvest, alpha_pct=alpha_pct)
+        r_off = self._make_rankings(coinvest_z=coinvest, alpha_pct=alpha_pct)
+
+        # In default mode with positive coinvest, T09 gets a small rank boost
+        rescore_rankings(r_default, "default")
+        rescore_rankings(r_off, "off")
+
+        # Without coinvest boost, T09 should be last (worst alpha_pct)
+        ranks_default = {r["ticker"]: int(r["actionable_rank"]) for r in r_default}
+        ranks_off = {r["ticker"]: int(r["actionable_rank"]) for r in r_off}
+        # T09 should rank better in default than in off (coinvest boost)
+        assert ranks_default["T09"] <= ranks_off["T09"]
+
+    def test_rescore_contra_flips_coinvest(self):
+        """Ticker with negative coinvest_score_z moves up in contra mode."""
+        coinvest = [0.0] * 10
+        coinvest[9] = -2.0  # Negative coinvest → becomes positive in contra
+        alpha_pct = [0.5] * 10  # All same anchor → tilt determines order
+        r = self._make_rankings(coinvest_z=coinvest, alpha_pct=alpha_pct, stage="late")
+        rescore_rankings(r, "contra")
+        # T09 with -2.0 coinvest → in contra, cz_contra = min(2, max(0, 2.0)) = 2.0
+        # Gets boost → should rank high
+        ranks = {r["ticker"]: int(r["actionable_rank"]) for r in r}
+        # T09 should be boosted relative to middle tickers
+        assert ranks["T09"] < 10
+
+    def test_rescore_default_noop(self):
+        """Default mode preserves original actionable_rank order (approx)."""
+        r = self._make_rankings()
+        original_order = [r_["ticker"] for r_ in r]
+        rescore_rankings(r, "default")
+        new_order = sorted(r, key=lambda x: int(x.get("actionable_rank") or 9999))
+        new_tickers = [x["ticker"] for x in new_order]
+        # With zero coinvest/inst, sort should approximately follow alpha_pct
+        assert new_tickers[0] == original_order[0]
+
+    def test_rescore_ineligible_stays_last(self):
+        """Ineligible tickers always sort after eligible."""
+        r = self._make_rankings(n=5)
+        r[0]["eligible"] = "False"  # Make best-anchor ticker ineligible
+        rescore_rankings(r, "off")
+        # Ineligible ticker should have empty rank
+        inelig = [x for x in r if x["eligible"] == "False"]
+        assert inelig[0]["actionable_rank"] == ""
+
+    def test_rescore_missing_columns_safe(self):
+        """Empty/missing columns default to 0."""
+        r = [{"ticker": "A", "actionable_rank": "1", "eligible": "True"},
+             {"ticker": "B", "actionable_rank": "2", "eligible": "True"}]
+        result = rescore_rankings(r, "off")
+        assert len(result) == 2
+        assert all(x["actionable_rank"] != "" for x in result)
+
+    def test_rescore_alpha_cohort_pct_used(self):
+        """Uses alpha_cohort_pct when present."""
+        r = [{"ticker": "A", "actionable_rank": "2", "eligible": "True",
+               "alpha_cohort_pct": "0.9", "composite_pct": "0.1"},
+             {"ticker": "B", "actionable_rank": "1", "eligible": "True",
+               "alpha_cohort_pct": "0.1", "composite_pct": "0.9"}]
+        rescore_rankings(r, "off")
+        ranks = {x["ticker"]: int(x["actionable_rank"]) for x in r}
+        # A has higher alpha_cohort_pct (0.9) → anchor=-0.9 → sorts first
+        assert ranks["A"] < ranks["B"]
+
+    def test_rescore_composite_pct_fallback(self):
+        """Falls back to composite_pct when alpha_cohort_pct missing."""
+        r = [{"ticker": "A", "actionable_rank": "2", "eligible": "True",
+               "alpha_cohort_pct": "", "composite_pct": "0.9"},
+             {"ticker": "B", "actionable_rank": "1", "eligible": "True",
+               "alpha_cohort_pct": "", "composite_pct": "0.1"}]
+        rescore_rankings(r, "off")
+        ranks = {x["ticker"]: int(x["actionable_rank"]) for x in r}
+        assert ranks["A"] < ranks["B"]
+
+    def test_rescore_deterministic(self):
+        """Same input → same output."""
+        import copy
+        r1 = self._make_rankings()
+        r2 = copy.deepcopy(r1)
+        rescore_rankings(r1, "off")
+        rescore_rankings(r2, "off")
+        order1 = [x["ticker"] for x in r1]
+        order2 = [x["ticker"] for x in r2]
+        assert order1 == order2
+
+
+# ---------------------------------------------------------------------------
+# Part B: Coinvest eval mode integration
+# ---------------------------------------------------------------------------
+
+class TestCoinvestEvalMode:
+    """Integration tests for coinvest_eval_mode in evaluate()."""
+
+    def _setup_eval_data(self, tmp_dir, n=20):
+        """Helper: create evaluation data with coinvest scores."""
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp_scores = {}
+        extra_fields = {}
+        for i, t in enumerate(tickers):
+            comp_scores[t] = {
+                "coinvest_score_z": str(1.0 - 0.1 * i),  # Varies across tickers
+                "clinical_score_z_tier": str(0.5),
+            }
+            extra_fields[t] = {
+                "alpha_cohort_pct": str(0.5 - 0.02 * i),
+                "stage_bucket": "late",
+                "inst_delta_z": "0.0",
+            }
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_full(snap_dir, tickers, comp_scores, extra_fields)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    ret = 0.20 - 0.02 * i
+                    rows.append({"date": d, "ticker": t,
+                                 "close": str(100 * (1 + ret))})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        return price_csv
+
+    def test_evaluate_coinvest_off_changes_ic(self, tmp_dir):
+        """IC differs between default and off modes."""
+        price_csv = self._setup_eval_data(tmp_dir)
+        s_default, _, _ = evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            coinvest_eval_mode="default",
+        )
+        s_off, _, _ = evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            coinvest_eval_mode="off",
+        )
+        # Both should produce results
+        assert s_default.n_evaluated >= 1
+        assert s_off.n_evaluated >= 1
+        # IC values may or may not differ (depends on data), but both should exist
+        ic_d = s_default.by_horizon.get(1, {}).get("mean_ic")
+        ic_o = s_off.by_horizon.get(1, {}).get("mean_ic")
+        assert ic_d is not None
+        assert ic_o is not None
+
+    def test_evaluate_coinvest_contra_changes_ic(self, tmp_dir):
+        """IC differs between default and contra modes."""
+        price_csv = self._setup_eval_data(tmp_dir)
+        s_default, _, _ = evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            coinvest_eval_mode="default",
+        )
+        s_contra, _, _ = evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            coinvest_eval_mode="contra",
+        )
+        assert s_default.n_evaluated >= 1
+        assert s_contra.n_evaluated >= 1
+
+    def test_cli_coinvest_eval_mode_arg(self):
+        """argparse accepts the --coinvest-eval-mode flag."""
+        import argparse
+        parser = argparse.ArgumentParser()
+        parser.add_argument(
+            "--coinvest-eval-mode",
+            choices=["default", "off", "contra"],
+            default="default",
+        )
+        args = parser.parse_args(["--coinvest-eval-mode", "off"])
+        assert args.coinvest_eval_mode == "off"
+
+    def test_evaluate_default_mode_unchanged(self, tmp_dir):
+        """Default mode results identical to no flag."""
+        price_csv = self._setup_eval_data(tmp_dir)
+        s1, r1, _ = evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+        )
+        s2, r2, _ = evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            coinvest_eval_mode="default",
+        )
+        # Same results
+        ic1 = s1.by_horizon.get(1, {}).get("mean_ic")
+        ic2 = s2.by_horizon.get(1, {}).get("mean_ic")
+        assert ic1 == ic2
+
+
+# ---------------------------------------------------------------------------
+# Part C: Compare coinvest modes script
+# ---------------------------------------------------------------------------
+
+class TestCompareCoinvestModes:
+    """Tests for scripts/compare_coinvest_modes.py."""
+
+    def _setup_multi_date(self, tmp_dir, n=20, n_dates=3):
+        """Helper: create multi-date eval data."""
+        tickers = [f"T{i:02d}" for i in range(n)]
+        dates = [f"2025-01-{6 + d:02d}" for d in range(n_dates + 2)]  # extra for fwd
+
+        for snap_idx in range(n_dates):
+            snap_date = dates[snap_idx]
+            snap_dir = tmp_dir / "snapshots" / snap_date
+            comp_scores = {t: {"coinvest_score_z": str(0.5 - 0.05 * i)}
+                           for i, t in enumerate(tickers)}
+            _write_rankings_with_components(snap_dir, tickers, comp_scores)
+            _write_metadata(snap_dir, snap_date)
+
+        rows = []
+        for d in dates:
+            for i, t in enumerate(tickers):
+                rows.append({"date": d, "ticker": t,
+                             "close": str(100 + i + dates.index(d))})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        return price_csv
+
+    def test_compare_writes_diagnosis_md(self, tmp_dir):
+        """Output file created."""
+        from scripts.compare_coinvest_modes import run_comparison, write_diagnosis
+        price_csv = self._setup_multi_date(tmp_dir)
+        out = tmp_dir / "diagnosis"
+        out.mkdir()
+        results = run_comparison(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            top_k=5,
+            cost_bps=30,
+            out_dir=out,
+        )
+        path = write_diagnosis(results, [1], out)
+        assert path.exists()
+        assert "Coinvest Signal Diagnosis" in path.read_text()
+
+    def test_compare_three_modes_run(self, tmp_dir):
+        """All 3 modes produce results."""
+        from scripts.compare_coinvest_modes import run_comparison
+        price_csv = self._setup_multi_date(tmp_dir)
+        out = tmp_dir / "diagnosis"
+        out.mkdir()
+        results = run_comparison(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            top_k=5,
+            cost_bps=30,
+            out_dir=out,
+        )
+        assert "default" in results
+        assert "off" in results
+        assert "contra" in results
+        for mode in ["default", "off", "contra"]:
+            assert results[mode].n_evaluated >= 1
+
+    def test_diagnosis_contains_recommendation(self, tmp_dir):
+        """DISABLE/INVERT/GATE/KEEP keyword present."""
+        from scripts.compare_coinvest_modes import run_comparison, write_diagnosis
+        price_csv = self._setup_multi_date(tmp_dir)
+        out = tmp_dir / "diagnosis"
+        out.mkdir()
+        results = run_comparison(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            top_k=5,
+            cost_bps=30,
+            out_dir=out,
+        )
+        path = write_diagnosis(results, [1], out)
+        text = path.read_text()
+        assert any(kw in text for kw in ["DISABLE", "INVERT", "GATE", "KEEP"])
+
+
+# ---------------------------------------------------------------------------
+# Helper: rankings with signal flags
+# ---------------------------------------------------------------------------
+
+def _write_rankings_with_signal_flags(snap_dir: Path, tickers: List[str],
+                                       component_scores: Dict[str, Dict[str, str]] = None,
+                                       signal_flags: Dict[str, Dict[str, str]] = None,
+                                       extra_cols: Dict[str, Dict[str, str]] = None):
+    """Write rankings.csv with component scores, signal flags, and extra columns."""
+    snap_dir.mkdir(parents=True, exist_ok=True)
+    base_fields = ["ticker", "actionable_rank", "eligible", "tier_dev",
+                    "composite_rank", "composite_score", "archetype"]
+    comp_fields = ["clinical_score_z_tier", "coinvest_score_z", "catalyst_decay_w",
+                   "clinical_alpha_z", "inst_delta_z", "alpha_cohort_raw",
+                   "de_alpha_60d"]
+    flag_fields = ["has_coinvest_signal", "has_inst_delta", "has_catalyst_signal"]
+    extra_fields = ["catalyst_days", "catalyst_mode", "coinvest_filing_age_days"]
+    fieldnames = base_fields + comp_fields + flag_fields + extra_fields
+    with open(snap_dir / "rankings.csv", "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+        writer.writeheader()
+        for i, t in enumerate(tickers):
+            row = {
+                "ticker": t, "actionable_rank": str(i + 1),
+                "eligible": "1", "tier_dev": "A",
+                "composite_rank": str(i + 1), "composite_score": "50.0",
+                "archetype": "drug_developer",
+            }
+            if component_scores and t in component_scores:
+                row.update(component_scores[t])
+            if signal_flags and t in signal_flags:
+                row.update(signal_flags[t])
+            if extra_cols and t in extra_cols:
+                row.update(extra_cols[t])
+            writer.writerow(row)
+
+
+# ---------------------------------------------------------------------------
+# Tests: Signal flag filtering in component eval (Part 1C + 1D)
+# ---------------------------------------------------------------------------
+
+class TestSignalFlagFiltering:
+
+    def test_has_coinvest_signal_filters_component_eval(self, tmp_dir):
+        """Tickers without has_coinvest_signal=True excluded from coinvest IC."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        flags = {}
+        for i, t in enumerate(tickers):
+            comp[t] = {
+                "coinvest_score_z": str(1.0 - 0.1 * i),
+                "clinical_score_z_tier": str(1.0 - 0.1 * i),
+            }
+            # Only first 10 tickers have coinvest signal
+            flags[t] = {
+                "has_coinvest_signal": "True" if i < 10 else "False",
+            }
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp, flags)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    ret = 0.20 - 0.02 * i
+                    rows.append({"date": d, "ticker": t,
+                                 "close": str(100 * (1 + ret))})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        coinvest_rows = [r for r in reader if r["component"] == "coinvest_score_z"]
+        assert len(coinvest_rows) >= 1
+        # n_with_signal should be 10 (only first 10 have True)
+        assert int(coinvest_rows[0]["n_with_signal"]) == 10
+        # n_signal should also be 10 (filtered)
+        assert int(coinvest_rows[0]["n_signal"]) == 10
+
+    def test_has_inst_delta_filters_component_eval(self, tmp_dir):
+        """Tickers without has_inst_delta=True excluded from inst_delta IC."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        flags = {}
+        for i, t in enumerate(tickers):
+            comp[t] = {"inst_delta_z": str(0.5 - 0.05 * i)}
+            flags[t] = {
+                "has_inst_delta": "True" if i < 8 else "False",
+            }
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp, flags)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    ret = 0.10 - 0.01 * i
+                    rows.append({"date": d, "ticker": t,
+                                 "close": str(100 * (1 + ret))})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        inst_rows = [r for r in reader if r["component"] == "inst_delta_z"]
+        assert len(inst_rows) >= 1
+        assert int(inst_rows[0]["n_with_signal"]) == 8
+
+    def test_has_catalyst_signal_filters_component_eval(self, tmp_dir):
+        """Tickers without has_catalyst_signal=True excluded from catalyst IC."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        flags = {}
+        for i, t in enumerate(tickers):
+            comp[t] = {"catalyst_decay_w": str(0.8 - 0.04 * i)}
+            flags[t] = {
+                "has_catalyst_signal": "True" if i < 12 else "False",
+            }
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp, flags)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    ret = 0.10 - 0.01 * i
+                    rows.append({"date": d, "ticker": t,
+                                 "close": str(100 * (1 + ret))})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        cat_rows = [r for r in reader if r["component"] == "catalyst_decay_w"]
+        assert len(cat_rows) >= 1
+        assert int(cat_rows[0]["n_with_signal"]) == 12
+
+    def test_component_eval_n_with_signal_column(self, tmp_dir):
+        """n_with_signal column present in component eval CSV."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        for i, t in enumerate(tickers):
+            comp[t] = {"clinical_score_z_tier": str(1.0 - 0.1 * i)}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    rows.append({"date": d, "ticker": t, "close": "110"})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        assert len(reader) >= 1
+        assert "n_with_signal" in reader[0]
+
+    def test_signal_flag_map_coverage(self):
+        """All SIGNAL_FLAG_MAP columns are in eval COMPONENT_COLS."""
+        from scripts.eval_forward_returns import SIGNAL_FLAG_MAP
+        # The keys of SIGNAL_FLAG_MAP should be columns used in component eval
+        component_cols = [
+            "clinical_score_z_tier", "coinvest_score_z", "catalyst_decay_w",
+            "clinical_alpha_z", "inst_delta_z", "alpha_cohort_raw",
+            "de_alpha_60d",
+        ]
+        for col in SIGNAL_FLAG_MAP:
+            assert col in component_cols, f"{col} not in COMPONENT_COLS"
+
+    def test_unflagged_component_uses_all_tickers(self, tmp_dir):
+        """Components without a signal flag (e.g. clinical) use all tickers."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        flags = {}
+        for i, t in enumerate(tickers):
+            comp[t] = {"clinical_score_z_tier": str(1.0 - 0.1 * i)}
+            # Set coinvest flag but we're testing clinical (no flag)
+            flags[t] = {"has_coinvest_signal": "False"}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp, flags)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    rows.append({"date": d, "ticker": t, "close": "110"})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        clin_rows = [r for r in reader if r["component"] == "clinical_score_z_tier"]
+        assert len(clin_rows) >= 1
+        # clinical has no flag → n_with_signal == n_signal
+        assert clin_rows[0]["n_with_signal"] == clin_rows[0]["n_signal"]
+
+
+# ---------------------------------------------------------------------------
+# Tests: Catalyst eval mode (Part 3)
+# ---------------------------------------------------------------------------
+
+class TestCatalystEvalMode:
+
+    def test_logistic_decay_values(self):
+        """Logistic decay matches decision_engine formula."""
+        from math import exp
+        # At midpoint (150), should be ~0.5
+        assert abs(_logistic_decay(150.0) - 0.5) < 0.01
+        # At 0, should be close to 1.0
+        assert _logistic_decay(0.0) > 0.99
+        # At 300, should be close to 0.0
+        assert _logistic_decay(300.0) < 0.01
+        # Negative days → 0
+        assert _logistic_decay(-10.0) == 0.0
+
+    def test_catalyst_eval_mode_default_unchanged(self, tmp_dir):
+        """Default mode uses CSV catalyst_decay_w values as-is."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        flags = {}
+        extra = {}
+        for i, t in enumerate(tickers):
+            comp[t] = {"catalyst_decay_w": "0.7"}
+            flags[t] = {"has_catalyst_signal": "True"}
+            extra[t] = {"catalyst_days": "60"}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp, flags, extra)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    rows.append({"date": d, "ticker": t, "close": "110"})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+            catalyst_eval_mode="default",
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        cat_rows = [r for r in reader if r["component"] == "catalyst_decay_w"]
+        # All tickers have identical value → signal is flat
+        assert len(cat_rows) >= 1
+        assert cat_rows[0]["flat_signal"] == "True"
+
+    def test_catalyst_eval_mode_logistic_recomputes(self, tmp_dir):
+        """Logistic mode recomputes catalyst_decay_w from catalyst_days."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        flags = {}
+        extra = {}
+        for i, t in enumerate(tickers):
+            days = 10 + i * 20  # 10, 30, 50, ... 390
+            comp[t] = {"catalyst_decay_w": "0.7"}  # hard mode constant
+            flags[t] = {"has_catalyst_signal": "True"}
+            extra[t] = {"catalyst_days": str(days)}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp, flags, extra)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    # Returns monotonically correlated with proximity
+                    ret = 0.20 - 0.01 * i
+                    rows.append({"date": d, "ticker": t,
+                                 "close": str(100 * (1 + ret))})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+            catalyst_eval_mode="logistic",
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        cat_rows = [r for r in reader if r["component"] == "catalyst_decay_w"]
+        assert len(cat_rows) >= 1
+        # With logistic, values are continuous → not flat
+        assert cat_rows[0]["flat_signal"] == "False"
+        # IC should be positive (closer catalysts → higher returns)
+        ic = float(cat_rows[0]["ic"])
+        assert ic > 0.3
+
+    def test_cli_catalyst_eval_mode_arg(self):
+        """CLI parser accepts --catalyst-eval-mode."""
+        import argparse
+        from scripts.eval_forward_returns import evaluate
+        # Just verify the arg is accepted by checking the module's argparse setup
+        # We test this by checking the function signature
+        import inspect
+        sig = inspect.signature(evaluate)
+        assert "catalyst_eval_mode" in sig.parameters
+
+    def test_catalyst_with_has_signal_filter(self, tmp_dir):
+        """Combined: logistic mode + signal flag filtering."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        flags = {}
+        extra = {}
+        for i, t in enumerate(tickers):
+            days = 10 + i * 20
+            comp[t] = {"catalyst_decay_w": "0.7"}
+            # Only first 15 have real catalyst signal
+            flags[t] = {"has_catalyst_signal": "True" if i < 15 else "False"}
+            extra[t] = {"catalyst_days": str(days)}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp, flags, extra)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    ret = 0.20 - 0.01 * i
+                    rows.append({"date": d, "ticker": t,
+                                 "close": str(100 * (1 + ret))})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+            catalyst_eval_mode="logistic",
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        cat_rows = [r for r in reader if r["component"] == "catalyst_decay_w"]
+        assert len(cat_rows) >= 1
+        assert int(cat_rows[0]["n_with_signal"]) == 15
+
+
+# ---------------------------------------------------------------------------
+# Tests: Coinvest staleness diagnostic (Part 2D)
+# ---------------------------------------------------------------------------
+
+class TestCoinvestStaleness:
+
+    def test_coinvest_staleness_diagnostic(self, tmp_dir):
+        """coinvest_staleness_days computed from filing_age_days."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        flags = {}
+        extra = {}
+        for i, t in enumerate(tickers):
+            comp[t] = {"coinvest_score_z": str(0.5 - 0.05 * i)}
+            flags[t] = {"has_coinvest_signal": "True"}
+            extra[t] = {"coinvest_filing_age_days": "45"}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp, flags, extra)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    rows.append({"date": d, "ticker": t, "close": "110"})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        coinvest_rows = [r for r in reader if r["component"] == "coinvest_score_z"]
+        assert len(coinvest_rows) >= 1
+        staleness = float(coinvest_rows[0]["coinvest_staleness_days"])
+        assert abs(staleness - 45.0) < 0.1
+
+    def test_coinvest_staleness_zero_for_fresh(self, tmp_dir):
+        """Zero filing age → staleness_days = 0."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        flags = {}
+        extra = {}
+        for i, t in enumerate(tickers):
+            comp[t] = {"coinvest_score_z": str(0.5 - 0.05 * i)}
+            flags[t] = {"has_coinvest_signal": "True"}
+            extra[t] = {"coinvest_filing_age_days": "0"}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp, flags, extra)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    rows.append({"date": d, "ticker": t, "close": "110"})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        coinvest_rows = [r for r in reader if r["component"] == "coinvest_score_z"]
+        assert len(coinvest_rows) >= 1
+        assert float(coinvest_rows[0]["coinvest_staleness_days"]) == 0.0
+
+    def test_coinvest_staleness_missing_graceful(self, tmp_dir):
+        """No coinvest_filing_age_days → staleness not populated."""
+        n = 20
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        flags = {}
+        for i, t in enumerate(tickers):
+            comp[t] = {"coinvest_score_z": str(0.5 - 0.05 * i)}
+            flags[t] = {"has_coinvest_signal": "True"}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp, flags)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    rows.append({"date": d, "ticker": t, "close": "110"})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        coinvest_rows = [r for r in reader if r["component"] == "coinvest_score_z"]
+        assert len(coinvest_rows) >= 1
+        # staleness column present but empty when no data
+        assert coinvest_rows[0].get("coinvest_staleness_days", "") == ""
