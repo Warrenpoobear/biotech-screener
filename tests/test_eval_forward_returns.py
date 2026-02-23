@@ -2094,7 +2094,7 @@ class TestCoinvestEvalMode:
 # ---------------------------------------------------------------------------
 
 class TestCompareCoinvestModes:
-    """Tests for scripts/compare_coinvest_modes.py."""
+    """Tests for scripts/research/compare_coinvest_modes.py."""
 
     def _setup_multi_date(self, tmp_dir, n=20, n_dates=3):
         """Helper: create multi-date eval data."""
@@ -2120,7 +2120,7 @@ class TestCompareCoinvestModes:
 
     def test_compare_writes_diagnosis_md(self, tmp_dir):
         """Output file created."""
-        from scripts.compare_coinvest_modes import run_comparison, write_diagnosis
+        from scripts.research.compare_coinvest_modes import run_comparison, write_diagnosis
         price_csv = self._setup_multi_date(tmp_dir)
         out = tmp_dir / "diagnosis"
         out.mkdir()
@@ -2138,7 +2138,7 @@ class TestCompareCoinvestModes:
 
     def test_compare_three_modes_run(self, tmp_dir):
         """All 3 modes produce results."""
-        from scripts.compare_coinvest_modes import run_comparison
+        from scripts.research.compare_coinvest_modes import run_comparison
         price_csv = self._setup_multi_date(tmp_dir)
         out = tmp_dir / "diagnosis"
         out.mkdir()
@@ -2158,7 +2158,7 @@ class TestCompareCoinvestModes:
 
     def test_diagnosis_contains_recommendation(self, tmp_dir):
         """DISABLE/INVERT/GATE/KEEP keyword present."""
-        from scripts.compare_coinvest_modes import run_comparison, write_diagnosis
+        from scripts.research.compare_coinvest_modes import run_comparison, write_diagnosis
         price_csv = self._setup_multi_date(tmp_dir)
         out = tmp_dir / "diagnosis"
         out.mkdir()
