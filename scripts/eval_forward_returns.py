@@ -2,7 +2,10 @@
 """Forward-return evaluation across snapshot dates.
 
 Walk-forward evaluation: Spearman IC, top-K portfolio gross/net return,
-turnover, and skip tracking.  Strict PIT enforcement via metadata.json.
+turnover, benchmark-relative excess, long-short decile spread,
+beta-hedged portfolio return, and skip tracking.
+
+Strict PIT enforcement via metadata.json.
 
 Outputs: summary.json, summary.md, by_date.csv, skips.json
 """
@@ -36,7 +39,7 @@ DEFAULT_MIN_PRICE_COVERAGE = 0.50
 # ---------------------------------------------------------------------------
 
 def load_price_series(csv_path: Path) -> Dict[str, Dict[str, float]]:
-    """Load price_history.csv → {ticker: {date_str: close}}."""
+    """Load price_history.csv -> {ticker: {date_str: close}}."""
     prices: Dict[str, Dict[str, float]] = {}
     with open(csv_path, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
@@ -63,6 +66,44 @@ def _trading_days_after(all_dates: List[str], start: str, n: int) -> Optional[st
     target = idx + n
     if target < len(all_dates):
         return all_dates[target]
+    return None
+
+
+def resolve_trade_date(
+    sorted_dates: List[str],
+    snap_date: str,
+    anchor_mode: str,
+) -> Optional[str]:
+    """Map a calendar as-of date to an actual trading date.
+
+    Args:
+        sorted_dates: All trading dates in price history, sorted ascending.
+        snap_date: Calendar date from the snapshot (may be weekend/holiday).
+        anchor_mode: One of "exact", "next_trading_day", "prev_trading_day".
+
+    Returns:
+        The resolved trading date, or None if not found.
+    """
+    if anchor_mode == "exact":
+        return snap_date if snap_date in sorted_dates else None
+
+    if anchor_mode == "next_trading_day":
+        # First date strictly AFTER snap_date (PIT-safe: trade after info date)
+        for d in sorted_dates:
+            if d > snap_date:
+                return d
+        return None
+
+    if anchor_mode == "prev_trading_day":
+        # Last date ON or BEFORE snap_date
+        result = None
+        for d in sorted_dates:
+            if d <= snap_date:
+                result = d
+            else:
+                break
+        return result
+
     return None
 
 
@@ -140,6 +181,19 @@ def top_k_portfolio_return(
     return ret, len(held)
 
 
+def bottom_k_portfolio_return(
+    tickers_ranked: List[str],
+    fwd_rets: Dict[str, float],
+    k: int,
+) -> Tuple[Optional[float], int]:
+    """Equal-weight bottom-K gross return. Returns (mean_return, n_held)."""
+    held = [t for t in tickers_ranked[-k:] if t in fwd_rets]
+    if not held:
+        return None, 0
+    ret = statistics.mean(fwd_rets[t] for t in held)
+    return ret, len(held)
+
+
 def compute_turnover(prev_set: List[str], curr_set: List[str]) -> float:
     """Turnover = 0.5 * |symmetric difference| / max(len(prev), len(curr), 1)."""
     if not prev_set and not curr_set:
@@ -154,6 +208,374 @@ def compute_turnover(prev_set: List[str], curr_set: List[str]) -> float:
 def net_return(gross: float, turnover: float, cost_bps: float) -> float:
     """Net return after transaction cost haircut."""
     return gross - turnover * cost_bps / 10_000
+
+
+# ---------------------------------------------------------------------------
+# Long-short decile spread
+# ---------------------------------------------------------------------------
+
+def _decile_spread(
+    tickers_ranked: List[str],
+    fwd_rets: Dict[str, float],
+) -> Optional[float]:
+    """Top-decile minus bottom-decile equal-weight return.
+
+    Uses the full ranked list (not just top-K). Decile = top/bottom 10%.
+    """
+    eligible = [t for t in tickers_ranked if t in fwd_rets]
+    n = len(eligible)
+    if n < 10:
+        return None
+    d_size = max(1, n // 10)
+    top = eligible[:d_size]
+    bottom = eligible[-d_size:]
+    top_ret = statistics.mean(fwd_rets[t] for t in top)
+    bottom_ret = statistics.mean(fwd_rets[t] for t in bottom)
+    return top_ret - bottom_ret
+
+
+# ---------------------------------------------------------------------------
+# Beta-hedged portfolio return
+# ---------------------------------------------------------------------------
+
+def _avg_field(
+    tickers: List[str],
+    fwd_rets: Dict[str, float],
+    field_map: Dict[str, float],
+) -> Optional[float]:
+    """Average field value for tickers that have forward returns."""
+    vals = [field_map[t] for t in tickers if t in fwd_rets and t in field_map]
+    if not vals:
+        return None
+    return statistics.mean(vals)
+
+
+def _simple_ols(x: List[float], y: List[float]) -> Tuple[float, float, float]:
+    """Simple OLS: y = alpha + beta * x.
+
+    Returns (alpha, beta, r_squared).
+    """
+    n = len(x)
+    if n < 3:
+        return 0.0, 0.0, 0.0
+    mx = statistics.mean(x)
+    my = statistics.mean(y)
+    cov = sum((x[i] - mx) * (y[i] - my) for i in range(n))
+    var_x = sum((x[i] - mx) ** 2 for i in range(n))
+    if var_x == 0:
+        return my, 0.0, 0.0
+    beta = cov / var_x
+    alpha = my - beta * mx
+    ss_res = sum((y[i] - alpha - beta * x[i]) ** 2 for i in range(n))
+    ss_tot = sum((y[i] - my) ** 2 for i in range(n))
+    r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
+    return alpha, beta, r2
+
+
+def compute_residual_alpha(
+    date_results: List["DateResult"],
+    horizon: int,
+) -> Dict[str, Any]:
+    """Regress top-bottom returns on benchmark return to extract residual alpha.
+
+    Returns dict with alpha, beta, r2, alpha_t_stat, n.
+    """
+    pairs = []
+    for dr in date_results:
+        if dr.horizon != horizon or dr.skipped:
+            continue
+        if (dr.gross_return is not None and dr.bottom_k_return is not None
+                and dr.benchmark_return is not None):
+            ls = dr.gross_return - dr.bottom_k_return
+            pairs.append((dr.benchmark_return, ls))
+
+    if len(pairs) < 5:
+        return {"n": len(pairs), "alpha": None, "beta": None, "r2": None}
+
+    bm_rets = [p[0] for p in pairs]
+    ls_rets = [p[1] for p in pairs]
+    alpha, beta, r2 = _simple_ols(bm_rets, ls_rets)
+
+    # Residuals for alpha t-stat
+    residuals = [ls_rets[i] - alpha - beta * bm_rets[i] for i in range(len(pairs))]
+    se_resid = math.sqrt(sum(r ** 2 for r in residuals) / max(len(pairs) - 2, 1))
+    # Standard error of alpha
+    var_x = sum((bm_rets[i] - statistics.mean(bm_rets)) ** 2
+                for i in range(len(pairs)))
+    se_alpha = se_resid * math.sqrt(1.0 / len(pairs) +
+                                     statistics.mean(bm_rets) ** 2 / max(var_x, 1e-12))
+    alpha_t = alpha / se_alpha if se_alpha > 0 else 0.0
+
+    return {
+        "n": len(pairs),
+        "alpha": round(alpha, 6),
+        "beta": round(beta, 4),
+        "r2": round(r2, 4),
+        "alpha_t_stat": round(alpha_t, 3),
+    }
+
+
+def _beta_hedged_return(
+    held_tickers: List[str],
+    fwd_rets: Dict[str, float],
+    benchmark_ret: float,
+    beta_by_ticker: Dict[str, float],
+) -> Optional[float]:
+    """Compute beta-hedged top-K return.
+
+    hedged = portfolio_return - beta_portfolio * benchmark_return
+    where beta_portfolio = weight-avg beta of held names.
+    """
+    betas = []
+    for t in held_tickers:
+        if t in fwd_rets and t in beta_by_ticker:
+            betas.append(beta_by_ticker[t])
+    if not betas:
+        return None
+    avg_beta = statistics.mean(betas)
+    port_ret = statistics.mean(fwd_rets[t] for t in held_tickers if t in fwd_rets)
+    return port_ret - avg_beta * benchmark_ret
+
+
+# ---------------------------------------------------------------------------
+# Decile curve + monotonicity diagnostics
+# ---------------------------------------------------------------------------
+
+def compute_decile_curve(
+    tickers_ranked: List[str],
+    fwd_rets: Dict[str, float],
+) -> Optional[List[Dict[str, Any]]]:
+    """Compute 10-bin decile curve: mean return per decile.
+
+    Decile 1 = best-ranked tickers, decile 10 = worst-ranked.
+    Returns list of dicts: [{decile, n, mean_return}, ...].
+    """
+    eligible = [t for t in tickers_ranked if t in fwd_rets]
+    n = len(eligible)
+    if n < 10:
+        return None
+    d_size = n // 10
+    remainder = n % 10
+    curve: List[Dict[str, Any]] = []
+    pos = 0
+    for d in range(10):
+        bucket_size = d_size + (1 if d < remainder else 0)
+        bucket = eligible[pos:pos + bucket_size]
+        pos += bucket_size
+        if bucket:
+            mean_ret = statistics.mean(fwd_rets[t] for t in bucket)
+            curve.append({
+                "decile": d + 1,
+                "n": len(bucket),
+                "mean_return": round(mean_ret, 6),
+            })
+    return curve
+
+
+def _monotonic_slope(curve: Optional[List[Dict[str, Any]]]) -> Optional[float]:
+    """Correlation between signal-strength proxy and decile mean return.
+
+    Signal proxy: (11 - decile_index), so decile 1 (best) -> proxy 10.
+    Positive slope = returns increase with signal strength (consistent with IC > 0).
+    """
+    if not curve or len(curve) < 3:
+        return None
+    xs = [float(11 - c["decile"]) for c in curve]
+    ys = [c["mean_return"] for c in curve]
+    return spearman_ic(xs, ys)
+
+
+def _share_counts(
+    tickers: List[str],
+    by_ticker: Dict[str, str],
+    fwd_rets: Dict[str, float],
+) -> Dict[str, int]:
+    """Count categories for tickers that have forward returns."""
+    counts: Dict[str, int] = {}
+    for t in tickers:
+        if t in fwd_rets:
+            val = by_ticker.get(t, "unknown")
+            counts[val] = counts.get(val, 0) + 1
+    return counts
+
+
+def _write_sign_mismatch(
+    out_dir: Path,
+    snap_date: str,
+    horizon: int,
+    data: Dict[str, Any],
+) -> None:
+    """Write sign mismatch diagnostic JSON."""
+    path = out_dir / f"sign_mismatch_{snap_date}_{horizon}d.json"
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, sort_keys=True)
+
+
+# ---------------------------------------------------------------------------
+# Multi-variate OLS
+# ---------------------------------------------------------------------------
+
+def _multi_ols(
+    x_cols: List[List[float]],
+    y: List[float],
+) -> Tuple[List[float], float]:
+    """Multi-variate OLS: y = b0 + b1*x1 + b2*x2 + ...
+
+    Args:
+        x_cols: List of column vectors (each same length as y).
+        y: Response vector.
+
+    Returns: (coefficients [b0, b1, ...], r_squared).
+    """
+    n = len(y)
+    p = len(x_cols) + 1  # +1 for intercept
+    if n < p + 2:
+        return [0.0] * p, 0.0
+
+    cols = [[1.0] * n] + x_cols
+
+    def dot(a: List[float], b: List[float]) -> float:
+        return sum(a[i] * b[i] for i in range(n))
+
+    # Normal equations: X^T X beta = X^T y
+    xtx = [[dot(cols[i], cols[j]) for j in range(p)] for i in range(p)]
+    xty = [dot(cols[i], y) for i in range(p)]
+
+    # Gaussian elimination with partial pivoting
+    aug = [xtx[i][:] + [xty[i]] for i in range(p)]
+    for i in range(p):
+        max_row = max(range(i, p), key=lambda r: abs(aug[r][i]))
+        aug[i], aug[max_row] = aug[max_row], aug[i]
+        if abs(aug[i][i]) < 1e-12:
+            return [0.0] * p, 0.0
+        for j in range(i + 1, p):
+            factor = aug[j][i] / aug[i][i]
+            for k in range(i, p + 1):
+                aug[j][k] -= factor * aug[i][k]
+
+    # Back-substitution
+    beta = [0.0] * p
+    for i in range(p - 1, -1, -1):
+        beta[i] = aug[i][p]
+        for j in range(i + 1, p):
+            beta[i] -= aug[i][j] * beta[j]
+        beta[i] /= aug[i][i]
+
+    y_mean = statistics.mean(y)
+    ss_tot = sum((y[i] - y_mean) ** 2 for i in range(n))
+    y_pred = [sum(beta[j] * cols[j][i] for j in range(p)) for i in range(n)]
+    ss_res = sum((y[i] - y_pred[i]) ** 2 for i in range(n))
+    r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
+
+    return beta, r2
+
+
+def compute_residual_alpha_multi(
+    date_results: List["DateResult"],
+    horizon: int,
+) -> Dict[str, Any]:
+    """Multi-regressor residual alpha: L/S ~ benchmark + beta_diff + drawdown_diff.
+
+    Returns dict with alpha, betas for each regressor, r2, alpha_t_stat.
+    """
+    rows: List[Tuple[float, float, float, float]] = []
+    for dr in date_results:
+        if dr.horizon != horizon or dr.skipped:
+            continue
+        if (dr.gross_return is not None and dr.bottom_k_return is not None
+                and dr.benchmark_return is not None
+                and dr.topk_avg_beta is not None and dr.bottomk_avg_beta is not None
+                and dr.topk_avg_drawdown is not None
+                and dr.bottomk_avg_drawdown is not None):
+            ls = dr.gross_return - dr.bottom_k_return
+            beta_diff = dr.topk_avg_beta - dr.bottomk_avg_beta
+            dd_diff = dr.topk_avg_drawdown - dr.bottomk_avg_drawdown
+            rows.append((dr.benchmark_return, beta_diff, dd_diff, ls))
+
+    if len(rows) < 8:
+        return {"n": len(rows), "alpha": None}
+
+    bm = [r[0] for r in rows]
+    bd = [r[1] for r in rows]
+    dd = [r[2] for r in rows]
+    ls = [r[3] for r in rows]
+
+    beta, r2 = _multi_ols([bm, bd, dd], ls)
+    alpha = beta[0]
+
+    n = len(rows)
+    p = 4
+    y_pred = [beta[0] + beta[1] * bm[i] + beta[2] * bd[i] + beta[3] * dd[i]
+              for i in range(n)]
+    residuals = [ls[i] - y_pred[i] for i in range(n)]
+    se_resid = math.sqrt(sum(r ** 2 for r in residuals) / max(n - p, 1))
+    se_alpha = se_resid / math.sqrt(n) if n > 0 else 0.0
+    alpha_t = alpha / se_alpha if se_alpha > 0 else 0.0
+
+    return {
+        "n": n,
+        "alpha": round(alpha, 6),
+        "beta_benchmark": round(beta[1], 4),
+        "beta_beta_diff": round(beta[2], 4),
+        "beta_dd_diff": round(beta[3], 4),
+        "r2": round(r2, 4),
+        "alpha_t_stat": round(alpha_t, 3),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Walk-forward split assignment
+# ---------------------------------------------------------------------------
+
+def assign_splits(
+    snap_dates: List[str],
+    mode: str = "none",
+    train_end: Optional[str] = None,
+    test_start: Optional[str] = None,
+    wf_train_months: int = 0,
+    wf_test_months: int = 0,
+) -> Dict[str, Tuple[int, bool, bool]]:
+    """Assign train/test labels to snapshot dates.
+
+    Returns: {date: (split_id, is_train, is_test)}
+
+    Modes:
+      none: all dates evaluated, no split labels.
+      fixed: dates <= train_end are train, dates >= test_start are test.
+      walk_forward: first wf_train_months dates are train-only,
+          remaining dates are test, grouped into chunks of wf_test_months.
+    """
+    result: Dict[str, Tuple[int, bool, bool]] = {}
+
+    if mode == "none":
+        for d in snap_dates:
+            result[d] = (0, False, False)
+        return result
+
+    if mode == "fixed":
+        for d in snap_dates:
+            is_train = d <= train_end if train_end else False
+            is_test = d >= test_start if test_start else False
+            sid = 1 if (is_train or is_test) else 0
+            result[d] = (sid, is_train, is_test)
+        return result
+
+    if mode == "walk_forward":
+        n = len(snap_dates)
+        train_count = min(wf_train_months, n)
+        for i in range(train_count):
+            result[snap_dates[i]] = (0, True, False)
+        split = 0
+        pos = train_count
+        while pos < n:
+            split += 1
+            end = min(pos + wf_test_months, n)
+            for i in range(pos, end):
+                result[snap_dates[i]] = (split, False, True)
+            pos = end
+        return result
+
+    return {d: (0, False, False) for d in snap_dates}
 
 
 # ---------------------------------------------------------------------------
@@ -230,6 +652,7 @@ def check_pit_metadata(snapshot_dir: Path, snap_date: str) -> Tuple[bool, str]:
 class DateResult:
     date: str
     horizon: int
+    trade_date: str = ""
     ic: Optional[float] = None
     gross_return: Optional[float] = None
     net_return: Optional[float] = None
@@ -239,6 +662,31 @@ class DateResult:
     coverage: float = 0.0
     skipped: bool = False
     skip_reason: str = ""
+    # Bottom-K for sign checks
+    bottom_k_return: Optional[float] = None
+    # Benchmark-relative fields
+    benchmark_return: Optional[float] = None
+    excess_return: Optional[float] = None
+    # Long-short spread
+    ls_return: Optional[float] = None
+    ls_net_return: Optional[float] = None
+    # Beta-hedged
+    hedged_return: Optional[float] = None
+    # Exposure diagnostics
+    topk_avg_beta: Optional[float] = None
+    bottomk_avg_beta: Optional[float] = None
+    topk_avg_drawdown: Optional[float] = None
+    bottomk_avg_drawdown: Optional[float] = None
+    # Monotonicity diagnostics
+    monotonic_slope: Optional[float] = None
+    # Walk-forward split
+    split_id: int = 0
+    is_train: bool = False
+    is_test: bool = False
+    # Eval universe diagnostics
+    n_universe_eval: int = 0
+    n_missing_anchor: int = 0
+    n_missing_forward: int = 0
 
 
 @dataclass
@@ -251,6 +699,10 @@ class EvalSummary:
     n_skipped: int = 0
     by_horizon: Dict[int, Dict[str, Any]] = field(default_factory=dict)
     use_positions: bool = False
+    anchor_mode: str = "exact"
+    benchmark: str = "none"
+    split_mode: str = "none"
+    universe_mode: str = "current"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -267,12 +719,53 @@ def evaluate(
     pit_mode: str = "strict",
     use_positions: bool = False,
     min_price_coverage: float = DEFAULT_MIN_PRICE_COVERAGE,
+    anchor_mode: str = "exact",
+    benchmark: str = "none",
+    long_short_deciles: bool = False,
+    split_mode: str = "none",
+    train_end: Optional[str] = None,
+    test_start: Optional[str] = None,
+    wf_train_months: int = 0,
+    wf_test_months: int = 0,
+    out_dir: Optional[Path] = None,
+    universe_mode: str = "current",
+    component_eval: bool = False,
+    rebalance_buffer_ranks: int = 0,
+    turnover_cap: float = 0.0,
+    top_quantile: float = 0.0,
 ) -> Tuple[EvalSummary, List[DateResult], List[Dict[str, str]]]:
     """Run the full walk-forward evaluation.
+
+    Args:
+        anchor_mode: "exact" (require price on snap_date),
+            "next_trading_day" (first date > snap_date, PIT-safe),
+            "prev_trading_day" (last date <= snap_date).
+        benchmark: "XBI", "SPY", or "none" — compute excess returns.
+        long_short_deciles: compute top-decile minus bottom-decile spread.
+        split_mode: "none", "fixed", or "walk_forward".
+        train_end: last date in training set (fixed split).
+        test_start: first date in test set (fixed split).
+        wf_train_months: number of initial dates for training (walk_forward).
+        wf_test_months: dates per test fold (walk_forward).
+        out_dir: output directory for sign mismatch dumps.
+        universe_mode: "current" (use rankings as-is) or "price_available"
+            (restrict eval universe to tickers with anchor+forward prices).
+        component_eval: compute per-component IC and L/S.
+        rebalance_buffer_ranks: buffer zone around top-K for rebalance.
+        turnover_cap: max turnover fraction per rebalance (0=unlimited).
+        top_quantile: use top N% instead of top-K (0=use top_k).
 
     Returns (summary, date_results, skips).
     """
     snap_dates = discover_snapshot_dates(snapshot_root, date_from, date_to)
+
+    # Assign train/test splits
+    split_map = assign_splits(
+        snap_dates, split_mode,
+        train_end=train_end, test_start=test_start,
+        wf_train_months=wf_train_months, wf_test_months=wf_test_months,
+    )
+
     prices = load_price_series(price_csv)
 
     # Build sorted trading dates from all price data
@@ -281,15 +774,32 @@ def evaluate(
         all_dates_set.update(ticker_prices.keys())
     sorted_dates = sorted(all_dates_set)
 
+    # Benchmark prices
+    benchmark_ticker = benchmark.upper() if benchmark not in ("none", "") else None
+    benchmark_prices = prices.get(benchmark_ticker, {}) if benchmark_ticker else {}
+
     date_results: List[DateResult] = []
     skips: List[Dict[str, str]] = []
 
     # Per-horizon accumulators
     horizon_ics: Dict[int, List[float]] = {h: [] for h in horizons}
     horizon_gross: Dict[int, List[float]] = {h: [] for h in horizons}
+    horizon_bottom: Dict[int, List[float]] = {h: [] for h in horizons}
     horizon_net: Dict[int, List[float]] = {h: [] for h in horizons}
     horizon_turnover: Dict[int, List[float]] = {h: [] for h in horizons}
+    horizon_excess: Dict[int, List[float]] = {h: [] for h in horizons}
+    horizon_ls: Dict[int, List[float]] = {h: [] for h in horizons}
+    horizon_ls_net: Dict[int, List[float]] = {h: [] for h in horizons}
+    horizon_hedged: Dict[int, List[float]] = {h: [] for h in horizons}
     prev_holdings: Dict[int, List[str]] = {h: [] for h in horizons}
+    sign_mismatches: Dict[int, int] = {h: 0 for h in horizons}
+
+    # Component eval accumulators
+    COMPONENT_COLS = [
+        "clinical_score_z_tier", "coinvest_score_z", "catalyst_strength",
+        "clinical_alpha_z", "inst_delta_z", "alpha_cohort_raw",
+    ]
+    component_results: List[Dict[str, Any]] = []  # per-date per-horizon per-component
 
     n_evaluated = 0
 
@@ -307,6 +817,17 @@ def evaluate(
                 skips.append({"date": snap_date, "reason": f"PIT: {reason}"})
                 continue
 
+        # Resolve trade_date from anchor_mode
+        trade_date = resolve_trade_date(sorted_dates, snap_date, anchor_mode)
+        if trade_date is None:
+            for h in horizons:
+                dr = DateResult(date=snap_date, horizon=h, skipped=True,
+                                skip_reason="ANCHOR_DATE_NOT_FOUND")
+                date_results.append(dr)
+            skips.append({"date": snap_date,
+                          "reason": f"ANCHOR_DATE_NOT_FOUND (mode={anchor_mode})"})
+            continue
+
         # Load rankings or positions
         if use_positions:
             positions = load_positions(snap_dir)
@@ -321,61 +842,316 @@ def evaluate(
                     date_results.append(dr)
                 skips.append({"date": snap_date, "reason": "EMPTY_RANKINGS"})
                 continue
-            # Sort by actionable_rank ascending
-            try:
-                rankings.sort(key=lambda r: int(r.get("actionable_rank", 9999)))
-            except (ValueError, TypeError):
-                pass
+            # Sort by actionable_rank ascending (per-row safe parse)
+            def _safe_rank(r):
+                try:
+                    return int(r.get("actionable_rank") or 9999)
+                except (ValueError, TypeError):
+                    return 9999
+            rankings.sort(key=_safe_rank)
             tickers_ranked = [r["ticker"] for r in rankings if r.get("ticker")]
+
+        # Build per-ticker lookups from rankings for hedged returns + diagnostics
+        beta_by_ticker: Dict[str, float] = {}
+        drawdown_by_ticker: Dict[str, float] = {}
+        archetype_by_ticker: Dict[str, str] = {}
+        catalyst_mode_by_ticker: Dict[str, str] = {}
+        if not use_positions:
+            for r in rankings:
+                t = r.get("ticker", "")
+                if not t:
+                    continue
+                # Beta
+                b = r.get("de_beta_xbi_60d", "")
+                if b:
+                    try:
+                        beta_by_ticker[t] = float(b)
+                    except (ValueError, TypeError):
+                        pass
+                # Drawdown
+                dd = r.get("de_drawdown", "")
+                if dd:
+                    try:
+                        drawdown_by_ticker[t] = float(dd)
+                    except (ValueError, TypeError):
+                        pass
+                # Archetype
+                arch = r.get("archetype", "")
+                if arch:
+                    archetype_by_ticker[t] = arch
+                # Catalyst mode
+                cm = r.get("catalyst_mode", "")
+                if cm:
+                    catalyst_mode_by_ticker[t] = cm
+
+        # Build component score lookups (for --component-eval)
+        comp_by_ticker: Dict[str, Dict[str, float]] = {}
+        if component_eval and not use_positions:
+            for r in rankings:
+                t = r.get("ticker", "")
+                if not t:
+                    continue
+                scores: Dict[str, float] = {}
+                for col in COMPONENT_COLS:
+                    v = r.get(col, "")
+                    if v:
+                        try:
+                            scores[col] = float(v)
+                        except (ValueError, TypeError):
+                            pass
+                if scores:
+                    comp_by_ticker[t] = scores
 
         date_evaluated = False
         for h in horizons:
             # Compute forward returns for all tickers with prices
+            # Track eval universe: anchor available + forward available
+            n_missing_anchor = 0
+            n_missing_forward = 0
             fwd_rets: Dict[str, float] = {}
             for ticker in tickers_ranked:
                 if ticker not in prices:
+                    n_missing_anchor += 1
                     continue
-                ret = compute_forward_return(prices[ticker], sorted_dates, snap_date, h)
+                anchor_price = prices[ticker].get(trade_date)
+                if anchor_price is None or anchor_price <= 0:
+                    n_missing_anchor += 1
+                    continue
+                ret = compute_forward_return(prices[ticker], sorted_dates, trade_date, h)
                 if ret is not None:
                     fwd_rets[ticker] = ret
+                else:
+                    n_missing_forward += 1
 
-            coverage = len(fwd_rets) / max(len(tickers_ranked), 1)
+            n_universe_eval = len(fwd_rets)
+
+            coverage = n_universe_eval / max(len(tickers_ranked), 1)
             if coverage < min_price_coverage:
-                dr = DateResult(date=snap_date, horizon=h, skipped=True,
-                                skip_reason="LOW_COVERAGE",
-                                coverage=round(coverage, 4))
+                dr = DateResult(date=snap_date, horizon=h, trade_date=trade_date,
+                                skipped=True, skip_reason="LOW_COVERAGE",
+                                coverage=round(coverage, 4),
+                                n_universe_eval=n_universe_eval,
+                                n_missing_anchor=n_missing_anchor,
+                                n_missing_forward=n_missing_forward)
                 date_results.append(dr)
                 skips.append({"date": snap_date, "horizon": str(h),
+                              "trade_date": trade_date,
                               "reason": f"LOW_COVERAGE ({coverage:.1%})"})
                 continue
 
+            # In price_available mode, restrict the ranked list to eval universe
+            if universe_mode == "price_available":
+                eval_tickers = [t for t in tickers_ranked if t in fwd_rets]
+            else:
+                eval_tickers = tickers_ranked
+
             # Signal: negative actionable_rank (lower rank = better = higher signal)
-            signal_tickers = [t for t in tickers_ranked if t in fwd_rets]
-            signal_vals = [-float(i + 1) for i, t in enumerate(tickers_ranked)
+            signal_tickers = [t for t in eval_tickers if t in fwd_rets]
+            signal_vals = [-float(i + 1) for i, t in enumerate(eval_tickers)
                            if t in fwd_rets]
             return_vals = [fwd_rets[t] for t in signal_tickers]
 
             ic = spearman_ic(signal_vals, return_vals)
 
-            # Top-K portfolio
-            top_k_tickers = tickers_ranked[:top_k]
-            gross, n_held = top_k_portfolio_return(top_k_tickers, fwd_rets, top_k)
+            # Determine effective top-K: use top_quantile if set
+            eff_k = top_k
+            if top_quantile > 0:
+                eff_k = max(1, int(len(eval_tickers) * top_quantile))
 
-            # Turnover
+            # Top-K portfolio with optional rebalance buffer
+            if rebalance_buffer_ranks > 0 and prev_holdings[h]:
+                # Buffer: keep existing holdings unless they fall out of top_k + buffer
+                prev_set = set(prev_holdings[h])
+                candidate_tickers = eval_tickers[:eff_k + rebalance_buffer_ranks]
+                # Keep prev holdings that are still in the buffer zone
+                kept = [t for t in prev_holdings[h] if t in set(candidate_tickers)]
+                # Add new tickers from top-K that aren't already held
+                new_slots = eff_k - len(kept)
+                if new_slots > 0:
+                    for t in eval_tickers[:eff_k]:
+                        if t not in set(kept):
+                            kept.append(t)
+                            if len(kept) >= eff_k:
+                                break
+                top_k_tickers = kept[:eff_k]
+            else:
+                top_k_tickers = eval_tickers[:eff_k]
+
+            gross, n_held = top_k_portfolio_return(top_k_tickers, fwd_rets, eff_k)
+
+            # Bottom-K portfolio (for sign check)
+            bottom_gross, _ = bottom_k_portfolio_return(eval_tickers, fwd_rets, eff_k)
+
+            # Turnover (with optional cap)
             turn = compute_turnover(prev_holdings[h], top_k_tickers)
+            if turnover_cap > 0 and turn > turnover_cap and prev_holdings[h]:
+                # Scale trades: blend prev and new holdings
+                scale = turnover_cap / turn if turn > 0 else 1.0
+                prev_set = set(prev_holdings[h])
+                new_set = set(top_k_tickers)
+                # Tickers to drop = in prev but not in new
+                to_drop = [t for t in prev_holdings[h] if t not in new_set]
+                # Tickers to add = in new but not in prev
+                to_add = [t for t in top_k_tickers if t not in prev_set]
+                n_trades = max(1, int(len(to_drop) * scale))
+                # Keep most of prev, only swap n_trades names
+                capped = [t for t in prev_holdings[h] if t not in set(to_drop[:n_trades])]
+                capped.extend(to_add[:n_trades])
+                top_k_tickers = capped[:eff_k]
+                gross, n_held = top_k_portfolio_return(top_k_tickers, fwd_rets, eff_k)
+                turn = compute_turnover(prev_holdings[h], top_k_tickers)
             prev_holdings[h] = top_k_tickers
 
             net_ret = None
             if gross is not None:
                 net_ret = net_return(gross, turn, cost_bps)
 
+            # Decile curve + monotonicity diagnostics
+            curve = compute_decile_curve(eval_tickers, fwd_rets)
+            slope = _monotonic_slope(curve)
+
+            # Benchmark return (computed before mismatch check so dump can include it)
+            bm_ret = None
+            excess_ret = None
+            if benchmark_prices:
+                bm_ret = compute_forward_return(benchmark_prices, sorted_dates, trade_date, h)
+                if bm_ret is not None and gross is not None:
+                    excess_ret = gross - bm_ret
+
+            # Enhanced sign consistency check
+            mismatch = False
+            top_minus_bottom = None
+            if ic is not None and gross is not None and bottom_gross is not None:
+                top_minus_bottom = gross - bottom_gross
+                if (ic > 0.02 and top_minus_bottom < -0.005) or \
+                   (ic < -0.02 and top_minus_bottom > 0.005):
+                    mismatch = True
+            if ic is not None and slope is not None:
+                if (ic > 0.02 and slope < -0.02) or \
+                   (ic < -0.02 and slope > 0.02):
+                    mismatch = True
+            if mismatch:
+                msg = (
+                    f"  ::warning::SIGN_MISMATCH {snap_date} h={h}: "
+                    f"IC={ic:.4f}"
+                )
+                if top_minus_bottom is not None:
+                    msg += f" top-bottom={top_minus_bottom:.4f}"
+                if slope is not None:
+                    msg += f" slope={slope:.4f}"
+                print(msg, file=sys.stderr)
+                # Write mismatch JSON dump
+                if out_dir is not None:
+                    top_detail = [
+                        {"ticker": t, "rank": i + 1,
+                         "fwd_return": round(fwd_rets.get(t, float("nan")), 6)}
+                        for i, t in enumerate(tickers_ranked[:top_k])
+                        if t in fwd_rets
+                    ]
+                    bottom_detail = [
+                        {"ticker": t, "rank": len(tickers_ranked) - top_k + i + 1,
+                         "fwd_return": round(fwd_rets.get(t, float("nan")), 6)}
+                        for i, t in enumerate(tickers_ranked[-top_k:])
+                        if t in fwd_rets
+                    ]
+                    _write_sign_mismatch(out_dir, snap_date, h, {
+                        "as_of_date": snap_date,
+                        "trade_date": trade_date,
+                        "horizon": h,
+                        "ic": _round_opt(ic, 4),
+                        "top_k_return": _round_opt(gross, 6),
+                        "bottom_k_return": _round_opt(bottom_gross, 6),
+                        "top_minus_bottom": _round_opt(top_minus_bottom, 6),
+                        "monotonic_slope": _round_opt(slope, 4),
+                        "decile_curve": curve,
+                        "top_tickers": top_detail,
+                        "bottom_tickers": bottom_detail,
+                        "benchmark_return": _round_opt(bm_ret, 6),
+                    })
+
+            # Long-short decile spread
+            ls_ret = None
+            ls_net_ret = None
+            if long_short_deciles:
+                ls_ret = _decile_spread(eval_tickers, fwd_rets)
+                if ls_ret is not None:
+                    # LS turnover approximation: use same turnover as top-K
+                    ls_net_ret = ls_ret - turn * cost_bps / 10_000 * 2  # both legs
+
+            # Beta-hedged return
+            hedged_ret = None
+            if benchmark_prices and beta_by_ticker and bm_ret is not None:
+                held_with_rets = [t for t in top_k_tickers if t in fwd_rets]
+                if held_with_rets:
+                    hedged_ret = _beta_hedged_return(
+                        held_with_rets, fwd_rets, bm_ret, beta_by_ticker
+                    )
+
+            # Exposure diagnostics: avg beta/drawdown for top-K vs bottom-K
+            topk_beta = _avg_field(top_k_tickers, fwd_rets, beta_by_ticker)
+            bottomk_beta = _avg_field(eval_tickers[-eff_k:], fwd_rets, beta_by_ticker)
+            topk_dd = _avg_field(top_k_tickers, fwd_rets, drawdown_by_ticker)
+            bottomk_dd = _avg_field(eval_tickers[-eff_k:], fwd_rets, drawdown_by_ticker)
+
+            # Component eval: per-component IC and L/S
+            if component_eval and comp_by_ticker:
+                for col in COMPONENT_COLS:
+                    comp_signal = []
+                    comp_returns = []
+                    for t in signal_tickers:
+                        if t in comp_by_ticker and col in comp_by_ticker[t]:
+                            comp_signal.append(comp_by_ticker[t][col])
+                            comp_returns.append(fwd_rets[t])
+                    comp_ic = spearman_ic(comp_signal, comp_returns)
+                    # Component L/S: top vs bottom decile by this component
+                    comp_ls = None
+                    if len(comp_signal) >= 10:
+                        # Sort tickers by component score descending
+                        comp_sorted = sorted(
+                            [(t, comp_by_ticker[t][col]) for t in signal_tickers
+                             if t in comp_by_ticker and col in comp_by_ticker[t]],
+                            key=lambda x: -x[1]
+                        )
+                        d_size = max(1, len(comp_sorted) // 10)
+                        top_comp = [t for t, _ in comp_sorted[:d_size]]
+                        bot_comp = [t for t, _ in comp_sorted[-d_size:]]
+                        top_ret = statistics.mean(fwd_rets[t] for t in top_comp if t in fwd_rets) if top_comp else None
+                        bot_ret = statistics.mean(fwd_rets[t] for t in bot_comp if t in fwd_rets) if bot_comp else None
+                        if top_ret is not None and bot_ret is not None:
+                            comp_ls = top_ret - bot_ret
+                    component_results.append({
+                        "date": snap_date, "horizon": h, "component": col,
+                        "ic": _round_opt(comp_ic, 4),
+                        "ls_return": _round_opt(comp_ls, 6),
+                        "n_signal": len(comp_signal),
+                    })
+
+            # Split assignment for this date
+            s_id, s_train, s_test = split_map.get(snap_date, (0, False, False))
+
             dr = DateResult(
-                date=snap_date, horizon=h, ic=_round_opt(ic, 4),
+                date=snap_date, horizon=h, trade_date=trade_date,
+                ic=_round_opt(ic, 4),
                 gross_return=_round_opt(gross, 6),
                 net_return=_round_opt(net_ret, 6),
                 turnover=round(turn, 4),
                 n_signal=len(signal_tickers), n_held=n_held,
                 coverage=round(coverage, 4),
+                bottom_k_return=_round_opt(bottom_gross, 6),
+                benchmark_return=_round_opt(bm_ret, 6),
+                excess_return=_round_opt(excess_ret, 6),
+                ls_return=_round_opt(ls_ret, 6),
+                ls_net_return=_round_opt(ls_net_ret, 6),
+                hedged_return=_round_opt(hedged_ret, 6),
+                topk_avg_beta=_round_opt(topk_beta, 4),
+                bottomk_avg_beta=_round_opt(bottomk_beta, 4),
+                topk_avg_drawdown=_round_opt(topk_dd, 4),
+                bottomk_avg_drawdown=_round_opt(bottomk_dd, 4),
+                monotonic_slope=_round_opt(slope, 4),
+                split_id=s_id, is_train=s_train, is_test=s_test,
+                n_universe_eval=n_universe_eval,
+                n_missing_anchor=n_missing_anchor,
+                n_missing_forward=n_missing_forward,
             )
             date_results.append(dr)
             date_evaluated = True
@@ -384,9 +1160,22 @@ def evaluate(
                 horizon_ics[h].append(ic)
             if gross is not None:
                 horizon_gross[h].append(gross)
+            if bottom_gross is not None:
+                horizon_bottom[h].append(bottom_gross)
             if net_ret is not None:
                 horizon_net[h].append(net_ret)
             horizon_turnover[h].append(turn)
+            # Track sign mismatches (from the enhanced check above)
+            if mismatch:
+                sign_mismatches[h] += 1
+            if excess_ret is not None:
+                horizon_excess[h].append(excess_ret)
+            if ls_ret is not None:
+                horizon_ls[h].append(ls_ret)
+            if ls_net_ret is not None:
+                horizon_ls_net[h].append(ls_net_ret)
+            if hedged_ret is not None:
+                horizon_hedged[h].append(hedged_ret)
 
         if date_evaluated:
             n_evaluated += 1
@@ -397,27 +1186,164 @@ def evaluate(
         n_dates=len(snap_dates), n_evaluated=n_evaluated,
         n_skipped=len(snap_dates) - n_evaluated,
         use_positions=use_positions,
+        anchor_mode=anchor_mode,
+        benchmark=benchmark,
+        split_mode=split_mode,
+        universe_mode=universe_mode,
     )
+
+    # Write component eval outputs if enabled
+    if component_eval and component_results and out_dir is not None:
+        _write_component_eval(component_results, horizons, out_dir)
 
     for h in horizons:
         ics = horizon_ics[h]
         gross_list = horizon_gross[h]
+        bottom_list = horizon_bottom[h]
         net_list = horizon_net[h]
         turn_list = horizon_turnover[h]
+        excess_list = horizon_excess[h]
+        ls_list = horizon_ls[h]
+        ls_net_list = horizon_ls_net[h]
+        hedged_list = horizon_hedged[h]
 
-        summary.by_horizon[h] = {
+        bh: Dict[str, Any] = {
             "n_dates": len(ics),
             "mean_ic": _round_opt(_safe_mean(ics), 4),
             "median_ic": _round_opt(_safe_median(ics), 4),
             "std_ic": _round_opt(_safe_std(ics), 4),
             "mean_gross_return": _round_opt(_safe_mean(gross_list), 6),
+            "mean_bottom_k_return": _round_opt(_safe_mean(bottom_list), 6),
             "mean_net_return": _round_opt(_safe_mean(net_list), 6),
             "cumulative_gross": _round_opt(_cumulative(gross_list), 6),
             "cumulative_net": _round_opt(_cumulative(net_list), 6),
             "mean_turnover": _round_opt(_safe_mean(turn_list), 4),
+            "sign_mismatches": sign_mismatches[h],
         }
 
+        # IC t-stat (if enough dates)
+        if len(ics) >= 8:
+            ic_std = _safe_std(ics)
+            if ic_std and ic_std > 0:
+                bh["ic_t_stat"] = _round_opt(
+                    _safe_mean(ics) / (ic_std / math.sqrt(len(ics))), 3
+                )
+
+        # Benchmark-relative
+        if excess_list:
+            bh["mean_excess_return"] = _round_opt(_safe_mean(excess_list), 6)
+            bh["cumulative_excess"] = _round_opt(_cumulative(excess_list), 6)
+
+        # Long-short
+        if ls_list:
+            bh["mean_ls_return"] = _round_opt(_safe_mean(ls_list), 6)
+            bh["mean_ls_net_return"] = _round_opt(_safe_mean(ls_net_list), 6)
+            bh["cumulative_ls"] = _round_opt(_cumulative(ls_list), 6)
+            if len(ls_list) >= 8:
+                ls_std = _safe_std(ls_list)
+                if ls_std and ls_std > 0:
+                    bh["ls_t_stat"] = _round_opt(
+                        _safe_mean(ls_list) / (ls_std / math.sqrt(len(ls_list))), 3
+                    )
+
+        # Beta-hedged
+        if hedged_list:
+            bh["mean_hedged_return"] = _round_opt(_safe_mean(hedged_list), 6)
+            bh["cumulative_hedged"] = _round_opt(_cumulative(hedged_list), 6)
+
+        # Residual alpha (regression of top-bottom on benchmark)
+        resid = compute_residual_alpha(date_results, h)
+        if resid["alpha"] is not None:
+            bh["residual_alpha"] = resid["alpha"]
+            bh["residual_beta"] = resid["beta"]
+            bh["residual_r2"] = resid["r2"]
+            bh["residual_alpha_t"] = resid["alpha_t_stat"]
+
+        # Multi-regressor residual alpha (benchmark + beta_diff + drawdown_diff)
+        resid_multi = compute_residual_alpha_multi(date_results, h)
+        if resid_multi.get("alpha") is not None:
+            bh["resid_multi_alpha"] = resid_multi["alpha"]
+            bh["resid_multi_beta_bm"] = resid_multi["beta_benchmark"]
+            bh["resid_multi_beta_bd"] = resid_multi["beta_beta_diff"]
+            bh["resid_multi_beta_dd"] = resid_multi["beta_dd_diff"]
+            bh["resid_multi_r2"] = resid_multi["r2"]
+            bh["resid_multi_alpha_t"] = resid_multi["alpha_t_stat"]
+
+        # Train/test split metrics (if split_mode != none)
+        if split_mode != "none":
+            train_dr = [dr for dr in date_results
+                        if dr.horizon == h and not dr.skipped and dr.is_train]
+            test_dr = [dr for dr in date_results
+                       if dr.horizon == h and not dr.skipped and dr.is_test]
+            train_ics = [dr.ic for dr in train_dr if dr.ic is not None]
+            test_ics = [dr.ic for dr in test_dr if dr.ic is not None]
+            bh["train_n"] = len(train_ics)
+            bh["train_mean_ic"] = _round_opt(_safe_mean(train_ics), 4)
+            bh["test_n"] = len(test_ics)
+            bh["test_mean_ic"] = _round_opt(_safe_mean(test_ics), 4)
+            test_gross = [dr.gross_return for dr in test_dr
+                          if dr.gross_return is not None]
+            bh["test_mean_gross"] = _round_opt(_safe_mean(test_gross), 6)
+            bh["test_cumulative_gross"] = _round_opt(_cumulative(test_gross), 6)
+            test_ls = [dr.ls_return for dr in test_dr
+                       if dr.ls_return is not None]
+            if test_ls:
+                bh["test_mean_ls"] = _round_opt(_safe_mean(test_ls), 6)
+
+        summary.by_horizon[h] = bh
+
     return summary, date_results, skips
+
+
+def _write_component_eval(
+    component_results: List[Dict[str, Any]],
+    horizons: List[int],
+    out_dir: Path,
+) -> None:
+    """Write component eval CSV and summary markdown."""
+    # by_date CSV
+    csv_path = out_dir / "component_eval_by_date.csv"
+    fieldnames = ["date", "horizon", "component", "ic", "ls_return", "n_signal"]
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in component_results:
+            writer.writerow(row)
+
+    # Summary: aggregate per component per horizon
+    from collections import defaultdict
+    agg: Dict[Tuple[int, str], List[Dict[str, Any]]] = defaultdict(list)
+    for row in component_results:
+        key = (row["horizon"], row["component"])
+        agg[key].append(row)
+
+    md_path = out_dir / "component_eval_summary.md"
+    lines = [
+        "# Component Attribution Summary",
+        "",
+        "Per-component Spearman IC and decile L/S spread.",
+        "",
+        "| Horizon | Component | N dates | Mean IC | Median IC | Mean L/S |",
+        "|---------|-----------|---------|---------|-----------|----------|",
+    ]
+    for h in horizons:
+        # Get all unique components for this horizon
+        comps = sorted(set(r["component"] for r in component_results if r["horizon"] == h))
+        for comp in comps:
+            rows = agg[(h, comp)]
+            ics = [r["ic"] for r in rows if r["ic"] is not None]
+            ls_rets = [r["ls_return"] for r in rows if r["ls_return"] is not None]
+            mean_ic = statistics.mean(ics) if ics else None
+            median_ic = statistics.median(ics) if ics else None
+            mean_ls = statistics.mean(ls_rets) if ls_rets else None
+            lines.append(
+                f"| {h}d | {comp} | {len(ics)} "
+                f"| {_fmt(mean_ic)} | {_fmt(median_ic)} "
+                f"| {_fmt_pct(mean_ls)} |"
+            )
+    lines.append("")
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
 
 
 def _round_opt(v: Optional[float], d: int) -> Optional[float]:
@@ -467,13 +1393,42 @@ def write_summary_md(summary: EvalSummary, out_dir: Path) -> Path:
         f"- **Skipped**: {summary.n_skipped}",
         f"- **Top-K**: {summary.top_k}",
         f"- **Cost (bps)**: {summary.cost_bps}",
+        f"- **Anchor mode**: {summary.anchor_mode}",
+        f"- **Benchmark**: {summary.benchmark}",
         f"- **Positions mode**: {summary.use_positions}",
+        f"- **Universe mode**: {summary.universe_mode}",
         "",
-        "## By Horizon",
+        "## Execution Convention",
         "",
-        "| Horizon | N | Mean IC | Median IC | Std IC | Mean Gross | Mean Net | Cum Gross | Cum Net | Mean Turn |",
-        "|---------|---|---------|-----------|--------|------------|----------|-----------|---------|-----------|",
+        f"Signal computed as of calendar date D (the snapshot `as_of_date`).",
     ]
+    if summary.anchor_mode == "next_trading_day":
+        lines.append(
+            "Trades executed on the **first trading day after D** (PIT-safe: "
+            "no lookahead since information is known at D, execution is next open)."
+        )
+    elif summary.anchor_mode == "prev_trading_day":
+        lines.append(
+            "Trades executed on the **last trading day on/before D** "
+            "(assumes signal known at market close on D)."
+        )
+    else:
+        lines.append(
+            "Trades anchored at **exact date D** (requires D to be a trading day)."
+        )
+    lines.append("")
+
+    # Core table
+    lines.append("## By Horizon")
+    lines.append("")
+    lines.append(
+        "| Horizon | N | Mean IC | Median IC | Std IC | IC t | "
+        "Mean Gross | Mean Net | Cum Gross | Cum Net | Mean Turn |"
+    )
+    lines.append(
+        "|---------|---|---------|-----------|--------|------|"
+        "-----------|----------|-----------|---------|-----------|"
+    )
     for h in summary.horizons:
         bh = summary.by_horizon.get(h, {})
         lines.append(
@@ -481,6 +1436,7 @@ def write_summary_md(summary: EvalSummary, out_dir: Path) -> Path:
             f"| {_fmt(bh.get('mean_ic'))} "
             f"| {_fmt(bh.get('median_ic'))} "
             f"| {_fmt(bh.get('std_ic'))} "
+            f"| {_fmt(bh.get('ic_t_stat'))} "
             f"| {_fmt_pct(bh.get('mean_gross_return'))} "
             f"| {_fmt_pct(bh.get('mean_net_return'))} "
             f"| {_fmt_pct(bh.get('cumulative_gross'))} "
@@ -488,6 +1444,227 @@ def write_summary_md(summary: EvalSummary, out_dir: Path) -> Path:
             f"| {_fmt(bh.get('mean_turnover'))} |"
         )
     lines.append("")
+
+    # Sign consistency check table
+    lines.append("## Sign Consistency (Top-K vs Bottom-K)")
+    lines.append("")
+    lines.append(
+        "| Horizon | Mean Top-K | Mean Bottom-K | Top-Bottom | Mean IC | "
+        "Consistent | Mismatches |"
+    )
+    lines.append(
+        "|---------|------------|---------------|------------|---------|"
+        "------------|------------|"
+    )
+    for h in summary.horizons:
+        bh = summary.by_horizon.get(h, {})
+        top_k_ret = bh.get("mean_gross_return")
+        bot_k_ret = bh.get("mean_bottom_k_return")
+        mean_ic = bh.get("mean_ic")
+        tmb = None
+        if top_k_ret is not None and bot_k_ret is not None:
+            tmb = top_k_ret - bot_k_ret
+        consistent = ""
+        if tmb is not None and mean_ic is not None:
+            if (mean_ic >= 0 and tmb >= 0) or (mean_ic < 0 and tmb < 0):
+                consistent = "YES"
+            else:
+                consistent = "**NO**"
+        lines.append(
+            f"| {h}d | {_fmt_pct(top_k_ret)} "
+            f"| {_fmt_pct(bot_k_ret)} "
+            f"| {_fmt_pct(tmb)} "
+            f"| {_fmt(mean_ic)} "
+            f"| {consistent} "
+            f"| {bh.get('sign_mismatches', 0)} |"
+        )
+    lines.append("")
+
+    # Benchmark table (if present)
+    has_excess = any(
+        "mean_excess_return" in summary.by_horizon.get(h, {}) for h in summary.horizons
+    )
+    if has_excess:
+        lines.append(f"## Benchmark-Relative ({summary.benchmark})")
+        lines.append("")
+        lines.append("| Horizon | Mean Excess | Cum Excess |")
+        lines.append("|---------|-------------|------------|")
+        for h in summary.horizons:
+            bh = summary.by_horizon.get(h, {})
+            lines.append(
+                f"| {h}d | {_fmt_pct(bh.get('mean_excess_return'))} "
+                f"| {_fmt_pct(bh.get('cumulative_excess'))} |"
+            )
+        lines.append("")
+
+    # Long-short table (if present)
+    has_ls = any(
+        "mean_ls_return" in summary.by_horizon.get(h, {}) for h in summary.horizons
+    )
+    if has_ls:
+        lines.append("## Long-Short Decile Spread")
+        lines.append("")
+        lines.append("| Horizon | Mean L/S | Mean L/S Net | Cum L/S | L/S t |")
+        lines.append("|---------|----------|--------------|---------|-------|")
+        for h in summary.horizons:
+            bh = summary.by_horizon.get(h, {})
+            lines.append(
+                f"| {h}d | {_fmt_pct(bh.get('mean_ls_return'))} "
+                f"| {_fmt_pct(bh.get('mean_ls_net_return'))} "
+                f"| {_fmt_pct(bh.get('cumulative_ls'))} "
+                f"| {_fmt(bh.get('ls_t_stat'))} |"
+            )
+        lines.append("")
+
+    # Beta-hedged table (if present)
+    has_hedged = any(
+        "mean_hedged_return" in summary.by_horizon.get(h, {}) for h in summary.horizons
+    )
+    if has_hedged:
+        lines.append("## Beta-Hedged Portfolio")
+        lines.append("")
+        lines.append("| Horizon | Mean Hedged | Cum Hedged |")
+        lines.append("|---------|-------------|------------|")
+        for h in summary.horizons:
+            bh = summary.by_horizon.get(h, {})
+            lines.append(
+                f"| {h}d | {_fmt_pct(bh.get('mean_hedged_return'))} "
+                f"| {_fmt_pct(bh.get('cumulative_hedged'))} |"
+            )
+        lines.append("")
+
+    # Residual alpha table (if present)
+    has_resid = any(
+        "residual_alpha" in summary.by_horizon.get(h, {}) for h in summary.horizons
+    )
+    if has_resid:
+        lines.append("## Residual Alpha (Top-Bottom regressed on Benchmark)")
+        lines.append("")
+        lines.append(
+            "| Horizon | Alpha (ann.) | Beta | R² | Alpha t |"
+        )
+        lines.append(
+            "|---------|-------------|------|-----|---------|"
+        )
+        for h in summary.horizons:
+            bh = summary.by_horizon.get(h, {})
+            alpha = bh.get("residual_alpha")
+            alpha_ann = f"{alpha * 12:.2%}" if alpha is not None else "\u2014"
+            lines.append(
+                f"| {h}d | {alpha_ann} "
+                f"| {_fmt(bh.get('residual_beta'))} "
+                f"| {_fmt(bh.get('residual_r2'))} "
+                f"| {_fmt(bh.get('residual_alpha_t'))} |"
+            )
+        lines.append("")
+        lines.append(
+            "> Residual alpha = intercept from OLS: (TopK - BottomK) = α + β × BenchmarkReturn. "
+            "Annualized by × 12 (monthly)."
+        )
+        lines.append("")
+
+    # Multi-regressor attribution (if present)
+    has_multi = any(
+        "resid_multi_alpha" in summary.by_horizon.get(h, {}) for h in summary.horizons
+    )
+    if has_multi:
+        lines.append("## Attribution (Multi-Regressor)")
+        lines.append("")
+        lines.append(
+            "| Horizon | Alpha (ann.) | β(BM) | β(Δbeta) | β(Δdd) | R² | Alpha t |"
+        )
+        lines.append(
+            "|---------|-------------|-------|----------|--------|-----|---------|"
+        )
+        for h in summary.horizons:
+            bh = summary.by_horizon.get(h, {})
+            alpha = bh.get("resid_multi_alpha")
+            alpha_ann = f"{alpha * 12:.2%}" if alpha is not None else "\u2014"
+            lines.append(
+                f"| {h}d | {alpha_ann} "
+                f"| {_fmt(bh.get('resid_multi_beta_bm'))} "
+                f"| {_fmt(bh.get('resid_multi_beta_bd'))} "
+                f"| {_fmt(bh.get('resid_multi_beta_dd'))} "
+                f"| {_fmt(bh.get('resid_multi_r2'))} "
+                f"| {_fmt(bh.get('resid_multi_alpha_t'))} |"
+            )
+        lines.append("")
+        lines.append(
+            "> L/S = α + β₁·BenchmarkRet + β₂·(TopBeta−BotBeta) + β₃·(TopDD−BotDD). "
+            "Annualized by × 12."
+        )
+        lines.append("")
+
+    # Train/test split metrics (if present)
+    has_split = any(
+        "test_n" in summary.by_horizon.get(h, {}) for h in summary.horizons
+    )
+    if has_split:
+        lines.append(f"## Walk-Forward Split ({summary.split_mode})")
+        lines.append("")
+        lines.append(
+            "| Horizon | Train N | Train IC | Test N | Test IC | "
+            "Test Gross | Test Cum | Test L/S |"
+        )
+        lines.append(
+            "|---------|---------|----------|--------|---------|"
+            "-----------|----------|----------|"
+        )
+        for h in summary.horizons:
+            bh = summary.by_horizon.get(h, {})
+            lines.append(
+                f"| {h}d | {bh.get('train_n', 0)} "
+                f"| {_fmt(bh.get('train_mean_ic'))} "
+                f"| {bh.get('test_n', 0)} "
+                f"| {_fmt(bh.get('test_mean_ic'))} "
+                f"| {_fmt_pct(bh.get('test_mean_gross'))} "
+                f"| {_fmt_pct(bh.get('test_cumulative_gross'))} "
+                f"| {_fmt_pct(bh.get('test_mean_ls'))} |"
+            )
+        lines.append("")
+
+    # Interpretation Notes
+    lines.append("## Interpretation Notes")
+    lines.append("")
+    lines.append("### Signal Direction")
+    lines.append(
+        "- **Signal**: `signal = -actionable_rank`. Rank 1 (best) maps to highest signal."
+    )
+    lines.append(
+        "- **IC > 0**: better-ranked tickers tend to have higher forward returns."
+    )
+    lines.append(
+        "- **Top-K**: first K tickers by actionable_rank (rank 1..K)."
+    )
+    lines.append(
+        "- **Bottom-K**: last K tickers by actionable_rank."
+    )
+    lines.append(
+        "- **L/S (decile spread)**: Top 10% return minus Bottom 10% return."
+    )
+    lines.append("")
+    lines.append("### Anchor Convention")
+    if summary.anchor_mode == "next_trading_day":
+        lines.append(
+            "- **next_trading_day**: calendar as-of date D maps to the "
+            "first trading day after D. PIT-safe: information available at D, "
+            "execution at next market open."
+        )
+    lines.append("")
+    lines.append("### SIGN_MISMATCH")
+    lines.append(
+        "- Fired when IC > 0 but TopK < BottomK, or when IC and monotonic slope "
+        "disagree. Indicates non-monotonic signal-return relationship or "
+        "exposure confound at the tails."
+    )
+    lines.append("")
+    lines.append("### PIT Enforcement")
+    lines.append(
+        "- All bundles use PIT-filtered data: CTgov trials `first_posted <= as_of_date`, "
+        "13F filings `filing_date <= as_of_date`, catalyst events `disclosed_at <= as_of_date`."
+    )
+    lines.append("")
+
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
     return path
@@ -496,8 +1673,16 @@ def write_summary_md(summary: EvalSummary, out_dir: Path) -> Path:
 def write_by_date_csv(date_results: List[DateResult], out_dir: Path) -> Path:
     path = out_dir / "by_date.csv"
     fieldnames = [
-        "date", "horizon", "ic", "gross_return", "net_return",
-        "turnover", "n_signal", "n_held", "coverage", "skipped", "skip_reason",
+        "date", "horizon", "trade_date", "ic", "gross_return", "bottom_k_return",
+        "net_return", "turnover", "n_signal", "n_held", "coverage",
+        "skipped", "skip_reason",
+        "benchmark_return", "excess_return",
+        "ls_return", "ls_net_return", "hedged_return",
+        "topk_avg_beta", "bottomk_avg_beta",
+        "topk_avg_drawdown", "bottomk_avg_drawdown",
+        "monotonic_slope",
+        "split_id", "is_train", "is_test",
+        "n_universe_eval", "n_missing_anchor", "n_missing_forward",
     ]
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -515,11 +1700,11 @@ def write_skips_json(skips: List[Dict[str, str]], out_dir: Path) -> Path:
 
 
 def _fmt(v: Optional[float]) -> str:
-    return f"{v:.4f}" if v is not None else "—"
+    return f"{v:.4f}" if v is not None else "\u2014"
 
 
 def _fmt_pct(v: Optional[float]) -> str:
-    return f"{v:.2%}" if v is not None else "—"
+    return f"{v:.2%}" if v is not None else "\u2014"
 
 
 # ---------------------------------------------------------------------------
@@ -559,6 +1744,65 @@ def main() -> None:
     parser.add_argument(
         "--min-price-coverage", type=float, default=DEFAULT_MIN_PRICE_COVERAGE,
     )
+    parser.add_argument(
+        "--anchor-mode",
+        choices=["exact", "next_trading_day", "prev_trading_day"],
+        default="exact",
+        help="How to resolve non-trading as-of dates to trade dates",
+    )
+    parser.add_argument(
+        "--benchmark",
+        default="none",
+        help="Benchmark ticker for excess returns (e.g. XBI, SPY, none)",
+    )
+    parser.add_argument(
+        "--long-short-deciles", action="store_true", default=False,
+        help="Compute top-decile minus bottom-decile spread",
+    )
+    parser.add_argument(
+        "--split-mode",
+        choices=["none", "fixed", "walk_forward"],
+        default="none",
+        help="Walk-forward split mode: none, fixed, or walk_forward",
+    )
+    parser.add_argument(
+        "--train-end", type=str, default=None,
+        help="Last date in training set (fixed split)",
+    )
+    parser.add_argument(
+        "--test-start", type=str, default=None,
+        help="First date in test set (fixed split)",
+    )
+    parser.add_argument(
+        "--wf-train-months", type=int, default=0,
+        help="Number of initial dates for training (walk_forward)",
+    )
+    parser.add_argument(
+        "--wf-test-months", type=int, default=0,
+        help="Dates per test fold (walk_forward)",
+    )
+    parser.add_argument(
+        "--universe-mode",
+        choices=["current", "price_available"],
+        default="current",
+        help="Eval universe: current (rankings as-is) or price_available (filter by price)",
+    )
+    parser.add_argument(
+        "--component-eval", action="store_true", default=False,
+        help="Compute per-component IC and L/S",
+    )
+    parser.add_argument(
+        "--rebalance-buffer-ranks", type=int, default=0,
+        help="Buffer zone around top-K for rebalance (research-only)",
+    )
+    parser.add_argument(
+        "--turnover-cap", type=float, default=0.0,
+        help="Max turnover fraction per rebalance, 0=unlimited (research-only)",
+    )
+    parser.add_argument(
+        "--top-quantile", type=float, default=0.0,
+        help="Use top N%% instead of top-K, 0=use top_k (research-only)",
+    )
     args = parser.parse_args()
 
     horizons = [int(h.strip()) for h in args.horizons.split(",")]
@@ -567,6 +1811,19 @@ def main() -> None:
 
     print(f"Evaluating snapshots in {args.snapshot_root}")
     print(f"  Horizons: {horizons}, Top-K: {args.top_k}, Cost: {args.cost_bps} bps")
+    print(f"  Anchor: {args.anchor_mode}, Benchmark: {args.benchmark}")
+    if args.split_mode != "none":
+        print(f"  Split: {args.split_mode}")
+    if args.universe_mode != "current":
+        print(f"  Universe: {args.universe_mode}")
+    if args.component_eval:
+        print("  Component eval: enabled")
+    if args.rebalance_buffer_ranks > 0:
+        print(f"  Rebalance buffer: {args.rebalance_buffer_ranks} ranks")
+    if args.turnover_cap > 0:
+        print(f"  Turnover cap: {args.turnover_cap:.0%}")
+    if args.top_quantile > 0:
+        print(f"  Top quantile: {args.top_quantile:.0%}")
 
     summary, date_results, skips = evaluate(
         snapshot_root=args.snapshot_root,
@@ -579,6 +1836,20 @@ def main() -> None:
         pit_mode=args.pit_mode,
         use_positions=args.use_positions,
         min_price_coverage=args.min_price_coverage,
+        anchor_mode=args.anchor_mode,
+        benchmark=args.benchmark,
+        long_short_deciles=args.long_short_deciles,
+        split_mode=args.split_mode,
+        train_end=args.train_end,
+        test_start=args.test_start,
+        wf_train_months=args.wf_train_months,
+        wf_test_months=args.wf_test_months,
+        out_dir=args.out_dir,
+        universe_mode=args.universe_mode,
+        component_eval=args.component_eval,
+        rebalance_buffer_ranks=args.rebalance_buffer_ranks,
+        turnover_cap=args.turnover_cap,
+        top_quantile=args.top_quantile,
     )
 
     write_summary_json(summary, args.out_dir)
@@ -586,15 +1857,24 @@ def main() -> None:
     write_by_date_csv(date_results, args.out_dir)
     write_skips_json(skips, args.out_dir)
 
-    print(f"\nResults → {args.out_dir}")
+    print(f"\nResults -> {args.out_dir}")
     print(f"  {summary.n_evaluated}/{summary.n_dates} dates evaluated, "
           f"{summary.n_skipped} skipped")
     for h in horizons:
         bh = summary.by_horizon.get(h, {})
-        print(f"  {h}d: IC={_fmt(bh.get('mean_ic'))}, "
-              f"Gross={_fmt_pct(bh.get('mean_gross_return'))}, "
-              f"Net={_fmt_pct(bh.get('mean_net_return'))}, "
-              f"Turn={_fmt(bh.get('mean_turnover'))}")
+        parts = [
+            f"IC={_fmt(bh.get('mean_ic'))}",
+            f"Gross={_fmt_pct(bh.get('mean_gross_return'))}",
+            f"Net={_fmt_pct(bh.get('mean_net_return'))}",
+            f"Turn={_fmt(bh.get('mean_turnover'))}",
+        ]
+        if "mean_excess_return" in bh:
+            parts.append(f"Excess={_fmt_pct(bh.get('mean_excess_return'))}")
+        if "mean_ls_return" in bh:
+            parts.append(f"L/S={_fmt_pct(bh.get('mean_ls_return'))}")
+        if "mean_hedged_return" in bh:
+            parts.append(f"Hedged={_fmt_pct(bh.get('mean_hedged_return'))}")
+        print(f"  {h}d: {', '.join(parts)}")
 
 
 if __name__ == "__main__":
