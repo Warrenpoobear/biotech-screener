@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "thresholds_id": "8ee2bbb8",
+  "thresholds": {
+    "warn_top20_overlap_pct": 70.0,
+    "warn_top60_overlap_pct": 80.0,
+    "warn_rank_spearman_rho": 0.9,
+    "warn_mean_abs_rank_delta_top60": 8.0,
+    "warn_tier_migration_count": 10,
+    "warn_eligibility_change_count": 10
+  },
+  "current_date": "2026-02-24",
+  "prior_date": "2026-02-21",
+  "metrics": {
+    "top20_overlap_pct": 90.48,
+    "top60_overlap_pct": 90.48,
+    "rank_spearman_rho": 0.9982,
+    "mean_abs_rank_delta_top60": 1.14,
+    "tier_migration_count": 7,
+    "eligibility_change_count": 10,
+    "top20_entrants": [
+      "ZBIO"
+    ],
+    "top20_exits": [
+      "DNTH"
+    ],
+    "rank_column_current": "actionable_rank",
+    "rank_column_prior": "actionable_rank",
+    "n_common_tickers": 319
+  },
+  "warn_reasons": [],
+  "status": "PASS"
+}

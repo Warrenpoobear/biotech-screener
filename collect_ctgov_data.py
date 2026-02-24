@@ -108,6 +108,7 @@ TICKER_TO_SPONSORS = {
     "CLDX": ["Celldex Therapeutics"],
     "CLLS": ["Cellectis S.A."],
     "CLYM": ["Climb Bio", "Climb Bio, Inc."],
+    "CMPX": ["Compass Therapeutics", "Compass Therapeutics, Inc."],
     "CMPS": ["COMPASS Pathways"],
     "CNTA": ["Centessa Pharmaceuticals", "Centessa Pharmaceuticals plc"],
     "CNTX": ["Context Therapeutics"],

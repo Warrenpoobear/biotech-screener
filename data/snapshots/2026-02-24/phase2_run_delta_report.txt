@@ -1,50 +1,45 @@
 ========================================================================
 PHASE-2 RUN DELTA REPORT
 ========================================================================
-Generated: 2026-02-24T17:27:53Z
+Generated: 2026-02-24T19:38:59Z
 Current:   2026-02-24 (ruleset 88d7ae9a)
-Prior:     2026-02-21 (ruleset 88d7ae9a)
+Prior:     (none)
 
 HEALTH: OK
-  turnover=5.0%  catalyst=92.3%  A=34  ruleset=88d7ae9a
+  catalyst=92.4%  A=34  ruleset=88d7ae9a
 
 1. PORTFOLIO TURNOVER
 ------------------------------------------------------------------------
-  Current portfolio: 20 names
-  Prior portfolio:   20 names
-  Entrants (1):  ZBIO
-  Exits (1):  DNTH
-  Name turnover: 5.0%
-  Weight L1 delta: 16.1%
+  Portfolio: 20 names (no prior for comparison)
 
 2. TIER DISTRIBUTION (dev-stage universe)
 ------------------------------------------------------------------------
-                Current    Prior    Delta
-  A                  34       33 +      1
-  B                  41       40 +      1
-  C                  64       60 +      4
-  D                  44       50      -6
+                Current
+  A                  34
+  B                  43
+  C                  64
+  D                  43
 
   In portfolio:
-    A: 20 (100%)   Prior: 20 (100%)
-    B: 0 (0%)   Prior: 0 (0%)
+    A: 20 (100%)
+    B: 0 (0%)
 
 3. SIZING (portfolio)
 ------------------------------------------------------------------------
-                Current    Prior    Delta
-  L                  14       14       0
-  M                   5        5       0
-  S                   1        1       0
-  XS                  0        0       0
+                Current
+  L                  14
+  M                   5
+  S                   1
+  XS                  0
 
 4. CATALYST COVERAGE (dev-stage)
 ------------------------------------------------------------------------
-  specific_days:  92.3%  (Prior: 92.3%)
-  Mode distribution (current):
+  specific_days:  92.4%
+  Mode distribution:
     no_upcoming: 14
-    specific_days: 169
+    specific_days: 170
 
-  Nearest 10 catalysts (current):
+  Nearest 10 catalysts:
     DNLI       1d  tier=B      ADCT       4d  tier=A
     NMRA       5d  tier=A      PVLA       5d  tier=A
     IMVT       5d  tier=A      VRDN       5d  tier=A
@@ -53,16 +48,15 @@ HEALTH: OK
 
 5. RISK SANITY (portfolio)
 ------------------------------------------------------------------------
-  Flag                  Current    Prior
-  deep_drawdown               1        1
-  high_vol                    2        1
-  high_beta                   4        3
-  overbought_rsi              3        2
-  low_confidence              0        0
+  Flag                  Current
+  deep_drawdown               1
+  high_vol                    2
+  high_beta                   4
+  overbought_rsi              3
+  low_confidence              0
 
 6. GUARDRAILS
 ------------------------------------------------------------------------
   [PASS] Ruleset matches pinned Phase-2 ID (88d7ae9a)
   [PASS] A-tier count > 0 (34)
-  [PASS] Catalyst specific_days coverage > 50.0% (92.3%)
-  [PASS] Name turnover 5.0% <= 40.0%
+  [PASS] Catalyst specific_days coverage > 50.0% (92.4%)

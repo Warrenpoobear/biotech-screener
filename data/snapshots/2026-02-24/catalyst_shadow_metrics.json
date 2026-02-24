@@ -10,14 +10,14 @@
   "median_catalyst_days_good": 126.0,
   "p10_catalyst_days": 5.0,
   "p50_catalyst_days": 126.0,
-  "p90_catalyst_days": 532.0,
+  "p90_catalyst_days": 531.1,
   "A_tier_count": 34,
   "top60_overlap": 0.9672,
-  "top100_overlap": 0.9608,
+  "top100_overlap": 0.9417,
   "sec_8k_events": 212,
   "ctgov_events": 1081,
   "fda_events": 4,
-  "coverage_bucket_OK": 258,
+  "coverage_bucket_OK": 259,
   "coverage_bucket_A": 23,
   "coverage_bucket_B": 2,
   "coverage_bucket_C": 1,
@@ -28,5 +28,5 @@
   "coverage_bucket_MISSING": 0,
   "n_no_upcoming_total": 61,
   "n_addressable_gap": 30,
-  "n_coverage_total": 319
+  "n_coverage_total": 320
 }

@@ -464597,5 +464597,192 @@
     "enrollment": null,
     "sponsor": "Zymeworks BC Inc.",
     "collected_at": "2026-02-18"
+  },
+  {
+    "ticker": "CMPX",
+    "nct_id": "NCT05513742",
+    "title": "A Study of CTX-009 in Adult Patients With Metastatic Colorectal Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Metastatic Colorectal Cancer",
+      "Colon Cancer",
+      "Rectal Cancer"
+    ],
+    "interventions": [
+      "CTX-009"
+    ],
+    "first_posted": "2022-08-24",
+    "start_date": "2022-12-08",
+    "primary_completion_date": "2025-04-28",
+    "completion_date": "2025-05-15",
+    "results_first_posted": null,
+    "last_update_posted": "2025-06-26",
+    "enrollment": null,
+    "sponsor": "Compass Therapeutics",
+    "collected_at": "2026-02-24"
+  },
+  {
+    "ticker": "CMPX",
+    "nct_id": "NCT05506943",
+    "title": "A Study of CTX-009 in Combination With Paclitaxel in Adult Patients With Unresectable Advanced, Metastatic or Recurrent Biliary Tract Cancers (COMPANION-002)",
+    "status": "ACTIVE_NOT_RECRUITING",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Biliary Tract Cancer",
+      "Cholangiocarcinoma",
+      "Gall Bladder Cancer",
+      "Ampullary Cancer"
+    ],
+    "interventions": [
+      "CTX-009",
+      "Paclitaxel"
+    ],
+    "first_posted": "2022-08-18",
+    "start_date": "2023-01-09",
+    "primary_completion_date": "2025-07-01",
+    "completion_date": "2025-12-01",
+    "results_first_posted": null,
+    "last_update_posted": "2025-04-20",
+    "enrollment": null,
+    "sponsor": "Compass Therapeutics",
+    "collected_at": "2026-02-24"
+  },
+  {
+    "ticker": "CMPX",
+    "nct_id": "NCT06150664",
+    "title": "A Phase 1 of CTX-8371 in Patients With Advanced Malignancies",
+    "status": "RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Non Small Cell Lung Cancer",
+      "Triple Negative Breast Cancer",
+      "Hodgkin Lymphoma",
+      "Head and Neck Squamous Cell Carcinoma",
+      "Malignant Melanoma"
+    ],
+    "interventions": [
+      "CTX-8371"
+    ],
+    "first_posted": "2023-11-29",
+    "start_date": "2024-03-19",
+    "primary_completion_date": "2026-12-01",
+    "completion_date": "2027-05-01",
+    "results_first_posted": null,
+    "last_update_posted": "2025-12-12",
+    "enrollment": null,
+    "sponsor": "Compass Therapeutics",
+    "collected_at": "2026-02-24"
+  },
+  {
+    "ticker": "CMPX",
+    "nct_id": "NCT07419841",
+    "title": "A Phase 1 Study of the Safety and Tolerability of CTX-10726",
+    "status": "NOT_YET_RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Gastroesophageal Cancer (GC)",
+      "Hepatocellular Carcinoma (HCC)",
+      "Endometrial Cancer",
+      "Renal Cell Carcinoma (RCC)"
+    ],
+    "interventions": [
+      "CTX-10726"
+    ],
+    "first_posted": "2026-02-19",
+    "start_date": "2026-04-01",
+    "primary_completion_date": "2028-04-01",
+    "completion_date": "2028-11-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-02-20",
+    "enrollment": null,
+    "sponsor": "Compass Therapeutics",
+    "collected_at": "2026-02-24"
+  },
+  {
+    "ticker": "CMPX",
+    "nct_id": "NCT06548412",
+    "title": "CTX-009 With Gemcitabine, Cisplatin, and Durvalumab as First-line Therapy in Patients With Unresectable or Metastatic Biliary Tract Cancers",
+    "status": "RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Metastatic Biliary Tract Cancer"
+    ],
+    "interventions": [
+      "Gemcitabine",
+      "Cisplatin",
+      "Durvalumab",
+      "CTX-009"
+    ],
+    "first_posted": "2024-08-12",
+    "start_date": "2025-01-22",
+    "primary_completion_date": "2027-05-01",
+    "completion_date": "2029-05-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-01-20",
+    "enrollment": null,
+    "sponsor": "M.D. Anderson Cancer Center",
+    "collected_at": "2026-02-24"
+  },
+  {
+    "ticker": "CMPX",
+    "nct_id": "NCT04492033",
+    "title": "A Study of CTX-009 (ABL001) in Combination With Irinotecan or Paclitaxel in Advanced or Metastatic Solid Tumor Patients",
+    "status": "TERMINATED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "P1b: Advanced Solid Tumors",
+      "P2: Biliary Tract Cancer"
+    ],
+    "interventions": [
+      "CTX-009 (ABL001)",
+      "Paclitaxel",
+      "Irinotecan"
+    ],
+    "first_posted": "2020-07-30",
+    "start_date": "2020-06-22",
+    "primary_completion_date": "2024-01-08",
+    "completion_date": "2025-01-09",
+    "results_first_posted": null,
+    "last_update_posted": "2025-01-27",
+    "enrollment": null,
+    "sponsor": "Handok Inc.",
+    "collected_at": "2026-02-24"
+  },
+  {
+    "ticker": "CMPX",
+    "nct_id": "NCT03881488",
+    "title": "Study of CTX-471 as a Monotherapy or in Combination With Pembrolizumab in Patients Post PD-1/PD-L1 Inhibitors in Metastatic or Locally Advanced Malignancies",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Locally Advanced Solid Tumor",
+      "Metastatic Cancer",
+      "Non-small Cell Lung Cancer",
+      "Small Cell Lung Cancer",
+      "Mesothelioma",
+      "Melanoma",
+      "Head and Neck Cancer"
+    ],
+    "interventions": [
+      "CTX-471",
+      "Pembrolizumab (KEYTRUDA\u00ae)"
+    ],
+    "first_posted": "2019-03-19",
+    "start_date": "2019-05-17",
+    "primary_completion_date": "2025-05-21",
+    "completion_date": "2025-05-21",
+    "results_first_posted": null,
+    "last_update_posted": "2025-06-13",
+    "enrollment": null,
+    "sponsor": "Compass Therapeutics",
+    "collected_at": "2026-02-24"
   }
 ]
