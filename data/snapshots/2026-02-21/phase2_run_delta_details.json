@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-02-21T16:55:45Z",
+  "generated_at": "2026-02-23T23:20:07Z",
   "current": {
     "date": "2026-02-21",
-    "ruleset_id": "8f99d47e",
+    "ruleset_id": "88d7ae9a",
     "has_native_portfolio": true,
     "portfolio_size": 20
   },
@@ -13,10 +13,16 @@
     "portfolio_size": 20
   },
   "portfolio_turnover": {
-    "entrants": [],
-    "exits": [],
-    "name_turnover_pct": 0.0,
-    "weight_l1_delta": 0.0
+    "entrants": [
+      "FDMT",
+      "KOD"
+    ],
+    "exits": [
+      "CGON",
+      "COGT"
+    ],
+    "name_turnover_pct": 10.0,
+    "weight_l1_delta": 24.0
   },
   "tier_distribution": {
     "current": {
@@ -48,9 +54,9 @@
   },
   "sizing": {
     "current": {
-      "L": 15,
+      "L": 14,
       "M": 5,
-      "S": 0,
+      "S": 1,
       "XS": 0
     },
     "prior": {
@@ -120,12 +126,12 @@
         "tier_dev": "A"
       },
       {
-        "ticker": "NUVL",
+        "ticker": "OLMA",
         "catalyst_days": 8,
         "tier_dev": "A"
       },
       {
-        "ticker": "OLMA",
+        "ticker": "NUVL",
         "catalyst_days": 8,
         "tier_dev": "A"
       },
@@ -191,8 +197,8 @@
   "risk_flags": {
     "current": {
       "deep_drawdown": 1,
-      "high_vol": 2,
-      "high_beta": 1,
+      "high_vol": 1,
+      "high_beta": 3,
       "overbought_rsi": 2,
       "low_confidence": 0
     },
@@ -206,11 +212,13 @@
   },
   "guardrails": {
     "passed": [
-      "Ruleset matches pinned Phase-2 ID (8f99d47e)",
+      "Ruleset matches pinned Phase-2 ID (88d7ae9a)",
       "A-tier count >= 1 (33)",
       "Catalyst coverage 92.3% >= 50.0%",
-      "Name turnover 0.0% <= 40.0%"
+      "Name turnover 10.0% <= 40.0%"
     ],
-    "warnings": []
+    "warnings": [
+      "Ruleset changed: 8f99d47e -> 88d7ae9a"
+    ]
   }
 }
