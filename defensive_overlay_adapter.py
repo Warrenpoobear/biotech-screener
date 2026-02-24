@@ -356,7 +356,17 @@ def detect_fundamental_red_flags(record: Dict) -> Tuple[bool, List[str]]:
 
     if risk_profile == "single_asset" and program_count >= 1:
         if stage.lower() in ["early", "preclinical"]:
-            reasons.append("single_asset_early_stage")
+            # Exempt cash-flow-positive companies with substantial cash:
+            # they are self-sustaining and not at binary risk from a single
+            # clinical program failure (e.g. ILMN — $4B revenue platform).
+            surv_metrics = (record.get("survivability_signal") or {}).get("metrics") or {}
+            burn_ttm = surv_metrics.get("burn_ttm")
+            cash_total = surv_metrics.get("cash_total") or 0
+            _is_self_sustaining = (
+                burn_ttm is not None and burn_ttm <= 0 and cash_total >= 500_000_000
+            )
+            if not _is_self_sustaining:
+                reasons.append("single_asset_early_stage")
 
     # Check for negative phase momentum from flags
     flags = record.get("flags") or []

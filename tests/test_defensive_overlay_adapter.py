@@ -1640,7 +1640,7 @@ class TestFundamentalRedFlagDetection:
                 "risk_profile": "single_asset",
                 "program_count": 1,
             },
-            "survivability_signal": {"metrics": {}},
+            "survivability_signal": {"metrics": {"burn_ttm": 50_000_000, "cash_total": 200_000_000}},
         }
         is_flagged, reasons = detect_fundamental_red_flags(record)
         assert is_flagged
@@ -1668,6 +1668,40 @@ class TestFundamentalRedFlagDetection:
         }
         is_flagged, reasons = detect_fundamental_red_flags(record)
         assert "single_asset_early_stage" not in reasons
+
+    def test_single_asset_early_self_sustaining_not_flagged(self):
+        """Cash-flow-positive company with $500M+ cash is self-sustaining — not flagged.
+
+        Targets false positives like ILMN ($4.3B revenue platform)
+        where program_count=1 is a data artifact.
+        """
+        record = {
+            "stage_bucket": "early",
+            "pipeline_diversity_signal": {
+                "risk_profile": "single_asset",
+                "program_count": 1,
+            },
+            "survivability_signal": {
+                "metrics": {"burn_ttm": 0.0, "cash_total": 1_800_000_000},
+            },
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert "single_asset_early_stage" not in reasons
+
+    def test_single_asset_early_burning_cash_still_flagged(self):
+        """Company with high cash but positive burn rate is still flagged."""
+        record = {
+            "stage_bucket": "early",
+            "pipeline_diversity_signal": {
+                "risk_profile": "single_asset",
+                "program_count": 1,
+            },
+            "survivability_signal": {
+                "metrics": {"burn_ttm": 230_000_000, "cash_total": 650_000_000},
+            },
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert "single_asset_early_stage" in reasons
 
     def test_single_asset_late_stage_not_flagged(self):
         """Single-asset late-stage should NOT be flagged for this reason."""

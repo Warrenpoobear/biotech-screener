@@ -202469,15 +202469,15 @@
     },
     "fundamental_red_flag_config": {
       "attenuation_applied_count": 0,
-      "flagged_count": 14,
+      "flagged_count": 13,
       "median_score_used": "27.26",
       "rank_driver_counts": {
-        "alpha": 305,
+        "alpha": 306,
         "defensive_boost": 0,
         "defensive_penalty": 0,
-        "suppressed": 14
+        "suppressed": 13
       },
-      "suppressed_count": 5,
+      "suppressed_count": 4,
       "suppression_mode": "continuous_multiplier",
       "suppressor_enabled": true,
       "suppressor_version": "1.1.0"
@@ -221579,7 +221579,7 @@
             "weight_effective": "0.0834"
           }
         ],
-        "composite_rank": 124,
+        "composite_rank": 125,
         "composite_score": "31.16",
         "composite_score_attn": "47.72",
         "composite_score_pre_suppression": "47.62",
@@ -235118,7 +235118,7 @@
             "weight_effective": "0.1047"
           }
         ],
-        "composite_rank": 121,
+        "composite_rank": 122,
         "composite_score": "31.49",
         "composite_score_attn": "44.08",
         "composite_score_pre_suppression": "44.08",
@@ -269825,7 +269825,7 @@
             "weight_effective": "0.1007"
           }
         ],
-        "composite_rank": 133,
+        "composite_rank": 134,
         "composite_score": "30.40",
         "composite_score_attn": "35.00",
         "composite_score_pre_suppression": "35.00",
@@ -271147,7 +271147,7 @@
             "weight_effective": "0.1228"
           }
         ],
-        "composite_rank": 135,
+        "composite_rank": 136,
         "composite_score": "30.38",
         "composite_score_attn": "34.91",
         "composite_score_pre_suppression": "34.91",
@@ -276891,10 +276891,9 @@
             "weight_effective": "0.0566"
           }
         ],
-        "composite_rank": 137,
-        "composite_score": "29.99",
+        "composite_rank": 112,
+        "composite_score": "33.61",
         "composite_score_attn": "33.68",
-        "composite_score_pre_suppression": "33.61",
         "confidence_catalyst": "0.4657",
         "confidence_clinical": "0.8657",
         "confidence_financial": "0.9657",
@@ -276976,10 +276975,8 @@
           "valuation_ev_cfo",
           "valuation_regime_commercial"
         ],
-        "fundamental_red_flag": true,
-        "fundamental_red_flag_reasons": [
-          "single_asset_early_stage"
-        ],
+        "fundamental_red_flag": false,
+        "fundamental_red_flag_reasons": [],
         "interaction_terms": {
           "flags": [],
           "total_adjustment": "0.00"
@@ -277090,7 +277087,7 @@
           "program_count": 1,
           "risk_profile": "single_asset"
         },
-        "rank_driver": "suppressed",
+        "rank_driver": "alpha",
         "rank_score": 38.94,
         "rankable": true,
         "risk_adjusted_rank": 114,
@@ -277542,7 +277539,7 @@
             "weight_effective": "0.0942"
           }
         ],
-        "composite_rank": 112,
+        "composite_rank": 113,
         "composite_score": "33.19",
         "composite_score_attn": "33.19",
         "confidence_catalyst": "0.2631",
@@ -278174,7 +278171,7 @@
             "weight_effective": "0.0975"
           }
         ],
-        "composite_rank": 113,
+        "composite_rank": 114,
         "composite_score": "33.14",
         "composite_score_attn": "33.14",
         "confidence_catalyst": "0.6670",
@@ -278819,7 +278816,7 @@
             "weight_effective": "0.0893"
           }
         ],
-        "composite_rank": 114,
+        "composite_rank": 115,
         "composite_score": "32.96",
         "composite_score_attn": "32.96",
         "confidence_catalyst": "0.4036",
@@ -279477,7 +279474,7 @@
             "weight_effective": "0.1063"
           }
         ],
-        "composite_rank": 115,
+        "composite_rank": 116,
         "composite_score": "32.75",
         "composite_score_attn": "32.75",
         "confidence_catalyst": "0.3500",
@@ -280123,7 +280120,7 @@
             "weight_effective": "0.1119"
           }
         ],
-        "composite_rank": 116,
+        "composite_rank": 117,
         "composite_score": "32.75",
         "composite_score_attn": "32.75",
         "confidence_catalyst": "0.2000",
@@ -280792,7 +280789,7 @@
             "weight_effective": "0.1119"
           }
         ],
-        "composite_rank": 117,
+        "composite_rank": 118,
         "composite_score": "32.72",
         "composite_score_attn": "32.72",
         "confidence_catalyst": "0.3243",
@@ -281433,7 +281430,7 @@
             "weight_effective": "0.1007"
           }
         ],
-        "composite_rank": 118,
+        "composite_rank": 119,
         "composite_score": "32.26",
         "composite_score_attn": "32.26",
         "confidence_catalyst": "0.2906",
@@ -282058,7 +282055,7 @@
             "weight_effective": "0.1430"
           }
         ],
-        "composite_rank": 119,
+        "composite_rank": 120,
         "composite_score": "32.10",
         "composite_score_attn": "32.10",
         "confidence_catalyst": "0.4895",
@@ -282665,7 +282662,7 @@
             "weight_effective": "0.0809"
           }
         ],
-        "composite_rank": 120,
+        "composite_rank": 121,
         "composite_score": "31.68",
         "composite_score_attn": "31.68",
         "confidence_catalyst": "0.2749",
@@ -283308,7 +283305,7 @@
             "weight_effective": "0.1197"
           }
         ],
-        "composite_rank": 122,
+        "composite_rank": 123,
         "composite_score": "31.28",
         "composite_score_attn": "31.28",
         "confidence_catalyst": "0.4253",
@@ -283983,7 +283980,7 @@
             "weight_effective": "0.1190"
           }
         ],
-        "composite_rank": 123,
+        "composite_rank": 124,
         "composite_score": "31.22",
         "composite_score_attn": "31.26",
         "confidence_catalyst": "0.4047",
@@ -284641,7 +284638,7 @@
             "weight_effective": "0.0421"
           }
         ],
-        "composite_rank": 125,
+        "composite_rank": 126,
         "composite_score": "31.10",
         "composite_score_attn": "31.10",
         "confidence_catalyst": "0.7000",
@@ -285305,7 +285302,7 @@
             "weight_effective": "0.1150"
           }
         ],
-        "composite_rank": 126,
+        "composite_rank": 127,
         "composite_score": "31.06",
         "composite_score_attn": "31.15",
         "confidence_catalyst": "0.3500",
@@ -285976,7 +285973,7 @@
             "weight_effective": "0.1007"
           }
         ],
-        "composite_rank": 127,
+        "composite_rank": 128,
         "composite_score": "30.99",
         "composite_score_attn": "30.99",
         "confidence_catalyst": "0.3500",
@@ -286624,7 +286621,7 @@
             "weight_effective": "0.0672"
           }
         ],
-        "composite_rank": 128,
+        "composite_rank": 129,
         "composite_score": "30.94",
         "composite_score_attn": "30.94",
         "confidence_catalyst": "0.3500",
@@ -287271,7 +287268,7 @@
             "weight_effective": "0.0892"
           }
         ],
-        "composite_rank": 129,
+        "composite_rank": 130,
         "composite_score": "30.92",
         "composite_score_attn": "30.92",
         "confidence_catalyst": "0.6302",
@@ -287902,7 +287899,7 @@
             "weight_effective": "0.0950"
           }
         ],
-        "composite_rank": 130,
+        "composite_rank": 131,
         "composite_score": "30.85",
         "composite_score_attn": "30.85",
         "confidence_catalyst": "0.2971",
@@ -288547,7 +288544,7 @@
             "weight_effective": "0.1007"
           }
         ],
-        "composite_rank": 131,
+        "composite_rank": 132,
         "composite_score": "30.82",
         "composite_score_attn": "30.82",
         "confidence_catalyst": "0.6501",
@@ -289192,7 +289189,7 @@
             "weight_effective": "0.0775"
           }
         ],
-        "composite_rank": 132,
+        "composite_rank": 133,
         "composite_score": "30.60",
         "composite_score_attn": "30.60",
         "confidence_catalyst": "0.2000",
@@ -289854,7 +289851,7 @@
             "weight_effective": "0.0715"
           }
         ],
-        "composite_rank": 134,
+        "composite_rank": 135,
         "composite_score": "30.40",
         "composite_score_attn": "30.40",
         "confidence_catalyst": "0.4386",
@@ -290476,7 +290473,7 @@
             "weight_effective": "0.1057"
           }
         ],
-        "composite_rank": 136,
+        "composite_rank": 137,
         "composite_score": "30.15",
         "composite_score_attn": "30.24",
         "confidence_catalyst": "0.4483",

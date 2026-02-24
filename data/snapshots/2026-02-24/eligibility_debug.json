@@ -3636,6 +3636,24 @@
     "ineligible_reasons": ""
   },
   {
+    "ticker": "ILMN",
+    "dd_abs": -0.20315,
+    "dd_rel": -0.184833,
+    "dd_xbi": -0.018317,
+    "abs_breach": false,
+    "rel_breach": false,
+    "gate_mode": "hard",
+    "require_both": true,
+    "rescue_enabled": false,
+    "rescue_threshold": -0.05,
+    "dd_combined_passed": true,
+    "dd_abs_margin": 0.19685,
+    "dd_rel_margin": 0.065167,
+    "rescued_by_rel": false,
+    "final_eligible": "1",
+    "ineligible_reasons": ""
+  },
+  {
     "ticker": "FLGT",
     "dd_abs": -0.24684,
     "dd_rel": -0.228523,
@@ -5344,24 +5362,6 @@
     "rescued_by_rel": false,
     "final_eligible": "0",
     "ineligible_reasons": "fundamental_red_flag|deep_drawdown"
-  },
-  {
-    "ticker": "ILMN",
-    "dd_abs": -0.20315,
-    "dd_rel": -0.184833,
-    "dd_xbi": -0.018317,
-    "abs_breach": false,
-    "rel_breach": false,
-    "gate_mode": "hard",
-    "require_both": true,
-    "rescue_enabled": false,
-    "rescue_threshold": -0.05,
-    "dd_combined_passed": true,
-    "dd_abs_margin": 0.19685,
-    "dd_rel_margin": 0.065167,
-    "rescued_by_rel": false,
-    "final_eligible": "0",
-    "ineligible_reasons": "fundamental_red_flag"
   },
   {
     "ticker": "MYGN",
