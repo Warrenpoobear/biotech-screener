@@ -32,27 +32,39 @@ def is_data_fresh(date_str: str, max_age_days: int = MAX_DATA_AGE_DAYS) -> bool:
         return False
 
 
-def get_cik_from_ticker(ticker: str) -> Optional[str]:
-    """Get CIK (Central Index Key) from ticker using SEC API"""
-    
+_CIK_CACHE: Optional[Dict[str, str]] = None
+
+
+def _load_cik_cache() -> Dict[str, str]:
+    """Load and cache the SEC ticker→CIK mapping (single request)."""
+    global _CIK_CACHE
+    if _CIK_CACHE is not None:
+        return _CIK_CACHE
+
     url = "https://www.sec.gov/files/company_tickers.json"
     headers = {'User-Agent': 'WakeRobinCapital research@wakerobincapital.com'}
-    
+
     try:
-        response = requests.get(url, headers=headers, timeout=10)
-        
+        response = requests.get(url, headers=headers, timeout=30)
         if response.status_code == 200:
             data = response.json()
-            
-            for entry in data.values():
-                if entry.get('ticker', '').upper() == ticker.upper():
-                    cik = str(entry.get('cik_str')).zfill(10)
-                    return cik
-        
-        return None
-    
-    except Exception as e:
-        return None
+            _CIK_CACHE = {
+                entry['ticker'].upper(): str(entry.get('cik_str')).zfill(10)
+                for entry in data.values()
+                if entry.get('ticker')
+            }
+        else:
+            _CIK_CACHE = {}
+    except Exception:
+        _CIK_CACHE = {}
+
+    return _CIK_CACHE
+
+
+def get_cik_from_ticker(ticker: str) -> Optional[str]:
+    """Get CIK (Central Index Key) from ticker using cached SEC mapping."""
+    cache = _load_cik_cache()
+    return cache.get(ticker.upper())
 
 
 def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
@@ -212,24 +224,37 @@ def collect_all_financial_data(universe_file: Path, output_file: Path):
         universe = json.load(f)
     
     tickers = [s['ticker'] for s in universe if s.get('ticker') and s['ticker'] != '_XBI_BENCHMARK_']
-    
-    print(f"\nUniverse: {len(tickers)} tickers")
+    # Build CIK lookup from universe.json (avoids SEC API calls for known CIKs)
+    universe_ciks = {}
+    for s in universe:
+        t = s.get('ticker', '')
+        c = s.get('cik', '')
+        if t and c and c not in ('', 'None', None):
+            # Normalize to 10-digit zero-padded
+            universe_ciks[t] = str(c).lstrip('0').zfill(10) if c else ''
+
+    print(f"\nUniverse: {len(tickers)} tickers ({len(universe_ciks)} with CIK in universe.json)")
     print(f"Output: {output_file}")
     print(f"Estimated time: {len(tickers) * 0.2 / 60:.1f} minutes")
-    
+
+    # Pre-load SEC CIK cache (single request)
+    print("Loading SEC ticker→CIK mapping...", flush=True)
+    _load_cik_cache()
+    print(f"  Loaded {len(_CIK_CACHE or {})} ticker→CIK mappings from SEC")
+
     # Collect
     all_data = []
     stats = {'total': len(tickers), 'successful': 0, 'no_cik': 0, 'no_data': 0}
-    
+
     print(f"\n{'='*80}")
     print("COLLECTING FINANCIAL DATA")
     print(f"{'='*80}\n")
-    
+
     for i, ticker in enumerate(tickers, 1):
         print(f"[{i:3d}/{len(tickers)}] {ticker:6s}", end=" ", flush=True)
-        
-        # Get CIK
-        cik = get_cik_from_ticker(ticker)
+
+        # Get CIK: prefer universe.json, then SEC cache
+        cik = universe_ciks.get(ticker) or get_cik_from_ticker(ticker)
         
         if not cik:
             stats['no_cik'] += 1
