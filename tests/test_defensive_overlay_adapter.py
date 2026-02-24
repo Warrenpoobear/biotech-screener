@@ -1632,6 +1632,32 @@ class TestFundamentalRedFlagDetection:
         assert is_flagged
         assert "survivability_critical" in reasons
 
+    def test_survivability_critical_high_burn_still_flagged(self):
+        """Company with high burn relative to cash is still flagged."""
+        record = {
+            "survivability_signal": {
+                "score": "-9.0",
+                "metrics": {"burn_ttm": 162_000_000, "cash_total": 135_000_000},
+            },
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert "survivability_critical" in reasons
+
+    def test_survivability_critical_debt_driven_not_flagged(self):
+        """Commercial company with 5+ years operational runway is debt-driven — not flagged.
+
+        Targets false positives like FTRE ($2B revenue CRO) where the
+        survivability score is negative due to leverage, not operational burn.
+        """
+        record = {
+            "survivability_signal": {
+                "score": "-5.0",
+                "metrics": {"burn_ttm": 16_000_000, "cash_total": 131_000_000},
+            },
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert "survivability_critical" not in reasons
+
     def test_single_asset_early_stage_flag(self):
         """Should flag single-asset early-stage company with tracked programs."""
         record = {

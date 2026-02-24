@@ -202469,13 +202469,13 @@
     },
     "fundamental_red_flag_config": {
       "attenuation_applied_count": 0,
-      "flagged_count": 13,
+      "flagged_count": 12,
       "median_score_used": "27.26",
       "rank_driver_counts": {
-        "alpha": 306,
+        "alpha": 307,
         "defensive_boost": 0,
         "defensive_penalty": 0,
-        "suppressed": 13
+        "suppressed": 12
       },
       "suppressed_count": 4,
       "suppression_mode": "continuous_multiplier",
@@ -383442,7 +383442,6 @@
         "composite_rank": 282,
         "composite_score": "12.92",
         "composite_score_attn": "12.90",
-        "composite_score_pre_suppression": "12.92",
         "confidence_catalyst": "0.3500",
         "confidence_clinical": "0.5500",
         "confidence_financial": "0.8500",
@@ -383525,10 +383524,8 @@
           "valuation_ev_revenue",
           "valuation_regime_commercial"
         ],
-        "fundamental_red_flag": true,
-        "fundamental_red_flag_reasons": [
-          "survivability_critical"
-        ],
+        "fundamental_red_flag": false,
+        "fundamental_red_flag_reasons": [],
         "interaction_terms": {
           "flags": [],
           "total_adjustment": "0.00"
@@ -383642,7 +383639,7 @@
           "program_count": 0,
           "risk_profile": "single_asset"
         },
-        "rank_driver": "suppressed",
+        "rank_driver": "alpha",
         "rank_score": 18.82,
         "rankable": true,
         "risk_adjusted_rank": 284,

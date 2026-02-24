@@ -322,7 +322,18 @@ def detect_fundamental_red_flags(record: Dict) -> Tuple[bool, List[str]]:
             score = float(surv_score)
             # Critical survivability: very negative score
             if score <= -4.0:
-                reasons.append("survivability_critical")
+                # Exempt companies where the negative score is debt-driven,
+                # not operational: if pure operational runway > 5 years,
+                # the concern is capital structure (refinanceable), not
+                # going-concern risk (e.g. FTRE — $2B revenue CRO).
+                burn_ttm = metrics.get("burn_ttm") or 0
+                cash_total = metrics.get("cash_total") or 0
+                _debt_driven = (
+                    burn_ttm > 0 and cash_total > 0
+                    and (cash_total / burn_ttm) >= 5.0
+                )
+                if not _debt_driven:
+                    reasons.append("survivability_critical")
             # Moderate survivability concern + high debt = distress
             elif score <= -2.0 and debt_to_cash is not None:
                 if float(debt_to_cash) > 3.0:
