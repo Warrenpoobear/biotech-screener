@@ -608,12 +608,11 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
     out["coinvest_tier1_conviction"] = _safe_float(coinvest.get("tier1_conviction_overlap"), default=0.0)
     out["coinvest_max_position_pct"] = _safe_float(coinvest.get("max_tier1_position_pct"), default=0.0)
     filing_age_raw = coinvest.get("days_since_latest_filing")
-    # Guard: treat non-finite / non-numeric as absent
+    # Guard: treat non-numeric as absent.  int() raises ValueError on NaN
+    # and TypeError on non-numeric types, so no separate NaN check needed.
     if filing_age_raw is not None:
         try:
             filing_age = int(filing_age_raw)
-            if filing_age != filing_age:  # NaN check
-                filing_age = None
         except (ValueError, TypeError):
             filing_age = None
     else:
@@ -1100,6 +1099,17 @@ def resolve_catalyst_priority(
     return ruleset.catalyst_priority_default
 
 
+# Fields injected by run_screen.py (not computed by the DE itself).
+# compute_actionable_sort_key() reads these from decision_fields and defaults
+# to 0.0 when absent, so the DE remains self-contained for unit testing.
+_EXTERNAL_SORT_FIELDS: frozenset = frozenset({
+    "clinical_score_z_tier",
+    "coinvest_score_z",
+    "inst_delta_z",
+    "stage_bucket",
+})
+
+
 def compute_actionable_sort_key(
     decision_fields: Dict[str, Any],
     archetype: str,
@@ -1125,6 +1135,10 @@ def compute_actionable_sort_key(
     - **blended**: small rank bonus applied per priority level — FDA tickers
       get ``effective_rank = comp_rank - bonus``, a gentle tilt that can
       leapfrog nearby ranks but not distant ones.
+
+    External fields (see ``_EXTERNAL_SORT_FIELDS``): ``clinical_score_z_tier``,
+    ``coinvest_score_z``, ``inst_delta_z``, and ``stage_bucket`` are injected
+    by ``run_screen.py`` after the DE loop and default to 0.0 when absent.
     """
     eligible_val = decision_fields.get("eligible", "0")
     is_eligible = 0 if eligible_val == "1" else 1
@@ -1299,8 +1313,11 @@ def compute_target_weights(
         mm = _safe_float(row.get("mom_state_tilt_mult"), default=1.0)
         raw_weights.append(weights_map.get(str(band), 0.15) * cm * tm * mm)
 
+    # Floor prevents explosive weights from near-zero floating-point totals.
+    # Smallest real weight in production is ~0.15, so 1e-9 is safely below.
+    _WEIGHT_TOTAL_FLOOR = 1e-9
     total = sum(raw_weights)
-    if total <= 0:
+    if total <= _WEIGHT_TOTAL_FLOOR:
         for row in rows:
             row["target_weight_pct"] = ""
         return rows

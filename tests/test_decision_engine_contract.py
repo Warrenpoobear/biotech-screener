@@ -1113,3 +1113,54 @@ class TestPhase2PinnedIdSync:
             f"run_screen={screen_id}, run_phase2_snapshot_delta={delta_id}. "
             f"These MUST be identical."
         )
+
+
+# =============================================================================
+# WEIGHT NORMALIZATION EDGE CASES
+# =============================================================================
+
+class TestWeightNormalizationEdgeCases:
+    """Edge cases for compute_target_weights — zero/near-zero/single-row."""
+
+    def test_all_zero_multipliers(self):
+        """All cost_mult=0 → every weight empty (degenerate case)."""
+        rows = [
+            {"size_band": "L", "ticker": "A", "cost_mult": 0.0,
+             "catalyst_tilt_mult": 1.0, "mom_state_tilt_mult": 1.0},
+            {"size_band": "M", "ticker": "B", "cost_mult": 0.0,
+             "catalyst_tilt_mult": 1.0, "mom_state_tilt_mult": 1.0},
+        ]
+        result = compute_target_weights(rows)
+        for r in result:
+            assert r["target_weight_pct"] == ""
+
+    def test_near_zero_total_treated_as_degenerate(self):
+        """Tiny sizing weights that sum to near-zero → empty weights."""
+        rs = DecisionRuleset(
+            sizing_weights=(("L", 1e-15), ("M", 1e-15), ("S", 1e-15), ("XS", 1e-15)),
+        )
+        rows = [
+            {"size_band": "L", "ticker": "A"},
+            {"size_band": "M", "ticker": "B"},
+        ]
+        result = compute_target_weights(rows, ruleset=rs)
+        for r in result:
+            assert r["target_weight_pct"] == ""
+
+    def test_single_eligible_row_gets_100_pct(self):
+        """One eligible row → 100% weight."""
+        rows = [{"size_band": "L", "ticker": "ONLY"}]
+        result = compute_target_weights(rows)
+        assert result[0]["target_weight_pct"] == 100.0
+
+    def test_normal_weights_sum_to_100(self):
+        """Normal case — weights sum to 100%."""
+        rows = [
+            {"size_band": "L", "ticker": "A"},
+            {"size_band": "M", "ticker": "B"},
+            {"size_band": "S", "ticker": "C"},
+            {"size_band": "XS", "ticker": "D"},
+        ]
+        result = compute_target_weights(rows)
+        total = sum(r["target_weight_pct"] for r in result)
+        assert abs(total - 100.0) < 0.01

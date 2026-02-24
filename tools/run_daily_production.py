@@ -64,6 +64,9 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "price_pit_cache",
     "forward_eval",
     "pit_bundle_health",
+    "decision_engine_schema",
+    "portfolio_weights",
+    "eligibility_consistency",
 })
 
 # Required fields in each market_data.json record for schema gate
@@ -122,6 +125,9 @@ class GateConfig:
 
     forward_eval_horizon: int = 20
     """Forward-return horizon in trading days for the gate."""
+
+    portfolio_weight_sum_tolerance: float = 1.0
+    """Max absolute deviation from 100% for target_weight_pct sum (pp)."""
 
     @staticmethod
     def from_json(path: Path) -> "GateConfig":
@@ -1226,6 +1232,244 @@ def check_pit_bundle_health(
     )
 
 
+# ---------------------------------------------------------------------------
+# Decision engine schema gate (WARN-only)
+# ---------------------------------------------------------------------------
+
+def check_decision_engine_schema(
+    snapshot_date_dir: Path,
+) -> GateResult:
+    """Validate rankings.csv has all DE columns with valid values. WARN-only.
+
+    Checks:
+    - All DECISION_COLUMNS + ACTIONABLE_COLUMNS present in headers
+    - tier_dev ∈ {A, B, C, D, ""}
+    - tier_any ∈ {A, B, C, D, ""}
+    - eligible ∈ {"0", "1"}
+    - actionable_rank sequential 1..N for eligible rows, empty for ineligible
+    """
+    rankings_path = snapshot_date_dir / "rankings.csv"
+    if not rankings_path.exists():
+        return GateResult(
+            name="decision_engine_schema", status="WARN",
+            detail="rankings.csv not found",
+        )
+
+    # Lazy import to avoid heavy module load at init
+    from decision_engine import ACTIONABLE_COLUMNS, DECISION_COLUMNS
+
+    expected_cols = set(DECISION_COLUMNS) | set(ACTIONABLE_COLUMNS)
+
+    warn_reasons: List[str] = []
+    rows_read = 0
+    expected_rank = 1
+
+    with open(rankings_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        headers = set(reader.fieldnames or [])
+
+        missing_cols = expected_cols - headers
+        if missing_cols:
+            warn_reasons.append(f"missing columns: {sorted(missing_cols)}")
+
+        valid_tiers = {"A", "B", "C", "D", ""}
+        valid_eligible = {"0", "1"}
+
+        for row in reader:
+            rows_read += 1
+            ticker = row.get("ticker", "?")
+
+            tier_dev = (row.get("tier_dev") or "").strip()
+            if tier_dev not in valid_tiers:
+                warn_reasons.append(f"{ticker}: tier_dev='{tier_dev}' invalid")
+
+            tier_any = (row.get("tier_any") or "").strip()
+            if tier_any not in valid_tiers:
+                warn_reasons.append(f"{ticker}: tier_any='{tier_any}' invalid")
+
+            eligible = (row.get("eligible") or "").strip()
+            if eligible not in valid_eligible:
+                warn_reasons.append(f"{ticker}: eligible='{eligible}' invalid")
+
+            act_rank = (row.get("actionable_rank") or "").strip()
+            if eligible == "1":
+                if act_rank:
+                    try:
+                        rank_int = int(act_rank)
+                        if rank_int != expected_rank:
+                            warn_reasons.append(
+                                f"{ticker}: actionable_rank={rank_int}, expected {expected_rank}"
+                            )
+                        expected_rank = rank_int + 1
+                    except ValueError:
+                        warn_reasons.append(
+                            f"{ticker}: actionable_rank='{act_rank}' not integer"
+                        )
+            else:
+                if act_rank and act_rank.lower() not in ("", "nan"):
+                    warn_reasons.append(
+                        f"{ticker}: ineligible but actionable_rank='{act_rank}'"
+                    )
+
+            # Cap warnings to avoid flood
+            if len(warn_reasons) >= 20:
+                warn_reasons.append("... (truncated)")
+                break
+
+    if not warn_reasons:
+        return GateResult(
+            name="decision_engine_schema", status="PASS",
+            detail=f"{rows_read} rows, all DE columns present and valid",
+        )
+
+    return GateResult(
+        name="decision_engine_schema", status="WARN",
+        detail=f"{len(warn_reasons)} issues: {'; '.join(warn_reasons[:5])}",
+        value=len(warn_reasons),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Portfolio weights gate (WARN-only)
+# ---------------------------------------------------------------------------
+
+def check_portfolio_weights(
+    snapshot_date_dir: Path,
+    tolerance: float = 1.0,
+) -> GateResult:
+    """Verify target_weight_pct sums to ~100% for eligible rows. WARN-only.
+
+    Checks:
+    - Sum of target_weight_pct ≈ 100% (within tolerance pp)
+    - No eligible row has empty weight
+    - No ineligible row has non-empty weight
+    """
+    rankings_path = snapshot_date_dir / "rankings.csv"
+    if not rankings_path.exists():
+        return GateResult(
+            name="portfolio_weights", status="WARN",
+            detail="rankings.csv not found",
+        )
+
+    warn_reasons: List[str] = []
+    weight_sum = 0.0
+    eligible_count = 0
+    eligible_no_weight = 0
+    ineligible_with_weight = 0
+
+    with open(rankings_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            eligible = (row.get("eligible") or "").strip()
+            weight_str = (row.get("target_weight_pct") or "").strip()
+            ticker = row.get("ticker", "?")
+
+            if eligible == "1":
+                eligible_count += 1
+                if weight_str and weight_str.lower() not in ("", "nan"):
+                    try:
+                        weight_sum += float(weight_str)
+                    except ValueError:
+                        warn_reasons.append(f"{ticker}: invalid weight '{weight_str}'")
+                else:
+                    eligible_no_weight += 1
+            else:
+                if weight_str and weight_str.lower() not in ("", "nan"):
+                    try:
+                        w = float(weight_str)
+                        if w > 0:
+                            ineligible_with_weight += 1
+                    except ValueError:
+                        pass
+
+    if eligible_count == 0:
+        return GateResult(
+            name="portfolio_weights", status="WARN",
+            detail="No eligible rows found",
+        )
+
+    if abs(weight_sum - 100.0) > tolerance:
+        warn_reasons.append(
+            f"weight sum={weight_sum:.2f}%, expected ~100% (tolerance={tolerance}pp)"
+        )
+
+    if eligible_no_weight > 0:
+        warn_reasons.append(
+            f"{eligible_no_weight} eligible row(s) missing target_weight_pct"
+        )
+
+    if ineligible_with_weight > 0:
+        warn_reasons.append(
+            f"{ineligible_with_weight} ineligible row(s) have non-zero target_weight_pct"
+        )
+
+    if not warn_reasons:
+        return GateResult(
+            name="portfolio_weights", status="PASS",
+            detail=f"weight sum={weight_sum:.2f}%, {eligible_count} eligible rows",
+        )
+
+    return GateResult(
+        name="portfolio_weights", status="WARN",
+        detail="; ".join(warn_reasons),
+        value=round(weight_sum, 2),
+        threshold=tolerance,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Eligibility consistency gate (WARN-only)
+# ---------------------------------------------------------------------------
+
+def check_eligibility_consistency(
+    snapshot_date_dir: Path,
+) -> GateResult:
+    """Verify eligible=1 ↔ ineligible_reasons="" for all rows. WARN-only."""
+    rankings_path = snapshot_date_dir / "rankings.csv"
+    if not rankings_path.exists():
+        return GateResult(
+            name="eligibility_consistency", status="WARN",
+            detail="rankings.csv not found",
+        )
+
+    warn_reasons: List[str] = []
+    total = 0
+
+    with open(rankings_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            total += 1
+            ticker = row.get("ticker", "?")
+            eligible = (row.get("eligible") or "").strip()
+            reasons = (row.get("ineligible_reasons") or "").strip()
+            reasons_present = reasons not in ("", "nan")
+
+            if eligible == "1" and reasons_present:
+                warn_reasons.append(
+                    f"{ticker}: eligible=1 but ineligible_reasons='{reasons}'"
+                )
+            elif eligible != "1" and not reasons_present:
+                warn_reasons.append(
+                    f"{ticker}: eligible={eligible} but ineligible_reasons empty"
+                )
+
+            if len(warn_reasons) >= 20:
+                warn_reasons.append("... (truncated)")
+                break
+
+    if not warn_reasons:
+        return GateResult(
+            name="eligibility_consistency", status="PASS",
+            detail=f"{total} rows, all consistent",
+        )
+
+    return GateResult(
+        name="eligibility_consistency", status="WARN",
+        detail=f"{len(warn_reasons)} inconsistencies: {'; '.join(warn_reasons[:5])}",
+        value=len(warn_reasons),
+    )
+
+
 def _read_invariants_summary(audit_output_dir: Path) -> Optional[Dict[str, Any]]:
     """Read invariants_summary.json written by the audit tool."""
     p = audit_output_dir / "invariants_summary.json"
@@ -2114,6 +2358,23 @@ def run_daily(
     )
     gate_results.append(pit_bundle_gate)
     print(f"  PIT bundle health gate: {pit_bundle_gate.status} — {pit_bundle_gate.detail}")
+
+    # --- Gate: decision_engine_schema (WARN-only) ---
+    de_schema_gate = check_decision_engine_schema(staging_date_dir)
+    gate_results.append(de_schema_gate)
+    print(f"  DE schema gate: {de_schema_gate.status} — {de_schema_gate.detail}")
+
+    # --- Gate: portfolio_weights (WARN-only) ---
+    pw_gate = check_portfolio_weights(
+        staging_date_dir, tolerance=config.portfolio_weight_sum_tolerance,
+    )
+    gate_results.append(pw_gate)
+    print(f"  Portfolio weights gate: {pw_gate.status} — {pw_gate.detail}")
+
+    # --- Gate: eligibility_consistency (WARN-only) ---
+    elig_gate = check_eligibility_consistency(staging_date_dir)
+    gate_results.append(elig_gate)
+    print(f"  Eligibility consistency gate: {elig_gate.status} — {elig_gate.detail}")
 
     # --- Step 5: Build manifest ---
     print(f"\n[5/5] Building run manifest ...")

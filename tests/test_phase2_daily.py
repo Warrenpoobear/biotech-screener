@@ -36,11 +36,14 @@ from run_daily_production import (
     build_run_manifest,
     check_audit_result,
     check_ctgov_cache,
+    check_decision_engine_schema,
+    check_eligibility_consistency,
     check_inputs_present,
     check_market_data_coverage,
     check_market_data_schema,
     check_market_data_staleness,
     check_missing_reason_fraction,
+    check_portfolio_weights,
     check_turnover,
     check_xbi_staleness,
     promote_snapshot,
@@ -51,6 +54,7 @@ from data_integrity_audit import (
     VIOLATION_SEVERITY,
     _violation_severity,
     check_invariants,
+    check_universe_coverage,
 )
 from publish_inputs_bundle import (
     build_tarball,
@@ -975,6 +979,8 @@ class TestOpsContract:
             "pnl_attribution",
             "price_pit_cache", "forward_eval",
             "pit_bundle_health",
+            "decision_engine_schema", "portfolio_weights",
+            "eligibility_consistency",
         }
         assert expected == GATE_ALLOWLIST
 
@@ -1185,3 +1191,262 @@ class TestMarketDataCoverageGate:
         (data_dir / "universe.json").write_text(json.dumps(universe))
         result = check_market_data_coverage(data_dir, min_coverage=0.90)
         assert result.status == "PASS"  # 0.9 >= 0.9
+
+
+# ---------------------------------------------------------------------------
+# Helper: write full-DE rankings.csv for schema/weight/eligibility gates
+# ---------------------------------------------------------------------------
+
+def _write_full_rankings_csv(
+    path: Path,
+    rows: List[Dict[str, str]],
+) -> None:
+    """Write rankings.csv with all DE + actionable columns."""
+    from decision_engine import ACTIONABLE_COLUMNS, DECISION_COLUMNS
+
+    all_cols = ["ticker"] + DECISION_COLUMNS + ACTIONABLE_COLUMNS
+    # Add any extra keys from rows not in the standard set
+    for r in rows:
+        for k in r:
+            if k not in all_cols:
+                all_cols.append(k)
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=all_cols)
+        writer.writeheader()
+        for r in rows:
+            writer.writerow({c: r.get(c, "") for c in all_cols})
+
+
+# ---------------------------------------------------------------------------
+# Tests: Decision Engine schema gate (B1)
+# ---------------------------------------------------------------------------
+
+class TestDecisionEngineSchemaGate:
+
+    def test_valid_pass(self, tmp_path):
+        """All DE columns present, valid values → PASS."""
+        snap = tmp_path / "snap"
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "ACRS", "eligible": "1", "tier_dev": "A", "tier_any": "A",
+             "actionable_rank": "1", "ineligible_reasons": "",
+             "target_weight_pct": "60.0"},
+            {"ticker": "BMRN", "eligible": "1", "tier_dev": "B", "tier_any": "B",
+             "actionable_rank": "2", "ineligible_reasons": "",
+             "target_weight_pct": "40.0"},
+        ])
+        result = check_decision_engine_schema(snap)
+        assert result.status == "PASS"
+
+    def test_missing_column_warn(self, tmp_path):
+        """Missing a DE column → WARN."""
+        snap = tmp_path / "snap"
+        # Write a CSV without tier_dev column
+        snap.mkdir(parents=True, exist_ok=True)
+        with open(snap / "rankings.csv", "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["ticker", "eligible", "actionable_rank"])
+            writer.writeheader()
+            writer.writerow({"ticker": "ACRS", "eligible": "1", "actionable_rank": "1"})
+        result = check_decision_engine_schema(snap)
+        assert result.status == "WARN"
+        assert "missing columns" in result.detail
+
+    def test_invalid_tier_warn(self, tmp_path):
+        """Invalid tier_dev value → WARN."""
+        snap = tmp_path / "snap"
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "ACRS", "eligible": "1", "tier_dev": "Z", "tier_any": "A",
+             "actionable_rank": "1"},
+        ])
+        result = check_decision_engine_schema(snap)
+        assert result.status == "WARN"
+        assert "tier_dev" in result.detail
+
+    def test_non_sequential_rank_warn(self, tmp_path):
+        """Non-sequential actionable_rank → WARN."""
+        snap = tmp_path / "snap"
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "ACRS", "eligible": "1", "tier_dev": "A", "tier_any": "A",
+             "actionable_rank": "1"},
+            {"ticker": "BMRN", "eligible": "1", "tier_dev": "B", "tier_any": "B",
+             "actionable_rank": "5"},  # should be 2
+        ])
+        result = check_decision_engine_schema(snap)
+        assert result.status == "WARN"
+        assert "expected" in result.detail
+
+    def test_ineligible_with_rank_warn(self, tmp_path):
+        """Ineligible row with actionable_rank → WARN."""
+        snap = tmp_path / "snap"
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "ACRS", "eligible": "0", "tier_dev": "D", "tier_any": "",
+             "actionable_rank": "1", "ineligible_reasons": "cash_runway"},
+        ])
+        result = check_decision_engine_schema(snap)
+        assert result.status == "WARN"
+        assert "ineligible" in result.detail
+
+
+# ---------------------------------------------------------------------------
+# Tests: Portfolio weights gate (B2)
+# ---------------------------------------------------------------------------
+
+class TestPortfolioWeightsGate:
+
+    def test_sum_100_pass(self, tmp_path):
+        """Weights sum to 100% → PASS."""
+        snap = tmp_path / "snap"
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "A", "eligible": "1", "target_weight_pct": "60.0"},
+            {"ticker": "B", "eligible": "1", "target_weight_pct": "40.0"},
+            {"ticker": "C", "eligible": "0", "target_weight_pct": ""},
+        ])
+        result = check_portfolio_weights(snap, tolerance=1.0)
+        assert result.status == "PASS"
+
+    def test_sum_80_warn(self, tmp_path):
+        """Weights sum to 80% (20pp off) → WARN."""
+        snap = tmp_path / "snap"
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "A", "eligible": "1", "target_weight_pct": "50.0"},
+            {"ticker": "B", "eligible": "1", "target_weight_pct": "30.0"},
+        ])
+        result = check_portfolio_weights(snap, tolerance=1.0)
+        assert result.status == "WARN"
+        assert "weight sum" in result.detail
+
+    def test_eligible_missing_weight_warn(self, tmp_path):
+        """Eligible row with no weight → WARN."""
+        snap = tmp_path / "snap"
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "A", "eligible": "1", "target_weight_pct": "100.0"},
+            {"ticker": "B", "eligible": "1", "target_weight_pct": ""},
+        ])
+        result = check_portfolio_weights(snap, tolerance=1.0)
+        assert result.status == "WARN"
+        assert "missing target_weight_pct" in result.detail
+
+    def test_ineligible_with_weight_warn(self, tmp_path):
+        """Ineligible row with non-zero weight → WARN."""
+        snap = tmp_path / "snap"
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "A", "eligible": "1", "target_weight_pct": "100.0"},
+            {"ticker": "B", "eligible": "0", "target_weight_pct": "5.0"},
+        ])
+        result = check_portfolio_weights(snap, tolerance=1.0)
+        assert result.status == "WARN"
+        assert "ineligible" in result.detail
+
+
+# ---------------------------------------------------------------------------
+# Tests: Eligibility consistency gate (B3)
+# ---------------------------------------------------------------------------
+
+class TestEligibilityConsistencyGate:
+
+    def test_consistent_pass(self, tmp_path):
+        """All rows consistent → PASS."""
+        snap = tmp_path / "snap"
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "A", "eligible": "1", "ineligible_reasons": ""},
+            {"ticker": "B", "eligible": "0", "ineligible_reasons": "cash_runway"},
+        ])
+        result = check_eligibility_consistency(snap)
+        assert result.status == "PASS"
+
+    def test_eligible_with_reasons_warn(self, tmp_path):
+        """eligible=1 but ineligible_reasons non-empty → WARN."""
+        snap = tmp_path / "snap"
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "A", "eligible": "1", "ineligible_reasons": "some_reason"},
+        ])
+        result = check_eligibility_consistency(snap)
+        assert result.status == "WARN"
+        assert "eligible=1" in result.detail
+
+    def test_ineligible_without_reasons_warn(self, tmp_path):
+        """eligible=0 but ineligible_reasons empty → WARN."""
+        snap = tmp_path / "snap"
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "A", "eligible": "0", "ineligible_reasons": ""},
+        ])
+        result = check_eligibility_consistency(snap)
+        assert result.status == "WARN"
+        assert "ineligible_reasons empty" in result.detail
+
+
+# ---------------------------------------------------------------------------
+# Tests: Universe coverage (C1)
+# ---------------------------------------------------------------------------
+
+class TestUniverseCoverage:
+
+    def test_all_present_pass(self, tmp_path):
+        """All universe tickers in rankings → no violations."""
+        import pandas as pd
+        df = pd.DataFrame([{"ticker": "A"}, {"ticker": "B"}])
+        uni_path = tmp_path / "universe.json"
+        uni_path.write_text(json.dumps([{"ticker": "A"}, {"ticker": "B"}]))
+        violations = check_universe_coverage(df, uni_path)
+        assert len(violations) == 0
+
+    def test_missing_ticker_warn(self, tmp_path):
+        """Universe ticker absent from rankings → violation."""
+        import pandas as pd
+        df = pd.DataFrame([{"ticker": "A"}])
+        uni_path = tmp_path / "universe.json"
+        uni_path.write_text(json.dumps([{"ticker": "A"}, {"ticker": "MISS"}]))
+        violations = check_universe_coverage(df, uni_path)
+        assert len(violations) == 1
+        assert violations[0]["rule"] == "universe_missing"
+        assert "MISS" in violations[0]["details"]
+
+
+# ---------------------------------------------------------------------------
+# Tests: Missing component enum validation (C2)
+# ---------------------------------------------------------------------------
+
+class TestMissingComponentEnum:
+
+    def test_known_components_pass(self):
+        """Known missing_components values → no violation."""
+        import pandas as pd
+        df = pd.DataFrame([{
+            "ticker": "A", "eligible": "1", "ineligible_reasons": "",
+            "actionable_rank": "1", "missingness_penalty": 0.5,
+            "missing_components": "catalyst|sponsor",
+        }])
+        violations = check_invariants(df)
+        unknown = [v for v in violations if v["rule"] == "unknown_missing_component"]
+        assert len(unknown) == 0
+
+    def test_unknown_component_warn(self):
+        """Unknown missing_components value → violation."""
+        import pandas as pd
+        df = pd.DataFrame([{
+            "ticker": "A", "eligible": "1", "ineligible_reasons": "",
+            "actionable_rank": "1", "missingness_penalty": 0.5,
+            "missing_components": "catalyst|bogus_thing",
+        }])
+        violations = check_invariants(df)
+        unknown = [v for v in violations if v["rule"] == "unknown_missing_component"]
+        assert len(unknown) == 1
+        assert "bogus_thing" in unknown[0]["details"]
+
+
+# ---------------------------------------------------------------------------
+# Tests: Updated ops contract — new gates in allowlist
+# ---------------------------------------------------------------------------
+
+class TestOpsContractWithNewGates:
+
+    def test_new_gates_in_allowlist(self):
+        """Three new gate names are in the allowlist."""
+        assert "decision_engine_schema" in GATE_ALLOWLIST
+        assert "portfolio_weights" in GATE_ALLOWLIST
+        assert "eligibility_consistency" in GATE_ALLOWLIST
+
+    def test_allowlist_count_updated(self):
+        """Allowlist has 22 entries (19 original + 3 new)."""
+        assert len(GATE_ALLOWLIST) == 22

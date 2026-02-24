@@ -79,6 +79,8 @@ VIOLATION_SEVERITY: Dict[str, str] = {
     "deep_dd_no_value": "warn",
     "rsi_flag_no_value": "warn",
     "beta_flag_no_value": "warn",
+    "unknown_missing_component": "warn",
+    "universe_missing": "warn",
 }
 # Anything starting with "range_" defaults to "info" (see _violation_severity())
 
@@ -159,6 +161,16 @@ def check_invariants(df: pd.DataFrame) -> List[Dict[str, str]]:
             _add(t, "penalty_no_components",
                  f"missingness_penalty={mp_val} but missing_components empty")
 
+        # 5b. missing_components values must be in known set
+        if mc not in ("", "nan"):
+            _KNOWN_MISSING_COMPONENTS = {"catalyst", "sponsor", "drawdown"}
+            for comp in mc.split("|"):
+                comp = comp.strip()
+                if comp and comp not in _KNOWN_MISSING_COMPONENTS:
+                    _add(t, "unknown_missing_component",
+                         f"missing_components contains '{comp}', "
+                         f"expected one of {sorted(_KNOWN_MISSING_COMPONENTS)}")
+
         # 6. tier_any non-empty → tier_any_reason non-empty
         if tier_any not in ("", "nan") and tier_reason in ("", "nan"):
             _add(t, "tier_no_reason",
@@ -198,6 +210,38 @@ def check_invariants(df: pd.DataFrame) -> List[Dict[str, str]]:
             except (ValueError, TypeError):
                 pass
 
+    return violations
+
+
+def check_universe_coverage(
+    df: pd.DataFrame,
+    universe_path: Path,
+) -> List[Dict[str, str]]:
+    """Verify all universe.json tickers are present in rankings DataFrame.
+
+    Returns list of violations (one per missing ticker).
+    """
+    violations = []
+    if not universe_path.exists():
+        return violations
+
+    with open(universe_path) as f:
+        universe = json.load(f)
+
+    uni_tickers: set[str] = set()
+    for entry in universe:
+        t = entry.get("ticker") if isinstance(entry, dict) else str(entry)
+        if t and not t.startswith("_"):
+            uni_tickers.add(t)
+
+    rankings_tickers = set(df["ticker"].tolist()) if "ticker" in df.columns else set()
+    missing = sorted(uni_tickers - rankings_tickers)
+    for t in missing:
+        violations.append({
+            "ticker": t,
+            "rule": "universe_missing",
+            "details": f"ticker '{t}' in universe.json but absent from rankings.csv",
+        })
     return violations
 
 
@@ -715,6 +759,7 @@ def main():
     parser.add_argument("--as-of-date", required=True, help="YYYY-MM-DD")
     parser.add_argument("--output-dir", default="output/data_integrity", help="Output directory")
     parser.add_argument("--skip-prices", action="store_true", help="Skip price recomputation (fast mode)")
+    parser.add_argument("--universe", default=None, help="Path to universe.json (for coverage check)")
     args = parser.parse_args()
 
     snap_dir = Path(args.snapshot_dir)
@@ -732,6 +777,19 @@ def main():
     # --- Part B: Invariants ---
     print("\n=== Part B: Invariant Checks ===")
     violations = check_invariants(df)
+
+    # Universe coverage check (optional)
+    universe_path = Path(args.universe) if args.universe else (snap_dir.parent / "universe.json")
+    if universe_path.exists():
+        uni_violations = check_universe_coverage(df, universe_path)
+        if uni_violations:
+            violations.extend(uni_violations)
+            print(f"  Universe coverage: {len(uni_violations)} missing tickers")
+        else:
+            print(f"  Universe coverage: all tickers present")
+    else:
+        print(f"  Universe coverage: skipped ({universe_path} not found)")
+
     inv_path = out_dir / "invariants_report.csv"
     if violations:
         pd.DataFrame(violations).to_csv(inv_path, index=False)
