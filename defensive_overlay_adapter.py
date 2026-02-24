@@ -342,11 +342,19 @@ def detect_fundamental_red_flags(record: Dict) -> Tuple[bool, List[str]]:
 
     # --- Clinical Credibility ---
     # Single asset risk profile + early stage = high binary risk
+    # Only applies when pipeline data is present (program_count >= 1).
+    # Companies with no tracked clinical programs (commercial/platform)
+    # get default stage_bucket="early" + risk_profile="single_asset"
+    # which are not meaningful for this check.
     stage = record.get("stage_bucket") or ""
     pipeline = record.get("pipeline_diversity_signal") or {}
     risk_profile = pipeline.get("risk_profile") or ""
+    try:
+        program_count = int(pipeline.get("program_count", 0))
+    except (ValueError, TypeError):
+        program_count = 0
 
-    if risk_profile == "single_asset":
+    if risk_profile == "single_asset" and program_count >= 1:
         if stage.lower() in ["early", "preclinical"]:
             reasons.append("single_asset_early_stage")
 

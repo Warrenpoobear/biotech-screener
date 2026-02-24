@@ -14,10 +14,10 @@
   "metrics": {
     "top20_overlap_pct": 90.48,
     "top60_overlap_pct": 84.62,
-    "rank_spearman_rho": 0.9694,
+    "rank_spearman_rho": 0.9675,
     "mean_abs_rank_delta_top60": 6.81,
     "tier_migration_count": 7,
-    "eligibility_change_count": 10,
+    "eligibility_change_count": 28,
     "top20_entrants": [
       "ZBIO"
     ],
@@ -26,8 +26,10 @@
     ],
     "rank_column_current": "actionable_rank",
     "rank_column_prior": "actionable_rank",
-    "n_common_tickers": 319
+    "n_common_tickers": 318
   },
-  "warn_reasons": [],
-  "status": "PASS"
+  "warn_reasons": [
+    "warn_eligibility_change_count: 28 > 10"
+  ],
+  "status": "WARN"
 }

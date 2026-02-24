@@ -1,95 +1,95 @@
 {
   "as_of_date": "2026-02-24",
-  "saved_at": "2026-02-24T19:50:49.228152Z",
+  "saved_at": "2026-02-24T20:25:50.009777Z",
   "decision_mode": "phase2",
   "ranking_mode": "decision",
   "version": "1.6.0",
-  "ticker_count": 320,
+  "ticker_count": 319,
   "source_type": "live_pipeline_v3",
   "scoring_model": "module_5_v3_ic_enhanced",
   "total_evaluated": 354,
-  "active_universe": 328,
-  "clinical_excluded": 19,
-  "clinical_exempted": 25,
+  "active_universe": 327,
+  "clinical_excluded": 20,
+  "clinical_exempted": 24,
   "archetype_distribution": {
-    "commercial_biotech": 72,
+    "commercial_biotech": 71,
     "commercial_pharma": 34,
-    "drug_developer": 205,
+    "drug_developer": 206,
     "platform_devices": 13,
     "platform_diagnostics": 14,
     "platform_services": 4
   },
   "ranking_diagnostics": {
     "composite_rank": {
-      "n_total": 320,
-      "n_unique": 320,
+      "n_total": 319,
+      "n_unique": 319,
       "tie_pct": 0.0
     },
     "score_rank_pct": {
-      "n_total": 320,
-      "n_unique": 320,
+      "n_total": 319,
+      "n_unique": 319,
       "tie_pct": 0.0
     },
     "score_z": {
-      "n_total": 320,
-      "n_unique": 320,
+      "n_total": 319,
+      "n_unique": 319,
       "tie_pct": 0.0
     },
     "composite_score": {
-      "n_total": 320,
-      "n_unique": 303,
-      "tie_pct": 0.0531
+      "n_total": 319,
+      "n_unique": 307,
+      "tie_pct": 0.0376
     }
   },
   "score_diagnostics": {
     "composite_score": {
-      "n_total": 320,
-      "n_unique": 303,
-      "tie_pct": 0.0531
+      "n_total": 319,
+      "n_unique": 307,
+      "tie_pct": 0.0376
     },
     "momentum_score": {
-      "n_total": 320,
-      "n_unique": 295,
-      "tie_pct": 0.0781
+      "n_total": 319,
+      "n_unique": 294,
+      "tie_pct": 0.0784
     },
     "catalyst_score": {
-      "n_total": 320,
-      "n_unique": 184,
-      "tie_pct": 0.425,
-      "zero_signal_count": 79,
+      "n_total": 319,
+      "n_unique": 182,
+      "tie_pct": 0.4295,
+      "zero_signal_count": 78,
       "signal_n": 241,
       "signal_unique": 216,
       "signal_tie_pct": 0.1037
     },
     "smart_money_score": {
-      "n_total": 263,
-      "n_unique": 207,
-      "tie_pct": 0.2129
+      "n_total": 262,
+      "n_unique": 206,
+      "tie_pct": 0.2137
     },
     "valuation_score": {
-      "n_total": 320,
-      "n_unique": 227,
-      "tie_pct": 0.2906
+      "n_total": 319,
+      "n_unique": 228,
+      "tie_pct": 0.2853
     },
     "clinical_score": {
-      "n_total": 320,
-      "n_unique": 247,
-      "tie_pct": 0.2281,
-      "zero_signal_count": 24,
+      "n_total": 319,
+      "n_unique": 248,
+      "tie_pct": 0.2226,
+      "zero_signal_count": 23,
       "zero_signal_raw": 32.92,
       "signal_n": 295,
       "signal_unique": 274,
       "signal_tie_pct": 0.0712
     },
     "financial_score": {
-      "n_total": 320,
-      "n_unique": 264,
-      "tie_pct": 0.175
+      "n_total": 319,
+      "n_unique": 262,
+      "tie_pct": 0.1787
     },
     "confidence_overall": {
-      "n_total": 320,
-      "n_unique": 258,
-      "tie_pct": 0.1937
+      "n_total": 319,
+      "n_unique": 257,
+      "tie_pct": 0.1944
     },
     "_top_tied": [
       "catalyst_score",
@@ -453,8 +453,9 @@
     "fda_designations.json": "c7aaaf3cd53273ff",
     "financial.json": "d3f369f4c0299cb6",
     "financial_data.json": "563dcdde7797a528",
+    "financial_data_2026-02-24.json": "0e284e0070714f21",
     "financial_data_cfo_2026-01-08.json": "4f53cda18c2baa0c",
-    "financial_records.json": "042b92c589fa58eb",
+    "financial_records.json": "03633561a375fadd",
     "holdings_detailed.json": "6949aff8b935ac6a",
     "holdings_snapshots.json": "622f1eed41c4e99a",
     "inputs_manifest.json": "d469b8cbbfb59239",
@@ -518,8 +519,8 @@
     "universe_mapped.json": "15f9c56365b4bad7"
   },
   "clinical_sort_telemetry": {
-    "n_nonzero_clin_adj_dev": 71,
-    "n_nonzero_clin_adj_comm": 61,
+    "n_nonzero_clin_adj_dev": 72,
+    "n_nonzero_clin_adj_comm": 62,
     "ruleset_id": "88d7ae9a",
     "enable_clinical_sort_signal": true
   },
@@ -535,25 +536,25 @@
     "shrink_k": 50.0
   },
   "coinvest_coverage": {
-    "tickers_with_signal": 263,
-    "ticker_count": 320,
-    "coverage_pct": 82.2
+    "tickers_with_signal": 262,
+    "ticker_count": 319,
+    "coverage_pct": 82.1
   },
   "alpha_contract_telemetry": {
     "input": {
       "alpha_contract_version": "v1.1.0",
-      "n_tickers_checked": 320,
+      "n_tickers_checked": 319,
       "n_tickers_with_errors": 0,
-      "n_tickers_with_warnings": 320,
+      "n_tickers_with_warnings": 319,
       "total_errors": 0,
-      "total_warnings": 992,
+      "total_warnings": 989,
       "n_missing_rec": 0,
-      "n_missing_catalyst_trace": 960,
+      "n_missing_catalyst_trace": 957,
       "top_missing_required": {},
       "top_missing_recommended": {
-        "catalyst_decay.nearest_catalyst_event_id": 320,
-        "catalyst_decay.nearest_catalyst_disclosed_at": 320,
-        "catalyst_decay.nearest_catalyst_source_uid": 320,
+        "catalyst_decay.nearest_catalyst_event_id": 319,
+        "catalyst_decay.nearest_catalyst_disclosed_at": 319,
+        "catalyst_decay.nearest_catalyst_source_uid": 319,
         "clinical_score_z": 29,
         "clinical_alpha_z": 1,
         "clinical_readout_days": 1,
@@ -563,7 +564,7 @@
     },
     "output": {
       "alpha_contract_version": "v1.1.0",
-      "n_tickers_checked": 320,
+      "n_tickers_checked": 319,
       "n_tickers_with_errors": 0,
       "n_tickers_with_warnings": 29,
       "total_errors": 0,

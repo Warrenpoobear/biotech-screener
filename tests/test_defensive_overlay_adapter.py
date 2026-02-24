@@ -1633,21 +1633,50 @@ class TestFundamentalRedFlagDetection:
         assert "survivability_critical" in reasons
 
     def test_single_asset_early_stage_flag(self):
-        """Should flag single-asset early-stage company."""
+        """Should flag single-asset early-stage company with tracked programs."""
         record = {
             "stage_bucket": "early",
-            "pipeline_diversity_signal": {"risk_profile": "single_asset"},
+            "pipeline_diversity_signal": {
+                "risk_profile": "single_asset",
+                "program_count": 1,
+            },
             "survivability_signal": {"metrics": {}},
         }
         is_flagged, reasons = detect_fundamental_red_flags(record)
         assert is_flagged
         assert "single_asset_early_stage" in reasons
 
+    def test_single_asset_early_no_programs_not_flagged(self):
+        """Single-asset + early but program_count=0 → default, not flagged."""
+        record = {
+            "stage_bucket": "early",
+            "pipeline_diversity_signal": {
+                "risk_profile": "single_asset",
+                "program_count": 0,
+            },
+            "survivability_signal": {"metrics": {}},
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert "single_asset_early_stage" not in reasons
+
+    def test_single_asset_early_no_program_count_not_flagged(self):
+        """Single-asset + early but missing program_count → default=0, not flagged."""
+        record = {
+            "stage_bucket": "early",
+            "pipeline_diversity_signal": {"risk_profile": "single_asset"},
+            "survivability_signal": {"metrics": {}},
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert "single_asset_early_stage" not in reasons
+
     def test_single_asset_late_stage_not_flagged(self):
         """Single-asset late-stage should NOT be flagged for this reason."""
         record = {
             "stage_bucket": "late",
-            "pipeline_diversity_signal": {"risk_profile": "single_asset"},
+            "pipeline_diversity_signal": {
+                "risk_profile": "single_asset",
+                "program_count": 1,
+            },
             "survivability_signal": {"metrics": {}},
         }
         is_flagged, reasons = detect_fundamental_red_flags(record)
