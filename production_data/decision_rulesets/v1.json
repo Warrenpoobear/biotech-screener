@@ -202,11 +202,14 @@
   "enable_coinvest_sort_signal": false,
   "enable_cost_haircut": false,
   "enable_dd_rel_margin_rescue": false,
+  "enable_institutional_sort_signal": false,
   "enable_missingness_size_penalty": false,
   "enable_missingness_sort_penalty": false,
   "enable_mom_state_tilt": false,
   "far_window_days": 0,
   "far_window_decay_mult": 0.15,
+  "institutional_positive_only": true,
+  "institutional_sort_weight": 0.3,
   "mom_state_tilt_mults": [
     [
       "tailwind",
@@ -229,6 +232,7 @@
     "XS": 0.15
   },
   "sort_anchor": "composite_rank",
+  "sparse_signal_mode": "legacy",
   "sponsor_confirm_threshold": 2,
   "tier_a_commercial_floor": 0.85,
   "tier_a_optionality_floor": 0.6,
