@@ -1,12 +1,12 @@
 ========================================================================
 PHASE-2 RUN DELTA REPORT
 ========================================================================
-Generated: 2026-02-24T19:38:59Z
+Generated: 2026-02-24T19:50:49Z
 Current:   2026-02-24 (ruleset 88d7ae9a)
 Prior:     (none)
 
 HEALTH: OK
-  catalyst=92.4%  A=34  ruleset=88d7ae9a
+  catalyst=92.5%  A=34  ruleset=88d7ae9a
 
 1. PORTFOLIO TURNOVER
 ------------------------------------------------------------------------
@@ -16,7 +16,7 @@ HEALTH: OK
 ------------------------------------------------------------------------
                 Current
   A                  34
-  B                  43
+  B                  45
   C                  64
   D                  43
 
@@ -34,10 +34,10 @@ HEALTH: OK
 
 4. CATALYST COVERAGE (dev-stage)
 ------------------------------------------------------------------------
-  specific_days:  92.4%
+  specific_days:  92.5%
   Mode distribution:
     no_upcoming: 14
-    specific_days: 170
+    specific_days: 172
 
   Nearest 10 catalysts:
     DNLI       1d  tier=B      ADCT       4d  tier=A
@@ -59,4 +59,4 @@ HEALTH: OK
 ------------------------------------------------------------------------
   [PASS] Ruleset matches pinned Phase-2 ID (88d7ae9a)
   [PASS] A-tier count > 0 (34)
-  [PASS] Catalyst specific_days coverage > 50.0% (92.4%)
+  [PASS] Catalyst specific_days coverage > 50.0% (92.5%)

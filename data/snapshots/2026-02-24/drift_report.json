@@ -13,9 +13,9 @@
   "prior_date": "2026-02-21",
   "metrics": {
     "top20_overlap_pct": 90.48,
-    "top60_overlap_pct": 90.48,
-    "rank_spearman_rho": 0.9982,
-    "mean_abs_rank_delta_top60": 1.14,
+    "top60_overlap_pct": 84.62,
+    "rank_spearman_rho": 0.9694,
+    "mean_abs_rank_delta_top60": 6.81,
     "tier_migration_count": 7,
     "eligibility_change_count": 10,
     "top20_entrants": [

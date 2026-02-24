@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-24T19:38:59Z",
+  "generated_at": "2026-02-24T19:50:49Z",
   "current": {
     "date": "2026-02-24",
     "ruleset_id": "88d7ae9a",
@@ -10,7 +10,7 @@
   "tier_distribution": {
     "current": {
       "A": 34,
-      "B": 43,
+      "B": 45,
       "C": 64,
       "D": 43
     }
@@ -33,11 +33,11 @@
   },
   "catalyst_coverage": {
     "current": {
-      "n_dev": 184,
-      "n_specific": 170,
-      "pct": 92.4,
+      "n_dev": 186,
+      "n_specific": 172,
+      "pct": 92.5,
       "mode_dist": {
-        "specific_days": 170,
+        "specific_days": 172,
         "no_upcoming": 14
       },
       "backfill_share_pct": 0.0
@@ -110,7 +110,7 @@
     "passed": [
       "Ruleset matches pinned Phase-2 ID (88d7ae9a)",
       "A-tier count >= 1 (34)",
-      "Catalyst coverage 92.4% >= 50.0%"
+      "Catalyst coverage 92.5% >= 50.0%"
     ],
     "warnings": []
   }
