@@ -594,6 +594,24 @@
     "ineligible_reasons": ""
   },
   {
+    "ticker": "AKRO",
+    "dd_abs": -0.050556,
+    "dd_rel": -0.032239,
+    "dd_xbi": -0.018317,
+    "abs_breach": false,
+    "rel_breach": false,
+    "gate_mode": "hard",
+    "require_both": true,
+    "rescue_enabled": false,
+    "rescue_threshold": -0.05,
+    "dd_combined_passed": true,
+    "dd_abs_margin": 0.349444,
+    "dd_rel_margin": 0.217761,
+    "rescued_by_rel": false,
+    "final_eligible": "1",
+    "ineligible_reasons": ""
+  },
+  {
     "ticker": "ABVX",
     "dd_abs": -0.143142,
     "dd_rel": -0.124825,
@@ -4552,24 +4570,6 @@
     "rescued_by_rel": false,
     "final_eligible": "1",
     "ineligible_reasons": ""
-  },
-  {
-    "ticker": "AKRO",
-    "dd_abs": -0.050556,
-    "dd_rel": -0.032239,
-    "dd_xbi": -0.018317,
-    "abs_breach": false,
-    "rel_breach": false,
-    "gate_mode": "hard",
-    "require_both": true,
-    "rescue_enabled": false,
-    "rescue_threshold": -0.05,
-    "dd_combined_passed": true,
-    "dd_abs_margin": 0.349444,
-    "dd_rel_margin": 0.217761,
-    "rescued_by_rel": false,
-    "final_eligible": "0",
-    "ineligible_reasons": "fundamental_red_flag"
   },
   {
     "ticker": "ALVO",

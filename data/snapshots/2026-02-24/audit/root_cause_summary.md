@@ -1,6 +1,6 @@
 # Data Integrity Audit — Root Cause Summary
 
-Generated: 2026-02-24T17:26:34.638675Z
+Generated: 2026-02-25T08:25:03.339642Z
 
 ## 1. Price-Derived Cross-Validation
 
