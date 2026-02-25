@@ -1,7 +1,7 @@
 # Biotech Screener Model Documentation
 
-**Version:** 2.4.2
-**Last Updated:** February 22, 2026
+**Version:** 2.5.0
+**Last Updated:** February 25, 2026
 **System:** Wake Robin Capital Biotech Screening Pipeline
 
 ---
@@ -67,7 +67,7 @@ python run_screen.py \
 
 ### Recommended IC workflow
 
-1. **Portfolio**: Start with `decision_portfolio.csv` (Decision Engine output: A+B tier, top-K, sized). Under ruleset v1.4.0, `composite_score` is driven by alpha cohort signals (not Module 5 linear combination). This supersedes legacy Module 5 `composite_rank` for all investment decisions.
+1. **Portfolio**: Start with `decision_portfolio.csv` (Decision Engine output: A+B tier, top-K, sized). Under ruleset v1.5.1, `composite_score` is driven by alpha cohort signals (not Module 5 linear combination). This supersedes legacy Module 5 `composite_rank` for all investment decisions.
 2. **Risk gates**: Review `severity`, `risk_flags`, and `tier_reason` before any investment decision.
 3. **Thesis build**: Use catalyst provenance (`catalyst_source`, `catalyst_days`, `catalyst_strength`) + Module 4 (pipeline quality) as the thesis backbone.
 4. **Health check**: Review `phase2_health.json` — FAIL means do not act, WARN means review before acting.
@@ -141,7 +141,7 @@ python run_screen.py \
 
 | File | Description | Source | Update Frequency |
 |------|-------------|--------|------------------|
-| `universe.json` | Investable ticker list with metadata | XBI ETF holdings + manual additions | Weekly |
+| `universe.json` | Investable ticker list with metadata (354 tickers, 7 excluded) | XBI ETF holdings + manual additions | Weekly |
 | `trial_records.json` | Clinical trial data per ticker | ClinicalTrials.gov API | Weekly |
 | `financial_data.json` | SEC EDGAR financial metrics | SEC XBRL API | Quarterly |
 | `defensive_features.json` | Market data: vol, correlation, drawdown | Yahoo Finance | Daily |
@@ -229,8 +229,9 @@ python run_screen.py \
 
 **Filters Applied:**
 - Minimum market cap: $50M
-- Status gates: Exclude DELISTED, ACQUIRED, SHELL, SUSPENDED
+- Status gates: Exclude DELISTED, ACQUIRED (`"acquired"`, `"m&a"`, `"excluded_acquired"`), SHELL, SUSPENDED
 - Shell company detection via keyword matching
+- Missing market cap → excluded (fail-loud data quality gate)
 
 **Output Fields:**
 | Field | Type | Description |
@@ -481,11 +482,11 @@ The defensive multiplier adjusts scores based on risk characteristics:
     "version": "3.0.0"
   },
   "summary": {
-    "total_evaluated": 353,
-    "active_universe": 326,
-    "final_ranked": 318,
-    "excluded": 12,
-    "catalyst_events": 480,
+    "total_evaluated": 354,
+    "active_universe": 336,
+    "final_ranked": 313,
+    "excluded": 18,
+    "catalyst_events": 1082,
     "severe_negatives": 0
   },
   "module_1_universe": { ... },
@@ -712,6 +713,22 @@ Tier assignments, catalyst provenance, and portfolio decisions.
 | `market_cap_bucket` | string | micro, small, mid, large |
 | `fundamental_red_flag` | bool | Material concerns identified |
 | `fundamental_red_flag_reasons` | string | Semicolon-separated reasons |
+
+### Fundamental Red Flag Categories
+
+**File:** `defensive_overlay_adapter.py` — `detect_fundamental_red_flags()`
+
+Red-flagged securities are suppressed to median composite score (never rank above 50th percentile).
+
+| Flag | Condition | Exemption |
+|------|-----------|-----------|
+| `cash_runway_lt_6m` | `effective_runway_months < 6` | None |
+| `survivability_critical` | `survivability.score <= -4.0` | Exempt if `cash_total / burn_ttm >= 5.0` years (debt-driven, not operational) |
+| `debt_distress_with_weak_surv` | `surv.score <= -2.0 AND debt_to_cash > 3.0` | None |
+| `dilution_risk_high` | `dilution_risk_signal.risk_level == "HIGH"` | None |
+| `single_asset_early_stage` | `risk_profile=="single_asset" AND stage in [early, preclinical]` | Exempt if `burn_ttm <= 0 AND cash_total >= $500M` (self-sustaining) |
+| `recent_trial_failure` | Trial failure flag present | None |
+| `weak_competitive_position` | `crowding=="intense" AND position in [weak, disadvantaged]` | None |
 
 ---
 
@@ -981,7 +998,7 @@ clin_adj = clinical_sort_weight * cz_eff * stage_mult
 
 **Relationship to Module 5:** Module 5 continues to run and produce `composite_score`, `composite_rank`, and all component scores consumed by the Decision Engine. Alpha cohort scoring is an alternative ranking signal that replaces `composite_rank` in the sort key when enabled. Both `composite_score` and `alpha_cohort_pct` are written to the snapshot for diagnostic comparison.
 
-**Active status:** In ruleset v1.4.0 (ID=`aa0aaf28`), `composite_engine="alpha_cohort"` and `sort_anchor="alpha_cohort"` are both enabled, making alpha cohort the authoritative ranking signal for all portfolio decisions.
+**Active status:** In ruleset v1.5.1 (ID=`88d7ae9a`), `composite_engine="alpha_cohort"` and `sort_anchor="alpha_cohort"` are both enabled, making alpha cohort the authoritative ranking signal for all portfolio decisions. Coinvest sort is DISABLED (weight=0.0) in this version; clinical sort remains ON.
 
 ### Composite Engine Override
 
@@ -1021,9 +1038,9 @@ validate_alpha_outputs(csv_rows, schema_mode="warn", alpha_cohort_enabled=True)
 
 Decision rules are externalized as frozen `DecisionRuleset` dataclass instances, serialized to JSON with content-hash IDs for reproducibility.
 
-- **Active ruleset**: `v1.4.0_alpha_cohort_candidate.json` (ID=`aa0aaf28`) — alpha cohort composite engine ON + clinical sort signal ON + tiebreaker priority
+- **Active ruleset**: `v1.5.1_coinvest_off.json` (ID=`88d7ae9a`) — coinvest sort DISABLED (w=0.0) + alpha cohort ON + clinical sort ON + tiebreaker priority
 - **Pinned in**: `run_screen.py` AND `run_phase2_snapshot_delta.py` (must stay in sync)
-- **Previous**: `v1.3.4_clinical_sort_candidate.json` (ID=`f9842e1f`)
+- **Previous**: `v1.5.0_coinvest_candidate.json` (ID=`8f99d47e`), `v1.4.0_alpha_cohort_candidate.json` (ID=`aa0aaf28`)
 - **Candidate**: `v1.4.1_tier_first_candidate.json` (ID=`054bc5cc`) — commercial tier promotion with tier_first mode, pending replay
 
 ### Phase-2 Health Gate
@@ -1111,6 +1128,39 @@ Track these metrics each run to detect data issues, model drift, and unintended 
 - **Catalyst coverage**: % tickers with `catalyst_proximity_score > 0`, plus `catalyst_window_bucket_m3` distribution.
 - **Risk & overlay**: distribution of `defensive_bucket`, `volatility`, `drawdown`, and `confidence_risk` states.
 - **Red flags / kill switches**: counts of `severe_negative_flag`, `severity=SEV3`, and `fundamental_red_flag`.
+
+### Daily Production Workflow
+
+**File:** `tools/run_daily_production.py`
+
+Five-step orchestrator that runs the complete screening pipeline with gates and audit:
+
+| Step | Name | Description |
+|------|------|-------------|
+| 1 | Price Refresh | Extend `price_history.csv` through `as_of_date`; evaluate XBI staleness + input gates |
+| 2 | Run Screen | Launch `run_screen.py --decision-mode phase2`; produce rankings.csv + sidecar files |
+| 3 | Integrity Audit | Run `data_integrity_audit.py` (invariants + price recompute) |
+| 4 | Post-Screen Gates | Evaluate 14 WARN-only gates (drift, coverage, schema, weights, consistency) |
+| 5 | Manifest + Promotion | Build `run_manifest.json`; promote to `data/snapshots/{date}/` if not FAIL |
+
+**Exit codes:** 0=PASS, 1=FAIL (snapshot stays in staging), 2=WARN (snapshot promoted with warnings)
+
+**20 production gates** in `GATE_ALLOWLIST`:
+- **Hard gates** (FAIL → abort): `xbi_staleness`, `ctgov_cache`, `inputs_present`, `market_data_schema`, `market_data_staleness`, `market_data_coverage`, `audit`, `missing_reason_fraction`, `turnover`
+- **Soft gates** (WARN only): `drift_monitoring`, `ctgov_pit_dates`, `sec_13f_cache`, `institutional_summary`, `institutional_delta`, `pnl_attribution`, `price_pit_cache`, `forward_eval`, `pit_bundle_health`, `decision_engine_schema`, `portfolio_weights`, `eligibility_consistency`
+
+### Data Integrity Audit
+
+**File:** `tools/data_integrity_audit.py`
+
+Post-screen validation with exit codes: 1=critical, 2=warn, 0=OK.
+
+**Checks:**
+- **Invariant checks**: eligible/ineligible consistency, rank assignment, catalyst field integrity, missing component validation, tier/reason completeness, universe coverage
+- **Sanity range checks**: 12 columns bounded (e.g., `de_drawdown` in [-1.0, 0.5], `de_rsi_14d` in [0, 100])
+- **Price cross-validation**: Recomputes `de_drawdown`, `de_beta_xbi_60d`, `de_rsi_14d`, `de_alpha_60d` from `price_history.csv` and diffs against rankings.csv with per-field tolerances
+
+**Outputs:** `audit/invariants_report.csv`, `audit/price_recompute_diff.csv`, `audit/catalyst_diff_sample.csv`, `audit/root_cause_summary.md`
 
 ### PIT-Safe Coinvest Features Builder
 
@@ -1423,6 +1473,14 @@ python run_screen.py \
 | Alpha Signal Contract | `alpha_signal_contract.py` | DE boundary validation (v1.1.0) |
 | Signal Robustness Backtest | `scripts/backtest_signal_robustness.py` | Out-of-sample IC + coverage diagnostics |
 | PIT Coinvest Features | `scripts/build_coinvest_features_from_13f.py` | PIT-safe coinvest features from 13F cache |
+| Daily Production Runner | `tools/run_daily_production.py` | 5-step orchestrator with 20 gates |
+| Data Integrity Audit | `tools/data_integrity_audit.py` | Invariant checks + price recompute verification |
+| PnL Attribution | `scripts/pnl_attribution.py` | Position-level PnL decomposition |
+| PIT Price Cache | `tools/warm_price_cache.py` | Write-once anchor prices + forward-return backfill |
+| Forward Eval Gate | `tools/forward_eval_gate.py` | Rolling Spearman IC from PIT-frozen prices |
+| Institutional Summary | `institutional_summary.py` | Per-ticker elite holder summary from 13F |
+| Defensive Overlay | `defensive_overlay_adapter.py` | Red flag detection + score suppression |
+| Financial Data Collector | `collect_financial_data.py` | SEC EDGAR XBRL financial metrics |
 | CSV export | `export_results_csv.py` | JSON to CSV conversion |
 | Production validation | `production_validation.py` | Output validation |
 | Date backfill | `backfill_ctgov_dates.py` | PIT date enhancement |
@@ -1431,6 +1489,7 @@ python run_screen.py \
 
 ## Changelog
 
+- **2026-02-25 v2.5.0**: Acquired ticker cleanup — AKRO (Eli Lilly, Dec 2025), MRUS (Dec 2025), CDTX (Jan 2026), ATXS (Jan 2026), GBIO (Feb 2026) marked `excluded_acquired` in universe.json. Fixed Module 1 `_classify_status()` to recognize `"excluded_acquired"` status. Defensive overlay false-positive fixes: self-sustaining exemption for `single_asset_early_stage` (burn_ttm<=0 + cash>=$500M, e.g. ILMN), debt-driven exemption for `survivability_critical` (cash/burn>=5yr, e.g. FTRE). AKRO CIK and SEC EDGAR financial data added. WSL2 `safe_mkdir` permissions fix. Added daily production workflow and data integrity audit documentation. Updated active ruleset to v1.5.1 (ID=`88d7ae9a`, coinvest OFF). Universe: 354 tickers, 313 ranked, 248 eligible, 9 red flags. ~7900+ tests across 233 files.
 - **2026-02-22 v2.4.2**: Added PIT-safe coinvest features builder (`scripts/build_coinvest_features_from_13f.py`). Standalone script reads ONLY from quarterly PIT 13F caches to produce deterministic per-ticker coinvest features (conviction formula, position changes, tier counts). Eliminates lookahead bias from smart-money factor during historical simulation. Output schema `coinvest_features.v1` with provenance tracking. Live run: 29/29 managers, 277/353 tickers (78.5% coverage). 39 tests.
 - **2026-02-20 v2.4.1**: Added PIT-safe 13F institutional holdings warm cache (`tools/warm_13f_cache.py`). Schema-versioned index (`sec_13f_pit_index.v1`) with 12-invariant pure validator. WARN-only `sec_13f_cache` gate in daily production runner. Integrated into `warm_caches.py` dispatcher (`--sources sec_13f`) and CI workflow. 29 elite managers, 100% coverage on 2026-02-19 snapshot.
 - **2026-02-18 v2.4.0**: Alpha cohort composite engine promoted — pinned ruleset `f9842e1f` → `aa0aaf28` (`composite_engine="alpha_cohort"`, `sort_anchor="alpha_cohort"`). Added composite engine override (pre-DE rewrite of composite_score/rank/pct). Added `far_window` catalyst mode for far-horizon PCD detection. Added alpha signal contract v1.1.0 (`alpha_signal_contract.py`). Added PIT event ledger sidecar. Added signal robustness backtest (`backtest_signal_robustness.py`) with forward-return coverage diagnostics, data freshness metadata, and `--extend-prices` auto-fetch. Added `sort_anchor="optionality_pct"` option. Added catalyst coverage bucket telemetry to shadow metrics.
