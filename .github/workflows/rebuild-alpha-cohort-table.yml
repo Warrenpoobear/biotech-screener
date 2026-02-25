@@ -1,0 +1,112 @@
+name: rebuild-alpha-cohort-table
+
+on:
+  schedule:
+    # Weekdays at 1:30 PM UTC (30 min before phase2-daily-production)
+    - cron: "30 13 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      as_of_date:
+        description: "Table date (YYYY-MM-DD), defaults to today (Detroit TZ)"
+        required: false
+        type: string
+      train_mode:
+        description: "Training window (expanding | trailing-N | decay-H)"
+        required: false
+        type: string
+        default: "trailing-6"
+      horizon:
+        description: "Forward horizon in trading days"
+        required: false
+        type: choice
+        options:
+          - "84"
+          - "63"
+          - "126"
+        default: "84"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rebuild-alpha-cohort-table
+  cancel-in-progress: true
+
+jobs:
+  build-table:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Resolve date
+        id: date
+        run: |
+          DATE="${{ inputs.as_of_date }}"
+          if [ -z "$DATE" ]; then
+            DATE=$(TZ=America/Detroit date +%F)
+          fi
+          echo "as_of_date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "Resolved as_of_date=$DATE"
+
+      - name: Build OOS alpha cohort table
+        id: build
+        run: |
+          DATE="${{ steps.date.outputs.as_of_date }}"
+          TRAIN_MODE="${{ inputs.train_mode || 'trailing-6' }}"
+          HORIZON="${{ inputs.horizon || '84' }}"
+          OUTPUT="production_data/alpha_cohort_tables/daily/v1_${DATE}.json"
+
+          echo "Building OOS alpha table: date=$DATE mode=$TRAIN_MODE horizon=$HORIZON"
+
+          python3 scripts/build_alpha_cohort_table_oos.py \
+            --as-of-date "$DATE" \
+            --output "$OUTPUT" \
+            --horizon "$HORIZON" \
+            --train-mode "$TRAIN_MODE" \
+            --min-train-dates 6 \
+            --shrink-k 50 \
+            --log-level INFO
+
+          # Emit summary
+          CELLS=$(python3 -c "
+          import json, sys
+          t = json.load(open('$OUTPUT'))
+          pop = sum(1 for c in t['cells'].values() if c.get('n', 0) > 0)
+          info = t.get('_build_info', {})
+          print(f'cells={len(t[\"cells\"])} populated={pop} train_dates={info.get(\"n_train_dates\", \"?\")}')
+          ")
+          echo "table_path=$OUTPUT" >> "$GITHUB_OUTPUT"
+          echo "Table: $CELLS"
+
+          echo "## Alpha Cohort Table Rebuild" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Date | \`$DATE\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Train mode | \`$TRAIN_MODE\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Horizon | \`$HORIZON\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Output | \`$OUTPUT\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Stats | $CELLS |" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload alpha table artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: alpha-cohort-table-${{ steps.date.outputs.as_of_date }}
+          path: ${{ steps.build.outputs.table_path }}
+          retention-days: 90
+          if-no-files-found: error
