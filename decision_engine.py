@@ -139,6 +139,12 @@ class DecisionRuleset:
     alpha_cohort_clip_min: float = -0.10
     alpha_cohort_clip_max: float = 0.10
 
+    # Alpha cohort training configuration (adaptive alpha)
+    alpha_train_mode: str = "trailing-6"      # "expanding" | "trailing-N" | "decay-H"
+    alpha_train_min_train_dates: int = 6      # minimum training dates (>= 2)
+    alpha_train_horizon: int = 84             # forward horizon in trading days (63|84|126)
+    alpha_table_rebuild_policy: str = "never" # "never" | "if_missing" | "daily"
+
     # Composite engine (default legacy = Module 5 composite scoring)
     composite_engine: str = "legacy"   # "legacy" | "alpha_cohort"
 
@@ -262,6 +268,40 @@ class DecisionRuleset:
             raise ValueError(
                 f"composite_engine must be 'legacy' or 'alpha_cohort', "
                 f"got '{self.composite_engine}'"
+            )
+        # Validate alpha_train_mode: expanding | trailing-N | decay-H
+        _atm = self.alpha_train_mode.strip().lower()
+        _atm_valid = False
+        if _atm == "expanding":
+            _atm_valid = True
+        elif _atm.startswith("trailing-") or _atm.startswith("decay-"):
+            try:
+                _param = int(_atm.split("-", 1)[1])
+                _atm_valid = _param >= 1
+            except (ValueError, IndexError):
+                pass
+        if not _atm_valid:
+            raise ValueError(
+                f"alpha_train_mode must be 'expanding', 'trailing-N', or 'decay-H', "
+                f"got '{self.alpha_train_mode}'"
+            )
+        # Validate alpha_train_min_train_dates
+        if self.alpha_train_min_train_dates < 2:
+            raise ValueError(
+                f"alpha_train_min_train_dates must be >= 2, "
+                f"got {self.alpha_train_min_train_dates}"
+            )
+        # Validate alpha_train_horizon
+        if self.alpha_train_horizon not in (63, 84, 126):
+            raise ValueError(
+                f"alpha_train_horizon must be 63, 84, or 126, "
+                f"got {self.alpha_train_horizon}"
+            )
+        # Validate alpha_table_rebuild_policy
+        if self.alpha_table_rebuild_policy not in ("never", "if_missing", "daily"):
+            raise ValueError(
+                f"alpha_table_rebuild_policy must be 'never', 'if_missing', or 'daily', "
+                f"got '{self.alpha_table_rebuild_policy}'"
             )
         # Validate tiering_priority_mode
         if self.tiering_priority_mode not in ("dev_first", "tier_first"):

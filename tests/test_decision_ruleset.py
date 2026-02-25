@@ -286,7 +286,7 @@ class TestRulesetDriftGuardrails:
     regenerate production_data/decision_rulesets/v1.json.
     """
 
-    EXPECTED_DEFAULT_RULESET_ID = "081defa4"
+    EXPECTED_DEFAULT_RULESET_ID = "f94f2ef1"
 
     def test_default_ruleset_id_pinned(self):
         """DEFAULT_RULESET.ruleset_id must match the committed expected value.
@@ -450,7 +450,7 @@ class TestRulesetIdSchemaStability:
     PINNED_FILE_HASHES = {
         "v1.2.2_candidate.json": "bf6815e2",
         "v1.3.0_candidate.json": "f3454ef7",
-        "v1.json": "081defa4",
+        "v1.json": "f94f2ef1",
         "v1.3.1_candidate.json": "898e5d0d",
         "v1.3.2_candidate.json": "96f655ee",
         "v1.3.3_missing_sort_only_candidate.json": "e1be5370",
@@ -1199,3 +1199,76 @@ class TestMomStateTilt:
         ]
         compute_target_weights(rows)
         assert rows[0]["target_weight_pct"] > rows[1]["target_weight_pct"]
+
+
+# =============================================================================
+# Alpha training mode validation
+# =============================================================================
+
+class TestAlphaTrainValidation:
+    """Tests for adaptive alpha training field validation."""
+
+    def test_valid_train_modes(self):
+        """All valid train mode formats accepted."""
+        for mode in ("expanding", "trailing-6", "trailing-1", "decay-3", "decay-12"):
+            rs = DecisionRuleset(alpha_train_mode=mode)
+            assert rs.alpha_train_mode == mode
+
+    def test_invalid_train_mode_rejected(self):
+        with pytest.raises(ValueError, match="alpha_train_mode"):
+            DecisionRuleset(alpha_train_mode="bogus")
+
+    def test_trailing_zero_rejected(self):
+        with pytest.raises(ValueError, match="alpha_train_mode"):
+            DecisionRuleset(alpha_train_mode="trailing-0")
+
+    def test_trailing_negative_rejected(self):
+        with pytest.raises(ValueError, match="alpha_train_mode"):
+            DecisionRuleset(alpha_train_mode="trailing--1")
+
+    def test_decay_no_param_rejected(self):
+        with pytest.raises(ValueError, match="alpha_train_mode"):
+            DecisionRuleset(alpha_train_mode="decay-")
+
+    def test_min_train_dates_below_2_rejected(self):
+        with pytest.raises(ValueError, match="alpha_train_min_train_dates"):
+            DecisionRuleset(alpha_train_min_train_dates=1)
+
+    def test_min_train_dates_valid(self):
+        rs = DecisionRuleset(alpha_train_min_train_dates=2)
+        assert rs.alpha_train_min_train_dates == 2
+
+    def test_invalid_horizon_rejected(self):
+        with pytest.raises(ValueError, match="alpha_train_horizon"):
+            DecisionRuleset(alpha_train_horizon=42)
+
+    def test_valid_horizons(self):
+        for h in (63, 84, 126):
+            rs = DecisionRuleset(alpha_train_horizon=h)
+            assert rs.alpha_train_horizon == h
+
+    def test_invalid_rebuild_policy_rejected(self):
+        with pytest.raises(ValueError, match="alpha_table_rebuild_policy"):
+            DecisionRuleset(alpha_table_rebuild_policy="always")
+
+    def test_valid_rebuild_policies(self):
+        for pol in ("never", "if_missing", "daily"):
+            rs = DecisionRuleset(alpha_table_rebuild_policy=pol)
+            assert rs.alpha_table_rebuild_policy == pol
+
+    def test_round_trip_alpha_train_fields(self, tmp_path):
+        """Alpha training fields survive JSON round-trip."""
+        custom = DecisionRuleset(
+            alpha_train_mode="decay-3",
+            alpha_train_min_train_dates=4,
+            alpha_train_horizon=63,
+            alpha_table_rebuild_policy="daily",
+        )
+        path = str(tmp_path / "alpha_train.json")
+        custom.to_json(path)
+        loaded = DecisionRuleset.from_json(path)
+        assert loaded.alpha_train_mode == "decay-3"
+        assert loaded.alpha_train_min_train_dates == 4
+        assert loaded.alpha_train_horizon == 63
+        assert loaded.alpha_table_rebuild_policy == "daily"
+        assert loaded == custom

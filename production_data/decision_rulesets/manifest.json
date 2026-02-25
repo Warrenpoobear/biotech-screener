@@ -108,14 +108,14 @@
       "updated_at": "2026-02-14T00:00:00Z"
     },
     {
-      "id": "081defa4",
+      "id": "f94f2ef1",
       "file": "v1.json",
-      "created_at": "2024-11-01",
-      "engine_version": "v1.0.0",
-      "description": "Original defaults (a_floor=0.60) + all schema expansions",
+      "created_at": "2026-02-25",
+      "engine_version": "v1.3.0",
+      "description": "Defaults + adaptive alpha training fields (alpha_train_mode, rebuild policy)",
       "status": "retired",
       "requires_replay": false,
-      "notes": "Retired: a_floor=0.60 produces negative tier-A vs tier-C spread. Schema updated with missingness penalty, clinical sort signal, alpha cohort, and coinvest sort fields."
+      "notes": "Schema expansion from 081defa4: added alpha_train_mode=trailing-6, alpha_train_horizon=84, alpha_table_rebuild_policy=never. No behavioral change (policy=never is legacy)."
     },
     {
       "id": "96f655ee",
