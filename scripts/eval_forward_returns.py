@@ -1050,6 +1050,7 @@ def evaluate(
             positions = load_positions(snap_dir)
             tickers_ranked = [r["ticker"] for r in positions
                               if r.get("ticker")]
+            eligible_set: set = set(tickers_ranked)
         else:
             rankings = load_rankings(snap_dir)
             if not rankings:
@@ -1080,6 +1081,9 @@ def evaluate(
                     return 9999
             rankings.sort(key=_safe_rank)
             tickers_ranked = [r["ticker"] for r in rankings if r.get("ticker")]
+            eligible_set = {r["ticker"] for r in rankings
+                           if r.get("ticker")
+                           and r.get("actionable_rank", "").strip()}
 
         # Build per-ticker lookups from rankings for hedged returns + diagnostics
         beta_by_ticker: Dict[str, float] = {}
@@ -1239,8 +1243,10 @@ def evaluate(
 
             gross, n_held = top_k_portfolio_return(top_k_tickers, fwd_rets, eff_k)
 
-            # Bottom-K portfolio (for sign check)
-            bottom_gross, _ = bottom_k_portfolio_return(eval_tickers, fwd_rets, eff_k)
+            # Bottom-K portfolio (eligible only — ineligible tickers have
+            # no signal; including them makes spread vs IC incomparable)
+            eligible_eval = [t for t in eval_tickers if t in eligible_set]
+            bottom_gross, _ = bottom_k_portfolio_return(eligible_eval, fwd_rets, eff_k)
 
             # Turnover (with optional cap)
             turn = compute_turnover(prev_holdings[h], top_k_tickers)

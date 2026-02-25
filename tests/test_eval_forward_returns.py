@@ -748,23 +748,31 @@ class TestSortBugFix:
     """Verify the safe-rank sort handles empty actionable_rank."""
 
     def test_ranked_before_ineligible(self, tmp_dir):
-        """Ranked tickers sorted first, ineligible pushed to back."""
-        # Ranked tickers get high returns, ineligible get low
-        ranked = ["GOOD1", "GOOD2", "GOOD3"]
+        """Ranked tickers sorted first, ineligible pushed to back.
+
+        Bottom-K uses eligible tickers only — ineligible tickers are
+        excluded so the spread compares ranked-best vs ranked-worst.
+        """
+        # 6 ranked (eligible) + 2 ineligible
+        ranked = ["GOOD1", "GOOD2", "GOOD3", "MED1", "MED2", "LOW1"]
         ineligible = ["BAD1", "BAD2"]
         snap_dir = tmp_dir / "snapshots" / "2025-01-06"
         _write_rankings_with_ineligible(snap_dir, ranked, ineligible)
         _write_metadata(snap_dir, "2025-01-06")
 
-        # Good tickers go up, bad tickers go down
         rows = []
         for d in ["2025-01-06", "2025-01-07"]:
-            for t in ranked:
+            for t in ["GOOD1", "GOOD2", "GOOD3"]:
                 rows.append({"date": d, "ticker": t,
                              "close": str(100 if d == "2025-01-06" else 120)})
+            for t in ["MED1", "MED2"]:
+                rows.append({"date": d, "ticker": t,
+                             "close": str(100 if d == "2025-01-06" else 105)})
+            rows.append({"date": d, "ticker": "LOW1",
+                         "close": str(100 if d == "2025-01-06" else 85)})
             for t in ineligible:
                 rows.append({"date": d, "ticker": t,
-                             "close": str(100 if d == "2025-01-06" else 80)})
+                             "close": str(100 if d == "2025-01-06" else 50)})
         price_csv = tmp_dir / "prices.csv"
         _write_price_csv(price_csv, rows)
 
@@ -780,9 +788,12 @@ class TestSortBugFix:
         # Top-3 should be GOOD1, GOOD2, GOOD3 with 20% return
         assert r.gross_return is not None
         assert abs(r.gross_return - 0.20) < 1e-4
-        # Bottom-3 should include BAD1, BAD2 with -20% return
+        # Bottom-3 (eligible only): MED1(+5%), MED2(+5%), LOW1(-15%)
+        # Mean = (0.05 + 0.05 + (-0.15)) / 3 ≈ -0.0167
         assert r.bottom_k_return is not None
         assert r.bottom_k_return < 0
+        # Ineligible BAD tickers (-50%) are NOT in bottom-K
+        assert r.bottom_k_return > -0.20
 
 
 class TestSignConsistency:
@@ -2940,3 +2951,115 @@ class TestStalenessStatus:
         result = _staleness_status(summary)
         assert result["stale"] is True
         assert "price_gap_days=0" in result["message"]
+
+
+# ---------------------------------------------------------------------------
+# Unit tests: spread-IC sign consistency (bottom-K eligible filter)
+# ---------------------------------------------------------------------------
+
+class TestSpreadICSignConsistency:
+    """Verify top-bottom spread matches IC sign when signal is monotonic."""
+
+    def test_positive_signal_positive_spread(self):
+        """Higher signal → higher return: IC > 0 and top-bottom > 0."""
+        # 30 tickers, returns perfectly correlated with rank
+        n = 30
+        tickers = [f"T{i:02d}" for i in range(n)]
+        # Best-ranked (position 0) gets highest return
+        fwd_rets = {tickers[i]: 0.10 - i * 0.005 for i in range(n)}
+
+        # IC: negative position index as signal (same as eval)
+        signal_vals = [-float(i + 1) for i in range(n)]
+        return_vals = [fwd_rets[tickers[i]] for i in range(n)]
+        ic = spearman_ic(signal_vals, return_vals)
+        assert ic is not None and ic > 0.5, f"Expected strong positive IC, got {ic}"
+
+        k = 5
+        top_gross, _ = top_k_portfolio_return(tickers[:k], fwd_rets, k)
+        bottom_gross, _ = bottom_k_portfolio_return(tickers, fwd_rets, k)
+        assert top_gross is not None and bottom_gross is not None
+        spread = top_gross - bottom_gross
+        assert spread > 0, f"Expected positive spread, got {spread:.4f}"
+
+    def test_negative_signal_negative_spread(self):
+        """Higher signal → lower return: IC < 0 and top-bottom < 0."""
+        n = 30
+        tickers = [f"T{i:02d}" for i in range(n)]
+        # Worst-ranked (position n-1) gets highest return
+        fwd_rets = {tickers[i]: -0.05 + i * 0.005 for i in range(n)}
+
+        signal_vals = [-float(i + 1) for i in range(n)]
+        return_vals = [fwd_rets[tickers[i]] for i in range(n)]
+        ic = spearman_ic(signal_vals, return_vals)
+        assert ic is not None and ic < -0.5, f"Expected strong negative IC, got {ic}"
+
+        k = 5
+        top_gross, _ = top_k_portfolio_return(tickers[:k], fwd_rets, k)
+        bottom_gross, _ = bottom_k_portfolio_return(tickers, fwd_rets, k)
+        assert top_gross is not None and bottom_gross is not None
+        spread = top_gross - bottom_gross
+        assert spread < 0, f"Expected negative spread, got {spread:.4f}"
+
+    def test_ineligible_excluded_from_bottom_k(self, tmp_dir):
+        """Bottom-K should use eligible tickers only, not ineligible tail."""
+        # Setup: 10 eligible (rank 1-10) + 5 ineligible (no rank, high returns)
+        snap_dir = tmp_dir / "snapshots" / "2026-01-15"
+        snap_dir.mkdir(parents=True)
+
+        rows = []
+        for i in range(1, 11):
+            rows.append({
+                "ticker": f"E{i:02d}", "actionable_rank": str(i),
+                "eligible": "1", "composite_rank": str(i),
+            })
+        for j in range(1, 6):
+            rows.append({
+                "ticker": f"X{j:02d}", "actionable_rank": "",
+                "eligible": "0", "composite_rank": "",
+            })
+
+        csv_path = snap_dir / "rankings.csv"
+        fieldnames = ["ticker", "actionable_rank", "eligible", "composite_rank"]
+        with open(csv_path, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for r in rows:
+                writer.writerow(r)
+
+        # Build eligible_set the same way evaluate() does
+        from scripts.eval_forward_returns import load_rankings
+        rankings = load_rankings(snap_dir)
+        def _safe_rank(r):
+            try:
+                return int(r.get("actionable_rank") or 9999)
+            except (ValueError, TypeError):
+                return 9999
+        rankings.sort(key=_safe_rank)
+        tickers_ranked = [r["ticker"] for r in rankings if r.get("ticker")]
+        eligible_set = {r["ticker"] for r in rankings
+                        if r.get("ticker")
+                        and r.get("actionable_rank", "").strip()}
+
+        assert len(tickers_ranked) == 15
+        assert len(eligible_set) == 10
+
+        # Ineligible tickers have very high returns (would skew bottom-K)
+        fwd_rets = {}
+        for i in range(1, 11):
+            fwd_rets[f"E{i:02d}"] = 0.10 - i * 0.01  # E01=+9%, E10=0%
+        for j in range(1, 6):
+            fwd_rets[f"X{j:02d}"] = 0.50  # ineligible: +50% each
+
+        # Without eligible filter (old behavior): bottom-5 are ineligible
+        bottom_all, _ = bottom_k_portfolio_return(tickers_ranked, fwd_rets, 5)
+        assert bottom_all is not None
+        assert abs(bottom_all - 0.50) < 1e-6, "Without filter: bottom = ineligible avg"
+
+        # With eligible filter (new behavior): bottom-5 are worst eligible
+        eligible_eval = [t for t in tickers_ranked if t in eligible_set]
+        bottom_elig, _ = bottom_k_portfolio_return(eligible_eval, fwd_rets, 5)
+        assert bottom_elig is not None
+        vals = [fwd_rets[f"E{i:02d}"] for i in range(6, 11)]
+        expected = sum(vals) / len(vals)
+        assert abs(bottom_elig - expected) < 1e-6, \
+            f"With filter: bottom should be worst eligible, got {bottom_elig}"
