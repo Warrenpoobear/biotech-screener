@@ -540,7 +540,10 @@ def safe_mkdir(
     old_umask = os.umask(0o077)
     try:
         path.mkdir(parents=True, exist_ok=True)
-        path.chmod(mode)
+        try:
+            path.chmod(mode)
+        except PermissionError:
+            pass  # skip chmod on dirs we don't own (e.g. /tmp on WSL2)
     finally:
         os.umask(old_umask)
     return path
