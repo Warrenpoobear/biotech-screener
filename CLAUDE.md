@@ -58,17 +58,13 @@ pip install -e ".[dev]"
 # Run tests (~6870 tests)
 pytest tests/ -v
 
-# Run the full screening pipeline with Decision Engine + Phase-2 health gate
-python run_screen.py --as-of-date 2026-02-14 --data-dir production_data \
-  --output results.json --phase2
+# Run the full screening pipeline (Decision Engine + Phase-2)
+python3 run_screen.py --as-of-date 2026-02-25 --decision-mode phase2 \
+  --data-dir production_data --output results.json
 
-# Run without Phase-2 health gate
-python run_screen.py --as-of-date 2026-02-14 --data-dir production_data \
-  --output results.json
-
-# Run with strict health gate (FAIL=exit 1, WARN=exit 2)
-python run_screen.py --as-of-date 2026-02-14 --data-dir production_data \
-  --output results.json --phase2 --strict
+# Run via daily production runner (price refresh + screen + audit + gates)
+python3 tools/run_daily_production.py --as-of-date 2026-02-25 \
+  --data-dir production_data --snapshot-dir data/snapshots/2026-02-25
 ```
 
 ## Architecture Overview
@@ -308,7 +304,7 @@ python scripts/calibrate_ruleset_from_panel.py --panel output/panel.csv
 ### Key Data Files
 | File | Size | Content |
 |------|------|---------|
-| `production_data/universe.json` | ~1MB | 353 tickers |
+| `production_data/universe.json` | ~1MB | 354 tickers (7 excluded: 5 acquired, 2 delisted) |
 | `production_data/trial_records.json` | ~5.8MB | Clinical trials (17,420 interventions) |
 | `production_data/financial_records.json` | — | Financial metrics |
 | `production_data/market_data.json` | ~307KB | Market metrics |
@@ -415,7 +411,7 @@ def validate_tickers(tickers: list[str]) -> ValidationResult:
 
 ## Testing
 
-**~7400+ tests across 105+ test files.**
+**~7900+ tests across 233 test files.**
 
 ### Key Test Files
 
@@ -467,6 +463,8 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 13. **`far_window` is a good catalyst mode** — `_GOOD_CATALYST_MODES = {"specific_days", "blended_window", "far_window"}`; health gating treats it as good
 14. **Alpha cohort composite override order** — alpha scoring → composite override → alpha signal contract validation → far-horizon hydration → DE loop → z_tier computation
 15. **Coinvest z-score timing** — `coinvest_score_z` is computed in `run_screen.py` after overlay extraction but before the DE sort; the column must exist in `csv_rows` before `compute_actionable_sort_key()` is called. When replaying old CSVs that lack `coinvest_score_z`, `_safe_float(None, default=0.0)` → `coinvest_adj=0.0` (zero impact, safe)
+16. **Module 1 status values** — `_classify_status()` must recognize ALL status values used in universe.json: `"delisted"`, `"d"`, `"acquired"`, `"m&a"`, `"excluded_acquired"`. Missing a value silently passes tickers through as ACTIVE.
+17. **Defensive red flag exemptions** — `detect_fundamental_red_flags()` has two exemptions: (a) self-sustaining companies skip `single_asset_early_stage` (burn_ttm<=0 + cash>=$500M), (b) debt-driven companies skip `survivability_critical` (cash/burn >= 5 years operational runway)
 
 ## Important Files Reference
 
@@ -483,17 +481,31 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 | `enrich_archive_inputs.py` | Archive re-enrichment (catalyst-only mode) |
 | `run_rank_ic_backtest.py` | Backtest harness with signals + group-by |
 | `scripts/run_drift_report.py` | Drift monitoring + rollback triggers |
+| `defensive_overlay_adapter.py` | Fundamental red flag detection + exemptions |
 | `alpha_signal_contract.py` | Alpha signal input/output validation (v1.1.0) |
 | `module_5_alpha_cohort.py` | Alpha cohort table-driven scoring |
 | `scripts/backtest_signal_robustness.py` | Signal IC + coverage diagnostics |
 | `scripts/build_coinvest_features_from_13f.py` | PIT-safe coinvest features from 13F cache (conviction formula, position changes) |
 | `tools/warm_13f_cache.py` | PIT-safe 13F cache builder + schema validator |
+| `tools/data_integrity_audit.py` | Invariant checks + price recompute verification |
+| `tools/run_daily_production.py` | Daily production runner (price refresh + screen + audit + 20 gates) |
+| `collect_financial_data.py` | SEC EDGAR XBRL financial data collector |
 | `elite_managers.py` | Manager registry (Tier 1 elite + full list) |
 | `tests/conftest.py` | Shared test fixtures |
 
 ## Recent Changes
 
-### v2.4.0 (February 2026 - Current)
+### v2.5.0 (February 2026 - Current)
+
+- **Acquired Ticker Exclusion**: AKRO (Eli Lilly), MRUS, CDTX, ATXS, GBIO marked `excluded_acquired` in universe.json. Module 1 `_classify_status()` fixed to recognize `"excluded_acquired"` status. Universe: 354 total, 313 ranked, 248 eligible.
+- **Defensive Overlay False-Positive Fixes** (`defensive_overlay_adapter.py`):
+  - Self-sustaining exemption: `single_asset_early_stage` skipped when `burn_ttm <= 0 AND cash_total >= $500M` (e.g., ILMN)
+  - Debt-driven exemption: `survivability_critical` skipped when `cash_total / burn_ttm >= 5.0 years` operational runway (e.g., FTRE)
+- **Financial Data Fix**: AKRO CIK added (`0001744659`), SEC EDGAR data fetched ($738M liquid, 47.5mo runway)
+- **WSL2 Permissions Fix**: `safe_mkdir()` in `common/production_hardening.py` catches `PermissionError` on chmod for directories we don't own (e.g., `/tmp`)
+- **7900+ tests across 233 test files**
+
+### v2.4.0 (February 2026)
 
 - **Coinvest Sort Signal**: `enable_coinvest_sort_signal=true` blends z-scored elite manager count into sort anchor as tie-breaker (w=0.05); promoted in ruleset v1.5.0 (ID=`8f99d47e`). 6 new informational columns in rankings.csv. WARN-only coverage gate at 70%.
 - **Alpha Cohort Composite Engine**: `composite_engine="alpha_cohort"` overwrites composite_score/rank/pct with alpha_cohort_raw-derived values; activated in ruleset v1.4.0 (ID=`aa0aaf28`, now retired)
