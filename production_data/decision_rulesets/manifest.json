@@ -108,14 +108,16 @@
       "updated_at": "2026-02-14T00:00:00Z"
     },
     {
-      "id": "f94f2ef1",
+      "id": "80937e07",
       "file": "v1.json",
       "created_at": "2026-02-25",
       "engine_version": "v1.3.0",
-      "description": "Defaults + adaptive alpha training fields (alpha_train_mode, rebuild policy)",
+      "description": "Defaults + adaptive alpha training + alpha modifier fields",
       "status": "retired",
       "requires_replay": false,
-      "notes": "Schema expansion from 081defa4: added alpha_train_mode=trailing-6, alpha_train_horizon=84, alpha_table_rebuild_policy=never. No behavioral change (policy=never is legacy)."
+      "notes": "Schema expansion from f94f2ef1: added alpha_modifier_mode=off, alpha_modifier_weight=0.0. No behavioral change (mode=off is default). Supersedes f94f2ef1 (alpha training fields).",
+      "updated_by": "manual_bootstrap",
+      "updated_at": "2026-02-25T00:00:00Z"
     },
     {
       "id": "96f655ee",
@@ -176,6 +178,18 @@
       "notes": "composite_engine=alpha_cohort, enable_clinical_sort_signal=true, enable_missingness_sort_penalty=true, catalyst_priority_mode=tiebreaker. Superseded by v1.5.0 (coinvest sort).",
       "updated_by": "promote_ruleset.py",
       "updated_at": "2026-02-20T00:00:00Z"
+    },
+    {
+      "id": "f3210152",
+      "file": "v1.6.0_alpha_modifier_candidate.json",
+      "created_at": "2026-02-25",
+      "engine_version": "v1.3.0",
+      "description": "Alpha modifier tiebreak mode: OOS alpha nudges within-tier ordering as last tiebreaker",
+      "status": "candidate",
+      "requires_replay": true,
+      "notes": "Same params as v1.5.1_coinvest_off + alpha_modifier_mode=tiebreak, alpha_modifier_weight=0.05, alpha_table_rebuild_policy=if_missing. Alpha signal from OOS cohort table used as second-to-last sort key (before ticker). Acceptance: run A/B diagnostics, verify top60_overlap >= 0.90.",
+      "updated_by": "manual_bootstrap",
+      "updated_at": "2026-02-25T00:00:00Z"
     },
     {
       "id": "8f99d47e",

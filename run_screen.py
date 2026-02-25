@@ -2810,6 +2810,104 @@ def _resolve_alpha_table_path(
     return dated_path
 
 
+def _compute_alpha_modifier_ab(
+    csv_rows: List[Dict[str, Any]],
+    ruleset: Optional[DecisionRuleset],
+    logger: logging.Logger,
+) -> Dict[str, Any]:
+    """Compute A/B diagnostics: modified ordering vs alpha_modifier_mode=off baseline.
+
+    Returns a dict with overlap, churn, and rank shift metrics.
+    Both orderings are computed in memory without rerunning the pipeline.
+    """
+    from copy import deepcopy
+
+    # Current ordering (already applied): extract eligible ticker→rank mapping
+    modified_ranks: Dict[str, int] = {}
+    for r in csv_rows:
+        if r.get("eligible") == "1" and r.get("actionable_rank") not in (None, ""):
+            modified_ranks[r["ticker"]] = int(r["actionable_rank"])
+
+    # Baseline ordering: re-sort with alpha_modifier_mode forced to "off"
+    baseline_rs = None
+    if ruleset:
+        # Build a copy with alpha_modifier_mode="off"
+        from dataclasses import fields as dc_fields
+        rs_kwargs = {}
+        for f in dc_fields(ruleset):
+            rs_kwargs[f.name] = getattr(ruleset, f.name)
+        rs_kwargs["alpha_modifier_mode"] = "off"
+        rs_kwargs["alpha_modifier_weight"] = 0.0
+        baseline_rs = DecisionRuleset(**rs_kwargs)
+
+    baseline_rows = deepcopy(csv_rows)
+    baseline_rows.sort(key=lambda r: compute_actionable_sort_key(
+        decision_fields=r,
+        archetype=r.get("archetype", ""),
+        optionality=_safe_float(r.get("clinical_optionality_pct_dev")),
+        composite_rank=r.get("composite_rank"),
+        ticker=r.get("ticker", ""),
+        catalyst_event_type=r.get("catalyst_event_type", ""),
+        catalyst_source=r.get("catalyst_source", ""),
+        ruleset=baseline_rs,
+        tiebreaker_pct=(
+            _safe_float(r.get("alpha_cohort_pct"))
+            if baseline_rs and baseline_rs.sort_anchor == "alpha_cohort"
+            else (_safe_float(r.get("commercial_quality_pct"))
+                  if r.get("archetype", "").startswith("commercial_")
+                  else _safe_float(r.get("clinical_optionality_pct_dev")))
+        ),
+        alpha_raw=_safe_float(r.get("alpha_cohort_raw")),
+    ))
+
+    baseline_ranks: Dict[str, int] = {}
+    rank = 0
+    for r in baseline_rows:
+        if r.get("eligible") == "1":
+            rank += 1
+            baseline_ranks[r["ticker"]] = rank
+
+    # Compute metrics
+    all_tickers = set(modified_ranks) & set(baseline_ranks)
+    n_rows = len(all_tickers)
+    n_alpha_nonzero = sum(
+        1 for r in csv_rows
+        if r.get("eligible") == "1" and _safe_float(r.get("alpha_cohort_raw")) != 0.0
+    )
+
+    rank_shifts = []
+    n_changed = 0
+    for tk in all_tickers:
+        shift = abs(modified_ranks[tk] - baseline_ranks[tk])
+        rank_shifts.append(shift)
+        if shift > 0:
+            n_changed += 1
+
+    # Top-60 overlap (Jaccard)
+    mod_top60 = {tk for tk, rk in modified_ranks.items() if rk <= 60}
+    base_top60 = {tk for tk, rk in baseline_ranks.items() if rk <= 60}
+    if mod_top60 or base_top60:
+        top60_overlap = len(mod_top60 & base_top60) / len(mod_top60 | base_top60)
+    else:
+        top60_overlap = 1.0
+
+    result = {
+        "n_rows": n_rows,
+        "n_alpha_nonzero": n_alpha_nonzero,
+        "alpha_modifier_mode": ruleset.alpha_modifier_mode if ruleset else "off",
+        "alpha_modifier_weight": ruleset.alpha_modifier_weight if ruleset else 0.0,
+        "top60_overlap": round(top60_overlap, 4),
+        "mean_abs_rank_shift": round(sum(rank_shifts) / max(len(rank_shifts), 1), 2),
+        "max_rank_shift": max(rank_shifts) if rank_shifts else 0,
+        "pct_rows_rank_changed": round(n_changed / max(n_rows, 1) * 100, 1),
+    }
+    logger.info(
+        "  Alpha modifier A/B: top60_overlap=%.3f mean_shift=%.1f pct_changed=%.1f%%",
+        result["top60_overlap"], result["mean_abs_rank_shift"], result["pct_rows_rank_changed"],
+    )
+    return result
+
+
 def save_validation_snapshot(
     snapshot_dir: Path,
     as_of_date: str,
@@ -2824,6 +2922,7 @@ def save_validation_snapshot(
     inputs_manifest_mode: str = "off",
     ranking_mode: str = "decision",
     prior_snapshot_dir: Optional[Path] = None,
+    alpha_ab_diagnostics: bool = False,
 ) -> Optional[Path]:
     """
     Save a lightweight validation snapshot for future forward-looking backtests.
@@ -3447,6 +3546,13 @@ def save_validation_snapshot(
 
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key
+    # Log alpha modifier if enabled
+    if ruleset and ruleset.alpha_modifier_mode != "off":
+        logger.info(
+            "  Alpha modifier enabled: mode=%s weight=%.3f using=alpha_cohort_raw",
+            ruleset.alpha_modifier_mode, ruleset.alpha_modifier_weight,
+        )
+
     csv_rows.sort(key=lambda r: compute_actionable_sort_key(
         decision_fields=r,
         archetype=r.get("archetype", ""),
@@ -3463,6 +3569,7 @@ def save_validation_snapshot(
                   if r.get("archetype", "").startswith("commercial_")
                   else _safe_float(r.get("clinical_optionality_pct_dev")))
         ),
+        alpha_raw=_safe_float(r.get("alpha_cohort_raw")),
     ))
 
     # Assign actionable_rank: eligible rows get 1..N, ineligible get blank
@@ -3476,6 +3583,20 @@ def save_validation_snapshot(
 
     # Compute target weights for eligible rows
     compute_target_weights(eligible_rows, ruleset=ruleset)
+
+    # --- Alpha modifier A/B diagnostics (opt-in) ---
+    _alpha_ab_result = None
+    if alpha_ab_diagnostics and ruleset and ruleset.alpha_modifier_mode != "off":
+        _alpha_ab_result = _compute_alpha_modifier_ab(csv_rows, ruleset, logger)
+        # Write to snapshot dir if available
+        if snapshot_dir:
+            _ab_path = snapshot_dir / as_of_date / "alpha_modifier_ab.json"
+            _ab_path.parent.mkdir(parents=True, exist_ok=True)
+            import json as _json_ab
+            with open(_ab_path, "w", encoding="utf-8") as _f:
+                _json_ab.dump(_alpha_ab_result, _f, indent=2)
+                _f.write("\n")
+            logger.info("  Alpha A/B diagnostics: wrote %s", _ab_path)
 
     # --- Final CSV row ordering ---
     # In decision ranking mode (default): eligible rows first (in DE order),
@@ -7264,6 +7385,14 @@ Module 3 Catalyst Detection:
     )
 
     parser.add_argument(
+        "--alpha-ab-diagnostics",
+        action="store_true",
+        default=False,
+        help="Emit alpha modifier A/B diagnostics (alpha_modifier_ab.json in snapshot dir). "
+             "Compares current ordering against alpha_modifier_mode=off baseline.",
+    )
+
+    parser.add_argument(
         "--replay-bundle-out",
         type=Path,
         default=None,
@@ -8047,6 +8176,7 @@ Module 3 Catalyst Detection:
                 inputs_manifest_mode=args.inputs_manifest,
                 ranking_mode=args.ranking_mode,
                 prior_snapshot_dir=prior_snapshot_dir,
+                alpha_ab_diagnostics=getattr(args, "alpha_ab_diagnostics", False),
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")
