@@ -1851,7 +1851,7 @@
     "name": "Akero Therapeutics, Inc.",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
-    "status": "active",
+    "status": "excluded_acquired",
     "added_date": "2026-01-31",
     "description": "NASH/metabolic liver disease. 7 Tier 1 managers, +161% 2Y.",
     "market_cap": 4499031040,
@@ -5577,7 +5577,7 @@
     "name": "ATXS",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
-    "status": "active",
+    "status": "excluded_acquired",
     "added_from_etf": true,
     "added_date": "2026-01-07",
     "etf_sources": [
@@ -9657,7 +9657,7 @@
     "name": "Cidara Therapeutics, Inc.",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
-    "status": "active",
+    "status": "excluded_acquired",
     "added_date": "2026-01-31",
     "description": "Antifungal/antiviral immunotherapies. 5 Tier 1 managers, +1593% 2Y.",
     "market_cap": 6961583616,
@@ -17423,7 +17423,8 @@
       "company_name": "Healthcare",
       "sector": "Healthcare",
       "industry": "Biotechnology"
-    }
+    },
+    "status": "excluded_acquired"
   },
   {
     "ticker": "GERN",
@@ -27473,7 +27474,7 @@
     "name": "Merus N.V.",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
-    "status": "active",
+    "status": "excluded_acquired",
     "added_date": "2026-01-31",
     "description": "Bispecific antibody oncology (Dutch). 5 Tier 1 managers, +149% 2Y.",
     "market_cap": 6826245632,

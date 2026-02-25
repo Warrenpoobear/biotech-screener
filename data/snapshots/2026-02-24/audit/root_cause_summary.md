@@ -1,15 +1,15 @@
 # Data Integrity Audit — Root Cause Summary
 
-Generated: 2026-02-25T08:25:03.339642Z
+Generated: 2026-02-25T08:51:07.771090Z
 
 ## 1. Price-Derived Cross-Validation
 
-- **Drawdown (252d)**: 318 OK, 0 FAIL, 1 missing/skip (of 319)
-- **RSI (14d)**: 319 OK, 0 FAIL, 0 missing/skip (of 319)
-- **Beta XBI (60d)**: 319 OK, 0 FAIL, 0 missing/skip (of 319)
-- **Alpha (60d)**: 319 OK, 0 FAIL, 0 missing/skip (of 319)
-- **Drawdown XBI**: 319 OK, 0 FAIL, 0 missing/skip (of 319)
-- **Drawdown Relative**: 318 OK, 0 FAIL, 1 missing/skip (of 319)
+- **Drawdown (252d)**: 312 OK, 0 FAIL, 1 missing/skip (of 313)
+- **RSI (14d)**: 313 OK, 0 FAIL, 0 missing/skip (of 313)
+- **Beta XBI (60d)**: 313 OK, 0 FAIL, 0 missing/skip (of 313)
+- **Alpha (60d)**: 313 OK, 0 FAIL, 0 missing/skip (of 313)
+- **Drawdown XBI**: 313 OK, 0 FAIL, 0 missing/skip (of 313)
+- **Drawdown Relative**: 312 OK, 0 FAIL, 1 missing/skip (of 313)
 
 ## 2. Root Cause Classification
 
