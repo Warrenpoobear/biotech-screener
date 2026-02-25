@@ -4,6 +4,8 @@
   "alpha_cohort_shrink_k": 50.0,
   "alpha_cohort_table_path": "production_data/alpha_cohort_tables/v1.json",
   "alpha_headwind": -0.05,
+  "alpha_modifier_mode": "off",
+  "alpha_modifier_weight": 0.0,
   "alpha_table_rebuild_policy": "never",
   "alpha_tailwind": 0.05,
   "alpha_train_horizon": 84,

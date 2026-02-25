@@ -286,7 +286,7 @@ class TestRulesetDriftGuardrails:
     regenerate production_data/decision_rulesets/v1.json.
     """
 
-    EXPECTED_DEFAULT_RULESET_ID = "f94f2ef1"
+    EXPECTED_DEFAULT_RULESET_ID = "80937e07"
 
     def test_default_ruleset_id_pinned(self):
         """DEFAULT_RULESET.ruleset_id must match the committed expected value.
@@ -450,7 +450,7 @@ class TestRulesetIdSchemaStability:
     PINNED_FILE_HASHES = {
         "v1.2.2_candidate.json": "bf6815e2",
         "v1.3.0_candidate.json": "f3454ef7",
-        "v1.json": "f94f2ef1",
+        "v1.json": "80937e07",
         "v1.3.1_candidate.json": "898e5d0d",
         "v1.3.2_candidate.json": "96f655ee",
         "v1.3.3_missing_sort_only_candidate.json": "e1be5370",
@@ -1271,4 +1271,62 @@ class TestAlphaTrainValidation:
         assert loaded.alpha_train_min_train_dates == 4
         assert loaded.alpha_train_horizon == 63
         assert loaded.alpha_table_rebuild_policy == "daily"
+        assert loaded == custom
+
+
+class TestAlphaModifierValidation:
+    """Validate alpha_modifier_mode and alpha_modifier_weight constraints."""
+
+    def test_mode_off_valid(self):
+        rs = DecisionRuleset(alpha_modifier_mode="off")
+        assert rs.alpha_modifier_mode == "off"
+
+    def test_mode_tiebreak_valid(self):
+        rs = DecisionRuleset(alpha_modifier_mode="tiebreak")
+        assert rs.alpha_modifier_mode == "tiebreak"
+
+    def test_mode_within_tier_valid(self):
+        rs = DecisionRuleset(alpha_modifier_mode="within_tier")
+        assert rs.alpha_modifier_mode == "within_tier"
+
+    def test_mode_invalid_rejected(self):
+        with pytest.raises(ValueError, match="alpha_modifier_mode"):
+            DecisionRuleset(alpha_modifier_mode="boost")
+
+    def test_weight_zero_valid(self):
+        rs = DecisionRuleset(alpha_modifier_weight=0.0)
+        assert rs.alpha_modifier_weight == 0.0
+
+    def test_weight_max_valid(self):
+        rs = DecisionRuleset(alpha_modifier_weight=0.25)
+        assert rs.alpha_modifier_weight == 0.25
+
+    def test_weight_mid_valid(self):
+        rs = DecisionRuleset(alpha_modifier_weight=0.10)
+        assert rs.alpha_modifier_weight == 0.10
+
+    def test_weight_negative_rejected(self):
+        with pytest.raises(ValueError, match="alpha_modifier_weight"):
+            DecisionRuleset(alpha_modifier_weight=-0.01)
+
+    def test_weight_above_cap_rejected(self):
+        with pytest.raises(ValueError, match="alpha_modifier_weight"):
+            DecisionRuleset(alpha_modifier_weight=0.26)
+
+    def test_defaults_are_off(self):
+        rs = DecisionRuleset()
+        assert rs.alpha_modifier_mode == "off"
+        assert rs.alpha_modifier_weight == 0.0
+
+    def test_round_trip_alpha_modifier_fields(self, tmp_path):
+        """Alpha modifier fields survive JSON round-trip."""
+        custom = DecisionRuleset(
+            alpha_modifier_mode="within_tier",
+            alpha_modifier_weight=0.15,
+        )
+        path = str(tmp_path / "alpha_mod.json")
+        custom.to_json(path)
+        loaded = DecisionRuleset.from_json(path)
+        assert loaded.alpha_modifier_mode == "within_tier"
+        assert loaded.alpha_modifier_weight == 0.15
         assert loaded == custom

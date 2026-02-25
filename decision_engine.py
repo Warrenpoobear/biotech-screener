@@ -181,6 +181,10 @@ class DecisionRuleset:
     catalyst_priority_default: int = 9
     catalyst_priority_unknown: int = 99
 
+    # Alpha modifier (nudges ordering using OOS alpha signal, does NOT replace composite)
+    alpha_modifier_mode: str = "off"           # "off" | "tiebreak" | "within_tier"
+    alpha_modifier_weight: float = 0.00        # weight for within_tier mode; capped [0, 0.25]
+
     # Actionable ordering — catalyst priority mode (supersedes enable_catalyst_priority)
     catalyst_priority_mode: str = "off"       # "off" | "tiebreaker" | "blended"
     catalyst_priority_rank_bonuses: tuple = (  # blended mode: priority → rank bonus
@@ -302,6 +306,18 @@ class DecisionRuleset:
             raise ValueError(
                 f"alpha_table_rebuild_policy must be 'never', 'if_missing', or 'daily', "
                 f"got '{self.alpha_table_rebuild_policy}'"
+            )
+        # Validate alpha_modifier_mode
+        if self.alpha_modifier_mode not in ("off", "tiebreak", "within_tier"):
+            raise ValueError(
+                f"alpha_modifier_mode must be 'off', 'tiebreak', or 'within_tier', "
+                f"got '{self.alpha_modifier_mode}'"
+            )
+        # Validate alpha_modifier_weight
+        if not (0.0 <= self.alpha_modifier_weight <= 0.25):
+            raise ValueError(
+                f"alpha_modifier_weight must be in [0.0, 0.25], "
+                f"got {self.alpha_modifier_weight}"
             )
         # Validate tiering_priority_mode
         if self.tiering_priority_mode not in ("dev_first", "tier_first"):
@@ -1161,6 +1177,7 @@ def compute_actionable_sort_key(
     catalyst_source: str = "",
     ruleset: Optional["DecisionRuleset"] = None,
     tiebreaker_pct: Optional[float] = None,
+    alpha_raw: Optional[float] = None,
 ) -> Tuple:
     """Return a sort-key tuple for deterministic actionable ordering.
 
@@ -1277,14 +1294,21 @@ def compute_actionable_sort_key(
             iz_eff = max(-2.0, min(2.0, iz))
         inst_adj = rs.institutional_sort_weight * iz_eff
 
+    # Alpha modifier signal (0.0 when mode=off or missing)
+    _alpha_sig = _safe_float(alpha_raw, default=0.0)
+
     # --- Mode dispatch ---
     # prefix is (is_eligible, is_dev, tier_ord) in dev_first mode
     # or (is_eligible, tier_ord, is_dev) in tier_first mode
+    # Alpha modifier adjustments (0.0 when mode=off)
+    _alpha_within = rs.alpha_modifier_weight * _alpha_sig if rs.alpha_modifier_mode == "within_tier" else 0.0
+    _alpha_tie = -_alpha_sig if rs.alpha_modifier_mode == "tiebreak" else 0.0
+
     if mode == "tiebreaker":
         # anchor dominates after tier; priority only breaks ties
-        effective_comp_rank = anchor - clin_adj - coinvest_adj - inst_adj
+        effective_comp_rank = anchor - clin_adj - coinvest_adj - inst_adj - _alpha_within
         return prefix + (
-            effective_comp_rank,  # anchor with clinical tilt
+            effective_comp_rank,  # anchor with clinical tilt + alpha within_tier
             missing_count,  # fewer missing components first
             cat_priority,   # priority breaks comp_rank ties
             cat_days,       # ascending days
@@ -1292,6 +1316,7 @@ def compute_actionable_sort_key(
             sponsor_neg,    # descending sponsor count
             mom_ord,        # tailwind < neutral < headwind
             cat_mode_ord,   # specific < blended < no_upcoming < missing
+            _alpha_tie,     # alpha tiebreak (0 unless mode=tiebreak)
             ticker,         # alphabetic tiebreak
         )
 
@@ -1299,9 +1324,9 @@ def compute_actionable_sort_key(
         # Build bonus map from ruleset tuples
         bonus_map = dict(rs.catalyst_priority_rank_bonuses)
         bonus = bonus_map.get(cat_priority, 0.0)
-        effective_comp_rank = anchor - bonus - clin_adj - coinvest_adj - inst_adj
+        effective_comp_rank = anchor - bonus - clin_adj - coinvest_adj - inst_adj - _alpha_within
         return prefix + (
-            effective_comp_rank,  # anchor with bonus + clinical tilt
+            effective_comp_rank,  # anchor with bonus + clinical tilt + alpha within_tier
             missing_count,        # fewer missing components first
             cat_mode_ord,         # specific < blended < no_upcoming < missing
             cat_days,             # ascending days
@@ -1309,11 +1334,12 @@ def compute_actionable_sort_key(
             sponsor_neg,          # descending sponsor count
             mom_ord,              # tailwind < neutral < headwind
             cat_priority,         # priority as tiebreaker
+            _alpha_tie,           # alpha tiebreak (0 unless mode=tiebreak)
             ticker,               # alphabetic tiebreak
         )
 
     # mode == "off" (default)
-    effective_opt_neg = opt_neg - clin_adj - coinvest_adj - inst_adj  # higher z → more negative → sorts earlier
+    effective_opt_neg = opt_neg - clin_adj - coinvest_adj - inst_adj - _alpha_within  # higher z → more negative → sorts earlier
     return prefix + (
         cat_priority,       # 0 (neutral) — no effect on ordering
         cat_mode_ord,       # specific < blended < no_upcoming < missing
@@ -1323,6 +1349,7 @@ def compute_actionable_sort_key(
         sponsor_neg,        # descending sponsor count (negated)
         mom_ord,            # tailwind < neutral < headwind
         anchor,             # ascending composite rank (or negated pct)
+        _alpha_tie,         # alpha tiebreak (0 unless mode=tiebreak)
         ticker,             # alphabetic tiebreak
     )
 
