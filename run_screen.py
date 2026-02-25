@@ -2750,6 +2750,66 @@ def _ensure_defaults(csv_rows, defaults=_ALWAYS_NUMERIC_DEFAULTS):
             row.setdefault(flag, flag_default)
 
 
+def _resolve_alpha_table_path(
+    ruleset: "DecisionRuleset",
+    as_of_date: str,
+    logger: logging.Logger,
+) -> Path:
+    """Resolve alpha cohort table path based on rebuild policy.
+
+    Policies:
+      - "never": use static ``alpha_cohort_table_path`` from ruleset (legacy)
+      - "if_missing": build OOS table only if dated path does not exist
+      - "daily": rebuild OOS table every run
+
+    Returns the resolved Path to the JSON table file.
+    """
+    project_root = Path(__file__).resolve().parent
+    policy = ruleset.alpha_table_rebuild_policy
+
+    if policy == "never":
+        return project_root / ruleset.alpha_cohort_table_path
+
+    # daily / if_missing: target path includes date
+    daily_dir = project_root / "production_data" / "alpha_cohort_tables" / "daily"
+    dated_path = daily_dir / f"v1_{as_of_date}.json"
+
+    if policy == "if_missing" and dated_path.exists():
+        logger.info(f"  Alpha table (if_missing): reusing {dated_path}")
+        return dated_path
+
+    # Build OOS table in-process
+    logger.info(
+        f"  Alpha table ({policy}): building OOS table for {as_of_date} "
+        f"(mode={ruleset.alpha_train_mode}, horizon={ruleset.alpha_train_horizon})"
+    )
+    from scripts.build_alpha_cohort_table_oos import build_oos_table
+
+    table = build_oos_table(
+        as_of_date=as_of_date,
+        train_mode=ruleset.alpha_train_mode,
+        horizon=ruleset.alpha_train_horizon,
+        min_train_dates=ruleset.alpha_train_min_train_dates,
+        shrink_k=ruleset.alpha_cohort_shrink_k,
+    )
+
+    if table is None:
+        logger.warning(
+            "  Alpha table rebuild returned None (insufficient data) — "
+            "falling back to static table"
+        )
+        return project_root / ruleset.alpha_cohort_table_path
+
+    # Write to dated path
+    daily_dir.mkdir(parents=True, exist_ok=True)
+    import json as _json
+    with open(dated_path, "w", encoding="utf-8") as f:
+        _json.dump(table, f, indent=2)
+        f.write("\n")
+    logger.info(f"  Alpha table: wrote {dated_path}")
+    return dated_path
+
+
 def save_validation_snapshot(
     snapshot_dir: Path,
     as_of_date: str,
@@ -3332,8 +3392,12 @@ def save_validation_snapshot(
     )
     if _run_alpha_cohort:
         from module_5_alpha_cohort import load_alpha_cohort_table, attach_alpha_scores
-        _table_path = Path(__file__).resolve().parent / ruleset.alpha_cohort_table_path
-        _alpha_table = load_alpha_cohort_table(_table_path)
+
+        # Policy-based table resolution (adaptive alpha)
+        _alpha_table_path_resolved = _resolve_alpha_table_path(
+            ruleset, as_of_date, logger,
+        )
+        _alpha_table = load_alpha_cohort_table(_alpha_table_path_resolved)
         attach_alpha_scores(
             csv_rows, _alpha_table,
             shrink_k=ruleset.alpha_cohort_shrink_k,
