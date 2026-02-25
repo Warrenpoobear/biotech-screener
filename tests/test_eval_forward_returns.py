@@ -30,6 +30,7 @@ from scripts.eval_forward_returns import (
     _logistic_decay,
     _monotonic_slope,
     _multi_ols,
+    _staleness_status,
     _trading_days_after,
     assign_splits,
     bottom_k_portfolio_return,
@@ -136,15 +137,16 @@ class TestNetReturn:
         assert net_return(0.05, 0.3, 0) == 0.05
 
     def test_basic_haircut(self):
-        # gross=0.05, turnover=0.5, cost=30bps → net = 0.05 - 0.5*30/10000
+        # gross=0.05, turnover=0.5 (one-way), cost=30bps
+        # Each rebalance has buy+sell legs → 2 * turnover * cost
         result = net_return(0.05, 0.5, 30)
-        expected = 0.05 - 0.5 * 30 / 10_000
+        expected = 0.05 - 2 * 0.5 * 30 / 10_000
         assert abs(result - expected) < 1e-10
 
     def test_high_turnover(self):
-        # 100% turnover, 100 bps cost → haircut = 1.0 * 100/10000 = 0.01
+        # 100% one-way turnover, 100 bps cost → haircut = 2*1.0*100/10000 = 0.02
         result = net_return(0.03, 1.0, 100)
-        assert abs(result - 0.02) < 1e-10
+        assert abs(result - 0.01) < 1e-10
 
 
 # ---------------------------------------------------------------------------
@@ -2884,3 +2886,57 @@ class TestCoinvestStaleness:
         assert len(coinvest_rows) >= 1
         # staleness column present but empty when no data
         assert coinvest_rows[0].get("coinvest_staleness_days", "") == ""
+
+
+# ---------------------------------------------------------------------------
+# Unit tests: staleness guardrail
+# ---------------------------------------------------------------------------
+
+class TestStalenessStatus:
+    def test_stale_returns_true(self):
+        summary = EvalSummary()
+        summary.data_freshness = {
+            "price_end_date": "2026-02-10",
+            "max_snapshot_date": "2026-02-05",
+            "price_gap_days": 5,
+            "max_horizon": 20,
+            "fwd_returns_stale": True,
+        }
+        result = _staleness_status(summary)
+        assert result["stale"] is True
+        assert "price_end_date=2026-02-10" in result["message"]
+        assert "max_snapshot_date=2026-02-05" in result["message"]
+        assert "price_gap_days=5" in result["message"]
+
+    def test_not_stale_returns_false(self):
+        summary = EvalSummary()
+        summary.data_freshness = {
+            "price_end_date": "2026-06-01",
+            "max_snapshot_date": "2026-02-05",
+            "price_gap_days": 116,
+            "max_horizon": 20,
+            "fwd_returns_stale": False,
+        }
+        result = _staleness_status(summary)
+        assert result["stale"] is False
+        assert "up to date" in result["message"]
+
+    def test_missing_block_returns_false(self):
+        summary = EvalSummary()
+        # data_freshness is None by default
+        result = _staleness_status(summary)
+        assert result["stale"] is False
+        assert "cold start" in result["message"]
+
+    def test_stale_with_zero_gap(self):
+        summary = EvalSummary()
+        summary.data_freshness = {
+            "price_end_date": "2026-02-05",
+            "max_snapshot_date": "2026-02-05",
+            "price_gap_days": 0,
+            "max_horizon": 63,
+            "fwd_returns_stale": True,
+        }
+        result = _staleness_status(summary)
+        assert result["stale"] is True
+        assert "price_gap_days=0" in result["message"]

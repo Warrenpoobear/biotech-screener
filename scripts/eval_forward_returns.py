@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import logging
 import math
 import statistics
 import sys
@@ -21,6 +22,8 @@ from dataclasses import asdict, dataclass, field, replace as dc_replace
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+
+log = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -229,8 +232,12 @@ def compute_turnover(prev_set: List[str], curr_set: List[str]) -> float:
 
 
 def net_return(gross: float, turnover: float, cost_bps: float) -> float:
-    """Net return after transaction cost haircut."""
-    return gross - turnover * cost_bps / 10_000
+    """Net return after transaction cost haircut.
+
+    turnover is one-way (0.5 * |sym_diff| / n).  Each rebalance has two
+    legs (sell exits + buy entries), so total cost = 2 * turnover * cost.
+    """
+    return gross - 2 * turnover * cost_bps / 10_000
 
 
 # ---------------------------------------------------------------------------
@@ -878,9 +885,33 @@ class EvalSummary:
     split_mode: str = "none"
     universe_mode: str = "current"
     coinvest_signal_diagnostics: Optional[Dict[str, Any]] = None
+    data_freshness: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
+
+
+def _staleness_status(summary: EvalSummary) -> Dict[str, Any]:
+    """Check forward-return data freshness from summary diagnostics.
+
+    Returns {"stale": bool, "message": str}.
+    """
+    df = summary.data_freshness
+    if df is None:
+        return {"stale": False, "message": "no data_freshness block (cold start)"}
+
+    stale = df.get("fwd_returns_stale", False)
+    if not stale:
+        return {"stale": False, "message": "forward returns up to date"}
+
+    parts = []
+    if df.get("price_end_date"):
+        parts.append(f"price_end_date={df['price_end_date']}")
+    if df.get("max_snapshot_date"):
+        parts.append(f"max_snapshot_date={df['max_snapshot_date']}")
+    if df.get("price_gap_days") is not None:
+        parts.append(f"price_gap_days={df['price_gap_days']}")
+    return {"stale": True, "message": f"forward returns stale: {'; '.join(parts)}"}
 
 
 def evaluate(
@@ -1304,8 +1335,8 @@ def evaluate(
             if long_short_deciles:
                 ls_ret = _decile_spread(eval_tickers, fwd_rets)
                 if ls_ret is not None:
-                    # LS turnover approximation: use same turnover as top-K
-                    ls_net_ret = ls_ret - turn * cost_bps / 10_000 * 2  # both legs
+                    # LS has two portfolios (long + short), each with buy+sell legs
+                    ls_net_ret = ls_ret - 4 * turn * cost_bps / 10_000
 
             # Beta-hedged return
             hedged_ret = None
@@ -1652,6 +1683,34 @@ def evaluate(
                 bh["test_mean_ls"] = _round_opt(_safe_mean(test_ls), 6)
 
         summary.by_horizon[h] = bh
+
+    # --- Data freshness diagnostics ---
+    price_end_str = sorted_dates[-1] if sorted_dates else None
+    max_snap_str = snap_dates[-1] if snap_dates else None
+    max_h = max(horizons) if horizons else 0
+    fwd_stale = False
+    gap_days = None
+    if price_end_str and max_snap_str:
+        try:
+            gap_days = (
+                datetime.strptime(price_end_str, "%Y-%m-%d").date()
+                - datetime.strptime(max_snap_str, "%Y-%m-%d").date()
+            ).days
+        except ValueError:
+            pass
+        td = resolve_trade_date(sorted_dates, max_snap_str, anchor_mode)
+        if td is not None:
+            fwd_end = _trading_days_after(sorted_dates, td, max_h)
+            fwd_stale = fwd_end is None
+        else:
+            fwd_stale = True
+    summary.data_freshness = {
+        "price_end_date": price_end_str,
+        "max_snapshot_date": max_snap_str,
+        "price_gap_days": gap_days,
+        "max_horizon": max_h,
+        "fwd_returns_stale": fwd_stale,
+    }
 
     return summary, date_results, skips
 
@@ -2221,6 +2280,14 @@ def main() -> None:
         "--ruleset", type=Path, default=None,
         help="DecisionRuleset JSON for faithful rescore (required when --coinvest-eval-mode != default)",
     )
+    parser.add_argument(
+        "--fail-if-stale", action="store_true", default=False,
+        help="Exit 2 if forward-return price data is stale",
+    )
+    parser.add_argument(
+        "--no-warn-if-stale", action="store_true", default=False,
+        help="Suppress staleness warning when price data is short",
+    )
     args = parser.parse_args()
 
     horizons = [int(h.strip()) for h in args.horizons.split(",")]
@@ -2315,6 +2382,15 @@ def main() -> None:
         if "mean_hedged_return" in bh:
             parts.append(f"Hedged={_fmt_pct(bh.get('mean_hedged_return'))}")
         print(f"  {h}d: {', '.join(parts)}")
+
+    # --- Staleness guardrail ---
+    status = _staleness_status(summary)
+    if status["stale"]:
+        if args.fail_if_stale:
+            print(f"FAIL: {status['message']}", file=sys.stderr)
+            sys.exit(2)
+        elif not args.no_warn_if_stale:
+            log.warning(status["message"])
 
 
 if __name__ == "__main__":
