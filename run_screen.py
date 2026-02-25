@@ -2891,6 +2891,27 @@ def _compute_alpha_modifier_ab(
     else:
         top60_overlap = 1.0
 
+    # Tier distribution for modified vs baseline top-60
+    from collections import Counter
+    mod_top60_tiers = Counter(
+        r.get("tier_dev", "") for r in csv_rows
+        if r.get("eligible") == "1"
+        and r.get("actionable_rank") not in (None, "")
+        and int(r["actionable_rank"]) <= 60
+    )
+    base_top60_tiers = Counter(
+        r.get("tier_dev", "") for r in baseline_rows
+        if r.get("ticker", "") in base_top60
+    )
+
+    # Alpha coverage across eligible rows
+    n_eligible = sum(1 for r in csv_rows if r.get("eligible") == "1")
+    n_with_alpha = sum(
+        1 for r in csv_rows
+        if r.get("eligible") == "1"
+        and (_safe_float(r.get("alpha_cohort_raw")) or 0.0) != 0.0
+    )
+
     result = {
         "n_rows": n_rows,
         "n_alpha_nonzero": n_alpha_nonzero,
@@ -2900,6 +2921,11 @@ def _compute_alpha_modifier_ab(
         "mean_abs_rank_shift": round(sum(rank_shifts) / max(len(rank_shifts), 1), 2),
         "max_rank_shift": max(rank_shifts) if rank_shifts else 0,
         "pct_rows_rank_changed": round(n_changed / max(n_rows, 1) * 100, 1),
+        "tier_dist_modified_top60": dict(mod_top60_tiers),
+        "tier_dist_baseline_top60": dict(base_top60_tiers),
+        "alpha_coverage_present": n_with_alpha,
+        "alpha_coverage_missing": n_eligible - n_with_alpha,
+        "alpha_coverage_pct": round(n_with_alpha / max(n_eligible, 1) * 100, 1),
     }
     logger.info(
         "  Alpha modifier A/B: top60_overlap=%.3f mean_shift=%.1f pct_changed=%.1f%%",
@@ -3485,6 +3511,10 @@ def save_validation_snapshot(
             logger.info(f"  Far-horizon catalyst: {_n_far_window} tickers overridden to far_window")
 
     # --- Alpha cohort scoring (opt-in via sort_anchor or composite_engine) ---
+    _alpha_table_path_resolved = None
+    _alpha_table = None
+    _alpha_cells_populated = 0
+
     _run_alpha_cohort = ruleset and (
         ruleset.sort_anchor == "alpha_cohort"
         or ruleset.composite_engine == "alpha_cohort"
@@ -3497,6 +3527,9 @@ def save_validation_snapshot(
             ruleset, as_of_date, logger,
         )
         _alpha_table = load_alpha_cohort_table(_alpha_table_path_resolved)
+        _alpha_cells_populated = sum(
+            1 for c in _alpha_table.get("cells", {}).values() if c.get("n", 0) > 0
+        )
         attach_alpha_scores(
             csv_rows, _alpha_table,
             shrink_k=ruleset.alpha_cohort_shrink_k,
@@ -3575,6 +3608,11 @@ def save_validation_snapshot(
     # Assign actionable_rank: eligible rows get 1..N, ineligible get blank
     eligible_rows = [r for r in csv_rows if r.get("eligible") == "1"]
     ineligible_rows = [r for r in csv_rows if r.get("eligible") != "1"]
+    _n_eligible = len(eligible_rows)
+    _alpha_present = sum(
+        1 for r in eligible_rows
+        if (_safe_float(r.get("alpha_cohort_raw")) or 0.0) != 0.0
+    )
     for i, row in enumerate(eligible_rows, start=1):
         row["actionable_rank"] = i
     for row in ineligible_rows:
@@ -3666,6 +3704,38 @@ def save_validation_snapshot(
             f.write("\n")
     except Exception as e:
         logger.warning("Could not write catalyst_shadow_metrics.json: %s", e)
+
+    # --- Write cache health sentinel sidecar ---
+    try:
+        from cache_health import compute_cache_health, load_prior_cache_health
+        _by_src = (source_mix or {}).get("by_source", {})
+        _sec8k_count = _by_src.get("SEC_8K_FILING", 0)
+        _ctgov_count = (
+            _by_src.get("CTGOV_CALENDAR", 0)
+            + _by_src.get("CTGOV", 0)
+        )
+        _prior_health = load_prior_cache_health(_prior_dir, as_of_date)
+        _prior_sec8k = (_prior_health or {}).get("sec8k", {}).get("count")
+        _prior_ctgov = (_prior_health or {}).get("ctgov", {}).get("count")
+        _cache_health = compute_cache_health(
+            sec8k_count=_sec8k_count,
+            ctgov_count=_ctgov_count,
+            prior_sec8k_count=_prior_sec8k,
+            prior_ctgov_count=_prior_ctgov,
+            as_of_date=as_of_date,
+        )
+        with open(snap_path / "cache_health.json", "w", encoding="utf-8") as f:
+            json.dump(_cache_health, f, indent=2)
+            f.write("\n")
+        if _cache_health["degraded_run"]:
+            logger.warning(
+                "[CACHE] Cache health: %s (sec8k=%s ctgov=%s)",
+                _cache_health["overall_status"],
+                _cache_health["sec8k"]["status"],
+                _cache_health["ctgov"]["status"],
+            )
+    except Exception as e:
+        logger.warning("Could not write cache_health.json: %s", e)
 
     # --- Write institutional summary sidecar (phase2 only) ---
     # inst_summary and inst_delta already computed above (before sort)
@@ -4052,6 +4122,16 @@ def save_validation_snapshot(
             "table_path": ruleset.alpha_cohort_table_path if ruleset else None,
             "shrink_k": ruleset.alpha_cohort_shrink_k if ruleset else None,
         } if _run_alpha_cohort else {},
+        "alpha_modifier_telemetry": {
+            "mode": ruleset.alpha_modifier_mode if ruleset else "off",
+            "weight": ruleset.alpha_modifier_weight if ruleset else 0.0,
+            "table_policy": ruleset.alpha_table_rebuild_policy if ruleset else "never",
+            "table_path": str(_alpha_table_path_resolved) if _alpha_table_path_resolved else None,
+            "table_build_info": (_alpha_table or {}).get("_build_info"),
+            "cells_populated": _alpha_cells_populated,
+            "alpha_score_present": _alpha_present,
+            "alpha_score_missing": _n_eligible - _alpha_present,
+        },
         "coinvest_coverage": {
             "tickers_with_signal": sum(
                 1 for r in csv_rows

@@ -67,6 +67,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "decision_engine_schema",
     "portfolio_weights",
     "eligibility_consistency",
+    "cache_health",
 })
 
 # Required fields in each market_data.json record for schema gate
@@ -1470,6 +1471,63 @@ def check_eligibility_consistency(
     )
 
 
+def check_cache_health(
+    snapshot_date_dir: Path,
+    *,
+    fail_on_bad: bool = False,
+) -> GateResult:
+    """Read cache_health.json sidecar and map to GateResult.
+
+    Default: WARN-only (degraded_run=true → WARN).
+    With *fail_on_bad*: overall_status=bad → FAIL.
+    """
+    health_path = snapshot_date_dir / "cache_health.json"
+    if not health_path.exists():
+        return GateResult(
+            name="cache_health", status="PASS",
+            detail="cache_health.json not found (skipped)",
+        )
+    try:
+        with open(health_path, "r", encoding="utf-8") as f:
+            health = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(
+            name="cache_health", status="WARN",
+            detail=f"Could not read cache_health.json: {e}",
+        )
+
+    overall = health.get("overall_status", "ok")
+    sec_status = health.get("sec8k", {}).get("status", "ok")
+    ctgov_status = health.get("ctgov", {}).get("status", "ok")
+    sec_reason = health.get("sec8k", {}).get("reason", "")
+    ctgov_reason = health.get("ctgov", {}).get("reason", "")
+
+    parts = []
+    if sec_reason:
+        parts.append(sec_reason)
+    if ctgov_reason:
+        parts.append(ctgov_reason)
+    detail = "; ".join(parts) if parts else f"sec8k={sec_status} ctgov={ctgov_status}"
+
+    if overall == "bad" and fail_on_bad:
+        return GateResult(
+            name="cache_health", status="FAIL",
+            detail=detail,
+            value=overall,
+        )
+    if overall != "ok":
+        return GateResult(
+            name="cache_health", status="WARN",
+            detail=detail,
+            value=overall,
+        )
+    return GateResult(
+        name="cache_health", status="PASS",
+        detail=detail,
+        value=overall,
+    )
+
+
 def _read_invariants_summary(audit_output_dir: Path) -> Optional[Dict[str, Any]]:
     """Read invariants_summary.json written by the audit tool."""
     p = audit_output_dir / "invariants_summary.json"
@@ -2079,6 +2137,7 @@ def run_daily(
     skip_drift: bool = False,
     skip_forward_eval: bool = False,
     price_cache_dir: Optional[Path] = None,
+    fail_on_bad_cache: bool = False,
 ) -> Dict[str, Any]:
     """Execute the full daily Phase-2 pipeline.
 
@@ -2376,6 +2435,13 @@ def run_daily(
     gate_results.append(elig_gate)
     print(f"  Eligibility consistency gate: {elig_gate.status} — {elig_gate.detail}")
 
+    # --- Gate: cache_health (WARN-only by default; FAIL with --fail-on-bad-cache) ---
+    ch_gate = check_cache_health(
+        staging_date_dir, fail_on_bad=fail_on_bad_cache,
+    )
+    gate_results.append(ch_gate)
+    print(f"  Cache health gate: {ch_gate.status} — {ch_gate.detail}")
+
     # --- Step 5: Build manifest ---
     print(f"\n[5/5] Building run manifest ...")
     git_post_run = get_git_info(REPO_ROOT)
@@ -2493,6 +2559,10 @@ def main():
         "--price-cache-dir", type=Path, default=None,
         help="Base dir for PIT price caches (default: data/caches/price_pit/PIT/)",
     )
+    parser.add_argument(
+        "--fail-on-bad-cache", action="store_true",
+        help="Exit non-zero if cache health sentinel detects BAD status (SEC 8-K outage or extreme CTGov shift).",
+    )
     args = parser.parse_args()
 
     config = GateConfig()
@@ -2518,6 +2588,7 @@ def main():
         skip_drift=args.skip_drift,
         skip_forward_eval=args.skip_forward_eval,
         price_cache_dir=args.price_cache_dir,
+        fail_on_bad_cache=args.fail_on_bad_cache,
     )
 
     # Always write manifest to output/ for CI discoverability

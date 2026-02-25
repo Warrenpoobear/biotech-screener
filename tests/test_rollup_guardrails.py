@@ -23,13 +23,13 @@ ROLLUP_CSV = Path(__file__).resolve().parent.parent / "output" / "catalyst_shado
 SERIES_START = "2026-01-15"
 STEADY_STATE_START = "2026-02-05"  # after prior-chain artifacts settle
 
-# Known one-off data pipeline events that cause transient churn spikes.
-# These dates are excluded from steady-state guardrails because the anomaly
-# is a data refresh, not a logic regression (verified: next day overlaps
-# return to >0.93).
-KNOWN_CACHE_REFRESH_DATES = {
+# Legacy hardcoded exclusions (kept as fallback for rows without sec_8k_events field).
+_LEGACY_CACHE_REFRESH_DATES = {
     "2026-02-17",  # CTGov cache refresh (1082→1315 entries) + SEC 8-K cache empty (0 events)
 }
+
+# Cache anomaly detection threshold: SEC 8-K count of 0 is a clear outage signal.
+_SEC8K_ANOMALY_THRESHOLD = 0
 
 # ── Thresholds (generous — these are guardrails, not tight bounds) ──
 MAX_DAILY_B2G = 15          # steady-state B→G per day (Feb 14 SEC refresh was 8)
@@ -47,11 +47,19 @@ def _load_rollup() -> list[dict]:
         return list(csv.DictReader(f))
 
 
+def _is_cache_anomaly(row: dict) -> bool:
+    """Objective cache anomaly predicate: SEC 8-K outage or legacy exclusion."""
+    sec8k = _int_or_none(row.get("sec_8k_events", ""))
+    if sec8k is not None and sec8k <= _SEC8K_ANOMALY_THRESHOLD:
+        return True
+    return row["as_of_date"] in _LEGACY_CACHE_REFRESH_DATES
+
+
 def _steady_state_rows(rows: list[dict]) -> list[dict]:
     out = [
         r for r in rows
         if r["as_of_date"] >= STEADY_STATE_START
-        and r["as_of_date"] not in KNOWN_CACHE_REFRESH_DATES
+        and not _is_cache_anomaly(r)
     ]
     if not out:
         pytest.skip("No steady-state rows in rollup (need Feb 05+)")
