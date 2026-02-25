@@ -138,9 +138,34 @@ jobs:
             }
           fi
 
+      # ── Fetch pre-built alpha cohort table (if available) ────────
+      - name: Fetch alpha cohort table artifact
+        run: |
+          DATE="${{ steps.date.outputs.as_of_date }}"
+          DEST="production_data/alpha_cohort_tables/daily/v1_${DATE}.json"
+
+          if [ -f "$DEST" ]; then
+            echo "Alpha table already exists for ${DATE}"
+          else
+            set +e
+            python3 scripts/fetch_alpha_table_artifact.py \
+              --as-of-date "$DATE" \
+              --dest "$DEST"
+            RC=$?
+            set -e
+            if [ "$RC" -eq 3 ]; then
+              echo "::notice::Alpha table artifact not found for ${DATE} — if_missing policy will build in-process"
+            elif [ "$RC" -ne 0 ]; then
+              echo "::warning::Alpha table fetch failed (exit $RC) — falling back to in-process build"
+            fi
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # ── Production daily run (includes audit + all gates) ──────
       # NOTE: nothing above this step should create files in-repo,
       # otherwise git_pre_run will report dirty=true from CI artifacts.
+      # (alpha table goes to gitignored daily/ dir — does not dirty state)
       - name: Run production daily
         id: runner
         continue-on-error: true  # don't short-circuit — uploads must happen
