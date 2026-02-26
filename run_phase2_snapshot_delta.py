@@ -617,8 +617,15 @@ def compute_health_gate(
     prior: Optional[SnapshotData],
     result,  # DeltaResult | SingleResult
     thresholds: Optional[Phase2HealthThresholds] = None,
+    expected_ruleset_id: Optional[str] = None,
 ) -> HealthResult:
-    """Evaluate FAIL / WARN / OK health status for the snapshot."""
+    """Evaluate FAIL / WARN / OK health status for the snapshot.
+
+    When *expected_ruleset_id* is provided (e.g. from an explicit ``--ruleset``
+    override), the mismatch check compares against that id instead of the
+    module-level ``PHASE2_PINNED_RULESET_ID``.  This prevents spurious
+    ``ruleset_mismatch`` FAILs when intentionally testing a candidate.
+    """
     th = thresholds or DEFAULT_HEALTH_THRESHOLDS
     is_delta = isinstance(result, DeltaResult)
     fail_reasons: List[str] = []
@@ -629,7 +636,8 @@ def compute_health_gate(
     cat_cov = result.catalyst_coverage_current if is_delta else result.catalyst_coverage
 
     # --- FAIL conditions (checked first) ---
-    if current.ruleset_id != PHASE2_PINNED_RULESET_ID:
+    _expected_id = expected_ruleset_id or PHASE2_PINNED_RULESET_ID
+    if current.ruleset_id != _expected_id:
         fail_reasons.append("ruleset_mismatch")
 
     if len(current.portfolio) == 0:
@@ -1257,6 +1265,11 @@ def main():
         default=None,
         help="Path to Phase2HealthThresholds JSON (default: built-in defaults)",
     )
+    parser.add_argument(
+        "--expected-ruleset-id",
+        default=None,
+        help="Override expected ruleset ID for health gate (skips pinned mismatch check)",
+    )
     args = parser.parse_args()
 
     snapshot_dir = Path(args.snapshot_dir)
@@ -1311,7 +1324,11 @@ def main():
         result = compute_single_snapshot_summary(current)
 
     # Health gate
-    health = compute_health_gate(current, prior, result, thresholds=health_thresholds)
+    health = compute_health_gate(
+        current, prior, result,
+        thresholds=health_thresholds,
+        expected_ruleset_id=args.expected_ruleset_id,
+    )
     health_json = generate_health_json(health, thresholds=health_thresholds)
 
     # Generate outputs

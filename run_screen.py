@@ -7210,8 +7210,16 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
         logger.info(f"Delta: {current_date} (no comparable prior)")
         result = compute_single_snapshot_summary(current)
 
-    # Health gate
-    health = compute_health_gate(current, prior, result, thresholds=health_thresholds)
+    # Health gate — when --ruleset is explicit, compare against the requested
+    # ruleset rather than the pinned default to avoid spurious FAIL.
+    _explicit_id = None
+    if getattr(args, "ruleset", None):
+        _explicit_id = current.ruleset_id  # snapshot was built with this ruleset
+    health = compute_health_gate(
+        current, prior, result,
+        thresholds=health_thresholds,
+        expected_ruleset_id=_explicit_id,
+    )
     health_json = generate_health_json(health, thresholds=health_thresholds)
 
     # Write artifacts into snapshot dir
