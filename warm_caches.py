@@ -27,10 +27,19 @@ automatically pick up these cached artifacts.
 import argparse
 import json
 import logging
+import os
 import re
+import shutil
 import sys
+import tempfile
 from datetime import date, timedelta
 from pathlib import Path
+
+from cache_health import (
+    SEC8K_MIN_RATIO_VS_PRIOR,
+    CTGOV_BAD_RATIO_LOW,
+    CTGOV_BAD_RATIO_HIGH,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -48,6 +57,39 @@ _CTGOV_CACHE_DIR = PROJECT_ROOT / "cache" / "ctgov"
 # Delta warming: narrow EDGAR search to recent filings only
 _DELTA_LOOKBACK_DAYS = 7
 _EXPIRE_WINDOW_DAYS = 180
+
+
+def validate_cache_refresh(
+    source: str,
+    new_count: int,
+    prior_count: int | None,
+) -> tuple[bool, str]:
+    """Validate a cache refresh before committing.
+
+    Returns (accepted, reason). reason="" if accepted.
+    """
+    if source == "sec_8k":
+        if new_count == 0:
+            return False, "empty_refresh"
+        if prior_count is not None and prior_count > 0:
+            ratio = new_count / prior_count
+            if ratio < SEC8K_MIN_RATIO_VS_PRIOR:
+                return False, f"collapse (ratio={ratio:.2f} < {SEC8K_MIN_RATIO_VS_PRIOR})"
+        return True, ""
+
+    if source == "ctgov":
+        if new_count == 0:
+            return False, "empty_refresh"
+        if prior_count is not None and prior_count > 0:
+            ratio = new_count / prior_count
+            if ratio < CTGOV_BAD_RATIO_LOW or ratio > CTGOV_BAD_RATIO_HIGH:
+                return False, (
+                    f"out_of_band (ratio={ratio:.2f}, "
+                    f"band=[{CTGOV_BAD_RATIO_LOW}, {CTGOV_BAD_RATIO_HIGH}])"
+                )
+        return True, ""
+
+    return True, ""
 
 
 def warm_fda_adcom(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
@@ -75,32 +117,92 @@ def warm_fda_adcom(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
     return len(events)
 
 
+def _find_prior_sec8k_count(cache_dir: Path) -> int | None:
+    """Find most recent prior 8-K cache file and return its event count."""
+    candidates = sorted(cache_dir.glob("8k_catalysts_*_*.json"), reverse=True)
+    for path in candidates:
+        try:
+            data = json.loads(path.read_text())
+            if isinstance(data, list):
+                return len(data)
+        except (json.JSONDecodeError, OSError):
+            continue
+    return None
+
+
 def warm_sec_8k(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
-    """Fetch and cache SEC 8-K timing events. Returns count."""
+    """Fetch and cache SEC 8-K timing events. Returns count.
+
+    Uses staging: fetches into a temp dir, validates the result count
+    against the prior cache, and only commits to the live path on pass.
+    """
     from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
         collect_8k_timing_events,
+        _versioned_cache_path,
     )
+
+    # Short-circuit if live cache already exists
+    live_path = _versioned_cache_path(cache_dir, as_of_date)
+    if live_path.exists():
+        try:
+            cached = json.loads(live_path.read_text())
+            logger.info(f"SEC 8-K cache exists: {live_path.name} ({len(cached)} events)")
+            return len(cached)
+        except (json.JSONDecodeError, OSError):
+            pass  # fall through to re-fetch
 
     universe = _load_universe(data_dir)
     if not universe:
         return 0
+
+    prior_count = _find_prior_sec8k_count(cache_dir)
     logger.info(f"Fetching SEC 8-K filings for {len(universe)} tickers, as_of {as_of_date}...")
 
-    events = collect_8k_timing_events(
-        universe=universe,
-        as_of_date=as_of_date,
-        cache_dir=cache_dir,
-    )
+    # Stage into temp dir (same filesystem for fast move)
+    staging_dir = tempfile.mkdtemp(dir=str(cache_dir), prefix=".staging_8k_")
+    try:
+        events = collect_8k_timing_events(
+            universe=universe,
+            as_of_date=as_of_date,
+            cache_dir=Path(staging_dir),
+        )
 
-    cache_path = cache_dir / f"8k_catalysts_{as_of_date.isoformat()}.json"
-    logger.info(f"SEC 8-K: {len(events)} events cached → {cache_path}")
-    return len(events)
+        accepted, reason = validate_cache_refresh("sec_8k", len(events), prior_count)
+        if not accepted:
+            logger.warning(
+                f"SEC 8-K refresh REJECTED: {reason} "
+                f"(new={len(events)}, prior={prior_count}) — keeping prior cache"
+            )
+            return 0
+
+        # Write validated events to live path
+        with open(live_path, "w", encoding="utf-8") as f:
+            json.dump(events, f, indent=2)
+
+        logger.info(f"SEC 8-K: {len(events)} events cached → {live_path}")
+        return len(events)
+    finally:
+        shutil.rmtree(staging_dir, ignore_errors=True)
+
+
+def _find_prior_ctgov_count(cache_dir: Path) -> int | None:
+    """Find most recent prior CTGov cache file and return its record count."""
+    candidates = sorted(cache_dir.glob("trial_records_*.json"), reverse=True)
+    for path in candidates:
+        try:
+            data = json.loads(path.read_text())
+            if isinstance(data, list):
+                return len(data)
+        except (json.JSONDecodeError, OSError):
+            continue
+    return None
 
 
 def warm_ctgov(as_of_date: date, data_dir: Path, cache_dir: Path | None = None) -> int:
     """Create PIT-filtered trial_records snapshot for as_of_date.
 
     Keeps only records with last_update_posted <= as_of_date.
+    Uses atomic write: temp file + os.replace() after validation.
     Returns count of records in filtered snapshot.
     """
     cache_dir = cache_dir or _CTGOV_CACHE_DIR
@@ -124,7 +226,31 @@ def warm_ctgov(as_of_date: date, data_dir: Path, cache_dir: Path | None = None) 
     ]
 
     cache_dir.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(filtered))
+
+    # Validate before writing
+    prior_count = _find_prior_ctgov_count(cache_dir)
+    accepted, reason = validate_cache_refresh("ctgov", len(filtered), prior_count)
+    if not accepted:
+        logger.warning(
+            f"CTGov refresh REJECTED: {reason} "
+            f"(new={len(filtered)}, prior={prior_count}) — keeping prior cache"
+        )
+        return 0
+
+    # Atomic write: temp file + os.replace()
+    fd, tmp_path = tempfile.mkstemp(dir=str(cache_dir), suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w") as f:
+            json.dump(filtered, f)
+        os.replace(tmp_path, str(target))
+    except BaseException:
+        # Clean up temp file on any failure
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
+
     logger.info(
         f"CTGov PIT filter: {len(records)} → {len(filtered)} records "
         f"(cutoff={cutoff}, dropped={len(records) - len(filtered)}, "
@@ -176,9 +302,9 @@ def warm_sec_8k_delta(
 
     1. Load seed cache (prior date's events)
     2. Validate PATTERN_VERSION matches current collector version
-    3. Run collector with narrow lookback (7 days)
+    3. Run collector with narrow lookback (7 days) into staging dir
     4. Merge seed + delta, dedup, expire old events
-    5. Overwrite cache with merged result
+    5. Validate merged count, commit to live path on pass
 
     Falls back to full warm on version mismatch or seed load failure.
     Returns event count.
@@ -217,50 +343,58 @@ def warm_sec_8k_delta(
     if not universe:
         return 0
 
-    # Remove any existing cache for as_of_date so collector doesn't short-circuit
     target_cache = _versioned_cache_path(cache_dir, as_of_date)
-    if target_cache.exists():
-        target_cache.unlink()
 
-    # Narrow EDGAR fetch (7-day lookback)
-    logger.info(
-        f"SEC 8-K delta: fetching {_DELTA_LOOKBACK_DAYS}-day window for "
-        f"{len(universe)} tickers, as_of {as_of_date}..."
-    )
-    delta_events = collect_8k_timing_events(
-        universe=universe,
-        as_of_date=as_of_date,
-        cache_dir=cache_dir,
-        lookback_days=_DELTA_LOOKBACK_DAYS,
-    )
-
-    # Merge seed + delta, dedup
-    merged = _dedup_events(seed_events + delta_events)
-
-    # Expire events with disclosed_at older than window
-    expire_cutoff = (as_of_date - timedelta(days=_EXPIRE_WINDOW_DAYS)).isoformat()
-    expired_count = 0
-    final = []
-    for event in merged:
-        disclosed = event.get("disclosed_at", "")
-        if disclosed and disclosed < expire_cutoff:
-            expired_count += 1
-        else:
-            final.append(event)
-
-    # Overwrite cache file with merged result
+    # Stage delta fetch into temp dir (collector won't short-circuit on empty dir)
+    staging_dir = tempfile.mkdtemp(dir=str(cache_dir), prefix=".staging_8k_delta_")
     try:
-        with open(target_cache, "w", encoding="utf-8") as f:
-            json.dump(final, f, indent=2)
-    except Exception as e:
-        logger.error(f"Failed to write merged cache: {e}")
-        return len(delta_events)
+        logger.info(
+            f"SEC 8-K delta: fetching {_DELTA_LOOKBACK_DAYS}-day window for "
+            f"{len(universe)} tickers, as_of {as_of_date}..."
+        )
+        delta_events = collect_8k_timing_events(
+            universe=universe,
+            as_of_date=as_of_date,
+            cache_dir=Path(staging_dir),
+            lookback_days=_DELTA_LOOKBACK_DAYS,
+        )
 
-    logger.info(
-        f"SEC 8-K delta: {len(seed_events)} seed + {len(delta_events)} new "
-        f"→ {len(final)} merged ({expired_count} expired)"
-    )
-    return len(final)
+        # Merge seed + delta, dedup
+        merged = _dedup_events(seed_events + delta_events)
+
+        # Expire events with disclosed_at older than window
+        expire_cutoff = (as_of_date - timedelta(days=_EXPIRE_WINDOW_DAYS)).isoformat()
+        expired_count = 0
+        final = []
+        for event in merged:
+            disclosed = event.get("disclosed_at", "")
+            if disclosed and disclosed < expire_cutoff:
+                expired_count += 1
+            else:
+                final.append(event)
+
+        # Validate merged result
+        accepted, reason = validate_cache_refresh("sec_8k", len(final), len(seed_events))
+        if not accepted:
+            logger.warning(
+                f"SEC 8-K delta refresh REJECTED: {reason} "
+                f"(merged={len(final)}, seed={len(seed_events)}) — keeping prior cache"
+            )
+            return 0
+
+        # Write merged result to staging, then move to live path
+        staged_file = Path(staging_dir) / target_cache.name
+        with open(staged_file, "w", encoding="utf-8") as f:
+            json.dump(final, f, indent=2)
+        shutil.move(str(staged_file), str(target_cache))
+
+        logger.info(
+            f"SEC 8-K delta: {len(seed_events)} seed + {len(delta_events)} new "
+            f"→ {len(final)} merged ({expired_count} expired)"
+        )
+        return len(final)
+    finally:
+        shutil.rmtree(staging_dir, ignore_errors=True)
 
 
 def warm_sec_13f(as_of_date: date, data_dir: Path, cache_dir: Path | None = None) -> int:
@@ -384,6 +518,7 @@ def main():
     logger.info(f"Warming caches for as_of_date={as_of}, sources={sources}")
 
     total = 0
+    refresh_results: list[dict] = []
 
     if "fda_adcom" in sources:
         fda_cache_dir = Path(args.fda_cache_dir)
@@ -396,13 +531,24 @@ def main():
     if "sec_8k" in sources:
         sec_cache_dir = Path(args.sec_cache_dir)
         sec_cache_dir.mkdir(parents=True, exist_ok=True)
+        prior_8k = _find_prior_sec8k_count(sec_cache_dir)
+        sec_8k_count = 0
         try:
             if args.seed_cache and Path(args.seed_cache).exists():
-                total += warm_sec_8k_delta(as_of, data_dir, sec_cache_dir, Path(args.seed_cache))
+                sec_8k_count = warm_sec_8k_delta(as_of, data_dir, sec_cache_dir, Path(args.seed_cache))
             else:
-                total += warm_sec_8k(as_of, data_dir, sec_cache_dir)
+                sec_8k_count = warm_sec_8k(as_of, data_dir, sec_cache_dir)
+            total += sec_8k_count
         except Exception as e:
             logger.error(f"SEC 8-K warm failed: {e}")
+        accepted, reason = validate_cache_refresh("sec_8k", sec_8k_count, prior_8k)
+        refresh_results.append({
+            "source": "sec_8k",
+            "count": sec_8k_count,
+            "prior_count": prior_8k,
+            "accepted": sec_8k_count > 0,
+            "reason": reason,
+        })
 
     sec_13f_count = 0
     if "sec_13f" in sources:
@@ -414,10 +560,19 @@ def main():
 
     ctgov_records = 0
     if "ctgov" in sources:
+        prior_ctgov = _find_prior_ctgov_count(_CTGOV_CACHE_DIR)
         try:
             ctgov_records = warm_ctgov(as_of, data_dir)
         except Exception as e:
             logger.error(f"CTGov warm failed: {e}")
+        accepted, reason = validate_cache_refresh("ctgov", ctgov_records, prior_ctgov)
+        refresh_results.append({
+            "source": "ctgov",
+            "count": ctgov_records,
+            "prior_count": prior_ctgov,
+            "accepted": ctgov_records > 0,
+            "reason": reason,
+        })
 
     ledger_entries = 0
     if "event_ledger" in sources:
@@ -434,6 +589,21 @@ def main():
             price_pit_count = warm_price_pit(as_of, data_dir)
         except Exception as e:
             logger.error(f"Price PIT warm failed: {e}")
+
+    # Write refresh diagnostics sidecar
+    if refresh_results:
+        cache_root = PROJECT_ROOT / "cache"
+        cache_root.mkdir(parents=True, exist_ok=True)
+        sidecar_path = cache_root / f"cache_refresh_{as_of.isoformat()}.json"
+        try:
+            sidecar_path.write_text(json.dumps({
+                "schema": "cache_refresh.v1",
+                "as_of_date": as_of.isoformat(),
+                "results": refresh_results,
+            }, indent=2))
+            logger.info(f"Refresh diagnostics → {sidecar_path}")
+        except OSError as e:
+            logger.warning(f"Could not write refresh sidecar: {e}")
 
     parts = [f"{total} events"]
     if sec_13f_count:
