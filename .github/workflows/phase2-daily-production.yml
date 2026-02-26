@@ -241,9 +241,77 @@ jobs:
           MARKER: production_data/alpha_cohort_tables/daily/v1_${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}.artifact.json
           META: data/snapshots/${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}/metadata.json
 
+      # ── Detect degraded snapshot ────────────────────────────────
+      - name: Detect degraded snapshot
+        if: always() && steps.runner.outputs.exit_code != '1'
+        id: degraded
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          from pathlib import Path
+
+          date = os.environ.get("EFF_DATE") or os.environ.get("REQ_DATE") or ""
+          snap = Path("data/snapshots") / date
+          health = snap / "cache_health.json"
+          meta = snap / "metadata.json"
+
+          degraded = False
+          overall = "missing"
+
+          if health.exists():
+              try:
+                  h = json.loads(health.read_text(encoding="utf-8"))
+                  degraded = bool(h.get("degraded_run", False))
+                  overall = str(h.get("overall_status", "ok"))
+                  if not degraded and overall != "ok":
+                      degraded = True
+              except Exception:
+                  degraded = True
+                  overall = "corrupt_cache_health"
+          else:
+              print("::notice::cache_health.json not found — assuming non-degraded")
+
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as f:
+              f.write(f"DEGRADED={'1' if degraded else '0'}\n")
+              f.write(f"CACHE_HEALTH_OVERALL={overall}\n")
+
+          rejected = []
+          sidecar = ""
+          if meta.exists():
+              try:
+                  m = json.loads(meta.read_text(encoding="utf-8"))
+                  rejected = m.get("cache_refresh_rejected_sources") or []
+                  sidecar = m.get("cache_refresh_sidecar") or ""
+              except Exception:
+                  pass
+
+          if degraded:
+              parts = [f"overall_status={overall}"]
+              if rejected:
+                  parts.append(f"rejected={','.join(rejected)}")
+              print(f"::warning::CACHE DEGRADED — baselines not updated ({'; '.join(parts)})")
+
+          summ = ["## Cache Health", ""]
+          summ.append(f"| Field | Value |")
+          summ.append(f"|-------|-------|")
+          summ.append(f"| as_of_date | `{date}` |")
+          summ.append(f"| overall_status | `{overall}` |")
+          summ.append(f"| degraded | `{degraded}` |")
+          if rejected:
+              summ.append(f"| rejected_sources | `{', '.join(rejected)}` |")
+          if sidecar:
+              summ.append(f"| cache_refresh_sidecar | `{sidecar}` |")
+          summ.append("")
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+              f.write("\n".join(summ) + "\n")
+          PY
+        env:
+          EFF_DATE: ${{ steps.manifest.outputs.effective_date }}
+          REQ_DATE: ${{ steps.date.outputs.as_of_date }}
+
       # ── PIT price cache (post-production, non-blocking) ────────
       - name: Create PIT price cache anchor
-        if: always() && steps.runner.outputs.exit_code != '1'
+        if: always() && steps.runner.outputs.exit_code != '1' && env.DEGRADED != '1'
         run: |
           DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
           RANKINGS="data/snapshots/${DATE}/rankings.csv"
@@ -265,7 +333,7 @@ jobs:
           fi
 
       - name: Backfill PIT price forward returns
-        if: always() && steps.runner.outputs.exit_code != '1'
+        if: always() && steps.runner.outputs.exit_code != '1' && env.DEGRADED != '1'
         run: |
           DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
           echo "Backfilling PIT price forward returns through ${DATE}..."
@@ -370,6 +438,12 @@ jobs:
               echo "> :rotating_light: **Cross-check mismatch**: exit code says \`$VERDICT\` but manifest says \`$MANIFEST_STATUS\`" >> "$GITHUB_STEP_SUMMARY"
               echo "::warning::RC=$RC ($VERDICT) disagrees with manifest overall_status=$MANIFEST_STATUS"
             fi
+          fi
+
+          # Degraded-mode banner (driven by detect step, not RC)
+          if [ "${DEGRADED:-0}" = "1" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "> :rotating_light: **DEGRADED RUN** — PIT price anchors and forward-return backfill skipped. Cache health: \`${CACHE_HEALTH_OVERALL:-?}\`" >> "$GITHUB_STEP_SUMMARY"
           fi
 
           # Banner + exit — driven by RC, not manifest
