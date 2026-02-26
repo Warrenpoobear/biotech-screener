@@ -173,7 +173,7 @@ def warm_sec_8k(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
                 f"SEC 8-K refresh REJECTED: {reason} "
                 f"(new={len(events)}, prior={prior_count}) — keeping prior cache"
             )
-            return 0
+            return len(events)
 
         # Write validated events to live path
         with open(live_path, "w", encoding="utf-8") as f:
@@ -235,7 +235,7 @@ def warm_ctgov(as_of_date: date, data_dir: Path, cache_dir: Path | None = None) 
             f"CTGov refresh REJECTED: {reason} "
             f"(new={len(filtered)}, prior={prior_count}) — keeping prior cache"
         )
-        return 0
+        return len(filtered)
 
     # Atomic write: temp file + os.replace()
     fd, tmp_path = tempfile.mkstemp(dir=str(cache_dir), suffix=".tmp")
@@ -380,7 +380,7 @@ def warm_sec_8k_delta(
                 f"SEC 8-K delta refresh REJECTED: {reason} "
                 f"(merged={len(final)}, seed={len(seed_events)}) — keeping prior cache"
             )
-            return 0
+            return len(final)
 
         # Write merged result to staging, then move to live path
         staged_file = Path(staging_dir) / target_cache.name
@@ -538,15 +538,17 @@ def main():
                 sec_8k_count = warm_sec_8k_delta(as_of, data_dir, sec_cache_dir, Path(args.seed_cache))
             else:
                 sec_8k_count = warm_sec_8k(as_of, data_dir, sec_cache_dir)
-            total += sec_8k_count
         except Exception as e:
             logger.error(f"SEC 8-K warm failed: {e}")
         accepted, reason = validate_cache_refresh("sec_8k", sec_8k_count, prior_8k)
+        if accepted:
+            total += sec_8k_count
         refresh_results.append({
             "source": "sec_8k",
             "count": sec_8k_count,
             "prior_count": prior_8k,
-            "accepted": sec_8k_count > 0,
+            "accepted": accepted,
+            "committed": accepted,
             "reason": reason,
         })
 
@@ -570,7 +572,8 @@ def main():
             "source": "ctgov",
             "count": ctgov_records,
             "prior_count": prior_ctgov,
-            "accepted": ctgov_records > 0,
+            "accepted": accepted,
+            "committed": accepted,
             "reason": reason,
         })
 

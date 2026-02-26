@@ -202,7 +202,7 @@ def test_sec_8k_staging_accepted(mock_collect, tmp_path):
     "wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector.collect_8k_timing_events",
 )
 def test_sec_8k_staging_rejected_empty(mock_collect, tmp_path):
-    """Collector returns [] → live file NOT created, returns 0."""
+    """Collector returns [] → live file NOT created, returns attempted count (0)."""
     cache_dir = tmp_path / "cache"
     cache_dir.mkdir()
     data_dir = tmp_path / "data"
@@ -211,7 +211,7 @@ def test_sec_8k_staging_rejected_empty(mock_collect, tmp_path):
     mock_collect.return_value = []
 
     result = warm_sec_8k(date(2026, 2, 15), data_dir, cache_dir)
-    assert result == 0
+    assert result == 0  # attempted 0 events
 
     # No live file
     live_path = cache_dir / f"8k_catalysts_2026-02-15_{FAKE_PATTERN_VERSION}.json"
@@ -226,7 +226,7 @@ def test_sec_8k_staging_rejected_empty(mock_collect, tmp_path):
     "wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector.collect_8k_timing_events",
 )
 def test_sec_8k_staging_rejected_collapse(mock_collect, tmp_path):
-    """New count / prior < 0.30 → rejected, prior untouched."""
+    """New count / prior < 0.30 → rejected, prior untouched, returns attempted count."""
     cache_dir = tmp_path / "cache"
     cache_dir.mkdir()
     data_dir = tmp_path / "data"
@@ -241,7 +241,7 @@ def test_sec_8k_staging_rejected_collapse(mock_collect, tmp_path):
     mock_collect.return_value = _make_events(10)
 
     result = warm_sec_8k(date(2026, 2, 15), data_dir, cache_dir)
-    assert result == 0
+    assert result == 10  # attempted count preserved for sidecar fidelity
 
     # Prior still intact
     assert prior_path.exists()
@@ -250,6 +250,11 @@ def test_sec_8k_staging_rejected_collapse(mock_collect, tmp_path):
     # No new file for 2026-02-15
     live_path = cache_dir / f"8k_catalysts_2026-02-15_{FAKE_PATTERN_VERSION}.json"
     assert not live_path.exists()
+
+    # validate_cache_refresh sees the true reason
+    accepted, reason = validate_cache_refresh("sec_8k", result, 100)
+    assert not accepted
+    assert "collapse" in reason
 
 
 @patch(
@@ -305,7 +310,7 @@ def test_ctgov_staging_accepted(tmp_path):
 
 
 def test_ctgov_staging_rejected_spike(tmp_path):
-    """Count/prior > 1.50 → live untouched, returns 0."""
+    """Count/prior > 1.50 → live untouched, returns attempted count."""
     cache_dir = tmp_path / "cache"
     cache_dir.mkdir(parents=True, exist_ok=True)
     data_dir = tmp_path / "data"
@@ -318,16 +323,21 @@ def test_ctgov_staging_rejected_spike(tmp_path):
     _write_trial_records(data_dir, 200, lup_date="2026-02-01")
 
     result = warm_ctgov(date(2026, 2, 15), data_dir, cache_dir)
-    assert result == 0
+    assert result == 200  # attempted count preserved
 
     # No new file for 2026-02-15
     assert not (cache_dir / "trial_records_2026-02-15.json").exists()
     # Prior still intact
     assert (cache_dir / "trial_records_2026-02-14.json").exists()
 
+    # validate_cache_refresh sees the true reason
+    accepted, reason = validate_cache_refresh("ctgov", result, 100)
+    assert not accepted
+    assert "out_of_band" in reason
+
 
 def test_ctgov_staging_rejected_crash(tmp_path):
-    """Count/prior < 0.60 → live untouched, returns 0."""
+    """Count/prior < 0.60 → live untouched, returns attempted count."""
     cache_dir = tmp_path / "cache"
     cache_dir.mkdir(parents=True, exist_ok=True)
     data_dir = tmp_path / "data"
@@ -342,7 +352,7 @@ def test_ctgov_staging_rejected_crash(tmp_path):
     (data_dir / "trial_records.json").write_text(json.dumps(records))
 
     result = warm_ctgov(date(2026, 2, 15), data_dir, cache_dir)
-    assert result == 0
+    assert result == 500  # attempted count preserved
     assert not (cache_dir / "trial_records_2026-02-15.json").exists()
 
 
