@@ -330,6 +330,18 @@ def _reconstruct_portfolio(rankings: pd.DataFrame) -> pd.DataFrame:
 # Core functions
 # ---------------------------------------------------------------------------
 
+def is_snapshot_degraded(snapshot_dir: Path) -> bool:
+    """Return True if snapshot has degraded cache health."""
+    health_path = snapshot_dir / "cache_health.json"
+    if not health_path.exists():
+        return False  # no sentinel → assume healthy (legacy snapshots)
+    try:
+        health = json.loads(health_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return False
+    return health.get("degraded_run", False)
+
+
 def find_snapshots(
     snapshot_dir: Path,
     current_date: Optional[str],
@@ -370,15 +382,19 @@ def find_snapshots(
         return current_path, prior_path
 
     # Auto-find: scan backwards from current for first dir with tier_dev column
+    # Skip degraded snapshots — don't use as baseline
     idx = all_dates.index(current_name)
     for candidate in all_dates[idx + 1 :]:
-        rankings_csv = snapshot_dir / candidate / "rankings.csv"
+        candidate_path = snapshot_dir / candidate
+        if is_snapshot_degraded(candidate_path):
+            continue  # skip degraded — don't use as baseline
+        rankings_csv = candidate_path / "rankings.csv"
         if not rankings_csv.exists():
             continue
         with open(rankings_csv, "r") as f:
             header = f.readline().strip()
         if "tier_dev" in header.split(","):
-            return current_path, snapshot_dir / candidate
+            return current_path, candidate_path
     return current_path, None
 
 
@@ -803,6 +819,7 @@ def generate_report(
     prior: Optional[SnapshotData],
     result,  # DeltaResult | SingleResult
     health: Optional[HealthResult] = None,
+    churn_suppressed: bool = False,
 ) -> str:
     """Generate human-readable text report."""
     lines: List[str] = []
@@ -820,6 +837,12 @@ def generate_report(
     else:
         lines.append("Prior:     (none)")
     lines.append("")
+
+    if churn_suppressed:
+        lines.append("*** CACHE HEALTH: DEGRADED ***")
+        lines.append("*** CHURN COMPARISONS: SUPPRESSED ***")
+        lines.append("*** BASELINES: NOT UPDATED ***")
+        lines.append("")
 
     # Health headline box
     if health is not None:
@@ -1067,6 +1090,7 @@ def generate_details_json(
     current: SnapshotData,
     prior: Optional[SnapshotData],
     result,
+    churn_suppressed: bool = False,
 ) -> dict:
     """Generate machine-readable JSON output."""
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -1129,6 +1153,10 @@ def generate_details_json(
         out["catalyst_coverage"] = {"current": _cat_cov_dict(result.catalyst_coverage)}
         out["top_catalysts"] = {"current": result.top_catalysts}
         out["risk_flags"] = {"current": result.risk}
+
+    out["churn_suppressed"] = churn_suppressed
+    if churn_suppressed:
+        out["churn_suppressed_reason"] = "cache_degraded"
 
     # Guardrails
     passed = []
@@ -1332,8 +1360,9 @@ def main():
     health_json = generate_health_json(health, thresholds=health_thresholds)
 
     # Generate outputs
-    report_txt = generate_report(current, prior, result, health=health)
-    details = generate_details_json(current, prior, result)
+    _churn_suppressed = is_snapshot_degraded(current_path)
+    report_txt = generate_report(current, prior, result, health=health, churn_suppressed=_churn_suppressed)
+    details = generate_details_json(current, prior, result, churn_suppressed=_churn_suppressed)
 
     # Write artifacts
     report_path = output_dir / "phase2_run_delta_report.txt"

@@ -1,6 +1,7 @@
 """Tests for run_phase2_snapshot_delta.py — all synthetic data, no disk I/O."""
 from __future__ import annotations
 
+import json
 import pandas as pd
 import pytest
 from pathlib import Path
@@ -19,9 +20,11 @@ from run_phase2_snapshot_delta import (
     _tier_in_portfolio,
     compute_delta,
     compute_single_snapshot_summary,
+    find_snapshots,
     generate_delta_csv,
     generate_details_json,
     generate_report,
+    is_snapshot_degraded,
     load_snapshot,
     PHASE2_PINNED_RULESET_ID,
     RECON_TOP_K,
@@ -502,3 +505,123 @@ class TestSizeBands:
         )
         counts = _size_band_counts(port)
         assert counts == {"L": 2, "M": 1, "S": 0, "XS": 1}
+
+
+# ---------------------------------------------------------------------------
+# Helpers for on-disk snapshot creation (find_snapshots + degraded tests)
+# ---------------------------------------------------------------------------
+
+def _write_rankings_csv(snap_dir: Path, date_str: str, has_tier_dev: bool = True) -> Path:
+    """Write a minimal rankings.csv with tier_dev column."""
+    d = snap_dir / date_str
+    d.mkdir(parents=True, exist_ok=True)
+    cols = ["ticker", "tier_dev"] if has_tier_dev else ["ticker"]
+    rows = ["AAAA"] if not has_tier_dev else ["AAAA,B"]
+    csv_path = d / "rankings.csv"
+    csv_path.write_text(",".join(cols) + "\n" + "\n".join(rows) + "\n", encoding="utf-8")
+    return d
+
+
+def _write_cache_health(snap_dir: Path, date_str: str, degraded: bool) -> None:
+    """Write cache_health.json into a snapshot directory."""
+    d = snap_dir / date_str
+    d.mkdir(parents=True, exist_ok=True)
+    health = {"overall_status": "degraded" if degraded else "ok", "degraded_run": degraded}
+    (d / "cache_health.json").write_text(json.dumps(health), encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# Test: Auto-prior skips degraded snapshots
+# ---------------------------------------------------------------------------
+
+class TestFindSnapshotsSkipsDegraded:
+
+    def test_auto_prior_skips_degraded(self, tmp_path):
+        """3 dates: current, degraded prior, ok prior → should select ok date."""
+        snap = tmp_path / "snapshots"
+        _write_rankings_csv(snap, "2026-02-20")  # current
+        _write_rankings_csv(snap, "2026-02-19")  # degraded
+        _write_cache_health(snap, "2026-02-19", degraded=True)
+        _write_rankings_csv(snap, "2026-02-18")  # ok
+        _write_cache_health(snap, "2026-02-18", degraded=False)
+
+        current, prior = find_snapshots(snap, "2026-02-20", None)
+        assert current.name == "2026-02-20"
+        assert prior is not None
+        assert prior.name == "2026-02-18"
+
+    def test_auto_prior_all_degraded_returns_none(self, tmp_path):
+        """All priors degraded → prior=None."""
+        snap = tmp_path / "snapshots"
+        _write_rankings_csv(snap, "2026-02-20")  # current
+        _write_rankings_csv(snap, "2026-02-19")
+        _write_cache_health(snap, "2026-02-19", degraded=True)
+        _write_rankings_csv(snap, "2026-02-18")
+        _write_cache_health(snap, "2026-02-18", degraded=True)
+
+        current, prior = find_snapshots(snap, "2026-02-20", None)
+        assert current.name == "2026-02-20"
+        assert prior is None
+
+    def test_explicit_prior_not_skipped(self, tmp_path):
+        """--prior=degraded-date still works (user override)."""
+        snap = tmp_path / "snapshots"
+        _write_rankings_csv(snap, "2026-02-20")
+        _write_rankings_csv(snap, "2026-02-19")
+        _write_cache_health(snap, "2026-02-19", degraded=True)
+
+        current, prior = find_snapshots(snap, "2026-02-20", "2026-02-19")
+        assert current.name == "2026-02-20"
+        assert prior is not None
+        assert prior.name == "2026-02-19"
+
+
+# ---------------------------------------------------------------------------
+# Test: Churn suppression in details JSON and report
+# ---------------------------------------------------------------------------
+
+class TestChurnSuppression:
+
+    def test_churn_suppressed_in_details(self):
+        """details.json has churn_suppressed=true when degraded."""
+        rank = _make_rankings_df(["A"], tiers=["A"])
+        port = _make_portfolio_df(["A"])
+        snap = _make_snapshot("2026-02-20", rank, port)
+        result = compute_single_snapshot_summary(snap)
+        details = generate_details_json(snap, None, result, churn_suppressed=True)
+
+        assert details["churn_suppressed"] is True
+        assert details["churn_suppressed_reason"] == "cache_degraded"
+
+    def test_churn_not_suppressed_by_default(self):
+        """details.json has churn_suppressed=false by default."""
+        rank = _make_rankings_df(["A"], tiers=["A"])
+        port = _make_portfolio_df(["A"])
+        snap = _make_snapshot("2026-02-20", rank, port)
+        result = compute_single_snapshot_summary(snap)
+        details = generate_details_json(snap, None, result)
+
+        assert details["churn_suppressed"] is False
+        assert "churn_suppressed_reason" not in details
+
+    def test_degraded_report_has_banner(self):
+        """Report text includes degraded banner when churn_suppressed."""
+        rank = _make_rankings_df(["A"], tiers=["A"])
+        port = _make_portfolio_df(["A"])
+        snap = _make_snapshot("2026-02-20", rank, port)
+        result = compute_single_snapshot_summary(snap)
+        report = generate_report(snap, None, result, churn_suppressed=True)
+
+        assert "*** CACHE HEALTH: DEGRADED ***" in report
+        assert "*** CHURN COMPARISONS: SUPPRESSED ***" in report
+        assert "*** BASELINES: NOT UPDATED ***" in report
+
+    def test_normal_report_no_banner(self):
+        """Report text does not include degraded banner normally."""
+        rank = _make_rankings_df(["A"], tiers=["A"])
+        port = _make_portfolio_df(["A"])
+        snap = _make_snapshot("2026-02-20", rank, port)
+        result = compute_single_snapshot_summary(snap)
+        report = generate_report(snap, None, result)
+
+        assert "CACHE HEALTH: DEGRADED" not in report

@@ -252,3 +252,40 @@ class TestCacheHealthGate:
         from run_daily_production import check_cache_health
         gate = check_cache_health(tmp_path)
         assert gate.status == "PASS"
+
+
+# =============================================================================
+# is_snapshot_degraded — used by run_phase2_snapshot_delta
+# =============================================================================
+
+from run_phase2_snapshot_delta import is_snapshot_degraded
+
+
+class TestIsSnapshotDegraded:
+
+    def test_no_health_file_not_degraded(self, tmp_path):
+        """Missing cache_health.json -> False (legacy snapshots)."""
+        assert is_snapshot_degraded(tmp_path) is False
+
+    def test_ok_status_not_degraded(self, tmp_path):
+        """overall_status=ok, degraded_run=False -> False."""
+        health = {"overall_status": "ok", "degraded_run": False}
+        (tmp_path / "cache_health.json").write_text(
+            json.dumps(health), encoding="utf-8"
+        )
+        assert is_snapshot_degraded(tmp_path) is False
+
+    def test_bad_status_is_degraded(self, tmp_path):
+        """degraded_run=True -> True."""
+        health = {"overall_status": "degraded", "degraded_run": True}
+        (tmp_path / "cache_health.json").write_text(
+            json.dumps(health), encoding="utf-8"
+        )
+        assert is_snapshot_degraded(tmp_path) is True
+
+    def test_corrupt_json_not_degraded(self, tmp_path):
+        """Malformed JSON -> False (graceful)."""
+        (tmp_path / "cache_health.json").write_text(
+            "{bad json", encoding="utf-8"
+        )
+        assert is_snapshot_degraded(tmp_path) is False

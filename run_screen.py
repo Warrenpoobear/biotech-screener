@@ -3768,6 +3768,10 @@ def save_validation_snapshot(
             )
     except Exception as e:
         logger.warning("Could not write cache_health.json: %s", e)
+        _cache_health = {}
+
+    _cache_degraded = _cache_health.get("degraded_run", False)
+    _cache_health_status = _cache_health.get("overall_status", "ok")
 
     # --- Write institutional summary sidecar (phase2 only) ---
     # inst_summary and inst_delta already computed above (before sort)
@@ -4198,6 +4202,9 @@ def save_validation_snapshot(
                 if inputs_manifest_mode != "off" else None
             ),
         },
+        "cache_health_overall_status": _cache_health_status,
+        "cache_degraded_run": _cache_degraded,
+        "suppress_churn_comparisons": _cache_degraded,
     }
 
     meta_path = snap_path / "metadata.json"
@@ -7179,6 +7186,7 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
     """
     from run_phase2_snapshot_delta import (
         find_snapshots,
+        is_snapshot_degraded,
         load_snapshot,
         compute_delta,
         compute_single_snapshot_summary,
@@ -7232,6 +7240,15 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
         logger.warning("Delta: could not load current snapshot, skipping")
         return
 
+    # Check if current snapshot is degraded → suppress churn
+    _churn_suppressed = is_snapshot_degraded(snap_path)
+    if _churn_suppressed:
+        logger.warning(
+            "CACHE DEGRADED — churn comparisons suppressed; baselines not updated"
+        )
+        prior = None  # force single-snapshot mode
+        prior_path = None
+
     prior = None
     if prior_path is not None:
         prior = load_snapshot(prior_path)
@@ -7261,8 +7278,8 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
 
     # Write artifacts into snapshot dir
     output_dir = snap_path
-    report_txt = generate_report(current, prior, result, health=health)
-    details = generate_details_json(current, prior, result)
+    report_txt = generate_report(current, prior, result, health=health, churn_suppressed=_churn_suppressed)
+    details = generate_details_json(current, prior, result, churn_suppressed=_churn_suppressed)
 
     report_path = output_dir / "phase2_run_delta_report.txt"
     details_path = output_dir / "phase2_run_delta_details.json"

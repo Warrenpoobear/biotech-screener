@@ -68,6 +68,14 @@ def collect_shadow_metrics(
         metrics_path = d / "catalyst_shadow_metrics.json"
         if not metrics_path.exists():
             continue
+        health_path = d / "cache_health.json"
+        if health_path.exists():
+            try:
+                h = json.loads(health_path.read_text(encoding="utf-8"))
+                if h.get("degraded_run", False):
+                    continue  # skip degraded snapshots from timeseries
+            except (json.JSONDecodeError, OSError):
+                pass
         try:
             data = json.loads(metrics_path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):

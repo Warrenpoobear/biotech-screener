@@ -215,3 +215,48 @@ class TestMain:
         assert len(loaded) == 2
         dates = [r["as_of_date"] for r in loaded]
         assert dates == ["2026-01-15", "2026-02-14"]
+
+
+class TestDegradedSnapshotSkip:
+
+    def test_rollup_skips_degraded_snapshots(self, tmp_path):
+        """Degraded snapshot excluded from timeseries."""
+        snap = tmp_path / "snapshots"
+        _write_shadow(snap, "2026-02-11", _sample_metrics("2026-02-11"))
+        _write_shadow(snap, "2026-02-12", _sample_metrics("2026-02-12"))
+        _write_shadow(snap, "2026-02-13", _sample_metrics("2026-02-13"))
+
+        # Mark 2026-02-12 as degraded
+        (snap / "2026-02-12" / "cache_health.json").write_text(
+            json.dumps({"overall_status": "degraded", "degraded_run": True}),
+            encoding="utf-8",
+        )
+
+        rows = collect_shadow_metrics(snap)
+        assert len(rows) == 2
+        dates = [r["as_of_date"] for r in rows]
+        assert "2026-02-12" not in dates
+        assert dates == ["2026-02-11", "2026-02-13"]
+
+    def test_rollup_keeps_healthy_with_cache_health(self, tmp_path):
+        """Healthy cache_health.json does not skip snapshot."""
+        snap = tmp_path / "snapshots"
+        _write_shadow(snap, "2026-02-11", _sample_metrics("2026-02-11"))
+        (snap / "2026-02-11" / "cache_health.json").write_text(
+            json.dumps({"overall_status": "ok", "degraded_run": False}),
+            encoding="utf-8",
+        )
+
+        rows = collect_shadow_metrics(snap)
+        assert len(rows) == 1
+
+    def test_rollup_ignores_corrupt_cache_health(self, tmp_path):
+        """Corrupt cache_health.json does not skip snapshot."""
+        snap = tmp_path / "snapshots"
+        _write_shadow(snap, "2026-02-11", _sample_metrics("2026-02-11"))
+        (snap / "2026-02-11" / "cache_health.json").write_text(
+            "{bad json", encoding="utf-8"
+        )
+
+        rows = collect_shadow_metrics(snap)
+        assert len(rows) == 1
