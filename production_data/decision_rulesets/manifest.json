@@ -211,8 +211,20 @@
       "description": "Coinvest sort tie-breaker: z-scored tier1_count blended into sort anchor (w=0.05, pos-only)",
       "status": "retired",
       "requires_replay": true,
-      "notes": "Same params as v1.4.0 + enable_coinvest_sort_signal=true, coinvest_sort_weight=0.05, coinvest_positive_only=true, coinvest_score_mode=tier1_count. Calibrated from 0.05-0.50 sweep: w=0.05 gives 82% top-20 overlap (2 name changes), saturation at w=0.25 (5 names). Superseded by v1.6.1 (alpha modifier within-tier).",
+      "notes": "Same params as v1.4.0 + enable_coinvest_sort_signal=true, coinvest_sort_weight=0.05, coinvest_positive_only=true, coinvest_score_mode=tier1_count. Calibrated from 0.05-0.50 sweep: w=0.05 gives 82% top-20 overlap (2 name changes), saturation at w=0.25 (5 names). Manifest-only active; actual pinned production was v1.5.1 (88d7ae9a).",
       "updated_by": "promote_ruleset.py",
+      "updated_at": "2026-02-26T00:00:00Z"
+    },
+    {
+      "id": "88d7ae9a",
+      "file": "v1.5.1_coinvest_off.json",
+      "created_at": "2026-02-21",
+      "engine_version": "v1.3.0",
+      "description": "Coinvest sort OFF (w=0.0) + alpha cohort + clinical sort — actual pinned production ruleset",
+      "status": "retired",
+      "requires_replay": true,
+      "notes": "Was PHASE2_PINNED_RULESET_ID in run_screen.py but missing from manifest (oversight). Same as v1.5.0 but coinvest_sort_weight=0.0 (disabled). Superseded by v1.6.1 (alpha modifier within-tier, 0c1129f6).",
+      "updated_by": "manual_bootstrap",
       "updated_at": "2026-02-26T00:00:00Z"
     },
     {
