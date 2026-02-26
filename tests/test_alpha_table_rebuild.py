@@ -1,4 +1,5 @@
 """Tests for adaptive alpha cohort table building and rebuild policy."""
+import hashlib
 import json
 import math
 import sys
@@ -157,47 +158,163 @@ class TestBuildWeightedTable:
 # _resolve_alpha_table_path (run_screen.py integration)
 # =============================================================================
 
+class TestCheckArtifactMarker:
+    """Tests for _check_artifact_marker (provenance validation)."""
+
+    def test_no_marker_file(self, tmp_path):
+        from run_screen import _check_artifact_marker
+        table = tmp_path / "v1_2026-02-25.json"
+        table.write_text('{"cells": {}}')
+        present, valid, data = _check_artifact_marker(table)
+        assert present is False
+        assert valid is False
+        assert data is None
+
+    def test_valid_marker_matches(self, tmp_path):
+        from run_screen import _check_artifact_marker
+        table = tmp_path / "v1_2026-02-25.json"
+        content = b'{"cells": {}}'
+        table.write_bytes(content)
+        sha = hashlib.sha256(content).hexdigest()
+        marker = {"sha256": sha, "artifact_id": 42, "as_of_date": "2026-02-25"}
+        table.with_suffix(".artifact.json").write_text(json.dumps(marker))
+
+        present, valid, data = _check_artifact_marker(table)
+        assert present is True
+        assert valid is True
+        assert data["artifact_id"] == 42
+
+    def test_marker_sha_mismatch(self, tmp_path):
+        from run_screen import _check_artifact_marker
+        table = tmp_path / "v1_2026-02-25.json"
+        table.write_bytes(b'{"cells": {}}')
+        marker = {"sha256": "0000bad0000", "artifact_id": 99}
+        table.with_suffix(".artifact.json").write_text(json.dumps(marker))
+
+        present, valid, data = _check_artifact_marker(table)
+        assert present is True
+        assert valid is False
+
+    def test_corrupt_marker_json(self, tmp_path):
+        from run_screen import _check_artifact_marker
+        table = tmp_path / "v1_2026-02-25.json"
+        table.write_bytes(b'{"cells": {}}')
+        table.with_suffix(".artifact.json").write_text("NOT JSON {{{")
+
+        present, valid, data = _check_artifact_marker(table)
+        assert present is True
+        assert valid is False
+        assert data is None
+
+    def test_marker_missing_sha_field(self, tmp_path):
+        from run_screen import _check_artifact_marker
+        table = tmp_path / "v1_2026-02-25.json"
+        table.write_bytes(b'{"cells": {}}')
+        marker = {"artifact_id": 1}  # no sha256 key
+        table.with_suffix(".artifact.json").write_text(json.dumps(marker))
+
+        present, valid, data = _check_artifact_marker(table)
+        assert present is True
+        assert valid is False
+
+
 class TestResolveAlphaTablePath:
 
-    def test_never_policy_returns_static_path(self):
+    def test_never_policy_returns_static(self):
         from run_screen import _resolve_alpha_table_path
         from decision_engine import DecisionRuleset
         import logging
 
         rs = DecisionRuleset(alpha_table_rebuild_policy="never")
         logger = logging.getLogger("test")
-        result = _resolve_alpha_table_path(rs, "2026-02-24", logger)
+        path, source = _resolve_alpha_table_path(rs, "2026-02-24", logger)
         expected = Path(__file__).resolve().parent.parent / rs.alpha_cohort_table_path
-        assert result == expected
+        assert path == expected
+        assert source == "static"
 
-    def test_if_missing_reuses_existing(self, tmp_path):
+    def test_if_missing_artifact_source(self, tmp_path, monkeypatch):
+        """Dated file + valid marker → source='artifact'."""
         from decision_engine import DecisionRuleset
-        import logging
+        import logging, run_screen
 
-        # Create a fake dated table
+        # Set up fake project root
+        daily_dir = tmp_path / "production_data" / "alpha_cohort_tables" / "daily"
+        daily_dir.mkdir(parents=True)
+        dated_file = daily_dir / "v1_2026-02-24.json"
+        content = b'{"cells": {}}'
+        dated_file.write_bytes(content)
+        sha = hashlib.sha256(content).hexdigest()
+        dated_file.with_suffix(".artifact.json").write_text(
+            json.dumps({"sha256": sha, "artifact_id": 1})
+        )
+
+        monkeypatch.setattr(run_screen, "__file__", str(tmp_path / "run_screen.py"))
+
+        rs = DecisionRuleset(alpha_table_rebuild_policy="if_missing")
+        logger = logging.getLogger("test")
+        path, source = run_screen._resolve_alpha_table_path(rs, "2026-02-24", logger)
+        assert source == "artifact"
+        assert path == dated_file
+
+    def test_if_missing_preexisting_local(self, tmp_path, monkeypatch):
+        """Dated file exists but no marker → source='preexisting_local'."""
+        from decision_engine import DecisionRuleset
+        import logging, run_screen
+
         daily_dir = tmp_path / "production_data" / "alpha_cohort_tables" / "daily"
         daily_dir.mkdir(parents=True)
         dated_file = daily_dir / "v1_2026-02-24.json"
         dated_file.write_text('{"cells": {}}')
+        # No .artifact.json marker
+
+        monkeypatch.setattr(run_screen, "__file__", str(tmp_path / "run_screen.py"))
+
+        rs = DecisionRuleset(alpha_table_rebuild_policy="if_missing")
+        logger = logging.getLogger("test")
+        path, source = run_screen._resolve_alpha_table_path(rs, "2026-02-24", logger)
+        assert source == "preexisting_local"
+        assert path == dated_file
+
+    def test_if_missing_rebuilds_in_run(self, tmp_path, monkeypatch):
+        """Dated file missing + build succeeds → source='rebuilt_in_run'."""
+        from decision_engine import DecisionRuleset
+        import logging, run_screen
+
+        # daily dir exists but no dated file
+        daily_dir = tmp_path / "production_data" / "alpha_cohort_tables" / "daily"
+        daily_dir.mkdir(parents=True)
+
+        monkeypatch.setattr(run_screen, "__file__", str(tmp_path / "run_screen.py"))
+
+        fake_table = {"cells": {}, "_build_info": {"as_of_date": "2026-02-24"}}
+        rs = DecisionRuleset(alpha_table_rebuild_policy="if_missing")
+        logger = logging.getLogger("test")
+
+        with patch("scripts.build_alpha_cohort_table_oos.build_oos_table", return_value=fake_table):
+            path, source = run_screen._resolve_alpha_table_path(rs, "2026-02-24", logger)
+
+        assert source == "rebuilt_in_run"
+        assert path.name == "v1_2026-02-24.json"
+        assert path.exists()  # file was written
+
+    def test_if_missing_fallback_static(self, tmp_path, monkeypatch):
+        """Dated file missing + build returns None → source='static_fallback'."""
+        from decision_engine import DecisionRuleset
+        import logging, run_screen
+
+        monkeypatch.setattr(run_screen, "__file__", str(tmp_path / "run_screen.py"))
+        # Create static fallback path
+        static_path = tmp_path / "production_data" / "alpha_cohort_tables" / "v1_alpha_cohort_table.json"
+        static_path.parent.mkdir(parents=True, exist_ok=True)
+        static_path.write_text('{"cells": {}}')
 
         rs = DecisionRuleset(alpha_table_rebuild_policy="if_missing")
         logger = logging.getLogger("test")
 
-        # Patch Path(__file__).resolve().parent to tmp_path
-        with patch("run_screen.Path") as mock_path_cls:
-            mock_file = MagicMock()
-            mock_file.resolve.return_value.parent = tmp_path
-            mock_path_cls.__file__ = mock_file
-            mock_path_cls.return_value = mock_path_cls
-            # Direct approach: just test the logic
-            from run_screen import _resolve_alpha_table_path
+        with patch("scripts.build_alpha_cohort_table_oos.build_oos_table", return_value=None):
+            path, source = run_screen._resolve_alpha_table_path(rs, "2026-02-24", logger)
 
-            # Use the actual function but with a monkey-patch
-            import run_screen
-            orig = run_screen.Path.__file__ if hasattr(run_screen.Path, '__file__') else None
-
-        # Simpler: just verify the never policy works (integration test for
-        # if_missing/daily requires the archive infrastructure)
+        assert source == "static_fallback"
 
 
 # =============================================================================

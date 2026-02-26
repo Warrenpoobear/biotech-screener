@@ -1,8 +1,10 @@
 """Tests for scripts/fetch_alpha_table_artifact.py (mocked GitHub API)."""
 from __future__ import annotations
 
+import hashlib
 import io
 import json
+import os
 import sys
 import zipfile
 from pathlib import Path
@@ -240,6 +242,48 @@ class TestEdgeCases:
             rc = fetch_alpha_table("2026-02-25", dest, token="fake-token")
         assert rc == EXIT_API_ERROR
 
+    def test_marker_created_on_success(self, tmp_path):
+        """Successful fetch writes .artifact.json marker with matching sha256."""
+        dest = tmp_path / "daily" / "v1_2026-02-25.json"
+        artifact = {
+            "id": 77,
+            "name": "alpha-cohort-table-2026-02-25",
+            "archive_download_url": "https://example.com/zip",
+            "expired": False,
+            "size_in_bytes": 200,
+        }
+        zip_bytes = _make_artifact_zip()
+
+        with patch("fetch_alpha_table_artifact.requests.get") as mock_get:
+            mock_get.side_effect = [
+                _mock_list_response([artifact]),
+                _mock_download_response(zip_bytes),
+            ]
+            rc = fetch_alpha_table("2026-02-25", dest, token="fake-token")
+
+        assert rc == EXIT_OK
+        marker_path = dest.with_suffix(".artifact.json")
+        assert marker_path.exists(), "marker file should be created alongside table"
+
+        marker = json.loads(marker_path.read_text())
+        assert marker["artifact_id"] == 77
+        assert marker["artifact_name"] == "alpha-cohort-table-2026-02-25"
+        assert marker["as_of_date"] == "2026-02-25"
+
+        # sha256 must match the actual written file
+        actual_sha = hashlib.sha256(dest.read_bytes()).hexdigest()
+        assert marker["sha256"] == actual_sha
+
+    def test_no_marker_on_failure(self, tmp_path):
+        """When artifact not found (exit 3), no marker is created."""
+        dest = tmp_path / "v1_2026-02-25.json"
+        with patch("fetch_alpha_table_artifact.requests.get") as mock_get:
+            mock_get.return_value = _mock_list_response([])
+            rc = fetch_alpha_table("2026-02-25", dest, token="fake-token")
+        assert rc == EXIT_NOT_FOUND
+        marker_path = dest.with_suffix(".artifact.json")
+        assert not marker_path.exists()
+
     def test_idempotent_overwrite(self, tmp_path):
         """Running twice overwrites the destination cleanly."""
         dest = tmp_path / "v1_2026-02-25.json"
@@ -263,3 +307,70 @@ class TestEdgeCases:
         assert rc == EXIT_OK
         data = json.loads(dest.read_text())
         assert data.get("new") is True
+
+
+# ---------------------------------------------------------------------------
+# --required flag (main() CLI wrapper)
+# ---------------------------------------------------------------------------
+
+class TestRequiredFlag:
+
+    def test_required_upgrades_not_found_to_api_error(self, tmp_path):
+        """With --required, exit 3 (not found) becomes exit 2 (api error)."""
+        from fetch_alpha_table_artifact import main
+
+        dest = tmp_path / "v1_2026-02-25.json"
+        with (
+            patch("fetch_alpha_table_artifact.requests.get") as mock_get,
+            patch("sys.argv", [
+                "fetch_alpha_table_artifact.py",
+                "--as-of-date", "2026-02-25",
+                "--dest", str(dest),
+                "--required",
+            ]),
+            patch.dict(os.environ, {"GITHUB_TOKEN": "fake-token"}),
+        ):
+            mock_get.return_value = _mock_list_response([])
+            rc = main()
+        assert rc == EXIT_API_ERROR
+
+    def test_required_env_var(self, tmp_path):
+        """REQUIRE_ALPHA_TABLE_ARTIFACT=1 activates --required."""
+        from fetch_alpha_table_artifact import main
+
+        dest = tmp_path / "v1_2026-02-25.json"
+        with (
+            patch("fetch_alpha_table_artifact.requests.get") as mock_get,
+            patch("sys.argv", [
+                "fetch_alpha_table_artifact.py",
+                "--as-of-date", "2026-02-25",
+                "--dest", str(dest),
+            ]),
+            patch.dict(os.environ, {
+                "GITHUB_TOKEN": "fake-token",
+                "REQUIRE_ALPHA_TABLE_ARTIFACT": "1",
+            }),
+        ):
+            mock_get.return_value = _mock_list_response([])
+            rc = main()
+        assert rc == EXIT_API_ERROR
+
+    def test_not_required_keeps_exit_3(self, tmp_path):
+        """Without --required, exit 3 stays as exit 3."""
+        from fetch_alpha_table_artifact import main
+
+        dest = tmp_path / "v1_2026-02-25.json"
+        with (
+            patch("fetch_alpha_table_artifact.requests.get") as mock_get,
+            patch("sys.argv", [
+                "fetch_alpha_table_artifact.py",
+                "--as-of-date", "2026-02-25",
+                "--dest", str(dest),
+            ]),
+            patch.dict(os.environ, {"GITHUB_TOKEN": "fake-token"}, clear=False),
+        ):
+            # Ensure env var is NOT set
+            os.environ.pop("REQUIRE_ALPHA_TABLE_ARTIFACT", None)
+            mock_get.return_value = _mock_list_response([])
+            rc = main()
+        assert rc == EXIT_NOT_FOUND

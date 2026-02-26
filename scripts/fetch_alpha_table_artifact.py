@@ -15,11 +15,14 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import io
+import json
 import os
 import sys
 import tempfile
 import zipfile
+from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
@@ -145,6 +148,26 @@ def fetch_alpha_table(
         return EXIT_API_ERROR
 
     print(f"OK: wrote {dest} ({len(table_bytes)} bytes)")
+
+    # Write provenance marker alongside the table
+    marker = {
+        "as_of_date": as_of_date,
+        "fetched_at_utc": datetime.now(timezone.utc).isoformat(),
+        "artifact_id": artifact["id"],
+        "artifact_name": artifact["name"],
+        "sha256": hashlib.sha256(table_bytes).hexdigest(),
+        "target_path": str(dest),
+    }
+    marker_path = dest.with_suffix(".artifact.json")
+    try:
+        with open(marker_path, "w", encoding="utf-8") as f:
+            json.dump(marker, f, indent=2)
+            f.write("\n")
+        print(f"OK: wrote marker {marker_path}")
+    except OSError as e:
+        # Marker is best-effort — table is already written
+        print(f"WARNING: could not write marker {marker_path}: {e}", file=sys.stderr)
+
     return EXIT_OK
 
 
@@ -168,16 +191,25 @@ def main() -> int:
         "--workflow", default=DEFAULT_WORKFLOW,
         help=f"Workflow file name (default: {DEFAULT_WORKFLOW})",
     )
+    parser.add_argument(
+        "--required", action="store_true",
+        default=os.environ.get("REQUIRE_ALPHA_TABLE_ARTIFACT", "") == "1",
+        help="Exit 2 (not 3) if artifact not found. Also set via REQUIRE_ALPHA_TABLE_ARTIFACT=1.",
+    )
     args = parser.parse_args()
 
     token = os.environ.get("GITHUB_TOKEN", "")
-    return fetch_alpha_table(
+    rc = fetch_alpha_table(
         as_of_date=args.as_of_date,
         dest=args.dest,
         repo=args.repo,
         workflow=args.workflow,
         token=token,
     )
+    if rc == EXIT_NOT_FOUND and args.required:
+        print("ERROR: --required flag set but artifact not found", file=sys.stderr)
+        return EXIT_API_ERROR
+    return rc
 
 
 if __name__ == "__main__":

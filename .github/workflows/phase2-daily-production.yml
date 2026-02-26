@@ -208,6 +208,39 @@ jobs:
             echo "::warning::No run_manifest.json found — runner may have crashed before writing it"
           fi
 
+      # ── Assert alpha table artifact was reused (not rebuilt) ──────
+      - name: Assert alpha table artifact reused
+        if: always() && steps.runner.outputs.exit_code != '1'
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          MARKER="production_data/alpha_cohort_tables/daily/v1_${DATE}.artifact.json"
+          META="data/snapshots/${DATE}/metadata.json"
+
+          python3 - <<'PY'
+          import json, os, sys
+          marker = os.environ["MARKER"]
+          meta = os.environ["META"]
+
+          if not os.path.exists(marker):
+              print(f"::warning::No alpha table artifact marker for date — skipping artifact-use assertion.")
+              sys.exit(0)
+
+          if not os.path.exists(meta):
+              print(f"::warning::No snapshot metadata.json — skipping artifact-use assertion.")
+              sys.exit(0)
+
+          m = json.load(open(meta))
+          tele = m.get("alpha_modifier_telemetry") or {}
+          src = tele.get("alpha_table_source")
+          if src != "artifact":
+              print(f"::error::Expected alpha_table_source='artifact' because marker exists; got {src!r}")
+              sys.exit(1)
+          print("OK: alpha cohort table artifact was reused (not rebuilt in-run).")
+          PY
+        env:
+          MARKER: production_data/alpha_cohort_tables/daily/v1_${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}.artifact.json
+          META: data/snapshots/${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}/metadata.json
+
       # ── PIT price cache (post-production, non-blocking) ────────
       - name: Create PIT price cache anchor
         if: always() && steps.runner.outputs.exit_code != '1'

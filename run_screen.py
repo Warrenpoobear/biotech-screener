@@ -2750,11 +2750,32 @@ def _ensure_defaults(csv_rows, defaults=_ALWAYS_NUMERIC_DEFAULTS):
             row.setdefault(flag, flag_default)
 
 
+def _check_artifact_marker(dated_path: Path) -> tuple:
+    """Check if an artifact provenance marker exists and matches.
+
+    Returns ``(marker_present, marker_valid, marker_data)`` where
+    *marker_valid* means the marker SHA-256 matches the file on disk.
+    """
+    import hashlib as _hl
+    marker_path = dated_path.with_suffix(".artifact.json")
+    if not marker_path.exists():
+        return False, False, None
+    try:
+        marker = json.loads(marker_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return True, False, None
+    expected_sha = marker.get("sha256", "")
+    if not expected_sha or not dated_path.exists():
+        return True, False, marker
+    actual_sha = _hl.sha256(dated_path.read_bytes()).hexdigest()
+    return True, actual_sha == expected_sha, marker
+
+
 def _resolve_alpha_table_path(
     ruleset: "DecisionRuleset",
     as_of_date: str,
     logger: logging.Logger,
-) -> Path:
+) -> tuple:
     """Resolve alpha cohort table path based on rebuild policy.
 
     Policies:
@@ -2762,21 +2783,31 @@ def _resolve_alpha_table_path(
       - "if_missing": build OOS table only if dated path does not exist
       - "daily": rebuild OOS table every run
 
-    Returns the resolved Path to the JSON table file.
+    Returns ``(resolved_path, source_tag)`` where *source_tag* is one of:
+      ``"artifact"`` — CI-fetched table with valid provenance marker
+      ``"preexisting_local"`` — dated file exists without marker
+      ``"rebuilt_in_run"`` — built OOS in this process
+      ``"static_fallback"`` — fell back to the static table
+      ``"static"`` — policy is "never" (always uses static)
     """
     project_root = Path(__file__).resolve().parent
     policy = ruleset.alpha_table_rebuild_policy
 
     if policy == "never":
-        return project_root / ruleset.alpha_cohort_table_path
+        return project_root / ruleset.alpha_cohort_table_path, "static"
 
     # daily / if_missing: target path includes date
     daily_dir = project_root / "production_data" / "alpha_cohort_tables" / "daily"
     dated_path = daily_dir / f"v1_{as_of_date}.json"
 
     if policy == "if_missing" and dated_path.exists():
-        logger.info(f"  Alpha table (if_missing): reusing {dated_path}")
-        return dated_path
+        marker_present, marker_valid, _ = _check_artifact_marker(dated_path)
+        if marker_present and marker_valid:
+            source = "artifact"
+        else:
+            source = "preexisting_local"
+        logger.info(f"  Alpha table (if_missing): reusing {dated_path} [source={source}]")
+        return dated_path, source
 
     # Build OOS table in-process
     logger.info(
@@ -2798,7 +2829,7 @@ def _resolve_alpha_table_path(
             "  Alpha table rebuild returned None (insufficient data) — "
             "falling back to static table"
         )
-        return project_root / ruleset.alpha_cohort_table_path
+        return project_root / ruleset.alpha_cohort_table_path, "static_fallback"
 
     # Write to dated path
     daily_dir.mkdir(parents=True, exist_ok=True)
@@ -2807,7 +2838,7 @@ def _resolve_alpha_table_path(
         _json.dump(table, f, indent=2)
         f.write("\n")
     logger.info(f"  Alpha table: wrote {dated_path}")
-    return dated_path
+    return dated_path, "rebuilt_in_run"
 
 
 def _compute_alpha_modifier_ab(
@@ -3512,6 +3543,7 @@ def save_validation_snapshot(
 
     # --- Alpha cohort scoring (opt-in via sort_anchor or composite_engine) ---
     _alpha_table_path_resolved = None
+    _alpha_table_source = None  # "artifact"|"preexisting_local"|"rebuilt_in_run"|"static"|"static_fallback"
     _alpha_table = None
     _alpha_cells_populated = 0
 
@@ -3523,7 +3555,7 @@ def save_validation_snapshot(
         from module_5_alpha_cohort import load_alpha_cohort_table, attach_alpha_scores
 
         # Policy-based table resolution (adaptive alpha)
-        _alpha_table_path_resolved = _resolve_alpha_table_path(
+        _alpha_table_path_resolved, _alpha_table_source = _resolve_alpha_table_path(
             ruleset, as_of_date, logger,
         )
         _alpha_table = load_alpha_cohort_table(_alpha_table_path_resolved)
@@ -4127,6 +4159,11 @@ def save_validation_snapshot(
             "weight": ruleset.alpha_modifier_weight if ruleset else 0.0,
             "table_policy": ruleset.alpha_table_rebuild_policy if ruleset else "never",
             "table_path": str(_alpha_table_path_resolved) if _alpha_table_path_resolved else None,
+            "alpha_table_source": _alpha_table_source,
+            "alpha_table_marker_present": (
+                _check_artifact_marker(Path(_alpha_table_path_resolved))[0]
+                if _alpha_table_path_resolved else False
+            ),
             "table_build_info": (_alpha_table or {}).get("_build_info"),
             "cells_populated": _alpha_cells_populated,
             "alpha_score_present": _alpha_present,
