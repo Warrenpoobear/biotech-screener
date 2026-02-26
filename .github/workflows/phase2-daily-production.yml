@@ -248,7 +248,7 @@ jobs:
 
       # ── Detect degraded snapshot ────────────────────────────────
       - name: Detect degraded snapshot
-        if: always() && steps.runner.outputs.exit_code != '1'
+        if: always() && (steps.runner.outputs.exit_code != '1' || inputs.force_degraded == true)
         id: degraded
         run: |
           python3 - <<'PY'
