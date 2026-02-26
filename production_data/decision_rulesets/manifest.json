@@ -209,11 +209,23 @@
       "created_at": "2026-02-20",
       "engine_version": "v1.3.0",
       "description": "Coinvest sort tie-breaker: z-scored tier1_count blended into sort anchor (w=0.05, pos-only)",
+      "status": "retired",
+      "requires_replay": true,
+      "notes": "Same params as v1.4.0 + enable_coinvest_sort_signal=true, coinvest_sort_weight=0.05, coinvest_positive_only=true, coinvest_score_mode=tier1_count. Calibrated from 0.05-0.50 sweep: w=0.05 gives 82% top-20 overlap (2 name changes), saturation at w=0.25 (5 names). Superseded by v1.6.1 (alpha modifier within-tier).",
+      "updated_by": "promote_ruleset.py",
+      "updated_at": "2026-02-26T00:00:00Z"
+    },
+    {
+      "id": "0c1129f6",
+      "file": "v1.6.1_alpha_modifier_within_tier.json",
+      "created_at": "2026-02-26",
+      "engine_version": "v1.3.0",
+      "description": "Alpha modifier within-tier: OOS alpha blended into effective_comp_rank (w=0.05)",
       "status": "active",
       "requires_replay": true,
-      "notes": "Same params as v1.4.0 + enable_coinvest_sort_signal=true, coinvest_sort_weight=0.05, coinvest_positive_only=true, coinvest_score_mode=tier1_count. Calibrated from 0.05-0.50 sweep: w=0.05 gives 82% top-20 overlap (2 name changes), saturation at w=0.25 (5 names). Promoted after CNTA/SION eyeball review.",
+      "notes": "Promoted from v1.6.1 candidate. Tiebreak mode (v1.6.0) was structurally unreachable; within_tier blends weight*alpha_raw into effective_comp_rank. Promotion check: 9 dates, 100% top-60 overlap, max shift=2, 0 tier-A regressions, 2.4% mean rows changed. Live pipeline run confirmed: alpha_modifier_ab.json sidecar + telemetry emitted.",
       "updated_by": "promote_ruleset.py",
-      "updated_at": "2026-02-20T00:00:00Z"
+      "updated_at": "2026-02-26T00:00:00Z"
     }
   ]
 }

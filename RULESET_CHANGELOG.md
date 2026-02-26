@@ -6,6 +6,30 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.6.1] 0c1129f6 — 2026-02-26 — Alpha modifier within-tier (promoted)
+
+**Active ruleset change**: `88d7ae9a` (v1.5.1_coinvest_off) → `0c1129f6` (v1.6.1_alpha_modifier_within_tier)
+
+**Alpha modifier**: OOS alpha signal blended into `effective_comp_rank` via `within_tier` mode
+(weight=0.05). Higher alpha_raw → lower effective rank → sorts earlier within same tier.
+
+**Why not tiebreak mode**: v1.6.0 used `alpha_modifier_mode="tiebreak"` which placed the alpha
+signal at tuple position 8 — unreachable because unique `alpha_cohort_pct` floats at position 3
+prevent any two rows from tying on positions 0-7. Zero rank shifts across 9 dates confirmed this.
+`within_tier` blends directly into the dominant sort term.
+
+**Promotion evidence** (9 dates, 2026-01-15 to 2026-02-25):
+- top-60 overlap: 1.000 (every date)
+- max rank shift: 2
+- mean rows changed: 2.4%
+- tier-A regressions: 0
+- Live pipeline confirmed: `alpha_modifier_ab.json` sidecar + telemetry emitted
+
+**No code change**: only ruleset parameter change (`alpha_modifier_mode: "tiebreak" → "within_tier"`).
+Golden output fingerprint unchanged (`da7e8b5fc87f`).
+
+---
+
 ## [v1.4.0] — 2026-02-17 — Alpha cohort scoring mode
 
 **New module**: `module_5_alpha_cohort.py` — table-driven ranking signal keyed on
