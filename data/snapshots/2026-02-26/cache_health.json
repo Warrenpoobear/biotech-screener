@@ -1,0 +1,47 @@
+{
+  "schema": "cache_health.v1",
+  "as_of_date": "2026-02-26",
+  "sec8k": {
+    "count": 219,
+    "status": "ok",
+    "reason": ""
+  },
+  "ctgov": {
+    "count": 1244,
+    "status": "ok",
+    "reason": ""
+  },
+  "overall_status": "ok",
+  "degraded_run": false,
+  "thresholds": {
+    "sec8k_min_count": 0,
+    "sec8k_min_ratio_vs_prior": 0.3,
+    "ctgov_warn_ratio_low": 0.8,
+    "ctgov_warn_ratio_high": 1.25,
+    "ctgov_bad_ratio_low": 0.6,
+    "ctgov_bad_ratio_high": 1.5
+  },
+  "comparisons": {
+    "sec8k_ratio_vs_prior": null,
+    "ctgov_ratio_vs_prior": 1.1497
+  },
+  "cache_refresh_sidecar": "cache_refresh_2026-02-26.json",
+  "cache_refresh_had_rejections": false,
+  "cache_refresh_rejected_sources": [],
+  "cache_refresh_summary": {
+    "sec_8k": {
+      "accepted": true,
+      "reason": "",
+      "count": 226,
+      "prior_count": 221,
+      "committed": true
+    },
+    "ctgov": {
+      "accepted": true,
+      "reason": "",
+      "count": 18689,
+      "prior_count": 18669,
+      "committed": true
+    }
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "generated_at": "2026-02-26T19:08:43Z",
+  "current": {
+    "date": "2026-02-26",
+    "ruleset_id": "0c1129f6",
+    "has_native_portfolio": true,
+    "portfolio_size": 20
+  },
+  "prior": {
+    "date": "2026-02-24",
+    "ruleset_id": "88d7ae9a",
+    "has_native_portfolio": false,
+    "portfolio_size": 20
+  },
+  "portfolio_turnover": {
+    "entrants": [
+      "CGON",
+      "CLYM",
+      "COGT",
+      "DNTH",
+      "IVVD",
+      "OLMA",
+      "REPL",
+      "VERA"
+    ],
+    "exits": [
+      "KURA",
+      "OCGN",
+      "ORKA",
+      "PEPG",
+      "PHVS",
+      "SION",
+      "SYRE",
+      "VRDN"
+    ],
+    "name_turnover_pct": 40.0,
+    "weight_l1_delta": 97.7
+  },
+  "tier_distribution": {
+    "current": {
+      "A": 30,
+      "B": 38,
+      "C": 44,
+      "D": 55
+    },
+    "prior": {
+      "A": 33,
+      "B": 45,
+      "C": 58,
+      "D": 41
+    }
+  },
+  "tier_in_portfolio": {
+    "current": {
+      "A": 20,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "prior": {
+      "A": 20,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    }
+  },
+  "sizing": {
+    "current": {
+      "L": 15,
+      "M": 3,
+      "S": 2,
+      "XS": 0
+    },
+    "prior": {
+      "L": 13,
+      "M": 6,
+      "S": 1,
+      "XS": 0
+    }
+  },
+  "catalyst_coverage": {
+    "current": {
+      "n_dev": 167,
+      "n_specific": 153,
+      "pct": 91.6,
+      "mode_dist": {
+        "specific_days": 153,
+        "no_upcoming": 14
+      },
+      "backfill_share_pct": 0.0
+    },
+    "prior": {
+      "n_dev": 177,
+      "n_specific": 163,
+      "pct": 92.1,
+      "mode_dist": {
+        "specific_days": 163,
+        "no_upcoming": 14
+      },
+      "backfill_share_pct": 0.0
+    }
+  },
+  "top_catalysts": {
+    "current": [
+      {
+        "ticker": "ADCT",
+        "catalyst_days": 2,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "NMRA",
+        "catalyst_days": 3,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "PVLA",
+        "catalyst_days": 3,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "IMVT",
+        "catalyst_days": 3,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "REPL",
+        "catalyst_days": 3,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "OLMA",
+        "catalyst_days": 3,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "IVVD",
+        "catalyst_days": 3,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "FULC",
+        "catalyst_days": 3,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "ANRO",
+        "catalyst_days": 3,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "KYTX",
+        "catalyst_days": 3,
+        "tier_dev": "B"
+      }
+    ],
+    "prior": [
+      {
+        "ticker": "DNLI",
+        "catalyst_days": 1,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "ADCT",
+        "catalyst_days": 4,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "NMRA",
+        "catalyst_days": 5,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "PVLA",
+        "catalyst_days": 5,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "IMVT",
+        "catalyst_days": 5,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "VRDN",
+        "catalyst_days": 5,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "REPL",
+        "catalyst_days": 5,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "OLMA",
+        "catalyst_days": 5,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "NUVL",
+        "catalyst_days": 5,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "ABVX",
+        "catalyst_days": 5,
+        "tier_dev": "B"
+      }
+    ]
+  },
+  "risk_flags": {
+    "current": {
+      "deep_drawdown": 3,
+      "high_vol": 5,
+      "high_beta": 5,
+      "overbought_rsi": 4,
+      "low_confidence": 0
+    },
+    "prior": {
+      "deep_drawdown": 1,
+      "high_vol": 2,
+      "high_beta": 4,
+      "overbought_rsi": 3,
+      "low_confidence": 0
+    }
+  },
+  "churn_suppressed": false,
+  "guardrails": {
+    "passed": [
+      "Ruleset matches pinned Phase-2 ID (0c1129f6)",
+      "A-tier count >= 1 (30)",
+      "Catalyst coverage 91.6% >= 50.0%",
+      "Name turnover 40.0% <= 40.0%"
+    ],
+    "warnings": [
+      "Ruleset changed: 88d7ae9a -> 0c1129f6"
+    ]
+  }
+}
