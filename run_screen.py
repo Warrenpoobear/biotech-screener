@@ -2965,6 +2965,46 @@ def _compute_alpha_modifier_ab(
     return result
 
 
+def load_cache_refresh_sidecar(path: Path) -> Dict[str, Any]:
+    """Load cache_refresh sidecar and extract rejection metadata.
+
+    Returns a dict with keys: sidecar, had_rejections, rejected_sources,
+    summary, banner.  Safe to call on missing/corrupt files.
+    """
+    empty: Dict[str, Any] = {
+        "sidecar": None,
+        "had_rejections": False,
+        "rejected_sources": [],
+        "summary": {},
+        "banner": "",
+    }
+    try:
+        if not path.exists():
+            return empty
+        refresh = json.loads(path.read_text())
+        results_list = refresh.get("results", [])
+        rejected = [r for r in results_list if not r.get("accepted", True)]
+        summary = {
+            r["source"]: {
+                k: r.get(k)
+                for k in ("accepted", "reason", "count", "prior_count", "committed")
+            }
+            for r in results_list
+        }
+        banner = "; ".join(
+            f"{r['source']}:{r.get('reason', '?')}" for r in rejected
+        )
+        return {
+            "sidecar": path.name,
+            "had_rejections": len(rejected) > 0,
+            "rejected_sources": [r["source"] for r in rejected],
+            "summary": summary,
+            "banner": banner,
+        }
+    except Exception:
+        return empty
+
+
 def save_validation_snapshot(
     snapshot_dir: Path,
     as_of_date: str,
@@ -3773,6 +3813,20 @@ def save_validation_snapshot(
     _cache_degraded = _cache_health.get("degraded_run", False)
     _cache_health_status = _cache_health.get("overall_status", "ok")
 
+    # --- Load cache refresh sidecar (written by warm_caches.py) ---
+    _refresh_path = Path(__file__).parent / "cache" / f"cache_refresh_{as_of_date}.json"
+    _cr = load_cache_refresh_sidecar(_refresh_path)
+    _cache_refresh_sidecar = _cr["sidecar"]
+    _cache_refresh_had_rejections = _cr["had_rejections"]
+    _cache_refresh_rejected_sources = _cr["rejected_sources"]
+    _cache_refresh_summary = _cr["summary"]
+    if _cache_refresh_had_rejections:
+        logger.warning(
+            "[CACHE REFRESH REJECTED] %s (see %s)",
+            _cr["banner"],
+            _refresh_path.name,
+        )
+
     # --- Write institutional summary sidecar (phase2 only) ---
     # inst_summary and inst_delta already computed above (before sort)
     if decision_mode == "phase2" and inst_summary:
@@ -4205,6 +4259,10 @@ def save_validation_snapshot(
         "cache_health_overall_status": _cache_health_status,
         "cache_degraded_run": _cache_degraded,
         "suppress_churn_comparisons": _cache_degraded,
+        "cache_refresh_sidecar": _cache_refresh_sidecar,
+        "cache_refresh_had_rejections": _cache_refresh_had_rejections,
+        "cache_refresh_rejected_sources": _cache_refresh_rejected_sources,
+        "cache_refresh_summary": _cache_refresh_summary or None,
     }
 
     meta_path = snap_path / "metadata.json"

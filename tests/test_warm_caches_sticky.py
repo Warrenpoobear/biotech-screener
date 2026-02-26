@@ -383,3 +383,85 @@ def test_ctgov_existing_cache_short_circuits(tmp_path):
 
     result = warm_ctgov(date(2026, 2, 15), data_dir, cache_dir)
     assert result == 42
+
+
+# ── load_cache_refresh_sidecar tests ─────────────────────────────────
+
+from run_screen import load_cache_refresh_sidecar
+
+
+def test_sidecar_with_rejection(tmp_path):
+    """Sidecar with one rejected source → had_rejections=True, banner formatted."""
+    sidecar = tmp_path / "cache_refresh_2026-02-25.json"
+    sidecar.write_text(json.dumps({
+        "schema": "cache_refresh.v1",
+        "as_of_date": "2026-02-25",
+        "results": [
+            {"source": "sec_8k", "count": 10, "prior_count": 100,
+             "accepted": False, "committed": False,
+             "reason": "collapse (ratio=0.10 < 0.3)"},
+            {"source": "ctgov", "count": 18000, "prior_count": 18000,
+             "accepted": True, "committed": True, "reason": ""},
+        ],
+    }))
+
+    cr = load_cache_refresh_sidecar(sidecar)
+    assert cr["sidecar"] == sidecar.name
+    assert cr["had_rejections"] is True
+    assert cr["rejected_sources"] == ["sec_8k"]
+    assert "CACHE REFRESH REJECTED" not in cr["banner"]  # banner is just the parts
+    assert "sec_8k:collapse" in cr["banner"]
+    # summary includes both sources
+    assert "sec_8k" in cr["summary"]
+    assert "ctgov" in cr["summary"]
+    assert cr["summary"]["sec_8k"]["accepted"] is False
+    assert cr["summary"]["ctgov"]["accepted"] is True
+
+
+def test_sidecar_all_accepted(tmp_path):
+    """Sidecar with all accepted → had_rejections=False."""
+    sidecar = tmp_path / "cache_refresh_2026-02-25.json"
+    sidecar.write_text(json.dumps({
+        "schema": "cache_refresh.v1",
+        "as_of_date": "2026-02-25",
+        "results": [
+            {"source": "sec_8k", "count": 220, "prior_count": 219,
+             "accepted": True, "committed": True, "reason": ""},
+        ],
+    }))
+
+    cr = load_cache_refresh_sidecar(sidecar)
+    assert cr["had_rejections"] is False
+    assert cr["rejected_sources"] == []
+    assert cr["banner"] == ""
+
+
+def test_sidecar_missing_file(tmp_path):
+    """Missing sidecar → safe defaults."""
+    cr = load_cache_refresh_sidecar(tmp_path / "nonexistent.json")
+    assert cr["sidecar"] is None
+    assert cr["had_rejections"] is False
+    assert cr["summary"] == {}
+
+
+def test_sidecar_multiple_rejections(tmp_path):
+    """Two rejected sources → both in banner, semicolon-separated."""
+    sidecar = tmp_path / "cache_refresh_2026-02-25.json"
+    sidecar.write_text(json.dumps({
+        "schema": "cache_refresh.v1",
+        "as_of_date": "2026-02-25",
+        "results": [
+            {"source": "sec_8k", "count": 0, "prior_count": 200,
+             "accepted": False, "committed": False, "reason": "empty_refresh"},
+            {"source": "ctgov", "count": 500, "prior_count": 1000,
+             "accepted": False, "committed": False,
+             "reason": "out_of_band (ratio=0.50, band=[0.6, 1.5])"},
+        ],
+    }))
+
+    cr = load_cache_refresh_sidecar(sidecar)
+    assert cr["had_rejections"] is True
+    assert cr["rejected_sources"] == ["sec_8k", "ctgov"]
+    assert "sec_8k:empty_refresh" in cr["banner"]
+    assert "ctgov:out_of_band" in cr["banner"]
+    assert "; " in cr["banner"]
