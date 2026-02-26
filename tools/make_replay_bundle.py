@@ -297,6 +297,16 @@ def make_replay_bundle(
     refresh_had_rejections = metadata.get("cache_refresh_had_rejections", False)
     rejected_sources = metadata.get("cache_refresh_rejected_sources", [])
 
+    # Resolve original ruleset path from decision_portfolio.json (most reliable)
+    ruleset_path_original = ""
+    dp_path = snap_dir / "decision_portfolio.json"
+    if dp_path.exists():
+        try:
+            dp = _read_json(dp_path)
+            ruleset_path_original = dp.get("ruleset_path", "")
+        except Exception:
+            pass
+
     manifest = {
         "schema": SCHEMA_VERSION,
         "version": VERSION,
@@ -305,7 +315,7 @@ def make_replay_bundle(
         "as_of_date": as_of_date,
         "decision_mode": metadata.get("decision_mode", "phase2"),
         "ruleset_id": expected_ruleset_id,
-        "ruleset_path_original": amt.get("table_path", ""),
+        "ruleset_path_original": ruleset_path_original,
         "snapshot_source_dir": str(snap_dir),
         "included_files": included_files,
         "key_inputs": {

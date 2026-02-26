@@ -135,6 +135,13 @@ def _make_synthetic_snapshot(
         "overall_status": "ok",
     })
 
+    # Decision portfolio (contains ruleset_path provenance)
+    _write_json(date_dir / "decision_portfolio.json", {
+        "ruleset_id": "test1234",
+        "ruleset_path": "production_data/decision_rulesets/v1.0.0_test.json",
+        "n_securities": n_tickers,
+    })
+
     return date_dir
 
 
@@ -651,3 +658,45 @@ class TestReplayBundleCLI:
             "--workdir", str(tmp_path / "work"),
         ])
         assert rc == 0
+
+
+# ---------------------------------------------------------------------------
+# Tests: ruleset_path_original provenance
+# ---------------------------------------------------------------------------
+
+
+class TestRulesetPathOriginal:
+    def test_uses_decision_portfolio_ruleset_path(self, tmp_path):
+        """ruleset_path_original comes from decision_portfolio.json."""
+        root = tmp_path / "project"
+        snap_dir = root / "data" / "snapshots"
+        _make_synthetic_snapshot(snap_dir, "2026-01-15")
+        _make_project_structure(root, "2026-01-15")
+
+        out = tmp_path / "bundle.tgz"
+        make_replay_bundle("2026-01-15", snap_dir, out, top_k=5, project_root=root)
+
+        extract_dir = tmp_path / "extracted"
+        bundle_dir = extract_bundle(out, extract_dir)
+        manifest = json.loads((bundle_dir / "manifest.json").read_text())
+
+        assert manifest["ruleset_path_original"] == "production_data/decision_rulesets/v1.0.0_test.json"
+
+    def test_empty_when_decision_portfolio_missing(self, tmp_path):
+        """Falls back to empty string when decision_portfolio.json absent."""
+        root = tmp_path / "project"
+        snap_dir = root / "data" / "snapshots"
+        _make_synthetic_snapshot(snap_dir, "2026-01-15")
+        _make_project_structure(root, "2026-01-15")
+
+        # Remove decision_portfolio.json
+        (snap_dir / "2026-01-15" / "decision_portfolio.json").unlink()
+
+        out = tmp_path / "bundle.tgz"
+        make_replay_bundle("2026-01-15", snap_dir, out, top_k=5, project_root=root)
+
+        extract_dir = tmp_path / "extracted"
+        bundle_dir = extract_bundle(out, extract_dir)
+        manifest = json.loads((bundle_dir / "manifest.json").read_text())
+
+        assert manifest["ruleset_path_original"] == ""
