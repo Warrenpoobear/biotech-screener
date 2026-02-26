@@ -20,6 +20,11 @@ on:
         required: false
         type: boolean
         default: false
+      force_degraded:
+        description: "Force degraded mode (testing). Skips PIT price steps regardless of cache_health."
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -250,6 +255,7 @@ jobs:
           import json, os, sys
           from pathlib import Path
 
+          forced = os.environ.get("FORCE_DEGRADED", "false") == "true"
           date = os.environ.get("EFF_DATE") or os.environ.get("REQ_DATE") or ""
           snap = Path("data/snapshots") / date
           health = snap / "cache_health.json"
@@ -258,7 +264,11 @@ jobs:
           degraded = False
           overall = "missing"
 
-          if health.exists():
+          if forced:
+              degraded = True
+              overall = "forced"
+              print("::warning::FORCED DEGRADED (workflow_dispatch test) — baselines not updated")
+          elif health.exists():
               try:
                   h = json.loads(health.read_text(encoding="utf-8"))
                   degraded = bool(h.get("degraded_run", False))
@@ -274,6 +284,8 @@ jobs:
           with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as f:
               f.write(f"DEGRADED={'1' if degraded else '0'}\n")
               f.write(f"CACHE_HEALTH_OVERALL={overall}\n")
+              if forced:
+                  f.write("DEGRADED_FORCED=1\n")
 
           rejected = []
           sidecar = ""
@@ -285,18 +297,23 @@ jobs:
               except Exception:
                   pass
 
-          if degraded:
+          if degraded and not forced:
               parts = [f"overall_status={overall}"]
               if rejected:
                   parts.append(f"rejected={','.join(rejected)}")
               print(f"::warning::CACHE DEGRADED — baselines not updated ({'; '.join(parts)})")
 
           summ = ["## Cache Health", ""]
+          if forced:
+              summ.append("> **FORCED DEGRADED** (workflow_dispatch test override)")
+              summ.append("")
           summ.append(f"| Field | Value |")
           summ.append(f"|-------|-------|")
           summ.append(f"| as_of_date | `{date}` |")
           summ.append(f"| overall_status | `{overall}` |")
           summ.append(f"| degraded | `{degraded}` |")
+          if forced:
+              summ.append(f"| forced | `True` |")
           if rejected:
               summ.append(f"| rejected_sources | `{', '.join(rejected)}` |")
           if sidecar:
@@ -308,6 +325,7 @@ jobs:
         env:
           EFF_DATE: ${{ steps.manifest.outputs.effective_date }}
           REQ_DATE: ${{ steps.date.outputs.as_of_date }}
+          FORCE_DEGRADED: ${{ inputs.force_degraded }}
 
       # ── PIT price cache (post-production, non-blocking) ────────
       - name: Create PIT price cache anchor
@@ -443,7 +461,11 @@ jobs:
           # Degraded-mode banner (driven by detect step, not RC)
           if [ "${DEGRADED:-0}" = "1" ]; then
             echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "> :rotating_light: **DEGRADED RUN** — PIT price anchors and forward-return backfill skipped. Cache health: \`${CACHE_HEALTH_OVERALL:-?}\`" >> "$GITHUB_STEP_SUMMARY"
+            if [ "${DEGRADED_FORCED:-0}" = "1" ]; then
+              echo "> :rotating_light: **FORCED DEGRADED (test)** — PIT price anchors and forward-return backfill skipped." >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "> :rotating_light: **DEGRADED RUN** — PIT price anchors and forward-return backfill skipped. Cache health: \`${CACHE_HEALTH_OVERALL:-?}\`" >> "$GITHUB_STEP_SUMMARY"
+            fi
           fi
 
           # Banner + exit — driven by RC, not manifest
