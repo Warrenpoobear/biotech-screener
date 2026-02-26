@@ -362,6 +362,34 @@ jobs:
             echo "::warning::PIT price backfill failed"
           }
 
+      # ── Build replay bundle ───────────────────────────────────
+      - name: Build replay bundle
+        if: always() && steps.runner.outputs.exit_code != '1'
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          python3 tools/make_replay_bundle.py \
+            --as-of-date "$DATE" \
+            --out "/tmp/replay_bundle_${DATE}.tgz"
+
+      - name: Verify replay bundle invariants
+        if: always() && steps.runner.outputs.exit_code != '1'
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          python3 tools/replay_bundle.py \
+            --bundle "/tmp/replay_bundle_${DATE}.tgz" \
+            --workdir "/tmp/replay_verify_${DATE}"
+
+      # ── Build monitoring artifact ─────────────────────────────
+      - name: Build monitoring artifact
+        if: always() && steps.runner.outputs.exit_code != '1'
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          python3 scripts/build_monitoring_artifact.py \
+            --as-of-date "$DATE" \
+            --snapshot-dir data/snapshots \
+            --out-json "data/snapshots/${DATE}/monitoring.json" \
+            --out-md   "data/snapshots/${DATE}/monitoring.md"
+
       # ── Upload snapshot artifacts ───────────────────────────────
       - name: Upload snapshot
         if: always()
@@ -371,6 +399,15 @@ jobs:
           path: |
             data/snapshots/${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}/
           retention-days: 90
+          if-no-files-found: warn
+
+      - name: Upload replay bundle
+        if: always() && steps.runner.outputs.exit_code != '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: replay-bundle-${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}
+          path: /tmp/replay_bundle_${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}.tgz
+          retention-days: 30
           if-no-files-found: warn
 
       - name: Upload run manifest & logs
