@@ -41,6 +41,8 @@ from scripts.eval_forward_returns import (
     net_return,
     resolve_trade_date,
 )
+from common.ranking_utils import backfill_columns, safe_float as _rerank_sf
+from decision_engine import DecisionRuleset, compute_actionable_sort_key
 
 VERSION = "1.0.0"
 SCHEMA = "ruleset_eval.v1"
@@ -221,6 +223,231 @@ def compute_max_shift(
         "from": prior_ranks[worst],
         "to": curr_ranks[worst],
     }
+
+
+# ---------------------------------------------------------------------------
+# Rerank-only helpers
+# ---------------------------------------------------------------------------
+
+
+def rerank_rows(
+    rows: List[Dict[str, str]],
+    ruleset: DecisionRuleset,
+) -> Tuple[List[str], Dict[str, int]]:
+    """Re-rank CSV rows using a ruleset.
+
+    Works on a shallow copy to avoid mutating the input.
+    Returns (ordered_eligible_tickers, rank_map).
+    """
+    work = [dict(r) for r in rows]
+    backfill_columns(work)
+
+    work.sort(key=lambda r: compute_actionable_sort_key(
+        decision_fields=r,
+        archetype=r.get("archetype", ""),
+        optionality=_rerank_sf(r.get("clinical_optionality_pct_dev")),
+        composite_rank=r.get("composite_rank"),
+        ticker=r.get("ticker", ""),
+        catalyst_event_type=r.get("catalyst_event_type", ""),
+        catalyst_source=r.get("catalyst_source", ""),
+        ruleset=ruleset,
+        tiebreaker_pct=(
+            _rerank_sf(r.get("alpha_cohort_pct"))
+            if ruleset.sort_anchor == "alpha_cohort"
+            else (
+                _rerank_sf(r.get("commercial_quality_pct"))
+                if r.get("archetype", "").startswith("commercial_")
+                else _rerank_sf(r.get("clinical_optionality_pct_dev"))
+            )
+        ),
+        alpha_raw=_rerank_sf(r.get("alpha_cohort_raw")),
+    ))
+
+    tickers: List[str] = []
+    ranks: Dict[str, int] = {}
+    rank = 1
+    for r in work:
+        elig = str(r.get("eligible", "")).strip().lower()
+        if elig in ("1", "true", "yes"):
+            t = r.get("ticker", "")
+            if t:
+                tickers.append(t)
+                ranks[t] = rank
+                rank += 1
+    return tickers, ranks
+
+
+def evaluate_ruleset_rerank_only(
+    candidate_ruleset: DecisionRuleset,
+    baseline_ruleset: DecisionRuleset,
+    dates: List[str],
+    snapshot_dir: Path,
+    k: int,
+) -> Dict[str, Any]:
+    """Evaluate by re-ranking historical snapshots (no price data needed).
+
+    Loads each snapshot's rankings.csv, re-ranks using both rulesets,
+    and computes stability + cross-comparison metrics.
+    """
+    is_self_eval = candidate_ruleset.ruleset_id == baseline_ruleset.ruleset_id
+
+    per_date: List[Dict[str, Any]] = []
+    skipped: List[Dict[str, str]] = []
+
+    prev_cand_tickers: List[str] = []
+    prev_cand_ranks: Optional[Dict[str, int]] = None
+
+    # Temporal stability (candidate day-over-day)
+    temporal_overlaps_20: List[float] = []
+    temporal_overlaps_60: List[float] = []
+    temporal_spearman: List[float] = []
+    temporal_max_shifts: List[Dict[str, Any]] = []
+
+    # Cross-comparison (candidate vs baseline, same date)
+    cross_overlaps_20: List[float] = []
+    cross_overlaps_60: List[float] = []
+    cross_spearman: List[float] = []
+    cross_max_shifts: List[Dict[str, Any]] = []
+    cross_pct_changed: List[float] = []
+
+    for snap_date in dates:
+        snap_path = snapshot_dir / snap_date
+        if not snap_path.is_dir():
+            skipped.append({"date": snap_date, "reason": "missing_snapshot"})
+            continue
+
+        rankings_path = snap_path / "rankings.csv"
+        if not rankings_path.exists():
+            skipped.append({"date": snap_date, "reason": "missing_rankings"})
+            continue
+
+        rows = _read_rankings(rankings_path)
+        if not rows:
+            skipped.append({"date": snap_date, "reason": "empty_rankings"})
+            continue
+
+        if "ticker" not in rows[0]:
+            skipped.append({"date": snap_date, "reason": "missing_ticker_column"})
+            continue
+
+        cand_tickers, cand_ranks = rerank_rows(rows, candidate_ruleset)
+
+        if not cand_tickers:
+            skipped.append({"date": snap_date, "reason": "no_eligible_rows"})
+            continue
+
+        date_row: Dict[str, Any] = {
+            "date": snap_date,
+            "n_eligible": len(cand_tickers),
+        }
+
+        if is_degraded(snap_path):
+            date_row["degraded_snapshot"] = True
+
+        # Temporal stability (candidate day-over-day)
+        if prev_cand_ranks is not None:
+            ov20 = compute_overlap(cand_tickers, prev_cand_tickers, min(20, k))
+            ov60 = compute_overlap(cand_tickers, prev_cand_tickers, k)
+            rc = compute_rank_correlation(cand_ranks, prev_cand_ranks)
+            ms = compute_max_shift(cand_ranks, prev_cand_ranks)
+
+            temporal_overlaps_20.append(ov20["overlap_pct"])
+            temporal_overlaps_60.append(ov60["overlap_pct"])
+            if rc["spearman"] is not None:
+                temporal_spearman.append(rc["spearman"])
+            if ms:
+                temporal_max_shifts.append({**ms, "date": snap_date})
+
+            date_row["temporal_overlap_20"] = ov20["overlap_pct"]
+            date_row["temporal_overlap_60"] = ov60["overlap_pct"]
+            date_row["temporal_spearman"] = rc["spearman"]
+
+        prev_cand_tickers = cand_tickers[:k]
+        prev_cand_ranks = cand_ranks
+
+        # Cross-comparison (candidate vs baseline, same date)
+        if not is_self_eval:
+            base_tickers, base_ranks = rerank_rows(rows, baseline_ruleset)
+
+            xov20 = compute_overlap(cand_tickers, base_tickers, min(20, k))
+            xov60 = compute_overlap(cand_tickers, base_tickers, k)
+            xrc = compute_rank_correlation(cand_ranks, base_ranks)
+            xms = compute_max_shift(cand_ranks, base_ranks)
+
+            cross_overlaps_20.append(xov20["overlap_pct"])
+            cross_overlaps_60.append(xov60["overlap_pct"])
+            if xrc["spearman"] is not None:
+                cross_spearman.append(xrc["spearman"])
+            if xms:
+                cross_max_shifts.append({**xms, "date": snap_date})
+
+            common = set(cand_ranks) & set(base_ranks)
+            if common:
+                changed = sum(
+                    1 for t in common if cand_ranks[t] != base_ranks[t]
+                )
+                pct = round(100 * changed / len(common), 1)
+                cross_pct_changed.append(pct)
+                date_row["cross_pct_rank_changed"] = pct
+
+            date_row["cross_overlap_20"] = xov20["overlap_pct"]
+            date_row["cross_overlap_60"] = xov60["overlap_pct"]
+            date_row["cross_spearman"] = xrc["spearman"]
+
+        per_date.append(date_row)
+
+    # --- Aggregate ---
+    result: Dict[str, Any] = {
+        "dates_evaluated": [d["date"] for d in per_date],
+        "n_evaluated": len(per_date),
+        "dates_skipped": skipped,
+        "n_skipped": len(skipped),
+    }
+
+    # Temporal stability
+    temporal: Dict[str, Any] = {}
+    if temporal_overlaps_60:
+        temporal["mean_top20_overlap"] = round(
+            statistics.mean(temporal_overlaps_20), 1
+        )
+        temporal["mean_top60_overlap"] = round(
+            statistics.mean(temporal_overlaps_60), 1
+        )
+        temporal["worst_top60_overlap"] = round(min(temporal_overlaps_60), 1)
+    if temporal_spearman:
+        temporal["mean_spearman"] = round(statistics.mean(temporal_spearman), 4)
+        temporal["worst_spearman"] = round(min(temporal_spearman), 4)
+    if temporal_max_shifts:
+        worst = max(temporal_max_shifts, key=lambda x: x["shift"])
+        temporal["max_rank_shift"] = worst
+    result["temporal_stability"] = temporal
+
+    # Cross-comparison
+    cross: Dict[str, Any] = {}
+    if cross_overlaps_60:
+        cross["mean_top20_overlap"] = round(
+            statistics.mean(cross_overlaps_20), 1
+        )
+        cross["mean_top60_overlap"] = round(
+            statistics.mean(cross_overlaps_60), 1
+        )
+        cross["worst_top60_overlap"] = round(min(cross_overlaps_60), 1)
+    if cross_spearman:
+        cross["mean_spearman"] = round(statistics.mean(cross_spearman), 4)
+    if cross_max_shifts:
+        worst = max(cross_max_shifts, key=lambda x: x["shift"])
+        cross["max_rank_shift"] = worst
+    if cross_pct_changed:
+        cross["mean_pct_rank_changed"] = round(
+            statistics.mean(cross_pct_changed), 1
+        )
+    result["cross_comparison"] = cross
+
+    result["performance"] = {}
+    result["regime"] = {}
+    result["per_date"] = per_date
+
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -692,6 +919,146 @@ def render_markdown(
 
 
 # ---------------------------------------------------------------------------
+# CLI — rerank-only mode
+# ---------------------------------------------------------------------------
+
+
+def _main_rerank_only(args: argparse.Namespace) -> int:
+    """Evaluate by re-ranking snapshots (no price data needed)."""
+    try:
+        cand_rs = DecisionRuleset.from_json(str(args.candidate))
+    except Exception as e:
+        print(f"ERROR: cannot load candidate ruleset: {e}", file=sys.stderr)
+        return 2
+    candidate_id = cand_rs.ruleset_id
+
+    baseline_file = ""
+    if args.baseline:
+        try:
+            base_rs = DecisionRuleset.from_json(str(args.baseline))
+            baseline_file = args.baseline.name
+        except Exception as e:
+            print(f"ERROR: cannot load baseline ruleset: {e}", file=sys.stderr)
+            return 2
+    else:
+        manifest_path = (
+            _PROJECT_ROOT / "production_data" / "decision_rulesets" / "manifest.json"
+        )
+        try:
+            _, baseline_file = active_ruleset_from_manifest(manifest_path)
+        except Exception as e:
+            print(
+                f"ERROR: cannot determine baseline from manifest: {e}",
+                file=sys.stderr,
+            )
+            return 2
+        try:
+            base_rs = DecisionRuleset.from_json(
+                str(manifest_path.parent / baseline_file)
+            )
+        except Exception as e:
+            print(f"ERROR: cannot load baseline ruleset: {e}", file=sys.stderr)
+            return 2
+
+    baseline_id = base_rs.ruleset_id
+
+    print(f"Candidate: {candidate_id} ({args.candidate.name})")
+    print(f"Baseline:  {baseline_id} ({baseline_file})")
+    print("Mode:      rerank-only (no price data needed)")
+
+    dates = discover_snapshot_dates(args.snapshot_dir, args.start, args.end)
+    if not dates:
+        print("ERROR: no snapshot dates found in range", file=sys.stderr)
+        return 1
+
+    print(f"Dates in range: {len(dates)} ({dates[0]} to {dates[-1]})")
+    print("Re-ranking...")
+
+    eval_result = evaluate_ruleset_rerank_only(
+        candidate_ruleset=cand_rs,
+        baseline_ruleset=base_rs,
+        dates=dates,
+        snapshot_dir=args.snapshot_dir,
+        k=args.k,
+    )
+
+    print(
+        f"  Evaluated: {eval_result['n_evaluated']}, "
+        f"Skipped: {eval_result['n_skipped']}"
+    )
+
+    gate_result = None
+    if args.gate:
+        gate_result = evaluate_gate(eval_result)
+        print(f"  Gate: {gate_result['verdict']}")
+
+    config = {
+        "start": args.start,
+        "end": args.end,
+        "k": args.k,
+        "rerank_only": True,
+    }
+
+    output = {
+        "schema": SCHEMA,
+        "version": VERSION,
+        "created_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "candidate": {"id": candidate_id, "file": args.candidate.name},
+        "baseline": {"id": baseline_id, "file": baseline_file},
+        "config": config,
+        "mode": "rerank_only",
+        "notes": "rerank-only: derived from snapshot rankings.csv; no PIT replay/returns",
+        **eval_result,
+        "gate": gate_result,
+    }
+
+    out_subdir = (
+        args.out_dir
+        / f"{candidate_id}__vs__{baseline_id}"
+        / f"{args.start}__{args.end}"
+    )
+    out_subdir.mkdir(parents=True, exist_ok=True)
+
+    json_path = out_subdir / "ruleset_eval.json"
+    json_path.write_text(_stable_json(output), encoding="utf-8")
+
+    md = render_markdown(
+        candidate_id,
+        args.candidate.name,
+        baseline_id,
+        baseline_file,
+        eval_result,
+        gate_result,
+        config,
+    )
+    md_path = out_subdir / "ruleset_eval.md"
+    md_path.write_text(md, encoding="utf-8")
+
+    per_date = eval_result.get("per_date", [])
+    if per_date:
+        csv_path = out_subdir / "per_date_metrics.csv"
+        all_fields: List[str] = []
+        seen: set = set()
+        for row in per_date:
+            for key in row:
+                if key not in seen:
+                    all_fields.append(key)
+                    seen.add(key)
+        with open(csv_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(
+                f, fieldnames=all_fields, extrasaction="ignore"
+            )
+            writer.writeheader()
+            writer.writerows(per_date)
+
+    print(f"Written: {out_subdir}")
+
+    if gate_result and gate_result["verdict"] == "FAIL":
+        return 1
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
@@ -721,7 +1088,14 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--gate", action="store_true")
     parser.add_argument("--long-short", action="store_true")
     parser.add_argument("--rebuild-snapshots", action="store_true")
+    parser.add_argument(
+        "--rerank-only", action="store_true",
+        help="Re-rank snapshots with candidate/baseline rulesets (no price data needed)",
+    )
     args = parser.parse_args(argv)
+
+    if args.rerank_only:
+        return _main_rerank_only(args)
 
     # Load candidate
     try:
