@@ -400,6 +400,40 @@ jobs:
             --thresholds "production_data/monitoring_thresholds/v1.json" \
             --as-of-date "${DATE}"
 
+      # ── Evaluate ruleset (trailing window, informational) ──────
+      - name: Evaluate ruleset
+        if: always() && steps.runner.outputs.exit_code != '1'
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          RULESET="production_data/decision_rulesets/v1.6.1_alpha_modifier_within_tier.json"
+          OUT_DIR="data/snapshots/${DATE}/ruleset_eval"
+
+          # Compute trailing window start (~15 trading days back)
+          START=$(python3 -c "
+          from datetime import datetime, timedelta
+          d = datetime.strptime('$DATE', '%Y-%m-%d')
+          print((d - timedelta(days=21)).strftime('%Y-%m-%d'))
+          ")
+
+          echo "Evaluating ruleset over ${START} → ${DATE}..."
+          python3 scripts/eval_ruleset.py \
+            --candidate "$RULESET" \
+            --start "$START" --end "$DATE" \
+            --k 60 --horizon 5 --cost-bps 30 \
+            --snapshot-dir data/snapshots \
+            --price-csv production_data/price_history.csv \
+            --out-dir "$OUT_DIR" \
+            --anchor-mode prev_trading_day \
+            --gate || {
+            echo "::warning::Ruleset evaluation failed or gate FAIL (exit $?)"
+          }
+
+          # Append eval summary to step summary if report exists
+          if [ -f "${OUT_DIR}/ruleset_eval.md" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            cat "${OUT_DIR}/ruleset_eval.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       # ── Upload snapshot artifacts ───────────────────────────────
       - name: Upload snapshot
         if: always()
