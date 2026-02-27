@@ -1,0 +1,393 @@
+name: ruleset-promotion-gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_ruleset_path:
+        description: "Path to candidate ruleset JSON (relative to repo root)"
+        required: true
+        type: string
+      baseline_ruleset_path:
+        description: "Path to baseline ruleset JSON (omit to use active ruleset from manifest)"
+        required: false
+        type: string
+      start_date:
+        description: "Evaluation start date (YYYY-MM-DD)"
+        required: true
+        type: string
+      end_date:
+        description: "Evaluation end date (YYYY-MM-DD)"
+        required: true
+        type: string
+      top_k:
+        description: "Top-k portfolio size"
+        required: false
+        type: string
+        default: "60"
+      horizon:
+        description: "Forward return horizon (trading days)"
+        required: false
+        type: string
+        default: "5"
+      cost_bps:
+        description: "Round-trip cost in basis points"
+        required: false
+        type: string
+        default: "30"
+      fail_on_warn:
+        description: "Treat WARN verdict as failure (exit 1)"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ruleset-promotion-gate
+  cancel-in-progress: true
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONHASHSEED: "0"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      # ── Hydrate inputs (market data + price CSV from replay bundle) ──
+      - name: Hydrate inputs
+        run: |
+          # Market data bundle
+          if gh release download "inputs-latest" --pattern "phase2-inputs-latest.tar.gz" --dir /tmp 2>/dev/null; then
+            echo "Downloaded inputs bundle"
+            tar -xzf "/tmp/phase2-inputs-latest.tar.gz" -C production_data/
+          else
+            echo "::notice::No inputs bundle found"
+          fi
+
+          # Price CSV from most recent replay bundle artifact
+          if [ -f "production_data/price_history.csv" ]; then
+            echo "price_history.csv already present"
+            exit 0
+          fi
+
+          echo "Fetching price_history.csv from recent replay bundle..."
+          # Find the most recent replay-bundle artifact
+          AID=$(gh api "repos/{owner}/{repo}/actions/artifacts?per_page=50" \
+            -q '[.artifacts[] | select(.name | startswith("replay-bundle-"))][0].id // empty' 2>/dev/null || true)
+
+          if [ -z "$AID" ]; then
+            echo "::error::No replay bundle artifact found — price_history.csv unavailable"
+            exit 1
+          fi
+
+          gh api "repos/{owner}/{repo}/actions/artifacts/${AID}/zip" > /tmp/replay.zip 2>/dev/null
+          # Replay bundle is a .tgz inside a .zip artifact wrapper
+          unzip -qo /tmp/replay.zip -d /tmp/replay_unzipped
+          BUNDLE=$(find /tmp/replay_unzipped -name "*.tgz" | head -1)
+          if [ -z "$BUNDLE" ]; then
+            echo "::error::No .tgz found inside replay bundle artifact"
+            exit 1
+          fi
+
+          mkdir -p /tmp/replay_extracted
+          tar -xzf "$BUNDLE" -C /tmp/replay_extracted
+
+          # Find price_history.csv (path has bundle version prefix, e.g. replay_bundle_v1/)
+          PRICE_CSV=$(find /tmp/replay_extracted -name "price_history.csv" -type f | head -1)
+          if [ -n "$PRICE_CSV" ]; then
+            cp "$PRICE_CSV" production_data/price_history.csv
+            echo "Extracted price_history.csv ($(wc -l < production_data/price_history.csv) lines)"
+          else
+            echo "::error::price_history.csv not found in replay bundle"
+            exit 1
+          fi
+
+          rm -rf /tmp/replay.zip /tmp/replay_unzipped /tmp/replay_extracted
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Download snapshot artifacts for the date range ─────────
+      - name: Download snapshots
+        run: |
+          mkdir -p data/snapshots
+          FOUND=0
+
+          # Generate weekday dates in range
+          DATES=$(python3 -c "
+          from datetime import datetime, timedelta
+          s = datetime.strptime('${{ inputs.start_date }}', '%Y-%m-%d')
+          e = datetime.strptime('${{ inputs.end_date }}', '%Y-%m-%d')
+          d = s
+          while d <= e:
+              if d.weekday() < 5:
+                  print(d.strftime('%Y-%m-%d'))
+              d += timedelta(days=1)
+          ")
+
+          for DATE in $DATES; do
+            DEST="data/snapshots/${DATE}"
+            if [ -f "${DEST}/rankings.csv" ]; then
+              echo "  ${DATE}: already exists"
+              FOUND=$((FOUND + 1))
+              continue
+            fi
+
+            ARTIFACT_NAME="phase2-snapshot-${DATE}"
+            AID=$(gh api "repos/{owner}/{repo}/actions/artifacts?name=${ARTIFACT_NAME}&per_page=1" \
+              -q '.artifacts[0].id // empty' 2>/dev/null || true)
+
+            if [ -z "$AID" ]; then
+              echo "  ${DATE}: no artifact"
+              continue
+            fi
+
+            mkdir -p "$DEST"
+            if gh api "repos/{owner}/{repo}/actions/artifacts/${AID}/zip" > "/tmp/snap_${DATE}.zip" 2>/dev/null; then
+              unzip -qo "/tmp/snap_${DATE}.zip" -d "$DEST" 2>/dev/null
+              rm -f "/tmp/snap_${DATE}.zip"
+              FOUND=$((FOUND + 1))
+              echo "  ${DATE}: downloaded"
+            else
+              echo "  ${DATE}: download failed"
+              rmdir "$DEST" 2>/dev/null || true
+            fi
+          done
+
+          echo "Snapshots available: ${FOUND}"
+          if [ "$FOUND" -eq 0 ]; then
+            echo "::warning::No snapshot artifacts found for date range — evaluator will skip all dates"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate inputs
+        run: |
+          if [ ! -f "${{ inputs.candidate_ruleset_path }}" ]; then
+            echo "::error::Candidate ruleset not found: ${{ inputs.candidate_ruleset_path }}"
+            exit 1
+          fi
+          if [ -n "${{ inputs.baseline_ruleset_path }}" ] && [ ! -f "${{ inputs.baseline_ruleset_path }}" ]; then
+            echo "::error::Baseline ruleset not found: ${{ inputs.baseline_ruleset_path }}"
+            exit 1
+          fi
+
+      - name: Run ruleset evaluator
+        id: evaluator
+        continue-on-error: true
+        run: |
+          ARGS="--candidate ${{ inputs.candidate_ruleset_path }}"
+          ARGS="$ARGS --start ${{ inputs.start_date }} --end ${{ inputs.end_date }}"
+          ARGS="$ARGS --k ${{ inputs.top_k }} --horizon ${{ inputs.horizon }}"
+          ARGS="$ARGS --cost-bps ${{ inputs.cost_bps }}"
+          ARGS="$ARGS --out-dir /tmp/ruleset_gate_out"
+          ARGS="$ARGS --anchor-mode prev_trading_day"
+          ARGS="$ARGS --gate"
+
+          if [ -n "${{ inputs.baseline_ruleset_path }}" ]; then
+            ARGS="$ARGS --baseline ${{ inputs.baseline_ruleset_path }}"
+          fi
+
+          set +e
+          python3 scripts/eval_ruleset.py $ARGS
+          RC=$?
+          set -e
+          echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+
+      - name: Build job summary
+        id: summary
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          from pathlib import Path
+
+          out_dir = Path("/tmp/ruleset_gate_out")
+          summary_file = os.environ["GITHUB_STEP_SUMMARY"]
+          eval_rc = os.environ.get("EVAL_RC", "")
+          fail_on_warn = os.environ.get("FAIL_ON_WARN", "false") == "true"
+
+          # Find the ruleset_eval.json (nested under {cand}__vs__{base}/{start}__{end}/)
+          candidates = list(out_dir.rglob("ruleset_eval.json"))
+          if not candidates:
+              with open(summary_file, "a", encoding="utf-8") as f:
+                  f.write("## Ruleset Promotion Gate\n\n")
+                  f.write("> :x: **No evaluation output found.** The evaluator may have crashed.\n")
+                  f.write(f"\n| Evaluator exit code | `{eval_rc}` |\n")
+              # Signal FAIL to the verdict step
+              with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                  f.write("verdict=FAIL\n")
+              sys.exit(0)
+
+          eval_path = candidates[0]
+          data = json.loads(eval_path.read_text(encoding="utf-8"))
+
+          # Extract metrics
+          gate = data.get("gate") or {}
+          verdict = gate.get("verdict", "UNKNOWN")
+          fail_reasons = gate.get("fail_reasons", [])
+          warn_reasons = gate.get("warn_reasons", [])
+          config = data.get("config", {})
+          ts = data.get("temporal_stability", {})
+          perf = data.get("performance", {})
+          cand_perf = perf.get("candidate", {})
+          base_perf = perf.get("baseline", {})
+          delta_perf = perf.get("delta", {})
+          cand_info = data.get("candidate", {})
+          base_info = data.get("baseline", {})
+
+          # Verdict icon
+          icons = {"PASS": ":white_check_mark:", "WARN": ":warning:", "FAIL": ":x:"}
+          icon = icons.get(verdict, ":question:")
+
+          # GitHub annotations
+          if verdict == "FAIL":
+              for r in fail_reasons:
+                  print(f"::error::GATE FAIL: {r}")
+          if verdict == "WARN":
+              for r in warn_reasons:
+                  print(f"::warning::GATE WARN: {r}")
+
+          # Build summary markdown
+          lines = []
+          lines.append("## Ruleset Promotion Gate")
+          lines.append("")
+          lines.append(f"> {icon} **Verdict: {verdict}**")
+          lines.append("")
+
+          # Config table
+          lines.append("### Configuration")
+          lines.append("")
+          lines.append("| Field | Value |")
+          lines.append("|-------|-------|")
+          lines.append(f"| candidate | `{cand_info.get('id', '?')}` ({cand_info.get('file', '?')}) |")
+          lines.append(f"| baseline | `{base_info.get('id', '?')}` ({base_info.get('file', '?')}) |")
+          lines.append(f"| window | `{config.get('start', '?')}` to `{config.get('end', '?')}` |")
+          lines.append(f"| dates evaluated | {data.get('n_evaluated', 0)} |")
+          lines.append(f"| dates skipped | {data.get('n_skipped', 0)} |")
+          lines.append(f"| k / horizon / cost_bps | {config.get('k')} / {config.get('horizon')} / {config.get('cost_bps')} |")
+          lines.append("")
+
+          # Skip reasons
+          skipped = data.get("dates_skipped", [])
+          if skipped:
+              from collections import Counter
+              reasons = Counter(s["reason"] for s in skipped)
+              lines.append("**Skip reasons:** " + ", ".join(f"{r}={c}" for r, c in sorted(reasons.items())))
+              lines.append("")
+
+          # Metrics table
+          lines.append("### Key Metrics")
+          lines.append("")
+          lines.append("| Metric | Value |")
+          lines.append("|--------|-------|")
+
+          mean_ov = ts.get("mean_top60_overlap")
+          if mean_ov is not None:
+              lines.append(f"| mean_top60_overlap | {mean_ov}% |")
+          worst_ov = ts.get("worst_top60_overlap")
+          if worst_ov is not None:
+              lines.append(f"| worst_top60_overlap | {worst_ov}% |")
+          ms = ts.get("max_rank_shift", {})
+          if ms:
+              lines.append(f"| max_rank_shift | {ms.get('shift', '?')} ({ms.get('ticker', '?')}: {ms.get('from', '?')}->{ms.get('to', '?')}) |")
+          mean_sp = ts.get("mean_spearman")
+          if mean_sp is not None:
+              lines.append(f"| mean_spearman | {mean_sp} |")
+          if cand_perf:
+              lines.append(f"| mean_turnover | {cand_perf.get('mean_turnover', '-')} |")
+              lines.append(f"| mean_net_return | {cand_perf.get('mean_net', '-')} |")
+              lines.append(f"| cumulative_net | {cand_perf.get('cumulative_net', '-')} |")
+          if delta_perf:
+              lines.append(f"| net_return_delta (vs baseline) | {delta_perf.get('mean_net', '-')} |")
+          lines.append("")
+
+          # Fail/Warn reasons
+          if fail_reasons:
+              lines.append("### Fail Reasons")
+              lines.append("")
+              for r in fail_reasons:
+                  lines.append(f"- :x: {r}")
+              lines.append("")
+          if warn_reasons:
+              lines.append("### Warn Reasons")
+              lines.append("")
+              for r in warn_reasons:
+                  lines.append(f"- :warning: {r}")
+              lines.append("")
+
+          # No data warning
+          if data.get("n_evaluated", 0) == 0:
+              lines.append("> :rotating_light: **No dates were evaluated.** All dates were skipped. Check that snapshots exist for the window and match the candidate ruleset ID.")
+              lines.append("")
+
+          with open(summary_file, "a", encoding="utf-8") as f:
+              f.write("\n".join(lines) + "\n")
+
+          # Pass verdict to next step
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"verdict={verdict}\n")
+          PY
+        env:
+          EVAL_RC: ${{ steps.evaluator.outputs.exit_code }}
+          FAIL_ON_WARN: ${{ inputs.fail_on_warn }}
+
+      - name: Upload evaluation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruleset-gate-${{ inputs.start_date }}-to-${{ inputs.end_date }}
+          path: /tmp/ruleset_gate_out/
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Final verdict
+        if: always()
+        run: |
+          VERDICT="${{ steps.summary.outputs.verdict }}"
+          EVAL_RC="${{ steps.evaluator.outputs.exit_code }}"
+          FAIL_ON_WARN="${{ inputs.fail_on_warn }}"
+
+          echo "Evaluator exit code: ${EVAL_RC}"
+          echo "Gate verdict: ${VERDICT}"
+
+          # Evaluator exit 2 = config error
+          if [ "${EVAL_RC}" = "2" ]; then
+            echo "::error::Evaluator configuration error (exit 2)"
+            exit 1
+          fi
+
+          if [ "${VERDICT}" = "FAIL" ]; then
+            echo "::error::Promotion gate FAILED"
+            exit 1
+          fi
+
+          if [ "${VERDICT}" = "WARN" ] && [ "${FAIL_ON_WARN}" = "true" ]; then
+            echo "::error::Promotion gate WARN (fail_on_warn=true)"
+            exit 1
+          fi
+
+          if [ "${VERDICT}" = "WARN" ]; then
+            echo "::warning::Promotion gate passed with warnings"
+            exit 0
+          fi
+
+          echo "Promotion gate PASSED"
+          exit 0
