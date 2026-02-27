@@ -541,6 +541,30 @@ jobs:
             cat "$TRIAGE_MD" >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      # ── Build daily triage bundle ──────────────────────────────
+      - name: Build daily triage bundle
+        if: always() && steps.runner.outputs.exit_code != '1'
+        continue-on-error: true
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          SNAP_DIR="data/snapshots/${DATE}"
+
+          if [ ! -d "$SNAP_DIR" ]; then
+            echo "::notice::Snapshot directory not found — skipping triage bundle"
+            exit 0
+          fi
+
+          python3 scripts/build_daily_triage.py \
+            --as-of-date "$DATE" \
+            --snapshot-dir data/snapshots \
+            --git-sha "${{ github.sha }}"
+
+          HEALTH_MD="${SNAP_DIR}/daily_triage/health_summary.md"
+          if [ -f "$HEALTH_MD" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            cat "$HEALTH_MD" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       # ── Upload snapshot artifacts ───────────────────────────────
       - name: Upload snapshot
         if: always()

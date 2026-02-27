@@ -3,11 +3,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import zipfile
 from pathlib import Path
 
 import pytest
 
 from scripts.promote_ruleset import (
+    _extract_from_artifact,
     _find_active,
     _validate_changelog,
     update_default_path,
@@ -355,3 +357,58 @@ class TestMain:
         assert _find_active(m)["id"] == _ACTIVE_ID
         # Pins unchanged
         assert _ACTIVE_ID in repo["run_screen"].read_text()
+
+
+# ---------------------------------------------------------------------------
+# Tests: gate artifact auto-fetch
+# ---------------------------------------------------------------------------
+
+
+class TestGateAutoFetch:
+    def test_artifact_zip_extraction(self, tmp_path):
+        """Extracts ruleset_eval.json from a zip artifact."""
+        eval_data = {"gate": {"verdict": "PASS"}, "n_evaluated": 5}
+        zip_path = tmp_path / "artifact.zip"
+        with zipfile.ZipFile(zip_path, "w") as zf:
+            zf.writestr(
+                "phase2-snapshot-2026-02-27/ruleset_eval.json",
+                json.dumps(eval_data),
+            )
+        work_dir = tmp_path / "extract"
+        work_dir.mkdir()
+        result = _extract_from_artifact(zip_path, work_dir)
+        assert result.exists()
+        loaded = json.loads(result.read_text())
+        assert loaded["gate"]["verdict"] == "PASS"
+
+    def test_multiple_sources_error(self, tmp_path, monkeypatch):
+        """Specifying >1 gate source produces an error."""
+        repo = _make_repo(tmp_path)
+        gate = _make_gate_json(tmp_path)
+
+        import scripts.promote_ruleset as mod
+        monkeypatch.setattr(mod, "RULESETS_DIR", repo["rulesets_dir"])
+        monkeypatch.setattr(mod, "MANIFEST_PATH", repo["manifest"])
+
+        rc = main([
+            _CANDIDATE_ID,
+            "--gate-summary", str(gate),
+            "--gate-run-id", "12345",
+            "--manifest", str(repo["manifest"]),
+        ])
+        assert rc == 1
+
+    def test_missing_artifact_file_error(self, tmp_path, monkeypatch):
+        """Non-existent zip path errors cleanly."""
+        repo = _make_repo(tmp_path)
+
+        import scripts.promote_ruleset as mod
+        monkeypatch.setattr(mod, "RULESETS_DIR", repo["rulesets_dir"])
+        monkeypatch.setattr(mod, "MANIFEST_PATH", repo["manifest"])
+
+        rc = main([
+            _CANDIDATE_ID,
+            "--gate-artifact", str(tmp_path / "nonexistent.zip"),
+            "--manifest", str(repo["manifest"]),
+        ])
+        assert rc == 1

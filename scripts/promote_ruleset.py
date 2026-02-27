@@ -19,6 +19,8 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
+import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -262,6 +264,75 @@ def write_receipt(
 
 
 # ---------------------------------------------------------------------------
+# Gate artifact auto-fetch
+# ---------------------------------------------------------------------------
+
+
+def _extract_from_artifact(artifact_path: Path, work_dir: Path) -> Path:
+    """Extract ruleset_eval.json from a downloaded artifact zip."""
+    if not artifact_path.exists():
+        raise FileNotFoundError(f"Artifact zip not found: {artifact_path}")
+    with zipfile.ZipFile(artifact_path, "r") as zf:
+        candidates = [n for n in zf.namelist() if n.endswith("ruleset_eval.json")]
+        if not candidates:
+            raise FileNotFoundError(
+                "No ruleset_eval.json found inside artifact zip."
+            )
+        # Pick the shortest path match
+        best = min(candidates, key=len)
+        zf.extract(best, work_dir)
+        return work_dir / best
+
+
+def _fetch_from_run(run_id: str, work_dir: Path) -> Path:
+    """Download snapshot artifact from a GitHub Actions run and find ruleset_eval.json."""
+    try:
+        subprocess.run(
+            ["gh", "run", "download", run_id, "-D", str(work_dir)],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=120,
+            cwd=str(PROJECT_ROOT),
+        )
+    except FileNotFoundError:
+        raise RuntimeError("'gh' CLI not found. Install GitHub CLI to use --gate-run-id.")
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"gh run download failed: {e.stderr.strip()}")
+
+    candidates = list(work_dir.rglob("ruleset_eval.json"))
+    if not candidates:
+        raise FileNotFoundError(
+            f"No ruleset_eval.json found in artifacts from run {run_id}."
+        )
+    return min(candidates, key=lambda p: len(p.parts))
+
+
+def _resolve_gate_summary(
+    gate_summary: Optional[Path],
+    gate_run_id: Optional[str],
+    gate_artifact: Optional[Path],
+) -> Optional[Path]:
+    """Resolve the gate summary path from one of three sources.
+
+    Priority: --gate-summary > --gate-artifact > --gate-run-id.
+    Returns the resolved Path, or None if no source provided.
+    """
+    if gate_summary:
+        return gate_summary
+
+    if gate_artifact:
+        work_dir = Path(tempfile.mkdtemp(prefix="promote_artifact_"))
+        return _extract_from_artifact(gate_artifact, work_dir)
+
+    if gate_run_id:
+        work_dir = Path(tempfile.mkdtemp(prefix="promote_run_"))
+        return _fetch_from_run(gate_run_id, work_dir)
+
+    return None
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -277,6 +348,14 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument(
         "--gate-summary", type=Path,
         help="Path to ruleset_eval.json from the evaluator (required unless --force).",
+    )
+    parser.add_argument(
+        "--gate-run-id", default="",
+        help="Fetch snapshot artifact from GitHub Actions run and extract ruleset_eval.json.",
+    )
+    parser.add_argument(
+        "--gate-artifact", type=Path, default=None,
+        help="Path to a pre-downloaded artifact zip containing ruleset_eval.json.",
     )
     parser.add_argument(
         "--gate-run-url", default="",
@@ -307,6 +386,27 @@ def main(argv: Optional[List[str]] = None) -> int:
         help=argparse.SUPPRESS,
     )
     args = parser.parse_args(argv)
+
+    # Resolve gate summary from multiple possible sources
+    source_count = sum(
+        bool(x) for x in [args.gate_summary, args.gate_run_id, args.gate_artifact]
+    )
+    if source_count > 1:
+        print(
+            "ERROR: Specify at most one of --gate-summary, --gate-run-id, --gate-artifact.",
+            file=sys.stderr,
+        )
+        return 1
+
+    try:
+        resolved = _resolve_gate_summary(
+            args.gate_summary, args.gate_run_id or None, args.gate_artifact
+        )
+    except (FileNotFoundError, RuntimeError) as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        return 1
+    if resolved is not None:
+        args.gate_summary = resolved
 
     rid = args.ruleset_id
     manifest_path = args.manifest
