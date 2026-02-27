@@ -1,6 +1,6 @@
 {
   "as_of_date": "2026-02-27",
-  "saved_at": "2026-02-27T20:38:01.985445Z",
+  "saved_at": "2026-02-27T21:02:03.029473Z",
   "decision_mode": "phase2",
   "ranking_mode": "decision",
   "version": "1.6.0",
@@ -37,15 +37,15 @@
     },
     "composite_score": {
       "n_total": 297,
-      "n_unique": 291,
-      "tie_pct": 0.0202
+      "n_unique": 289,
+      "tie_pct": 0.0269
     }
   },
   "score_diagnostics": {
     "composite_score": {
       "n_total": 297,
-      "n_unique": 291,
-      "tie_pct": 0.0202
+      "n_unique": 289,
+      "tie_pct": 0.0269
     },
     "momentum_score": {
       "n_total": 297,
@@ -524,8 +524,8 @@
     "universe_mapped.json": "15f9c56365b4bad7"
   },
   "clinical_sort_telemetry": {
-    "n_nonzero_clin_adj_dev": 66,
-    "n_nonzero_clin_adj_comm": 59,
+    "n_nonzero_clin_adj_dev": 64,
+    "n_nonzero_clin_adj_comm": 60,
     "ruleset_id": "0c1129f6",
     "enable_clinical_sort_signal": true
   },
@@ -562,7 +562,7 @@
       ]
     },
     "cells_populated": 26,
-    "alpha_score_present": 190,
+    "alpha_score_present": 173,
     "alpha_score_missing": 16
   },
   "coinvest_coverage": {
