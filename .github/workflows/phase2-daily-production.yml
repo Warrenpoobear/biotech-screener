@@ -400,15 +400,18 @@ jobs:
             --thresholds "production_data/monitoring_thresholds/v1.json" \
             --as-of-date "${DATE}"
 
-      # ── Evaluate ruleset (trailing window, informational) ──────
+      # ── Evaluate ruleset (trailing window → single-day fallback) ──
       - name: Evaluate ruleset
         if: always() && steps.runner.outputs.exit_code != '1'
         run: |
           DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
           RULESET="production_data/decision_rulesets/v1.6.1_alpha_modifier_within_tier.json"
           OUT_DIR="data/snapshots/${DATE}/ruleset_eval"
+          COMMON_ARGS="--candidate $RULESET --k 60 --horizon 5 --cost-bps 30 \
+            --snapshot-dir data/snapshots --price-csv production_data/price_history.csv \
+            --out-dir $OUT_DIR --anchor-mode prev_trading_day --gate"
 
-          # Compute trailing window start (~15 trading days back)
+          # Trailing window (~15 trading days back)
           START=$(python3 -c "
           from datetime import datetime, timedelta
           d = datetime.strptime('$DATE', '%Y-%m-%d')
@@ -416,22 +419,39 @@ jobs:
           ")
 
           echo "Evaluating ruleset over ${START} → ${DATE}..."
-          python3 scripts/eval_ruleset.py \
-            --candidate "$RULESET" \
-            --start "$START" --end "$DATE" \
-            --k 60 --horizon 5 --cost-bps 30 \
-            --snapshot-dir data/snapshots \
-            --price-csv production_data/price_history.csv \
-            --out-dir "$OUT_DIR" \
-            --anchor-mode prev_trading_day \
-            --gate || {
-            echo "::warning::Ruleset evaluation failed or gate FAIL (exit $?)"
-          }
+          set +e
+          python3 scripts/eval_ruleset.py --start "$START" --end "$DATE" $COMMON_ARGS
+          EVAL_RC=$?
+          set -e
+
+          # Check if any dates were evaluated; fall back to single-day if not
+          EVAL_JSON=$(find "$OUT_DIR" -name "ruleset_eval.json" -type f 2>/dev/null | head -1)
+          if [ -n "$EVAL_JSON" ]; then
+            N_EVAL=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('n_evaluated',0))" "$EVAL_JSON")
+          else
+            N_EVAL=0
+          fi
+
+          if [ "$N_EVAL" -eq 0 ] && [ "$EVAL_RC" -ne 2 ]; then
+            echo "::warning::RULESET EVAL: zero dates evaluated in trailing window; falling back to single-day eval"
+            rm -rf "$OUT_DIR"
+            set +e
+            python3 scripts/eval_ruleset.py --start "$DATE" --end "$DATE" $COMMON_ARGS
+            EVAL_RC=$?
+            set -e
+          fi
+
+          if [ "$EVAL_RC" -eq 1 ]; then
+            echo "::warning::Ruleset evaluation gate FAIL (exit 1)"
+          elif [ "$EVAL_RC" -eq 2 ]; then
+            echo "::warning::Ruleset evaluation config error (exit 2)"
+          fi
 
           # Append eval summary to step summary if report exists
-          if [ -f "${OUT_DIR}/ruleset_eval.md" ]; then
+          EVAL_MD=$(find "$OUT_DIR" -name "ruleset_eval.md" -type f 2>/dev/null | head -1)
+          if [ -n "$EVAL_MD" ]; then
             echo "" >> "$GITHUB_STEP_SUMMARY"
-            cat "${OUT_DIR}/ruleset_eval.md" >> "$GITHUB_STEP_SUMMARY"
+            cat "$EVAL_MD" >> "$GITHUB_STEP_SUMMARY"
           fi
 
       # ── Upload snapshot artifacts ───────────────────────────────

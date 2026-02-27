@@ -502,6 +502,10 @@ def evaluate_gate(
     fail_reasons: List[str] = []
     warn_reasons: List[str] = []
 
+    # Zero evaluated dates is never a PASS
+    if eval_result.get("n_evaluated", 0) == 0:
+        warn_reasons.append("zero_evaluated_dates")
+
     ts = eval_result.get("temporal_stability", {})
 
     # Overlap

@@ -413,6 +413,7 @@ class TestDeterminism:
 class TestGate:
     def test_pass_when_stable(self):
         eval_result = {
+            "n_evaluated": 5,
             "temporal_stability": {
                 "mean_top60_overlap": 95.0,
                 "max_rank_shift": {"ticker": "X", "shift": 10, "date": "2026-02-05"},
@@ -448,13 +449,24 @@ class TestGate:
         gate = evaluate_gate(eval_result)
         assert gate["verdict"] == "FAIL"
 
-    def test_empty_stability_passes(self):
+    def test_empty_stability_with_dates_passes(self):
         eval_result = {
+            "n_evaluated": 1,
             "temporal_stability": {},
             "performance": {},
         }
         gate = evaluate_gate(eval_result)
         assert gate["verdict"] == "PASS"
+
+    def test_zero_evaluated_warns(self):
+        eval_result = {
+            "n_evaluated": 0,
+            "temporal_stability": {},
+            "performance": {},
+        }
+        gate = evaluate_gate(eval_result)
+        assert gate["verdict"] == "WARN"
+        assert "zero_evaluated_dates" in gate["warn_reasons"]
 
 
 # ---------------------------------------------------------------------------
