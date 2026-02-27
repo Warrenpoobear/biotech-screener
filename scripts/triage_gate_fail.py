@@ -30,7 +30,7 @@ from scripts.eval_ruleset import (
     rank_map as _existing_rank_map,
     rerank_rows,
 )
-from scripts.explain_rank_shift import explain_ticker_shift
+from scripts.explain_rank_shift import explain_rank_shift
 
 VERSION = "1.0.0"
 SCHEMA = "triage.v1"
@@ -248,35 +248,59 @@ def triage_gate_fail(
             }]
             notes.append("movers from aggregate max_rank_shift")
 
-    # Build per-ticker explains
+    # Build per-ticker explains (load both snapshots once, rerank once)
     explain_dir = out_dir / "explain"
     explain_dir.mkdir(parents=True, exist_ok=True)
 
     explain_files: List[str] = []
 
-    if ruleset and worst_date and prior_date:
-        for mover in movers:
-            ticker = mover.get("ticker", "")
-            if not ticker:
-                continue
-            try:
-                explain = explain_ticker_shift(
-                    ticker=ticker,
-                    current_date=worst_date,
-                    prior_date=prior_date,
-                    snapshot_dir=snapshot_dir,
-                    ruleset=ruleset,
-                )
-                fname = f"explain_{worst_date}_{ticker}.json"
-                (explain_dir / fname).write_text(
-                    _stable_json(explain), encoding="utf-8"
-                )
-                explain_files.append(f"explain/{fname}")
-            except Exception as exc:
-                notes.append(f"explain failed for {ticker}: {exc}")
-    elif not ruleset:
-        notes.append("no ruleset provided — skipped per-ticker explains")
-    elif not prior_date:
+    if worst_date and prior_date and movers:
+        cur_csv = snapshot_dir / worst_date / "rankings.csv"
+        pri_csv = snapshot_dir / prior_date / "rankings.csv"
+        if cur_csv.exists() and pri_csv.exists():
+            cur_rows = _read_rankings(cur_csv)
+            pri_rows = _read_rankings(pri_csv)
+            cur_by_ticker = {r.get("ticker", ""): r for r in cur_rows}
+            pri_by_ticker = {r.get("ticker", ""): r for r in pri_rows}
+
+            if ruleset:
+                _, cur_ranks = rerank_rows(cur_rows, ruleset)
+                _, pri_ranks = rerank_rows(pri_rows, ruleset)
+                rs_id = ruleset.ruleset_id
+            else:
+                cur_ranks = _existing_rank_map(cur_rows)
+                pri_ranks = _existing_rank_map(pri_rows)
+                rs_id = cand_info.get("id", "unknown")
+
+            for mover in movers:
+                ticker = mover.get("ticker", "")
+                if not ticker:
+                    continue
+                try:
+                    result = explain_rank_shift(
+                        as_of_date=worst_date,
+                        ticker=ticker,
+                        baseline_rank=pri_ranks.get(ticker),
+                        candidate_rank=cur_ranks.get(ticker),
+                        baseline_row=pri_by_ticker.get(ticker, {}),
+                        candidate_row=cur_by_ticker.get(ticker, {}),
+                        eval_mode="temporal",
+                        baseline_id=f"{rs_id}@{prior_date}",
+                        candidate_id=f"{rs_id}@{worst_date}",
+                    )
+                    fname = f"explain_{worst_date}_{ticker}.json"
+                    (explain_dir / fname).write_text(
+                        _stable_json(result.payload), encoding="utf-8"
+                    )
+                    explain_files.append(f"explain/{fname}")
+                except Exception as exc:
+                    notes.append(f"explain failed for {ticker}: {exc}")
+        else:
+            notes.append(
+                f"snapshot(s) missing for explain "
+                f"({worst_date} or {prior_date})"
+            )
+    elif not prior_date and worst_date:
         notes.append(
             f"no prior date for {worst_date} — skipped per-ticker explains"
         )

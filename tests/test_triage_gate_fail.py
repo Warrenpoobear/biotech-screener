@@ -22,10 +22,11 @@ from scripts.triage_gate_fail import (
     triage_gate_fail,
 )
 from scripts.explain_rank_shift import (
-    explain_ticker_shift,
+    ExplainResult,
     _feature_deltas,
-    _feature_snapshot,
     _module_attribution,
+    _stable_json,
+    explain_rank_shift,
 )
 
 
@@ -269,105 +270,126 @@ class TestCollectTopMovers:
 # ---------------------------------------------------------------------------
 
 
-class TestExplainTickerShift:
-    def test_basic_explain(self, tmp_path):
-        snap_dir = tmp_path / "snaps"
-        tickers = ["A", "B", "C", "D", "E"]
-        _make_snapshot(snap_dir, "2026-02-10", _rich_rows(tickers))
-        _make_snapshot(snap_dir, "2026-02-11", _rich_rows(list(reversed(tickers))))
+class TestExplainRankShift:
+    """Tests for the explain_rank_shift core function (new pre-loaded API)."""
 
-        rs = DecisionRuleset()
-        result = explain_ticker_shift(
+    def test_basic_explain(self):
+        baseline_row = {
+            "ticker": "A", "financial_score_z": "0.5", "clinical_score_z": "0.3",
+            "catalyst_score_z": "0.2", "composite_score": "1.5",
+            "eligible": "1", "tier_dev": "A", "catalyst_days": "90",
+        }
+        candidate_row = {
+            "ticker": "A", "financial_score_z": "0.6", "clinical_score_z": "0.4",
+            "catalyst_score_z": "0.1", "composite_score": "1.7",
+            "eligible": "1", "tier_dev": "A", "catalyst_days": "60",
+        }
+        result = explain_rank_shift(
+            as_of_date="2026-02-11",
             ticker="A",
-            current_date="2026-02-11",
-            prior_date="2026-02-10",
-            snapshot_dir=snap_dir,
-            ruleset=rs,
+            baseline_rank=5,
+            candidate_rank=2,
+            baseline_row=baseline_row,
+            candidate_row=candidate_row,
+            eval_mode="temporal",
+            baseline_id="rs1@2026-02-10",
+            candidate_id="rs1@2026-02-11",
         )
-        assert result["schema"] == "explain_rank_shift.v1"
-        assert result["ticker"] == "A"
-        assert result["current_rank"] is not None
-        assert result["prior_rank"] is not None
-        assert "delta_rank" in result
-        assert "module_attribution" in result
-        assert "feature_deltas" in result
+        assert isinstance(result, ExplainResult)
+        p = result.payload
+        assert p["schema"] == "explain_rank_shift.v1"
+        assert p["ticker"] == "A"
+        assert p["baseline"]["rank"] == 5
+        assert p["candidate"]["rank"] == 2
+        assert p["delta"]["rank"] == -3
+        assert "modules" in p["delta"]
+        assert "features" in p["delta"]
+        assert len(result.markdown) > 0
 
-    def test_missing_snapshot(self, tmp_path):
-        snap_dir = tmp_path / "snaps"
-        snap_dir.mkdir(parents=True)
-        rs = DecisionRuleset()
-        result = explain_ticker_shift(
-            ticker="A",
-            current_date="2026-02-11",
-            prior_date="2026-02-10",
-            snapshot_dir=snap_dir,
-            ruleset=rs,
-        )
-        assert "error" in result
-
-    def test_missing_fields_no_crash(self, tmp_path):
-        """Ticker with minimal fields (no alpha, coinvest, etc) still works."""
-        snap_dir = tmp_path / "snaps"
-        rows = [
-            {"ticker": "X", "eligible": "1", "tier_dev": "A"},
-            {"ticker": "Y", "eligible": "1", "tier_dev": "B"},
-        ]
-        _make_snapshot(snap_dir, "2026-02-10", rows)
-        _make_snapshot(snap_dir, "2026-02-11", rows)
-
-        rs = DecisionRuleset()
-        result = explain_ticker_shift(
-            ticker="X",
-            current_date="2026-02-11",
-            prior_date="2026-02-10",
-            snapshot_dir=snap_dir,
-            ruleset=rs,
-        )
-        assert result["ticker"] == "X"
-        assert "error" not in result
-        assert len(result["module_attribution"]) == 6  # 6 module score columns
-
-    def test_ticker_not_in_snapshot(self, tmp_path):
-        """Ticker missing from a snapshot produces notes, not crash."""
-        snap_dir = tmp_path / "snaps"
-        _make_snapshot(snap_dir, "2026-02-10", _rich_rows(["A", "B"]))
-        _make_snapshot(snap_dir, "2026-02-11", _rich_rows(["A", "B"]))
-
-        rs = DecisionRuleset()
-        result = explain_ticker_shift(
+    def test_none_ranks(self):
+        result = explain_rank_shift(
+            as_of_date="2026-02-11",
             ticker="MISSING",
-            current_date="2026-02-11",
-            prior_date="2026-02-10",
-            snapshot_dir=snap_dir,
-            ruleset=rs,
+            baseline_rank=None,
+            candidate_rank=None,
+            baseline_row={},
+            candidate_row={},
+            eval_mode="temporal",
+            baseline_id="rs1@2026-02-10",
+            candidate_id="rs1@2026-02-11",
         )
-        assert result["current_rank"] is None
-        assert result["prior_rank"] is None
-        assert any("not eligible" in n or "not found" in n for n in result["notes"])
+        p = result.payload
+        assert p["baseline"]["rank"] is None
+        assert p["candidate"]["rank"] is None
+        assert p["delta"]["rank"] is None
 
-    def test_deterministic_output(self, tmp_path):
-        snap_dir = tmp_path / "snaps"
-        _make_snapshot(snap_dir, "2026-02-10", _rich_rows(["A", "B", "C"]))
-        _make_snapshot(snap_dir, "2026-02-11", _rich_rows(["C", "B", "A"]))
+    def test_minimal_rows_no_crash(self):
+        result = explain_rank_shift(
+            as_of_date="2026-02-11",
+            ticker="X",
+            baseline_rank=1,
+            candidate_rank=3,
+            baseline_row={"ticker": "X", "eligible": "1"},
+            candidate_row={"ticker": "X", "eligible": "1"},
+            eval_mode="rerank_only",
+            baseline_id="base",
+            candidate_id="cand",
+        )
+        p = result.payload
+        assert p["ticker"] == "X"
+        assert p["delta"]["rank"] == 2
 
-        rs = DecisionRuleset()
-        r1 = explain_ticker_shift("A", "2026-02-11", "2026-02-10", snap_dir, rs)
-        r2 = explain_ticker_shift("A", "2026-02-11", "2026-02-10", snap_dir, rs)
-        assert json.dumps(r1, sort_keys=True) == json.dumps(r2, sort_keys=True)
+    def test_deterministic_fingerprint(self):
+        kwargs = dict(
+            as_of_date="2026-02-11",
+            ticker="A",
+            baseline_rank=1,
+            candidate_rank=5,
+            baseline_row={"ticker": "A", "financial_score_z": "0.5"},
+            candidate_row={"ticker": "A", "financial_score_z": "0.7"},
+            eval_mode="temporal",
+            baseline_id="rs1@d1",
+            candidate_id="rs1@d2",
+        )
+        r1 = explain_rank_shift(**kwargs)
+        r2 = explain_rank_shift(**kwargs)
+        assert r1.payload["fingerprint"] == r2.payload["fingerprint"]
+        assert _stable_json(r1.payload) == _stable_json(r2.payload)
 
-    def test_module_attribution_has_delta(self, tmp_path):
-        """Module scores that differ between dates produce delta values."""
-        snap_dir = tmp_path / "snaps"
-        tickers = ["A", "B", "C"]
-        _make_snapshot(snap_dir, "2026-02-10", _rich_rows(tickers))
-        _make_snapshot(snap_dir, "2026-02-11", _rich_rows(list(reversed(tickers))))
+    def test_module_attribution_has_delta(self):
+        baseline_row = {"financial_score_z": "0.5", "clinical_score_z": "0.3"}
+        candidate_row = {"financial_score_z": "0.8", "clinical_score_z": "0.3"}
+        result = explain_rank_shift(
+            as_of_date="2026-02-11",
+            ticker="A",
+            baseline_rank=1,
+            candidate_rank=3,
+            baseline_row=baseline_row,
+            candidate_row=candidate_row,
+            eval_mode="temporal",
+            baseline_id="rs1@d1",
+            candidate_id="rs1@d2",
+        )
+        modules = result.payload["delta"]["modules"]
+        assert "financial" in modules
+        assert modules["financial"]["delta"] == pytest.approx(0.3)
+        # clinical same value — delta = 0
+        assert "clinical" in modules
+        assert modules["clinical"]["delta"] == pytest.approx(0.0)
 
-        rs = DecisionRuleset()
-        result = explain_ticker_shift("A", "2026-02-11", "2026-02-10", snap_dir, rs)
-        attribs = result["module_attribution"]
-        # At least one module should have a delta (scores differ because row position differs)
-        deltas = [a for a in attribs if "delta" in a]
-        assert len(deltas) >= 1
+    def test_large_shift_note(self):
+        result = explain_rank_shift(
+            as_of_date="2026-02-11",
+            ticker="A",
+            baseline_rank=1,
+            candidate_rank=60,
+            baseline_row={"ticker": "A"},
+            candidate_row={"ticker": "A"},
+            eval_mode="temporal",
+            baseline_id="rs1@d1",
+            candidate_id="rs1@d2",
+        )
+        assert "large_rank_shift" in result.payload["notes"]
 
 
 # ---------------------------------------------------------------------------
@@ -376,28 +398,29 @@ class TestExplainTickerShift:
 
 
 class TestFeatureHelpers:
-    def test_feature_snapshot_filters_empty(self):
-        row = {"ticker": "X", "eligible": "1", "catalyst_days": "90"}
-        snap = _feature_snapshot(row)
-        assert "catalyst" in snap
-        assert snap["catalyst"]["catalyst_days"] == "90"
-        # momentum has no values in this row
-        assert "momentum" not in snap or not snap.get("momentum")
-
     def test_feature_deltas_only_changed(self):
-        cur = {"catalyst": {"catalyst_days": "90", "catalyst_mode": "specific_days"}}
-        pri = {"catalyst": {"catalyst_days": "120", "catalyst_mode": "specific_days"}}
-        deltas = _feature_deltas(cur, pri)
+        baseline = {"catalyst_days": "120", "catalyst_mode": "specific_days"}
+        candidate = {"catalyst_days": "90", "catalyst_mode": "specific_days"}
+        deltas = _feature_deltas(baseline, candidate)
         assert "catalyst" in deltas
         assert "catalyst_days" in deltas["catalyst"]
         # catalyst_mode unchanged — should not appear
         assert "catalyst_mode" not in deltas["catalyst"]
 
-    def test_feature_deltas_numeric_delta(self):
-        cur = {"alpha": {"alpha_cohort_raw": "0.25"}}
-        pri = {"alpha": {"alpha_cohort_raw": "0.15"}}
-        deltas = _feature_deltas(cur, pri)
-        assert deltas["alpha"]["alpha_cohort_raw"]["delta"] == pytest.approx(0.1)
+    def test_feature_deltas_empty_when_identical(self):
+        row = {"catalyst_days": "90", "alpha_raw": "0.5"}
+        deltas = _feature_deltas(row, row)
+        assert deltas == {}
+
+    def test_module_attribution_picks_first_key(self):
+        baseline = {"financial_score_z": "0.5", "clinical_score_z": "0.3"}
+        candidate = {"financial_score_z": "0.8", "clinical_score_z": "0.6"}
+        modules = _module_attribution(baseline, candidate)
+        assert "financial" in modules
+        assert modules["financial"]["key"] == "financial_score_z"
+        assert modules["financial"]["delta"] == pytest.approx(0.3)
+        assert "clinical" in modules
+        assert modules["clinical"]["delta"] == pytest.approx(0.3)
 
 
 # ---------------------------------------------------------------------------
@@ -447,7 +470,8 @@ class TestTriageGateFail:
         ex = json.loads(explain_files[0].read_text())
         assert ex["schema"] == "explain_rank_shift.v1"
         assert "ticker" in ex
-        assert "module_attribution" in ex
+        assert "delta" in ex
+        assert "modules" in ex["delta"]
 
     def test_worst_date_deterministic(self, tmp_path):
         snap_dir, eval_json = _standard_setup(tmp_path)
@@ -460,7 +484,8 @@ class TestTriageGateFail:
         assert s1["worst_date"] == s2["worst_date"]
         assert s1["top_movers"] == s2["top_movers"]
 
-    def test_no_ruleset_skips_explains(self, tmp_path):
+    def test_no_ruleset_uses_existing_ranks_for_explains(self, tmp_path):
+        """Without ruleset, explains still produced using existing rank columns."""
         snap_dir, eval_json = _standard_setup(tmp_path)
         out_dir = tmp_path / "triage"
 
@@ -470,8 +495,8 @@ class TestTriageGateFail:
             out_dir=out_dir,
             ruleset=None,
         )
-        assert summary["explain_files"] == []
-        assert any("no ruleset" in n for n in summary["notes"])
+        # Explains are produced (using _existing_rank_map fallback)
+        assert len(summary["explain_files"]) >= 1
 
     def test_summary_json_schema_keys(self, tmp_path):
         snap_dir, eval_json = _standard_setup(tmp_path)
