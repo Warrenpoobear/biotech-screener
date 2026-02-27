@@ -31,14 +31,18 @@ def _write_changelog(tmp_path: Path, content: str = "") -> Path:
 
 
 def _run_promote(tmp_path: Path, *args: str) -> subprocess.CompletedProcess:
-    """Run promote_ruleset.py with the project root overridden to tmp_path."""
-    # We patch PROJECT_ROOT by running via subprocess with modified script
+    """Run promote_ruleset.py with all paths overridden to tmp_path."""
+    rulesets_dir = tmp_path / "production_data" / "decision_rulesets"
     env_script = (
         f"import sys; sys.path.insert(0, '{PROJECT_ROOT}'); "
         f"sys.path.insert(0, '{PROJECT_ROOT / 'scripts'}'); "
         f"import promote_ruleset; "
-        f"promote_ruleset.MANIFEST_PATH = __import__('pathlib').Path('{tmp_path / 'production_data' / 'decision_rulesets' / 'manifest.json'}'); "
+        f"promote_ruleset.PROJECT_ROOT = __import__('pathlib').Path('{tmp_path}'); "
+        f"promote_ruleset.RULESETS_DIR = __import__('pathlib').Path('{rulesets_dir}'); "
+        f"promote_ruleset.MANIFEST_PATH = __import__('pathlib').Path('{rulesets_dir / 'manifest.json'}'); "
         f"promote_ruleset.CHANGELOG_PATH = __import__('pathlib').Path('{tmp_path / 'RULESET_CHANGELOG.md'}'); "
+        f"promote_ruleset.RECEIPTS_DIR = __import__('pathlib').Path('{tmp_path / 'receipts'}'); "
+        f"promote_ruleset.PINNED_FILES = []; "
         f"sys.argv = ['promote_ruleset.py'] + {list(args)}; "
         f"sys.exit(promote_ruleset.main())"
     )
