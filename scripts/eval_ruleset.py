@@ -357,6 +357,10 @@ def evaluate_ruleset_rerank_only(
                 temporal_spearman.append(rc["spearman"])
             if ms:
                 temporal_max_shifts.append({**ms, "date": snap_date})
+                date_row["temporal_max_shift_ticker"] = ms["ticker"]
+                date_row["temporal_max_shift"] = ms["shift"]
+                date_row["temporal_max_shift_from"] = ms["from"]
+                date_row["temporal_max_shift_to"] = ms["to"]
 
             date_row["temporal_overlap_20"] = ov20["overlap_pct"]
             date_row["temporal_overlap_60"] = ov60["overlap_pct"]
@@ -420,6 +424,9 @@ def evaluate_ruleset_rerank_only(
     if temporal_max_shifts:
         worst = max(temporal_max_shifts, key=lambda x: x["shift"])
         temporal["max_rank_shift"] = worst
+        temporal["top_movers"] = sorted(
+            temporal_max_shifts, key=lambda x: x["shift"], reverse=True
+        )[:10]
     result["temporal_stability"] = temporal
 
     # Cross-comparison
@@ -596,6 +603,10 @@ def evaluate_ruleset(
                     temporal_spearman.append(rc["spearman"])
                 if ms:
                     temporal_max_shifts.append({**ms, "date": snap_date})
+                    date_row["temporal_max_shift_ticker"] = ms["ticker"]
+                    date_row["temporal_max_shift"] = ms["shift"]
+                    date_row["temporal_max_shift_from"] = ms["from"]
+                    date_row["temporal_max_shift_to"] = ms["to"]
 
                 date_row["temporal_overlap_20"] = ov20["overlap_pct"]
                 date_row["temporal_overlap_60"] = ov60["overlap_pct"]
@@ -661,6 +672,9 @@ def evaluate_ruleset(
     if temporal_max_shifts:
         worst = max(temporal_max_shifts, key=lambda x: x["shift"])
         temporal["max_rank_shift"] = worst
+        temporal["top_movers"] = sorted(
+            temporal_max_shifts, key=lambda x: x["shift"], reverse=True
+        )[:10]
     result["temporal_stability"] = temporal
 
     # Performance

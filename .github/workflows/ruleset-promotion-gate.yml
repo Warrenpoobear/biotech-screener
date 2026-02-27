@@ -381,6 +381,67 @@ jobs:
               lines.append("> :rotating_light: **No dates were evaluated.** All dates were skipped. Check that snapshots exist for the window and match the candidate ruleset ID.")
               lines.append("")
 
+          # --- What changed? (WARN/FAIL diagnostics) ---
+          if verdict in ("WARN", "FAIL"):
+              lines.append("### What Changed?")
+              lines.append("")
+
+              # Worst date by overlap
+              per_dates = data.get("per_date", [])
+              worst_date = None
+              worst_ov = 100.0
+              for pd in per_dates:
+                  ov = pd.get("temporal_overlap_60")
+                  if ov is not None and ov < worst_ov:
+                      worst_ov = ov
+                      worst_date = pd
+              if worst_date:
+                  wd = worst_date["date"]
+                  wsp = worst_date.get("temporal_spearman", "?")
+                  wt = worst_date.get("temporal_max_shift_ticker", "?")
+                  ws = worst_date.get("temporal_max_shift", "?")
+                  lines.append(f"**Worst date:** `{wd}` — top-60 overlap={worst_ov}%, spearman={wsp}")
+                  if wt != "?":
+                      wf = worst_date.get("temporal_max_shift_from", "?")
+                      wto = worst_date.get("temporal_max_shift_to", "?")
+                      lines.append(f"  - Biggest mover: **{wt}** rank {wf} -> {wto} (shift={ws})")
+                  lines.append("")
+
+              # Top movers table
+              movers = ts.get("top_movers", [])
+              if movers:
+                  lines.append("**Top movers** (biggest day-over-day rank shifts):")
+                  lines.append("")
+                  lines.append("| Ticker | Date | From | To | Shift |")
+                  lines.append("|--------|------|------|----|-------|")
+                  for m in movers[:5]:
+                      lines.append(f"| {m.get('ticker', '?')} | {m.get('date', '?')} | {m.get('from', '?')} | {m.get('to', '?')} | {m.get('shift', '?')} |")
+                  lines.append("")
+
+              # Root-cause hints
+              hints = []
+              # Check for n_eligible changes (universe refresh)
+              n_elig = [pd.get("n_eligible", 0) for pd in per_dates if pd.get("n_eligible")]
+              if n_elig and len(n_elig) > 1:
+                  elig_range = max(n_elig) - min(n_elig)
+                  if elig_range > 10:
+                      hints.append(f"Universe size changed by {elig_range} tickers across window (min={min(n_elig)}, max={max(n_elig)}) — likely universe refresh")
+              # Check for degraded snapshots
+              n_degraded = sum(1 for pd in per_dates if pd.get("degraded_snapshot"))
+              if n_degraded:
+                  hints.append(f"{n_degraded} degraded snapshot(s) in window — cache health issues")
+              # Check for low spearman cluster
+              low_sp = [pd for pd in per_dates if pd.get("temporal_spearman") is not None and pd["temporal_spearman"] < 0.95]
+              if len(low_sp) >= 2:
+                  low_dates = ", ".join(pd["date"] for pd in low_sp[:3])
+                  hints.append(f"Multiple low-correlation dates ({low_dates}) — possible data regime shift")
+              if hints:
+                  lines.append("**Possible root causes:**")
+                  lines.append("")
+                  for h in hints:
+                      lines.append(f"- {h}")
+                  lines.append("")
+
           with open(summary_file, "a", encoding="utf-8") as f:
               f.write("\n".join(lines) + "\n")
 
@@ -394,6 +455,62 @@ jobs:
           EVAL_OUT_DIR: ${{ steps.evaluator.outputs.eval_out_dir }}
           EVAL_MODE: ${{ steps.evaluator.outputs.eval_mode }}
           MIN_EVALUATED_DATES: ${{ inputs.min_evaluated_dates }}
+
+      - name: Build FAIL packet
+        if: always() && steps.summary.outputs.verdict != 'PASS'
+        run: |
+          python3 - <<'PY'
+          import csv, json, os, sys
+          from pathlib import Path
+
+          out_dir = Path(os.environ.get("EVAL_OUT_DIR", "/tmp/ruleset_gate_out"))
+          candidates = list(out_dir.rglob("ruleset_eval.json"))
+          if not candidates:
+              print("No eval JSON found — skipping FAIL packet")
+              sys.exit(0)
+
+          eval_path = candidates[0]
+          data = json.loads(eval_path.read_text(encoding="utf-8"))
+          packet_dir = eval_path.parent / "fail_packet"
+          packet_dir.mkdir(exist_ok=True)
+
+          # --- top_movers.csv ---
+          movers = data.get("temporal_stability", {}).get("top_movers", [])
+          if movers:
+              csv_path = packet_dir / "top_movers.csv"
+              with open(csv_path, "w", newline="", encoding="utf-8") as f:
+                  w = csv.DictWriter(f, fieldnames=["ticker", "date", "from", "to", "shift"])
+                  w.writeheader()
+                  for m in movers:
+                      w.writerow({
+                          "ticker": m.get("ticker", ""),
+                          "date": m.get("date", ""),
+                          "from": m.get("from", ""),
+                          "to": m.get("to", ""),
+                          "shift": m.get("shift", ""),
+                      })
+              print(f"Wrote {csv_path} ({len(movers)} rows)")
+
+          # --- per_date_instability.csv ---
+          per_date = data.get("per_date", [])
+          if per_date:
+              fields = [
+                  "date", "n_eligible", "temporal_overlap_20", "temporal_overlap_60",
+                  "temporal_spearman", "temporal_max_shift_ticker", "temporal_max_shift",
+                  "temporal_max_shift_from", "temporal_max_shift_to", "degraded_snapshot",
+              ]
+              csv_path = packet_dir / "per_date_instability.csv"
+              with open(csv_path, "w", newline="", encoding="utf-8") as f:
+                  w = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
+                  w.writeheader()
+                  for pd in per_date:
+                      w.writerow({k: pd.get(k, "") for k in fields})
+              print(f"Wrote {csv_path} ({len(per_date)} rows)")
+
+          print("FAIL packet complete")
+          PY
+        env:
+          EVAL_OUT_DIR: ${{ steps.evaluator.outputs.eval_out_dir }}
 
       - name: Upload evaluation artifacts
         if: always()

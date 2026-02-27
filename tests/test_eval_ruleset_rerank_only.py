@@ -277,6 +277,64 @@ class TestRerankOnlyEval:
         assert "mean_top60_overlap" in ts
         assert "mean_spearman" in ts
 
+    def test_per_date_shift_details(self, tmp_path):
+        """Per-date entries include max shift ticker/from/to when shifts occur."""
+        snap_dir = tmp_path / "snaps"
+        tickers = [f"T{i:02d}" for i in range(1, 11)]
+        _make_snapshot(snap_dir, "2026-02-10", _rich_rows(tickers))
+        tickers_d2 = tickers[:8] + list(reversed(tickers[8:]))
+        _make_snapshot(snap_dir, "2026-02-11", _rich_rows(tickers_d2))
+
+        rs = _default_ruleset()
+        result = evaluate_ruleset_rerank_only(
+            candidate_ruleset=rs,
+            baseline_ruleset=rs,
+            dates=["2026-02-10", "2026-02-11"],
+            snapshot_dir=snap_dir,
+            k=10,
+        )
+        # Day 1 has no prior — no shift fields
+        assert "temporal_max_shift_ticker" not in result["per_date"][0]
+        # Day 2 should have shift details
+        day2 = result["per_date"][1]
+        assert "temporal_max_shift_ticker" in day2
+        assert isinstance(day2["temporal_max_shift"], int)
+        assert isinstance(day2["temporal_max_shift_from"], int)
+        assert isinstance(day2["temporal_max_shift_to"], int)
+
+    def test_top_movers_in_temporal_stability(self, tmp_path):
+        """temporal_stability.top_movers lists worst shifts across dates."""
+        snap_dir = tmp_path / "snaps"
+        tickers = [f"T{i:02d}" for i in range(1, 11)]
+        _make_snapshot(snap_dir, "2026-02-10", _rich_rows(tickers))
+        tickers_d2 = tickers[:8] + list(reversed(tickers[8:]))
+        _make_snapshot(snap_dir, "2026-02-11", _rich_rows(tickers_d2))
+        _make_snapshot(snap_dir, "2026-02-12", _rich_rows(tickers))
+
+        rs = _default_ruleset()
+        result = evaluate_ruleset_rerank_only(
+            candidate_ruleset=rs,
+            baseline_ruleset=rs,
+            dates=["2026-02-10", "2026-02-11", "2026-02-12"],
+            snapshot_dir=snap_dir,
+            k=10,
+        )
+        ts = result["temporal_stability"]
+        assert "top_movers" in ts
+        movers = ts["top_movers"]
+        assert len(movers) >= 1
+        assert len(movers) <= 10
+        # Sorted descending by shift
+        shifts = [m["shift"] for m in movers]
+        assert shifts == sorted(shifts, reverse=True)
+        # Each entry has expected keys
+        for m in movers:
+            assert "ticker" in m
+            assert "date" in m
+            assert "from" in m
+            assert "to" in m
+            assert "shift" in m
+
     def test_degraded_snapshot_still_evaluated(self, tmp_path):
         """Degraded snapshots are evaluated in rerank-only (tagged, not skipped)."""
         snap_dir = tmp_path / "snaps"
