@@ -3815,10 +3815,18 @@ def _score_single_ticker_v3(
         if dilution_bucket == "HIGH":
             _red_flag_reasons.append("dilution_high")
         # Single asset + early stage (binary risk)
-        if diversity_risk_profile == "single_asset" and stage.lower() in ("early", "preclinical"):
+        # Guard: only fire when lead_phase is explicitly known (stage defaults
+        # to "early" when lead_phase is absent — not reliable).
+        if (diversity_risk_profile == "single_asset"
+                and stage.lower() in ("early", "preclinical")
+                and lead_phase):
             _red_flag_reasons.append("single_asset_early")
         # Weak competitive position under intense crowding
-        if intensity_crowding == "intense" and intensity_position in ("weak", "disadvantaged"):
+        # Guard: require competitor_count > 0 to prove signal was computed
+        if (intensity_crowding == "intense"
+                and intensity_position in ("weak", "disadvantaged")
+                and intensity_competitor_count is not None
+                and intensity_competitor_count > 0):
             _red_flag_reasons.append("weak_competitive")
 
         if _red_flag_reasons:

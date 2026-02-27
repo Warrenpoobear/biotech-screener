@@ -1662,6 +1662,7 @@ class TestFundamentalRedFlagDetection:
         """Should flag single-asset early-stage company with tracked programs."""
         record = {
             "stage_bucket": "early",
+            "lead_phase": "Phase 1",
             "pipeline_diversity_signal": {
                 "risk_profile": "single_asset",
                 "program_count": 1,
@@ -1703,6 +1704,7 @@ class TestFundamentalRedFlagDetection:
         """
         record = {
             "stage_bucket": "early",
+            "lead_phase": "Phase 1",
             "pipeline_diversity_signal": {
                 "risk_profile": "single_asset",
                 "program_count": 1,
@@ -1718,6 +1720,7 @@ class TestFundamentalRedFlagDetection:
         """Company with high cash but positive burn rate is still flagged."""
         record = {
             "stage_bucket": "early",
+            "lead_phase": "Phase 1",
             "pipeline_diversity_signal": {
                 "risk_profile": "single_asset",
                 "program_count": 1,
@@ -1741,6 +1744,66 @@ class TestFundamentalRedFlagDetection:
         }
         is_flagged, reasons = detect_fundamental_red_flags(record)
         assert "single_asset_early_stage" not in reasons
+
+    def test_single_asset_early_no_lead_phase_skips(self):
+        """stage_bucket=early with lead_phase=None → confidence guard skips flag.
+
+        When lead_phase is absent, stage_bucket defaults to "early" which is
+        not reliable enough to fire the single_asset_early_stage flag.
+        """
+        record = {
+            "stage_bucket": "early",
+            # lead_phase intentionally absent
+            "pipeline_diversity_signal": {
+                "risk_profile": "single_asset",
+                "program_count": 1,
+            },
+            "survivability_signal": {"metrics": {"burn_ttm": 50_000_000, "cash_total": 200_000_000}},
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert "single_asset_early_stage" not in reasons
+
+    def test_single_asset_early_with_lead_phase_fires(self):
+        """stage_bucket=early with explicit lead_phase → flag fires normally."""
+        record = {
+            "stage_bucket": "early",
+            "lead_phase": "Phase 1",
+            "pipeline_diversity_signal": {
+                "risk_profile": "single_asset",
+                "program_count": 1,
+            },
+            "survivability_signal": {"metrics": {"burn_ttm": 50_000_000, "cash_total": 200_000_000}},
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert is_flagged
+        assert "single_asset_early_stage" in reasons
+
+    def test_weak_competitive_no_competitor_count_skips(self):
+        """intense crowding + weak position but no competitor_count → guard skips flag."""
+        record = {
+            "competitive_intensity_signal": {
+                "crowding_level": "intense",
+                "competitive_position": "weak",
+                # competitor_count intentionally absent
+            },
+            "survivability_signal": {"metrics": {}},
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert "weak_competitive_position" not in reasons
+
+    def test_weak_competitive_with_competitor_count_fires(self):
+        """intense crowding + weak position + competitor_count > 0 → flag fires."""
+        record = {
+            "competitive_intensity_signal": {
+                "crowding_level": "intense",
+                "competitive_position": "weak",
+                "competitor_count": 3,
+            },
+            "survivability_signal": {"metrics": {}},
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert is_flagged
+        assert "weak_competitive_position" in reasons
 
 
 class TestRedFlagSuppression:

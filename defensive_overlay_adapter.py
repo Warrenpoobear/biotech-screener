@@ -367,17 +367,23 @@ def detect_fundamental_red_flags(record: Dict) -> Tuple[bool, List[str]]:
 
     if risk_profile == "single_asset" and program_count >= 1:
         if stage.lower() in ["early", "preclinical"]:
-            # Exempt cash-flow-positive companies with substantial cash:
-            # they are self-sustaining and not at binary risk from a single
-            # clinical program failure (e.g. ILMN — $4B revenue platform).
-            surv_metrics = (record.get("survivability_signal") or {}).get("metrics") or {}
-            burn_ttm = surv_metrics.get("burn_ttm")
-            cash_total = surv_metrics.get("cash_total") or 0
-            _is_self_sustaining = (
-                burn_ttm is not None and burn_ttm <= 0 and cash_total >= 500_000_000
-            )
-            if not _is_self_sustaining:
-                reasons.append("single_asset_early_stage")
+            # Confidence guard: stage_bucket defaults to "early" when
+            # lead_phase is absent (no clinical data).  Only fire if
+            # lead_phase is explicitly known — default "early" is not
+            # reliable enough to suppress a ticker.
+            lead_phase = record.get("lead_phase")
+            if lead_phase:
+                # Exempt cash-flow-positive companies with substantial cash:
+                # they are self-sustaining and not at binary risk from a single
+                # clinical program failure (e.g. ILMN — $4B revenue platform).
+                surv_metrics = (record.get("survivability_signal") or {}).get("metrics") or {}
+                burn_ttm = surv_metrics.get("burn_ttm")
+                cash_total = surv_metrics.get("cash_total") or 0
+                _is_self_sustaining = (
+                    burn_ttm is not None and burn_ttm <= 0 and cash_total >= 500_000_000
+                )
+                if not _is_self_sustaining:
+                    reasons.append("single_asset_early_stage")
 
     # Check for negative phase momentum from flags
     flags = record.get("flags") or []
@@ -391,7 +397,13 @@ def detect_fundamental_red_flags(record: Dict) -> Tuple[bool, List[str]]:
     comp_signal = record.get("competitive_intensity_signal") or {}
     crowding = comp_signal.get("crowding_level") or ""
     position = comp_signal.get("competitive_position") or ""
-    if crowding == "intense" and position in ["weak", "disadvantaged"]:
+    # Confidence guard: only fire if signal was actually computed
+    # (competitor_count > 0 proves real data, not template defaults)
+    competitor_count = comp_signal.get("competitor_count")
+    if (crowding == "intense"
+            and position in ["weak", "disadvantaged"]
+            and competitor_count is not None
+            and int(competitor_count) > 0):
         reasons.append("weak_competitive_position")
 
     return (len(reasons) > 0, reasons)
