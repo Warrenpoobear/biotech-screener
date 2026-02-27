@@ -1,0 +1,118 @@
+{
+  "generated_at": "2026-02-27T20:38:02Z",
+  "current": {
+    "date": "2026-02-27",
+    "ruleset_id": "0c1129f6",
+    "has_native_portfolio": true,
+    "portfolio_size": 20
+  },
+  "prior": null,
+  "tier_distribution": {
+    "current": {
+      "A": 28,
+      "B": 38,
+      "C": 44,
+      "D": 57
+    }
+  },
+  "tier_in_portfolio": {
+    "current": {
+      "A": 20,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    }
+  },
+  "sizing": {
+    "current": {
+      "L": 14,
+      "M": 5,
+      "S": 0,
+      "XS": 1
+    }
+  },
+  "catalyst_coverage": {
+    "current": {
+      "n_dev": 167,
+      "n_specific": 153,
+      "pct": 91.6,
+      "mode_dist": {
+        "specific_days": 153,
+        "no_upcoming": 14
+      },
+      "backfill_share_pct": 0.0
+    }
+  },
+  "top_catalysts": {
+    "current": [
+      {
+        "ticker": "ADCT",
+        "catalyst_days": 1,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "NMRA",
+        "catalyst_days": 2,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "PVLA",
+        "catalyst_days": 2,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "IMVT",
+        "catalyst_days": 2,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "REPL",
+        "catalyst_days": 2,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "OLMA",
+        "catalyst_days": 2,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "ANRO",
+        "catalyst_days": 2,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "KYTX",
+        "catalyst_days": 2,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "VIR",
+        "catalyst_days": 2,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "CLDX",
+        "catalyst_days": 2,
+        "tier_dev": "B"
+      }
+    ]
+  },
+  "risk_flags": {
+    "current": {
+      "deep_drawdown": 3,
+      "high_vol": 5,
+      "high_beta": 4,
+      "overbought_rsi": 4,
+      "low_confidence": 0
+    }
+  },
+  "churn_suppressed": false,
+  "guardrails": {
+    "passed": [
+      "Ruleset matches pinned Phase-2 ID (0c1129f6)",
+      "A-tier count >= 1 (28)",
+      "Catalyst coverage 91.6% >= 50.0%"
+    ],
+    "warnings": []
+  }
+}
