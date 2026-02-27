@@ -541,6 +541,34 @@ jobs:
         env:
           EVAL_OUT_DIR: ${{ steps.evaluator.outputs.eval_out_dir }}
 
+      - name: Run gate triage
+        if: always() && steps.summary.outputs.verdict != 'PASS'
+        continue-on-error: true
+        run: |
+          EVAL_JSON=$(find "$EVAL_OUT_DIR" -name "ruleset_eval.json" -type f | head -1)
+          if [ -z "$EVAL_JSON" ]; then
+            echo "No eval JSON found — skipping triage"
+            exit 0
+          fi
+          python3 scripts/triage_gate_fail.py \
+            --eval-json "$EVAL_JSON" \
+            --snapshot-dir data/snapshots \
+            --out-dir "$EVAL_OUT_DIR/triage" \
+            --ruleset "${{ inputs.candidate_ruleset_path }}" \
+            --max-tickers 10
+
+          # Append triage summary to job summary
+          TRIAGE_MD="$EVAL_OUT_DIR/triage/triage_summary.md"
+          if [ -f "$TRIAGE_MD" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "---" >> "$GITHUB_STEP_SUMMARY"
+            head -30 "$TRIAGE_MD" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "> Full triage bundle available in uploaded artifacts." >> "$GITHUB_STEP_SUMMARY"
+          fi
+        env:
+          EVAL_OUT_DIR: ${{ steps.evaluator.outputs.eval_out_dir }}
+
       - name: Upload evaluation artifacts
         if: always()
         uses: actions/upload-artifact@v4
