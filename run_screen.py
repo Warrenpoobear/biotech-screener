@@ -3775,6 +3775,73 @@ def save_validation_snapshot(
         logger.warning(f"Could not write snapshot CSV: {e}")
         return None
 
+    # --- Write eligibility summary sidecar ---
+    try:
+        from decision_engine_codes import canonicalize_reasons
+        _elig_counts: Dict[str, int] = {}
+        _elig_examples: Dict[str, List[str]] = {}
+        _n_eligible = 0
+        _n_ineligible = 0
+        for _row in csv_rows:
+            _raw = _row.get("ineligible_reasons", "")
+            _codes = canonicalize_reasons(_raw)
+            if _codes:
+                _n_ineligible += 1
+                for _c in _codes:
+                    _elig_counts[_c] = _elig_counts.get(_c, 0) + 1
+                    _elig_examples.setdefault(_c, []).append(_row.get("ticker", ""))
+            else:
+                _n_eligible += 1
+        # Cap examples at 10 tickers, sorted alphabetically for determinism
+        for _c in _elig_examples:
+            _elig_examples[_c] = sorted(_elig_examples[_c])[:10]
+
+        _elig_summary = {
+            "schema": "eligibility_summary.v1",
+            "as_of_date": as_of_date,
+            "n_total": len(csv_rows),
+            "n_eligible": _n_eligible,
+            "n_ineligible": _n_ineligible,
+            "counts_by_reason": dict(sorted(_elig_counts.items(),
+                                            key=lambda x: (-x[1], x[0]))),
+            "examples_by_reason": dict(sorted(_elig_examples.items(),
+                                              key=lambda x: (-_elig_counts.get(x[0], 0), x[0]))),
+        }
+        with open(snap_path / "eligibility_summary.json", "w", encoding="utf-8") as f:
+            json.dump(_elig_summary, f, indent=2, sort_keys=False)
+            f.write("\n")
+
+        # Markdown sidecar
+        _md_lines = [
+            f"# Eligibility Summary — {as_of_date}",
+            "",
+            f"| Metric | Count |",
+            f"|--------|-------|",
+            f"| Total  | {len(csv_rows)} |",
+            f"| Eligible | {_n_eligible} |",
+            f"| Ineligible | {_n_ineligible} |",
+            "",
+            "## Counts by Reason",
+            "",
+            "| Reason | Count |",
+            "|--------|-------|",
+        ]
+        for _c, _cnt in sorted(_elig_counts.items(), key=lambda x: (-x[1], x[0])):
+            _md_lines.append(f"| {_c} | {_cnt} |")
+        _md_lines.append("")
+        _md_lines.append("## Examples (top 5 reasons)")
+        _md_lines.append("")
+        _top5 = sorted(_elig_counts.items(), key=lambda x: (-x[1], x[0]))[:5]
+        for _c, _cnt in _top5:
+            _tickers = ", ".join(_elig_examples.get(_c, []))
+            _md_lines.append(f"**{_c}** ({_cnt}): {_tickers}")
+            _md_lines.append("")
+        with open(snap_path / "eligibility_summary.md", "w", encoding="utf-8") as f:
+            f.write("\n".join(_md_lines))
+            f.write("\n")
+    except Exception as e:
+        logger.warning("Could not write eligibility_summary: %s", e)
+
     # --- Write catalyst source mix sidecar JSON ---
     source_mix = (results.get("module_3_catalyst") or {}).get("catalyst_source_mix")
     if source_mix:

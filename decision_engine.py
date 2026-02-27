@@ -24,6 +24,8 @@ import json
 from dataclasses import dataclass, fields as dc_fields
 from typing import Any, Dict, List, Optional, Tuple
 
+from decision_engine_codes import canonicalize_reasons
+
 
 # =============================================================================
 # RULESET CONFIGURATION
@@ -1528,7 +1530,7 @@ def compute_decision_fields(
         "decision_engine_version": VERSION,
         "decision_engine_ruleset_id": rs.ruleset_id,
         "eligible": "1" if eligible else "0",
-        "ineligible_reasons": "|".join(reasons) if reasons else "",
+        "ineligible_reasons": "|".join(canonicalize_reasons(reasons)),
         **overlays,
         "size_band": size_band,
         "size_reasons": "|".join(size_reasons) if size_reasons else "",

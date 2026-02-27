@@ -37,6 +37,8 @@ class ReasonCode:
 # =============================================================================
 
 _ELIGIBILITY_CODE_LIST: List[ReasonCode] = [
+    ReasonCode("financials_missing", "eligibility",
+               "Survivability data absent (cash + burn both missing)"),
     ReasonCode("fundamental_red_flag", "eligibility",
                "Fundamental red flag (survivability / runway critical)"),
     ReasonCode("sev3", "eligibility",
@@ -48,6 +50,10 @@ _ELIGIBILITY_CODE_LIST: List[ReasonCode] = [
 ]
 
 ELIGIBILITY_CODES: FrozenSet[str] = frozenset(rc.code for rc in _ELIGIBILITY_CODE_LIST)
+
+# Canonical ordering for deterministic serialisation of ineligible_reasons.
+# Known codes appear in gate-evaluation order; unknown codes sort alphabetically after.
+REASON_ORDER: List[str] = [rc.code for rc in _ELIGIBILITY_CODE_LIST]
 
 
 # =============================================================================
@@ -397,6 +403,41 @@ def describe_code(code: str) -> str:
     if desc:
         return desc
     return code
+
+
+def canonicalize_reasons(reasons) -> List[str]:
+    """Normalize an ineligible_reasons value to a deterministic list.
+
+    Accepts:
+        - list of strings (from compute_eligibility)
+        - pipe- or comma-separated string (from CSV round-trip)
+        - None / empty
+
+    Returns:
+        De-duplicated list sorted by REASON_ORDER (unknowns alphabetically after).
+    """
+    if reasons is None:
+        return []
+    if isinstance(reasons, str):
+        # Accept both pipe and comma separators (pipe is canonical, comma for CSV)
+        parts = reasons.replace(",", "|").split("|")
+    else:
+        parts = list(reasons)
+
+    # Strip whitespace, drop empties, de-dup preserving first occurrence
+    seen: set = set()
+    cleaned: List[str] = []
+    for r in parts:
+        r = r.strip()
+        if r and r not in seen:
+            seen.add(r)
+            cleaned.append(r)
+
+    # Sort: known codes by REASON_ORDER position, then unknowns alphabetically
+    _order_map = {code: i for i, code in enumerate(REASON_ORDER)}
+    _sentinel = len(REASON_ORDER)
+    cleaned.sort(key=lambda x: (_order_map.get(x, _sentinel), x))
+    return cleaned
 
 
 def registry_fingerprint() -> str:

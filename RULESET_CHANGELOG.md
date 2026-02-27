@@ -6,6 +6,19 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## Registry 50b8d8deef73 — 2026-02-27 — Add financials_missing to eligibility codes
+
+Added `financials_missing` reason code to `_ELIGIBILITY_CODE_LIST` in
+`decision_engine_codes.py`. This code was already emitted by
+`_compute_eligibility()` (Gate 0) but was missing from the canonical
+registry. Also added `REASON_ORDER` constant and `canonicalize_reasons()`
+helper for deterministic serialisation of `ineligible_reasons`.
+
+No behavioral change — gate logic unchanged, only registry completeness
+and output ordering.
+
+---
+
 ## [v1.6.1] 0c1129f6 — 2026-02-26 — Alpha modifier within-tier (promoted)
 
 **Active ruleset change**: `88d7ae9a` (v1.5.1_coinvest_off) → `0c1129f6` (v1.6.1_alpha_modifier_within_tier)
