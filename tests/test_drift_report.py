@@ -973,7 +973,7 @@ class TestDriftAttribution:
         r = _make_rankings(n_dev=20)  # no include_attribution_cols
         dev = r[r["archetype"] == "drug_developer"]
         counts = _compute_gate_counts(dev)
-        assert counts == {"fundamental_red_flag": 0, "sev3": 0, "deep_drawdown": 0, "adv_fail": 0}
+        assert counts == {"financials_missing": 0, "fundamental_red_flag": 0, "sev3": 0, "deep_drawdown": 0, "adv_fail": 0}
 
     # -- Catalyst strength tests --
 

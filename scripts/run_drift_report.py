@@ -1685,7 +1685,7 @@ def compute_suggested_guardrails(
 # ---------------------------------------------------------------------------
 # Drift attribution — root-cause breadcrumbs for pairwise snapshot diffs
 # ---------------------------------------------------------------------------
-_GATE_KEYS = ("fundamental_red_flag", "sev3", "deep_drawdown", "adv_fail")
+_GATE_KEYS = ("financials_missing", "fundamental_red_flag", "sev3", "deep_drawdown", "adv_fail")
 _STRENGTH_RANK = {"near": 0, "mid": 1, "far": 2, "missing": 3}
 
 
