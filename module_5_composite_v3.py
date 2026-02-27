@@ -1063,6 +1063,9 @@ def compute_module_5_composite_v3(
         result["stage_bucket"] = rec["stage_bucket"]
         result["cohort_key"] = rec["cohort_key"]
         result["coinvest"] = rec["coinvest"]
+        # Propagate for red-flag detection (missingness-safe guards)
+        result["lead_phase"] = rec.get("lead_phase")
+        result["has_revenue"] = (rec.get("fin_data") or {}).get("has_revenue")
         scored.append(result)
 
     # =========================================================================

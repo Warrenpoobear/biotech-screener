@@ -1806,6 +1806,90 @@ class TestFundamentalRedFlagDetection:
         assert "weak_competitive_position" in reasons
 
 
+    def test_no_revenue_late_stage_missing_has_revenue_skips(self):
+        """has_revenue=None (missing) should NOT trigger no_revenue_late_stage."""
+        record = {
+            "stage_bucket": "late",
+            # has_revenue intentionally absent
+            "survivability_signal": {"metrics": {}},
+        }
+        _, reasons = detect_fundamental_red_flags(record)
+        assert "no_revenue_late_stage" not in reasons
+
+    def test_no_revenue_late_stage_explicit_false_fires(self):
+        """has_revenue=False + late stage → flag fires."""
+        record = {
+            "stage_bucket": "late",
+            "has_revenue": False,
+            "survivability_signal": {"metrics": {}},
+        }
+        _, reasons = detect_fundamental_red_flags(record)
+        assert "no_revenue_late_stage" in reasons
+
+    def test_no_revenue_early_stage_not_flagged(self):
+        """has_revenue=False but early stage → NOT flagged (only late)."""
+        record = {
+            "stage_bucket": "early",
+            "has_revenue": False,
+            "survivability_signal": {"metrics": {}},
+        }
+        _, reasons = detect_fundamental_red_flags(record)
+        assert "no_revenue_late_stage" not in reasons
+
+    def test_sponsor_absent_late_stage_missing_tier1_skips(self):
+        """Missing tier1_count should NOT trigger sponsor_absent_late_stage."""
+        record = {
+            "stage_bucket": "late",
+            "coinvest": {},  # tier1_count absent
+            "survivability_signal": {"metrics": {}},
+        }
+        _, reasons = detect_fundamental_red_flags(record)
+        assert "sponsor_absent_late_stage" not in reasons
+
+    def test_sponsor_absent_late_stage_explicit_zero_fires(self):
+        """tier1_count=0 + late stage → flag fires."""
+        record = {
+            "stage_bucket": "late",
+            "coinvest": {"tier1_count": 0},
+            "survivability_signal": {"metrics": {}},
+        }
+        _, reasons = detect_fundamental_red_flags(record)
+        assert "sponsor_absent_late_stage" in reasons
+
+    def test_sponsor_present_late_stage_not_flagged(self):
+        """tier1_count > 0 + late stage → NOT flagged."""
+        record = {
+            "stage_bucket": "late",
+            "coinvest": {"tier1_count": 3},
+            "survivability_signal": {"metrics": {}},
+        }
+        _, reasons = detect_fundamental_red_flags(record)
+        assert "sponsor_absent_late_stage" not in reasons
+
+    def test_reasons_always_emitted_when_flagged(self):
+        """When fundamental_red_flag=True, reasons list must be non-empty."""
+        record = {
+            "survivability_signal": {
+                "metrics": {"effective_runway_months": 4}
+            },
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert is_flagged
+        assert len(reasons) > 0
+
+    def test_reasons_deterministic_order(self):
+        """Reason codes are in stable (identical across calls) order."""
+        record = {
+            "survivability_signal": {
+                "score": "-5.0",
+                "metrics": {"effective_runway_months": 3}
+            },
+        }
+        _, reasons1 = detect_fundamental_red_flags(record)
+        _, reasons2 = detect_fundamental_red_flags(record)
+        assert reasons1 == reasons2
+
+
 class TestRedFlagSuppression:
     """Tests for apply_red_flag_suppression()."""
 

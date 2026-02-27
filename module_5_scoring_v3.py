@@ -3821,6 +3821,15 @@ def _score_single_ticker_v3(
                 and stage.lower() in ("early", "preclinical")
                 and lead_phase):
             _red_flag_reasons.append("single_asset_early")
+        # No revenue + late stage
+        if has_revenue is False and stage.lower() in ("late",):
+            _red_flag_reasons.append("no_revenue_late")
+        # Sponsor absent + late stage
+        # smart_money is SmartMoneySignal dataclass (line 3170);
+        # tier_breakdown is Dict[int, int] where key 1 = tier-1 count
+        _sm_tier1 = smart_money.tier_breakdown.get(1, None)
+        if _sm_tier1 is not None and _sm_tier1 == 0 and stage.lower() in ("late",):
+            _red_flag_reasons.append("sponsor_absent_late")
         # Weak competitive position under intense crowding
         # Guard: require competitor_count > 0 to prove signal was computed
         if (intensity_crowding == "intense"

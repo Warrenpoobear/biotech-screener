@@ -1335,6 +1335,10 @@ SNAPSHOT_COLUMNS = [
     "decision_engine_ruleset_id",
     "eligible",
     "ineligible_reasons",
+    # --- Red flag audit trail ---
+    "fundamental_red_flag",
+    "fundamental_red_flag_reasons",
+    "fundamental_red_flag_inputs",
     # --- Diagnostics / supporting DE signals ---
     "alpha_cohort_key",
     "alpha_cohort_raw",
@@ -3314,6 +3318,25 @@ def save_validation_snapshot(
             commercial_quality_pct=cq_pct_float,
         )
         row.update(decision)
+
+        # Red flag audit trail: persist detection results from rec
+        row["fundamental_red_flag"] = "1" if rec.get("fundamental_red_flag") else "0"
+        row["fundamental_red_flag_reasons"] = ",".join(
+            sorted(rec.get("fundamental_red_flag_reasons") or [])
+        )
+        _surv_m = (rec.get("survivability_signal") or {}).get("metrics") or {}
+        row["fundamental_red_flag_inputs"] = json.dumps({
+            "stage_bucket": rec.get("stage_bucket"),
+            "lead_phase": rec.get("lead_phase"),
+            "has_revenue": rec.get("has_revenue"),
+            "tier1_count": (rec.get("coinvest") or {}).get("tier1_count"),
+            "runway_months": _surv_m.get("effective_runway_months"),
+            "burn_ttm": _surv_m.get("burn_ttm"),
+            "cash_total": _surv_m.get("cash_total"),
+            "surv_score": (rec.get("survivability_signal") or {}).get("score"),
+            "dilution_risk": (rec.get("dilution_risk_signal") or {}).get("risk_level"),
+        }, sort_keys=True)
+
         row["est_cost_bps"] = est_cost_bps if est_cost_bps is not None else ""
         # Signal presence flag for catalyst
         row["has_catalyst_signal"] = str(decision.get("catalyst_mode", "missing") != "missing")

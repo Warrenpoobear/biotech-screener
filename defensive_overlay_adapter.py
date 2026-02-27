@@ -351,13 +351,30 @@ def detect_fundamental_red_flags(record: Dict) -> Tuple[bool, List[str]]:
     if dilution.get("risk_level") == "HIGH":
         reasons.append("dilution_risk_high")
 
+    # --- Revenue gate for late-stage companies ---
+    # Spec §3.1: Revenue = 0 AND stage >= Phase 3 → no_revenue_late_stage
+    # Missingness-safe: only fire when has_revenue is explicitly False
+    # (not missing/None/""), AND stage_bucket is confidently late.
+    stage = record.get("stage_bucket") or ""
+    has_revenue = record.get("has_revenue")
+    if has_revenue is False and stage.lower() in ["late"]:
+        reasons.append("no_revenue_late_stage")
+
+    # --- Sponsor absence for late-stage ---
+    # Late-stage company with zero tier-1 sponsors = institutional skepticism.
+    # Missingness-safe: only fire when tier1_count is explicitly present and == 0
+    # (missing/None won't trigger).
+    coinvest = record.get("coinvest") or {}
+    tier1_count = coinvest.get("tier1_count")
+    if tier1_count is not None and int(tier1_count) == 0 and stage.lower() in ["late"]:
+        reasons.append("sponsor_absent_late_stage")
+
     # --- Clinical Credibility ---
     # Single asset risk profile + early stage = high binary risk
     # Only applies when pipeline data is present (program_count >= 1).
     # Companies with no tracked clinical programs (commercial/platform)
     # get default stage_bucket="early" + risk_profile="single_asset"
     # which are not meaningful for this check.
-    stage = record.get("stage_bucket") or ""
     pipeline = record.get("pipeline_diversity_signal") or {}
     risk_profile = pipeline.get("risk_profile") or ""
     try:
