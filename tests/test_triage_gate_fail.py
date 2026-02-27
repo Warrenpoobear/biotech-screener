@@ -17,6 +17,7 @@ from decision_engine import DecisionRuleset
 from scripts.triage_gate_fail import (
     collect_top_movers,
     find_prior_date,
+    reconstruct_movers_from_snapshots,
     select_worst_date,
     triage_gate_fail,
 )
@@ -533,3 +534,111 @@ class TestTriageGateFail:
         summary = triage_gate_fail(eval_json, snap_dir, tmp_path / "out")
         assert len(summary["top_movers"]) == 1
         assert summary["top_movers"][0]["ticker"] == "A"
+
+    def test_reconstruct_movers_from_snapshots(self, tmp_path):
+        """When eval JSON has NO top_movers AND no per-date shift ticker,
+        movers are reconstructed from snapshots."""
+        snap_dir = tmp_path / "snaps"
+        tickers = [f"T{i:02d}" for i in range(1, 11)]
+        _make_snapshot(snap_dir, "2026-02-10", _rich_rows(tickers))
+        tickers_d2 = tickers[:7] + list(reversed(tickers[7:]))
+        _make_snapshot(snap_dir, "2026-02-11", _rich_rows(tickers_d2))
+
+        eval_data = _make_eval_json(
+            dates_evaluated=["2026-02-10", "2026-02-11"],
+            per_date=[
+                {"date": "2026-02-10", "n_eligible": 10},
+                {
+                    "date": "2026-02-11",
+                    "n_eligible": 10,
+                    "temporal_overlap_60": 80.0,
+                    "temporal_spearman": 0.92,
+                    # No temporal_max_shift_ticker — only overlap!
+                },
+            ],
+            top_movers=[],
+        )
+        eval_json = tmp_path / "eval.json"
+        _write_json(eval_json, eval_data)
+        rs = DecisionRuleset()
+
+        summary = triage_gate_fail(
+            eval_json, snap_dir, tmp_path / "out",
+            max_tickers=5, ruleset=rs,
+        )
+        assert len(summary["top_movers"]) >= 1
+        assert any(
+            "reconstructed" in n for n in summary["notes"]
+        )
+        # Explains should also be produced
+        assert len(summary["explain_files"]) >= 1
+
+    def test_reconstruct_without_ruleset_uses_existing_ranks(self, tmp_path):
+        """Reconstruction without ruleset uses actionable_rank column."""
+        snap_dir = tmp_path / "snaps"
+        rows_d1 = [
+            {"ticker": "A", "eligible": "1", "actionable_rank": "1"},
+            {"ticker": "B", "eligible": "1", "actionable_rank": "2"},
+            {"ticker": "C", "eligible": "1", "actionable_rank": "3"},
+        ]
+        rows_d2 = [
+            {"ticker": "A", "eligible": "1", "actionable_rank": "3"},
+            {"ticker": "B", "eligible": "1", "actionable_rank": "1"},
+            {"ticker": "C", "eligible": "1", "actionable_rank": "2"},
+        ]
+        _make_snapshot(snap_dir, "2026-02-10", rows_d1)
+        _make_snapshot(snap_dir, "2026-02-11", rows_d2)
+
+        eval_data = _make_eval_json(
+            dates_evaluated=["2026-02-10", "2026-02-11"],
+            per_date=[
+                {"date": "2026-02-10", "n_eligible": 3},
+                {
+                    "date": "2026-02-11",
+                    "n_eligible": 3,
+                    "temporal_overlap_60": 80.0,
+                },
+            ],
+            top_movers=[],
+        )
+        eval_json = tmp_path / "eval.json"
+        _write_json(eval_json, eval_data)
+
+        # No ruleset — should use actionable_rank
+        summary = triage_gate_fail(
+            eval_json, snap_dir, tmp_path / "out",
+            max_tickers=5, ruleset=None,
+        )
+        assert len(summary["top_movers"]) >= 1
+        assert summary["top_movers"][0]["ticker"] == "A"  # shifted by 2
+        assert summary["top_movers"][0]["shift"] == 2
+
+    def test_aggregate_max_shift_fallback(self, tmp_path):
+        """Falls back to aggregate max_rank_shift when no snapshots exist."""
+        eval_data = _make_eval_json(
+            dates_evaluated=["2026-02-10", "2026-02-11"],
+            per_date=[
+                {"date": "2026-02-10", "n_eligible": 10},
+                {
+                    "date": "2026-02-11",
+                    "n_eligible": 10,
+                    "temporal_overlap_60": 80.0,
+                },
+            ],
+            top_movers=[],
+        )
+        # Add aggregate max_rank_shift
+        eval_data["temporal_stability"]["max_rank_shift"] = {
+            "ticker": "IBRX", "shift": 201, "from": 29, "to": 230,
+            "date": "2026-02-11",
+        }
+        eval_json = tmp_path / "eval.json"
+        _write_json(eval_json, eval_data)
+
+        # No snapshots exist, no ruleset — should fall back to aggregate
+        summary = triage_gate_fail(
+            eval_json, tmp_path / "empty_snaps", tmp_path / "out",
+        )
+        assert len(summary["top_movers"]) == 1
+        assert summary["top_movers"][0]["ticker"] == "IBRX"
+        assert summary["top_movers"][0]["shift"] == 201

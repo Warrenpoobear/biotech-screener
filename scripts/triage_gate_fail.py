@@ -25,6 +25,11 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from decision_engine import DecisionRuleset
+from scripts.eval_ruleset import (
+    _read_rankings,
+    rank_map as _existing_rank_map,
+    rerank_rows,
+)
 from scripts.explain_rank_shift import explain_ticker_shift
 
 VERSION = "1.0.0"
@@ -101,6 +106,55 @@ def collect_top_movers(
     return date_movers[:max_tickers]
 
 
+def reconstruct_movers_from_snapshots(
+    worst_date: str,
+    prior_date: str,
+    snapshot_dir: Path,
+    max_tickers: int,
+    ruleset: Optional[DecisionRuleset] = None,
+) -> List[Dict[str, Any]]:
+    """Reconstruct top movers by loading two snapshots and computing shifts.
+
+    Used as a fallback when the eval JSON lacks enriched top_movers.
+    If *ruleset* is provided, re-ranks both snapshots; otherwise uses
+    existing actionable_rank columns.
+    """
+    cur_path = snapshot_dir / worst_date / "rankings.csv"
+    pri_path = snapshot_dir / prior_date / "rankings.csv"
+    if not cur_path.exists() or not pri_path.exists():
+        return []
+
+    cur_rows = _read_rankings(cur_path)
+    pri_rows = _read_rankings(pri_path)
+    if not cur_rows or not pri_rows:
+        return []
+
+    if ruleset:
+        _, cur_ranks = rerank_rows(cur_rows, ruleset)
+        _, pri_ranks = rerank_rows(pri_rows, ruleset)
+    else:
+        cur_ranks = _existing_rank_map(cur_rows)
+        pri_ranks = _existing_rank_map(pri_rows)
+
+    common = set(cur_ranks) & set(pri_ranks)
+    if not common:
+        return []
+
+    entries = []
+    for t in common:
+        s = abs(cur_ranks[t] - pri_ranks[t])
+        if s > 0:
+            entries.append({
+                "ticker": t,
+                "shift": s,
+                "from": pri_ranks[t],
+                "to": cur_ranks[t],
+                "date": worst_date,
+            })
+    entries.sort(key=lambda x: (-x["shift"], x["ticker"]))
+    return entries[:max_tickers]
+
+
 # ---------------------------------------------------------------------------
 # Orchestrator
 # ---------------------------------------------------------------------------
@@ -143,6 +197,8 @@ def triage_gate_fail(
         worst_metric_name = "temporal_overlap_60"
         worst_metric_value = worst.get("temporal_overlap_60")
 
+    notes: List[str] = []
+
     # Top movers for worst date
     movers = (
         collect_top_movers(eval_data, worst_date, max_tickers)
@@ -150,7 +206,7 @@ def triage_gate_fail(
         else []
     )
 
-    # Fallback: use per-date shift info if enriched movers are absent
+    # Fallback 1: use per-date shift info if enriched movers are absent
     if not movers and worst:
         t = worst.get("temporal_max_shift_ticker")
         if t:
@@ -162,12 +218,41 @@ def triage_gate_fail(
                 "date": worst_date,
             }]
 
+    # Fallback 2: reconstruct from snapshots when eval JSON lacks movers
+    if not movers and worst_date and prior_date:
+        movers = reconstruct_movers_from_snapshots(
+            worst_date=worst_date,
+            prior_date=prior_date,
+            snapshot_dir=snapshot_dir,
+            max_tickers=max_tickers,
+            ruleset=ruleset,
+        )
+        if movers:
+            notes.append(
+                f"movers reconstructed from snapshots "
+                f"({worst_date} vs {prior_date})"
+            )
+
+    # Fallback 3: aggregate max_rank_shift from temporal_stability
+    if not movers:
+        agg_ms = eval_data.get("temporal_stability", {}).get(
+            "max_rank_shift", {}
+        )
+        if agg_ms.get("ticker"):
+            movers = [{
+                "ticker": agg_ms["ticker"],
+                "shift": agg_ms.get("shift", 0),
+                "from": agg_ms.get("from"),
+                "to": agg_ms.get("to"),
+                "date": agg_ms.get("date", worst_date),
+            }]
+            notes.append("movers from aggregate max_rank_shift")
+
     # Build per-ticker explains
     explain_dir = out_dir / "explain"
     explain_dir.mkdir(parents=True, exist_ok=True)
 
     explain_files: List[str] = []
-    notes: List[str] = []
 
     if ruleset and worst_date and prior_date:
         for mover in movers:
