@@ -454,6 +454,93 @@ jobs:
             cat "$EVAL_MD" >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      # ── Build eligibility delta ──────────────────────────────────
+      - name: Build eligibility delta
+        if: always() && steps.runner.outputs.exit_code != '1'
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          SNAP_DIR="data/snapshots/${DATE}"
+
+          if [ "${DEGRADED}" = "1" ]; then
+            echo "::notice::DEGRADED run — writing DEGRADED_SKIP sidecar for eligibility delta"
+            echo '{"schema":"eligibility_delta.v1","verdict":"DEGRADED_SKIP"}' \
+              > "${SNAP_DIR}/eligibility_delta.json"
+            exit 0
+          fi
+
+          python3 scripts/build_eligibility_delta.py \
+            --as-of-date "$DATE" \
+            --snapshot-dir data/snapshots \
+            --out-json "${SNAP_DIR}/eligibility_delta.json" \
+            --out-md   "${SNAP_DIR}/eligibility_delta.md"
+
+          # Append delta markdown to step summary
+          if [ -f "${SNAP_DIR}/eligibility_delta.md" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            cat "${SNAP_DIR}/eligibility_delta.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # ── Evaluate eligibility gate ──────────────────────────────
+      - name: Evaluate eligibility gate
+        id: elig_gate
+        if: always() && steps.runner.outputs.exit_code != '1'
+        continue-on-error: true
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          SNAP_DIR="data/snapshots/${DATE}"
+          DELTA_JSON="${SNAP_DIR}/eligibility_delta.json"
+
+          if [ ! -f "$DELTA_JSON" ]; then
+            echo "::notice::eligibility_delta.json not found — skipping gate"
+            echo "ELIG_VERDICT=SKIP" >> "$GITHUB_ENV"
+            exit 0
+          fi
+
+          # Check for DEGRADED_SKIP sidecar
+          VERDICT_CHECK=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('verdict',''))" "$DELTA_JSON" 2>/dev/null || echo "")
+          if [ "$VERDICT_CHECK" = "DEGRADED_SKIP" ]; then
+            echo "::notice::Eligibility delta is DEGRADED_SKIP — gate skipped"
+            echo "ELIG_VERDICT=DEGRADED_SKIP" >> "$GITHUB_ENV"
+            exit 0
+          fi
+
+          set +e
+          python3 scripts/eval_eligibility_gate.py \
+            --delta-json "$DELTA_JSON" \
+            --out-json "${SNAP_DIR}/eligibility_gate.json"
+          GATE_RC=$?
+          set -e
+
+          if [ "$GATE_RC" -eq 0 ]; then
+            # Could be PASS or WARN — read verdict from output
+            ELIG_VERDICT=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('verdict','PASS'))" "${SNAP_DIR}/eligibility_gate.json" 2>/dev/null || echo "PASS")
+          else
+            ELIG_VERDICT="FAIL"
+          fi
+          echo "ELIG_VERDICT=${ELIG_VERDICT}" >> "$GITHUB_ENV"
+
+      # ── Triage eligibility drift (on WARN or FAIL) ─────────────
+      - name: Triage eligibility drift
+        if: always() && steps.runner.outputs.exit_code != '1' && (env.ELIG_VERDICT == 'WARN' || env.ELIG_VERDICT == 'FAIL')
+        continue-on-error: true
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          SNAP_DIR="data/snapshots/${DATE}"
+
+          python3 scripts/triage_eligibility_drift.py \
+            --as-of-date "$DATE" \
+            --snapshot-dir data/snapshots \
+            --out-dir "${SNAP_DIR}/eligibility_triage" \
+            --include-reason-only \
+            --max-tickers 50
+
+          # Append triage markdown to step summary
+          TRIAGE_MD="${SNAP_DIR}/eligibility_triage/triage_summary.md"
+          if [ -f "$TRIAGE_MD" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            cat "$TRIAGE_MD" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       # ── Upload snapshot artifacts ───────────────────────────────
       - name: Upload snapshot
         if: always()
@@ -517,6 +604,9 @@ jobs:
           echo "| Requested date | \`$REQ_DATE\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Effective date | \`$EFF_DATE\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Exit code | \`$RC\` |" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "${ELIG_VERDICT:-}" ]; then
+            echo "| Eligibility gate | \`$ELIG_VERDICT\` |" >> "$GITHUB_STEP_SUMMARY"
+          fi
 
           # Parse manifest for summary details + cross-check
           MANIFEST_STATUS=""
