@@ -15,6 +15,7 @@ if _root not in sys.path:
 
 from decision_engine import DecisionRuleset
 from scripts.eval_ruleset import (
+    compute_top_shifts,
     evaluate_ruleset_rerank_only,
     rerank_rows,
     main,
@@ -104,6 +105,40 @@ def _rich_rows(tickers: List[str]) -> List[Dict[str, str]]:
             "mom_state": "neutral",
         })
     return rows
+
+
+# ---------------------------------------------------------------------------
+# Tests: compute_top_shifts
+# ---------------------------------------------------------------------------
+
+
+class TestComputeTopShifts:
+    def test_returns_top_n_sorted(self):
+        curr = {"A": 1, "B": 5, "C": 3, "D": 4, "E": 2}
+        prior = {"A": 2, "B": 1, "C": 5, "D": 4, "E": 3}
+        result = compute_top_shifts(curr, prior, n=3)
+        assert len(result) == 3
+        shifts = [r["shift"] for r in result]
+        assert shifts == sorted(shifts, reverse=True)
+
+    def test_empty_on_no_overlap(self):
+        assert compute_top_shifts({"A": 1}, {"B": 1}, n=3) == []
+
+    def test_excludes_zero_shifts(self):
+        curr = {"A": 1, "B": 2}
+        prior = {"A": 1, "B": 3}
+        result = compute_top_shifts(curr, prior, n=5)
+        assert len(result) == 1
+        assert result[0]["ticker"] == "B"
+
+    def test_deterministic_tiebreak_by_ticker(self):
+        curr = {"A": 2, "B": 3}
+        prior = {"A": 1, "B": 2}
+        # Both shift by 1
+        result = compute_top_shifts(curr, prior, n=5)
+        assert len(result) == 2
+        assert result[0]["ticker"] == "A"  # alphabetical tiebreak
+        assert result[1]["ticker"] == "B"
 
 
 # ---------------------------------------------------------------------------
@@ -323,17 +358,52 @@ class TestRerankOnlyEval:
         assert "top_movers" in ts
         movers = ts["top_movers"]
         assert len(movers) >= 1
-        assert len(movers) <= 10
-        # Sorted descending by shift
-        shifts = [m["shift"] for m in movers]
-        assert shifts == sorted(shifts, reverse=True)
-        # Each entry has expected keys
+        assert len(movers) <= 20
+        # Sorted descending by shift, then ascending ticker for ties
+        for i in range(len(movers) - 1):
+            a, b = movers[i], movers[i + 1]
+            assert (-a["shift"], a["ticker"]) <= (-b["shift"], b["ticker"])
+        # Each entry has core + enrichment keys
         for m in movers:
             assert "ticker" in m
             assert "date" in m
             assert "from" in m
             assert "to" in m
             assert "shift" in m
+            # Enrichment columns
+            assert "tier" in m
+            assert "archetype" in m
+            assert "composite_rank" in m
+            assert "catalyst_days" in m
+            assert "missing_count" in m
+            assert isinstance(m["missing_count"], int)
+
+    def test_top_movers_enrichment_values(self, tmp_path):
+        """Enrichment columns reflect the CSV row data for shifted tickers."""
+        snap_dir = tmp_path / "snaps"
+        tickers = [f"T{i:02d}" for i in range(1, 11)]
+        rows_d1 = _rich_rows(tickers)
+        _make_snapshot(snap_dir, "2026-02-10", rows_d1)
+        tickers_d2 = tickers[:8] + list(reversed(tickers[8:]))
+        _make_snapshot(snap_dir, "2026-02-11", _rich_rows(tickers_d2))
+
+        rs = _default_ruleset()
+        result = evaluate_ruleset_rerank_only(
+            candidate_ruleset=rs,
+            baseline_ruleset=rs,
+            dates=["2026-02-10", "2026-02-11"],
+            snapshot_dir=snap_dir,
+            k=10,
+        )
+        movers = result["temporal_stability"]["top_movers"]
+        assert len(movers) >= 1
+        top = movers[0]
+        # Rich rows set archetype="drug_developer" for all
+        assert top["archetype"] == "drug_developer"
+        # Tier is A or B
+        assert top["tier"] in ("", "A", "B")  # tier_any may not be set; tier_dev is
+        # missing_count should be 0 (no missing_components in rich rows)
+        assert top["missing_count"] == 0
 
     def test_degraded_snapshot_still_evaluated(self, tmp_path):
         """Degraded snapshots are evaluated in rerank-only (tagged, not skipped)."""

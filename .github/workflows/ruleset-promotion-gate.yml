@@ -407,15 +407,30 @@ jobs:
                       lines.append(f"  - Biggest mover: **{wt}** rank {wf} -> {wto} (shift={ws})")
                   lines.append("")
 
-              # Top movers table
+              # Top movers table (with decomposition columns)
               movers = ts.get("top_movers", [])
               if movers:
                   lines.append("**Top movers** (biggest day-over-day rank shifts):")
                   lines.append("")
-                  lines.append("| Ticker | Date | From | To | Shift |")
-                  lines.append("|--------|------|------|----|-------|")
-                  for m in movers[:5]:
-                      lines.append(f"| {m.get('ticker', '?')} | {m.get('date', '?')} | {m.get('from', '?')} | {m.get('to', '?')} | {m.get('shift', '?')} |")
+                  lines.append("| Ticker | Date | From | To | Shift | Tier | Archetype | Catalyst | Missing |")
+                  lines.append("|--------|------|------|----|-------|------|-----------|----------|---------|")
+                  for m in movers[:10]:
+                      cat = m.get("catalyst_days", "?")
+                      cat_mode = m.get("catalyst_mode", "")
+                      cat_str = f"{cat}d" if cat and cat != "?" else cat_mode or "?"
+                      lines.append(
+                          f"| {m.get('ticker', '?')} "
+                          f"| {m.get('date', '?')} "
+                          f"| {m.get('from', '?')} "
+                          f"| {m.get('to', '?')} "
+                          f"| {m.get('shift', '?')} "
+                          f"| {m.get('tier', '?')} "
+                          f"| {m.get('archetype', '?')[:12]} "
+                          f"| {cat_str} "
+                          f"| {m.get('missing_count', '?')} |"
+                      )
+                  if len(movers) > 10:
+                      lines.append(f"| ... | +{len(movers) - 10} more in `top_movers.csv` | | | | | | | |")
                   lines.append("")
 
               # Root-cause hints
@@ -435,12 +450,27 @@ jobs:
               if len(low_sp) >= 2:
                   low_dates = ", ".join(pd["date"] for pd in low_sp[:3])
                   hints.append(f"Multiple low-correlation dates ({low_dates}) — possible data regime shift")
+              # Check for high missing_count cluster
+              if movers:
+                  high_miss = [m for m in movers[:20] if m.get("missing_count", 0) >= 2]
+                  if len(high_miss) >= 3:
+                      tks = ", ".join(m["ticker"] for m in high_miss[:5])
+                      hints.append(f"{len(high_miss)} top movers have >=2 missing components ({tks}) — data gaps driving instability")
               if hints:
                   lines.append("**Possible root causes:**")
                   lines.append("")
                   for h in hints:
                       lines.append(f"- {h}")
                   lines.append("")
+
+              # Next actions
+              lines.append("### Next Actions")
+              lines.append("")
+              lines.append("1. Download `fail_packet/top_movers.csv` from artifacts and inspect the worst-date snapshot inputs")
+              lines.append("2. Check whether shifts are from data/cache degradation or real ranking sensitivity")
+              lines.append("3. If data-driven: fix cache health, re-run the gate")
+              lines.append("4. If sensitivity-driven: consider adjusting the candidate ruleset (sort weights, penalties)")
+              lines.append("")
 
           with open(summary_file, "a", encoding="utf-8") as f:
               f.write("\n".join(lines) + "\n")
@@ -474,22 +504,21 @@ jobs:
           packet_dir = eval_path.parent / "fail_packet"
           packet_dir.mkdir(exist_ok=True)
 
-          # --- top_movers.csv ---
+          # --- top_movers.csv (with decomposition) ---
           movers = data.get("temporal_stability", {}).get("top_movers", [])
-          if movers:
-              csv_path = packet_dir / "top_movers.csv"
-              with open(csv_path, "w", newline="", encoding="utf-8") as f:
-                  w = csv.DictWriter(f, fieldnames=["ticker", "date", "from", "to", "shift"])
-                  w.writeheader()
-                  for m in movers:
-                      w.writerow({
-                          "ticker": m.get("ticker", ""),
-                          "date": m.get("date", ""),
-                          "from": m.get("from", ""),
-                          "to": m.get("to", ""),
-                          "shift": m.get("shift", ""),
-                      })
-              print(f"Wrote {csv_path} ({len(movers)} rows)")
+          mover_fields = [
+              "ticker", "date", "from", "to", "shift",
+              "tier", "archetype", "composite_rank",
+              "catalyst_days", "catalyst_mode",
+              "missing_count", "alpha_cohort_raw",
+          ]
+          csv_path = packet_dir / "top_movers.csv"
+          with open(csv_path, "w", newline="", encoding="utf-8") as f:
+              w = csv.DictWriter(f, fieldnames=mover_fields, extrasaction="ignore")
+              w.writeheader()
+              for m in movers:
+                  w.writerow({k: m.get(k, "") for k in mover_fields})
+          print(f"Wrote {csv_path} ({len(movers)} rows)")
 
           # --- per_date_instability.csv ---
           per_date = data.get("per_date", [])

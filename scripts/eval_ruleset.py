@@ -225,6 +225,54 @@ def compute_max_shift(
     }
 
 
+def compute_top_shifts(
+    curr_ranks: Dict[str, int],
+    prior_ranks: Dict[str, int],
+    n: int = 3,
+) -> List[Dict[str, Any]]:
+    """Return top-N rank shifts between two rank maps, sorted by shift desc."""
+    common = set(curr_ranks) & set(prior_ranks)
+    if not common:
+        return []
+    entries = []
+    for t in common:
+        s = abs(curr_ranks[t] - prior_ranks[t])
+        if s > 0:
+            entries.append({
+                "ticker": t,
+                "shift": s,
+                "from": prior_ranks[t],
+                "to": curr_ranks[t],
+            })
+    entries.sort(key=lambda x: (-x["shift"], x["ticker"]))
+    return entries[:n]
+
+
+# Decomposition columns added to shift entries for FAIL-packet diagnostics.
+_ENRICHMENT_COLS = [
+    ("tier", "tier_any"),
+    ("archetype", "archetype"),
+    ("composite_rank", "composite_rank"),
+    ("catalyst_days", "catalyst_days"),
+    ("catalyst_mode", "catalyst_mode"),
+    ("alpha_cohort_raw", "alpha_cohort_raw"),
+]
+
+
+def _enrich_shift(
+    shift: Dict[str, Any],
+    row_by_ticker: Dict[str, Dict[str, str]],
+) -> None:
+    """Add decomposition columns from the CSV row to a shift entry (in-place)."""
+    row = row_by_ticker.get(shift.get("ticker", ""), {})
+    for out_key, csv_col in _ENRICHMENT_COLS:
+        shift[out_key] = row.get(csv_col, "")
+    mc = row.get("missing_components", "")
+    shift["missing_count"] = (
+        len([x for x in mc.split(";") if x.strip()]) if mc else 0
+    )
+
+
 # ---------------------------------------------------------------------------
 # Rerank-only helpers
 # ---------------------------------------------------------------------------
@@ -302,6 +350,7 @@ def evaluate_ruleset_rerank_only(
     temporal_overlaps_60: List[float] = []
     temporal_spearman: List[float] = []
     temporal_max_shifts: List[Dict[str, Any]] = []
+    all_enriched_shifts: List[Dict[str, Any]] = []
 
     # Cross-comparison (candidate vs baseline, same date)
     cross_overlaps_20: List[float] = []
@@ -322,6 +371,7 @@ def evaluate_ruleset_rerank_only(
             continue
 
         rows = _read_rankings(rankings_path)
+        row_by_ticker = {r.get("ticker", ""): r for r in rows}
         if not rows:
             skipped.append({"date": snap_date, "reason": "empty_rankings"})
             continue
@@ -361,6 +411,13 @@ def evaluate_ruleset_rerank_only(
                 date_row["temporal_max_shift"] = ms["shift"]
                 date_row["temporal_max_shift_from"] = ms["from"]
                 date_row["temporal_max_shift_to"] = ms["to"]
+
+            # Enriched top-N shifts for FAIL packet
+            top_shifts = compute_top_shifts(cand_ranks, prev_cand_ranks, n=3)
+            for ts_entry in top_shifts:
+                enriched = {**ts_entry, "date": snap_date}
+                _enrich_shift(enriched, row_by_ticker)
+                all_enriched_shifts.append(enriched)
 
             date_row["temporal_overlap_20"] = ov20["overlap_pct"]
             date_row["temporal_overlap_60"] = ov60["overlap_pct"]
@@ -424,9 +481,11 @@ def evaluate_ruleset_rerank_only(
     if temporal_max_shifts:
         worst = max(temporal_max_shifts, key=lambda x: x["shift"])
         temporal["max_rank_shift"] = worst
+    if all_enriched_shifts:
         temporal["top_movers"] = sorted(
-            temporal_max_shifts, key=lambda x: x["shift"], reverse=True
-        )[:10]
+            all_enriched_shifts,
+            key=lambda x: (-x["shift"], x["ticker"]),
+        )[:20]
     result["temporal_stability"] = temporal
 
     # Cross-comparison
@@ -496,6 +555,7 @@ def evaluate_ruleset(
     temporal_overlaps_60: List[float] = []
     temporal_spearman: List[float] = []
     temporal_max_shifts: List[Dict[str, Any]] = []
+    all_enriched_shifts: List[Dict[str, Any]] = []
 
     # Cross-comparison (candidate vs baseline, same date)
     cross_overlaps_20: List[float] = []
@@ -539,6 +599,7 @@ def evaluate_ruleset(
             continue
 
         rows = _read_rankings(rankings_path)
+        row_by_ticker = {r.get("ticker", ""): r for r in rows}
         tickers = ranked_tickers(rows)
         ranks = rank_map(rows)
 
@@ -608,6 +669,13 @@ def evaluate_ruleset(
                     date_row["temporal_max_shift_from"] = ms["from"]
                     date_row["temporal_max_shift_to"] = ms["to"]
 
+                # Enriched top-N shifts for FAIL packet
+                top_shifts = compute_top_shifts(ranks, prev_cand_ranks, n=3)
+                for ts_entry in top_shifts:
+                    enriched = {**ts_entry, "date": snap_date}
+                    _enrich_shift(enriched, row_by_ticker)
+                    all_enriched_shifts.append(enriched)
+
                 date_row["temporal_overlap_20"] = ov20["overlap_pct"]
                 date_row["temporal_overlap_60"] = ov60["overlap_pct"]
                 date_row["temporal_spearman"] = rc["spearman"]
@@ -672,9 +740,11 @@ def evaluate_ruleset(
     if temporal_max_shifts:
         worst = max(temporal_max_shifts, key=lambda x: x["shift"])
         temporal["max_rank_shift"] = worst
+    if all_enriched_shifts:
         temporal["top_movers"] = sorted(
-            temporal_max_shifts, key=lambda x: x["shift"], reverse=True
-        )[:10]
+            all_enriched_shifts,
+            key=lambda x: (-x["shift"], x["ticker"]),
+        )[:20]
     result["temporal_stability"] = temporal
 
     # Performance
