@@ -1,0 +1,27 @@
+{
+  "schema": "monitoring_thresholds.v1",
+  "version": "v1",
+  "notes": "Conservative defaults. WARN gates emit annotations; FAIL gates exit 1.",
+  "stability": {
+    "top60_overlap_warn": 70.0,
+    "top60_overlap_fail": 50.0,
+    "spearman_rho_warn": 0.80,
+    "spearman_rho_fail": 0.60,
+    "name_turnover_pct_warn": 35.0,
+    "name_turnover_pct_fail": 50.0
+  },
+  "coverage": {
+    "eligible_pct_warn": 60.0,
+    "eligible_pct_fail": 40.0
+  },
+  "data_counts": {
+    "sec_8k_events_warn_min": 50,
+    "sec_8k_events_fail_min": 1,
+    "ctgov_records_warn_min": 5000,
+    "ctgov_records_fail_min": 1
+  },
+  "degraded_mode": {
+    "skip_stability_gates": true,
+    "skip_reason": "cache_degraded_run"
+  }
+}

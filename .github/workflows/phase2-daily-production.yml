@@ -390,6 +390,16 @@ jobs:
             --out-json "data/snapshots/${DATE}/monitoring.json" \
             --out-md   "data/snapshots/${DATE}/monitoring.md"
 
+      # ── Evaluate monitoring gate ─────────────────────────────
+      - name: Evaluate monitoring gate
+        if: always() && steps.runner.outputs.exit_code != '1'
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          python3 scripts/evaluate_monitoring_gate.py \
+            --monitoring "data/snapshots/${DATE}/monitoring.json" \
+            --thresholds "production_data/monitoring_thresholds/v1.json" \
+            --as-of-date "${DATE}"
+
       # ── Upload snapshot artifacts ───────────────────────────────
       - name: Upload snapshot
         if: always()
