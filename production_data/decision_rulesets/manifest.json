@@ -192,18 +192,6 @@
       "updated_at": "2026-02-26T00:00:00Z"
     },
     {
-      "id": "0c1129f6",
-      "file": "v1.6.1_alpha_modifier_within_tier_candidate.json",
-      "created_at": "2026-02-26",
-      "engine_version": "v1.3.0",
-      "description": "Alpha modifier within-tier: OOS alpha blended into effective_comp_rank (w=0.05)",
-      "status": "candidate",
-      "requires_replay": true,
-      "notes": "Same params as v1.6.0 but alpha_modifier_mode=within_tier (was tiebreak). Tiebreak was unreachable due to unique upstream floats in sort tuple; within_tier blends weight*alpha_raw into effective_comp_rank, the dominant sort term. Acceptance: run A/B promotion check, verify top60_overlap >= 0.90 with non-zero rank shifts.",
-      "updated_by": "manual_bootstrap",
-      "updated_at": "2026-02-26T00:00:00Z"
-    },
-    {
       "id": "8f99d47e",
       "file": "v1.5.0_coinvest_candidate.json",
       "created_at": "2026-02-20",
