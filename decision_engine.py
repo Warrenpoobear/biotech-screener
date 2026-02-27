@@ -542,15 +542,21 @@ def _compute_eligibility(
     reasons: List[str] = []
     dd_rel_margin_rescued = False
 
-    # Gate: fundamental red flag (runway < 6m, survivability critical, etc.)
-    # If the boolean is present (live run), use it; if absent (archive run),
-    # compute it directly via the red-flag detection rules.
-    has_red_flag = rec.get("fundamental_red_flag")
-    if has_red_flag is None:
-        from defensive_overlay_adapter import detect_fundamental_red_flags
-        has_red_flag, _ = detect_fundamental_red_flags(rec)
-    if has_red_flag:
-        reasons.append("fundamental_red_flag")
+    # Gate 0: financials missing — if survivability data is absent,
+    # don't trust red flag checks (they'd produce false positives).
+    surv_coverage = (rec.get("survivability_signal") or {}).get("coverage") or []
+    if "missing_cash" in surv_coverage and "missing_burn_data" in surv_coverage:
+        reasons.append("financials_missing")
+    else:
+        # Gate 1: fundamental red flag (runway < 6m, survivability critical, etc.)
+        # If the boolean is present (live run), use it; if absent (archive run),
+        # compute it directly via the red-flag detection rules.
+        has_red_flag = rec.get("fundamental_red_flag")
+        if has_red_flag is None:
+            from defensive_overlay_adapter import detect_fundamental_red_flags
+            has_red_flag, _ = detect_fundamental_red_flags(rec)
+        if has_red_flag:
+            reasons.append("fundamental_red_flag")
 
     # Gate: severity SEV3 (excluded by pipeline already, but double-check)
     if str(rec.get("severity", "")).upper() == "SEV3":
