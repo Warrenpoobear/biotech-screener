@@ -39,6 +39,11 @@ on:
         required: false
         type: boolean
         default: false
+      min_evaluated_dates:
+        description: "If normal mode evaluates fewer than this many dates, rerun in --rerank-only"
+        required: false
+        type: string
+        default: "10"
 
 permissions:
   contents: read
@@ -197,7 +202,6 @@ jobs:
           ARGS="$ARGS --start ${{ inputs.start_date }} --end ${{ inputs.end_date }}"
           ARGS="$ARGS --k ${{ inputs.top_k }} --horizon ${{ inputs.horizon }}"
           ARGS="$ARGS --cost-bps ${{ inputs.cost_bps }}"
-          ARGS="$ARGS --out-dir /tmp/ruleset_gate_out"
           ARGS="$ARGS --anchor-mode prev_trading_day"
           ARGS="$ARGS --gate"
 
@@ -205,11 +209,47 @@ jobs:
             ARGS="$ARGS --baseline ${{ inputs.baseline_ruleset_path }}"
           fi
 
+          NORMAL_DIR="/tmp/ruleset_gate_out"
+          MIN_EVAL="${{ inputs.min_evaluated_dates }}"
+
+          # --- Pass 1: normal mode ---
           set +e
-          python3 scripts/eval_ruleset.py $ARGS
+          python3 scripts/eval_ruleset.py $ARGS --out-dir "$NORMAL_DIR"
           RC=$?
           set -e
+
+          EVAL_JSON=$(find "$NORMAL_DIR" -name "ruleset_eval.json" -type f | head -1)
+          if [ -z "$EVAL_JSON" ]; then
+            echo "::error::Evaluator produced no output JSON"
+            echo "exit_code=1" >> "$GITHUB_OUTPUT"
+            echo "eval_mode=normal" >> "$GITHUB_OUTPUT"
+            echo "eval_out_dir=$NORMAL_DIR" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          N_EVAL=$(python3 -c "import json; print(json.load(open('$EVAL_JSON')).get('n_evaluated', 0))")
+          echo "Normal mode: n_evaluated=$N_EVAL, min_required=$MIN_EVAL"
+
+          if [ "$N_EVAL" -ge "$MIN_EVAL" ]; then
+            echo "Normal mode sufficient ($N_EVAL >= $MIN_EVAL)"
+            echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+            echo "eval_mode=normal" >> "$GITHUB_OUTPUT"
+            echo "eval_out_dir=$NORMAL_DIR" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # --- Pass 2: rerank-only fallback ---
+          echo "::notice::Switching to rerank-only (evaluated $N_EVAL < $MIN_EVAL)"
+          RERANK_DIR="/tmp/ruleset_gate_rerank"
+
+          set +e
+          python3 scripts/eval_ruleset.py $ARGS --out-dir "$RERANK_DIR" --rerank-only
+          RC=$?
+          set -e
+
           echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+          echo "eval_mode=rerank_only" >> "$GITHUB_OUTPUT"
+          echo "eval_out_dir=$RERANK_DIR" >> "$GITHUB_OUTPUT"
 
       - name: Build job summary
         id: summary
@@ -219,7 +259,7 @@ jobs:
           import json, os, sys
           from pathlib import Path
 
-          out_dir = Path("/tmp/ruleset_gate_out")
+          out_dir = Path(os.environ.get("EVAL_OUT_DIR", "/tmp/ruleset_gate_out"))
           summary_file = os.environ["GITHUB_STEP_SUMMARY"]
           eval_rc = os.environ.get("EVAL_RC", "")
           fail_on_warn = os.environ.get("FAIL_ON_WARN", "false") == "true"
@@ -283,6 +323,9 @@ jobs:
           lines.append(f"| dates evaluated | {data.get('n_evaluated', 0)} |")
           lines.append(f"| dates skipped | {data.get('n_skipped', 0)} |")
           lines.append(f"| k / horizon / cost_bps | {config.get('k')} / {config.get('horizon')} / {config.get('cost_bps')} |")
+          eval_mode = os.environ.get("EVAL_MODE", "normal")
+          min_eval = os.environ.get("MIN_EVALUATED_DATES", "10")
+          lines.append(f"| eval_mode | `{eval_mode}` (min_required={min_eval}) |")
           lines.append("")
 
           # Skip reasons
@@ -348,13 +391,16 @@ jobs:
         env:
           EVAL_RC: ${{ steps.evaluator.outputs.exit_code }}
           FAIL_ON_WARN: ${{ inputs.fail_on_warn }}
+          EVAL_OUT_DIR: ${{ steps.evaluator.outputs.eval_out_dir }}
+          EVAL_MODE: ${{ steps.evaluator.outputs.eval_mode }}
+          MIN_EVALUATED_DATES: ${{ inputs.min_evaluated_dates }}
 
       - name: Upload evaluation artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ruleset-gate-${{ inputs.start_date }}-to-${{ inputs.end_date }}
-          path: /tmp/ruleset_gate_out/
+          path: ${{ steps.evaluator.outputs.eval_out_dir }}/
           retention-days: 30
           if-no-files-found: warn
 
