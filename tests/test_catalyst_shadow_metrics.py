@@ -348,6 +348,101 @@ class TestComputeShadowMetrics:
         assert result["ctgov_events"] == 1084
         assert result["fda_events"] == 11  # 8 + 2 + 1
 
+    # ----- SEC 8-K future coverage tests -----
+
+    def test_sec8k_future_count_from_source_mix(self, tmp_path):
+        snap = tmp_path / "snapshots"
+        rows = [_make_dev_row("A")]
+        _write_rankings(snap, "2026-02-14", rows)
+
+        source_mix = {
+            "by_source": {"SEC_8K_FILING": 50},
+            "sec8k_future": {
+                "count": 12,
+                "tickers": 8,
+                "by_precision": {"DAY": 5, "QUARTER": 7},
+                "days_ahead_p50": 45,
+                "days_ahead_p90": 120,
+            },
+        }
+        result = _compute_shadow_metrics(rows, "2026-02-14", snap, source_mix)
+        assert result["sec8k_future_count"] == 12
+        assert result["sec8k_future_tickers"] == 8
+
+    def test_sec8k_future_days_passthrough(self, tmp_path):
+        snap = tmp_path / "snapshots"
+        rows = [_make_dev_row("A")]
+        _write_rankings(snap, "2026-02-14", rows)
+
+        source_mix = {
+            "by_source": {"SEC_8K_FILING": 10},
+            "sec8k_future": {
+                "count": 5,
+                "tickers": 3,
+                "by_precision": {"DAY": 2, "QUARTER": 3},
+                "days_ahead_p50": 60,
+                "days_ahead_p90": 150,
+            },
+        }
+        result = _compute_shadow_metrics(rows, "2026-02-14", snap, source_mix)
+        assert result["sec8k_future_days_p50"] == 60
+        assert result["sec8k_future_days_p90"] == 150
+
+    def test_sec8k_future_zero_alert(self, tmp_path):
+        snap = tmp_path / "snapshots"
+        rows = [_make_dev_row("A")]
+        _write_rankings(snap, "2026-02-14", rows)
+
+        source_mix = {
+            "by_source": {"SEC_8K_FILING": 10},
+            "sec8k_future": {
+                "count": 0,
+                "tickers": 0,
+                "by_precision": {},
+                "days_ahead_p50": None,
+                "days_ahead_p90": None,
+            },
+        }
+        result = _compute_shadow_metrics(rows, "2026-02-14", snap, source_mix)
+        assert result["sec8k_future_alert"] == "ZERO_FUTURE_EVENTS"
+
+    def test_sec8k_future_collapse_alert(self, tmp_path):
+        snap = tmp_path / "snapshots"
+        rows = [_make_dev_row("A")]
+        # Write prior snapshot with shadow metrics showing count=20
+        _write_rankings(snap, "2026-02-12", [_make_dev_row("A")])
+        prior_shadow = {"sec8k_future_count": 20}
+        (snap / "2026-02-12" / "catalyst_shadow_metrics.json").write_text(
+            json.dumps(prior_shadow), encoding="utf-8"
+        )
+        _write_rankings(snap, "2026-02-14", rows)
+
+        source_mix = {
+            "by_source": {"SEC_8K_FILING": 10},
+            "sec8k_future": {
+                "count": 5,
+                "tickers": 3,
+                "by_precision": {},
+                "days_ahead_p50": 30,
+                "days_ahead_p90": 60,
+            },
+        }
+        result = _compute_shadow_metrics(rows, "2026-02-14", snap, source_mix)
+        assert result["sec8k_future_alert"] is not None
+        assert "COLLAPSED" in result["sec8k_future_alert"]
+
+    def test_sec8k_future_none_without_source_mix(self, tmp_path):
+        snap = tmp_path / "snapshots"
+        rows = [_make_dev_row("A")]
+        _write_rankings(snap, "2026-02-14", rows)
+
+        result = _compute_shadow_metrics(rows, "2026-02-14", snap, None)
+        assert result["sec8k_future_count"] is None
+        assert result["sec8k_future_tickers"] is None
+        assert result["sec8k_future_days_p50"] is None
+        assert result["sec8k_future_days_p90"] is None
+        assert result["sec8k_future_alert"] is None
+
 
 # ===================================================================
 # TestIntegration

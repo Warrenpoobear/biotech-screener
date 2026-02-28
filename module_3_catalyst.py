@@ -1974,6 +1974,43 @@ def compute_module_3_catalyst(
         "by_date_precision": dict(sorted(_prec_counts.items())),
     }
 
+    # ----- SEC 8-K future event sub-tally -----
+    _as_of_iso = as_of_date.isoformat() if hasattr(as_of_date, 'isoformat') else str(as_of_date)
+    _sec8k_future: List[Any] = []
+    _sec8k_future_tickers: Set[str] = set()
+    _sec8k_prec_buckets: Dict[str, int] = {}
+    for _ticker, _evts in events_by_ticker_v2.items():
+        for _ev in _evts:
+            if _ev.source != "SEC_8K_FILING":
+                continue
+            if not _ev.event_date or _ev.event_date <= _as_of_iso:
+                continue
+            _sec8k_future.append(_ev)
+            _sec8k_future_tickers.add(_ticker)
+            _prec = getattr(_ev, 'date_precision', 'UNKNOWN')
+            _sec8k_prec_buckets[_prec] = _sec8k_prec_buckets.get(_prec, 0) + 1
+
+    _days_ahead: List[int] = []
+    for _ev in _sec8k_future:
+        try:
+            _delta = (date.fromisoformat(_ev.event_date) - as_of_date).days
+            _days_ahead.append(_delta)
+        except (ValueError, TypeError):
+            pass
+    _days_ahead.sort()
+
+    catalyst_source_mix["sec8k_future"] = {
+        "count": len(_sec8k_future),
+        "tickers": len(_sec8k_future_tickers),
+        "by_precision": dict(sorted(_sec8k_prec_buckets.items())),
+        "days_ahead_p50": _days_ahead[len(_days_ahead) // 2] if _days_ahead else None,
+        "days_ahead_p90": (
+            _days_ahead[int(len(_days_ahead) * 0.9)]
+            if len(_days_ahead) >= 2
+            else (_days_ahead[0] if _days_ahead else None)
+        ),
+    }
+
     # =========================================================================
     # BUILD EVENT LEDGER for PIT-safe nearest-catalyst query + traceability
     # =========================================================================

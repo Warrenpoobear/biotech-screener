@@ -40,6 +40,11 @@ COLUMNS = [
     "sec_8k_events",
     "ctgov_events",
     "fda_events",
+    "sec8k_future_count",
+    "sec8k_future_tickers",
+    "sec8k_future_days_p50",
+    "sec8k_future_days_p90",
+    "sec8k_future_alert",
 ]
 
 

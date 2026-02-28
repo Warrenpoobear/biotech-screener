@@ -216,6 +216,41 @@ DOWNSIDE_PATTERNS = [
 _PATTERN_HASH_INPUT = repr(TIMING_PATTERNS) + repr(DOWNSIDE_PATTERNS)
 PATTERN_VERSION = hashlib.sha256(_PATTERN_HASH_INPUT.encode()).hexdigest()[:8]
 
+# ---------------------------------------------------------------------------
+# Diagnostic counters — reset per collection run, harvested when alerts fire
+# ---------------------------------------------------------------------------
+_DIAG_COUNTERS: Dict[str, int] = {
+    "raw_matches": 0,
+    "boilerplate_dropped": 0,
+    "biopharma_context_dropped": 0,
+    "year_guard_dropped": 0,
+    "staleness_dropped": 0,
+    "accepted": 0,
+}
+_DIAG_DROPPED: List[Dict[str, Any]] = []
+
+
+def _append_dropped(ticker: str, event_type: str, captured: str,
+                    reason: str, snippet: str) -> None:
+    if len(_DIAG_DROPPED) < 10:
+        _DIAG_DROPPED.append({
+            "ticker": ticker, "event_type": event_type,
+            "captured": captured, "drop_reason": reason,
+            "snippet": snippet[:100],
+        })
+
+
+def reset_extraction_diagnostics() -> None:
+    """Reset all diagnostic counters and dropped examples."""
+    for k in _DIAG_COUNTERS:
+        _DIAG_COUNTERS[k] = 0
+    _DIAG_DROPPED.clear()
+
+
+def get_extraction_diagnostics() -> Dict[str, Any]:
+    """Return a snapshot of diagnostic counters and dropped examples."""
+    return {"counters": dict(_DIAG_COUNTERS), "dropped_examples": list(_DIAG_DROPPED)}
+
 
 def _versioned_cache_path(cache_dir: Path, as_of_date: date) -> Path:
     """Cache path that includes pattern version to invalidate on pattern changes."""
@@ -418,11 +453,18 @@ def _extract_timing_events(
 
     for pattern, event_type, precision in TIMING_PATTERNS:
         for match in re.finditer(pattern, text, re.IGNORECASE):
+            _DIAG_COUNTERS["raw_matches"] += 1
             # Context-based relevance filters (±300 chars around match)
             ctx = text[max(0, match.start() - 300):min(len(text), match.end() + 300)].lower()
             if block_boilerplate and any(k in ctx for k in _BOILERPLATE_KWS):
+                _DIAG_COUNTERS["boilerplate_dropped"] += 1
+                _append_dropped(ticker, event_type, match.group(1).strip(),
+                                "boilerplate", ctx[:100])
                 continue
             if require_biopharma_context and not any(k in ctx for k in _BIOPHARMA_KWS):
+                _DIAG_COUNTERS["biopharma_context_dropped"] += 1
+                _append_dropped(ticker, event_type, match.group(1).strip(),
+                                "biopharma_context", ctx[:100])
                 continue
 
             captured = match.group(1).strip()
@@ -461,6 +503,9 @@ def _extract_timing_events(
             except (ValueError, TypeError):
                 continue
             if event_year < min_year or event_year > max_year:
+                _DIAG_COUNTERS["year_guard_dropped"] += 1
+                _append_dropped(ticker, event_type, captured,
+                                "year_guard", f"{event_date} outside [{min_year},{max_year}]")
                 logger.debug(
                     f"Year guard: skipping {ticker} {event_type} {event_date} "
                     f"(year {event_year} outside [{min_year}, {max_year}])"
@@ -470,12 +515,16 @@ def _extract_timing_events(
             # Staleness filter: reject events whose end date is >180d before as_of_date
             end_for_staleness = event_date_end or event_date
             if staleness_cutoff and end_for_staleness < staleness_cutoff:
+                _DIAG_COUNTERS["staleness_dropped"] += 1
+                _append_dropped(ticker, event_type, captured,
+                                "staleness", f"{end_for_staleness} < {staleness_cutoff}")
                 logger.debug(
                     f"Staleness filter: skipping {ticker} {event_type} {end_for_staleness} "
                     f"(older than {staleness_cutoff})"
                 )
                 continue
 
+            _DIAG_COUNTERS["accepted"] += 1
             events.append({
                 "ticker": ticker,
                 "event_type": event_type,
@@ -633,6 +682,7 @@ def collect_8k_timing_events(
     Returns:
         List of event dicts matching corporate catalyst schema
     """
+    reset_extraction_diagnostics()
     cache_dir = Path(cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)
     cache_path = _versioned_cache_path(cache_dir, as_of_date)

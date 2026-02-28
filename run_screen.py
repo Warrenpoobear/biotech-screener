@@ -2682,6 +2682,36 @@ def _compute_shadow_metrics(
                        "FEDERAL_REGISTER", "FDA_PDUFA")
         )
 
+    # ----- SEC 8-K future coverage (from catalyst_source_mix) -----
+    sec8k_future_count: Optional[int] = None
+    sec8k_future_tickers: Optional[int] = None
+    sec8k_future_days_p50: Optional[int] = None
+    sec8k_future_days_p90: Optional[int] = None
+    sec8k_future_alert: Optional[str] = None
+
+    if source_mix and isinstance(source_mix.get("sec8k_future"), dict):
+        _fut = source_mix["sec8k_future"]
+        sec8k_future_count = _fut.get("count", 0)
+        sec8k_future_tickers = _fut.get("tickers", 0)
+        sec8k_future_days_p50 = _fut.get("days_ahead_p50")
+        sec8k_future_days_p90 = _fut.get("days_ahead_p90")
+
+        # Red flag: zero future events when total 8K count is >0
+        if sec8k_future_count == 0 and (sec_8k_events or 0) > 0:
+            sec8k_future_alert = "ZERO_FUTURE_EVENTS"
+
+        # Collapse detection: compare to prior shadow metrics
+        if sec8k_future_count is not None and sec8k_future_alert is None and prior is not None:
+            _prior_shadow_path = snapshot_dir / prior["date"] / "catalyst_shadow_metrics.json"
+            if _prior_shadow_path.exists():
+                try:
+                    _ps = json.loads(_prior_shadow_path.read_text(encoding="utf-8"))
+                    _prior_fc = _ps.get("sec8k_future_count")
+                    if _prior_fc and _prior_fc > 0 and sec8k_future_count / _prior_fc < 0.50:
+                        sec8k_future_alert = f"COLLAPSED_{sec8k_future_count / _prior_fc:.0%}_vs_prior"
+                except (json.JSONDecodeError, OSError, TypeError, ZeroDivisionError):
+                    pass
+
     # ----- A-tier count (dev-only) -----
     a_tier_count = sum(
         1 for r in csv_rows
@@ -2707,6 +2737,11 @@ def _compute_shadow_metrics(
         "sec_8k_events": sec_8k_events,
         "ctgov_events": ctgov_events,
         "fda_events": fda_events,
+        "sec8k_future_count": sec8k_future_count,
+        "sec8k_future_tickers": sec8k_future_tickers,
+        "sec8k_future_days_p50": sec8k_future_days_p50,
+        "sec8k_future_days_p90": sec8k_future_days_p90,
+        "sec8k_future_alert": sec8k_future_alert,
     }
 
     # ----- Coverage bucket telemetry (requires trial_records) -----
@@ -3864,6 +3899,23 @@ def save_validation_snapshot(
         with open(snap_path / "catalyst_shadow_metrics.json", "w", encoding="utf-8") as f:
             json.dump(shadow, f, indent=2, default=str)
             f.write("\n")
+        # Log extraction diagnostics when future coverage alert fires
+        if shadow.get("sec8k_future_alert"):
+            try:
+                from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import get_extraction_diagnostics
+                diag = get_extraction_diagnostics()
+                logger.warning(
+                    "8-K future coverage alert: %s | Stages: %s",
+                    shadow["sec8k_future_alert"], diag["counters"],
+                )
+                for ex in diag["dropped_examples"][:5]:
+                    logger.warning(
+                        "  Dropped: %s %s → %s | '%s'",
+                        ex["ticker"], ex["event_type"],
+                        ex["drop_reason"], ex["snippet"][:80],
+                    )
+            except ImportError:
+                pass
     except Exception as e:
         logger.warning("Could not write catalyst_shadow_metrics.json: %s", e)
 
