@@ -76,6 +76,21 @@ _GENERIC_INTERVENTION_NAMES = frozenset({
     "sham procedure", "sham", "usual care",
 })
 
+# Minimum character length for product map entries from trial interventions.
+# Short strings (e.g. "1", "2", "ai") cause false-positive substring matches
+# against Federal Register titles.
+_MIN_PRODUCT_NAME_LENGTH = 4
+
+# Common English words that appear in FR titles but are not drug names.
+# Checked against trial-intervention entries only (PDUFA/designation names are
+# assumed to be curated).
+_GENERIC_INTERVENTION_WORDS = frozenset({
+    "application", "protocol", "study", "trial", "treatment", "procedure",
+    "therapy", "dose", "drug", "agent", "regimen", "infusion", "injection",
+    "tablet", "capsule", "solution", "device", "comparator", "combination",
+    "diet", "exercise", "surgery", "radiation", "chemotherapy",
+})
+
 # ADCOM date patterns in SEC 8-K filings
 _ADCOM_DATE_PATTERNS = [
     r"[Aa]dvisory\s+[Cc]ommittee\s+(?:meeting\s+)?(?:scheduled\s+for|on|date[:\s]+|is\s+)\s*(\w+\s+\d{1,2},?\s+\d{4})",
@@ -140,12 +155,20 @@ def build_product_ticker_map(data_dir: Path) -> Dict[str, str]:
                 if not ticker:
                     continue
                 for intervention in trial.get("interventions", []):
+                    if not intervention or not isinstance(intervention, str):
+                        continue
                     name = intervention.strip()
                     if not name:
                         continue
-                    # Skip generic/non-drug interventions
                     name_lower = name.lower()
+                    # Skip generic/non-drug interventions
                     if name_lower in _GENERIC_INTERVENTION_NAMES:
+                        continue
+                    # Skip short names — they cause false-positive substring matches
+                    if len(name_lower) < _MIN_PRODUCT_NAME_LENGTH:
+                        continue
+                    # Skip common English words
+                    if name_lower in _GENERIC_INTERVENTION_WORDS:
                         continue
                     # Only add if not already mapped to a different ticker
                     if name_lower not in product_map:
@@ -807,10 +830,13 @@ def collect_fda_adcom_events(
         f"({fr_count} from Federal Register, {len(events) - fr_count} from EDGAR)"
     )
 
+    # Stable sort for deterministic output
+    events.sort(key=lambda e: (e.get("event_date", ""), e.get("ticker", "")))
+
     # Cache results
     try:
         with open(cache_path, "w", encoding="utf-8") as f:
-            json.dump(events, f, indent=2)
+            json.dump(events, f, indent=2, sort_keys=True)
     except Exception as e:
         logger.warning(f"Cache write error: {e}")
 
