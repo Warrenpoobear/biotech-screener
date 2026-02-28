@@ -1,24 +1,73 @@
 {
   "ctNumber": "2024-511897-64-00",
-  "title": "A Phase III, Randomized, Double-Blind Study of mRNA-1234 in Adults with RSV",
-  "sponsorName": "ModernaTX, Inc.",
-  "sponsorCountry": "US",
-  "trialPhase": "Phase III",
-  "trialStatus": "Ongoing",
-  "decisionDate": "15/03/2024",
-  "startDate": "01/04/2024",
-  "endDate": "30/06/2026",
-  "medicalCondition": "Respiratory Syncytial Virus; Lower Respiratory Tract Infection",
-  "therapeuticArea": "Infectious Diseases",
-  "memberStates": ["DE", "FR", "IT", "ES"],
-  "eudractNumber": "2024-001234-56",
-  "nctNumber": "NCT06001234",
-  "protocolNumber": "mRNA-1234-P301",
-  "primaryEndpoints": "Efficacy of mRNA-1234 vs placebo in preventing RSV-associated LRTD",
-  "enrollmentTarget": 35000,
-  "trialDesign": {
-    "randomized": true,
-    "doubleBlind": true,
-    "placeboControlled": true
+  "ctStatus": "Authorised",
+  "publishDate": "2025-03-01",
+  "trialGlobalEndDate": "15/12/2027",
+  "authorizedApplication": {
+    "authorizedPartI": {
+      "trialDetails": {
+        "clinicalTrialIdentifiers": {
+          "secondaryIdentifyingNumbers": {
+            "nctNumber": {
+              "number": "NCT06001234"
+            },
+            "sponsorProtocolNumber": "mRNA-1234-P301"
+          },
+          "eudractNumber": "2024-001234-56"
+        },
+        "trialInformation": {
+          "trialPhase": "Therapeutic confirmatory (Phase III)",
+          "therapeuticAreas": ["Infectious Diseases"]
+        }
+      }
+    }
+  },
+  "events": {
+    "trialEvents": [
+      {
+        "notificationType": "END_OF_TRIAL",
+        "country": "Germany",
+        "date": "2027-09-30",
+        "eventDate": "2027-09-30"
+      },
+      {
+        "notificationType": "END_OF_TRIAL",
+        "country": "France",
+        "date": "2027-11-15",
+        "eventDate": "2027-11-15"
+      },
+      {
+        "notificationType": "END_OF_RECRUITMENT",
+        "country": "Germany",
+        "date": "2026-06-30",
+        "eventDate": "2026-06-30"
+      },
+      {
+        "notificationType": "END_OF_RECRUITMENT",
+        "country": "France",
+        "date": "2026-08-15",
+        "eventDate": "2026-08-15"
+      },
+      {
+        "notificationType": "START_OF_RECRUITMENT",
+        "country": "Germany",
+        "date": "2024-04-01",
+        "eventDate": "2024-04-01"
+      }
+    ]
+  },
+  "periodDetails": [
+    {
+      "description": "Treatment period: 24 weeks",
+      "periodType": "TREATMENT"
+    },
+    {
+      "description": "Follow-up period: 12 months",
+      "periodType": "FOLLOW_UP"
+    }
+  ],
+  "sponsor": {
+    "name": "ModernaTX, Inc.",
+    "country": "US"
   }
 }

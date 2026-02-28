@@ -501,7 +501,10 @@ def warm_euctr(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
     return len(records)
 
 
-def warm_ctis(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
+def warm_ctis(
+    as_of_date: date, data_dir: Path, cache_dir: Path,
+    enrich_detail: bool = True,
+) -> int:
     """Fetch and cache CTIS trial records. Returns count."""
     from wake_robin_data_pipeline.collectors.ctis_collector import collect_ctis_trials
 
@@ -517,6 +520,7 @@ def warm_ctis(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
         universe=universe,
         as_of_date=as_of_date,
         cache_dir=cache_dir,
+        enrich_detail=enrich_detail,
     )
     logger.info("CTIS: %d records cached", len(records))
     return len(records)
@@ -668,6 +672,12 @@ def main():
         default=str(PROJECT_ROOT / "cache" / "trials"),
         help="Root directory for trial registry caches (merged output goes here)",
     )
+    parser.add_argument(
+        "--no-ctis-enrich-detail",
+        action="store_true",
+        default=False,
+        help="Disable CTIS detail endpoint enrichment (default: enrichment ON)",
+    )
 
     args = parser.parse_args()
     as_of = date.fromisoformat(args.as_of_date)
@@ -764,7 +774,10 @@ def main():
     if "ctis" in sources:
         try:
             ctis_cache_dir = Path(args.ctis_cache_dir)
-            ctis_count = warm_ctis(as_of, data_dir, ctis_cache_dir)
+            ctis_count = warm_ctis(
+                as_of, data_dir, ctis_cache_dir,
+                enrich_detail=not args.no_ctis_enrich_detail,
+            )
         except Exception as e:
             logger.error(f"CTIS warm failed: {e}")
 

@@ -14,7 +14,7 @@ import os
 import re
 import tempfile
 import time
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -36,32 +36,30 @@ _PAGE_SIZE = 100
 _CTIS_SEARCH_URL = "https://euclinicaltrials.eu/ctis-public-api/search"
 _CTIS_DETAIL_URL = "https://euclinicaltrials.eu/ctis-public-api/retrieve"
 
-# Phase mapping: CTIS text -> normalized
-_PHASE_MAP = {
-    "phase i": "PHASE1",
-    "phase 1": "PHASE1",
-    "phase ii": "PHASE2",
-    "phase 2": "PHASE2",
-    "phase iii": "PHASE3",
-    "phase 3": "PHASE3",
-    "phase iv": "PHASE4",
-    "phase 4": "PHASE4",
-    "i": "PHASE1",
-    "ii": "PHASE2",
-    "iii": "PHASE3",
-    "iv": "PHASE4",
-}
+# Phase mapping: CTIS trialPhase field uses descriptive text
+# e.g. "Therapeutic exploratory (Phase II)", "Therapeutic confirmatory (Phase III)"
+_PHASE_PATTERNS = [
+    (re.compile(r"phase\s*i(?:v|4)", re.IGNORECASE), "PHASE4"),
+    (re.compile(r"phase\s*iii|phase\s*3|confirmatory", re.IGNORECASE), "PHASE3"),
+    (re.compile(r"phase\s*ii|phase\s*2|exploratory", re.IGNORECASE), "PHASE2"),
+    (re.compile(r"phase\s*i|phase\s*1|human\s*pharmacology", re.IGNORECASE), "PHASE1"),
+]
 
 # Status integer codes observed from CTIS API -> normalized strings
+# Reverse-engineered from live responses: ctStatus field
 _STATUS_CODE_MAP = {
-    1: "RECRUITING",
-    2: "ACTIVE_NOT_RECRUITING",
-    3: "COMPLETED",
-    4: "TERMINATED",
-    5: "UNKNOWN",
+    1: "RECRUITING",       # Authorised - recruiting
+    2: "RECRUITING",       # Authorised - not yet recruiting
+    3: "ACTIVE_NOT_RECRUITING",  # Authorised - no longer recruiting
+    4: "COMPLETED",        # Completed
+    5: "TERMINATED",       # Ended / Terminated
+    6: "TERMINATED",       # Lapsed
+    7: "TERMINATED",       # Suspended / Halted
+    8: "RECRUITING",       # Authorised (general)
+    9: "TERMINATED",       # Withdrawn
 }
 
-# Status text mapping
+# Status text mapping (fallback)
 _STATUS_TEXT_MAP = {
     "ongoing": "RECRUITING",
     "authorised": "RECRUITING",
@@ -77,12 +75,31 @@ _STATUS_TEXT_MAP = {
     "halted": "TERMINATED",
 }
 
+# Detail endpoint ctStatus text -> normalized status
+# The detail endpoint returns descriptive text (not integer codes like search)
+_DETAIL_STATUS_MAP = {
+    "authorised": "RECRUITING",
+    "ongoing": "RECRUITING",
+    "recruiting": "RECRUITING",
+    "not yet recruiting": "RECRUITING",
+    "no longer recruiting": "ACTIVE_NOT_RECRUITING",
+    "active, not recruiting": "ACTIVE_NOT_RECRUITING",
+    "completed": "COMPLETED",
+    "ended": "TERMINATED",
+    "terminated": "TERMINATED",
+    "withdrawn": "TERMINATED",
+    "suspended": "TERMINATED",
+    "lapsed": "TERMINATED",
+    "halted": "TERMINATED",
+}
+
 
 def collect_ctis_trials(
     universe: list,
     as_of_date: date,
     cache_dir: Path,
     cache_only: bool = False,
+    enrich_detail: bool = True,
 ) -> List[dict]:
     """Collect CTIS trials for tickers in universe.
 
@@ -91,6 +108,9 @@ def collect_ctis_trials(
         as_of_date: PIT date for cache naming.
         cache_dir: Root directory for CTIS cache files.
         cache_only: If True, only read from cache (no network).
+        enrich_detail: If True, call detail endpoint for records missing
+            primary_completion_date to get corrected status, NCT IDs,
+            and future completion dates.
 
     Returns:
         List of normalized TrialRecord dicts.
@@ -151,7 +171,8 @@ def collect_ctis_trials(
                         continue
 
                     matched_ticker = _match_ticker(
-                        raw_item.get("sponsorName", ""), universe_map
+                        raw_item.get("sponsor") or raw_item.get("sponsorName") or "",
+                        universe_map,
                     )
                     if matched_ticker is None:
                         matched_ticker = ticker
@@ -167,6 +188,35 @@ def collect_ctis_trials(
                 page += 1
 
     records = sorted(all_records.values(), key=lambda r: (r["ticker"], r["primary_id"]))
+
+    # --- Detail enrichment pass ---
+    enrich_candidates = 0
+    enrich_ok = 0
+    enrich_errors = 0
+    if enrich_detail:
+        candidates = [
+            r for r in records if not r.get("primary_completion_date")
+        ]
+        enrich_candidates = len(candidates)
+        logger.info(
+            "CTIS enrichment: %d/%d records missing primary_completion_date",
+            enrich_candidates, len(records),
+        )
+        for rec in candidates:
+            ct_number = rec["primary_id"]
+            try:
+                detail = _fetch_ctis_detail(ct_number, raw_dir=raw_dir)
+                _enrich_record_from_detail(rec, detail, as_of_date)
+                enrich_ok += 1
+            except Exception as e:
+                enrich_errors += 1
+                logger.warning(
+                    "CTIS detail enrichment failed for %s: %s", ct_number, e,
+                )
+        logger.info(
+            "CTIS enrichment done: %d enriched, %d errors (of %d candidates)",
+            enrich_ok, enrich_errors, enrich_candidates,
+        )
 
     # Atomic write
     fd, tmp_path = tempfile.mkstemp(dir=str(cache_dir), suffix=".tmp")
@@ -188,6 +238,12 @@ def collect_ctis_trials(
         "record_count": len(records),
         "fetched_at_utc": fetched_at,
         "tickers_searched": len(universe),
+        "enrichment": {
+            "enabled": enrich_detail,
+            "candidates": enrich_candidates,
+            "enriched": enrich_ok,
+            "errors": enrich_errors,
+        },
     }
     meta_path.write_text(json.dumps(meta, indent=2))
 
@@ -271,51 +327,250 @@ def _fetch_ctis_detail(ct_number: str, raw_dir: Path | None = None) -> dict:
     return result
 
 
+# ---------------------------------------------------------------------------
+# Detail enrichment helpers
+# ---------------------------------------------------------------------------
+
+
+def _extract_detail_status(detail: dict) -> str:
+    """Map detail endpoint ctStatus text to normalized status.
+
+    The detail endpoint returns descriptive text like "Authorised", "Ended".
+    Case-insensitive lookup via _DETAIL_STATUS_MAP.
+    """
+    raw = detail.get("ctStatus") or ""
+    if isinstance(raw, int):
+        return _STATUS_CODE_MAP.get(raw, "UNKNOWN")
+    return _DETAIL_STATUS_MAP.get(str(raw).lower().strip(), "UNKNOWN")
+
+
+def _extract_nct_id(detail: dict) -> Optional[str]:
+    """Extract NCT number from nested detail structure.
+
+    Path: authorizedApplication.authorizedPartI.trialDetails
+          .clinicalTrialIdentifiers.secondaryIdentifyingNumbers
+          .nctNumber.number
+    """
+    nct = (
+        detail
+        .get("authorizedApplication", {})
+        .get("authorizedPartI", {})
+        .get("trialDetails", {})
+        .get("clinicalTrialIdentifiers", {})
+        .get("secondaryIdentifyingNumbers", {})
+        .get("nctNumber", {})
+        .get("number")
+    )
+    if nct and isinstance(nct, str) and nct.strip():
+        return nct.strip()
+    return None
+
+
+def _collect_milestone_dates(
+    events_block: dict, notification_type: str,
+) -> List[str]:
+    """Gather normalized dates for a milestone type across all countries.
+
+    Scans events_block["trialEvents"] list for entries matching the given
+    notificationType and collects their dates (YYYY-MM-DD normalized).
+    """
+    dates = []
+    trial_events = events_block.get("trialEvents") or []
+    for event in trial_events:
+        if not isinstance(event, dict):
+            continue
+        if (event.get("notificationType") or "").upper() != notification_type.upper():
+            continue
+        raw_date = event.get("date") or event.get("eventDate") or ""
+        normalized = _normalize_ctis_date(str(raw_date))
+        if normalized:
+            dates.append(normalized)
+    return sorted(set(dates))
+
+
+def _parse_treatment_duration_days(detail: dict) -> Optional[int]:
+    """Parse study treatment duration from periodDetails descriptions.
+
+    Looks for patterns like "12 weeks", "6 months", "180 days" in the
+    description fields of periodDetails entries.
+    """
+    period_details = detail.get("periodDetails") or []
+    for period in period_details:
+        desc = (period.get("description") or "").lower()
+        if not desc:
+            continue
+        m_weeks = re.search(r"(\d+)\s*week", desc)
+        if m_weeks:
+            return int(m_weeks.group(1)) * 7
+        m_months = re.search(r"(\d+)\s*month", desc)
+        if m_months:
+            return int(m_months.group(1)) * 30
+        m_days = re.search(r"(\d+)\s*day", desc)
+        if m_days:
+            return int(m_days.group(1))
+    return None
+
+
+def _estimate_primary_completion_date(
+    detail: dict, as_of_date: date,
+) -> Optional[str]:
+    """Estimate primary completion date from detail endpoint data.
+
+    Cascade:
+    1. Latest END_OF_TRIAL date across countries (prefer future dates)
+    2. trialGlobalEndDate if present
+    3. Latest END_OF_RECRUITMENT + treatment duration (heuristic)
+    4. None
+    """
+    as_of_str = as_of_date.isoformat()
+    events_block = detail.get("events") or {}
+
+    # 1. END_OF_TRIAL milestone dates
+    eot_dates = _collect_milestone_dates(events_block, "END_OF_TRIAL")
+    if eot_dates:
+        future = [d for d in eot_dates if d > as_of_str]
+        if future:
+            return future[-1]  # latest future
+        return eot_dates[-1]  # latest past
+
+    # 2. trialGlobalEndDate
+    global_end = _normalize_ctis_date(detail.get("trialGlobalEndDate") or "")
+    if global_end:
+        return global_end
+
+    # 3. END_OF_RECRUITMENT + treatment duration
+    eor_dates = _collect_milestone_dates(events_block, "END_OF_RECRUITMENT")
+    if eor_dates:
+        duration_days = _parse_treatment_duration_days(detail)
+        if duration_days:
+            latest_eor = eor_dates[-1]
+            try:
+                eor_dt = datetime.strptime(latest_eor, "%Y-%m-%d").date()
+                pcd = eor_dt + timedelta(days=duration_days)
+                return pcd.isoformat()
+            except ValueError:
+                pass
+
+    return None
+
+
+def _enrich_record_from_detail(
+    record: dict, detail: dict, as_of_date: date,
+) -> dict:
+    """Enrich a TrialRecord dict using detail endpoint data.
+
+    Overwrites: status, primary_completion_date, completion_date.
+    Appends: NCT ID to secondary_ids.
+    Updates: last_update_posted if publishDate is newer.
+    Returns the record (modified in place).
+    """
+    # Status
+    detail_status = _extract_detail_status(detail)
+    if detail_status != "UNKNOWN":
+        record["status"] = detail_status
+
+    # NCT cross-reference
+    nct_id = _extract_nct_id(detail)
+    if nct_id and nct_id not in record.get("secondary_ids", []):
+        record.setdefault("secondary_ids", []).append(nct_id)
+
+    # Primary completion date
+    pcd = _estimate_primary_completion_date(detail, as_of_date)
+    if pcd:
+        record["primary_completion_date"] = pcd
+        if not record.get("completion_date"):
+            record["completion_date"] = pcd
+
+    # PIT anchor: update last_update_posted if publishDate is newer
+    publish_date = _normalize_ctis_date(detail.get("publishDate") or "")
+    if publish_date:
+        current_lup = record.get("last_update_posted") or ""
+        if not current_lup or publish_date > current_lup:
+            record["last_update_posted"] = publish_date
+
+    return record
+
+
 def _normalize_ctis_record(raw: dict, ticker: str, fetched_at: str) -> dict:
-    """Normalize a CTIS search result to the unified TrialRecord schema."""
+    """Normalize a CTIS search result to the unified TrialRecord schema.
+
+    Actual CTIS API fields (from live response):
+        ctNumber, ctStatus (int), ctTitle, shortTitle, startDateEU, endDateEU,
+        conditions (str), trialCountries (list of "Country:code"), sponsor (str),
+        trialPhase (descriptive text), decisionDateOverall, lastUpdated,
+        lastPublicationUpdate, therapeuticAreas (list), product, etc.
+    """
     ct_number = raw.get("ctNumber", "")
 
-    # Phase normalization
-    phase_raw = (raw.get("trialPhase") or raw.get("phase") or "").lower().strip()
-    phase = _PHASE_MAP.get(phase_raw, "NA")
+    # Phase normalization — trialPhase uses descriptive text like
+    # "Therapeutic exploratory (Phase II)" or "Therapeutic confirmatory (Phase III)"
+    phase_raw = raw.get("trialPhase") or ""
+    phase = "NA"
+    for pattern, phase_val in _PHASE_PATTERNS:
+        if pattern.search(phase_raw):
+            phase = phase_val
+            break
 
-    # Status normalization - try integer code first, then text
-    status_raw = raw.get("trialStatus") or raw.get("overallStatus") or ""
+    # Status normalization — ctStatus is an integer code
+    status_raw = raw.get("ctStatus")
     if isinstance(status_raw, int):
         status = _STATUS_CODE_MAP.get(status_raw, "UNKNOWN")
     else:
-        status = _STATUS_TEXT_MAP.get(str(status_raw).lower().strip(), "UNKNOWN")
+        status = _STATUS_TEXT_MAP.get(str(status_raw or "").lower().strip(), "UNKNOWN")
 
-    # Date parsing: CTIS uses "dd/mm/yyyy" or ISO
-    decision_date = _normalize_ctis_date(raw.get("decisionDate", ""))
-    start_date = _normalize_ctis_date(raw.get("startDate", ""))
-    end_date = _normalize_ctis_date(raw.get("endDate", ""))
+    # Date parsing: CTIS uses "dd/mm/yyyy"
+    # decisionDateOverall is the single overall date; decisionDate has per-country breakdown
+    decision_date = _normalize_ctis_date(raw.get("decisionDateOverall") or "")
+    start_date = _normalize_ctis_date(raw.get("startDateEU") or "")
+    end_date = _normalize_ctis_date(raw.get("endDateEU") or raw.get("endDate") or "")
+    last_updated = _normalize_ctis_date(raw.get("lastUpdated") or "")
+    last_pub_update = _normalize_ctis_date(raw.get("lastPublicationUpdate") or "")
 
-    # Sponsor info
-    sponsor_name = raw.get("sponsorName", "")
-    sponsor_country = raw.get("sponsorCountry", "")
+    # Sponsor info — "sponsor" is a plain string in search results
+    sponsor_name = raw.get("sponsor") or raw.get("sponsorName") or ""
+    sponsor_country = raw.get("sponsorCountry") or ""
 
     # Secondary IDs
     secondary_ids = []
-    eudract = raw.get("eudractNumber", "")
+    eudract = raw.get("eudractNumber") or ""
     if eudract:
         secondary_ids.append(eudract)
     nct_id = raw.get("nctNumber") or raw.get("nctId") or ""
     if nct_id:
         secondary_ids.append(nct_id)
+    protocol = raw.get("shortTitle") or ""
+    if protocol:
+        secondary_ids.append(f"protocol:{protocol}")
 
-    # Countries
-    countries = raw.get("memberStates", [])
-    if isinstance(countries, str):
-        countries = [c.strip() for c in countries.split(",") if c.strip()]
+    # Countries — trialCountries is list of "Country:statusCode" pairs
+    countries_raw = raw.get("trialCountries") or raw.get("memberStates") or []
+    if isinstance(countries_raw, str):
+        countries_raw = [countries_raw]
+    countries = []
+    for entry in countries_raw:
+        if isinstance(entry, str):
+            # "Germany:8" -> "Germany"
+            country = entry.split(":")[0].strip()
+            if country:
+                countries.append(country)
 
-    # Conditions
+    # Conditions — plain string in search results
     conditions = []
-    condition_raw = raw.get("medicalCondition") or raw.get("therapeuticArea") or ""
-    if condition_raw:
-        conditions = [c.strip() for c in condition_raw.split(";") if c.strip()]
+    cond_raw = raw.get("conditions") or ""
+    if isinstance(cond_raw, str) and cond_raw:
+        conditions = [c.strip() for c in cond_raw.split(";") if c.strip()]
+    # Also capture therapeutic areas
+    ta_raw = raw.get("therapeuticAreas") or []
+    for ta in ta_raw:
+        if isinstance(ta, str) and ta and ta not in conditions:
+            conditions.append(ta)
 
-    title = raw.get("title") or raw.get("trialTitle") or ""
+    title = raw.get("ctTitle") or raw.get("title") or raw.get("trialTitle") or ""
+    # Clean up embedded newlines in title
+    title = " ".join(title.split())
+
+    # PIT anchor: prefer lastUpdated > lastPublicationUpdate > decisionDate > startDate
+    pit_anchor = last_updated or last_pub_update or decision_date or start_date
 
     return {
         "registry": "ctis",
@@ -334,7 +589,7 @@ def _normalize_ctis_record(raw: dict, ticker: str, fetched_at: str) -> dict:
         "completion_date": end_date,
         "results_posted_date": None,
         "first_posted": decision_date,
-        "last_update_posted": decision_date or start_date,
+        "last_update_posted": pit_anchor,
         "source_url": f"https://euclinicaltrials.eu/ctis-public/view/{ct_number}" if ct_number else "",
         "fetched_at_utc": fetched_at,
     }

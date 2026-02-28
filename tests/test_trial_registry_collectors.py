@@ -116,7 +116,7 @@ class TestCtisCollector:
     """Tests for ctis_collector.py."""
 
     def test_search_response_parsing(self):
-        """CTIS search JSON is parsed correctly."""
+        """CTIS search JSON is parsed correctly with real API field names."""
         from wake_robin_data_pipeline.collectors.ctis_collector import _normalize_ctis_record
 
         search_data = json.loads((FIXTURES / "ctis_search_response.json").read_text())
@@ -126,14 +126,25 @@ class TestCtisCollector:
         rec = _normalize_ctis_record(items[0], "MRNA", "2026-02-27T12:00:00Z")
         assert rec["primary_id"] == "2024-511897-64-00"
         assert rec["phase"] == "PHASE3"
+        assert rec["status"] == "RECRUITING"  # ctStatus=8
+        assert rec["sponsor"]["name"] == "ModernaTX, Inc."
         assert "NCT06001234" in rec["secondary_ids"]
+        assert "2024-001234-56" in rec["secondary_ids"]
+        assert rec["start_date"] == "2024-04-01"
+        assert rec["last_update_posted"] == "2025-01-15"  # from lastUpdated
+        assert "Germany" in rec["countries"]
+        assert rec["title"].startswith("A Phase III Study")
 
     def test_detail_parsing(self):
         """CTIS detail response provides enriched metadata."""
         detail = json.loads((FIXTURES / "ctis_detail_response.json").read_text())
         assert detail["ctNumber"] == "2024-511897-64-00"
-        assert detail["eudractNumber"] == "2024-001234-56"
-        assert detail["nctNumber"] == "NCT06001234"
+        assert detail["ctStatus"] == "Authorised"
+        # NCT is nested in the detail structure
+        nct = (detail["authorizedApplication"]["authorizedPartI"]
+               ["trialDetails"]["clinicalTrialIdentifiers"]
+               ["secondaryIdentifyingNumbers"]["nctNumber"]["number"])
+        assert nct == "NCT06001234"
 
     def test_date_normalization(self):
         """CTIS dd/mm/yyyy dates are normalized to YYYY-MM-DD."""
@@ -149,6 +160,375 @@ class TestCtisCollector:
         pagination = search_data["pagination"]
         assert pagination["totalPages"] == 1
         assert pagination["totalElements"] == 3
+
+
+# ===========================================================================
+# CTIS Detail Enrichment
+# ===========================================================================
+
+class TestCtisDetailStatus:
+    """Tests for _extract_detail_status."""
+
+    def test_authorised_maps_to_recruiting(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _extract_detail_status
+        assert _extract_detail_status({"ctStatus": "Authorised"}) == "RECRUITING"
+
+    def test_ended_maps_to_terminated(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _extract_detail_status
+        assert _extract_detail_status({"ctStatus": "Ended"}) == "TERMINATED"
+
+    def test_unknown_status(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _extract_detail_status
+        assert _extract_detail_status({"ctStatus": "SomethingNew"}) == "UNKNOWN"
+
+    def test_case_insensitive(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _extract_detail_status
+        assert _extract_detail_status({"ctStatus": "AUTHORISED"}) == "RECRUITING"
+        assert _extract_detail_status({"ctStatus": "ended"}) == "TERMINATED"
+        assert _extract_detail_status({"ctStatus": "  Completed  "}) == "COMPLETED"
+
+
+class TestCtisNctExtraction:
+    """Tests for _extract_nct_id."""
+
+    def test_nct_present(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _extract_nct_id
+        detail = json.loads((FIXTURES / "ctis_detail_response.json").read_text())
+        assert _extract_nct_id(detail) == "NCT06001234"
+
+    def test_nct_missing(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _extract_nct_id
+        assert _extract_nct_id({}) is None
+        assert _extract_nct_id({"authorizedApplication": {}}) is None
+
+    def test_nct_empty_string(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _extract_nct_id
+        detail = {
+            "authorizedApplication": {
+                "authorizedPartI": {
+                    "trialDetails": {
+                        "clinicalTrialIdentifiers": {
+                            "secondaryIdentifyingNumbers": {
+                                "nctNumber": {"number": ""}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        assert _extract_nct_id(detail) is None
+
+
+class TestCtisEstimatePCD:
+    """Tests for _estimate_primary_completion_date."""
+
+    def test_future_end_of_trial(self):
+        """Future END_OF_TRIAL dates are preferred."""
+        from wake_robin_data_pipeline.collectors.ctis_collector import _estimate_primary_completion_date
+        detail = json.loads((FIXTURES / "ctis_detail_response.json").read_text())
+        pcd = _estimate_primary_completion_date(detail, date(2026, 2, 28))
+        # Fixture has END_OF_TRIAL: 2027-09-30, 2027-11-15 — both future
+        assert pcd == "2027-11-15"
+
+    def test_past_end_of_trial_fallback(self):
+        """When all END_OF_TRIAL dates are past, uses latest."""
+        from wake_robin_data_pipeline.collectors.ctis_collector import _estimate_primary_completion_date
+        detail = {
+            "events": {
+                "trialEvents": [
+                    {"notificationType": "END_OF_TRIAL", "date": "2025-06-30"},
+                    {"notificationType": "END_OF_TRIAL", "date": "2025-03-15"},
+                ]
+            }
+        }
+        pcd = _estimate_primary_completion_date(detail, date(2026, 2, 28))
+        assert pcd == "2025-06-30"
+
+    def test_global_end_date_fallback(self):
+        """trialGlobalEndDate used when no END_OF_TRIAL milestones."""
+        from wake_robin_data_pipeline.collectors.ctis_collector import _estimate_primary_completion_date
+        detail = {
+            "events": {"trialEvents": []},
+            "trialGlobalEndDate": "15/12/2027",
+        }
+        pcd = _estimate_primary_completion_date(detail, date(2026, 2, 28))
+        assert pcd == "2027-12-15"
+
+    def test_recruitment_plus_duration_fallback(self):
+        """END_OF_RECRUITMENT + treatment duration as last resort."""
+        from wake_robin_data_pipeline.collectors.ctis_collector import _estimate_primary_completion_date
+        detail = {
+            "events": {
+                "trialEvents": [
+                    {"notificationType": "END_OF_RECRUITMENT", "date": "2026-06-30"},
+                ]
+            },
+            "periodDetails": [
+                {"description": "Treatment period: 24 weeks"},
+            ],
+        }
+        pcd = _estimate_primary_completion_date(detail, date(2026, 2, 28))
+        # 2026-06-30 + 24*7=168 days = 2026-12-15
+        assert pcd == "2026-12-15"
+
+    def test_no_data_returns_none(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _estimate_primary_completion_date
+        assert _estimate_primary_completion_date({}, date(2026, 2, 28)) is None
+        assert _estimate_primary_completion_date({"events": {}}, date(2026, 2, 28)) is None
+
+    def test_preference_order(self):
+        """END_OF_TRIAL is preferred over trialGlobalEndDate."""
+        from wake_robin_data_pipeline.collectors.ctis_collector import _estimate_primary_completion_date
+        detail = {
+            "events": {
+                "trialEvents": [
+                    {"notificationType": "END_OF_TRIAL", "date": "2027-06-30"},
+                ]
+            },
+            "trialGlobalEndDate": "15/12/2028",
+        }
+        pcd = _estimate_primary_completion_date(detail, date(2026, 2, 28))
+        assert pcd == "2027-06-30"  # END_OF_TRIAL wins
+
+
+class TestCtisDurationParsing:
+    """Tests for _parse_treatment_duration_days."""
+
+    def test_weeks(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _parse_treatment_duration_days
+        detail = {"periodDetails": [{"description": "Treatment: 12 weeks"}]}
+        assert _parse_treatment_duration_days(detail) == 84
+
+    def test_months(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _parse_treatment_duration_days
+        detail = {"periodDetails": [{"description": "Treatment period of 6 months"}]}
+        assert _parse_treatment_duration_days(detail) == 180
+
+    def test_days(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _parse_treatment_duration_days
+        detail = {"periodDetails": [{"description": "90 day treatment"}]}
+        assert _parse_treatment_duration_days(detail) == 90
+
+    def test_unparseable(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _parse_treatment_duration_days
+        detail = {"periodDetails": [{"description": "See protocol"}]}
+        assert _parse_treatment_duration_days(detail) is None
+        assert _parse_treatment_duration_days({}) is None
+
+
+class TestCtisMilestoneDates:
+    """Tests for _collect_milestone_dates."""
+
+    def test_multi_country(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _collect_milestone_dates
+        events_block = {
+            "trialEvents": [
+                {"notificationType": "END_OF_TRIAL", "date": "2027-09-30"},
+                {"notificationType": "END_OF_TRIAL", "date": "2027-11-15"},
+                {"notificationType": "END_OF_RECRUITMENT", "date": "2026-06-30"},
+            ]
+        }
+        eot = _collect_milestone_dates(events_block, "END_OF_TRIAL")
+        assert eot == ["2027-09-30", "2027-11-15"]
+
+    def test_empty(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _collect_milestone_dates
+        assert _collect_milestone_dates({}, "END_OF_TRIAL") == []
+        assert _collect_milestone_dates({"trialEvents": []}, "END_OF_TRIAL") == []
+
+
+class TestCtisEnrichRecord:
+    """Tests for _enrich_record_from_detail (full enrichment)."""
+
+    def _make_record(self, **overrides):
+        base = {
+            "registry": "ctis",
+            "primary_id": "2024-511897-64-00",
+            "secondary_ids": ["2024-001234-56"],
+            "ticker": "MRNA",
+            "sponsor": {"name": "ModernaTX, Inc.", "country": "US"},
+            "title": "Test Trial",
+            "conditions": [],
+            "phase": "PHASE3",
+            "status": "RECRUITING",
+            "study_type": "INTERVENTIONAL",
+            "countries": ["DE"],
+            "start_date": "2024-04-01",
+            "primary_completion_date": None,
+            "completion_date": None,
+            "results_posted_date": None,
+            "first_posted": "2024-03-15",
+            "last_update_posted": "2025-01-15",
+            "source_url": "https://euclinicaltrials.eu/ctis-public/view/2024-511897-64-00",
+            "fetched_at_utc": "2026-02-28T12:00:00Z",
+        }
+        base.update(overrides)
+        return base
+
+    def test_status_update(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _enrich_record_from_detail
+        rec = self._make_record(status="RECRUITING")
+        detail = {"ctStatus": "Ended"}
+        _enrich_record_from_detail(rec, detail, date(2026, 2, 28))
+        assert rec["status"] == "TERMINATED"
+
+    def test_nct_added(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _enrich_record_from_detail
+        detail = json.loads((FIXTURES / "ctis_detail_response.json").read_text())
+        rec = self._make_record(secondary_ids=["2024-001234-56"])
+        _enrich_record_from_detail(rec, detail, date(2026, 2, 28))
+        assert "NCT06001234" in rec["secondary_ids"]
+        assert "2024-001234-56" in rec["secondary_ids"]  # preserved
+
+    def test_pcd_set(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _enrich_record_from_detail
+        detail = json.loads((FIXTURES / "ctis_detail_response.json").read_text())
+        rec = self._make_record()
+        _enrich_record_from_detail(rec, detail, date(2026, 2, 28))
+        assert rec["primary_completion_date"] == "2027-11-15"
+        assert rec["completion_date"] == "2027-11-15"
+
+    def test_pit_anchor_update(self):
+        from wake_robin_data_pipeline.collectors.ctis_collector import _enrich_record_from_detail
+        rec = self._make_record(last_update_posted="2025-01-15")
+        detail = {"publishDate": "2025-03-01"}
+        _enrich_record_from_detail(rec, detail, date(2026, 2, 28))
+        assert rec["last_update_posted"] == "2025-03-01"
+
+    def test_pit_anchor_not_downgraded(self):
+        """publishDate older than existing last_update_posted is ignored."""
+        from wake_robin_data_pipeline.collectors.ctis_collector import _enrich_record_from_detail
+        rec = self._make_record(last_update_posted="2025-06-01")
+        detail = {"publishDate": "2025-03-01"}
+        _enrich_record_from_detail(rec, detail, date(2026, 2, 28))
+        assert rec["last_update_posted"] == "2025-06-01"
+
+
+class TestCtisCollectEnrichIntegration:
+    """Integration tests for enrichment within collect_ctis_trials."""
+
+    def test_only_enriches_missing_enddate(self, tmp_path):
+        """Records with primary_completion_date are NOT enriched."""
+        from wake_robin_data_pipeline.collectors.ctis_collector import (
+            collect_ctis_trials, _fetch_ctis_detail,
+        )
+
+        # Record WITH endDate already set
+        search_resp = {
+            "data": [{
+                "ctNumber": "2024-000001-00",
+                "ctTitle": "Trial With EndDate",
+                "sponsor": "TestCo",
+                "ctStatus": 8,
+                "decisionDateOverall": "01/01/2024",
+                "lastUpdated": "15/01/2024",
+                "endDateEU": "30/06/2027",
+            }],
+            "pagination": {"totalPages": 1, "totalElements": 1},
+        }
+        detail_resp = json.loads((FIXTURES / "ctis_detail_response.json").read_text())
+
+        with patch("wake_robin_data_pipeline.collectors.ctis_collector._search_ctis",
+                    return_value=search_resp):
+            with patch("wake_robin_data_pipeline.collectors.ctis_collector._fetch_ctis_detail",
+                        return_value=detail_resp) as mock_detail:
+                with patch("wake_robin_data_pipeline.collectors.ctis_collector.time.sleep"):
+                    records = collect_ctis_trials(
+                        universe=[{"ticker": "TEST", "company_name": "TestCo"}],
+                        as_of_date=date(2026, 2, 28),
+                        cache_dir=tmp_path,
+                        enrich_detail=True,
+                    )
+        # Record already had endDate -> detail NOT called
+        mock_detail.assert_not_called()
+        assert len(records) == 1
+        assert records[0]["primary_completion_date"] == "2027-06-30"
+
+    def test_enrich_detail_false_skips(self, tmp_path):
+        """enrich_detail=False skips the enrichment pass entirely."""
+        from wake_robin_data_pipeline.collectors.ctis_collector import collect_ctis_trials
+
+        search_resp = {
+            "data": [{
+                "ctNumber": "2024-000002-00",
+                "ctTitle": "Trial No EndDate",
+                "sponsor": "TestCo",
+                "ctStatus": 8,
+                "decisionDateOverall": "01/01/2024",
+                "lastUpdated": "15/01/2024",
+            }],
+            "pagination": {"totalPages": 1, "totalElements": 1},
+        }
+
+        with patch("wake_robin_data_pipeline.collectors.ctis_collector._search_ctis",
+                    return_value=search_resp):
+            with patch("wake_robin_data_pipeline.collectors.ctis_collector._fetch_ctis_detail") as mock_detail:
+                with patch("wake_robin_data_pipeline.collectors.ctis_collector.time.sleep"):
+                    records = collect_ctis_trials(
+                        universe=[{"ticker": "TEST", "company_name": "TestCo"}],
+                        as_of_date=date(2026, 2, 28),
+                        cache_dir=tmp_path,
+                        enrich_detail=False,
+                    )
+        mock_detail.assert_not_called()
+        assert len(records) == 1
+        assert records[0]["primary_completion_date"] is None
+
+    def test_detail_failure_continues(self, tmp_path):
+        """If detail fetch fails for one trial, enrichment continues."""
+        from wake_robin_data_pipeline.collectors.ctis_collector import collect_ctis_trials
+
+        search_resp = {
+            "data": [
+                {
+                    "ctNumber": "2024-000003-00",
+                    "ctTitle": "Trial A",
+                    "sponsor": "TestCo",
+                    "ctStatus": 8,
+                    "decisionDateOverall": "01/01/2024",
+                    "lastUpdated": "15/01/2024",
+                },
+                {
+                    "ctNumber": "2024-000004-00",
+                    "ctTitle": "Trial B",
+                    "sponsor": "TestCo",
+                    "ctStatus": 8,
+                    "decisionDateOverall": "01/02/2024",
+                    "lastUpdated": "15/02/2024",
+                },
+            ],
+            "pagination": {"totalPages": 1, "totalElements": 2},
+        }
+
+        detail_good = json.loads((FIXTURES / "ctis_detail_response.json").read_text())
+
+        call_count = 0
+        def mock_fetch(ct_number, raw_dir=None):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                raise ConnectionError("Network error")
+            return detail_good
+
+        with patch("wake_robin_data_pipeline.collectors.ctis_collector._search_ctis",
+                    return_value=search_resp):
+            with patch("wake_robin_data_pipeline.collectors.ctis_collector._fetch_ctis_detail",
+                        side_effect=mock_fetch):
+                with patch("wake_robin_data_pipeline.collectors.ctis_collector.time.sleep"):
+                    records = collect_ctis_trials(
+                        universe=[{"ticker": "TEST", "company_name": "TestCo"}],
+                        as_of_date=date(2026, 2, 28),
+                        cache_dir=tmp_path,
+                        enrich_detail=True,
+                    )
+
+        assert len(records) == 2
+        # First trial: detail failed -> no enrichment
+        rec_a = next(r for r in records if r["primary_id"] == "2024-000003-00")
+        assert rec_a["primary_completion_date"] is None
+        # Second trial: detail succeeded -> enriched
+        rec_b = next(r for r in records if r["primary_id"] == "2024-000004-00")
+        assert rec_b["primary_completion_date"] is not None
 
 
 # ===========================================================================
@@ -435,9 +815,10 @@ class TestNormalizedSchema:
         from wake_robin_data_pipeline.collectors.ctis_collector import _normalize_ctis_record
 
         raw = {
-            "ctNumber": "2024-511897-64-00", "title": "Test",
-            "sponsorName": "Test", "trialPhase": "Phase II",
-            "trialStatus": "Ongoing", "decisionDate": "01/01/2024",
+            "ctNumber": "2024-511897-64-00", "ctTitle": "Test",
+            "sponsor": "Test", "trialPhase": "Therapeutic exploratory (Phase II)",
+            "ctStatus": 8, "decisionDateOverall": "01/01/2024",
+            "lastUpdated": "15/01/2024",
         }
         rec = _normalize_ctis_record(raw, "TEST", "2026-01-01T00:00:00Z")
         assert self.REQUIRED_FIELDS.issubset(rec.keys())
@@ -465,13 +846,15 @@ class TestPhaseStatusNormalization:
 
     def test_phase_normalization(self):
         from wake_robin_data_pipeline.collectors.euctr_collector import _PHASE_MAP as euctr_phases
-        from wake_robin_data_pipeline.collectors.ctis_collector import _PHASE_MAP as ctis_phases
+        from wake_robin_data_pipeline.collectors.ctis_collector import _PHASE_PATTERNS as ctis_patterns
         from wake_robin_data_pipeline.collectors.isrctn_collector import _PHASE_MAP as isrctn_phases
 
         # All maps should produce the same canonical values
         canonical = {"PHASE1", "PHASE2", "PHASE3", "PHASE4"}
         assert set(euctr_phases.values()).issubset(canonical)
-        assert set(ctis_phases.values()).issubset(canonical)
+        # CTIS uses regex patterns -> phase values
+        ctis_values = {phase_val for _, phase_val in ctis_patterns}
+        assert ctis_values.issubset(canonical)
         assert set(isrctn_phases.values()) - {"NA"} == canonical or \
                set(isrctn_phases.values()).issubset(canonical | {"NA"})
 
