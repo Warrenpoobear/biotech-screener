@@ -145,6 +145,14 @@ class Module3Config:
         self.enable_conference_calendar: str = "cache_only"
         self.conference_cache_dir = Path("cache/conferences")
 
+        # Company-announced IR events config (company events pages)
+        self.enable_ir_events: str = "cache_only"
+        self.ir_cache_dir = Path("cache/ir")
+
+        # Company-announced press release events config
+        self.enable_press_releases: str = "cache_only"
+        self.press_cache_dir = Path("cache/press")
+
         # CTGov cache override: None=auto-detect from repo, False=disable
         self.ctgov_cache_dir: Optional[Any] = None
 
@@ -242,6 +250,30 @@ class Module3Config:
                 config.enable_conference_calendar = str(val)
         if 'conference_cache_dir' in config_dict:
             config.conference_cache_dir = Path(config_dict['conference_cache_dir'])
+
+        # IR events settings (same bool compat)
+        if 'enable_ir_events' in config_dict:
+            val = config_dict['enable_ir_events']
+            if val is True:
+                config.enable_ir_events = "live"
+            elif val is False:
+                config.enable_ir_events = "off"
+            else:
+                config.enable_ir_events = str(val)
+        if 'ir_cache_dir' in config_dict:
+            config.ir_cache_dir = Path(config_dict['ir_cache_dir'])
+
+        # Press release events settings (same bool compat)
+        if 'enable_press_releases' in config_dict:
+            val = config_dict['enable_press_releases']
+            if val is True:
+                config.enable_press_releases = "live"
+            elif val is False:
+                config.enable_press_releases = "off"
+            else:
+                config.enable_press_releases = str(val)
+        if 'press_cache_dir' in config_dict:
+            config.press_cache_dir = Path(config_dict['press_cache_dir'])
 
         return config
 
@@ -668,6 +700,64 @@ def convert_conference_event_to_v2(
         confidence=confidence,
         disclosed_at=event.get('disclosed_at', as_of_date.isoformat()),
         tags=tuple(t for t in [f"conference:{conference.lower()}"] if t),
+    )
+
+
+def convert_company_calendar_to_v2(
+    record: Dict[str, Any],
+    as_of_date: date,
+) -> Optional[CatalystEventV2]:
+    """Convert IR event or press release record to CatalystEventV2.
+
+    Maps:
+      ir_event.v1      -> EventType.IR_EVENT
+      press_release_event.v1 -> EventType.PRESS_RELEASE_EVENT
+
+    Hard gates:
+      - must have ticker
+      - must have parseable YYYY-MM-DD event_date
+      - event_date must be >= as_of_date (future only)
+    """
+    ticker = record.get("ticker")
+    event_date_str = record.get("event_date")
+    if not ticker or not event_date_str:
+        return None
+
+    try:
+        event_date = date.fromisoformat(event_date_str)
+    except (ValueError, TypeError):
+        return None
+
+    if event_date < as_of_date:
+        return None
+
+    days_until = (event_date - as_of_date).days
+    title = record.get("title", "")
+
+    schema = record.get("schema", "")
+    if "press_release" in schema:
+        event_type = EventType.PRESS_RELEASE_EVENT
+    else:
+        event_type = EventType.IR_EVENT
+
+    severity = EVENT_SEVERITY_MAP.get(event_type, EventSeverity.POSITIVE)
+    confidence = ConfidenceLevel.MED
+
+    new_value = f"{days_until}d_ahead: {title}"[:120] if title else f"{days_until}d_ahead"
+
+    return CatalystEventV2(
+        ticker=ticker,
+        nct_id=record.get("id", f"CAL_{ticker}_{event_date_str}"),
+        event_type=event_type,
+        event_severity=severity,
+        event_date=event_date_str,
+        field_changed="company_calendar",
+        prior_value=None,
+        new_value=new_value,
+        source=record.get("source", "COMPANY_CALENDAR"),
+        confidence=confidence,
+        disclosed_at=record.get("disclosed_at", as_of_date.isoformat()),
+        tags=tuple(record.get("tags", [])),
     )
 
 
@@ -2087,6 +2177,108 @@ def compute_module_3_catalyst(
                 total_events += conf_added
                 logger.info(f"Merged {conf_added} conference calendar events "
                            f"(new tickers: {conf_tickers_added}, deduped: {conf_deduped})")
+
+    # =========================================================================
+    # MERGE COMPANY-ANNOUNCED IR EVENTS INTO SCORING PIPELINE
+    # =========================================================================
+    _ir_mode = config.enable_ir_events
+    if _ir_mode == "off":
+        logger.debug("IR events source off (set enable_ir_events='cache_only' or 'live')")
+    else:
+        ir_events_raw: List[Dict[str, Any]] = []
+        _ir_cache_path = Path(config.ir_cache_dir) / f"ir_events_{as_of_date.isoformat()}.json"
+
+        if _ir_mode == "cache_only":
+            if _ir_cache_path.exists():
+                try:
+                    with open(_ir_cache_path, 'r', encoding='utf-8') as f:
+                        _ir_payload = json.load(f)
+                    ir_events_raw = _ir_payload.get("events", _ir_payload) if isinstance(_ir_payload, dict) else _ir_payload
+                    logger.info(f"IR events: loaded {len(ir_events_raw)} events from cache")
+                except Exception as e:
+                    logger.warning(f"IR events cache read error: {e}")
+            else:
+                logger.debug(f"IR events: no cache for {as_of_date} (run warm_caches.py --sources ir_events)")
+
+        if ir_events_raw:
+            ir_added = 0
+            ir_tickers_added = 0
+            ir_touched: Set[str] = set()
+            for ir_rec in ir_events_raw:
+                ticker = ir_rec.get('ticker')
+                if not ticker or ticker not in active_tickers:
+                    continue
+                v2_event = convert_company_calendar_to_v2(ir_rec, as_of_date)
+                if v2_event is None:
+                    continue
+                if ticker not in events_by_ticker_v2:
+                    events_by_ticker_v2[ticker] = []
+                    ir_tickers_added += 1
+                events_by_ticker_v2[ticker].append(v2_event)
+                ir_touched.add(ticker)
+                ir_added += 1
+
+            if ir_added > 0:
+                ir_deduped = 0
+                for ticker in sorted(ir_touched):
+                    events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
+                    ir_deduped += deduped
+                    events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
+                total_deduped += ir_deduped
+                total_events += ir_added
+                logger.info(f"Merged {ir_added} IR events "
+                           f"(new tickers: {ir_tickers_added}, deduped: {ir_deduped})")
+
+    # =========================================================================
+    # MERGE COMPANY-ANNOUNCED PRESS RELEASE EVENTS INTO SCORING PIPELINE
+    # =========================================================================
+    _pr_mode = config.enable_press_releases
+    if _pr_mode == "off":
+        logger.debug("Press release source off (set enable_press_releases='cache_only' or 'live')")
+    else:
+        pr_events_raw: List[Dict[str, Any]] = []
+        _pr_cache_path = Path(config.press_cache_dir) / f"press_release_events_{as_of_date.isoformat()}.json"
+
+        if _pr_mode == "cache_only":
+            if _pr_cache_path.exists():
+                try:
+                    with open(_pr_cache_path, 'r', encoding='utf-8') as f:
+                        _pr_payload = json.load(f)
+                    pr_events_raw = _pr_payload.get("events", _pr_payload) if isinstance(_pr_payload, dict) else _pr_payload
+                    logger.info(f"Press releases: loaded {len(pr_events_raw)} events from cache")
+                except Exception as e:
+                    logger.warning(f"Press release cache read error: {e}")
+            else:
+                logger.debug(f"Press releases: no cache for {as_of_date} (run warm_caches.py --sources press_releases)")
+
+        if pr_events_raw:
+            pr_added = 0
+            pr_tickers_added = 0
+            pr_touched: Set[str] = set()
+            for pr_rec in pr_events_raw:
+                ticker = pr_rec.get('ticker')
+                if not ticker or ticker not in active_tickers:
+                    continue
+                v2_event = convert_company_calendar_to_v2(pr_rec, as_of_date)
+                if v2_event is None:
+                    continue
+                if ticker not in events_by_ticker_v2:
+                    events_by_ticker_v2[ticker] = []
+                    pr_tickers_added += 1
+                events_by_ticker_v2[ticker].append(v2_event)
+                pr_touched.add(ticker)
+                pr_added += 1
+
+            if pr_added > 0:
+                pr_deduped = 0
+                for ticker in sorted(pr_touched):
+                    events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
+                    pr_deduped += deduped
+                    events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
+                total_deduped += pr_deduped
+                total_events += pr_added
+                logger.info(f"Merged {pr_added} press release events "
+                           f"(new tickers: {pr_tickers_added}, deduped: {pr_deduped})")
 
     # Update total event count for combined diff + calendar + corporate events
     combined_tickers_with_events = len([t for t in events_by_ticker_v2 if events_by_ticker_v2[t]])

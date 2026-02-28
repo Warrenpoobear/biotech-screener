@@ -155,6 +155,14 @@ class EventType(str, Enum):
     # Company-disclosed accepted abstract (PR-based)
     CONFERENCE_ACCEPTED_ABSTRACT = "CONFERENCE_ACCEPTED_ABSTRACT"
 
+    # ==========================================================================
+    # COMPANY-ANNOUNCED CALENDAR EVENTS (IR pages + press releases)
+    # ==========================================================================
+    # Event from company IR/Events page (earnings, investor day, conference, etc.)
+    IR_EVENT = "IR_EVENT"
+    # Future-dated event extracted from press release text
+    PRESS_RELEASE_EVENT = "PRESS_RELEASE_EVENT"
+
     # Unknown (catch-all, zero score)
     UNKNOWN = "UNKNOWN"
 
@@ -230,6 +238,10 @@ EVENT_SEVERITY_MAP: Dict[EventType, EventSeverity] = {
     # Conference calendar events
     EventType.CONFERENCE_LATE_BREAKER: EventSeverity.CRITICAL_POSITIVE,  # Late-breaking presentation
     EventType.CONFERENCE_ACCEPTED_ABSTRACT: EventSeverity.POSITIVE,      # Accepted abstract PR
+
+    # Company-announced calendar events (IR + press releases)
+    EventType.IR_EVENT: EventSeverity.POSITIVE,               # IR page event (company calendar)
+    EventType.PRESS_RELEASE_EVENT: EventSeverity.POSITIVE,    # PR future-date announcement
 
     # Neutral
     EventType.CT_RESULTS_POSTED: EventSeverity.NEUTRAL,
@@ -331,6 +343,10 @@ EVENT_DEFAULT_CONFIDENCE: Dict[EventType, ConfidenceLevel] = {
     # Conference calendar events
     EventType.CONFERENCE_LATE_BREAKER: ConfidenceLevel.HIGH,      # Late-breaking / plenary presentation
     EventType.CONFERENCE_ACCEPTED_ABSTRACT: ConfidenceLevel.MED,  # Company-disclosed accepted abstract
+
+    # Company-announced calendar events (IR + press releases)
+    EventType.IR_EVENT: ConfidenceLevel.MED,              # IR page — dates can shift
+    EventType.PRESS_RELEASE_EVENT: ConfidenceLevel.MED,   # PR — company-announced, may shift
 
     EventType.UNKNOWN: ConfidenceLevel.LOW,
 }
@@ -440,6 +456,10 @@ EVENT_TYPE_WEIGHT: Dict[EventType, Decimal] = {
     # Conference calendar events
     EventType.CONFERENCE_LATE_BREAKER: Decimal("18.0"),        # Late-breaking: high-impact data
     EventType.CONFERENCE_ACCEPTED_ABSTRACT: Decimal("10.0"),   # Accepted abstract PR
+
+    # Company-announced calendar events (IR + press releases) — conservative weights
+    EventType.IR_EVENT: Decimal("8.0"),              # IR page events (earnings, investor day, etc.)
+    EventType.PRESS_RELEASE_EVENT: Decimal("10.0"),  # PR future-date events (data readout, presentation)
 
     EventType.UNKNOWN: Decimal("0.0"),
 }

@@ -689,6 +689,70 @@ def warm_merged_trials(as_of_date: date, data_dir: Path, cache_root: Path) -> in
     return len(merged)
 
 
+def warm_ir_events(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
+    """Fetch and cache IR events from company events pages. Returns count."""
+    from wake_robin_data_pipeline.collectors.ir_events_collector import collect_ir_events
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    # Short-circuit if cache exists
+    cache_path = cache_dir / f"ir_events_{as_of_date.isoformat()}.json"
+    if cache_path.exists():
+        try:
+            data = json.loads(cache_path.read_text())
+            count = len(data.get("events", []))
+            logger.info(f"IR events cache exists: {cache_path.name} ({count} events)")
+            return count
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    universe = _load_universe(data_dir)
+    if not universe:
+        return 0
+
+    logger.info("Fetching IR events for %d tickers, as_of %s...", len(universe), as_of_date)
+    events = collect_ir_events(
+        universe=universe,
+        as_of_date=as_of_date,
+        cache_dir=cache_dir,
+    )
+    logger.info("IR events: %d events cached", len(events))
+    return len(events)
+
+
+def warm_press_release_events(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
+    """Fetch and cache press release future-date events. Returns count."""
+    from wake_robin_data_pipeline.collectors.press_release_collector import collect_press_release_events
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    # Short-circuit if cache exists
+    cache_path = cache_dir / f"press_release_events_{as_of_date.isoformat()}.json"
+    if cache_path.exists():
+        try:
+            data = json.loads(cache_path.read_text())
+            count = len(data.get("events", []))
+            logger.info(f"Press release cache exists: {cache_path.name} ({count} events)")
+            return count
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    universe = _load_universe(data_dir)
+    if not universe:
+        return 0
+
+    logger.info("Fetching press release events for %d tickers, as_of %s...", len(universe), as_of_date)
+    events = collect_press_release_events(
+        universe=universe,
+        as_of_date=as_of_date,
+        cache_dir=cache_dir,
+    )
+    logger.info("Press release events: %d events cached", len(events))
+    return len(events)
+
+
 def warm_conference_calendar(
     as_of_date: date,
     data_dir: Path,
@@ -817,6 +881,18 @@ def main():
         action="store_true",
         default=False,
         help="Disable CTIS detail endpoint enrichment (default: enrichment ON)",
+    )
+    parser.add_argument(
+        "--ir-cache-dir",
+        type=str,
+        default=str(PROJECT_ROOT / "cache" / "ir"),
+        help="IR events cache directory",
+    )
+    parser.add_argument(
+        "--press-cache-dir",
+        type=str,
+        default=str(PROJECT_ROOT / "cache" / "press"),
+        help="Press release events cache directory",
     )
     parser.add_argument(
         "--conference-cache-dir",
@@ -1012,6 +1088,22 @@ def main():
             except Exception as e:
                 logger.error(f"Conference calendar warm failed for {slug}: {e}")
 
+    ir_events_count = 0
+    if "ir_events" in sources:
+        try:
+            ir_cache_dir = Path(args.ir_cache_dir)
+            ir_events_count = warm_ir_events(as_of, data_dir, ir_cache_dir)
+        except Exception as e:
+            logger.error(f"IR events warm failed: {e}")
+
+    press_release_count = 0
+    if "press_releases" in sources:
+        try:
+            press_cache_dir = Path(args.press_cache_dir)
+            press_release_count = warm_press_release_events(as_of, data_dir, press_cache_dir)
+        except Exception as e:
+            logger.error(f"Press release events warm failed: {e}")
+
     # Write refresh diagnostics sidecar
     if refresh_results:
         cache_root = PROJECT_ROOT / "cache"
@@ -1050,6 +1142,10 @@ def main():
         parts.append(f"{merged_trials_count} merged trial records")
     if conference_count:
         parts.append(f"{conference_count} conference events")
+    if ir_events_count:
+        parts.append(f"{ir_events_count} IR events")
+    if press_release_count:
+        parts.append(f"{press_release_count} press release events")
     logger.info(f"Cache warm complete: {', '.join(parts)}")
     return 0
 
