@@ -252,9 +252,22 @@ def _extract_eudract_number(text: str) -> Optional[str]:
 
 
 def _parse_description(desc: str) -> dict:
-    """Parse semi-structured description text from RSS item."""
+    """Parse semi-structured description text from RSS item.
+
+    EUCTR RSS descriptions use HTML-encoded <br/> separators inside <p> tags:
+        <p>EudraCT Number: 2020-000346-33<br/>Sponsor Name: AstraZeneca AB<br/>...</p>
+    Also handles plain newline-separated format (used in test fixtures).
+    """
     fields: dict = {}
-    for line in desc.split("\n"):
+
+    # Strip HTML tags like <p>, </p>, <a ...>...</a> but preserve text content
+    clean = re.sub(r'<a [^>]*>.*?</a>', '', desc)  # remove anchor tags entirely
+    clean = re.sub(r'<[^>]+>', '\n', clean)  # replace remaining tags with newlines
+
+    # Also split on <br/> variants that may have been entity-encoded
+    clean = clean.replace('&lt;br/&gt;', '\n').replace('&lt;br&gt;', '\n')
+
+    for line in clean.split("\n"):
         line = line.strip()
         if ":" not in line:
             continue
@@ -262,7 +275,12 @@ def _parse_description(desc: str) -> dict:
         key = key.strip().lower()
         value = value.strip()
 
-        if "sponsor" in key and "protocol" not in key:
+        if not value:
+            continue
+
+        if "eudract" in key:
+            pass  # already extracted from link
+        elif "sponsor" in key and "protocol" not in key:
             fields["sponsor"] = value
         elif "protocol" in key:
             fields["sponsor_protocol"] = value
