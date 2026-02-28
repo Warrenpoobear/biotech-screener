@@ -21,7 +21,55 @@ if str(PROJECT_ROOT) not in sys.path:
 # Inline HTML fixtures
 # ---------------------------------------------------------------------------
 
+# Realistic EMA committee landing page structure with div.bcl-file blocks.
+# Anchor text is "View"; the descriptive title and "First published" date
+# live in the enclosing div.bcl-file container.
 COMMITTEE_LANDING_HTML = """
+<html>
+<head><title>CHMP | European Medicines Agency</title></head>
+<body>
+<h1>Committee for Medicinal Products for Human Use (CHMP)</h1>
+<div class="field--items">
+  <div class="bcl-file">
+    <span>Agenda of the CHMP meeting 8 - 11 December 2025</span>
+    <span>First published:05/12/2025</span>
+    <div class="file-language-links">
+      <a href="/en/documents/agenda/agenda-chmp-meeting-8-11-december-2025_en.pdf">View</a>
+    </div>
+  </div>
+  <div class="bcl-file">
+    <span>Annex to agenda of the CHMP meeting 8 - 11 December 2025</span>
+    <span>First published:05/12/2025</span>
+    <div class="file-language-links">
+      <a href="/en/documents/annex/annex-to-agenda-chmp-meeting-8-11-december-2025_en.xlsx">View</a>
+    </div>
+  </div>
+  <div class="bcl-file">
+    <span>Meeting highlights from the CHMP 8 - 11 December 2025</span>
+    <div class="file-language-links">
+      <a href="/en/news/meeting-highlights-committee-medicinal-products-human-use-chmp-8-11-december-2025">View</a>
+    </div>
+  </div>
+  <div class="bcl-file">
+    <span>Meeting highlights from the CHMP 10 - 13 November 2025</span>
+    <div class="file-language-links">
+      <a href="/en/news/meeting-highlights-committee-medicinal-products-human-use-chmp-10-13-november-2025">View</a>
+    </div>
+  </div>
+  <div class="bcl-file">
+    <span>Agenda of the CHMP meeting 27 - 30 January 2026</span>
+    <span>First published:24/01/2026</span>
+    <div class="file-language-links">
+      <a href="/en/documents/agenda/agenda-chmp-meeting-27-30-january-2026_en.pdf">View</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+"""
+
+# Legacy-style HTML where the anchor text itself contains the title (fallback path).
+COMMITTEE_LANDING_HTML_LEGACY = """
 <html>
 <head><title>CHMP | European Medicines Agency</title></head>
 <body>
@@ -30,17 +78,8 @@ COMMITTEE_LANDING_HTML = """
   <a href="/en/documents/agenda/agenda-chmp-meeting-8-11-december-2025">
     Agenda of the CHMP meeting 8 - 11 December 2025
   </a>
-  <a href="/en/documents/annex/annex-to-agenda-chmp-meeting-8-11-december-2025.xlsx">
-    Annex to agenda of the CHMP meeting 8 - 11 December 2025
-  </a>
   <a href="/en/news/meeting-highlights-committee-medicinal-products-human-use-chmp-8-11-december-2025">
     Meeting highlights from the CHMP 8 - 11 December 2025
-  </a>
-  <a href="/en/news/meeting-highlights-committee-medicinal-products-human-use-chmp-10-13-november-2025">
-    Meeting highlights from the CHMP 10 - 13 November 2025
-  </a>
-  <a href="/en/documents/agenda/agenda-chmp-meeting-27-30-january-2026">
-    Agenda of the CHMP meeting 27 - 30 January 2026
   </a>
 </div>
 </body>
@@ -106,7 +145,7 @@ PRODUCT_MAP = {
 class TestDiscovery:
     """Tests for _discover_links."""
 
-    def test_discovers_agenda_links(self):
+    def test_discovers_agenda_links_from_bcl_file(self):
         from wake_robin_data_pipeline.collectors.ema_committee_collector import _discover_links
 
         links = _discover_links(COMMITTEE_LANDING_HTML, "https://www.ema.europa.eu")
@@ -116,7 +155,7 @@ class TestDiscovery:
         assert any("annex" in u for u in urls)
         assert any("27-30-january-2026" in u for u in urls)
 
-    def test_discovers_highlights_links(self):
+    def test_discovers_highlights_links_from_bcl_file(self):
         from wake_robin_data_pipeline.collectors.ema_committee_collector import _discover_links
 
         links = _discover_links(COMMITTEE_LANDING_HTML, "https://www.ema.europa.eu")
@@ -131,6 +170,36 @@ class TestDiscovery:
         links = _discover_links(COMMITTEE_LANDING_HTML, "https://www.ema.europa.eu")
         for doc in links["agenda_docs"] + links["highlights"]:
             assert doc["url"].startswith("https://"), f"URL not absolute: {doc['url']}"
+
+    def test_title_from_bcl_file_block(self):
+        """Title comes from the div.bcl-file text, not the anchor text."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _discover_links
+
+        links = _discover_links(COMMITTEE_LANDING_HTML, "https://www.ema.europa.eu")
+        titles = [d["title"] for d in links["agenda_docs"]]
+        assert any("Agenda of the CHMP meeting 8 - 11 December 2025" in t for t in titles)
+        # Anchor text "View" should NOT be the title
+        assert not any(t == "View" for t in titles)
+
+    def test_disclosed_at_from_first_published(self):
+        """disclosed_at extracted from 'First published:DD/MM/YYYY' in block."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _discover_links
+
+        links = _discover_links(COMMITTEE_LANDING_HTML, "https://www.ema.europa.eu")
+        # The December 2025 agenda has "First published:05/12/2025"
+        dec_agenda = [d for d in links["agenda_docs"]
+                      if "8-11-december-2025" in d["url"] and "annex" not in d["url"]]
+        assert len(dec_agenda) == 1
+        assert dec_agenda[0]["disclosed_at"] == "2025-12-05"
+
+    def test_legacy_anchor_text_fallback(self):
+        """Falls back to anchor-text matching when no div.bcl-file blocks."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _discover_links
+
+        links = _discover_links(COMMITTEE_LANDING_HTML_LEGACY, "https://www.ema.europa.eu")
+        assert len(links["agenda_docs"]) == 1
+        assert "agenda-chmp-meeting-8-11-december-2025" in links["agenda_docs"][0]["url"]
+        assert len(links["highlights"]) == 1
 
 
 # ===========================================================================

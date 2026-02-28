@@ -223,41 +223,97 @@ def _classify_outcome_code(section_heading: str) -> str:
 # ---------------------------------------------------------------------------
 
 
+_FIRST_PUBLISHED_RE = re.compile(
+    r"[Ff]irst\s+published[:\s]*(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})"
+)
+
+
 def _discover_links(
     html: str, base_url: str,
 ) -> Dict[str, List[Dict[str, str]]]:
     """Discover agenda docs and meeting highlights links from a committee page.
 
+    EMA committee pages wrap each document in a ``div.bcl-file`` container.
+    The anchor text is typically just "View"; the descriptive title and
+    "First published" date live in the surrounding ``div.bcl-file`` block.
+
+    Fallback: if no ``div.bcl-file`` wrapper is found (e.g. simpler page
+    layouts) the function falls back to matching "agenda" in anchor text.
+
     Returns dict with keys:
-      - agenda_docs: list of {url, title}
+      - agenda_docs: list of {url, title, disclosed_at}
       - highlights: list of {url, title}
     """
     soup = BeautifulSoup(html, "html.parser")
 
     agenda_docs: List[Dict[str, str]] = []
     highlights: List[Dict[str, str]] = []
+    seen_urls: set = set()
 
+    # --- Strategy 1: div.bcl-file containers (current EMA layout) ----------
+    for block in soup.select("div.bcl-file"):
+        block_text = block.get_text(" ", strip=True)
+        for a_tag in block.find_all("a", href=True):
+            href = a_tag["href"]
+            if href.startswith("/"):
+                href = base_url.rstrip("/") + href
+
+            href_lower = href.lower()
+
+            # Agenda / annex documents — detected via href path segment
+            if "/agenda/" in href_lower or "/annex/" in href_lower:
+                if href in seen_urls:
+                    continue
+                seen_urls.add(href)
+                # Title from block text, stripping trailing "First published…View"
+                title = re.sub(r"\s*First published.*", "", block_text, flags=re.IGNORECASE).strip()
+                if not title:
+                    title = block_text[:200]
+                # Extract disclosed_at from "First published:DD/MM/YYYY"
+                disclosed_at = None
+                fp = _FIRST_PUBLISHED_RE.search(block_text)
+                if fp:
+                    d, mo, y = fp.groups()
+                    try:
+                        disclosed_at = datetime.strptime(f"{d}/{mo}/{y}", "%d/%m/%Y").strftime("%Y-%m-%d")
+                    except ValueError:
+                        pass
+                agenda_docs.append({"url": href, "title": title, "disclosed_at": disclosed_at})
+
+            # Meeting highlights — detected via href path
+            if "/en/news/meeting-highlights" in href_lower:
+                if href in seen_urls:
+                    continue
+                seen_urls.add(href)
+                title = re.sub(r"\s*First published.*", "", block_text, flags=re.IGNORECASE).strip()
+                if not title:
+                    title = block_text[:200]
+                highlights.append({"url": href, "title": title})
+
+    # --- Strategy 2: plain anchor-text fallback (legacy / simple HTML) -----
     for a_tag in soup.find_all("a", href=True):
         href = a_tag["href"]
         text = a_tag.get_text(strip=True)
         if not text:
             continue
-
-        # Resolve relative URLs
         if href.startswith("/"):
             href = base_url.rstrip("/") + href
+        if href in seen_urls:
+            continue
 
         text_lower = text.lower()
+        href_lower = href.lower()
 
-        # Agenda / Annex documents
+        # Agenda by text content
         if "agenda" in text_lower and ("meeting" in text_lower or "annex" in text_lower):
-            agenda_docs.append({"url": href, "title": text})
+            seen_urls.add(href)
+            agenda_docs.append({"url": href, "title": text, "disclosed_at": None})
 
-        # Meeting highlights
-        if "/en/news/meeting-highlights" in href.lower() or (
-            "meeting highlights" in text_lower
-        ):
-            highlights.append({"url": href, "title": text})
+        # Meeting highlights by text or href
+        if "/en/news/meeting-highlights" in href_lower or "meeting highlights" in text_lower:
+            if href not in seen_urls:
+                seen_urls.add(href)
+                highlights.append({"url": href, "title": text})
 
     return {"agenda_docs": agenda_docs, "highlights": highlights}
 
@@ -547,6 +603,12 @@ def collect_ema_committee_events(
 
         links = _discover_links(landing_html, _BASE_URL)
 
+        # Group agenda docs by meeting date to avoid duplicate meeting events.
+        # PDF/XLSX docs cannot be parsed for individual items, so we create
+        # one meeting-level event per unique (committee, meeting_end).
+        # HTML agenda pages (rare) are still parsed for item-level events.
+        seen_meetings: set = set()
+
         for doc in links["agenda_docs"]:
             dates = _parse_meeting_dates(doc["title"])
             if not dates:
@@ -557,31 +619,76 @@ def collect_ema_committee_events(
             if meeting_end < cutoff or meeting_end > as_of_date.isoformat():
                 continue
 
-            try:
-                doc_html = _fetch(doc["url"])
-                stats["fetched_pages"] += 1
+            doc_url = doc["url"]
+            doc_disclosed = doc.get("disclosed_at") or as_of_date.isoformat()
+            is_binary = doc_url.lower().endswith((".pdf", ".xlsx", ".xls"))
+
+            if is_binary:
+                # Create one meeting-level event per unique meeting
+                meeting_key = (committee, meeting_end)
+                if meeting_key in seen_meetings:
+                    continue
+                seen_meetings.add(meeting_key)
+
+                event_id = _make_event_id(
+                    f"EMA_{committee}_AGENDA_{meeting_end}",
+                    committee, meeting_start, meeting_end,
+                )
+                title = doc["title"]
+                # Strip file-size/format metadata from title if present
+                title = re.sub(r"\s*\([\d.,]+\s*[KMG]B\s*-\s*\w+\)\s*$", "", title).strip()
+                title = re.sub(r"\s*Draft\s+Reference\s+Number:.*$", "", title).strip()
+                title = re.sub(r"\s*Reference\s+Number:.*$", "", title).strip()
+
+                all_events.append({
+                    "schema": "ema_committee_event.v1",
+                    "id": event_id,
+                    "ticker": None,
+                    "jurisdiction": "EU",
+                    "committee": committee,
+                    "meeting_start": meeting_start,
+                    "meeting_end": meeting_end,
+                    "event_date": meeting_end,
+                    "disclosed_at": doc_disclosed,
+                    "item_type": "meeting",
+                    "procedure_type": None,
+                    "medicine_name": None,
+                    "active_substance": None,
+                    "sponsor": None,
+                    "title": title,
+                    "source": f"EMA_{committee}_AGENDA",
+                    "url": doc_url,
+                    "confidence": "MED",
+                    "raw": {},
+                })
                 stats["parsed_docs"] += 1
-            except Exception as e:
-                logger.warning("EMA agenda fetch failed for %s: %s", doc["url"], e)
-                continue
+            else:
+                # HTML agenda page — parse for individual agenda items
+                try:
+                    doc_html = _fetch(doc_url)
+                    stats["fetched_pages"] += 1
+                    stats["parsed_docs"] += 1
+                except Exception as e:
+                    logger.warning("EMA agenda fetch failed for %s: %s", doc_url, e)
+                    continue
 
-            events, unmatched = _parse_agenda_page(
-                doc_html, doc["url"], committee,
-                meeting_start, meeting_end, product_ticker_map,
-            )
-            # Set disclosed_at based on as_of_date for agenda items
-            for ev in events:
-                if ev["disclosed_at"] is None:
-                    ev["disclosed_at"] = as_of_date.isoformat()
+                events, unmatched = _parse_agenda_page(
+                    doc_html, doc_url, committee,
+                    meeting_start, meeting_end, product_ticker_map,
+                )
+                for ev in events:
+                    if ev["disclosed_at"] is None:
+                        ev["disclosed_at"] = doc_disclosed
 
-            all_events.extend(events)
-            all_unmatched.extend(unmatched)
+                all_events.extend(events)
+                all_unmatched.extend(unmatched)
 
-    stats["matched_tickers"] = len(set(ev["ticker"] for ev in all_events))
+    stats["matched_tickers"] = len(set(ev["ticker"] for ev in all_events if ev.get("ticker")))
+    stats["meeting_events"] = len([ev for ev in all_events if ev.get("item_type") == "meeting"])
     stats["unmatched_items"] = len(all_unmatched)
 
     # Deterministic sort
-    all_events.sort(key=lambda e: (e["event_date"], e["committee"], e["ticker"], e["id"]))
+    all_events.sort(key=lambda e: (e["event_date"], e["committee"], e.get("ticker") or "", e["id"]))
 
     # Write cache
     payload = {
