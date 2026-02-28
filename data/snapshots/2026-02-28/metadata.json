@@ -1,6 +1,6 @@
 {
   "as_of_date": "2026-02-28",
-  "saved_at": "2026-02-28T22:02:30.551343Z",
+  "saved_at": "2026-02-28T22:40:12.225452Z",
   "decision_mode": "phase2",
   "ranking_mode": "decision",
   "version": "1.6.0",
@@ -37,15 +37,15 @@
     },
     "composite_score": {
       "n_total": 297,
-      "n_unique": 290,
-      "tie_pct": 0.0236
+      "n_unique": 291,
+      "tie_pct": 0.0202
     }
   },
   "score_diagnostics": {
     "composite_score": {
       "n_total": 297,
-      "n_unique": 290,
-      "tie_pct": 0.0236
+      "n_unique": 291,
+      "tie_pct": 0.0202
     },
     "momentum_score": {
       "n_total": 297,
@@ -54,17 +54,17 @@
     },
     "catalyst_score": {
       "n_total": 297,
-      "n_unique": 160,
-      "tie_pct": 0.4613,
-      "zero_signal_count": 92,
-      "signal_n": 205,
-      "signal_unique": 179,
-      "signal_tie_pct": 0.1268
+      "n_unique": 184,
+      "tie_pct": 0.3805,
+      "zero_signal_count": 74,
+      "signal_n": 223,
+      "signal_unique": 200,
+      "signal_tie_pct": 0.1031
     },
     "smart_money_score": {
       "n_total": 249,
-      "n_unique": 196,
-      "tie_pct": 0.2129
+      "n_unique": 194,
+      "tie_pct": 0.2209
     },
     "valuation_score": {
       "n_total": 297,
@@ -83,8 +83,8 @@
     },
     "financial_score": {
       "n_total": 297,
-      "n_unique": 220,
-      "tie_pct": 0.2593
+      "n_unique": 242,
+      "tie_pct": 0.1852
     },
     "confidence_overall": {
       "n_total": 297,
@@ -94,10 +94,10 @@
     "_top_tied": [
       "catalyst_score",
       "valuation_score",
-      "financial_score",
       "smart_money_score",
       "clinical_score",
       "confidence_overall",
+      "financial_score",
       "momentum_score",
       "composite_score"
     ]
@@ -444,7 +444,7 @@
     "catalyst_events_vnext_2026-02-25.json": "c1805c2ad001e372",
     "catalyst_events_vnext_2026-02-26.json": "425f9c60df5e04b2",
     "catalyst_events_vnext_2026-02-27.json": "93db2c8b561ffb22",
-    "catalyst_events_vnext_2026-02-28.json": "bde9942f470245ee",
+    "catalyst_events_vnext_2026-02-28.json": "1b9a8c42e06f2a61",
     "catalyst_overrides.json": "e4c587ce6c537d65",
     "cfo_data_2026-01-08.json": "33e0d93576eff5d0",
     "corporate_catalysts.json": "ad7d56deef131f58",
@@ -463,14 +463,17 @@
     "financial_data.json": "563dcdde7797a528",
     "financial_data_cfo_2026-01-08.json": "4f53cda18c2baa0c",
     "financial_records.json": "21a94f0fcb296bd1",
+    "holdings_2025-09-30.json": "530ed7fee22b875a",
+    "holdings_2025-12-31.json": "73ea0f2222dc1a50",
     "holdings_detailed.json": "6949aff8b935ac6a",
     "holdings_snapshots.json": "622f1eed41c4e99a",
     "inputs_manifest.json": "d469b8cbbfb59239",
     "m3_vnext_events_2026-02-07.json": "bb0472147eabc572",
     "manager_registry.json": "f76ba4f3c4cad4f9",
-    "market_data.json": "088c1e36acff076c",
+    "manifest.json": "56295d2d841f9e64",
+    "market_data.json": "c13ea45460f25a69",
     "market_data.momentum_meta.json": "5e8f2cc2ccf8f8be",
-    "market_snapshot.json": "7d165d8bb272eec8",
+    "market_snapshot.json": "137797b8b9ed8959",
     "morningstar_data_manifest.json": "e553e2edb80abc24",
     "morningstar_id_map.json": "17c4322d15fe230f",
     "morningstar_mcp_data.json": "ab599c17d82e7664",
@@ -483,7 +486,7 @@
     "pit_degrade_test.json": "c556f87a5c477828",
     "pos_coverage_validation.json": "1b59d24430d261d5",
     "production_market_caps.json": "303de21c05bf2d9c",
-    "quarterly_burn_history.json": "d9278df762e11e6e",
+    "quarterly_burn_history.json": "f1ea51e98d35bc34",
     "results.json": "9f6b9d721ea77da5",
     "results_2026-01-30.json": "94c755ac19669737",
     "results_2026-01-30_v4.1.json": "5ad7a3280f40c83c",
@@ -526,7 +529,7 @@
     "universe_mapped.json": "15f9c56365b4bad7"
   },
   "clinical_sort_telemetry": {
-    "n_nonzero_clin_adj_dev": 64,
+    "n_nonzero_clin_adj_dev": 65,
     "n_nonzero_clin_adj_comm": 60,
     "ruleset_id": "0c1129f6",
     "enable_clinical_sort_signal": true
@@ -564,7 +567,7 @@
       ]
     },
     "cells_populated": 26,
-    "alpha_score_present": 173,
+    "alpha_score_present": 174,
     "alpha_score_missing": 16
   },
   "coinvest_coverage": {
@@ -612,18 +615,18 @@
     "path": null,
     "all_required_present": null
   },
-  "cache_health_overall_status": "bad",
-  "cache_degraded_run": true,
-  "suppress_churn_comparisons": true,
+  "cache_health_overall_status": "ok",
+  "cache_degraded_run": false,
+  "suppress_churn_comparisons": false,
   "cache_refresh_sidecar": "cache_refresh_2026-02-28.json",
   "cache_refresh_had_rejections": false,
   "cache_refresh_rejected_sources": [],
   "cache_refresh_summary": {
-    "ctgov": {
+    "sec_8k": {
       "accepted": true,
       "reason": "",
-      "count": 18689,
-      "prior_count": 18689,
+      "count": 226,
+      "prior_count": 227,
       "committed": true
     }
   }

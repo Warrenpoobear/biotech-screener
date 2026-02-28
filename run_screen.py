@@ -3923,7 +3923,10 @@ def save_validation_snapshot(
     try:
         from cache_health import compute_cache_health, load_prior_cache_health, _worst
         _by_src = (source_mix or {}).get("by_source", {})
-        _sec8k_count = _by_src.get("SEC_8K_FILING", 0)
+        # Use pre-dedup counts for cache health: fuzzy dedup absorbs 8-K events
+        # into calendar events, zeroing out their source tag in post-dedup counts.
+        _pre_dedup_src = (source_mix or {}).get("pre_dedup_by_source", _by_src)
+        _sec8k_count = _pre_dedup_src.get("SEC_8K_FILING", 0)
         _ctgov_count = (
             _by_src.get("CTGOV_CALENDAR", 0)
             + _by_src.get("CTGOV", 0)

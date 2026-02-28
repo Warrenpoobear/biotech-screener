@@ -1,0 +1,49 @@
+{
+  "_schema": {
+    "version": "13f_manifest_v1"
+  },
+  "input_hashes": [
+    {
+      "path": "cusip_static_map.json",
+      "sha256": "d365334982834af17500f02b155b07d99d61bff3f07bd91ae0ec617cf6582a45"
+    },
+    {
+      "path": "manager_registry.json",
+      "sha256": "f76ba4f3c4cad4f94393e7106694bb44bc9d19b88aaea481d960ae84c8c7a0c7"
+    },
+    {
+      "path": "universe.json",
+      "sha256": "92134e828c805ecba672a586956e71777eba3839d0d640c10b496c3e4b300698"
+    }
+  ],
+  "params": {
+    "cusip_map_hash": "d365334982834af17500f02b155b07d99d61bff3f07bd91ae0ec617cf6582a45",
+    "manager_registry_hash": "f76ba4f3c4cad4f94393e7106694bb44bc9d19b88aaea481d960ae84c8c7a0c7",
+    "mode": "live",
+    "quarter_end": "2025-12-31",
+    "quarters": 2,
+    "universe_hash": "92134e828c805ecba672a586956e71777eba3839d0d640c10b496c3e4b300698"
+  },
+  "quarters": [
+    {
+      "filename": "holdings_2025-12-31.json",
+      "managers_count": 4,
+      "prior_quarter_end": "2025-09-30",
+      "quarter_end": "2025-12-31",
+      "sha256": "73ea0f2222dc1a509854e5b1db8e1536aabcbecd81a0404b9b90f5933318004c",
+      "tickers_count": 284,
+      "warnings_count": 25
+    },
+    {
+      "filename": "holdings_2025-09-30.json",
+      "managers_count": 26,
+      "prior_quarter_end": "2025-06-30",
+      "quarter_end": "2025-09-30",
+      "sha256": "530ed7fee22b875a896f35fe9965e726a78b20b8a6e44351bae1b7cc639cd97b",
+      "tickers_count": 292,
+      "warnings_count": 0
+    }
+  ],
+  "run_id": "1f63fe8a90c9a640",
+  "warnings_total": 25
+}

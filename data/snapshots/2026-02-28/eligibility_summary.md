@@ -3,20 +3,20 @@
 | Metric | Count |
 |--------|-------|
 | Total  | 297 |
-| Eligible | 189 |
-| Ineligible | 108 |
+| Eligible | 190 |
+| Ineligible | 107 |
 
 ## Counts by Reason
 
 | Reason | Count |
 |--------|-------|
-| deep_drawdown | 58 |
+| deep_drawdown | 57 |
 | financials_missing | 31 |
 | fundamental_red_flag | 30 |
 
 ## Examples (top 5 reasons)
 
-**deep_drawdown** (58): ABCL, ABSI, ACRV, ALT, ALVO, AQST, AVTR, AVXL, BCYC, BDTX
+**deep_drawdown** (57): ABCL, ABSI, ACRV, ALT, ALVO, AQST, AVTR, AVXL, BCYC, BDTX
 
 **financials_missing** (31): ABVX, ACIU, ALVO, ARGX, ARWR, ASND, AZN, BIIB, BLTE, BNTX
 

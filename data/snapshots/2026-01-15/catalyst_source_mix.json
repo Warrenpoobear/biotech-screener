@@ -4,6 +4,9 @@
   "by_source": {
     "CTGOV_CALENDAR": 925
   },
+  "pre_dedup_by_source": {
+    "CTGOV_CALENDAR": 1621
+  },
   "by_confidence": {
     "HIGH": 94,
     "LOW": 673,

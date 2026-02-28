@@ -2092,6 +2092,12 @@ def compute_module_3_catalyst(
     combined_tickers_with_events = len([t for t in events_by_ticker_v2 if events_by_ticker_v2[t]])
     logger.info(f"Total events for scoring: {total_events} across {combined_tickers_with_events} tickers")
 
+    # Compute pre-dedup source counts (before fuzzy dedup absorbs cross-source events)
+    _pre_dedup_src_counts: Dict[str, int] = {}
+    for _ticker, _evts in events_by_ticker_v2.items():
+        for _ev in _evts:
+            _pre_dedup_src_counts[_ev.source] = _pre_dedup_src_counts.get(_ev.source, 0) + 1
+
     # =========================================================================
     # FUZZY DEDUP: Cross-source deduplication before scoring
     # =========================================================================
@@ -2120,6 +2126,7 @@ def compute_module_3_catalyst(
         "total_events": _total_events,
         "unique_tickers_with_events": len(_tickers_with_events),
         "by_source": dict(sorted(_src_counts.items())),
+        "pre_dedup_by_source": dict(sorted(_pre_dedup_src_counts.items())),
         "by_confidence": dict(sorted(_conf_counts.items())),
         "by_date_precision": dict(sorted(_prec_counts.items())),
     }

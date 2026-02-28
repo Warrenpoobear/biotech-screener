@@ -2,10 +2,10 @@
   "schema": "eligibility_summary.v1",
   "as_of_date": "2026-02-28",
   "n_total": 297,
-  "n_eligible": 189,
-  "n_ineligible": 108,
+  "n_eligible": 190,
+  "n_ineligible": 107,
   "counts_by_reason": {
-    "deep_drawdown": 58,
+    "deep_drawdown": 57,
     "financials_missing": 31,
     "fundamental_red_flag": 30
   },
