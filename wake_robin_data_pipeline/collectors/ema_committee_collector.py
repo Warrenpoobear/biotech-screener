@@ -1205,6 +1205,70 @@ def collect_ema_committee_events(
                         continue
                     seen_meetings.add(meeting_key)
 
+                    # Try XLSX parsing for product-level data
+                    if doc_url.lower().endswith(".xlsx"):
+                        try:
+                            xlsx_bytes = _fetch_xlsx_bytes(doc_url)
+                            items = _parse_annex_xlsx(xlsx_bytes)
+                        except Exception as e:
+                            logger.warning("EMA fallback XLSX parse failed for %s: %s", doc_url, e)
+                            items = []
+
+                        if items:
+                            stats["items_parsed"] += len(items)
+                            seen_ids: set = set()
+                            for item in items:
+                                medicine_name = item["medicine_name"]
+                                active_substance = item.get("active_substance")
+                                process_type = item.get("process_type") or "OTHER"
+                                sponsor = item.get("sponsor")
+
+                                ticker = _match_medicine_to_ticker(
+                                    medicine_name, active_substance, product_ticker_map,
+                                )
+                                if ticker is None:
+                                    stats["unmatched"] += 1
+                                    if len(all_unmatched) < _MAX_UNMATCHED_LOG:
+                                        all_unmatched.append(f"{medicine_name} ({active_substance})")
+                                    continue
+
+                                stats["matched"] += 1
+                                event_id = _make_event_id(
+                                    f"EMA_{committee}_AGENDA_{meeting_end}",
+                                    medicine_name, process_type, committee, meeting_start, meeting_end,
+                                )
+                                if event_id in seen_ids:
+                                    continue
+                                seen_ids.add(event_id)
+
+                                classified_type = _classify_procedure_type(process_type)
+                                all_events.append({
+                                    "schema": "ema_committee_event.v1",
+                                    "id": event_id,
+                                    "ticker": ticker,
+                                    "jurisdiction": "EU",
+                                    "committee": committee,
+                                    "meeting_start": meeting_start,
+                                    "meeting_end": meeting_end,
+                                    "event_date": meeting_end,
+                                    "disclosed_at": doc_disclosed,
+                                    "item_type": "agenda_item",
+                                    "procedure_type": classified_type,
+                                    "medicine_name": medicine_name,
+                                    "active_substance": active_substance,
+                                    "sponsor": sponsor,
+                                    "title": f"{committee} agenda: {process_type} — {medicine_name}",
+                                    "source": f"EMA_{committee}_AGENDA",
+                                    "url": doc_url,
+                                    "confidence": "MED",
+                                    "tags": _make_tags(classified_type, committee),
+                                    "raw": {"process_type_raw": process_type},
+                                })
+
+                            stats["parsed_docs"] += 1
+                            continue  # skip meeting-level placeholder
+
+                    # Meeting-level placeholder (PDF or empty XLSX)
                     event_id = _make_event_id(
                         f"EMA_{committee}_AGENDA_{meeting_end}",
                         committee, meeting_start, meeting_end,
