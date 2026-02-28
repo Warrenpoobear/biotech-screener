@@ -1,0 +1,27 @@
+{
+  "total_events": 1189,
+  "unique_tickers_with_events": 239,
+  "by_source": {
+    "CTGOV_CALENDAR": 1089,
+    "EMA_CHMP_AGENDA": 66,
+    "EMA_MEETING_HIGHLIGHTS": 17,
+    "FDA_ADCOM_CALENDAR": 6,
+    "FDA_CALENDAR": 11
+  },
+  "by_confidence": {
+    "HIGH": 149,
+    "LOW": 792,
+    "MED": 248
+  },
+  "by_date_precision": {
+    "DAY": 951,
+    "RANGE": 238
+  },
+  "sec8k_future": {
+    "count": 0,
+    "tickers": 0,
+    "by_precision": {},
+    "days_ahead_p50": null,
+    "days_ahead_p90": null
+  }
+}
