@@ -3876,15 +3876,26 @@ def save_validation_snapshot(
             _by_src.get("CTGOV_CALENDAR", 0)
             + _by_src.get("CTGOV", 0)
         )
+        _ema_agenda_count = sum(
+            v for k, v in _by_src.items()
+            if k.startswith("EMA_") and k.endswith("_AGENDA")
+        )
+        _ema_outcomes_count = _by_src.get("EMA_MEETING_HIGHLIGHTS", 0)
         _prior_health = load_prior_cache_health(_prior_dir, as_of_date)
         _prior_sec8k = (_prior_health or {}).get("sec8k", {}).get("count")
         _prior_ctgov = (_prior_health or {}).get("ctgov", {}).get("count")
+        _prior_ema_agenda = (_prior_health or {}).get("ema_agenda", {}).get("count")
+        _prior_ema_outcomes = (_prior_health or {}).get("ema_outcomes", {}).get("count")
         _cache_health = compute_cache_health(
             sec8k_count=_sec8k_count,
             ctgov_count=_ctgov_count,
             prior_sec8k_count=_prior_sec8k,
             prior_ctgov_count=_prior_ctgov,
             as_of_date=as_of_date,
+            ema_agenda_count=_ema_agenda_count if _ema_agenda_count else None,
+            ema_outcomes_count=_ema_outcomes_count if _ema_outcomes_count else None,
+            prior_ema_agenda_count=_prior_ema_agenda,
+            prior_ema_outcomes_count=_prior_ema_outcomes,
         )
 
         # Load cache refresh sidecar and merge into cache_health
@@ -3904,11 +3915,18 @@ def save_validation_snapshot(
             json.dump(_cache_health, f, indent=2)
             f.write("\n")
         if _cache_health["degraded_run"]:
+            _parts = [
+                f"sec8k={_cache_health['sec8k']['status']}",
+                f"ctgov={_cache_health['ctgov']['status']}",
+            ]
+            if "ema_agenda" in _cache_health:
+                _parts.append(f"ema_agenda={_cache_health['ema_agenda']['status']}")
+            if "ema_outcomes" in _cache_health:
+                _parts.append(f"ema_outcomes={_cache_health['ema_outcomes']['status']}")
             logger.warning(
-                "[CACHE] Cache health: %s (sec8k=%s ctgov=%s)",
+                "[CACHE] Cache health: %s (%s)",
                 _cache_health["overall_status"],
-                _cache_health["sec8k"]["status"],
-                _cache_health["ctgov"]["status"],
+                " ".join(_parts),
             )
         if _cr["had_rejections"]:
             logger.warning(

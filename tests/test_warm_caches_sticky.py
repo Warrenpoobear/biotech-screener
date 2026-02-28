@@ -18,6 +18,7 @@ from warm_caches import (
     warm_ctgov,
     _find_prior_sec8k_count,
     _find_prior_ctgov_count,
+    _find_prior_ema_count,
 )
 
 
@@ -383,6 +384,121 @@ def test_ctgov_existing_cache_short_circuits(tmp_path):
 
     result = warm_ctgov(date(2026, 2, 15), data_dir, cache_dir)
     assert result == 42
+
+
+# ── validate_cache_refresh: EMA agenda ────────────────────────────────
+
+
+def test_ema_agenda_zero_accepted():
+    """EMA agenda has no zero floor — 0 is valid (no upcoming meetings)."""
+    accepted, reason = validate_cache_refresh("ema_agenda", 0, 10)
+    assert accepted
+    assert reason == ""
+
+
+def test_ema_agenda_zero_no_prior_accepted():
+    accepted, reason = validate_cache_refresh("ema_agenda", 0, None)
+    assert accepted
+    assert reason == ""
+
+
+def test_ema_agenda_within_band_accepted():
+    # 8/10 = 0.80 — within [0.30, 3.00]
+    accepted, reason = validate_cache_refresh("ema_agenda", 8, 10)
+    assert accepted
+    assert reason == ""
+
+
+def test_ema_agenda_crash_rejected():
+    # 2/10 = 0.20 < 0.30
+    accepted, reason = validate_cache_refresh("ema_agenda", 2, 10)
+    assert not accepted
+    assert "out_of_band" in reason
+    assert "0.20" in reason
+
+
+def test_ema_agenda_spike_rejected():
+    # 40/10 = 4.00 > 3.00
+    accepted, reason = validate_cache_refresh("ema_agenda", 40, 10)
+    assert not accepted
+    assert "out_of_band" in reason
+    assert "4.00" in reason
+
+
+def test_ema_agenda_no_prior_accepted():
+    accepted, reason = validate_cache_refresh("ema_agenda", 25, None)
+    assert accepted
+    assert reason == ""
+
+
+def test_ema_agenda_prior_zero_accepted():
+    accepted, reason = validate_cache_refresh("ema_agenda", 25, 0)
+    assert accepted
+    assert reason == ""
+
+
+# ── validate_cache_refresh: EMA outcomes ──────────────────────────────
+
+
+def test_ema_outcomes_zero_accepted():
+    """EMA outcomes has no zero floor — 0 is valid (no outcomes published)."""
+    accepted, reason = validate_cache_refresh("ema_outcomes", 0, 15)
+    assert accepted
+    assert reason == ""
+
+
+def test_ema_outcomes_within_band_accepted():
+    # 12/15 = 0.80 — within [0.30, 3.00]
+    accepted, reason = validate_cache_refresh("ema_outcomes", 12, 15)
+    assert accepted
+    assert reason == ""
+
+
+def test_ema_outcomes_crash_rejected():
+    # 3/15 = 0.20 < 0.30
+    accepted, reason = validate_cache_refresh("ema_outcomes", 3, 15)
+    assert not accepted
+    assert "out_of_band" in reason
+    assert "0.20" in reason
+
+
+def test_ema_outcomes_spike_rejected():
+    # 50/15 = 3.33 > 3.00
+    accepted, reason = validate_cache_refresh("ema_outcomes", 50, 15)
+    assert not accepted
+    assert "out_of_band" in reason
+    assert "3.33" in reason
+
+
+# ── _find_prior_ema_count helper ──────────────────────────────────────
+
+
+def test_find_prior_ema_agenda_count(tmp_path):
+    payload = {"events": [{"x": 1}, {"x": 2}], "stats": {}}
+    (tmp_path / "ema_committee_events_2026-02-01.json").write_text(json.dumps(payload))
+    assert _find_prior_ema_count(tmp_path, "ema_committee_events") == 2
+
+
+def test_find_prior_ema_outcomes_count(tmp_path):
+    payload = {"events": [{"x": i} for i in range(7)], "stats": {}}
+    (tmp_path / "ema_meeting_outcomes_2026-02-01.json").write_text(json.dumps(payload))
+    assert _find_prior_ema_count(tmp_path, "ema_meeting_outcomes") == 7
+
+
+def test_find_prior_ema_count_no_files(tmp_path):
+    assert _find_prior_ema_count(tmp_path, "ema_committee_events") is None
+
+
+def test_find_prior_ema_count_malformed_json(tmp_path):
+    """Malformed JSON → returns None."""
+    (tmp_path / "ema_committee_events_2026-02-01.json").write_text("{bad json")
+    assert _find_prior_ema_count(tmp_path, "ema_committee_events") is None
+
+
+def test_find_prior_ema_count_list_payload(tmp_path):
+    """Old-format list payload (no 'events' key) → returns None."""
+    (tmp_path / "ema_committee_events_2026-02-01.json").write_text(json.dumps([{"x": 1}]))
+    assert _find_prior_ema_count(tmp_path, "ema_committee_events") is None
 
 
 # ── load_cache_refresh_sidecar tests ─────────────────────────────────

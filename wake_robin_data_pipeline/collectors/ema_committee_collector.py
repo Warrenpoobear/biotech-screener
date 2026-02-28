@@ -17,12 +17,16 @@ Rate limit: 1.0s between requests. Timeout: 30s.
 """
 
 import hashlib
+import io
 import json
 import logging
 import os
 import re
 import tempfile
 import time
+import zipfile
+import xml.etree.ElementTree as ET
+from collections import Counter
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -47,6 +51,14 @@ _COMMITTEE_URLS = {
     "CHMP": f"{_BASE_URL}/en/committees/committee-medicinal-products-human-use-chmp",
     "PRAC": f"{_BASE_URL}/en/committees/pharmacovigilance-risk-assessment-committee-prac",
 }
+
+# Event page URL slugs — used to filter discovered links to committee event pages.
+_COMMITTEE_EVENT_SLUGS = {
+    "CHMP": "committee-medicinal-products-human-use-chmp",
+    "PRAC": "pharmacovigilance-risk-assessment-committee-prac",
+}
+
+_MAX_XLSX_ROWS = 2000
 
 # Meeting date range regex: "8 - 11 December 2025" or "8-11 December 2025"
 # Also handles "10 November 2025" (single day) and "27 - 30 January 2026"
@@ -117,6 +129,21 @@ def _fetch(url: str) -> str:
     return resp.text
 
 
+def _fetch_xlsx_bytes(url: str) -> bytes:
+    """Download binary XLSX content with rate limiting. Returns raw bytes."""
+    time.sleep(_RATE_LIMIT_SECS)
+    resp = requests.get(
+        url,
+        timeout=_REQUEST_TIMEOUT,
+        headers={
+            "Accept": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "User-Agent": "Wake Robin Research (biotech screener)",
+        },
+    )
+    resp.raise_for_status()
+    return resp.content
+
+
 # ---------------------------------------------------------------------------
 # Parsing helpers
 # ---------------------------------------------------------------------------
@@ -158,6 +185,51 @@ def _normalize_name(s: str) -> str:
     return s
 
 
+# Salt forms, counter-ions, and common pharmaceutical suffixes.
+_SALT_FORMS = frozenset({
+    "hydrochloride", "hcl", "sodium", "potassium", "calcium",
+    "succinate", "fumarate", "mesylate", "mesilate", "maleate",
+    "tartrate", "acetate", "phosphate", "sulfate", "sulphate",
+    "citrate", "besylate", "besilate", "tosylate", "tosylat",
+    "dihydrochloride", "disodium", "tromethamine", "meglumine",
+    "hemifumarate", "esylate", "edisylate", "xinafoate",
+    "bromide", "chloride", "iodide", "nitrate", "carbonate",
+    "gluconate", "lactate", "malate", "oxalate", "benzoate",
+    "pamoate", "stearate", "valerate", "propionate",
+    "dihydrate", "monohydrate", "trihydrate", "hemihydrate",
+    "anhydrous",
+})
+
+# Dosage / formulation tokens to strip.
+_FORMULATION_RE = re.compile(
+    r"\b(?:"
+    r"\d+(?:\.\d+)?\s*(?:mg|mcg|µg|ml|iu|mmol|mg/ml|microgram)"
+    r"|tablets?|capsules?|injection|solution|suspension|concentrate"
+    r"|powder|granules?|lyophilised|lyophilizate"
+    r"|liposomal|pegylated|subcutaneous|intravenous"
+    r"|film-coated|modified-release|prolonged-release|gastro-resistant"
+    r")\b",
+    re.IGNORECASE,
+)
+
+# Parenthetical qualifiers: "(liposomal)", "(50 mg)", etc.
+_PARENS_RE = re.compile(r"\([^)]*\)")
+
+
+def _strip_pharma_tokens(s: str) -> str:
+    """Strip salt forms, dosage tokens, and formulation suffixes.
+
+    Applied as a fallback normalization layer when base matching fails.
+    """
+    s = _PARENS_RE.sub(" ", s)
+    s = _FORMULATION_RE.sub(" ", s)
+    tokens = s.split()
+    tokens = [t for t in tokens if t.lower() not in _SALT_FORMS]
+    s = " ".join(tokens)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+
 def _match_medicine_to_ticker(
     medicine_name: str,
     active_substance: Optional[str],
@@ -170,9 +242,12 @@ def _match_medicine_to_ticker(
       2) exact match on normalized active_substance
       3) substring match on normalized medicine_name
       4) substring match with hyphens removed
+      5) repeat 1-4 with salt/dosage tokens stripped (pharma normalization)
     """
     norm_med = _normalize_name(medicine_name) if medicine_name else ""
     norm_sub = _normalize_name(active_substance) if active_substance else ""
+
+    # --- Pass 1: base normalization --------------------------------------
 
     # Exact matches first
     if norm_med and norm_med in product_ticker_map:
@@ -189,6 +264,27 @@ def _match_medicine_to_ticker(
             return ticker
     for drug_name, ticker in product_ticker_map.items():
         if norm_sub and drug_name in norm_sub:
+            return ticker
+
+    # --- Pass 2: pharma-stripped normalization ----------------------------
+    # Strip both query and map keys — handles salt forms on either side.
+    strip_med = _strip_pharma_tokens(norm_med) if norm_med else ""
+    strip_sub = _strip_pharma_tokens(norm_sub) if norm_sub else ""
+
+    if strip_med and strip_med in product_ticker_map:
+        return product_ticker_map[strip_med]
+    if strip_sub and strip_sub in product_ticker_map:
+        return product_ticker_map[strip_sub]
+
+    for drug_name, ticker in product_ticker_map.items():
+        drug_stripped = _strip_pharma_tokens(drug_name)
+        if strip_med and drug_stripped and drug_stripped in strip_med:
+            return ticker
+        if strip_med and drug_stripped and drug_stripped.replace("-", "") in strip_med.replace("-", ""):
+            return ticker
+    for drug_name, ticker in product_ticker_map.items():
+        drug_stripped = _strip_pharma_tokens(drug_name)
+        if strip_sub and drug_stripped and drug_stripped in strip_sub:
             return ticker
 
     return None
@@ -218,8 +314,342 @@ def _classify_outcome_code(section_heading: str) -> str:
     return "other"
 
 
+# Tag value for procedure type — lowercase, short.
+_PROCEDURE_TAG_MAP = {
+    "MAA": "maa",
+    "VARIATION": "variation",
+    "REFERRAL": "referral",
+    "PSUR": "psur",
+    "SIGNAL": "signal",
+    "OTHER": "other",
+}
+
+
+def _make_tags(procedure_type: Optional[str], committee: str) -> List[str]:
+    """Build a tags list for an agenda event.
+
+    Tags emitted:
+        procedure:maa | procedure:variation | procedure:referral | ...
+        committee:chmp | committee:prac
+    """
+    tags: List[str] = []
+    if procedure_type:
+        tag_val = _PROCEDURE_TAG_MAP.get(procedure_type, procedure_type.lower())
+        tags.append(f"procedure:{tag_val}")
+    tags.append(f"committee:{committee.lower()}")
+    return tags
+
+
 # ---------------------------------------------------------------------------
-# Discovery: scrape committee landing page for links
+# XLSX parsing (stdlib only — no openpyxl)
+# ---------------------------------------------------------------------------
+
+
+def _col_letter_to_index(col: str) -> int:
+    """Convert Excel column letter(s) to 0-based index. 'A'->0, 'B'->1, ..."""
+    idx = 0
+    for ch in col.upper():
+        idx = idx * 26 + (ord(ch) - ord("A") + 1)
+    return idx - 1
+
+
+def _cell_ref_to_col_index(ref: str) -> int:
+    """Extract column index from a cell reference like 'F25'. Returns 0-based."""
+    col_letters = re.match(r"([A-Z]+)", ref)
+    if not col_letters:
+        return -1
+    return _col_letter_to_index(col_letters.group(1))
+
+
+def _parse_annex_xlsx(xlsx_bytes: bytes) -> List[dict]:
+    """Parse an EMA Annex XLSX spreadsheet into product-level items.
+
+    Uses stdlib ``zipfile`` + ``xml.etree.ElementTree`` — no openpyxl.
+
+    Returns list of dicts with keys:
+        medicine_name, active_substance, process_type, sponsor
+    """
+    try:
+        zf = zipfile.ZipFile(io.BytesIO(xlsx_bytes))
+    except (zipfile.BadZipFile, Exception) as exc:
+        logger.warning("XLSX parse: invalid zip — %s", exc)
+        return []
+
+    # 1. Build shared-string table ----------------------------------------
+    shared_strings: List[str] = []
+    try:
+        ss_xml = zf.read("xl/sharedStrings.xml")
+        ss_root = ET.fromstring(ss_xml)
+        ns = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+        for si in ss_root.findall("s:si", ns):
+            # <si> may contain <t> or multiple <r><t> elements
+            parts = []
+            for t_el in si.iter("{http://schemas.openxmlformats.org/spreadsheetml/2006/main}t"):
+                parts.append(t_el.text or "")
+            shared_strings.append("".join(parts))
+    except (KeyError, ET.ParseError) as exc:
+        logger.warning("XLSX parse: sharedStrings.xml read error — %s", exc)
+        return []
+
+    # 2. Determine data start row from table1.xml (if present) ------------
+    data_start_row = None  # 1-based
+    try:
+        tbl_xml = zf.read("xl/tables/table1.xml")
+        tbl_root = ET.fromstring(tbl_xml)
+        ref = tbl_root.get("ref", "")  # e.g. "A24:O168"
+        m = re.match(r"[A-Z]+(\d+):[A-Z]+(\d+)", ref)
+        if m:
+            header_row = int(m.group(1))
+            data_start_row = header_row + 1
+    except (KeyError, ET.ParseError):
+        pass  # Fall back to header scan below
+
+    # 3. Read sheet1.xml --------------------------------------------------
+    try:
+        ws_xml = zf.read("xl/worksheets/sheet1.xml")
+        ws_root = ET.fromstring(ws_xml)
+    except (KeyError, ET.ParseError) as exc:
+        logger.warning("XLSX parse: sheet1.xml read error — %s", exc)
+        return []
+
+    ns = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+
+    def _cell_value(cell_el):
+        """Resolve cell value: shared string (t='s') or inline."""
+        t_attr = cell_el.get("t", "")
+        v_el = cell_el.find("s:v", ns)
+        if v_el is None or v_el.text is None:
+            return ""
+        if t_attr == "s":
+            idx = int(v_el.text)
+            if 0 <= idx < len(shared_strings):
+                return shared_strings[idx]
+            return ""
+        return v_el.text
+
+    rows = ws_root.findall(".//s:sheetData/s:row", ns)
+
+    # 4. Fallback: scan for header row containing "Invented name" ---------
+    #    Column mapping: we need to find which column indices hold the fields.
+    col_map = {}  # field_name -> 0-based column index
+    _TARGET_HEADERS = {
+        "invented name": "medicine_name",
+        "active substance": "active_substance",
+        "process type": "process_type",
+        "customer": "sponsor",
+        "customer/sponsor": "sponsor",
+    }
+
+    if data_start_row is None:
+        # Scan rows for header
+        for row_el in rows:
+            cells = row_el.findall("s:c", ns)
+            cell_texts = {}
+            for c in cells:
+                ref = c.get("r", "")
+                col_idx = _cell_ref_to_col_index(ref)
+                cell_texts[col_idx] = _cell_value(c).strip().lower()
+            found = {ht for ht in _TARGET_HEADERS if ht in cell_texts.values()}
+            if "invented name" in found:
+                # This is the header row
+                for col_idx, txt in cell_texts.items():
+                    for header_key, field_name in _TARGET_HEADERS.items():
+                        if header_key == txt:
+                            col_map[field_name] = col_idx
+                row_num = int(row_el.get("r", "0"))
+                data_start_row = row_num + 1
+                break
+
+    if data_start_row is None:
+        logger.warning("XLSX parse: could not determine data start row")
+        return []
+
+    # 5. If no col_map from header scan, also scan header row from table ref
+    if not col_map:
+        header_row_num = data_start_row - 1
+        for row_el in rows:
+            if int(row_el.get("r", "0")) == header_row_num:
+                cells = row_el.findall("s:c", ns)
+                for c in cells:
+                    ref = c.get("r", "")
+                    col_idx = _cell_ref_to_col_index(ref)
+                    txt = _cell_value(c).strip().lower()
+                    for header_key, field_name in _TARGET_HEADERS.items():
+                        if header_key == txt:
+                            col_map[field_name] = col_idx
+                break
+
+    # Default column positions matching known EMA Annex layout:
+    # E=process_type(4), F=invented_name(5), G=active_substance(6), H=customer(7)
+    if "medicine_name" not in col_map:
+        col_map.setdefault("medicine_name", 5)      # F
+        col_map.setdefault("active_substance", 6)    # G
+        col_map.setdefault("process_type", 4)        # E
+        col_map.setdefault("sponsor", 7)             # H
+
+    # 6. Extract data rows ------------------------------------------------
+    items: List[dict] = []
+    for row_el in rows:
+        row_num = int(row_el.get("r", "0"))
+        if row_num < data_start_row:
+            continue
+        if len(items) >= _MAX_XLSX_ROWS:
+            logger.warning("XLSX parse: truncated at %d rows", _MAX_XLSX_ROWS)
+            break
+
+        cells = row_el.findall("s:c", ns)
+        cell_vals: Dict[int, str] = {}
+        for c in cells:
+            ref = c.get("r", "")
+            col_idx = _cell_ref_to_col_index(ref)
+            cell_vals[col_idx] = _cell_value(c)
+
+        medicine_raw = cell_vals.get(col_map.get("medicine_name", -1), "").strip()
+        if not medicine_raw:
+            continue
+
+        # Normalize multi-line: take first non-empty line
+        medicine_name = medicine_raw
+        if "\n" in medicine_raw:
+            for line in medicine_raw.split("\n"):
+                line = line.strip()
+                if line:
+                    medicine_name = line
+                    break
+
+        active_raw = cell_vals.get(col_map.get("active_substance", -1), "").strip()
+        active_substance = active_raw
+        if "\n" in active_raw:
+            for line in active_raw.split("\n"):
+                line = line.strip()
+                if line:
+                    active_substance = line
+                    break
+
+        items.append({
+            "medicine_name": medicine_name,
+            "active_substance": active_substance or None,
+            "process_type": cell_vals.get(col_map.get("process_type", -1), "").strip() or None,
+            "sponsor": cell_vals.get(col_map.get("sponsor", -1), "").strip() or None,
+        })
+
+    zf.close()
+    return items
+
+
+# ---------------------------------------------------------------------------
+# Event page discovery
+# ---------------------------------------------------------------------------
+
+
+def _discover_meeting_event_pages(
+    html: str, base_url: str, committee: str,
+) -> List[dict]:
+    """Extract event page links from a committee landing page.
+
+    Looks for ``<a href="/en/events/...">`` links whose path contains the
+    committee slug (e.g. "chmp" or "prac").
+
+    Returns list of dicts: {url, meeting_start, meeting_end, committee}
+    """
+    slug = _COMMITTEE_EVENT_SLUGS.get(committee, committee.lower())
+    soup = BeautifulSoup(html, "html.parser")
+    results: List[dict] = []
+    seen: set = set()
+
+    for a_tag in soup.find_all("a", href=True):
+        href = a_tag["href"]
+        if "/en/events/" not in href:
+            continue
+        if slug not in href.lower():
+            continue
+        if href.startswith("/"):
+            href = base_url.rstrip("/") + href
+        if href in seen:
+            continue
+        seen.add(href)
+
+        text = a_tag.get_text(strip=True)
+        dates = _parse_meeting_dates(text) or _parse_meeting_dates(href)
+        if not dates:
+            continue
+
+        results.append({
+            "url": href,
+            "meeting_start": dates[0],
+            "meeting_end": dates[1],
+            "committee": committee,
+        })
+
+    return results
+
+
+def _discover_event_page_documents(
+    html: str, base_url: str,
+) -> Dict[str, List[dict]]:
+    """Extract agenda PDF + annex XLSX links from an event page.
+
+    Returns dict with keys ``agenda`` and ``annex``, each a list of
+    ``{url, title, first_published}``.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    agenda: List[dict] = []
+    annex: List[dict] = []
+    seen: set = set()
+
+    def _extract_from_block(block, a_tag, href):
+        block_text = block.get_text(" ", strip=True) if block else a_tag.get_text(strip=True)
+        title = re.sub(r"\s*First published.*", "", block_text, flags=re.IGNORECASE).strip()
+        if not title:
+            title = block_text[:200]
+        first_published = None
+        fp = _FIRST_PUBLISHED_RE.search(block_text)
+        if fp:
+            d, mo, y = fp.groups()
+            try:
+                first_published = datetime.strptime(f"{d}/{mo}/{y}", "%d/%m/%Y").strftime("%Y-%m-%d")
+            except ValueError:
+                pass
+        return {"url": href, "title": title, "first_published": first_published}
+
+    # Strategy 1: div.bcl-file blocks
+    for block in soup.select("div.bcl-file"):
+        for a_tag in block.find_all("a", href=True):
+            href = a_tag["href"]
+            if href.startswith("/"):
+                href = base_url.rstrip("/") + href
+            if href in seen:
+                continue
+            href_lower = href.lower()
+            if "/documents/agenda/" in href_lower or "/documents/annex/" in href_lower or "/agenda/" in href_lower or "/annex/" in href_lower:
+                seen.add(href)
+                doc = _extract_from_block(block, a_tag, href)
+                if href_lower.endswith(".xlsx") or "annex" in href_lower:
+                    annex.append(doc)
+                else:
+                    agenda.append(doc)
+
+    # Strategy 2: plain anchor scan fallback
+    for a_tag in soup.find_all("a", href=True):
+        href = a_tag["href"]
+        if href.startswith("/"):
+            href = base_url.rstrip("/") + href
+        if href in seen:
+            continue
+        href_lower = href.lower()
+        if "/documents/agenda/" in href_lower or "/documents/annex/" in href_lower or "/agenda/" in href_lower or "/annex/" in href_lower:
+            seen.add(href)
+            doc = _extract_from_block(None, a_tag, href)
+            if href_lower.endswith(".xlsx") or "annex" in href_lower:
+                annex.append(doc)
+            else:
+                agenda.append(doc)
+
+    return {"agenda": agenda, "annex": annex}
+
+
+# ---------------------------------------------------------------------------
+# Discovery: scrape committee landing page for links (legacy fallback)
 # ---------------------------------------------------------------------------
 
 
@@ -413,6 +843,7 @@ def _parse_agenda_page(
             "source": f"EMA_{committee}_AGENDA",
             "url": url,
             "confidence": "MED",
+            "tags": _make_tags(procedure_type, committee),
             "raw": {"snippet": item_text[:300]},
         })
 
@@ -475,7 +906,13 @@ def _parse_meeting_highlights(
     if not disclosed_at:
         disclosed_at = meeting_end or None
 
-    # Walk headings to find outcome sections
+    # Walk headings to find outcome sections.
+    # Only emit outcomes under decision-grade sections — drop "other",
+    # PSUR, administrative, etc. at the collector to keep signal clean.
+    _SIGNAL_CODES = frozenset({
+        "positive_opinion", "negative_opinion", "refusal",
+        "withdrawn", "referral_started", "referral_concluded", "safety_signal",
+    })
     current_outcome_code = None
     seen_ids = set()
 
@@ -487,7 +924,9 @@ def _parse_meeting_highlights(
             current_outcome_code = _classify_outcome_code(text)
             continue
 
-        if current_outcome_code is None or not text or len(text) < 3:
+        if current_outcome_code is None or current_outcome_code not in _SIGNAL_CODES:
+            continue
+        if not text or len(text) < 3:
             continue
 
         # Try to match text as a medicine name
@@ -555,8 +994,11 @@ def collect_ema_committee_events(
 ) -> List[dict]:
     """Collect EMA committee agenda events.
 
-    Scrapes committee landing pages for agenda/annex links, parses them,
-    and maps medicines to tickers.
+    Primary path: discover meeting event pages → download Annex XLSX →
+    parse product-level items → match to tickers.
+
+    Fallback: if no event pages found, falls back to the landing-page
+    document discovery (creates meeting-level placeholder events).
 
     Args:
         as_of_date: PIT date for cache naming.
@@ -584,9 +1026,14 @@ def collect_ema_committee_events(
             pass
 
     cutoff = (as_of_date - timedelta(days=lookback_days)).isoformat()
+    as_of_iso = as_of_date.isoformat()
     all_events: List[dict] = []
     all_unmatched: List[str] = []
-    stats = {"fetched_pages": 0, "parsed_docs": 0, "matched_tickers": 0, "unmatched_items": 0}
+    stats = {
+        "fetched_pages": 0, "parsed_docs": 0, "matched_tickers": 0,
+        "unmatched_items": 0, "meeting_pages_found": 0, "docs_found": 0,
+        "items_parsed": 0, "matched": 0, "unmatched": 0,
+    }
 
     for committee in committees:
         landing_url = _COMMITTEE_URLS.get(committee)
@@ -601,45 +1048,115 @@ def collect_ema_committee_events(
             logger.warning("EMA %s landing page fetch failed: %s", committee, e)
             continue
 
-        links = _discover_links(landing_html, _BASE_URL)
+        # --- Primary path: event page discovery --------------------------
+        meeting_pages = _discover_meeting_event_pages(landing_html, _BASE_URL, committee)
+        stats["meeting_pages_found"] += len(meeting_pages)
 
-        # Group agenda docs by meeting date to avoid duplicate meeting events.
-        # PDF/XLSX docs cannot be parsed for individual items, so we create
-        # one meeting-level event per unique (committee, meeting_end).
-        # HTML agenda pages (rare) are still parsed for item-level events.
-        seen_meetings: set = set()
-
-        for doc in links["agenda_docs"]:
-            dates = _parse_meeting_dates(doc["title"])
-            if not dates:
-                continue
-            meeting_start, meeting_end = dates
+        used_event_pages = False
+        for mp in meeting_pages:
+            meeting_start = mp["meeting_start"]
+            meeting_end = mp["meeting_end"]
 
             # Lookback + PIT filter
-            if meeting_end < cutoff or meeting_end > as_of_date.isoformat():
+            if meeting_end < cutoff or meeting_end > as_of_iso:
                 continue
 
-            doc_url = doc["url"]
-            doc_disclosed = doc.get("disclosed_at") or as_of_date.isoformat()
-            is_binary = doc_url.lower().endswith((".pdf", ".xlsx", ".xls"))
+            try:
+                event_html = _fetch(mp["url"])
+                stats["fetched_pages"] += 1
+            except Exception as e:
+                logger.warning("EMA event page fetch failed for %s: %s", mp["url"], e)
+                continue
 
-            if is_binary:
-                # Create one meeting-level event per unique meeting
-                meeting_key = (committee, meeting_end)
-                if meeting_key in seen_meetings:
+            docs = _discover_event_page_documents(event_html, _BASE_URL)
+            stats["docs_found"] += len(docs.get("agenda", [])) + len(docs.get("annex", []))
+
+            # Try annex XLSX first — product-level data
+            annex_parsed = False
+            for annex_doc in docs.get("annex", []):
+                annex_url = annex_doc["url"]
+                if not annex_url.lower().endswith(".xlsx"):
                     continue
-                seen_meetings.add(meeting_key)
+                try:
+                    xlsx_bytes = _fetch_xlsx_bytes(annex_url)
+                    items = _parse_annex_xlsx(xlsx_bytes)
+                except Exception as e:
+                    logger.warning("EMA annex XLSX fetch/parse failed for %s: %s", annex_url, e)
+                    continue
 
+                if not items:
+                    continue
+
+                annex_parsed = True
+                used_event_pages = True
+                stats["items_parsed"] += len(items)
+                disclosed_at = annex_doc.get("first_published") or as_of_iso
+
+                seen_ids: set = set()
+                for item in items:
+                    medicine_name = item["medicine_name"]
+                    active_substance = item.get("active_substance")
+                    process_type = item.get("process_type") or "OTHER"
+                    sponsor = item.get("sponsor")
+
+                    ticker = _match_medicine_to_ticker(
+                        medicine_name, active_substance, product_ticker_map,
+                    )
+                    if ticker is None:
+                        stats["unmatched"] += 1
+                        if len(all_unmatched) < _MAX_UNMATCHED_LOG:
+                            all_unmatched.append(f"{medicine_name} ({active_substance})")
+                        continue
+
+                    stats["matched"] += 1
+
+                    event_id = _make_event_id(
+                        f"EMA_{committee}_AGENDA_{meeting_end}",
+                        medicine_name, process_type, committee, meeting_start, meeting_end,
+                    )
+                    if event_id in seen_ids:
+                        continue
+                    seen_ids.add(event_id)
+
+                    classified_type = _classify_procedure_type(process_type)
+                    all_events.append({
+                        "schema": "ema_committee_event.v1",
+                        "id": event_id,
+                        "ticker": ticker,
+                        "jurisdiction": "EU",
+                        "committee": committee,
+                        "meeting_start": meeting_start,
+                        "meeting_end": meeting_end,
+                        "event_date": meeting_end,
+                        "disclosed_at": disclosed_at,
+                        "item_type": "agenda_item",
+                        "procedure_type": classified_type,
+                        "medicine_name": medicine_name,
+                        "active_substance": active_substance,
+                        "sponsor": sponsor,
+                        "title": f"{committee} agenda: {process_type} — {medicine_name}",
+                        "source": f"EMA_{committee}_AGENDA",
+                        "url": annex_url,
+                        "confidence": "MED",
+                        "tags": _make_tags(classified_type, committee),
+                        "raw": {"process_type_raw": process_type},
+                    })
+
+                stats["parsed_docs"] += 1
+                break  # one annex per meeting is enough
+
+            # If no annex parsed, create meeting-level placeholder from event page
+            if not annex_parsed:
+                used_event_pages = True
                 event_id = _make_event_id(
                     f"EMA_{committee}_AGENDA_{meeting_end}",
                     committee, meeting_start, meeting_end,
                 )
-                title = doc["title"]
-                # Strip file-size/format metadata from title if present
-                title = re.sub(r"\s*\([\d.,]+\s*[KMG]B\s*-\s*\w+\)\s*$", "", title).strip()
-                title = re.sub(r"\s*Draft\s+Reference\s+Number:.*$", "", title).strip()
-                title = re.sub(r"\s*Reference\s+Number:.*$", "", title).strip()
-
+                disclosed_at = as_of_iso
+                for d in docs.get("agenda", []) + docs.get("annex", []):
+                    if d.get("first_published"):
+                        disclosed_at = d["first_published"]
+                        break
                 all_events.append({
                     "schema": "ema_committee_event.v1",
                     "id": event_id,
@@ -649,43 +1166,112 @@ def collect_ema_committee_events(
                     "meeting_start": meeting_start,
                     "meeting_end": meeting_end,
                     "event_date": meeting_end,
-                    "disclosed_at": doc_disclosed,
+                    "disclosed_at": disclosed_at,
                     "item_type": "meeting",
                     "procedure_type": None,
                     "medicine_name": None,
                     "active_substance": None,
                     "sponsor": None,
-                    "title": title,
+                    "title": f"{committee} meeting {meeting_start} to {meeting_end}",
                     "source": f"EMA_{committee}_AGENDA",
-                    "url": doc_url,
+                    "url": mp["url"],
                     "confidence": "MED",
+                    "tags": _make_tags(None, committee),
                     "raw": {},
                 })
-                stats["parsed_docs"] += 1
-            else:
-                # HTML agenda page — parse for individual agenda items
-                try:
-                    doc_html = _fetch(doc_url)
-                    stats["fetched_pages"] += 1
-                    stats["parsed_docs"] += 1
-                except Exception as e:
-                    logger.warning("EMA agenda fetch failed for %s: %s", doc_url, e)
+
+        # --- Fallback: landing page document discovery -------------------
+        if not used_event_pages:
+            logger.info("EMA %s: no event pages found, falling back to landing page docs", committee)
+            links = _discover_links(landing_html, _BASE_URL)
+            seen_meetings: set = set()
+
+            for doc in links["agenda_docs"]:
+                dates = _parse_meeting_dates(doc["title"])
+                if not dates:
+                    continue
+                meeting_start, meeting_end = dates
+
+                if meeting_end < cutoff or meeting_end > as_of_iso:
                     continue
 
-                events, unmatched = _parse_agenda_page(
-                    doc_html, doc_url, committee,
-                    meeting_start, meeting_end, product_ticker_map,
-                )
-                for ev in events:
-                    if ev["disclosed_at"] is None:
-                        ev["disclosed_at"] = doc_disclosed
+                doc_url = doc["url"]
+                doc_disclosed = doc.get("disclosed_at") or as_of_iso
+                is_binary = doc_url.lower().endswith((".pdf", ".xlsx", ".xls"))
 
-                all_events.extend(events)
-                all_unmatched.extend(unmatched)
+                if is_binary:
+                    meeting_key = (committee, meeting_end)
+                    if meeting_key in seen_meetings:
+                        continue
+                    seen_meetings.add(meeting_key)
+
+                    event_id = _make_event_id(
+                        f"EMA_{committee}_AGENDA_{meeting_end}",
+                        committee, meeting_start, meeting_end,
+                    )
+                    title = doc["title"]
+                    title = re.sub(r"\s*\([\d.,]+\s*[KMG]B\s*-\s*\w+\)\s*$", "", title).strip()
+                    title = re.sub(r"\s*Draft\s+Reference\s+Number:.*$", "", title).strip()
+                    title = re.sub(r"\s*Reference\s+Number:.*$", "", title).strip()
+
+                    all_events.append({
+                        "schema": "ema_committee_event.v1",
+                        "id": event_id,
+                        "ticker": None,
+                        "jurisdiction": "EU",
+                        "committee": committee,
+                        "meeting_start": meeting_start,
+                        "meeting_end": meeting_end,
+                        "event_date": meeting_end,
+                        "disclosed_at": doc_disclosed,
+                        "item_type": "meeting",
+                        "procedure_type": None,
+                        "medicine_name": None,
+                        "active_substance": None,
+                        "sponsor": None,
+                        "title": title,
+                        "source": f"EMA_{committee}_AGENDA",
+                        "url": doc_url,
+                        "confidence": "MED",
+                        "tags": _make_tags(None, committee),
+                        "raw": {},
+                    })
+                    stats["parsed_docs"] += 1
+                else:
+                    try:
+                        doc_html = _fetch(doc_url)
+                        stats["fetched_pages"] += 1
+                        stats["parsed_docs"] += 1
+                    except Exception as e:
+                        logger.warning("EMA agenda fetch failed for %s: %s", doc_url, e)
+                        continue
+
+                    events, unmatched = _parse_agenda_page(
+                        doc_html, doc_url, committee,
+                        meeting_start, meeting_end, product_ticker_map,
+                    )
+                    for ev in events:
+                        if ev["disclosed_at"] is None:
+                            ev["disclosed_at"] = doc_disclosed
+
+                    all_events.extend(events)
+                    all_unmatched.extend(unmatched)
 
     stats["matched_tickers"] = len(set(ev["ticker"] for ev in all_events if ev.get("ticker")))
     stats["meeting_events"] = len([ev for ev in all_events if ev.get("item_type") == "meeting"])
     stats["unmatched_items"] = len(all_unmatched)
+
+    # Top-25 unmatched names by frequency — for surgical map patching.
+    unmatched_counts: Counter = Counter()
+    for raw in all_unmatched:
+        # Normalize to short key: take text before " (" or first 60 chars
+        key = raw.split(" (")[0].strip()[:60]
+        if key:
+            unmatched_counts[key] += 1
+    stats["unmatched_top"] = [
+        {"name": name, "count": count}
+        for name, count in unmatched_counts.most_common(25)
+    ]
 
     # Deterministic sort
     all_events.sort(key=lambda e: (e["event_date"], e["committee"], e.get("ticker") or "", e["id"]))
@@ -700,7 +1286,8 @@ def collect_ema_committee_events(
     }
     _write_cache(cache_path, payload)
 
-    logger.info("EMA committee events: %d events cached -> %s", len(all_events), cache_path)
+    logger.info("EMA committee events: %d events (%d product-level) cached -> %s",
+                len(all_events), stats["matched"], cache_path)
     return all_events
 
 
@@ -791,6 +1378,16 @@ def collect_ema_meeting_outcomes(
 
     stats["matched_tickers"] = len(set(ev["ticker"] for ev in all_outcomes))
     stats["unmatched_items"] = len(all_unmatched)
+
+    unmatched_counts: Counter = Counter()
+    for raw in all_unmatched:
+        key = raw.split(" (")[0].strip()[:60]
+        if key:
+            unmatched_counts[key] += 1
+    stats["unmatched_top"] = [
+        {"name": name, "count": count}
+        for name, count in unmatched_counts.most_common(25)
+    ]
 
     # Deterministic sort
     all_outcomes.sort(key=lambda e: (e["event_date"], e["committee"], e["ticker"], e["id"]))

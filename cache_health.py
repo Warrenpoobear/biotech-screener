@@ -28,6 +28,12 @@ ISRCTN_MIN_COUNT = 0
 TRIAL_MERGE_BAD_RATIO_LOW = 0.50    # reject if merged count drops >50% vs prior
 TRIAL_MERGE_BAD_RATIO_HIGH = 2.00   # reject if merged count doubles vs prior
 
+# EMA committee events / outcomes — generous initial thresholds
+EMA_AGENDA_BAD_RATIO_LOW = 0.30     # reject if count drops >70% vs prior
+EMA_AGENDA_BAD_RATIO_HIGH = 3.00    # reject if count triples vs prior
+EMA_OUTCOMES_BAD_RATIO_LOW = 0.30
+EMA_OUTCOMES_BAD_RATIO_HIGH = 3.00
+
 _STATUS_RANK = {"ok": 0, "warning": 1, "bad": 2}
 
 
@@ -50,6 +56,10 @@ def compute_cache_health(
     ctis_count: Optional[int] = None,
     isrctn_count: Optional[int] = None,
     merged_count: Optional[int] = None,
+    ema_agenda_count: Optional[int] = None,
+    prior_ema_agenda_count: Optional[int] = None,
+    ema_outcomes_count: Optional[int] = None,
+    prior_ema_outcomes_count: Optional[int] = None,
 ) -> Dict[str, Any]:
     """Compute cache health from event counts and optional prior baselines.
 
@@ -92,7 +102,35 @@ def compute_cache_health(
                 f"(ratio={ctgov_ratio:.2f} outside [{CTGOV_WARN_RATIO_LOW}, {CTGOV_WARN_RATIO_HIGH}])"
             )
 
-    overall = _worst(sec8k_status, ctgov_status)
+    # --- EMA agenda checks (WARN-only — soft gate) ---
+    ema_agenda_status = "ok"
+    ema_agenda_reason = ""
+    ema_agenda_ratio: Optional[float] = None
+
+    if ema_agenda_count is not None and prior_ema_agenda_count is not None and prior_ema_agenda_count > 0:
+        ema_agenda_ratio = round(ema_agenda_count / prior_ema_agenda_count, 4)
+        if ema_agenda_ratio < EMA_AGENDA_BAD_RATIO_LOW or ema_agenda_ratio > EMA_AGENDA_BAD_RATIO_HIGH:
+            ema_agenda_status = "warning"
+            ema_agenda_reason = (
+                f"EMA agenda count shifted: {ema_agenda_count} vs prior {prior_ema_agenda_count} "
+                f"(ratio={ema_agenda_ratio:.2f} outside [{EMA_AGENDA_BAD_RATIO_LOW}, {EMA_AGENDA_BAD_RATIO_HIGH}])"
+            )
+
+    # --- EMA outcomes checks (WARN-only — soft gate) ---
+    ema_outcomes_status = "ok"
+    ema_outcomes_reason = ""
+    ema_outcomes_ratio: Optional[float] = None
+
+    if ema_outcomes_count is not None and prior_ema_outcomes_count is not None and prior_ema_outcomes_count > 0:
+        ema_outcomes_ratio = round(ema_outcomes_count / prior_ema_outcomes_count, 4)
+        if ema_outcomes_ratio < EMA_OUTCOMES_BAD_RATIO_LOW or ema_outcomes_ratio > EMA_OUTCOMES_BAD_RATIO_HIGH:
+            ema_outcomes_status = "warning"
+            ema_outcomes_reason = (
+                f"EMA outcomes count shifted: {ema_outcomes_count} vs prior {prior_ema_outcomes_count} "
+                f"(ratio={ema_outcomes_ratio:.2f} outside [{EMA_OUTCOMES_BAD_RATIO_LOW}, {EMA_OUTCOMES_BAD_RATIO_HIGH}])"
+            )
+
+    overall = _worst(sec8k_status, ctgov_status, ema_agenda_status, ema_outcomes_status)
 
     result = {
         "schema": "cache_health.v1",
@@ -116,10 +154,16 @@ def compute_cache_health(
             "ctgov_warn_ratio_high": CTGOV_WARN_RATIO_HIGH,
             "ctgov_bad_ratio_low": CTGOV_BAD_RATIO_LOW,
             "ctgov_bad_ratio_high": CTGOV_BAD_RATIO_HIGH,
+            "ema_agenda_bad_ratio_low": EMA_AGENDA_BAD_RATIO_LOW,
+            "ema_agenda_bad_ratio_high": EMA_AGENDA_BAD_RATIO_HIGH,
+            "ema_outcomes_bad_ratio_low": EMA_OUTCOMES_BAD_RATIO_LOW,
+            "ema_outcomes_bad_ratio_high": EMA_OUTCOMES_BAD_RATIO_HIGH,
         },
         "comparisons": {
             "sec8k_ratio_vs_prior": sec8k_ratio,
             "ctgov_ratio_vs_prior": ctgov_ratio,
+            "ema_agenda_ratio_vs_prior": ema_agenda_ratio,
+            "ema_outcomes_ratio_vs_prior": ema_outcomes_ratio,
         },
     }
 
@@ -132,6 +176,10 @@ def compute_cache_health(
         result["isrctn"] = {"count": isrctn_count, "status": "ok", "reason": ""}
     if merged_count is not None:
         result["merged_trials"] = {"count": merged_count, "status": "ok", "reason": ""}
+    if ema_agenda_count is not None:
+        result["ema_agenda"] = {"count": ema_agenda_count, "status": ema_agenda_status, "reason": ema_agenda_reason}
+    if ema_outcomes_count is not None:
+        result["ema_outcomes"] = {"count": ema_outcomes_count, "status": ema_outcomes_status, "reason": ema_outcomes_reason}
 
     return result
 

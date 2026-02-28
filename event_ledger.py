@@ -598,7 +598,7 @@ def _load_ema_events(
                 confidence=confidence,
                 extractor_version="ema_committee",
                 event_name=event_name, field_changed="event_date",
-                value=event_date, tags=(),
+                value=event_date, tags=tuple(ev.get("tags", [])),
             ))
 
     return entries

@@ -548,6 +548,10 @@ def convert_ema_committee_to_v2(
 
     Agenda items → MED confidence, EMA_COMMITTEE_AGENDA type.
     Meeting outcomes → HIGH confidence, EMA_COMMITTEE_OUTCOME type.
+
+    Tag-aware boosting:
+        procedure:maa → CRITICAL_POSITIVE severity + field_changed="ema_maa"
+        (behaves like PDUFA/AdCom calendar catalyst)
     """
     ticker = event.get('ticker')
     event_date_str = event.get('event_date')
@@ -566,6 +570,7 @@ def convert_ema_committee_to_v2(
 
     medicine_name = event.get('medicine_name', '')
     title = event.get('title', '')
+    tags = tuple(event.get('tags', []))
 
     try:
         event_date = date.fromisoformat(event_date_str)
@@ -575,19 +580,26 @@ def convert_ema_committee_to_v2(
 
     new_value = f"{days_until}d_ahead: {title}" if title else f"{days_until}d_ahead"
 
+    # Tag-aware severity + field_changed boosting for agenda items.
+    severity = EVENT_SEVERITY_MAP.get(event_type, EventSeverity.POSITIVE)
+    field_changed = "ema_committee"
+    if not is_outcome and "procedure:maa" in tags:
+        severity = EventSeverity.CRITICAL_POSITIVE
+        field_changed = "ema_maa"
+
     return CatalystEventV2(
         ticker=ticker,
         nct_id=event.get('id', f"EMA_{ticker}_{event_date_str}"),
         event_type=event_type,
-        event_severity=EVENT_SEVERITY_MAP.get(event_type, EventSeverity.POSITIVE),
+        event_severity=severity,
         event_date=event_date_str,
-        field_changed="ema_committee",
+        field_changed=field_changed,
         prior_value=None,
         new_value=new_value,
         source=event.get('source', 'EMA_COMMITTEE'),
         confidence=confidence,
         disclosed_at=event.get('disclosed_at', as_of_date.isoformat()),
-        tags=tuple(event.get('tags', [])),
+        tags=tags,
     )
 
 

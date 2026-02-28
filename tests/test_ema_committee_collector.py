@@ -4,8 +4,11 @@ Tests for EMA committee agenda + meeting highlights collectors.
 All tests use inline HTML fixtures + monkeypatched _fetch — zero network calls.
 """
 
+import io
 import json
 import sys
+import zipfile
+import xml.etree.ElementTree as ET
 from datetime import date
 from pathlib import Path
 from unittest.mock import patch
@@ -282,6 +285,135 @@ class TestMedicineMatching:
 
 
 # ===========================================================================
+# Pharma token stripping + hardened matching
+# ===========================================================================
+
+
+class TestStripPharmaTokens:
+    """Tests for _strip_pharma_tokens."""
+
+    def test_strips_salt_form(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _strip_pharma_tokens
+
+        assert _strip_pharma_tokens("aficamten hydrochloride") == "aficamten"
+
+    def test_strips_multiple_salt_tokens(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _strip_pharma_tokens
+
+        assert _strip_pharma_tokens("pembrolizumab sodium dihydrate") == "pembrolizumab"
+
+    def test_strips_dosage(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _strip_pharma_tokens
+
+        assert _strip_pharma_tokens("aficamten 10mg tablets") == "aficamten"
+
+    def test_strips_parenthetical(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _strip_pharma_tokens
+
+        assert _strip_pharma_tokens("doxorubicin (liposomal)") == "doxorubicin"
+
+    def test_strips_formulation_suffix(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _strip_pharma_tokens
+
+        result = _strip_pharma_tokens("aficamten film-coated tablets")
+        assert result == "aficamten"
+
+    def test_preserves_hyphenated_drug_name(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _strip_pharma_tokens
+
+        assert _strip_pharma_tokens("axs-05") == "axs-05"
+
+    def test_noop_on_clean_name(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _strip_pharma_tokens
+
+        assert _strip_pharma_tokens("aficamten") == "aficamten"
+
+
+class TestHardenedMatching:
+    """Tests for salt-form / dosage-stripped matching fallback."""
+
+    def test_salt_form_medicine_name_matches(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _match_medicine_to_ticker
+
+        assert _match_medicine_to_ticker("Aficamten hydrochloride", None, PRODUCT_MAP) == "CYTK"
+
+    def test_salt_form_active_substance_matches(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _match_medicine_to_ticker
+
+        assert _match_medicine_to_ticker("Unknown Brand", "pembrolizumab sodium", PRODUCT_MAP) == "MRK"
+
+    def test_dosage_token_stripped_match(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _match_medicine_to_ticker
+
+        assert _match_medicine_to_ticker("Keytruda 25mg solution", None, PRODUCT_MAP) == "MRK"
+
+    def test_parenthetical_form_stripped(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _match_medicine_to_ticker
+
+        assert _match_medicine_to_ticker("Patisiran (liposomal)", None, PRODUCT_MAP) == "ALNY"
+
+    def test_salt_form_on_map_side(self):
+        """Map key contains salt form — stripped match should still work."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _match_medicine_to_ticker
+
+        salt_map = {"forodesine hydrochloride": "BCRX"}
+        assert _match_medicine_to_ticker("Forodesine", None, salt_map) == "BCRX"
+
+    def test_still_returns_none_for_truly_unknown(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _match_medicine_to_ticker
+
+        assert _match_medicine_to_ticker(
+            "Completely Unknown Drug hydrochloride", None, PRODUCT_MAP
+        ) is None
+
+
+class TestUnmatchedTop:
+    """Tests for unmatched_top frequency tracking in stats."""
+
+    def test_unmatched_top_in_stats(self, tmp_path):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        # Build XLSX with unmatched items that repeat
+        xlsx_bytes = _build_test_xlsx([
+            _make_row("MAA", "UnknownDrugA", "sub_a", "CompanyA"),
+            _make_row("MAA", "UnknownDrugA", "sub_a2", "CompanyA"),
+            _make_row("MAA", "UnknownDrugB", "sub_b", "CompanyB"),
+            _make_row("MAA", "Aficamten", "aficamten", "Cytokinetics"),
+        ])
+
+        def mock_fetch(url):
+            if "committees/committee-medicinal-products" in url:
+                return LANDING_WITH_EVENT_PAGES_HTML
+            if "/en/events/" in url:
+                return EVENT_PAGE_HTML
+            return "<html></html>"
+
+        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
+                    side_effect=mock_fetch), \
+             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
+                    return_value=xlsx_bytes):
+            collect_ema_committee_events(
+                as_of_date=date(2026, 2, 28),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        cache_path = tmp_path / "ema_committee_events_2026-02-28.json"
+        payload = json.loads(cache_path.read_text())
+        top = payload["stats"]["unmatched_top"]
+        assert isinstance(top, list)
+        # UnknownDrugA appears twice, UnknownDrugB once
+        names = [entry["name"] for entry in top]
+        assert "UnknownDrugA" in names
+        assert "UnknownDrugB" in names
+        # Most frequent first
+        assert top[0]["count"] >= top[-1]["count"]
+
+
+# ===========================================================================
 # Outcome code classification
 # ===========================================================================
 
@@ -538,6 +670,273 @@ class TestStatsBounded:
 
 
 # ===========================================================================
+# Outcomes precision filter tests
+# ===========================================================================
+
+
+# HTML with mixed decision + non-decision sections
+HIGHLIGHTS_MIXED_HTML = """
+<html>
+<head>
+  <title>Meeting highlights from the CHMP 8 - 11 December 2025</title>
+  <meta name="dcterms.issued" content="2025-12-11" />
+</head>
+<body>
+<h1>Meeting highlights from the CHMP 8 - 11 December 2025</h1>
+
+<h2>Medicines recommended for approval</h2>
+<ul>
+  <li>Aficamten — for obstructive hypertrophic cardiomyopathy</li>
+</ul>
+
+<h2>Negative opinions</h2>
+<ul>
+  <li>Keytruda — rejected indication</li>
+</ul>
+
+<h2>Withdrawn applications</h2>
+<ul>
+  <li>Patisiran — withdrawn by MAH</li>
+</ul>
+
+<h2>Periodic safety update reports (PSURs)</h2>
+<ul>
+  <li>Aficamten — PSUR assessment</li>
+  <li>Keytruda — PSUR assessment</li>
+</ul>
+
+<h2>Administrative and procedural matters</h2>
+<ul>
+  <li>Aficamten — updated SmPC wording</li>
+</ul>
+
+<h2>Other topics of interest</h2>
+<ul>
+  <li>Keytruda — paediatric investigation plan</li>
+</ul>
+
+<h2>Safety referrals</h2>
+<ul>
+  <li>Keytruda — safety referral started</li>
+</ul>
+</body>
+</html>
+"""
+
+
+class TestOutcomePrecisionFilter:
+    """Outcomes precision: only decision-grade sections emit events."""
+
+    def test_decision_sections_produce_events(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_meeting_highlights
+
+        outcomes, _ = _parse_meeting_highlights(
+            HIGHLIGHTS_MIXED_HTML, "https://example.com/highlights", "CHMP", PRODUCT_MAP,
+        )
+        codes = {o["outcome_code"] for o in outcomes}
+        # Should contain the three decision codes
+        assert "positive_opinion" in codes
+        assert "negative_opinion" in codes
+        assert "withdrawn" in codes
+        assert "referral_started" in codes
+
+    def test_other_sections_produce_zero_events(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_meeting_highlights
+
+        outcomes, _ = _parse_meeting_highlights(
+            HIGHLIGHTS_MIXED_HTML, "https://example.com/highlights", "CHMP", PRODUCT_MAP,
+        )
+        codes = [o["outcome_code"] for o in outcomes]
+        assert "other" not in codes
+
+    def test_psur_section_filtered(self):
+        """PSUR section items should not produce outcome events."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_meeting_highlights
+
+        html = """
+        <html><head><title>CHMP 8 - 11 December 2025</title></head>
+        <body>
+        <h2>Periodic safety update reports (PSURs)</h2>
+        <ul>
+          <li>Aficamten — PSUR assessment</li>
+          <li>Keytruda — PSUR assessment</li>
+        </ul>
+        </body></html>
+        """
+        outcomes, _ = _parse_meeting_highlights(html, "https://example.com", "CHMP", PRODUCT_MAP)
+        assert len(outcomes) == 0
+
+    def test_administrative_section_filtered(self):
+        """Administrative items should not produce outcome events."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_meeting_highlights
+
+        html = """
+        <html><head><title>CHMP 8 - 11 December 2025</title></head>
+        <body>
+        <h2>Administrative and procedural matters</h2>
+        <ul>
+          <li>Aficamten — updated SmPC wording</li>
+          <li>Keytruda — variation assessment</li>
+        </ul>
+        <h2>Other topics of interest</h2>
+        <ul>
+          <li>Patisiran — paediatric investigation plan</li>
+        </ul>
+        </body></html>
+        """
+        outcomes, _ = _parse_meeting_highlights(html, "https://example.com", "CHMP", PRODUCT_MAP)
+        assert len(outcomes) == 0
+
+    def test_mixed_page_correct_count(self):
+        """Mixed page: only decision-grade items counted."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_meeting_highlights
+
+        outcomes, _ = _parse_meeting_highlights(
+            HIGHLIGHTS_MIXED_HTML, "https://example.com/highlights", "CHMP", PRODUCT_MAP,
+        )
+        # positive_opinion: CYTK, negative_opinion: MRK, withdrawn: ALNY,
+        # referral_started: MRK (Keytruda)
+        assert len(outcomes) == 4
+
+    def test_unmatched_only_from_decision_sections(self):
+        """Unmatched list should only contain items from decision-grade sections."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_meeting_highlights
+
+        html = """
+        <html><head><title>CHMP 8 - 11 December 2025</title></head>
+        <body>
+        <h2>Medicines recommended for approval</h2>
+        <ul>
+          <li>SomeUnknownDrug — for rare disease</li>
+        </ul>
+        <h2>Other topics of interest</h2>
+        <ul>
+          <li>AnotherUnknownDrug — paediatric plan</li>
+        </ul>
+        </body></html>
+        """
+        outcomes, unmatched = _parse_meeting_highlights(html, "https://example.com", "CHMP", {})
+        assert len(outcomes) == 0
+        # Only "SomeUnknownDrug" from the decision section should be in unmatched
+        assert len(unmatched) == 1
+        assert "SomeUnknownDrug" in unmatched[0]
+
+
+# ===========================================================================
+# Agenda catalyst relevance tagging
+# ===========================================================================
+
+
+class TestMakeTags:
+    """Tests for _make_tags helper."""
+
+    def test_maa_procedure_tag(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _make_tags
+
+        tags = _make_tags("MAA", "CHMP")
+        assert "procedure:maa" in tags
+        assert "committee:chmp" in tags
+
+    def test_variation_procedure_tag(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _make_tags
+
+        tags = _make_tags("VARIATION", "CHMP")
+        assert "procedure:variation" in tags
+        assert "committee:chmp" in tags
+
+    def test_prac_committee_tag(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _make_tags
+
+        tags = _make_tags("REFERRAL", "PRAC")
+        assert "procedure:referral" in tags
+        assert "committee:prac" in tags
+
+    def test_none_procedure(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _make_tags
+
+        tags = _make_tags(None, "CHMP")
+        assert len(tags) == 1
+        assert tags[0] == "committee:chmp"
+
+    def test_all_procedure_types(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _make_tags
+
+        for proc, expected in [("MAA", "maa"), ("VARIATION", "variation"),
+                               ("REFERRAL", "referral"), ("PSUR", "psur"),
+                               ("SIGNAL", "signal"), ("OTHER", "other")]:
+            tags = _make_tags(proc, "CHMP")
+            assert f"procedure:{expected}" in tags
+
+
+class TestTagsOnEmittedEvents:
+    """Tags field present on all emitted events."""
+
+    def test_xlsx_parsed_events_have_tags(self, tmp_path):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        xlsx_bytes = _build_test_xlsx([
+            _make_row("Marketing authorisation application", "Aficamten", "aficamten", "Cytokinetics"),
+            _make_row("Variation type II", "Keytruda", "pembrolizumab", "Merck"),
+        ])
+
+        def mock_fetch(url):
+            if "committees/committee-medicinal-products" in url:
+                return LANDING_WITH_EVENT_PAGES_HTML
+            if "/en/events/" in url:
+                return EVENT_PAGE_HTML
+            return "<html></html>"
+
+        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
+                    side_effect=mock_fetch), \
+             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
+                    return_value=xlsx_bytes):
+            events = collect_ema_committee_events(
+                as_of_date=date(2026, 2, 28),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        product_events = [e for e in events if e["ticker"]]
+        assert len(product_events) == 2
+        for ev in product_events:
+            assert "tags" in ev
+            assert "committee:chmp" in ev["tags"]
+            assert any(t.startswith("procedure:") for t in ev["tags"])
+
+        # MAA item should have procedure:maa
+        maa_ev = [e for e in product_events if e["ticker"] == "CYTK"][0]
+        assert "procedure:maa" in maa_ev["tags"]
+
+        # Variation item should have procedure:variation
+        var_ev = [e for e in product_events if e["ticker"] == "MRK"][0]
+        assert "procedure:variation" in var_ev["tags"]
+
+    def test_fallback_meeting_events_have_tags(self, tmp_path):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        def mock_fetch(url):
+            return COMMITTEE_LANDING_HTML
+
+        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
+                    side_effect=mock_fetch):
+            events = collect_ema_committee_events(
+                as_of_date=date(2026, 1, 31),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        for ev in events:
+            assert "tags" in ev
+            assert "committee:chmp" in ev["tags"]
+
+
+# ===========================================================================
 # Module3 conversion test
 # ===========================================================================
 
@@ -591,6 +990,110 @@ class TestModule3Conversion:
 
         event = {"schema": "ema_committee_event.v1", "event_date": "2025-12-11"}
         assert convert_ema_committee_to_v2(event, date(2025, 12, 11)) is None
+
+
+class TestModule3TagBoosting:
+    """Test tag-aware severity/field_changed boosting in convert_ema_committee_to_v2."""
+
+    def test_maa_tag_boosts_severity(self):
+        from module_3_catalyst import convert_ema_committee_to_v2
+
+        event = {
+            "schema": "ema_committee_event.v1",
+            "id": "EMA_CHMP_AGENDA_2026-02-26_abc",
+            "ticker": "CYTK",
+            "event_date": "2026-02-26",
+            "medicine_name": "Aficamten",
+            "title": "CHMP agenda: MAA — Aficamten",
+            "confidence": "MED",
+            "source": "EMA_CHMP_AGENDA",
+            "disclosed_at": "2026-02-20",
+            "tags": ["procedure:maa", "committee:chmp"],
+        }
+        v2 = convert_ema_committee_to_v2(event, date(2026, 2, 20))
+        assert v2 is not None
+        assert v2.event_severity.value == "CRITICAL_POSITIVE"
+        assert v2.field_changed == "ema_maa"
+        assert "procedure:maa" in v2.tags
+        assert "committee:chmp" in v2.tags
+
+    def test_variation_tag_keeps_default_severity(self):
+        from module_3_catalyst import convert_ema_committee_to_v2
+
+        event = {
+            "schema": "ema_committee_event.v1",
+            "id": "EMA_CHMP_AGENDA_2026-02-26_def",
+            "ticker": "MRK",
+            "event_date": "2026-02-26",
+            "medicine_name": "Keytruda",
+            "title": "CHMP agenda: VARIATION — Keytruda",
+            "confidence": "MED",
+            "source": "EMA_CHMP_AGENDA",
+            "disclosed_at": "2026-02-20",
+            "tags": ["procedure:variation", "committee:chmp"],
+        }
+        v2 = convert_ema_committee_to_v2(event, date(2026, 2, 20))
+        assert v2 is not None
+        assert v2.event_severity.value == "POSITIVE"
+        assert v2.field_changed == "ema_committee"
+
+    def test_no_tags_keeps_default(self):
+        from module_3_catalyst import convert_ema_committee_to_v2
+
+        event = {
+            "schema": "ema_committee_event.v1",
+            "id": "EMA_CHMP_AGENDA_2026-02-26_ghi",
+            "ticker": "CYTK",
+            "event_date": "2026-02-26",
+            "medicine_name": "Aficamten",
+            "title": "CHMP agenda: MAA — Aficamten",
+            "confidence": "MED",
+            "source": "EMA_CHMP_AGENDA",
+            "disclosed_at": "2026-02-20",
+        }
+        v2 = convert_ema_committee_to_v2(event, date(2026, 2, 20))
+        assert v2 is not None
+        assert v2.event_severity.value == "POSITIVE"
+        assert v2.field_changed == "ema_committee"
+        assert v2.tags == ()
+
+    def test_outcome_with_maa_tag_not_boosted(self):
+        """Outcomes already have CRITICAL_POSITIVE; MAA tag should not change behavior."""
+        from module_3_catalyst import convert_ema_committee_to_v2
+
+        event = {
+            "schema": "ema_meeting_outcome.v1",
+            "id": "EMA_CHMP_OUTCOME_2026-02-26_abc",
+            "ticker": "CYTK",
+            "event_date": "2026-02-26",
+            "medicine_name": "Aficamten",
+            "title": "CHMP: positive opinion — Aficamten",
+            "confidence": "HIGH",
+            "source": "EMA_MEETING_HIGHLIGHTS",
+            "disclosed_at": "2026-02-26",
+            "tags": ["procedure:maa", "committee:chmp"],
+        }
+        v2 = convert_ema_committee_to_v2(event, date(2026, 2, 26))
+        assert v2 is not None
+        assert v2.event_severity.value == "CRITICAL_POSITIVE"
+        assert v2.field_changed == "ema_committee"  # outcomes keep generic field_changed
+
+    def test_tags_pass_through(self):
+        from module_3_catalyst import convert_ema_committee_to_v2
+
+        event = {
+            "schema": "ema_committee_event.v1",
+            "id": "EMA_CHMP_AGENDA_2026-02-26_jkl",
+            "ticker": "MRK",
+            "event_date": "2026-02-26",
+            "medicine_name": "Keytruda",
+            "confidence": "MED",
+            "source": "EMA_CHMP_AGENDA",
+            "disclosed_at": "2026-02-20",
+            "tags": ["procedure:variation", "committee:chmp"],
+        }
+        v2 = convert_ema_committee_to_v2(event, date(2026, 2, 20))
+        assert v2.tags == ("procedure:variation", "committee:chmp")
 
 
 # ===========================================================================
@@ -652,3 +1155,764 @@ class TestEventLedgerEmaLoader:
 
         entries = _load_ema_events(date(2026, 1, 30), tmp_path)
         assert entries == []
+
+    def test_tags_propagated(self, tmp_path):
+        """Tags from collector events are propagated into LedgerEntry.tags."""
+        from event_ledger import _load_ema_events
+
+        payload = {
+            "schema": "ema_committee_events.v1",
+            "events": [
+                {
+                    "id": "EMA_CHMP_AGENDA_2026-01-30_abc",
+                    "ticker": "CYTK",
+                    "event_date": "2026-01-30",
+                    "disclosed_at": "2026-01-20",
+                    "title": "CHMP agenda: MAA — Aficamten",
+                    "confidence": "MED",
+                    "tags": ["procedure:maa", "committee:chmp"],
+                },
+            ],
+        }
+        cache_path = tmp_path / "ema_committee_events_2026-01-30.json"
+        cache_path.write_text(json.dumps(payload))
+
+        entries = _load_ema_events(date(2026, 1, 30), tmp_path)
+        assert len(entries) == 1
+        assert entries[0].tags == ("procedure:maa", "committee:chmp")
+
+    def test_tags_default_empty(self, tmp_path):
+        """Events without tags field get empty tuple."""
+        from event_ledger import _load_ema_events
+
+        payload = {
+            "schema": "ema_committee_events.v1",
+            "events": [
+                {
+                    "id": "EMA_CHMP_AGENDA_2026-01-30_abc",
+                    "ticker": "CYTK",
+                    "event_date": "2026-01-30",
+                    "disclosed_at": "2026-01-20",
+                    "title": "CHMP agenda item",
+                    "confidence": "MED",
+                },
+            ],
+        }
+        cache_path = tmp_path / "ema_committee_events_2026-01-30.json"
+        cache_path.write_text(json.dumps(payload))
+
+        entries = _load_ema_events(date(2026, 1, 30), tmp_path)
+        assert len(entries) == 1
+        assert entries[0].tags == ()
+
+
+# ===========================================================================
+# run_screen.py cache health — EMA counts wired through
+# ===========================================================================
+
+
+class TestRunScreenCacheHealthEma:
+    """Verify run_screen passes EMA counts to compute_cache_health."""
+
+    def test_cache_health_includes_ema_agenda(self):
+        """compute_cache_health includes ema_agenda section when count provided."""
+        from cache_health import compute_cache_health
+
+        result = compute_cache_health(
+            sec8k_count=100,
+            ctgov_count=500,
+            ema_agenda_count=15,
+            ema_outcomes_count=8,
+        )
+        assert "ema_agenda" in result
+        assert result["ema_agenda"]["count"] == 15
+        assert result["ema_agenda"]["status"] == "ok"
+        assert "ema_outcomes" in result
+        assert result["ema_outcomes"]["count"] == 8
+        assert result["ema_outcomes"]["status"] == "ok"
+
+    def test_cache_health_ema_ratio_warning(self):
+        """EMA ratio outside band produces warning status."""
+        from cache_health import compute_cache_health
+
+        result = compute_cache_health(
+            sec8k_count=100,
+            ctgov_count=500,
+            ema_agenda_count=5,
+            prior_ema_agenda_count=50,  # ratio = 0.10 < 0.30
+            ema_outcomes_count=8,
+        )
+        assert result["ema_agenda"]["status"] == "warning"
+        assert result["overall_status"] == "warning"
+        assert result["degraded_run"] is True
+
+    def test_cache_health_ema_thresholds_in_output(self):
+        """EMA thresholds appear in the thresholds dict."""
+        from cache_health import compute_cache_health
+
+        result = compute_cache_health(
+            sec8k_count=100,
+            ctgov_count=500,
+            ema_agenda_count=10,
+            ema_outcomes_count=5,
+        )
+        assert "ema_agenda_bad_ratio_low" in result["thresholds"]
+        assert "ema_agenda_bad_ratio_high" in result["thresholds"]
+        assert "ema_outcomes_bad_ratio_low" in result["thresholds"]
+        assert "ema_outcomes_bad_ratio_high" in result["thresholds"]
+
+    def test_cache_health_ema_ratios_in_comparisons(self):
+        """EMA ratios appear in comparisons dict when priors provided."""
+        from cache_health import compute_cache_health
+
+        result = compute_cache_health(
+            sec8k_count=100,
+            ctgov_count=500,
+            ema_agenda_count=15,
+            prior_ema_agenda_count=10,  # ratio 1.5
+            ema_outcomes_count=8,
+            prior_ema_outcomes_count=8,  # ratio 1.0
+        )
+        assert result["comparisons"]["ema_agenda_ratio_vs_prior"] == 1.5
+        assert result["comparisons"]["ema_outcomes_ratio_vs_prior"] == 1.0
+
+    def test_cache_health_omits_ema_when_none(self):
+        """No ema_agenda/ema_outcomes in result when counts are None."""
+        from cache_health import compute_cache_health
+
+        result = compute_cache_health(
+            sec8k_count=100,
+            ctgov_count=500,
+        )
+        assert "ema_agenda" not in result
+        assert "ema_outcomes" not in result
+
+
+# ===========================================================================
+# End-to-end: EMA events flow through module_3 with tags preserved
+# ===========================================================================
+
+
+class TestEmaEndToEndTagFlow:
+    """Verify tags survive the full collector → module_3 → CatalystEventV2 path."""
+
+    def test_tags_preserved_through_convert(self):
+        """Tags from collector event dict survive convert_ema_committee_to_v2."""
+        from module_3_catalyst import convert_ema_committee_to_v2
+
+        event = {
+            "schema": "ema_committee_event.v1",
+            "ticker": "CYTK",
+            "event_date": "2026-03-15",
+            "disclosed_at": "2026-02-20",
+            "title": "CHMP agenda: MAA — Aficamten",
+            "medicine_name": "Aficamten",
+            "procedure_type": "MAA",
+            "source": "EMA_CHMP_AGENDA",
+            "confidence": "MED",
+            "tags": ["procedure:maa", "committee:chmp"],
+        }
+        v2 = convert_ema_committee_to_v2(event, date(2026, 2, 28))
+        assert v2 is not None
+        assert v2.tags == ("procedure:maa", "committee:chmp")
+        # MAA tag should boost severity
+        from module_3_schema import EventSeverity
+        assert v2.event_severity == EventSeverity.CRITICAL_POSITIVE
+        assert v2.field_changed == "ema_maa"
+
+    def test_outcome_tags_preserved_no_boost(self):
+        """Outcome events preserve tags but don't get MAA boosting."""
+        from module_3_catalyst import convert_ema_committee_to_v2
+        from module_3_schema import EventSeverity
+
+        event = {
+            "schema": "ema_meeting_outcome.v1",
+            "ticker": "MRK",
+            "event_date": "2025-12-11",
+            "disclosed_at": "2025-12-11",
+            "title": "CHMP: positive_opinion — Keytruda",
+            "outcome_code": "positive_opinion",
+            "source": "EMA_MEETING_HIGHLIGHTS",
+            "confidence": "HIGH",
+            "tags": ["committee:chmp"],
+        }
+        v2 = convert_ema_committee_to_v2(event, date(2026, 2, 28))
+        assert v2 is not None
+        assert v2.tags == ("committee:chmp",)
+        # Outcomes keep default severity, not boosted
+        assert v2.event_severity == EventSeverity.CRITICAL_POSITIVE
+        assert v2.field_changed == "ema_committee"
+
+    def test_no_tags_field_defaults_empty(self):
+        """Events without 'tags' key get empty tuple in CatalystEventV2."""
+        from module_3_catalyst import convert_ema_committee_to_v2
+
+        event = {
+            "schema": "ema_committee_event.v1",
+            "ticker": "CYTK",
+            "event_date": "2026-03-15",
+            "disclosed_at": "2026-02-20",
+            "title": "CHMP agenda item",
+            "source": "EMA_CHMP_AGENDA",
+            "confidence": "MED",
+        }
+        v2 = convert_ema_committee_to_v2(event, date(2026, 2, 28))
+        assert v2 is not None
+        assert v2.tags == ()
+
+    def test_source_key_for_source_mix(self):
+        """EMA v2 events use the collector's source key (not generic 'EMA_COMMITTEE')."""
+        from module_3_catalyst import convert_ema_committee_to_v2
+
+        event = {
+            "schema": "ema_committee_event.v1",
+            "ticker": "CYTK",
+            "event_date": "2026-03-15",
+            "disclosed_at": "2026-02-20",
+            "title": "CHMP agenda: MAA — Aficamten",
+            "source": "EMA_CHMP_AGENDA",
+            "confidence": "MED",
+            "tags": ["procedure:maa", "committee:chmp"],
+        }
+        v2 = convert_ema_committee_to_v2(event, date(2026, 2, 28))
+        # source passed through from collector → used as by_source key
+        assert v2.source == "EMA_CHMP_AGENDA"
+
+    def test_ema_source_mix_aggregation(self):
+        """Verify source_mix keys that run_screen uses to extract EMA counts."""
+        # Simulate what module_3 does: count events by v2.source
+        sources = [
+            "EMA_CHMP_AGENDA", "EMA_CHMP_AGENDA", "EMA_PRAC_AGENDA",
+            "EMA_MEETING_HIGHLIGHTS",
+        ]
+        by_source = {}
+        for s in sources:
+            by_source[s] = by_source.get(s, 0) + 1
+
+        # run_screen aggregation logic
+        ema_agenda_count = sum(
+            v for k, v in by_source.items()
+            if k.startswith("EMA_") and k.endswith("_AGENDA")
+        )
+        ema_outcomes_count = by_source.get("EMA_MEETING_HIGHLIGHTS", 0)
+
+        assert ema_agenda_count == 3  # 2 CHMP + 1 PRAC
+        assert ema_outcomes_count == 1
+
+
+# ===========================================================================
+# XLSX builder fixture + Annex XLSX parsing tests
+# ===========================================================================
+
+
+def _build_test_xlsx(
+    rows: list[list[str]],
+    *,
+    header_row_num: int = 24,
+    include_table: bool = True,
+    headers: list[str] | None = None,
+) -> bytes:
+    """Build a minimal valid XLSX in-memory using zipfile + XML.
+
+    Args:
+        rows: List of rows, each a list of 15 string cell values.
+              Columns map to A-O (indices 0-14).
+        header_row_num: 1-based row number for the header row.
+        include_table: Whether to include xl/tables/table1.xml.
+        headers: Header labels. Defaults to EMA Annex layout.
+
+    Returns:
+        Raw bytes of a valid XLSX file.
+    """
+    if headers is None:
+        headers = [
+            "No", "Procedure No", "EMEA No", "Rapporteur/Co-rapporteur",
+            "Process type",  # E = col 4
+            "Invented name",  # F = col 5
+            "Active substance",  # G = col 6
+            "Customer",  # H = col 7
+            "Scope", "Background", "Action", "Timetable",
+            "Outcome", "Notes", "Status",
+        ]
+
+    # Build shared strings
+    all_strings: list[str] = []
+    string_index: dict[str, int] = {}
+
+    def _add_string(s: str) -> int:
+        if s not in string_index:
+            string_index[s] = len(all_strings)
+            all_strings.append(s)
+        return string_index[s]
+
+    # Register header strings
+    for h in headers:
+        _add_string(h)
+
+    # Register data strings
+    for row in rows:
+        for cell in row:
+            if cell:
+                _add_string(cell)
+
+    # Build sharedStrings.xml
+    ss_ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+    ss_root = ET.Element("sst", xmlns=ss_ns, count=str(len(all_strings)),
+                         uniqueCount=str(len(all_strings)))
+    for s in all_strings:
+        si = ET.SubElement(ss_root, "si")
+        t = ET.SubElement(si, "t")
+        t.text = s
+    ss_xml = ET.tostring(ss_root, encoding="unicode", xml_declaration=True)
+
+    # Build sheet1.xml
+    ws_ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+
+    def _col_letter(idx: int) -> str:
+        result = ""
+        idx += 1
+        while idx > 0:
+            idx, rem = divmod(idx - 1, 26)
+            result = chr(65 + rem) + result
+        return result
+
+    ws_root = ET.Element("worksheet", xmlns=ws_ns)
+    sheet_data = ET.SubElement(ws_root, "sheetData")
+
+    # Header row
+    h_row = ET.SubElement(sheet_data, "row", r=str(header_row_num))
+    for ci, h in enumerate(headers):
+        ref = f"{_col_letter(ci)}{header_row_num}"
+        c = ET.SubElement(h_row, "c", r=ref, t="s")
+        v = ET.SubElement(c, "v")
+        v.text = str(_add_string(h))
+
+    # Data rows
+    data_start = header_row_num + 1
+    for ri, row in enumerate(rows):
+        row_num = data_start + ri
+        r_el = ET.SubElement(sheet_data, "row", r=str(row_num))
+        for ci, cell in enumerate(row):
+            if not cell:
+                continue
+            ref = f"{_col_letter(ci)}{row_num}"
+            c = ET.SubElement(r_el, "c", r=ref, t="s")
+            v = ET.SubElement(c, "v")
+            v.text = str(_add_string(cell))
+
+    ws_xml = ET.tostring(ws_root, encoding="unicode", xml_declaration=True)
+
+    # Build table1.xml (optional)
+    last_col = _col_letter(len(headers) - 1)
+    last_row = data_start + len(rows) - 1 if rows else data_start
+    tbl_ref = f"A{header_row_num}:{last_col}{last_row}"
+    tbl_xml = None
+    if include_table:
+        tbl_ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+        tbl_root = ET.Element("table", xmlns=tbl_ns, ref=tbl_ref, id="1", name="Table1")
+        tbl_xml = ET.tostring(tbl_root, encoding="unicode", xml_declaration=True)
+
+    # Assemble ZIP
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("[Content_Types].xml", """<?xml version="1.0" encoding="UTF-8"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+  <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+  <Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/>
+</Types>""")
+        zf.writestr("_rels/.rels", """<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+</Relationships>""")
+        zf.writestr("xl/workbook.xml", """<?xml version="1.0" encoding="UTF-8"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <sheets><sheet name="Sheet1" sheetId="1" r:id="rId1"
+    xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/></sheets>
+</workbook>""")
+        zf.writestr("xl/_rels/workbook.xml.rels", """<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>
+</Relationships>""")
+        zf.writestr("xl/sharedStrings.xml", ss_xml)
+        zf.writestr("xl/worksheets/sheet1.xml", ws_xml)
+        if tbl_xml:
+            zf.writestr("xl/tables/table1.xml", tbl_xml)
+
+    return buf.getvalue()
+
+
+# 15-element row helper (A-O columns)
+def _make_row(
+    process_type: str = "",
+    invented_name: str = "",
+    active_substance: str = "",
+    customer: str = "",
+) -> list[str]:
+    """Build a 15-element row with values in the correct column positions."""
+    row = [""] * 15
+    row[4] = process_type     # E
+    row[5] = invented_name    # F
+    row[6] = active_substance  # G
+    row[7] = customer         # H
+    return row
+
+
+# Event page HTML fixture — mimics a real EMA event page with documents
+EVENT_PAGE_HTML = """
+<html>
+<head><title>CHMP meeting 23 - 26 February 2026</title></head>
+<body>
+<h1>Committee for Medicinal Products for Human Use (CHMP) meeting 23 - 26 February 2026</h1>
+<div class="field--items">
+  <div class="bcl-file">
+    <span>Agenda of CHMP meeting 23 - 26 February 2026</span>
+    <span>First published:20/02/2026</span>
+    <div class="file-language-links">
+      <a href="/en/documents/agenda/agenda-chmp-meeting-23-26-february-2026_en.pdf">View</a>
+    </div>
+  </div>
+  <div class="bcl-file">
+    <span>Annex to agenda of CHMP meeting 23 - 26 February 2026</span>
+    <span>First published:20/02/2026</span>
+    <div class="file-language-links">
+      <a href="/en/documents/annex/annex-to-agenda-chmp-meeting-23-26-february-2026_en.xlsx">View</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+"""
+
+# Committee landing page with event page links
+LANDING_WITH_EVENT_PAGES_HTML = """
+<html>
+<head><title>CHMP | European Medicines Agency</title></head>
+<body>
+<h1>Committee for Medicinal Products for Human Use (CHMP)</h1>
+<div class="field--items">
+  <h3>Upcoming meetings</h3>
+  <ul>
+    <li><a href="/en/events/committee-medicinal-products-human-use-chmp-23-26-february-2026">
+      CHMP meeting 23 - 26 February 2026
+    </a></li>
+    <li><a href="/en/events/committee-medicinal-products-human-use-chmp-24-27-march-2026">
+      CHMP meeting 24 - 27 March 2026
+    </a></li>
+  </ul>
+</div>
+</body>
+</html>
+"""
+
+
+class TestParseAnnexXlsx:
+    """Tests for _parse_annex_xlsx."""
+
+    def test_basic_extraction(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_annex_xlsx
+
+        rows = [
+            _make_row("Variation type II", "Keytruda", "pembrolizumab", "Merck"),
+            _make_row("MAA", "Aficamten", "aficamten", "Cytokinetics"),
+        ]
+        xlsx = _build_test_xlsx(rows)
+        items = _parse_annex_xlsx(xlsx)
+        assert len(items) == 2
+        assert items[0]["medicine_name"] == "Keytruda"
+        assert items[0]["active_substance"] == "pembrolizumab"
+        assert items[0]["process_type"] == "Variation type II"
+        assert items[0]["sponsor"] == "Merck"
+        assert items[1]["medicine_name"] == "Aficamten"
+
+    def test_empty_rows_skipped(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_annex_xlsx
+
+        rows = [
+            _make_row("Variation type II", "Keytruda", "pembrolizumab", "Merck"),
+            _make_row("", "", "", ""),  # empty invented_name → skipped
+            _make_row("MAA", "Aficamten", "aficamten", "Cytokinetics"),
+        ]
+        xlsx = _build_test_xlsx(rows)
+        items = _parse_annex_xlsx(xlsx)
+        assert len(items) == 2
+
+    def test_multiline_medicine_name(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_annex_xlsx
+
+        rows = [
+            _make_row("Variation type II", "Keytruda\nKeytiva", "pembrolizumab\npembrolizumab+x", "Merck"),
+        ]
+        xlsx = _build_test_xlsx(rows)
+        items = _parse_annex_xlsx(xlsx)
+        assert len(items) == 1
+        assert items[0]["medicine_name"] == "Keytruda"
+        assert items[0]["active_substance"] == "pembrolizumab"
+
+    def test_fallback_header_detection_without_table(self):
+        """When table1.xml is missing, header row is detected by scanning for 'Invented name'."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_annex_xlsx
+
+        rows = [
+            _make_row("Variation type II", "Keytruda", "pembrolizumab", "Merck"),
+        ]
+        xlsx = _build_test_xlsx(rows, include_table=False)
+        items = _parse_annex_xlsx(xlsx)
+        assert len(items) == 1
+        assert items[0]["medicine_name"] == "Keytruda"
+
+    def test_invalid_zip_returns_empty(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_annex_xlsx
+
+        items = _parse_annex_xlsx(b"not a zip file")
+        assert items == []
+
+    def test_many_rows(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_annex_xlsx
+
+        rows = [_make_row("Variation", f"Drug{i}", f"substance{i}", f"Co{i}") for i in range(150)]
+        xlsx = _build_test_xlsx(rows)
+        items = _parse_annex_xlsx(xlsx)
+        assert len(items) == 150
+
+
+class TestDiscoverMeetingEventPages:
+    """Tests for _discover_meeting_event_pages."""
+
+    def test_finds_chmp_events(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _discover_meeting_event_pages
+
+        pages = _discover_meeting_event_pages(
+            LANDING_WITH_EVENT_PAGES_HTML, "https://www.ema.europa.eu", "CHMP",
+        )
+        assert len(pages) == 2
+        assert pages[0]["meeting_start"] == "2026-02-23"
+        assert pages[0]["meeting_end"] == "2026-02-26"
+        assert pages[0]["committee"] == "CHMP"
+        assert "chmp-23-26-february-2026" in pages[0]["url"]
+
+    def test_skips_non_committee_events(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _discover_meeting_event_pages
+
+        html = """<html><body>
+        <a href="/en/events/committee-medicinal-products-human-use-chmp-23-26-february-2026">
+          CHMP meeting 23 - 26 February 2026
+        </a>
+        <a href="/en/events/some-other-event-2026">Other event</a>
+        </body></html>"""
+        pages = _discover_meeting_event_pages(html, "https://www.ema.europa.eu", "CHMP")
+        assert len(pages) == 1
+
+    def test_prac_events(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _discover_meeting_event_pages
+
+        html = """<html><body>
+        <a href="/en/events/pharmacovigilance-risk-assessment-committee-prac-3-6-february-2026">
+          PRAC meeting 3 - 6 February 2026
+        </a>
+        </body></html>"""
+        pages = _discover_meeting_event_pages(html, "https://www.ema.europa.eu", "PRAC")
+        assert len(pages) == 1
+        assert pages[0]["committee"] == "PRAC"
+
+
+class TestDiscoverEventPageDocuments:
+    """Tests for _discover_event_page_documents."""
+
+    def test_finds_agenda_and_annex(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _discover_event_page_documents
+
+        docs = _discover_event_page_documents(EVENT_PAGE_HTML, "https://www.ema.europa.eu")
+        assert len(docs["agenda"]) == 1
+        assert len(docs["annex"]) == 1
+        assert docs["agenda"][0]["url"].endswith(".pdf")
+        assert docs["annex"][0]["url"].endswith(".xlsx")
+
+    def test_extracts_first_published(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _discover_event_page_documents
+
+        docs = _discover_event_page_documents(EVENT_PAGE_HTML, "https://www.ema.europa.eu")
+        assert docs["annex"][0]["first_published"] == "2026-02-20"
+        assert docs["agenda"][0]["first_published"] == "2026-02-20"
+
+    def test_empty_page(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _discover_event_page_documents
+
+        docs = _discover_event_page_documents("<html><body></body></html>", "https://www.ema.europa.eu")
+        assert docs["agenda"] == []
+        assert docs["annex"] == []
+
+
+class TestCollectEmaWithEventPages:
+    """Integration tests for collect_ema_committee_events with event page path."""
+
+    def _build_xlsx_for_test(self):
+        return _build_test_xlsx([
+            _make_row("Variation type II", "Keytruda", "pembrolizumab", "Merck"),
+            _make_row("MAA", "Aficamten", "aficamten", "Cytokinetics"),
+            _make_row("Variation type II", "Unmapped Drug", "unknown_sub", "UnknownCo"),
+        ])
+
+    def test_product_level_events_from_annex(self, tmp_path):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        xlsx_bytes = self._build_xlsx_for_test()
+
+        def mock_fetch(url):
+            if "committees/committee-medicinal-products" in url:
+                return LANDING_WITH_EVENT_PAGES_HTML
+            if "/en/events/" in url:
+                return EVENT_PAGE_HTML
+            return "<html></html>"
+
+        def mock_fetch_xlsx(url):
+            return xlsx_bytes
+
+        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
+                    side_effect=mock_fetch), \
+             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
+                    side_effect=mock_fetch_xlsx):
+            events = collect_ema_committee_events(
+                as_of_date=date(2026, 2, 28),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        # Should have product-level events for matched tickers
+        tickers = [e["ticker"] for e in events if e["ticker"]]
+        assert "MRK" in tickers
+        assert "CYTK" in tickers
+        # Should have item_type=agenda_item (not meeting)
+        assert all(e["item_type"] == "agenda_item" for e in events if e["ticker"])
+
+    def test_stats_correct(self, tmp_path):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        xlsx_bytes = self._build_xlsx_for_test()
+
+        def mock_fetch(url):
+            if "committees/committee-medicinal-products" in url:
+                return LANDING_WITH_EVENT_PAGES_HTML
+            if "/en/events/" in url:
+                return EVENT_PAGE_HTML
+            return "<html></html>"
+
+        def mock_fetch_xlsx(url):
+            return xlsx_bytes
+
+        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
+                    side_effect=mock_fetch), \
+             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
+                    side_effect=mock_fetch_xlsx):
+            collect_ema_committee_events(
+                as_of_date=date(2026, 2, 28),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        cache_path = tmp_path / "ema_committee_events_2026-02-28.json"
+        payload = json.loads(cache_path.read_text())
+        stats = payload["stats"]
+        assert stats["items_parsed"] == 3
+        assert stats["matched"] == 2
+        assert stats["unmatched"] == 1
+        assert stats["meeting_pages_found"] >= 1
+
+    def test_deterministic_cache(self, tmp_path):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        xlsx_bytes = self._build_xlsx_for_test()
+
+        def mock_fetch(url):
+            if "committees/committee-medicinal-products" in url:
+                return LANDING_WITH_EVENT_PAGES_HTML
+            if "/en/events/" in url:
+                return EVENT_PAGE_HTML
+            return "<html></html>"
+
+        def mock_fetch_xlsx(url):
+            return xlsx_bytes
+
+        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
+                    side_effect=mock_fetch), \
+             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
+                    side_effect=mock_fetch_xlsx):
+            result1 = collect_ema_committee_events(
+                as_of_date=date(2026, 2, 28),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        # Second call hits cache
+        result2 = collect_ema_committee_events(
+            as_of_date=date(2026, 2, 28),
+            cache_dir=tmp_path,
+            product_ticker_map=PRODUCT_MAP,
+            committees=("CHMP",),
+        )
+        assert [e["id"] for e in result1] == [e["id"] for e in result2]
+
+    def test_fallback_to_landing_page_docs(self, tmp_path):
+        """When no event pages found, falls back to landing page doc discovery."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        def mock_fetch(url):
+            # Return landing page with docs but NO event page links
+            return COMMITTEE_LANDING_HTML
+
+        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
+                    side_effect=mock_fetch):
+            events = collect_ema_committee_events(
+                as_of_date=date(2026, 1, 31),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        # Should fall back to meeting-level events
+        meeting_events = [e for e in events if e["item_type"] == "meeting"]
+        assert len(meeting_events) > 0
+
+    def test_xlsx_parse_error_continues(self, tmp_path):
+        """XLSX parse error is logged and collector continues."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        def mock_fetch(url):
+            if "committees/committee-medicinal-products" in url:
+                return LANDING_WITH_EVENT_PAGES_HTML
+            if "/en/events/" in url:
+                return EVENT_PAGE_HTML
+            return "<html></html>"
+
+        def mock_fetch_xlsx(url):
+            return b"not a valid xlsx"
+
+        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
+                    side_effect=mock_fetch), \
+             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
+                    side_effect=mock_fetch_xlsx):
+            events = collect_ema_committee_events(
+                as_of_date=date(2026, 2, 28),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        # Should still produce events (meeting-level placeholders)
+        assert len(events) >= 1

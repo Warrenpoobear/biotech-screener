@@ -39,6 +39,10 @@ from cache_health import (
     SEC8K_MIN_RATIO_VS_PRIOR,
     CTGOV_BAD_RATIO_LOW,
     CTGOV_BAD_RATIO_HIGH,
+    EMA_AGENDA_BAD_RATIO_LOW,
+    EMA_AGENDA_BAD_RATIO_HIGH,
+    EMA_OUTCOMES_BAD_RATIO_LOW,
+    EMA_OUTCOMES_BAD_RATIO_HIGH,
 )
 
 logging.basicConfig(
@@ -89,8 +93,30 @@ def validate_cache_refresh(
                 )
         return True, ""
 
-    if source in ("euctr", "ctis", "isrctn", "ema_agenda", "ema_outcomes"):
-        # New registries/sources: accept anything non-negative; no hard floor initially
+    if source in ("euctr", "ctis", "isrctn"):
+        # New registries: accept anything non-negative; no hard floor initially
+        return True, ""
+
+    if source == "ema_agenda":
+        # No zero floor — 0 is valid (no upcoming meetings)
+        if prior_count is not None and prior_count > 0 and new_count > 0:
+            ratio = new_count / prior_count
+            if ratio < EMA_AGENDA_BAD_RATIO_LOW or ratio > EMA_AGENDA_BAD_RATIO_HIGH:
+                return False, (
+                    f"out_of_band (ratio={ratio:.2f}, "
+                    f"band=[{EMA_AGENDA_BAD_RATIO_LOW}, {EMA_AGENDA_BAD_RATIO_HIGH}])"
+                )
+        return True, ""
+
+    if source == "ema_outcomes":
+        # No zero floor — 0 is valid (no outcomes published yet)
+        if prior_count is not None and prior_count > 0 and new_count > 0:
+            ratio = new_count / prior_count
+            if ratio < EMA_OUTCOMES_BAD_RATIO_LOW or ratio > EMA_OUTCOMES_BAD_RATIO_HIGH:
+                return False, (
+                    f"out_of_band (ratio={ratio:.2f}, "
+                    f"band=[{EMA_OUTCOMES_BAD_RATIO_LOW}, {EMA_OUTCOMES_BAD_RATIO_HIGH}])"
+                )
         return True, ""
 
     if source == "merged_trials":
@@ -210,6 +236,24 @@ def _find_prior_ctgov_count(cache_dir: Path) -> int | None:
             data = json.loads(path.read_text())
             if isinstance(data, list):
                 return len(data)
+        except (json.JSONDecodeError, OSError):
+            continue
+    return None
+
+
+def _find_prior_ema_count(cache_dir: Path, prefix: str) -> int | None:
+    """Find most recent prior EMA cache file and return its event count.
+
+    Scans for files matching ``{prefix}_{date}.json`` with a dict payload
+    containing an ``events`` list.
+    """
+    pattern = f"{prefix}_*.json"
+    candidates = sorted(cache_dir.glob(pattern), reverse=True)
+    for path in candidates:
+        try:
+            data = json.loads(path.read_text())
+            if isinstance(data, dict) and "events" in data:
+                return len(data["events"])
         except (json.JSONDecodeError, OSError):
             continue
     return None
@@ -824,19 +868,41 @@ def main():
 
     ema_agenda_count = 0
     if "ema_agenda" in sources:
+        ema_cache_dir = Path(args.ema_cache_dir)
+        ema_cache_dir.mkdir(parents=True, exist_ok=True)
+        prior_ema_agenda = _find_prior_ema_count(ema_cache_dir, "ema_committee_events")
         try:
-            ema_cache_dir = Path(args.ema_cache_dir)
             ema_agenda_count = warm_ema_committee_events(as_of, data_dir, ema_cache_dir)
         except Exception as e:
             logger.error(f"EMA committee events warm failed: {e}")
+        accepted, reason = validate_cache_refresh("ema_agenda", ema_agenda_count, prior_ema_agenda)
+        refresh_results.append({
+            "source": "ema_agenda",
+            "count": ema_agenda_count,
+            "prior_count": prior_ema_agenda,
+            "accepted": accepted,
+            "committed": accepted,
+            "reason": reason,
+        })
 
     ema_outcomes_count = 0
     if "ema_outcomes" in sources:
+        ema_cache_dir = Path(args.ema_cache_dir)
+        ema_cache_dir.mkdir(parents=True, exist_ok=True)
+        prior_ema_outcomes = _find_prior_ema_count(ema_cache_dir, "ema_meeting_outcomes")
         try:
-            ema_cache_dir = Path(args.ema_cache_dir)
             ema_outcomes_count = warm_ema_meeting_outcomes(as_of, data_dir, ema_cache_dir)
         except Exception as e:
             logger.error(f"EMA meeting outcomes warm failed: {e}")
+        accepted, reason = validate_cache_refresh("ema_outcomes", ema_outcomes_count, prior_ema_outcomes)
+        refresh_results.append({
+            "source": "ema_outcomes",
+            "count": ema_outcomes_count,
+            "prior_count": prior_ema_outcomes,
+            "accepted": accepted,
+            "committed": accepted,
+            "reason": reason,
+        })
 
     euctr_count = 0
     if "euctr" in sources:
