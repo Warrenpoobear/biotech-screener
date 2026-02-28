@@ -139,6 +139,14 @@ class EventType(str, Enum):
     # Licensing deal
     LICENSING_DEAL = "LICENSING_DEAL"
 
+    # ==========================================================================
+    # EMA COMMITTEE EVENTS (EU regulatory)
+    # ==========================================================================
+    # EMA committee agenda item (scheduled for discussion)
+    EMA_COMMITTEE_AGENDA = "EMA_COMMITTEE_AGENDA"
+    # EMA committee meeting outcome (opinion / decision)
+    EMA_COMMITTEE_OUTCOME = "EMA_COMMITTEE_OUTCOME"
+
     # Unknown (catch-all, zero score)
     UNKNOWN = "UNKNOWN"
 
@@ -206,6 +214,10 @@ EVENT_SEVERITY_MAP: Dict[EventType, EventSeverity] = {
     EventType.PARTNERSHIP: EventSeverity.POSITIVE,
     EventType.MA_ACTIVITY: EventSeverity.NEUTRAL,  # Can go either way
     EventType.LICENSING_DEAL: EventSeverity.POSITIVE,
+
+    # EMA committee events (EU regulatory)
+    EventType.EMA_COMMITTEE_AGENDA: EventSeverity.POSITIVE,            # Scheduled item
+    EventType.EMA_COMMITTEE_OUTCOME: EventSeverity.CRITICAL_POSITIVE,  # Decision
 
     # Neutral
     EventType.CT_RESULTS_POSTED: EventSeverity.NEUTRAL,
@@ -299,6 +311,10 @@ EVENT_DEFAULT_CONFIDENCE: Dict[EventType, ConfidenceLevel] = {
     EventType.PARTNERSHIP: ConfidenceLevel.LOW,
     EventType.MA_ACTIVITY: ConfidenceLevel.LOW,
     EventType.LICENSING_DEAL: ConfidenceLevel.LOW,
+
+    # EMA committee events
+    EventType.EMA_COMMITTEE_AGENDA: ConfidenceLevel.MED,   # Agenda item (scheduled, not decided)
+    EventType.EMA_COMMITTEE_OUTCOME: ConfidenceLevel.HIGH,  # Meeting decision
 
     EventType.UNKNOWN: ConfidenceLevel.LOW,
 }
@@ -400,6 +416,11 @@ EVENT_TYPE_WEIGHT: Dict[EventType, Decimal] = {
     EventType.CT_TRIAL_SUSPENDED: Decimal("0.0"),
     EventType.CLINICAL_HOLD: Decimal("0.0"),
     EventType.SAFETY_SIGNAL: Decimal("0.0"),
+
+    # EMA committee events (EU regulatory — AdCom equivalent)
+    EventType.EMA_COMMITTEE_AGENDA: Decimal("12.0"),   # Scheduled: similar to FDA_SUBMISSION
+    EventType.EMA_COMMITTEE_OUTCOME: Decimal("18.0"),  # Decision: similar to FDA_APPROVAL
+
     EventType.UNKNOWN: Decimal("0.0"),
 }
 

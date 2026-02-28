@@ -89,8 +89,8 @@ def validate_cache_refresh(
                 )
         return True, ""
 
-    if source in ("euctr", "ctis", "isrctn"):
-        # New registries: accept anything non-negative; no hard floor initially
+    if source in ("euctr", "ctis", "isrctn", "ema_agenda", "ema_outcomes"):
+        # New registries/sources: accept anything non-negative; no hard floor initially
         return True, ""
 
     if source == "merged_trials":
@@ -480,6 +480,60 @@ def warm_price_pit(
     return index.get("ticker_count", 0)
 
 
+def warm_ema_committee_events(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
+    """Fetch and cache EMA committee agenda events. Returns count."""
+    from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+        collect_ema_committee_events,
+    )
+    from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
+        build_product_ticker_map,
+    )
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    product_map = build_product_ticker_map(data_dir)
+    if not product_map:
+        logger.warning("Empty product map — check pdufa_dates.json / fda_designations.json")
+        return 0
+
+    logger.info("Fetching EMA committee events for %s...", as_of_date)
+    events = collect_ema_committee_events(
+        as_of_date=as_of_date,
+        cache_dir=cache_dir,
+        product_ticker_map=product_map,
+    )
+    logger.info("EMA committee events: %d events cached", len(events))
+    return len(events)
+
+
+def warm_ema_meeting_outcomes(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
+    """Fetch and cache EMA meeting outcome events. Returns count."""
+    from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+        collect_ema_meeting_outcomes,
+    )
+    from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
+        build_product_ticker_map,
+    )
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    product_map = build_product_ticker_map(data_dir)
+    if not product_map:
+        logger.warning("Empty product map — check pdufa_dates.json / fda_designations.json")
+        return 0
+
+    logger.info("Fetching EMA meeting outcomes for %s...", as_of_date)
+    events = collect_ema_meeting_outcomes(
+        as_of_date=as_of_date,
+        cache_dir=cache_dir,
+        product_ticker_map=product_map,
+    )
+    logger.info("EMA meeting outcomes: %d events cached", len(events))
+    return len(events)
+
+
 def warm_euctr(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
     """Fetch and cache EUCTR trial records. Returns count."""
     from wake_robin_data_pipeline.collectors.euctr_collector import collect_euctr_trials
@@ -649,6 +703,12 @@ def main():
         help="SEC 13F PIT cache output directory (default: data/caches/sec_13f/PIT/{date})",
     )
     parser.add_argument(
+        "--ema-cache-dir",
+        type=str,
+        default=str(PROJECT_ROOT / "cache" / "ema"),
+        help="EMA committee cache directory",
+    )
+    parser.add_argument(
         "--euctr-cache-dir",
         type=str,
         default=str(PROJECT_ROOT / "cache" / "trials" / "euctr"),
@@ -762,6 +822,22 @@ def main():
         except Exception as e:
             logger.error(f"Price PIT warm failed: {e}")
 
+    ema_agenda_count = 0
+    if "ema_agenda" in sources:
+        try:
+            ema_cache_dir = Path(args.ema_cache_dir)
+            ema_agenda_count = warm_ema_committee_events(as_of, data_dir, ema_cache_dir)
+        except Exception as e:
+            logger.error(f"EMA committee events warm failed: {e}")
+
+    ema_outcomes_count = 0
+    if "ema_outcomes" in sources:
+        try:
+            ema_cache_dir = Path(args.ema_cache_dir)
+            ema_outcomes_count = warm_ema_meeting_outcomes(as_of, data_dir, ema_cache_dir)
+        except Exception as e:
+            logger.error(f"EMA meeting outcomes warm failed: {e}")
+
     euctr_count = 0
     if "euctr" in sources:
         try:
@@ -821,6 +897,10 @@ def main():
         parts.append(f"{ledger_entries} ledger entries")
     if price_pit_count:
         parts.append(f"{price_pit_count} price PIT tickers")
+    if ema_agenda_count:
+        parts.append(f"{ema_agenda_count} EMA agenda events")
+    if ema_outcomes_count:
+        parts.append(f"{ema_outcomes_count} EMA outcome events")
     if euctr_count:
         parts.append(f"{euctr_count} EUCTR records")
     if ctis_count:

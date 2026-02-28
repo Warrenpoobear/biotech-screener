@@ -137,6 +137,10 @@ class Module3Config:
         # FDA regulatory notices config (approvals, CRLs, etc. from Federal Register)
         self.enable_fda_regulatory: str = "off"
 
+        # EMA committee events config (EU regulatory — AdCom equivalent)
+        self.enable_ema_committee: str = "cache_only"
+        self.ema_cache_dir = Path("cache/ema")
+
         # CTGov cache override: None=auto-detect from repo, False=disable
         self.ctgov_cache_dir: Optional[Any] = None
 
@@ -210,6 +214,18 @@ class Module3Config:
                 config.enable_fda_regulatory = "off"
             else:
                 config.enable_fda_regulatory = str(val)
+
+        # EMA committee settings (same bool compat)
+        if 'enable_ema_committee' in config_dict:
+            val = config_dict['enable_ema_committee']
+            if val is True:
+                config.enable_ema_committee = "live"
+            elif val is False:
+                config.enable_ema_committee = "off"
+            else:
+                config.enable_ema_committee = str(val)
+        if 'ema_cache_dir' in config_dict:
+            config.ema_cache_dir = Path(config_dict['ema_cache_dir'])
 
         return config
 
@@ -519,6 +535,57 @@ def convert_fda_adcom_to_v2(
         new_value=new_value,
         source="FDA_ADCOM_CALENDAR",
         confidence=ConfidenceLevel.HIGH,
+        disclosed_at=event.get('disclosed_at', as_of_date.isoformat()),
+        tags=tuple(event.get('tags', [])),
+    )
+
+
+def convert_ema_committee_to_v2(
+    event: Dict[str, Any],
+    as_of_date: date,
+) -> Optional[CatalystEventV2]:
+    """Convert EMA committee event/outcome dict to CatalystEventV2.
+
+    Agenda items → MED confidence, EMA_COMMITTEE_AGENDA type.
+    Meeting outcomes → HIGH confidence, EMA_COMMITTEE_OUTCOME type.
+    """
+    ticker = event.get('ticker')
+    event_date_str = event.get('event_date')
+    if not ticker or not event_date_str:
+        return None
+
+    schema = event.get('schema', '')
+    is_outcome = 'outcome' in schema
+    event_type = EventType.EMA_COMMITTEE_OUTCOME if is_outcome else EventType.EMA_COMMITTEE_AGENDA
+    confidence_str = event.get('confidence', 'MED').upper()
+    confidence = {
+        'HIGH': ConfidenceLevel.HIGH,
+        'MED': ConfidenceLevel.MED,
+        'LOW': ConfidenceLevel.LOW,
+    }.get(confidence_str, ConfidenceLevel.MED)
+
+    medicine_name = event.get('medicine_name', '')
+    title = event.get('title', '')
+
+    try:
+        event_date = date.fromisoformat(event_date_str)
+        days_until = (event_date - as_of_date).days
+    except ValueError:
+        days_until = 0
+
+    new_value = f"{days_until}d_ahead: {title}" if title else f"{days_until}d_ahead"
+
+    return CatalystEventV2(
+        ticker=ticker,
+        nct_id=event.get('id', f"EMA_{ticker}_{event_date_str}"),
+        event_type=event_type,
+        event_severity=EVENT_SEVERITY_MAP.get(event_type, EventSeverity.POSITIVE),
+        event_date=event_date_str,
+        field_changed="ema_committee",
+        prior_value=None,
+        new_value=new_value,
+        source=event.get('source', 'EMA_COMMITTEE'),
+        confidence=confidence,
         disclosed_at=event.get('disclosed_at', as_of_date.isoformat()),
         tags=tuple(event.get('tags', [])),
     )
@@ -1780,6 +1847,84 @@ def compute_module_3_catalyst(
                 total_events += reg_added
                 logger.info(f"Merged {reg_added} FDA regulatory events "
                            f"(new tickers: {reg_tickers_added}, deduped: {reg_deduped})")
+
+    # =========================================================================
+    # MERGE EMA COMMITTEE EVENTS INTO SCORING PIPELINE
+    # =========================================================================
+    _ema_mode = config.enable_ema_committee
+    if _ema_mode == "off":
+        logger.debug("EMA committee source off (set enable_ema_committee='cache_only' or 'live')")
+    else:
+        ema_all_events = []
+        ema_events_cache = Path(config.ema_cache_dir) / f"ema_committee_events_{as_of_date.isoformat()}.json"
+        ema_outcomes_cache = Path(config.ema_cache_dir) / f"ema_meeting_outcomes_{as_of_date.isoformat()}.json"
+
+        if _ema_mode == "cache_only":
+            for _ema_path in (ema_events_cache, ema_outcomes_cache):
+                if _ema_path.exists():
+                    try:
+                        with open(_ema_path, 'r', encoding='utf-8') as f:
+                            _payload = json.load(f)
+                        _evts = _payload.get("events", _payload) if isinstance(_payload, dict) else _payload
+                        ema_all_events.extend(_evts)
+                        logger.info(f"EMA: loaded {len(_evts)} events from {_ema_path.name}")
+                    except Exception as e:
+                        logger.warning(f"EMA cache read error ({_ema_path.name}): {e}")
+                else:
+                    logger.debug(f"EMA: no cache at {_ema_path}")
+        elif _ema_mode == "live":
+            try:
+                from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+                    collect_ema_committee_events,
+                    collect_ema_meeting_outcomes,
+                )
+                from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
+                    build_product_ticker_map,
+                )
+                product_map = build_product_ticker_map(data_dir)
+                ema_all_events.extend(collect_ema_committee_events(
+                    as_of_date=as_of_date,
+                    cache_dir=config.ema_cache_dir,
+                    product_ticker_map=product_map,
+                ))
+                ema_all_events.extend(collect_ema_meeting_outcomes(
+                    as_of_date=as_of_date,
+                    cache_dir=config.ema_cache_dir,
+                    product_ticker_map=product_map,
+                ))
+            except ImportError:
+                logger.debug("EMA committee collector not available")
+            except Exception as e:
+                logger.warning(f"EMA committee live collection error: {e}")
+
+        if ema_all_events:
+            ema_added = 0
+            ema_tickers_added = 0
+            ema_touched: Set[str] = set()
+            for ema_event in ema_all_events:
+                ticker = ema_event.get('ticker')
+                if not ticker or ticker not in active_tickers:
+                    continue
+                v2_event = convert_ema_committee_to_v2(ema_event, as_of_date)
+                if v2_event is None:
+                    continue
+                if ticker not in events_by_ticker_v2:
+                    events_by_ticker_v2[ticker] = []
+                    ema_tickers_added += 1
+                events_by_ticker_v2[ticker].append(v2_event)
+                ema_touched.add(ticker)
+                ema_added += 1
+
+            if ema_added > 0:
+                ema_deduped = 0
+                for ticker in sorted(ema_touched):
+                    events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
+                    ema_deduped += deduped
+                    events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
+                total_deduped += ema_deduped
+                total_events += ema_added
+                logger.info(f"Merged {ema_added} EMA committee events "
+                           f"(new tickers: {ema_tickers_added}, deduped: {ema_deduped})")
 
     # Update total event count for combined diff + calendar + corporate events
     combined_tickers_with_events = len([t for t in events_by_ticker_v2 if events_by_ticker_v2[t]])

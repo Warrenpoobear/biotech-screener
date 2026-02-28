@@ -126,6 +126,7 @@ class LedgerConfig:
     data_dir: Optional[Path] = None
     strict_ctgov: bool = False
     merged_trials_cache_dir: Optional[Path] = None
+    ema_cache_dir: Optional[Path] = None
 
     def __post_init__(self):
         # ctgov_cache_dir=False means "disabled" — skip auto-detection
@@ -143,6 +144,10 @@ class LedgerConfig:
             self.merged_trials_cache_dir = _PROJECT_ROOT / "cache" / "trials" / "merged"
         elif self.merged_trials_cache_dir is False:
             self.merged_trials_cache_dir = None
+        if self.ema_cache_dir is None:
+            self.ema_cache_dir = _PROJECT_ROOT / "cache" / "ema"
+        elif self.ema_cache_dir is False:
+            self.ema_cache_dir = None
 
 
 # =============================================================================
@@ -543,6 +548,62 @@ def _load_fda_regulatory_events(
     return entries
 
 
+def _load_ema_events(
+    as_of_date: date,
+    ema_cache_dir: Path,
+) -> List[LedgerEntry]:
+    """Load EMA committee events and outcomes from cache."""
+    entries: List[LedgerEntry] = []
+
+    cache_files = [
+        ("ema_committee_events", "EMA_AGENDA", "MED"),
+        ("ema_meeting_outcomes", "EMA_OUTCOME", "HIGH"),
+    ]
+
+    for prefix, source_tag, default_conf in cache_files:
+        cache_path = ema_cache_dir / f"{prefix}_{as_of_date.isoformat()}.json"
+        if not cache_path.exists():
+            continue
+
+        try:
+            payload = json.loads(cache_path.read_text())
+        except (json.JSONDecodeError, OSError) as e:
+            logger.warning("EMA cache read error (%s): %s", cache_path.name, e)
+            continue
+
+        events = payload.get("events", payload) if isinstance(payload, dict) else payload
+
+        for ev in events:
+            ticker = ev.get("ticker", "")
+            event_date = ev.get("event_date", "")
+            disclosed_at = ev.get("disclosed_at", "")
+            event_name = ev.get("title", "")
+            confidence = ev.get("confidence", default_conf)
+
+            if not ticker or not disclosed_at:
+                continue
+
+            event_id_str = ev.get("id", "")
+            source_uid = event_id_str or f"{ticker}_{event_date}"
+            eid = compute_event_id(
+                source_tag, source_uid, ticker, source_tag,
+                "event_date", event_date, event_date, None,
+                disclosed_at, "ema_committee",
+            )
+            entries.append(LedgerEntry(
+                event_id=eid, ticker=ticker, event_type=source_tag,
+                event_date=event_date, event_date_end=None,
+                date_precision="DAY", disclosed_at=disclosed_at,
+                source=source_tag, source_uid=source_uid,
+                confidence=confidence,
+                extractor_version="ema_committee",
+                event_name=event_name, field_changed="event_date",
+                value=event_date, tags=(),
+            ))
+
+    return entries
+
+
 def _load_pdufa_events(data_dir: Path) -> List[LedgerEntry]:
     """Load PDUFA dates from production data."""
     entries: List[LedgerEntry] = []
@@ -681,6 +742,15 @@ def build_event_ledger(
         logger.info("Ledger: %d PDUFA entries loaded", len(pdufa))
     except Exception as e:
         logger.warning("Ledger: PDUFA load failed: %s", e)
+
+    # 7. EMA committee events + outcomes
+    if config.ema_cache_dir is not None:
+        try:
+            ema = _load_ema_events(as_of_date, config.ema_cache_dir)
+            all_entries.extend(ema)
+            logger.info("Ledger: %d EMA committee entries loaded", len(ema))
+        except Exception as e:
+            logger.warning("Ledger: EMA committee load failed: %s", e)
 
     # PIT filter: only include entries disclosed on or before as_of_date
     ledger = [e for e in all_entries if e.disclosed_at <= as_of_str]
