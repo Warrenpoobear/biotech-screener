@@ -232,7 +232,7 @@ class TestExtractDossier:
         assert dossier["ticker"] == "T000"
         assert dossier["archetype"] == "drug_developer"
         assert isinstance(dossier["gates"], dict)
-        assert len(dossier["gates"]) == 4
+        assert len(dossier["gates"]) == 5
         assert dossier["composite_rank"] is not None
         assert dossier["composite_score"] is not None
         assert dossier["tier_dev"] in ("A", "B", "C", "D")
