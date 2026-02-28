@@ -27,6 +27,7 @@ import time
 import zipfile
 import xml.etree.ElementTree as ET
 from collections import Counter
+from email.utils import parsedate_to_datetime
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -59,6 +60,16 @@ _COMMITTEE_EVENT_SLUGS = {
 }
 
 _MAX_XLSX_ROWS = 2000
+
+# RSS feed URLs — richer discovery source than landing-page HTML.
+_RSS_AGENDAS_URL = f"{_BASE_URL}/en/agendas-and-minutes.xml"
+_RSS_EVENTS_URL = f"{_BASE_URL}/en/events.xml"
+
+# Committee slugs that may appear in RSS titles or links.
+_COMMITTEE_RSS_SLUGS = {
+    "CHMP": ["chmp", "committee-medicinal-products-human-use"],
+    "PRAC": ["prac", "pharmacovigilance-risk-assessment-committee"],
+}
 
 # Meeting date range regex: "8 - 11 December 2025" or "8-11 December 2025"
 # Also handles "10 November 2025" (single day) and "27 - 30 January 2026"
@@ -142,6 +153,134 @@ def _fetch_xlsx_bytes(url: str) -> bytes:
     )
     resp.raise_for_status()
     return resp.content
+
+
+def _fetch_xml(url: str) -> str:
+    """Fetch RSS/XML feed with rate limiting. Returns raw text."""
+    time.sleep(_RATE_LIMIT_SECS)
+    resp = requests.get(
+        url,
+        timeout=_REQUEST_TIMEOUT,
+        headers={
+            "Accept": "application/rss+xml, application/xml, text/xml",
+            "User-Agent": "Wake Robin Research (biotech screener)",
+        },
+    )
+    resp.raise_for_status()
+    return resp.text
+
+
+# ---------------------------------------------------------------------------
+# RSS feed parsing
+# ---------------------------------------------------------------------------
+
+
+def _parse_rfc2822_date(s: str) -> Optional[str]:
+    """Parse RFC 2822 date string to ISO date. Returns None on failure."""
+    try:
+        dt = parsedate_to_datetime(s)
+        return dt.strftime("%Y-%m-%d")
+    except (ValueError, TypeError, IndexError):
+        return None
+
+
+def _parse_rss_agenda_items(xml_text: str, committee: str) -> List[dict]:
+    """Parse agendas-and-minutes RSS feed for a committee's agenda items.
+
+    Returns list of dicts with keys: agenda_url, title, pub_date, meeting_start, meeting_end.
+    """
+    slugs = _COMMITTEE_RSS_SLUGS.get(committee, [committee.lower()])
+    try:
+        root = ET.fromstring(xml_text)
+    except ET.ParseError:
+        return []
+
+    items: List[dict] = []
+    for item_el in root.iter("item"):
+        title_el = item_el.find("title")
+        link_el = item_el.find("link")
+        pubdate_el = item_el.find("pubDate")
+
+        title = title_el.text.strip() if title_el is not None and title_el.text else ""
+        link = link_el.text.strip() if link_el is not None and link_el.text else ""
+        pub_date = pubdate_el.text.strip() if pubdate_el is not None and pubdate_el.text else ""
+
+        if not title or not link:
+            continue
+
+        title_lower = title.lower()
+        if not any(slug in title_lower for slug in slugs):
+            continue
+
+        dates = _parse_meeting_dates(title)
+        if not dates:
+            continue
+
+        items.append({
+            "agenda_url": link,
+            "title": title,
+            "pub_date": pub_date,
+            "meeting_start": dates[0],
+            "meeting_end": dates[1],
+        })
+
+    return items
+
+
+def _construct_annex_url(agenda_url: str) -> Optional[str]:
+    """Derive annex XLSX URL from an agenda PDF URL.
+
+    Pattern: ``/agenda-chmp-meeting-{date}_en.pdf``
+           → ``/annex-agenda-chmp-meeting-{date}_en.xlsx``
+
+    Returns None if the URL doesn't match the expected pattern.
+    """
+    if "/agenda-" not in agenda_url or not agenda_url.lower().endswith(".pdf"):
+        return None
+    return agenda_url.replace("/agenda-", "/annex-agenda-").replace(".pdf", ".xlsx")
+
+
+def _parse_rss_event_items(xml_text: str, committee: str) -> List[dict]:
+    """Parse events RSS feed for committee meeting event page links.
+
+    Returns list of dicts with keys: url, title, meeting_start, meeting_end.
+    """
+    slugs = _COMMITTEE_RSS_SLUGS.get(committee, [committee.lower()])
+    try:
+        root = ET.fromstring(xml_text)
+    except ET.ParseError:
+        return []
+
+    items: List[dict] = []
+    for item_el in root.iter("item"):
+        title_el = item_el.find("title")
+        link_el = item_el.find("link")
+
+        title = title_el.text.strip() if title_el is not None and title_el.text else ""
+        link = link_el.text.strip() if link_el is not None and link_el.text else ""
+
+        if not title or not link:
+            continue
+
+        title_lower = title.lower()
+        link_lower = link.lower()
+        if not any(slug in title_lower or slug in link_lower for slug in slugs):
+            continue
+
+        dates = _parse_meeting_dates(title)
+        if not dates:
+            dates = _parse_meeting_dates(link)
+        if not dates:
+            continue
+
+        items.append({
+            "url": link,
+            "title": title,
+            "meeting_start": dates[0],
+            "meeting_end": dates[1],
+        })
+
+    return items
 
 
 # ---------------------------------------------------------------------------
@@ -980,6 +1119,83 @@ def _parse_meeting_highlights(
 
 
 # ---------------------------------------------------------------------------
+# Shared XLSX → event conversion
+# ---------------------------------------------------------------------------
+
+
+def _process_annex_items(
+    items: List[dict],
+    committee: str,
+    meeting_start: str,
+    meeting_end: str,
+    disclosed_at: str,
+    annex_url: str,
+    product_ticker_map: Dict[str, str],
+    stats: dict,
+    all_unmatched: list,
+) -> List[dict]:
+    """Convert parsed XLSX items into ema_committee_event.v1 dicts.
+
+    Shared between all discovery tiers to avoid duplication.
+    Mutates *stats* (matched/unmatched counters) and *all_unmatched* in place.
+    Returns list of event dicts.
+    """
+    events: List[dict] = []
+    seen_ids: set = set()
+
+    for item in items:
+        medicine_name = item["medicine_name"]
+        active_substance = item.get("active_substance")
+        process_type = item.get("process_type") or "OTHER"
+        sponsor = item.get("sponsor")
+
+        ticker = _match_medicine_to_ticker(
+            medicine_name, active_substance, product_ticker_map,
+        )
+        if ticker is None:
+            stats["unmatched"] += 1
+            if len(all_unmatched) < _MAX_UNMATCHED_LOG:
+                all_unmatched.append(f"{medicine_name} ({active_substance})")
+            continue
+
+        stats["matched"] += 1
+
+        event_id = _make_event_id(
+            f"EMA_{committee}_AGENDA_{meeting_end}",
+            medicine_name, process_type, committee, meeting_start, meeting_end,
+        )
+        if event_id in seen_ids:
+            continue
+        seen_ids.add(event_id)
+
+        classified_type = _classify_procedure_type(process_type)
+        events.append({
+            "schema": "ema_committee_event.v1",
+            "id": event_id,
+            "ticker": ticker,
+            "jurisdiction": "EU",
+            "committee": committee,
+            "meeting_start": meeting_start,
+            "meeting_end": meeting_end,
+            "event_date": meeting_end,
+            "disclosed_at": disclosed_at,
+            "item_type": "agenda_item",
+            "procedure_type": classified_type,
+            "medicine_name": medicine_name,
+            "active_substance": active_substance,
+            "sponsor": sponsor,
+            "title": f"{committee} agenda: {process_type} — {medicine_name}",
+            "source": f"EMA_{committee}_AGENDA",
+            "url": annex_url,
+            "confidence": "MED",
+            "tags": _make_tags(classified_type, committee),
+            "raw": {"process_type_raw": process_type},
+        })
+
+    return events
+
+
+# ---------------------------------------------------------------------------
 # Public entrypoints
 # ---------------------------------------------------------------------------
 
@@ -994,11 +1210,10 @@ def collect_ema_committee_events(
 ) -> List[dict]:
     """Collect EMA committee agenda events.
 
-    Primary path: discover meeting event pages → download Annex XLSX →
-    parse product-level items → match to tickers.
-
-    Fallback: if no event pages found, falls back to the landing-page
-    document discovery (creates meeting-level placeholder events).
+    Three-tier discovery (tried in order, merged with dedup):
+      Tier 1: RSS agendas feed → construct annex XLSX URL → download & parse
+      Tier 2: RSS events feed → fetch event pages → find annex → download & parse
+      Tier 3: Landing page fallback (event page discovery + doc link fallback)
 
     Args:
         as_of_date: PIT date for cache naming.
@@ -1029,11 +1244,16 @@ def collect_ema_committee_events(
     as_of_iso = as_of_date.isoformat()
     all_events: List[dict] = []
     all_unmatched: List[str] = []
-    stats = {
+    stats: Dict[str, Any] = {
         "fetched_pages": 0, "parsed_docs": 0, "matched_tickers": 0,
         "unmatched_items": 0, "meeting_pages_found": 0, "docs_found": 0,
         "items_parsed": 0, "matched": 0, "unmatched": 0,
+        "rss_agenda_items": 0, "rss_event_items": 0, "discovery_tier": {},
     }
+
+    # Cache RSS XML once per run — shared across committees.
+    rss_agendas_xml: Optional[str] = None
+    rss_events_xml: Optional[str] = None
 
     for committee in committees:
         landing_url = _COMMITTEE_URLS.get(committee)
@@ -1041,6 +1261,133 @@ def collect_ema_committee_events(
             logger.warning("Unknown EMA committee: %s", committee)
             continue
 
+        collected_meeting_keys: set = set()  # (committee, meeting_end)
+
+        # ---------------------------------------------------------------
+        # Tier 1: RSS agendas-and-minutes feed
+        # ---------------------------------------------------------------
+        if rss_agendas_xml is None:
+            try:
+                rss_agendas_xml = _fetch_xml(_RSS_AGENDAS_URL)
+                stats["fetched_pages"] += 1
+            except Exception as e:
+                logger.warning("EMA RSS agendas feed fetch failed: %s", e)
+                rss_agendas_xml = ""
+
+        rss_agenda_items = (
+            _parse_rss_agenda_items(rss_agendas_xml, committee)
+            if rss_agendas_xml else []
+        )
+        stats["rss_agenda_items"] += len(rss_agenda_items)
+
+        for rss_item in rss_agenda_items:
+            meeting_start = rss_item["meeting_start"]
+            meeting_end = rss_item["meeting_end"]
+            meeting_key = (committee, meeting_end)
+
+            if meeting_key in collected_meeting_keys:
+                continue
+            if meeting_end < cutoff or meeting_end > as_of_iso:
+                continue
+
+            annex_url = _construct_annex_url(rss_item["agenda_url"])
+            if not annex_url:
+                continue
+
+            try:
+                xlsx_bytes = _fetch_xlsx_bytes(annex_url)
+                xlsx_items = _parse_annex_xlsx(xlsx_bytes)
+            except Exception as e:
+                logger.warning("EMA tier-1 annex fetch/parse failed for %s: %s", annex_url, e)
+                continue
+
+            if not xlsx_items:
+                continue
+
+            stats["items_parsed"] += len(xlsx_items)
+            disclosed_at = (
+                _parse_rfc2822_date(rss_item.get("pub_date", "")) or as_of_iso
+            )
+            new_events = _process_annex_items(
+                xlsx_items, committee, meeting_start, meeting_end,
+                disclosed_at, annex_url, product_ticker_map, stats, all_unmatched,
+            )
+            all_events.extend(new_events)
+            collected_meeting_keys.add(meeting_key)
+            stats["parsed_docs"] += 1
+            stats["discovery_tier"][f"{committee}|{meeting_end}"] = "rss_agendas"
+
+        # ---------------------------------------------------------------
+        # Tier 2: RSS events feed → event pages
+        # ---------------------------------------------------------------
+        if rss_events_xml is None:
+            try:
+                rss_events_xml = _fetch_xml(_RSS_EVENTS_URL)
+                stats["fetched_pages"] += 1
+            except Exception as e:
+                logger.warning("EMA RSS events feed fetch failed: %s", e)
+                rss_events_xml = ""
+
+        rss_event_items = (
+            _parse_rss_event_items(rss_events_xml, committee)
+            if rss_events_xml else []
+        )
+        stats["rss_event_items"] += len(rss_event_items)
+
+        for rss_item in rss_event_items:
+            meeting_start = rss_item["meeting_start"]
+            meeting_end = rss_item["meeting_end"]
+            meeting_key = (committee, meeting_end)
+
+            if meeting_key in collected_meeting_keys:
+                continue
+            if meeting_end < cutoff or meeting_end > as_of_iso:
+                continue
+
+            try:
+                event_html = _fetch(rss_item["url"])
+                stats["fetched_pages"] += 1
+            except Exception as e:
+                logger.warning("EMA tier-2 event page fetch failed for %s: %s",
+                               rss_item["url"], e)
+                continue
+
+            docs = _discover_event_page_documents(event_html, _BASE_URL)
+            stats["docs_found"] += len(docs.get("agenda", [])) + len(docs.get("annex", []))
+
+            annex_parsed = False
+            for annex_doc in docs.get("annex", []):
+                aurl = annex_doc["url"]
+                if not aurl.lower().endswith(".xlsx"):
+                    continue
+                try:
+                    xlsx_bytes = _fetch_xlsx_bytes(aurl)
+                    xlsx_items = _parse_annex_xlsx(xlsx_bytes)
+                except Exception as e:
+                    logger.warning("EMA tier-2 annex fetch/parse failed for %s: %s", aurl, e)
+                    continue
+
+                if not xlsx_items:
+                    continue
+
+                annex_parsed = True
+                stats["items_parsed"] += len(xlsx_items)
+                disclosed_at = annex_doc.get("first_published") or as_of_iso
+                new_events = _process_annex_items(
+                    xlsx_items, committee, meeting_start, meeting_end,
+                    disclosed_at, aurl, product_ticker_map, stats, all_unmatched,
+                )
+                all_events.extend(new_events)
+                stats["parsed_docs"] += 1
+                break  # one annex per meeting
+
+            if annex_parsed:
+                collected_meeting_keys.add(meeting_key)
+                stats["discovery_tier"][f"{committee}|{meeting_end}"] = "rss_events"
+
+        # ---------------------------------------------------------------
+        # Tier 3: Landing page fallback (existing discovery paths)
+        # ---------------------------------------------------------------
         try:
             landing_html = _fetch(landing_url)
             stats["fetched_pages"] += 1
@@ -1048,7 +1395,7 @@ def collect_ema_committee_events(
             logger.warning("EMA %s landing page fetch failed: %s", committee, e)
             continue
 
-        # --- Primary path: event page discovery --------------------------
+        # Tier 3a: event page discovery from landing page
         meeting_pages = _discover_meeting_event_pages(landing_html, _BASE_URL, committee)
         stats["meeting_pages_found"] += len(meeting_pages)
 
@@ -1056,8 +1403,10 @@ def collect_ema_committee_events(
         for mp in meeting_pages:
             meeting_start = mp["meeting_start"]
             meeting_end = mp["meeting_end"]
+            meeting_key = (committee, meeting_end)
 
-            # Lookback + PIT filter
+            if meeting_key in collected_meeting_keys:
+                continue
             if meeting_end < cutoff or meeting_end > as_of_iso:
                 continue
 
@@ -1071,7 +1420,6 @@ def collect_ema_committee_events(
             docs = _discover_event_page_documents(event_html, _BASE_URL)
             stats["docs_found"] += len(docs.get("agenda", [])) + len(docs.get("annex", []))
 
-            # Try annex XLSX first — product-level data
             annex_parsed = False
             for annex_doc in docs.get("annex", []):
                 annex_url = annex_doc["url"]
@@ -1079,73 +1427,31 @@ def collect_ema_committee_events(
                     continue
                 try:
                     xlsx_bytes = _fetch_xlsx_bytes(annex_url)
-                    items = _parse_annex_xlsx(xlsx_bytes)
+                    xlsx_items = _parse_annex_xlsx(xlsx_bytes)
                 except Exception as e:
                     logger.warning("EMA annex XLSX fetch/parse failed for %s: %s", annex_url, e)
                     continue
 
-                if not items:
+                if not xlsx_items:
                     continue
 
                 annex_parsed = True
                 used_event_pages = True
-                stats["items_parsed"] += len(items)
+                stats["items_parsed"] += len(xlsx_items)
                 disclosed_at = annex_doc.get("first_published") or as_of_iso
-
-                seen_ids: set = set()
-                for item in items:
-                    medicine_name = item["medicine_name"]
-                    active_substance = item.get("active_substance")
-                    process_type = item.get("process_type") or "OTHER"
-                    sponsor = item.get("sponsor")
-
-                    ticker = _match_medicine_to_ticker(
-                        medicine_name, active_substance, product_ticker_map,
-                    )
-                    if ticker is None:
-                        stats["unmatched"] += 1
-                        if len(all_unmatched) < _MAX_UNMATCHED_LOG:
-                            all_unmatched.append(f"{medicine_name} ({active_substance})")
-                        continue
-
-                    stats["matched"] += 1
-
-                    event_id = _make_event_id(
-                        f"EMA_{committee}_AGENDA_{meeting_end}",
-                        medicine_name, process_type, committee, meeting_start, meeting_end,
-                    )
-                    if event_id in seen_ids:
-                        continue
-                    seen_ids.add(event_id)
-
-                    classified_type = _classify_procedure_type(process_type)
-                    all_events.append({
-                        "schema": "ema_committee_event.v1",
-                        "id": event_id,
-                        "ticker": ticker,
-                        "jurisdiction": "EU",
-                        "committee": committee,
-                        "meeting_start": meeting_start,
-                        "meeting_end": meeting_end,
-                        "event_date": meeting_end,
-                        "disclosed_at": disclosed_at,
-                        "item_type": "agenda_item",
-                        "procedure_type": classified_type,
-                        "medicine_name": medicine_name,
-                        "active_substance": active_substance,
-                        "sponsor": sponsor,
-                        "title": f"{committee} agenda: {process_type} — {medicine_name}",
-                        "source": f"EMA_{committee}_AGENDA",
-                        "url": annex_url,
-                        "confidence": "MED",
-                        "tags": _make_tags(classified_type, committee),
-                        "raw": {"process_type_raw": process_type},
-                    })
-
+                new_events = _process_annex_items(
+                    xlsx_items, committee, meeting_start, meeting_end,
+                    disclosed_at, annex_url, product_ticker_map, stats, all_unmatched,
+                )
+                all_events.extend(new_events)
+                collected_meeting_keys.add(meeting_key)
                 stats["parsed_docs"] += 1
-                break  # one annex per meeting is enough
+                stats["discovery_tier"].setdefault(
+                    f"{committee}|{meeting_end}", "landing_page",
+                )
+                break  # one annex per meeting
 
-            # If no annex parsed, create meeting-level placeholder from event page
+            # Meeting-level placeholder from event page (no annex)
             if not annex_parsed:
                 used_event_pages = True
                 event_id = _make_event_id(
@@ -1179,19 +1485,25 @@ def collect_ema_committee_events(
                     "tags": _make_tags(None, committee),
                     "raw": {},
                 })
+                collected_meeting_keys.add(meeting_key)
+                stats["discovery_tier"].setdefault(
+                    f"{committee}|{meeting_end}", "landing_page",
+                )
 
-        # --- Fallback: landing page document discovery -------------------
+        # Tier 3b: landing page doc links fallback
         if not used_event_pages:
             logger.info("EMA %s: no event pages found, falling back to landing page docs", committee)
             links = _discover_links(landing_html, _BASE_URL)
-            seen_meetings: set = set()
 
             for doc in links["agenda_docs"]:
                 dates = _parse_meeting_dates(doc["title"])
                 if not dates:
                     continue
                 meeting_start, meeting_end = dates
+                meeting_key = (committee, meeting_end)
 
+                if meeting_key in collected_meeting_keys:
+                    continue
                 if meeting_end < cutoff or meeting_end > as_of_iso:
                     continue
 
@@ -1200,75 +1512,32 @@ def collect_ema_committee_events(
                 is_binary = doc_url.lower().endswith((".pdf", ".xlsx", ".xls"))
 
                 if is_binary:
-                    meeting_key = (committee, meeting_end)
-                    if meeting_key in seen_meetings:
-                        continue
-                    seen_meetings.add(meeting_key)
-
                     # Try XLSX parsing for product-level data
                     if doc_url.lower().endswith(".xlsx"):
                         try:
                             xlsx_bytes = _fetch_xlsx_bytes(doc_url)
-                            items = _parse_annex_xlsx(xlsx_bytes)
+                            xlsx_items = _parse_annex_xlsx(xlsx_bytes)
                         except Exception as e:
                             logger.warning("EMA fallback XLSX parse failed for %s: %s", doc_url, e)
-                            items = []
+                            xlsx_items = []
 
-                        if items:
-                            stats["items_parsed"] += len(items)
-                            seen_ids: set = set()
-                            for item in items:
-                                medicine_name = item["medicine_name"]
-                                active_substance = item.get("active_substance")
-                                process_type = item.get("process_type") or "OTHER"
-                                sponsor = item.get("sponsor")
-
-                                ticker = _match_medicine_to_ticker(
-                                    medicine_name, active_substance, product_ticker_map,
-                                )
-                                if ticker is None:
-                                    stats["unmatched"] += 1
-                                    if len(all_unmatched) < _MAX_UNMATCHED_LOG:
-                                        all_unmatched.append(f"{medicine_name} ({active_substance})")
-                                    continue
-
-                                stats["matched"] += 1
-                                event_id = _make_event_id(
-                                    f"EMA_{committee}_AGENDA_{meeting_end}",
-                                    medicine_name, process_type, committee, meeting_start, meeting_end,
-                                )
-                                if event_id in seen_ids:
-                                    continue
-                                seen_ids.add(event_id)
-
-                                classified_type = _classify_procedure_type(process_type)
-                                all_events.append({
-                                    "schema": "ema_committee_event.v1",
-                                    "id": event_id,
-                                    "ticker": ticker,
-                                    "jurisdiction": "EU",
-                                    "committee": committee,
-                                    "meeting_start": meeting_start,
-                                    "meeting_end": meeting_end,
-                                    "event_date": meeting_end,
-                                    "disclosed_at": doc_disclosed,
-                                    "item_type": "agenda_item",
-                                    "procedure_type": classified_type,
-                                    "medicine_name": medicine_name,
-                                    "active_substance": active_substance,
-                                    "sponsor": sponsor,
-                                    "title": f"{committee} agenda: {process_type} — {medicine_name}",
-                                    "source": f"EMA_{committee}_AGENDA",
-                                    "url": doc_url,
-                                    "confidence": "MED",
-                                    "tags": _make_tags(classified_type, committee),
-                                    "raw": {"process_type_raw": process_type},
-                                })
-
+                        if xlsx_items:
+                            stats["items_parsed"] += len(xlsx_items)
+                            new_events = _process_annex_items(
+                                xlsx_items, committee, meeting_start, meeting_end,
+                                doc_disclosed, doc_url, product_ticker_map,
+                                stats, all_unmatched,
+                            )
+                            all_events.extend(new_events)
+                            collected_meeting_keys.add(meeting_key)
                             stats["parsed_docs"] += 1
+                            stats["discovery_tier"].setdefault(
+                                f"{committee}|{meeting_end}", "landing_page",
+                            )
                             continue  # skip meeting-level placeholder
 
                     # Meeting-level placeholder (PDF or empty XLSX)
+                    collected_meeting_keys.add(meeting_key)
                     event_id = _make_event_id(
                         f"EMA_{committee}_AGENDA_{meeting_end}",
                         committee, meeting_start, meeting_end,
@@ -1301,6 +1570,9 @@ def collect_ema_committee_events(
                         "raw": {},
                     })
                     stats["parsed_docs"] += 1
+                    stats["discovery_tier"].setdefault(
+                        f"{committee}|{meeting_end}", "landing_page",
+                    )
                 else:
                     try:
                         doc_html = _fetch(doc_url)
@@ -1320,6 +1592,10 @@ def collect_ema_committee_events(
 
                     all_events.extend(events)
                     all_unmatched.extend(unmatched)
+                    collected_meeting_keys.add(meeting_key)
+                    stats["discovery_tier"].setdefault(
+                        f"{committee}|{meeting_end}", "landing_page",
+                    )
 
     stats["matched_tickers"] = len(set(ev["ticker"] for ev in all_events if ev.get("ticker")))
     stats["meeting_events"] = len([ev for ev in all_events if ev.get("item_type") == "meeting"])

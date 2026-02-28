@@ -19,6 +19,8 @@ PROJECT_ROOT = Path(__file__).parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+_MOD = "wake_robin_data_pipeline.collectors.ema_committee_collector"
+
 
 # ---------------------------------------------------------------------------
 # Inline HTML fixtures
@@ -390,10 +392,9 @@ class TestUnmatchedTop:
                 return EVENT_PAGE_HTML
             return "<html></html>"
 
-        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
-                    side_effect=mock_fetch), \
-             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
-                    return_value=xlsx_bytes):
+        with patch(f"{_MOD}._fetch", side_effect=mock_fetch), \
+             patch(f"{_MOD}._fetch_xlsx_bytes", return_value=xlsx_bytes), \
+             patch(f"{_MOD}._fetch_xml", side_effect=Exception("no RSS in tests")):
             collect_ema_committee_events(
                 as_of_date=date(2026, 2, 28),
                 cache_dir=tmp_path,
@@ -888,10 +889,9 @@ class TestTagsOnEmittedEvents:
                 return EVENT_PAGE_HTML
             return "<html></html>"
 
-        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
-                    side_effect=mock_fetch), \
-             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
-                    return_value=xlsx_bytes):
+        with patch(f"{_MOD}._fetch", side_effect=mock_fetch), \
+             patch(f"{_MOD}._fetch_xlsx_bytes", return_value=xlsx_bytes), \
+             patch(f"{_MOD}._fetch_xml", side_effect=Exception("no RSS in tests")):
             events = collect_ema_committee_events(
                 as_of_date=date(2026, 2, 28),
                 cache_dir=tmp_path,
@@ -922,8 +922,8 @@ class TestTagsOnEmittedEvents:
         def mock_fetch(url):
             return COMMITTEE_LANDING_HTML
 
-        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
-                    side_effect=mock_fetch):
+        with patch(f"{_MOD}._fetch", side_effect=mock_fetch), \
+             patch(f"{_MOD}._fetch_xml", side_effect=Exception("no RSS in tests")):
             events = collect_ema_committee_events(
                 as_of_date=date(2026, 1, 31),
                 cache_dir=tmp_path,
@@ -1773,10 +1773,9 @@ class TestCollectEmaWithEventPages:
         def mock_fetch_xlsx(url):
             return xlsx_bytes
 
-        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
-                    side_effect=mock_fetch), \
-             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
-                    side_effect=mock_fetch_xlsx):
+        with patch(f"{_MOD}._fetch", side_effect=mock_fetch), \
+             patch(f"{_MOD}._fetch_xlsx_bytes", side_effect=mock_fetch_xlsx), \
+             patch(f"{_MOD}._fetch_xml", side_effect=Exception("no RSS in tests")):
             events = collect_ema_committee_events(
                 as_of_date=date(2026, 2, 28),
                 cache_dir=tmp_path,
@@ -1808,10 +1807,9 @@ class TestCollectEmaWithEventPages:
         def mock_fetch_xlsx(url):
             return xlsx_bytes
 
-        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
-                    side_effect=mock_fetch), \
-             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
-                    side_effect=mock_fetch_xlsx):
+        with patch(f"{_MOD}._fetch", side_effect=mock_fetch), \
+             patch(f"{_MOD}._fetch_xlsx_bytes", side_effect=mock_fetch_xlsx), \
+             patch(f"{_MOD}._fetch_xml", side_effect=Exception("no RSS in tests")):
             collect_ema_committee_events(
                 as_of_date=date(2026, 2, 28),
                 cache_dir=tmp_path,
@@ -1844,10 +1842,9 @@ class TestCollectEmaWithEventPages:
         def mock_fetch_xlsx(url):
             return xlsx_bytes
 
-        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
-                    side_effect=mock_fetch), \
-             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
-                    side_effect=mock_fetch_xlsx):
+        with patch(f"{_MOD}._fetch", side_effect=mock_fetch), \
+             patch(f"{_MOD}._fetch_xlsx_bytes", side_effect=mock_fetch_xlsx), \
+             patch(f"{_MOD}._fetch_xml", side_effect=Exception("no RSS in tests")):
             result1 = collect_ema_committee_events(
                 as_of_date=date(2026, 2, 28),
                 cache_dir=tmp_path,
@@ -1874,8 +1871,8 @@ class TestCollectEmaWithEventPages:
             # Return landing page with docs but NO event page links
             return COMMITTEE_LANDING_HTML
 
-        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
-                    side_effect=mock_fetch):
+        with patch(f"{_MOD}._fetch", side_effect=mock_fetch), \
+             patch(f"{_MOD}._fetch_xml", side_effect=Exception("no RSS in tests")):
             events = collect_ema_committee_events(
                 as_of_date=date(2026, 1, 31),
                 cache_dir=tmp_path,
@@ -1903,10 +1900,9 @@ class TestCollectEmaWithEventPages:
         def mock_fetch_xlsx(url):
             return b"not a valid xlsx"
 
-        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch",
-                    side_effect=mock_fetch), \
-             patch("wake_robin_data_pipeline.collectors.ema_committee_collector._fetch_xlsx_bytes",
-                    side_effect=mock_fetch_xlsx):
+        with patch(f"{_MOD}._fetch", side_effect=mock_fetch), \
+             patch(f"{_MOD}._fetch_xlsx_bytes", side_effect=mock_fetch_xlsx), \
+             patch(f"{_MOD}._fetch_xml", side_effect=Exception("no RSS in tests")):
             events = collect_ema_committee_events(
                 as_of_date=date(2026, 2, 28),
                 cache_dir=tmp_path,
@@ -1916,3 +1912,392 @@ class TestCollectEmaWithEventPages:
 
         # Should still produce events (meeting-level placeholders)
         assert len(events) >= 1
+
+
+# ===========================================================================
+# RSS feed fixtures
+# ===========================================================================
+
+RSS_AGENDAS_XML = """<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel><title>EMA Agendas and minutes</title>
+<item>
+  <title>Agenda of the CHMP meeting 23-26 February 2026</title>
+  <link>https://www.ema.europa.eu/en/documents/agenda/agenda-chmp-meeting-23-26-february-2026_en.pdf</link>
+  <pubDate>Thu, 20 Feb 2026 00:00:00 +0100</pubDate>
+</item>
+<item>
+  <title>Agenda of the PRAC meeting 3-6 February 2026</title>
+  <link>https://www.ema.europa.eu/en/documents/agenda/agenda-prac-meeting-3-6-february-2026_en.pdf</link>
+  <pubDate>Fri, 31 Jan 2026 00:00:00 +0100</pubDate>
+</item>
+<item>
+  <title>Minutes of the CAT meeting January 2026</title>
+  <link>https://www.ema.europa.eu/en/documents/minutes/cat-january-2026.pdf</link>
+  <pubDate>Mon, 05 Jan 2026 00:00:00 +0100</pubDate>
+</item>
+</channel></rss>"""
+
+RSS_EVENTS_XML = """<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel><title>EMA Events</title>
+<item>
+  <title>CHMP meeting 23-26 February 2026</title>
+  <link>https://www.ema.europa.eu/en/events/committee-medicinal-products-human-use-chmp-23-26-february-2026</link>
+  <pubDate>Fri, 01 Jan 2026 00:00:00 +0100</pubDate>
+</item>
+<item>
+  <title>CHMP meeting 24-27 March 2026</title>
+  <link>https://www.ema.europa.eu/en/events/committee-medicinal-products-human-use-chmp-24-27-march-2026</link>
+  <pubDate>Fri, 01 Jan 2026 00:00:00 +0100</pubDate>
+</item>
+<item>
+  <title>Scientific workshop on AI in drug development</title>
+  <link>https://www.ema.europa.eu/en/events/ai-workshop-2026</link>
+  <pubDate>Mon, 01 Dec 2025 00:00:00 +0100</pubDate>
+</item>
+</channel></rss>"""
+
+
+# ===========================================================================
+# RSS helper unit tests
+# ===========================================================================
+
+
+class TestFetchXml:
+    """Tests for _fetch_xml."""
+
+    def test_successful_fetch(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _fetch_xml
+
+        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector.requests.get") as mock_get, \
+             patch("wake_robin_data_pipeline.collectors.ema_committee_collector.time.sleep"):
+            mock_get.return_value.text = RSS_AGENDAS_XML
+            mock_get.return_value.raise_for_status = lambda: None
+            result = _fetch_xml("https://example.com/feed.xml")
+
+        assert "CHMP" in result
+        mock_get.assert_called_once()
+        call_kwargs = mock_get.call_args
+        assert "application/rss+xml" in call_kwargs.kwargs.get("headers", {}).get("Accept", "")
+
+    def test_network_error_raises(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _fetch_xml
+
+        with patch("wake_robin_data_pipeline.collectors.ema_committee_collector.requests.get",
+                    side_effect=Exception("Connection failed")), \
+             patch("wake_robin_data_pipeline.collectors.ema_committee_collector.time.sleep"):
+            with pytest.raises(Exception, match="Connection failed"):
+                _fetch_xml("https://example.com/feed.xml")
+
+
+class TestParseRssAgendaItems:
+    """Tests for _parse_rss_agenda_items."""
+
+    def test_finds_chmp_items(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_rss_agenda_items
+
+        items = _parse_rss_agenda_items(RSS_AGENDAS_XML, "CHMP")
+        assert len(items) == 1
+        assert items[0]["meeting_start"] == "2026-02-23"
+        assert items[0]["meeting_end"] == "2026-02-26"
+        assert "agenda-chmp" in items[0]["agenda_url"]
+        assert items[0]["pub_date"] == "Thu, 20 Feb 2026 00:00:00 +0100"
+
+    def test_finds_prac_items(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_rss_agenda_items
+
+        items = _parse_rss_agenda_items(RSS_AGENDAS_XML, "PRAC")
+        assert len(items) == 1
+        assert items[0]["meeting_start"] == "2026-02-03"
+        assert items[0]["meeting_end"] == "2026-02-06"
+
+    def test_skips_non_committee(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_rss_agenda_items
+
+        items = _parse_rss_agenda_items(RSS_AGENDAS_XML, "CHMP")
+        # CAT minutes and PRAC agenda should not appear in CHMP results
+        titles = [i["title"] for i in items]
+        assert not any("CAT" in t for t in titles)
+        assert not any("PRAC" in t for t in titles)
+
+    def test_empty_feed(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_rss_agenda_items
+
+        xml = '<?xml version="1.0"?><rss><channel></channel></rss>'
+        items = _parse_rss_agenda_items(xml, "CHMP")
+        assert items == []
+
+    def test_invalid_xml_returns_empty(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_rss_agenda_items
+
+        items = _parse_rss_agenda_items("not valid xml at all", "CHMP")
+        assert items == []
+
+
+class TestConstructAnnexUrl:
+    """Tests for _construct_annex_url."""
+
+    def test_happy_path(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _construct_annex_url
+
+        url = "https://www.ema.europa.eu/en/documents/agenda/agenda-chmp-meeting-23-26-february-2026_en.pdf"
+        result = _construct_annex_url(url)
+        assert result == "https://www.ema.europa.eu/en/documents/agenda/annex-agenda-chmp-meeting-23-26-february-2026_en.xlsx"
+
+    def test_already_annex_url_returns_none(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _construct_annex_url
+
+        url = "https://www.ema.europa.eu/en/documents/annex/annex-agenda-chmp-meeting-23-26-february-2026_en.xlsx"
+        result = _construct_annex_url(url)
+        # no "/agenda-" in URL (has "/annex-agenda-" but no bare "/agenda-")
+        # Actually "/annex-agenda-" contains "/agenda-" via replace... let me check
+        # The URL has "/annex/" not "/agenda/" so the replace changes /agenda- prefix part
+        # But this URL does contain "/agenda-" (in "annex-agenda-"). Let's test:
+        # It DOES contain "/agenda-" so replace will fire. But .pdf check fails.
+        assert result is None  # not .pdf
+
+    def test_non_matching_url_returns_none(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _construct_annex_url
+
+        assert _construct_annex_url("https://example.com/report.docx") is None
+        assert _construct_annex_url("https://example.com/agenda.docx") is None
+        assert _construct_annex_url("") is None
+
+
+class TestParseRssEventItems:
+    """Tests for _parse_rss_event_items."""
+
+    def test_finds_chmp_events(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_rss_event_items
+
+        items = _parse_rss_event_items(RSS_EVENTS_XML, "CHMP")
+        assert len(items) == 2
+        assert items[0]["meeting_start"] == "2026-02-23"
+        assert items[0]["meeting_end"] == "2026-02-26"
+        assert "/en/events/" in items[0]["url"]
+
+    def test_skips_non_committee(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_rss_event_items
+
+        items = _parse_rss_event_items(RSS_EVENTS_XML, "CHMP")
+        # The AI workshop should not match CHMP slugs
+        titles = [i["title"] for i in items]
+        assert not any("workshop" in t.lower() for t in titles)
+
+    def test_parses_dates_from_title(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_rss_event_items
+
+        items = _parse_rss_event_items(RSS_EVENTS_XML, "CHMP")
+        march_items = [i for i in items if i["meeting_end"] == "2026-03-27"]
+        assert len(march_items) == 1
+        assert march_items[0]["meeting_start"] == "2026-03-24"
+
+
+class TestParseRfc2822Date:
+    """Tests for _parse_rfc2822_date."""
+
+    def test_valid_date(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_rfc2822_date
+
+        assert _parse_rfc2822_date("Thu, 20 Feb 2026 00:00:00 +0100") == "2026-02-20"
+
+    def test_invalid_date_returns_none(self):
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import _parse_rfc2822_date
+
+        assert _parse_rfc2822_date("not a date") is None
+        assert _parse_rfc2822_date("") is None
+
+
+# ===========================================================================
+# RSS integration tests
+# ===========================================================================
+
+
+class TestCollectRssIntegration:
+    """Integration tests for three-tier RSS discovery."""
+
+    def _build_xlsx(self):
+        return _build_test_xlsx([
+            _make_row("MAA", "Aficamten", "aficamten", "Cytokinetics"),
+            _make_row("Variation type II", "Keytruda", "pembrolizumab", "Merck"),
+            _make_row("MAA", "UnmappedDrug", "unknown_sub", "UnknownCo"),
+        ])
+
+    def test_tier1_rss_agenda_success(self, tmp_path):
+        """Tier 1: RSS agenda → annex XLSX → product events with tickers."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        xlsx_bytes = self._build_xlsx()
+
+        with patch(f"{_MOD}._fetch_xml", return_value=RSS_AGENDAS_XML), \
+             patch(f"{_MOD}._fetch_xlsx_bytes", return_value=xlsx_bytes), \
+             patch(f"{_MOD}._fetch") as mock_fetch:
+            # _fetch for landing page (tier 3) — returns page with NO event links
+            mock_fetch.return_value = "<html><body></body></html>"
+            events = collect_ema_committee_events(
+                as_of_date=date(2026, 2, 28),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        tickers = [e["ticker"] for e in events if e["ticker"]]
+        assert "CYTK" in tickers
+        assert "MRK" in tickers
+        assert all(e["item_type"] == "agenda_item" for e in events if e["ticker"])
+
+        # Check stats
+        cache_path = tmp_path / "ema_committee_events_2026-02-28.json"
+        payload = json.loads(cache_path.read_text())
+        stats = payload["stats"]
+        assert stats["rss_agenda_items"] >= 1
+        assert stats["discovery_tier"].get("CHMP|2026-02-26") == "rss_agendas"
+
+    def test_tier2_when_tier1_fails(self, tmp_path):
+        """Tier 2: RSS events feed → event page → annex XLSX when tier 1 fails."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        xlsx_bytes = self._build_xlsx()
+
+        # RSS agendas returns no matching items (empty feed)
+        empty_rss = '<?xml version="1.0"?><rss><channel></channel></rss>'
+
+        def mock_fetch(url):
+            if "/en/events/" in url:
+                return EVENT_PAGE_HTML
+            # Landing page — no event page links
+            return "<html><body></body></html>"
+
+        with patch(f"{_MOD}._fetch_xml") as mock_xml, \
+             patch(f"{_MOD}._fetch_xlsx_bytes", return_value=xlsx_bytes), \
+             patch(f"{_MOD}._fetch", side_effect=mock_fetch):
+            # First call (_RSS_AGENDAS_URL) returns empty, second (_RSS_EVENTS_URL) returns events
+            mock_xml.side_effect = [empty_rss, RSS_EVENTS_XML]
+            events = collect_ema_committee_events(
+                as_of_date=date(2026, 2, 28),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        tickers = [e["ticker"] for e in events if e["ticker"]]
+        assert "CYTK" in tickers
+        assert "MRK" in tickers
+
+        cache_path = tmp_path / "ema_committee_events_2026-02-28.json"
+        payload = json.loads(cache_path.read_text())
+        stats = payload["stats"]
+        assert stats["rss_event_items"] >= 1
+        assert stats["discovery_tier"].get("CHMP|2026-02-26") == "rss_events"
+
+    def test_tier3_fallback_when_rss_empty(self, tmp_path):
+        """Tier 3: both RSS feeds empty → landing page fallback."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        def mock_fetch(url):
+            # Return landing page with docs but NO event page links
+            return COMMITTEE_LANDING_HTML
+
+        with patch(f"{_MOD}._fetch_xml", side_effect=Exception("no RSS")), \
+             patch(f"{_MOD}._fetch", side_effect=mock_fetch):
+            events = collect_ema_committee_events(
+                as_of_date=date(2026, 1, 31),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        # Should fall back to meeting-level events
+        meeting_events = [e for e in events if e["item_type"] == "meeting"]
+        assert len(meeting_events) > 0
+
+    def test_dedup_across_tiers(self, tmp_path):
+        """Same meeting in tier 1 and tier 2: only processed once."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        xlsx_bytes = self._build_xlsx()
+
+        def mock_fetch(url):
+            if "/en/events/" in url:
+                return EVENT_PAGE_HTML
+            return "<html><body></body></html>"
+
+        with patch(f"{_MOD}._fetch_xml") as mock_xml, \
+             patch(f"{_MOD}._fetch_xlsx_bytes", return_value=xlsx_bytes), \
+             patch(f"{_MOD}._fetch", side_effect=mock_fetch):
+            # Both RSS feeds return the same Feb 2026 meeting
+            mock_xml.side_effect = [RSS_AGENDAS_XML, RSS_EVENTS_XML]
+            events = collect_ema_committee_events(
+                as_of_date=date(2026, 2, 28),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        # Count product-level events for the Feb meeting
+        feb_events = [e for e in events if e["meeting_end"] == "2026-02-26" and e["ticker"]]
+        # Should be 2 (CYTK + MRK) not 4 (duplicated)
+        assert len(feb_events) == 2
+
+    def test_stats_fields_populated(self, tmp_path):
+        """Stats include rss_agenda_items, rss_event_items, discovery_tier."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        xlsx_bytes = self._build_xlsx()
+
+        with patch(f"{_MOD}._fetch_xml", return_value=RSS_AGENDAS_XML), \
+             patch(f"{_MOD}._fetch_xlsx_bytes", return_value=xlsx_bytes), \
+             patch(f"{_MOD}._fetch", return_value="<html><body></body></html>"):
+            collect_ema_committee_events(
+                as_of_date=date(2026, 2, 28),
+                cache_dir=tmp_path,
+                product_ticker_map=PRODUCT_MAP,
+                committees=("CHMP",),
+            )
+
+        cache_path = tmp_path / "ema_committee_events_2026-02-28.json"
+        payload = json.loads(cache_path.read_text())
+        stats = payload["stats"]
+        assert "rss_agenda_items" in stats
+        assert "rss_event_items" in stats
+        assert "discovery_tier" in stats
+        assert isinstance(stats["discovery_tier"], dict)
+
+    def test_determinism_two_runs(self, tmp_path):
+        """Two runs with same inputs produce identical output."""
+        from wake_robin_data_pipeline.collectors.ema_committee_collector import (
+            collect_ema_committee_events,
+        )
+
+        xlsx_bytes = self._build_xlsx()
+
+        def run():
+            d = tmp_path / "run"
+            d.mkdir(exist_ok=True)
+            with patch(f"{_MOD}._fetch_xml", return_value=RSS_AGENDAS_XML), \
+                 patch(f"{_MOD}._fetch_xlsx_bytes", return_value=xlsx_bytes), \
+                 patch(f"{_MOD}._fetch", return_value="<html><body></body></html>"):
+                return collect_ema_committee_events(
+                    as_of_date=date(2026, 2, 28),
+                    cache_dir=d,
+                    product_ticker_map=PRODUCT_MAP,
+                    committees=("CHMP",),
+                )
+
+        # Delete cache between runs to force re-collection
+        result1 = run()
+        (tmp_path / "run" / "ema_committee_events_2026-02-28.json").unlink()
+        result2 = run()
+
+        ids1 = [e["id"] for e in result1]
+        ids2 = [e["id"] for e in result2]
+        assert ids1 == ids2
