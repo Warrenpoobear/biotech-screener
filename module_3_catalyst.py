@@ -141,6 +141,10 @@ class Module3Config:
         self.enable_ema_committee: str = "cache_only"
         self.ema_cache_dir = Path("cache/ema")
 
+        # Conference calendar config (medical conference programs + abstracts)
+        self.enable_conference_calendar: str = "cache_only"
+        self.conference_cache_dir = Path("cache/conferences")
+
         # CTGov cache override: None=auto-detect from repo, False=disable
         self.ctgov_cache_dir: Optional[Any] = None
 
@@ -226,6 +230,18 @@ class Module3Config:
                 config.enable_ema_committee = str(val)
         if 'ema_cache_dir' in config_dict:
             config.ema_cache_dir = Path(config_dict['ema_cache_dir'])
+
+        # Conference calendar settings (same bool compat)
+        if 'enable_conference_calendar' in config_dict:
+            val = config_dict['enable_conference_calendar']
+            if val is True:
+                config.enable_conference_calendar = "live"
+            elif val is False:
+                config.enable_conference_calendar = "off"
+            else:
+                config.enable_conference_calendar = str(val)
+        if 'conference_cache_dir' in config_dict:
+            config.conference_cache_dir = Path(config_dict['conference_cache_dir'])
 
         return config
 
@@ -600,6 +616,58 @@ def convert_ema_committee_to_v2(
         confidence=confidence,
         disclosed_at=event.get('disclosed_at', as_of_date.isoformat()),
         tags=tags,
+    )
+
+
+def convert_conference_event_to_v2(
+    event: Dict[str, Any],
+    as_of_date: date,
+) -> Optional[CatalystEventV2]:
+    """Convert conference-derived catalyst event dict to CatalystEventV2.
+
+    Maps event_type strings from the collector to EventType enum values:
+      CONF_LATE_BREAKER       → CONFERENCE_LATE_BREAKER (HIGH)
+      CONF_PRESENTATION       → CONFERENCE_PRESENTATION (MED)
+      CONF_ABSTRACT_ACCEPTED_PR → CONFERENCE_ACCEPTED_ABSTRACT (MED)
+    """
+    ticker = event.get('ticker')
+    event_date_str = event.get('event_date')
+    if not ticker or not event_date_str:
+        return None
+
+    _TYPE_MAP = {
+        "CONF_LATE_BREAKER": EventType.CONFERENCE_LATE_BREAKER,
+        "CONF_PRESENTATION": EventType.CONFERENCE_PRESENTATION,
+        "CONF_ABSTRACT_ACCEPTED_PR": EventType.CONFERENCE_ACCEPTED_ABSTRACT,
+    }
+    event_type = _TYPE_MAP.get(event.get('event_type', ''))
+    if event_type is None:
+        return None
+
+    confidence_str = event.get('confidence', 'MED').upper()
+    confidence = {
+        'HIGH': ConfidenceLevel.HIGH,
+        'MED': ConfidenceLevel.MED,
+        'LOW': ConfidenceLevel.LOW,
+    }.get(confidence_str, ConfidenceLevel.MED)
+
+    severity = EVENT_SEVERITY_MAP.get(event_type, EventSeverity.POSITIVE)
+    conference = event.get('conference', '')
+    title = event.get('title', '')
+
+    return CatalystEventV2(
+        ticker=ticker,
+        nct_id=event.get('id', f"CONF_{ticker}_{event_date_str}"),
+        event_type=event_type,
+        event_severity=severity,
+        event_date=event_date_str,
+        field_changed="conference_calendar",
+        prior_value=None,
+        new_value=f"{conference}: {title}"[:120] if title else conference,
+        source=event.get('source', 'CONF_PROGRAM'),
+        confidence=confidence,
+        disclosed_at=event.get('disclosed_at', as_of_date.isoformat()),
+        tags=tuple(t for t in [f"conference:{conference.lower()}"] if t),
     )
 
 
@@ -1937,6 +2005,88 @@ def compute_module_3_catalyst(
                 total_events += ema_added
                 logger.info(f"Merged {ema_added} EMA committee events "
                            f"(new tickers: {ema_tickers_added}, deduped: {ema_deduped})")
+
+    # =========================================================================
+    # MERGE CONFERENCE CALENDAR EVENTS INTO SCORING PIPELINE
+    # =========================================================================
+    _conf_mode = config.enable_conference_calendar
+    if _conf_mode == "off":
+        logger.debug("Conference calendar source off (set enable_conference_calendar='cache_only' or 'live')")
+    else:
+        conf_all_events: List[Dict[str, Any]] = []
+        _conf_cache_dir = Path(config.conference_cache_dir)
+
+        if _conf_mode == "cache_only":
+            # Scan for derived_events cache files across all conference slugs
+            if _conf_cache_dir.exists():
+                for _slug_dir in sorted(_conf_cache_dir.iterdir()):
+                    if not _slug_dir.is_dir():
+                        continue
+                    _derived_path = _slug_dir / f"derived_events_{as_of_date.isoformat()}.json"
+                    if _derived_path.exists():
+                        try:
+                            with open(_derived_path, 'r', encoding='utf-8') as f:
+                                _payload = json.load(f)
+                            _evts = _payload.get("records", _payload) if isinstance(_payload, dict) else _payload
+                            conf_all_events.extend(_evts)
+                            logger.info(f"Conference: loaded {len(_evts)} events from {_derived_path.name}")
+                        except Exception as e:
+                            logger.warning(f"Conference cache read error ({_derived_path.name}): {e}")
+            else:
+                logger.debug(f"Conference: no cache dir at {_conf_cache_dir}")
+        elif _conf_mode == "live":
+            try:
+                from wake_robin_data_pipeline.collectors.conference_program_collector import (
+                    collect_conference_derived_events,
+                )
+                from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
+                    build_product_ticker_map,
+                )
+                product_map = build_product_ticker_map(data_dir)
+                # MVP: collect configured conferences (currently just asco)
+                for _slug in ("asco",):
+                    _evts = collect_conference_derived_events(
+                        conference_slug=_slug,
+                        edition_year=as_of_date.year,
+                        as_of_date=as_of_date,
+                        cache_dir=_conf_cache_dir,
+                        product_ticker_map=product_map,
+                        company_ticker_map={},
+                    )
+                    conf_all_events.extend(_evts)
+            except ImportError:
+                logger.debug("Conference program collector not available")
+            except Exception as e:
+                logger.warning(f"Conference calendar live collection error: {e}")
+
+        if conf_all_events:
+            conf_added = 0
+            conf_tickers_added = 0
+            conf_touched: Set[str] = set()
+            for conf_event in conf_all_events:
+                ticker = conf_event.get('ticker')
+                if not ticker or ticker not in active_tickers:
+                    continue
+                v2_event = convert_conference_event_to_v2(conf_event, as_of_date)
+                if v2_event is None:
+                    continue
+                if ticker not in events_by_ticker_v2:
+                    events_by_ticker_v2[ticker] = []
+                    conf_tickers_added += 1
+                events_by_ticker_v2[ticker].append(v2_event)
+                conf_touched.add(ticker)
+                conf_added += 1
+
+            if conf_added > 0:
+                conf_deduped = 0
+                for ticker in sorted(conf_touched):
+                    events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
+                    conf_deduped += deduped
+                    events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
+                total_deduped += conf_deduped
+                total_events += conf_added
+                logger.info(f"Merged {conf_added} conference calendar events "
+                           f"(new tickers: {conf_tickers_added}, deduped: {conf_deduped})")
 
     # Update total event count for combined diff + calendar + corporate events
     combined_tickers_with_events = len([t for t in events_by_ticker_v2 if events_by_ticker_v2[t]])

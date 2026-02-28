@@ -147,6 +147,14 @@ class EventType(str, Enum):
     # EMA committee meeting outcome (opinion / decision)
     EMA_COMMITTEE_OUTCOME = "EMA_COMMITTEE_OUTCOME"
 
+    # ==========================================================================
+    # CONFERENCE CALENDAR EVENTS (medical conference programs + abstracts)
+    # ==========================================================================
+    # Late-breaking / plenary presentation (high-impact data)
+    CONFERENCE_LATE_BREAKER = "CONFERENCE_LATE_BREAKER"
+    # Company-disclosed accepted abstract (PR-based)
+    CONFERENCE_ACCEPTED_ABSTRACT = "CONFERENCE_ACCEPTED_ABSTRACT"
+
     # Unknown (catch-all, zero score)
     UNKNOWN = "UNKNOWN"
 
@@ -218,6 +226,10 @@ EVENT_SEVERITY_MAP: Dict[EventType, EventSeverity] = {
     # EMA committee events (EU regulatory)
     EventType.EMA_COMMITTEE_AGENDA: EventSeverity.POSITIVE,            # Scheduled item
     EventType.EMA_COMMITTEE_OUTCOME: EventSeverity.CRITICAL_POSITIVE,  # Decision
+
+    # Conference calendar events
+    EventType.CONFERENCE_LATE_BREAKER: EventSeverity.CRITICAL_POSITIVE,  # Late-breaking presentation
+    EventType.CONFERENCE_ACCEPTED_ABSTRACT: EventSeverity.POSITIVE,      # Accepted abstract PR
 
     # Neutral
     EventType.CT_RESULTS_POSTED: EventSeverity.NEUTRAL,
@@ -315,6 +327,10 @@ EVENT_DEFAULT_CONFIDENCE: Dict[EventType, ConfidenceLevel] = {
     # EMA committee events
     EventType.EMA_COMMITTEE_AGENDA: ConfidenceLevel.MED,   # Agenda item (scheduled, not decided)
     EventType.EMA_COMMITTEE_OUTCOME: ConfidenceLevel.HIGH,  # Meeting decision
+
+    # Conference calendar events
+    EventType.CONFERENCE_LATE_BREAKER: ConfidenceLevel.HIGH,      # Late-breaking / plenary presentation
+    EventType.CONFERENCE_ACCEPTED_ABSTRACT: ConfidenceLevel.MED,  # Company-disclosed accepted abstract
 
     EventType.UNKNOWN: ConfidenceLevel.LOW,
 }
@@ -420,6 +436,10 @@ EVENT_TYPE_WEIGHT: Dict[EventType, Decimal] = {
     # EMA committee events (EU regulatory — AdCom equivalent)
     EventType.EMA_COMMITTEE_AGENDA: Decimal("12.0"),   # Scheduled: similar to FDA_SUBMISSION
     EventType.EMA_COMMITTEE_OUTCOME: Decimal("18.0"),  # Decision: similar to FDA_APPROVAL
+
+    # Conference calendar events
+    EventType.CONFERENCE_LATE_BREAKER: Decimal("18.0"),        # Late-breaking: high-impact data
+    EventType.CONFERENCE_ACCEPTED_ABSTRACT: Decimal("10.0"),   # Accepted abstract PR
 
     EventType.UNKNOWN: Decimal("0.0"),
 }

@@ -689,6 +689,42 @@ def warm_merged_trials(as_of_date: date, data_dir: Path, cache_root: Path) -> in
     return len(merged)
 
 
+def warm_conference_calendar(
+    as_of_date: date,
+    data_dir: Path,
+    cache_dir: Path,
+    conference_slug: str = "asco",
+    edition_year: int | None = None,
+) -> int:
+    """Fetch and cache conference program + derived catalyst events. Returns count."""
+    from wake_robin_data_pipeline.collectors.conference_program_collector import (
+        collect_conference_derived_events,
+    )
+    from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
+        build_product_ticker_map,
+    )
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    product_map = build_product_ticker_map(data_dir)
+    if not product_map:
+        logger.warning("Empty product map — check pdufa_dates.json / fda_designations.json")
+
+    year = edition_year or as_of_date.year
+    logger.info("Fetching conference calendar for %s %d (as_of=%s)...", conference_slug, year, as_of_date)
+    events = collect_conference_derived_events(
+        conference_slug=conference_slug,
+        edition_year=year,
+        as_of_date=as_of_date,
+        cache_dir=cache_dir,
+        product_ticker_map=product_map,
+        company_ticker_map={},
+    )
+    logger.info("Conference calendar: %d events cached", len(events))
+    return len(events)
+
+
 def _load_registry_cache(path: Path) -> list:
     """Load a per-registry JSON cache file. Returns empty list on error."""
     if not path.exists():
@@ -781,6 +817,24 @@ def main():
         action="store_true",
         default=False,
         help="Disable CTIS detail endpoint enrichment (default: enrichment ON)",
+    )
+    parser.add_argument(
+        "--conference-cache-dir",
+        type=str,
+        default=str(PROJECT_ROOT / "cache" / "conferences"),
+        help="Conference calendar cache directory",
+    )
+    parser.add_argument(
+        "--conference",
+        type=str,
+        default="asco",
+        help="Conference slug to warm (default: asco)",
+    )
+    parser.add_argument(
+        "--conference-year",
+        type=int,
+        default=None,
+        help="Conference edition year (default: derived from as-of-date year)",
     )
 
     args = parser.parse_args()
@@ -939,6 +993,18 @@ def main():
         except Exception as e:
             logger.error(f"Merged trials warm failed: {e}")
 
+    conference_count = 0
+    if "conference_calendar" in sources:
+        try:
+            conf_cache_dir = Path(args.conference_cache_dir)
+            conference_count = warm_conference_calendar(
+                as_of, data_dir, conf_cache_dir,
+                conference_slug=args.conference,
+                edition_year=args.conference_year,
+            )
+        except Exception as e:
+            logger.error(f"Conference calendar warm failed: {e}")
+
     # Write refresh diagnostics sidecar
     if refresh_results:
         cache_root = PROJECT_ROOT / "cache"
@@ -975,6 +1041,8 @@ def main():
         parts.append(f"{isrctn_count} ISRCTN records")
     if merged_trials_count:
         parts.append(f"{merged_trials_count} merged trial records")
+    if conference_count:
+        parts.append(f"{conference_count} conference events")
     logger.info(f"Cache warm complete: {', '.join(parts)}")
     return 0
 
