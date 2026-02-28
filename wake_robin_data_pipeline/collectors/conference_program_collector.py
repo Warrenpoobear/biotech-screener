@@ -163,6 +163,195 @@ class ConferenceAdapter(ABC):
         """Parse abstract HTML/JSON into conference_abstract.v1 records."""
 
 
+ALL_CONFERENCE_SLUGS = ("asco", "esmo", "aacr", "ash", "sitc", "sabcs", "aan", "acr")
+
+
+class ConfexMixin:
+    """Shared parser for conferences hosted on confex.com (ASH, SITC).
+
+    Confex sites use a consistent HTML structure:
+      Sessions:  <div class="item" data-type="..."> with child spans .title, .date, .time, .location
+      Abstracts: <div class="abstract" data-number="..."> with child spans .title, .author, .affiliation, .sessiontype
+    """
+
+    def _parse_confex_sessions(
+        self, html: str, edition_year: int, conf_name: str, tz: str,
+    ) -> List[dict]:
+        sessions: List[dict] = []
+        try:
+            from html.parser import HTMLParser
+
+            class ConfexSessionParser(HTMLParser):
+                def __init__(self):
+                    super().__init__()
+                    self._in_item = False
+                    self._current: Dict[str, Any] = {}
+                    self._capture_tag: Optional[str] = None
+                    self._text_buf: List[str] = []
+                    self.items: List[dict] = []
+
+                def handle_starttag(self, tag, attrs):
+                    attrs_d = dict(attrs)
+                    if tag == "div" and "item" in (attrs_d.get("class") or "").split():
+                        self._in_item = True
+                        self._current = {
+                            "session_type": attrs_d.get("data-type", "other"),
+                        }
+                    if self._in_item:
+                        cls = attrs_d.get("class") or ""
+                        if "title" in cls.split():
+                            self._capture_tag = "title"
+                            self._text_buf = []
+                        elif "date" in cls.split():
+                            self._capture_tag = "date"
+                            self._text_buf = []
+                        elif "time" in cls.split():
+                            self._capture_tag = "time"
+                            self._text_buf = []
+                            self._current["start_raw"] = attrs_d.get("data-start", "")
+                            self._current["end_raw"] = attrs_d.get("data-end", "")
+                        elif "location" in cls.split():
+                            self._capture_tag = "location"
+                            self._text_buf = []
+
+                def handle_data(self, data):
+                    if self._capture_tag:
+                        self._text_buf.append(data)
+
+                def handle_endtag(self, tag):
+                    if self._capture_tag and tag == "span":
+                        text = " ".join(self._text_buf).strip()
+                        self._current[self._capture_tag] = text
+                        self._capture_tag = None
+                    if tag == "div" and self._in_item and self._current.get("title"):
+                        self.items.append(dict(self._current))
+                        self._in_item = False
+                        self._current = {}
+
+            parser = ConfexSessionParser()
+            parser.feed(html)
+
+            for s in parser.items:
+                title = s.get("title", "")
+                stype = _classify_session_type(s.get("session_type", ""), title)
+                start_raw = s.get("start_raw", "")
+                end_raw = s.get("end_raw", "")
+
+                key = f"{conf_name}|{edition_year}|{stype}|{title}|{start_raw}"
+                sid = f"CONF_{conf_name}_{edition_year}_SESSION_{_stable_hash10(key)}"
+
+                entities = _extract_entities(title)
+
+                sessions.append({
+                    "schema": "conference_session.v1",
+                    "id": sid,
+                    "conference": conf_name,
+                    "edition_year": edition_year,
+                    "session_type": stype,
+                    "track": None,
+                    "title": title,
+                    "start_dt_local": start_raw,
+                    "end_dt_local": end_raw or None,
+                    "timezone": tz,
+                    "start_dt_utc": _local_to_utc(start_raw, tz),
+                    "end_dt_utc": _local_to_utc(end_raw, tz) if end_raw else None,
+                    "location": s.get("location"),
+                    "url": "",
+                    "entities": entities,
+                })
+        except Exception as e:
+            logger.warning("%s confex session parse error: %s", conf_name, e)
+
+        return sessions
+
+    def _parse_confex_abstracts(
+        self, html: str, edition_year: int, conf_name: str, tz: str,
+    ) -> List[dict]:
+        abstracts: List[dict] = []
+        try:
+            from html.parser import HTMLParser
+
+            class ConfexAbstractParser(HTMLParser):
+                def __init__(self):
+                    super().__init__()
+                    self._in_abstract = False
+                    self._current: Dict[str, Any] = {}
+                    self._capture_tag: Optional[str] = None
+                    self._text_buf: List[str] = []
+                    self.abstracts: List[dict] = []
+
+                def handle_starttag(self, tag, attrs):
+                    attrs_d = dict(attrs)
+                    if tag == "div" and "abstract" in (attrs_d.get("class") or "").split():
+                        self._in_abstract = True
+                        self._current = {
+                            "abstract_code": attrs_d.get("data-number", ""),
+                            "presentation_type": attrs_d.get("data-type", "other"),
+                        }
+                    if self._in_abstract:
+                        cls = attrs_d.get("class") or ""
+                        if "title" in cls.split():
+                            self._capture_tag = "title"
+                            self._text_buf = []
+                        elif "author" in cls.split():
+                            self._capture_tag = "presenter"
+                            self._text_buf = []
+                        elif "affiliation" in cls.split():
+                            self._capture_tag = "affiliation"
+                            self._text_buf = []
+                        elif "sessiontype" in cls.split():
+                            self._capture_tag = "session_type"
+                            self._text_buf = []
+
+                def handle_data(self, data):
+                    if self._capture_tag:
+                        self._text_buf.append(data)
+
+                def handle_endtag(self, tag):
+                    if self._capture_tag and tag == "span":
+                        text = " ".join(self._text_buf).strip()
+                        self._current[self._capture_tag] = text
+                        self._capture_tag = None
+                    if tag == "div" and self._in_abstract and self._current.get("title"):
+                        self.abstracts.append(dict(self._current))
+                        self._in_abstract = False
+                        self._current = {}
+
+            parser = ConfexAbstractParser()
+            parser.feed(html)
+
+            for a in parser.abstracts:
+                code = a.get("abstract_code", "")
+                title = a.get("title", "")
+                ptype = _classify_presentation_type(a.get("presentation_type", ""), code)
+
+                key_str = code if code else _stable_hash10(title)
+                aid = f"CONF_{conf_name}_{edition_year}_ABS_{key_str}"
+
+                entities = _extract_entities(title)
+
+                abstracts.append({
+                    "schema": "conference_abstract.v1",
+                    "id": aid,
+                    "conference": conf_name,
+                    "edition_year": edition_year,
+                    "abstract_code": code or None,
+                    "title": title,
+                    "session_id": None,
+                    "presentation_type": ptype,
+                    "presenter": a.get("presenter"),
+                    "affiliation": a.get("affiliation"),
+                    "sponsor_company": None,
+                    "entities": entities,
+                    "url": "",
+                    "disclosed_at": None,
+                })
+        except Exception as e:
+            logger.warning("%s confex abstract parse error: %s", conf_name, e)
+
+        return abstracts
+
+
 class AscoAdapter(ConferenceAdapter):
     """MVP adapter for ASCO Annual Meeting.
 
@@ -364,6 +553,396 @@ class AscoAdapter(ConferenceAdapter):
         return abstracts
 
 
+# ---------------------------------------------------------------------------
+# Additional conference adapters
+# ---------------------------------------------------------------------------
+
+class _CustomSessionParserBase:
+    """Helper to build per-conference HTMLParser session parsers.
+
+    Subclasses set container_tag, container_class, and child class prefixes.
+    """
+
+    @staticmethod
+    def _build_sessions(
+        html: str,
+        container_class: str,
+        child_prefix: str,
+        conf_name: str,
+        edition_year: int,
+        tz: str,
+    ) -> List[dict]:
+        """Generic session parser: container div + child spans with prefixed classes."""
+        from html.parser import HTMLParser
+
+        class _Parser(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self._in = False
+                self._cur: Dict[str, Any] = {}
+                self._cap: Optional[str] = None
+                self._buf: List[str] = []
+                self.items: List[dict] = []
+
+            def handle_starttag(self, tag, attrs):
+                ad = dict(attrs)
+                cls = ad.get("class") or ""
+                if tag == "div" and container_class in cls:
+                    self._in = True
+                    self._cur = {"session_type": ad.get("data-type", "other"),
+                                 "track": ad.get("data-track")}
+                if self._in:
+                    for field in ("title", "time", "location"):
+                        if f"{child_prefix}{field}" in cls:
+                            self._cap = field
+                            self._buf = []
+                            if field == "time":
+                                self._cur["start_raw"] = ad.get("data-start", "")
+                                self._cur["end_raw"] = ad.get("data-end", "")
+                            break
+
+            def handle_data(self, data):
+                if self._cap:
+                    self._buf.append(data)
+
+            def handle_endtag(self, tag):
+                if self._cap and tag == "span":
+                    self._cur[self._cap] = " ".join(self._buf).strip()
+                    self._cap = None
+                if tag == "div" and self._in and self._cur.get("title"):
+                    self.items.append(dict(self._cur))
+                    self._in = False
+                    self._cur = {}
+
+        p = _Parser()
+        p.feed(html)
+
+        sessions: List[dict] = []
+        for s in p.items:
+            title = s.get("title", "")
+            stype = _classify_session_type(s.get("session_type", ""), title)
+            start_raw = s.get("start_raw", "")
+            end_raw = s.get("end_raw", "")
+
+            key = f"{conf_name}|{edition_year}|{stype}|{title}|{start_raw}"
+            sid = f"CONF_{conf_name}_{edition_year}_SESSION_{_stable_hash10(key)}"
+
+            sessions.append({
+                "schema": "conference_session.v1",
+                "id": sid,
+                "conference": conf_name,
+                "edition_year": edition_year,
+                "session_type": stype,
+                "track": s.get("track"),
+                "title": title,
+                "start_dt_local": start_raw,
+                "end_dt_local": end_raw or None,
+                "timezone": tz,
+                "start_dt_utc": _local_to_utc(start_raw, tz),
+                "end_dt_utc": _local_to_utc(end_raw, tz) if end_raw else None,
+                "location": s.get("location"),
+                "url": "",
+                "entities": _extract_entities(title),
+            })
+        return sessions
+
+    @staticmethod
+    def _build_abstracts(
+        html: str,
+        container_class: str,
+        child_prefix: str,
+        conf_name: str,
+        edition_year: int,
+    ) -> List[dict]:
+        """Generic abstract parser: container div + child spans with prefixed classes."""
+        from html.parser import HTMLParser
+
+        class _Parser(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self._in = False
+                self._cur: Dict[str, Any] = {}
+                self._cap: Optional[str] = None
+                self._buf: List[str] = []
+                self.items: List[dict] = []
+
+            def handle_starttag(self, tag, attrs):
+                ad = dict(attrs)
+                cls = ad.get("class") or ""
+                if tag in ("div", "article") and container_class in cls:
+                    self._in = True
+                    self._cur = {
+                        "abstract_code": ad.get("data-code", ""),
+                        "presentation_type": ad.get("data-type", "other"),
+                    }
+                if self._in:
+                    for field in ("title", "presenter", "affiliation", "sponsor"):
+                        if f"{child_prefix}{field}" in cls:
+                            self._cap = field
+                            self._buf = []
+                            break
+
+            def handle_data(self, data):
+                if self._cap:
+                    self._buf.append(data)
+
+            def handle_endtag(self, tag):
+                if self._cap and tag == "span":
+                    self._cur[self._cap] = " ".join(self._buf).strip()
+                    self._cap = None
+                if tag in ("div", "article") and self._in and self._cur.get("title"):
+                    self.items.append(dict(self._cur))
+                    self._in = False
+                    self._cur = {}
+
+        p = _Parser()
+        p.feed(html)
+
+        abstracts: List[dict] = []
+        for a in p.items:
+            code = a.get("abstract_code", "")
+            title = a.get("title", "")
+            ptype = _classify_presentation_type(a.get("presentation_type", ""), code)
+            sponsor = a.get("sponsor", "")
+
+            key_str = code if code else _stable_hash10(title)
+            aid = f"CONF_{conf_name}_{edition_year}_ABS_{key_str}"
+
+            entities = _extract_entities(title)
+            if sponsor:
+                entities["companies"].append(sponsor)
+
+            abstracts.append({
+                "schema": "conference_abstract.v1",
+                "id": aid,
+                "conference": conf_name,
+                "edition_year": edition_year,
+                "abstract_code": code or None,
+                "title": title,
+                "session_id": None,
+                "presentation_type": ptype,
+                "presenter": a.get("presenter"),
+                "affiliation": a.get("affiliation"),
+                "sponsor_company": sponsor or None,
+                "entities": entities,
+                "url": "",
+                "disclosed_at": None,
+            })
+        return abstracts
+
+
+class EsmoAdapter(ConferenceAdapter):
+    """ESMO Congress — esmo.org."""
+
+    conf_name = "ESMO"
+    default_tz = "Europe/Berlin"
+
+    def discover_endpoints(self, edition_year: int) -> Dict[str, str]:
+        return {
+            "program": f"https://www.esmo.org/meeting-calendar/esmo-congress-{edition_year}/programme",
+            "abstracts": f"https://www.esmo.org/meeting-calendar/esmo-congress-{edition_year}/abstracts",
+        }
+
+    def parse_sessions(self, program_payload: str, edition_year: int) -> List[dict]:
+        try:
+            return _CustomSessionParserBase._build_sessions(
+                program_payload, "session-item", "session-item-",
+                self.conf_name, edition_year, self.default_tz,
+            )
+        except Exception as e:
+            logger.warning("ESMO session parse error: %s", e)
+            return []
+
+    def parse_abstracts(self, abstract_payload: str, edition_year: int) -> List[dict]:
+        try:
+            return _CustomSessionParserBase._build_abstracts(
+                abstract_payload, "abstract-item", "abstract-item-",
+                self.conf_name, edition_year,
+            )
+        except Exception as e:
+            logger.warning("ESMO abstract parse error: %s", e)
+            return []
+
+
+class AacrAdapter(ConferenceAdapter):
+    """AACR Annual Meeting — aacr.org."""
+
+    conf_name = "AACR"
+    default_tz = "America/New_York"
+
+    def discover_endpoints(self, edition_year: int) -> Dict[str, str]:
+        return {
+            "program": f"https://www.aacr.org/meeting/aacr-annual-meeting-{edition_year}/program/",
+            "abstracts": f"https://www.aacr.org/meeting/aacr-annual-meeting-{edition_year}/abstracts/",
+        }
+
+    def parse_sessions(self, program_payload: str, edition_year: int) -> List[dict]:
+        try:
+            return _CustomSessionParserBase._build_sessions(
+                program_payload, "program-session", "program-session-",
+                self.conf_name, edition_year, self.default_tz,
+            )
+        except Exception as e:
+            logger.warning("AACR session parse error: %s", e)
+            return []
+
+    def parse_abstracts(self, abstract_payload: str, edition_year: int) -> List[dict]:
+        try:
+            return _CustomSessionParserBase._build_abstracts(
+                abstract_payload, "abstract-entry", "abstract-entry-",
+                self.conf_name, edition_year,
+            )
+        except Exception as e:
+            logger.warning("AACR abstract parse error: %s", e)
+            return []
+
+
+class AshAdapter(ConfexMixin, ConferenceAdapter):
+    """ASH Annual Meeting — ash.confex.com."""
+
+    conf_name = "ASH"
+    default_tz = "America/New_York"
+
+    def discover_endpoints(self, edition_year: int) -> Dict[str, str]:
+        return {
+            "program": f"https://ash.confex.com/ash/{edition_year}/webprogram/start.html",
+            "abstracts": f"https://ash.confex.com/ash/{edition_year}/webprogram/ALLABSTRACTS.html",
+        }
+
+    def parse_sessions(self, program_payload: str, edition_year: int) -> List[dict]:
+        return self._parse_confex_sessions(
+            program_payload, edition_year, self.conf_name, self.default_tz,
+        )
+
+    def parse_abstracts(self, abstract_payload: str, edition_year: int) -> List[dict]:
+        return self._parse_confex_abstracts(
+            abstract_payload, edition_year, self.conf_name, self.default_tz,
+        )
+
+
+class SitcAdapter(ConfexMixin, ConferenceAdapter):
+    """SITC Annual Meeting — sitcancer.confex.com."""
+
+    conf_name = "SITC"
+    default_tz = "America/New_York"
+
+    def discover_endpoints(self, edition_year: int) -> Dict[str, str]:
+        return {
+            "program": f"https://sitcancer.confex.com/sitcancer/{edition_year}/meetingapp.cgi/Home",
+            "abstracts": f"https://sitcancer.confex.com/sitcancer/{edition_year}/meetingapp.cgi/Paper",
+        }
+
+    def parse_sessions(self, program_payload: str, edition_year: int) -> List[dict]:
+        return self._parse_confex_sessions(
+            program_payload, edition_year, self.conf_name, self.default_tz,
+        )
+
+    def parse_abstracts(self, abstract_payload: str, edition_year: int) -> List[dict]:
+        return self._parse_confex_abstracts(
+            abstract_payload, edition_year, self.conf_name, self.default_tz,
+        )
+
+
+class SabcsAdapter(ConferenceAdapter):
+    """SABCS — San Antonio Breast Cancer Symposium."""
+
+    conf_name = "SABCS"
+    default_tz = "America/Chicago"
+
+    def discover_endpoints(self, edition_year: int) -> Dict[str, str]:
+        yr_short = str(edition_year)
+        return {
+            "program": f"https://www.sabcs.org/Portals/SABCS{yr_short}/program.aspx",
+            "abstracts": f"https://www.sabcs.org/Portals/SABCS{yr_short}/abstracts.aspx",
+        }
+
+    def parse_sessions(self, program_payload: str, edition_year: int) -> List[dict]:
+        try:
+            return _CustomSessionParserBase._build_sessions(
+                program_payload, "program-item", "program-item-",
+                self.conf_name, edition_year, self.default_tz,
+            )
+        except Exception as e:
+            logger.warning("SABCS session parse error: %s", e)
+            return []
+
+    def parse_abstracts(self, abstract_payload: str, edition_year: int) -> List[dict]:
+        try:
+            return _CustomSessionParserBase._build_abstracts(
+                abstract_payload, "abstract-card", "abstract-card-",
+                self.conf_name, edition_year,
+            )
+        except Exception as e:
+            logger.warning("SABCS abstract parse error: %s", e)
+            return []
+
+
+class AanAdapter(ConferenceAdapter):
+    """AAN — American Academy of Neurology."""
+
+    conf_name = "AAN"
+    default_tz = "America/New_York"
+
+    def discover_endpoints(self, edition_year: int) -> Dict[str, str]:
+        return {
+            "program": f"https://submissions.mirasmart.com/AAN{edition_year}/Itinerary/SearchResults.aspx",
+            "abstracts": f"https://submissions.mirasmart.com/AAN{edition_year}/Itinerary/SubmissionList.aspx",
+        }
+
+    def parse_sessions(self, program_payload: str, edition_year: int) -> List[dict]:
+        try:
+            return _CustomSessionParserBase._build_sessions(
+                program_payload, "itinerary-item", "itinerary-item-",
+                self.conf_name, edition_year, self.default_tz,
+            )
+        except Exception as e:
+            logger.warning("AAN session parse error: %s", e)
+            return []
+
+    def parse_abstracts(self, abstract_payload: str, edition_year: int) -> List[dict]:
+        try:
+            return _CustomSessionParserBase._build_abstracts(
+                abstract_payload, "submission-item", "submission-item-",
+                self.conf_name, edition_year,
+            )
+        except Exception as e:
+            logger.warning("AAN abstract parse error: %s", e)
+            return []
+
+
+class AcrAdapter(ConferenceAdapter):
+    """ACR Convergence — acrabstracts.org."""
+
+    conf_name = "ACR"
+    default_tz = "America/New_York"
+
+    def discover_endpoints(self, edition_year: int) -> Dict[str, str]:
+        return {
+            "program": f"https://acrabstracts.org/meeting/acr-convergence-{edition_year}/program/",
+            "abstracts": f"https://acrabstracts.org/meeting/acr-convergence-{edition_year}/abstracts/",
+        }
+
+    def parse_sessions(self, program_payload: str, edition_year: int) -> List[dict]:
+        try:
+            return _CustomSessionParserBase._build_sessions(
+                program_payload, "session-entry", "session-entry-",
+                self.conf_name, edition_year, self.default_tz,
+            )
+        except Exception as e:
+            logger.warning("ACR session parse error: %s", e)
+            return []
+
+    def parse_abstracts(self, abstract_payload: str, edition_year: int) -> List[dict]:
+        try:
+            return _CustomSessionParserBase._build_abstracts(
+                abstract_payload, "abstract-entry", "abstract-entry-",
+                self.conf_name, edition_year,
+            )
+        except Exception as e:
+            logger.warning("ACR abstract parse error: %s", e)
+            return []
+
+
 def _classify_session_type(raw_type: str, title: str) -> str:
     """Normalize session type to canonical values."""
     low = (raw_type + " " + title).lower()
@@ -419,6 +998,13 @@ def _local_to_utc(dt_str: str, tz: str) -> Optional[str]:
 
 CONFERENCE_ADAPTERS: Dict[str, ConferenceAdapter] = {
     "asco": AscoAdapter(),
+    "esmo": EsmoAdapter(),
+    "aacr": AacrAdapter(),
+    "ash": AshAdapter(),
+    "sitc": SitcAdapter(),
+    "sabcs": SabcsAdapter(),
+    "aan": AanAdapter(),
+    "acr": AcrAdapter(),
 }
 
 

@@ -825,10 +825,10 @@ def main():
         help="Conference calendar cache directory",
     )
     parser.add_argument(
-        "--conference",
+        "--conferences",
         type=str,
-        default="asco",
-        help="Conference slug to warm (default: asco)",
+        default="all",
+        help="Comma-separated conference slugs or 'all' (default: all)",
     )
     parser.add_argument(
         "--conference-year",
@@ -995,15 +995,22 @@ def main():
 
     conference_count = 0
     if "conference_calendar" in sources:
-        try:
-            conf_cache_dir = Path(args.conference_cache_dir)
-            conference_count = warm_conference_calendar(
-                as_of, data_dir, conf_cache_dir,
-                conference_slug=args.conference,
-                edition_year=args.conference_year,
-            )
-        except Exception as e:
-            logger.error(f"Conference calendar warm failed: {e}")
+        from wake_robin_data_pipeline.collectors.conference_program_collector import ALL_CONFERENCE_SLUGS
+        raw_conf = getattr(args, "conferences", "all")
+        conf_slugs = list(ALL_CONFERENCE_SLUGS) if raw_conf.strip() == "all" else [
+            s.strip() for s in raw_conf.split(",")
+        ]
+        conf_cache_dir = Path(args.conference_cache_dir)
+        for slug in conf_slugs:
+            try:
+                count = warm_conference_calendar(
+                    as_of, data_dir, conf_cache_dir,
+                    conference_slug=slug,
+                    edition_year=args.conference_year,
+                )
+                conference_count += count
+            except Exception as e:
+                logger.error(f"Conference calendar warm failed for {slug}: {e}")
 
     # Write refresh diagnostics sidecar
     if refresh_results:

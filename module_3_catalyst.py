@@ -2038,13 +2038,13 @@ def compute_module_3_catalyst(
             try:
                 from wake_robin_data_pipeline.collectors.conference_program_collector import (
                     collect_conference_derived_events,
+                    ALL_CONFERENCE_SLUGS,
                 )
                 from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
                     build_product_ticker_map,
                 )
                 product_map = build_product_ticker_map(data_dir)
-                # MVP: collect configured conferences (currently just asco)
-                for _slug in ("asco",):
+                for _slug in ALL_CONFERENCE_SLUGS:
                     _evts = collect_conference_derived_events(
                         conference_slug=_slug,
                         edition_year=as_of_date.year,
