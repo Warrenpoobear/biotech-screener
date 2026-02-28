@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>EU Clinical Trials Register - Search Results</title>
+    <link>https://www.clinicaltrialsregister.eu</link>
+    <description>Clinical trial search results</description>
+    <item>
+      <title>2024-001234-56 - A Phase III Study of Drug X in Patients with Condition A</title>
+      <link>https://www.clinicaltrialsregister.eu/ctr-search/trial/2024-001234-56/results</link>
+      <description>
+Sponsor name: ModernaTX, Inc.
+Sponsor protocol number: PROT-2024-001
+Trial status: Ongoing
+Phase: Phase III
+Start date: 2024-03-15
+Medical condition: Respiratory Syncytial Virus Infection
+Countries: DE, FR, ES
+      </description>
+    </item>
+    <item>
+      <title>2023-005678-90 - Phase II Trial of Compound Y for Disease B</title>
+      <link>https://www.clinicaltrialsregister.eu/ctr-search/trial/2023-005678-90/results</link>
+      <description>
+Sponsor name: Moderna
+Sponsor protocol number: PROT-2023-005
+Trial status: Completed
+Phase: Phase II
+Start date: 2023-01-10
+Medical condition: Melanoma; Skin Cancer
+Countries: GB, NL
+      </description>
+    </item>
+    <item>
+      <title>2025-009999-12 - Phase I Study of Novel Agent Z</title>
+      <link>https://www.clinicaltrialsregister.eu/ctr-search/trial/2025-009999-12/results</link>
+      <description>
+Sponsor name: Unknown Pharma Ltd.
+Trial status: Ongoing
+Phase: Phase I
+Start date: 2025-06-01
+Medical condition: Solid Tumors
+Countries: DE
+      </description>
+    </item>
+  </channel>
+</rss>

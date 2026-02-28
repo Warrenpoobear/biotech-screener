@@ -125,6 +125,7 @@ class LedgerConfig:
     fda_cache_dir: Optional[Path] = None
     data_dir: Optional[Path] = None
     strict_ctgov: bool = False
+    merged_trials_cache_dir: Optional[Path] = None
 
     def __post_init__(self):
         # ctgov_cache_dir=False means "disabled" — skip auto-detection
@@ -138,6 +139,10 @@ class LedgerConfig:
             self.fda_cache_dir = _PROJECT_ROOT / "cache" / "fda"
         if self.data_dir is None:
             self.data_dir = _PROJECT_ROOT / "production_data"
+        if self.merged_trials_cache_dir is None:
+            self.merged_trials_cache_dir = _PROJECT_ROOT / "cache" / "trials" / "merged"
+        elif self.merged_trials_cache_dir is False:
+            self.merged_trials_cache_dir = None
 
 
 # =============================================================================
@@ -223,6 +228,95 @@ def _load_ctgov_events(
                 extractor_version="ctgov_pit",
                 event_name=f"{nct_id} CD {cd}",
                 field_changed="completion_date", value=cd,
+            ))
+
+    return entries
+
+
+def _load_merged_trial_events(
+    as_of_date: date,
+    merged_cache_dir: Path,
+    ctgov_nct_ids: set,
+) -> List[LedgerEntry]:
+    """Load merged trial records (non-CTgov registries) into ledger entries.
+
+    Only emits entries for non-CTgov records (EUCTR, CTIS, ISRCTN) to avoid
+    double-counting with the CTgov loader. Skips records already covered by
+    CTgov (checked via ctgov_nct_ids set of known NCT IDs).
+    """
+    merged_path = merged_cache_dir / f"trial_records_{as_of_date.isoformat()}.json"
+    if not merged_path.exists():
+        return []
+
+    try:
+        records = json.loads(merged_path.read_text())
+    except (json.JSONDecodeError, OSError) as e:
+        logger.warning("Merged trials cache read error: %s", e)
+        return []
+
+    entries: List[LedgerEntry] = []
+    for rec in records:
+        registry = (rec.get("registry") or "").lower()
+        if registry == "ctgov":
+            continue  # already loaded by _load_ctgov_events
+
+        # Skip if any secondary_id is a known CTgov NCT ID
+        secondary_ids = rec.get("secondary_ids", [])
+        if any(sid.upper() in ctgov_nct_ids for sid in secondary_ids if sid.startswith("NCT")):
+            continue
+
+        study_type = (rec.get("study_type") or "").upper()
+        if "INTERVENTIONAL" not in study_type:
+            continue
+
+        phase = (rec.get("phase") or "").upper()
+        if not any(p in phase for p in ("PHASE1", "PHASE2", "PHASE3")):
+            continue
+
+        ticker = rec.get("ticker", "")
+        primary_id = rec.get("primary_id", "")
+        disclosed_at = (rec.get("last_update_posted") or "")[:10]
+        if not disclosed_at or not ticker:
+            continue
+
+        source = registry.upper()
+
+        # Primary completion date
+        pcd = _normalize_iso_date(rec.get("primary_completion_date") or "")
+        if pcd:
+            eid = compute_event_id(
+                source, primary_id, ticker, "CLINICAL_PCD",
+                "primary_completion_date", pcd, pcd, None,
+                disclosed_at, f"{registry}_pit",
+            )
+            entries.append(LedgerEntry(
+                event_id=eid, ticker=ticker, event_type="CLINICAL_PCD",
+                event_date=pcd, event_date_end=None,
+                date_precision="DAY", disclosed_at=disclosed_at,
+                source=source, source_uid=primary_id, confidence="MED",
+                extractor_version=f"{registry}_pit",
+                event_name=f"{primary_id} PCD {pcd}",
+                field_changed="primary_completion_date", value=pcd,
+                tags=(f"registry:{registry}",),
+            ))
+
+        # Completion date fallback
+        cd = _normalize_iso_date(rec.get("completion_date") or "")
+        if cd and cd != pcd:
+            eid = compute_event_id(
+                source, primary_id, ticker, "CLINICAL_CD",
+                "completion_date", cd, cd, None,
+                disclosed_at, f"{registry}_pit",
+            )
+            entries.append(LedgerEntry(
+                event_id=eid, ticker=ticker, event_type="CLINICAL_CD",
+                event_date=cd, event_date_end=None,
+                date_precision="DAY", disclosed_at=disclosed_at,
+                source=source, source_uid=primary_id, confidence="MED",
+                extractor_version=f"{registry}_pit",
+                event_name=f"{primary_id} CD {cd}",
+                field_changed="completion_date", value=cd,
+                tags=(f"registry:{registry}",),
             ))
 
     return entries
@@ -523,10 +617,12 @@ def build_event_ledger(
     all_entries: List[LedgerEntry] = []
 
     # 1. CTGov trials (skipped when ctgov_cache_dir was disabled)
+    ctgov_nct_ids: set = set()
     if config.ctgov_cache_dir is not None:
         try:
             ctgov = _load_ctgov_events(as_of_date, config.ctgov_cache_dir, config.strict_ctgov, config.data_dir)
             all_entries.extend(ctgov)
+            ctgov_nct_ids = {e.source_uid.upper() for e in ctgov if e.source_uid}
             logger.info("Ledger: %d CTGov entries loaded", len(ctgov))
         except FileNotFoundError:
             raise  # strict mode — let it propagate
@@ -534,6 +630,17 @@ def build_event_ledger(
             logger.warning("Ledger: CTGov load failed: %s", e)
     else:
         logger.info("Ledger: CTGov cache disabled, skipping")
+
+    # 1b. Merged trial registries (EUCTR, CTIS, ISRCTN — non-CTgov only)
+    if config.merged_trials_cache_dir is not None:
+        try:
+            merged_entries = _load_merged_trial_events(
+                as_of_date, config.merged_trials_cache_dir, ctgov_nct_ids,
+            )
+            all_entries.extend(merged_entries)
+            logger.info("Ledger: %d merged trial entries loaded (non-CTgov)", len(merged_entries))
+        except Exception as e:
+            logger.warning("Ledger: merged trials load failed: %s", e)
 
     # 2. SEC 8-K
     try:

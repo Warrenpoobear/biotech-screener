@@ -89,6 +89,23 @@ def validate_cache_refresh(
                 )
         return True, ""
 
+    if source in ("euctr", "ctis", "isrctn"):
+        # New registries: accept anything non-negative; no hard floor initially
+        return True, ""
+
+    if source == "merged_trials":
+        if new_count == 0:
+            return False, "empty_refresh"
+        if prior_count is not None and prior_count > 0:
+            from cache_health import TRIAL_MERGE_BAD_RATIO_LOW, TRIAL_MERGE_BAD_RATIO_HIGH
+            ratio = new_count / prior_count
+            if ratio < TRIAL_MERGE_BAD_RATIO_LOW or ratio > TRIAL_MERGE_BAD_RATIO_HIGH:
+                return False, (
+                    f"out_of_band (ratio={ratio:.2f}, "
+                    f"band=[{TRIAL_MERGE_BAD_RATIO_LOW}, {TRIAL_MERGE_BAD_RATIO_HIGH}])"
+                )
+        return True, ""
+
     return True, ""
 
 
@@ -463,6 +480,124 @@ def warm_price_pit(
     return index.get("ticker_count", 0)
 
 
+def warm_euctr(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
+    """Fetch and cache EUCTR trial records. Returns count."""
+    from wake_robin_data_pipeline.collectors.euctr_collector import collect_euctr_trials
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    universe = _load_universe(data_dir)
+    if not universe:
+        return 0
+
+    logger.info("Fetching EUCTR trials for %d tickers...", len(universe))
+    records = collect_euctr_trials(
+        universe=universe,
+        as_of_date=as_of_date,
+        cache_dir=cache_dir,
+    )
+    logger.info("EUCTR: %d records cached", len(records))
+    return len(records)
+
+
+def warm_ctis(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
+    """Fetch and cache CTIS trial records. Returns count."""
+    from wake_robin_data_pipeline.collectors.ctis_collector import collect_ctis_trials
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    universe = _load_universe(data_dir)
+    if not universe:
+        return 0
+
+    logger.info("Fetching CTIS trials for %d tickers...", len(universe))
+    records = collect_ctis_trials(
+        universe=universe,
+        as_of_date=as_of_date,
+        cache_dir=cache_dir,
+    )
+    logger.info("CTIS: %d records cached", len(records))
+    return len(records)
+
+
+def warm_isrctn(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
+    """Fetch and cache ISRCTN trial records. Returns count."""
+    from wake_robin_data_pipeline.collectors.isrctn_collector import collect_isrctn_trials
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    universe = _load_universe(data_dir)
+    if not universe:
+        return 0
+
+    logger.info("Fetching ISRCTN trials for %d tickers...", len(universe))
+    records = collect_isrctn_trials(
+        universe=universe,
+        as_of_date=as_of_date,
+        cache_dir=cache_dir,
+    )
+    logger.info("ISRCTN: %d records cached", len(records))
+    return len(records)
+
+
+def warm_merged_trials(as_of_date: date, data_dir: Path, cache_root: Path) -> int:
+    """Merge all per-registry trial caches into unified merged output. Returns count."""
+    from wake_robin_data_pipeline.collectors.trial_registry_merger import (
+        merge_trial_registries,
+        write_merged_cache,
+    )
+
+    cache_root = Path(cache_root)
+
+    # Load per-registry caches (empty list if absent)
+    ctgov_records = _load_registry_cache(
+        _CTGOV_CACHE_DIR / f"trial_records_{as_of_date.isoformat()}.json"
+    )
+    euctr_records = _load_registry_cache(
+        cache_root / "euctr" / f"euctr_{as_of_date.isoformat()}.json"
+    )
+    ctis_records = _load_registry_cache(
+        cache_root / "ctis" / f"ctis_{as_of_date.isoformat()}.json"
+    )
+    isrctn_records = _load_registry_cache(
+        cache_root / "isrctn" / f"isrctn_{as_of_date.isoformat()}.json"
+    )
+
+    total_input = len(ctgov_records) + len(euctr_records) + len(ctis_records) + len(isrctn_records)
+    if total_input == 0:
+        logger.warning("No per-registry caches found for %s — skipping merge", as_of_date)
+        return 0
+
+    logger.info(
+        "Merging trials: ctgov=%d, euctr=%d, ctis=%d, isrctn=%d",
+        len(ctgov_records), len(euctr_records), len(ctis_records), len(isrctn_records),
+    )
+
+    merged = merge_trial_registries(
+        ctgov_records, euctr_records, ctis_records, isrctn_records, as_of_date,
+    )
+
+    merged_dir = cache_root / "merged"
+    write_merged_cache(merged, as_of_date, merged_dir)
+
+    logger.info("Merged trials: %d records -> %s", len(merged), merged_dir)
+    return len(merged)
+
+
+def _load_registry_cache(path: Path) -> list:
+    """Load a per-registry JSON cache file. Returns empty list on error."""
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text())
+        return data if isinstance(data, list) else []
+    except (json.JSONDecodeError, OSError):
+        return []
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Pre-populate catalyst data caches for production screening runs.",
@@ -508,6 +643,30 @@ def main():
         type=str,
         default=None,
         help="SEC 13F PIT cache output directory (default: data/caches/sec_13f/PIT/{date})",
+    )
+    parser.add_argument(
+        "--euctr-cache-dir",
+        type=str,
+        default=str(PROJECT_ROOT / "cache" / "trials" / "euctr"),
+        help="EUCTR cache directory",
+    )
+    parser.add_argument(
+        "--ctis-cache-dir",
+        type=str,
+        default=str(PROJECT_ROOT / "cache" / "trials" / "ctis"),
+        help="CTIS cache directory",
+    )
+    parser.add_argument(
+        "--isrctn-cache-dir",
+        type=str,
+        default=str(PROJECT_ROOT / "cache" / "trials" / "isrctn"),
+        help="ISRCTN cache directory",
+    )
+    parser.add_argument(
+        "--trials-cache-root",
+        type=str,
+        default=str(PROJECT_ROOT / "cache" / "trials"),
+        help="Root directory for trial registry caches (merged output goes here)",
     )
 
     args = parser.parse_args()
@@ -593,6 +752,38 @@ def main():
         except Exception as e:
             logger.error(f"Price PIT warm failed: {e}")
 
+    euctr_count = 0
+    if "euctr" in sources:
+        try:
+            euctr_cache_dir = Path(args.euctr_cache_dir)
+            euctr_count = warm_euctr(as_of, data_dir, euctr_cache_dir)
+        except Exception as e:
+            logger.error(f"EUCTR warm failed: {e}")
+
+    ctis_count = 0
+    if "ctis" in sources:
+        try:
+            ctis_cache_dir = Path(args.ctis_cache_dir)
+            ctis_count = warm_ctis(as_of, data_dir, ctis_cache_dir)
+        except Exception as e:
+            logger.error(f"CTIS warm failed: {e}")
+
+    isrctn_count = 0
+    if "isrctn" in sources:
+        try:
+            isrctn_cache_dir = Path(args.isrctn_cache_dir)
+            isrctn_count = warm_isrctn(as_of, data_dir, isrctn_cache_dir)
+        except Exception as e:
+            logger.error(f"ISRCTN warm failed: {e}")
+
+    merged_trials_count = 0
+    if "merged_trials" in sources:
+        try:
+            trials_cache_root = Path(args.trials_cache_root)
+            merged_trials_count = warm_merged_trials(as_of, data_dir, trials_cache_root)
+        except Exception as e:
+            logger.error(f"Merged trials warm failed: {e}")
+
     # Write refresh diagnostics sidecar
     if refresh_results:
         cache_root = PROJECT_ROOT / "cache"
@@ -617,6 +808,14 @@ def main():
         parts.append(f"{ledger_entries} ledger entries")
     if price_pit_count:
         parts.append(f"{price_pit_count} price PIT tickers")
+    if euctr_count:
+        parts.append(f"{euctr_count} EUCTR records")
+    if ctis_count:
+        parts.append(f"{ctis_count} CTIS records")
+    if isrctn_count:
+        parts.append(f"{isrctn_count} ISRCTN records")
+    if merged_trials_count:
+        parts.append(f"{merged_trials_count} merged trial records")
     logger.info(f"Cache warm complete: {', '.join(parts)}")
     return 0
 

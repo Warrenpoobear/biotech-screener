@@ -1,0 +1,55 @@
+{
+  "data": [
+    {
+      "ctNumber": "2024-511897-64-00",
+      "title": "A Phase III Study of mRNA-1234 in Adults",
+      "sponsorName": "ModernaTX, Inc.",
+      "sponsorCountry": "US",
+      "trialPhase": "Phase III",
+      "trialStatus": "Ongoing",
+      "decisionDate": "15/03/2024",
+      "startDate": "01/04/2024",
+      "endDate": "30/06/2026",
+      "medicalCondition": "Respiratory Syncytial Virus",
+      "memberStates": ["DE", "FR", "IT"],
+      "eudractNumber": "2024-001234-56",
+      "nctNumber": "NCT06001234"
+    },
+    {
+      "ctNumber": "2023-422888-33-00",
+      "title": "Phase II Dose-Finding Study of mRNA-5678",
+      "sponsorName": "Moderna",
+      "sponsorCountry": "US",
+      "trialPhase": "Phase II",
+      "trialStatus": "Completed",
+      "decisionDate": "10/01/2023",
+      "startDate": "01/02/2023",
+      "endDate": "31/12/2024",
+      "medicalCondition": "Influenza",
+      "memberStates": ["NL", "BE"],
+      "eudractNumber": "",
+      "nctNumber": ""
+    },
+    {
+      "ctNumber": "2025-600100-11-00",
+      "title": "Phase I First-in-Human Study",
+      "sponsorName": "Unknown Biotech GmbH",
+      "sponsorCountry": "DE",
+      "trialPhase": "Phase I",
+      "trialStatus": "Authorised",
+      "decisionDate": "01/06/2025",
+      "startDate": "",
+      "endDate": "",
+      "medicalCondition": "Oncology",
+      "memberStates": ["DE"],
+      "eudractNumber": "",
+      "nctNumber": ""
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "size": 100,
+    "totalPages": 1,
+    "totalElements": 3
+  }
+}

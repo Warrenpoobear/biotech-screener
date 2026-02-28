@@ -21,6 +21,13 @@ CTGOV_WARN_RATIO_HIGH = 1.25
 CTGOV_BAD_RATIO_LOW = 0.60    # BAD band: outside [0.60, 1.50]
 CTGOV_BAD_RATIO_HIGH = 1.50
 
+# New registries — generous initial thresholds (first deployments may have low counts)
+EUCTR_MIN_COUNT = 0
+CTIS_MIN_COUNT = 0
+ISRCTN_MIN_COUNT = 0
+TRIAL_MERGE_BAD_RATIO_LOW = 0.50    # reject if merged count drops >50% vs prior
+TRIAL_MERGE_BAD_RATIO_HIGH = 2.00   # reject if merged count doubles vs prior
+
 _STATUS_RANK = {"ok": 0, "warning": 1, "bad": 2}
 
 
@@ -39,6 +46,10 @@ def compute_cache_health(
     prior_ctgov_count: Optional[int] = None,
     *,
     as_of_date: str = "",
+    euctr_count: Optional[int] = None,
+    ctis_count: Optional[int] = None,
+    isrctn_count: Optional[int] = None,
+    merged_count: Optional[int] = None,
 ) -> Dict[str, Any]:
     """Compute cache health from event counts and optional prior baselines.
 
@@ -83,7 +94,7 @@ def compute_cache_health(
 
     overall = _worst(sec8k_status, ctgov_status)
 
-    return {
+    result = {
         "schema": "cache_health.v1",
         "as_of_date": as_of_date,
         "sec8k": {
@@ -111,6 +122,18 @@ def compute_cache_health(
             "ctgov_ratio_vs_prior": ctgov_ratio,
         },
     }
+
+    # Include new registry counts when provided
+    if euctr_count is not None:
+        result["euctr"] = {"count": euctr_count, "status": "ok", "reason": ""}
+    if ctis_count is not None:
+        result["ctis"] = {"count": ctis_count, "status": "ok", "reason": ""}
+    if isrctn_count is not None:
+        result["isrctn"] = {"count": isrctn_count, "status": "ok", "reason": ""}
+    if merged_count is not None:
+        result["merged_trials"] = {"count": merged_count, "status": "ok", "reason": ""}
+
+    return result
 
 
 def load_prior_cache_health(
