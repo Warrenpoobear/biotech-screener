@@ -12,5 +12,12 @@
   "by_date_precision": {
     "DAY": 720,
     "RANGE": 205
+  },
+  "sec8k_future": {
+    "count": 0,
+    "tickers": 0,
+    "by_precision": {},
+    "days_ahead_p50": null,
+    "days_ahead_p90": null
   }
 }

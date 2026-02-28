@@ -1,21 +1,17 @@
 {
-  "status": "WARN",
-  "reasons": [
-    "high_weight_churn"
-  ],
+  "status": "OK",
+  "reasons": [],
   "metrics": {
-    "a_count": 25,
-    "catalyst_coverage_pct": 84.5,
+    "a_count": 20,
+    "catalyst_coverage_pct": 82.4,
     "portfolio_size": 20,
-    "ruleset_id": "8f99d47e",
+    "ruleset_id": "0c1129f6",
     "thresholds_id": "74457e8f",
-    "name_turnover_pct": 50.0,
-    "weight_l1_delta": 108.2,
     "coverage_catalyst_pct": 100.0,
     "coverage_sponsor_pct": 100.0,
     "coverage_drawdown_pct": 99.4,
     "portfolio_missing_count": 0,
-    "coinvest_coverage_pct": 82.3
+    "coinvest_coverage_pct": 83.7
   },
   "thresholds_id": "74457e8f",
   "thresholds": {

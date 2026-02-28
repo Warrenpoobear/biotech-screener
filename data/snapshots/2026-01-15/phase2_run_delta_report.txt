@@ -1,12 +1,16 @@
 ========================================================================
 PHASE-2 RUN DELTA REPORT
 ========================================================================
-Generated: 2026-02-22T20:06:58Z
-Current:   2026-01-15 (ruleset 8f99d47e)
+Generated: 2026-02-28T21:47:45Z
+Current:   2026-01-15 (ruleset 0c1129f6)
 Prior:     (none)
 
+*** CACHE HEALTH: DEGRADED ***
+*** CHURN COMPARISONS: SUPPRESSED ***
+*** BASELINES: NOT UPDATED ***
+
 HEALTH: OK
-  catalyst=84.5%  A=25  ruleset=8f99d47e
+  catalyst=82.4%  A=19  ruleset=0c1129f6
 
 1. PORTFOLIO TURNOVER
 ------------------------------------------------------------------------
@@ -15,48 +19,48 @@ HEALTH: OK
 2. TIER DISTRIBUTION (dev-stage universe)
 ------------------------------------------------------------------------
                 Current
-  A                  25
-  B                  46
-  C                  61
-  D                  49
+  A                  19
+  B                  42
+  C                  44
+  D                  60
 
   In portfolio:
-    A: 20 (100%)
-    B: 0 (0%)
+    A: 19 (95%)
+    B: 1 (5%)
 
 3. SIZING (portfolio)
 ------------------------------------------------------------------------
                 Current
-  L                  16
-  M                   2
-  S                   1
+  L                  18
+  M                   1
+  S                   0
   XS                  1
 
 4. CATALYST COVERAGE (dev-stage)
 ------------------------------------------------------------------------
-  specific_days:  84.5%
+  specific_days:  82.4%
   Mode distribution:
-    no_upcoming: 28
-    specific_days: 153
+    no_upcoming: 29
+    specific_days: 136
 
   Nearest 10 catalysts:
     PRTA       8d  tier=D      MBX       11d  tier=C
-    BEAM      14d  tier=C      KOD       16d  tier=A
-    CGEM      16d  tier=C      CRNX      17d  tier=A
-    PHVS      17d  tier=A      ERAS      17d  tier=A
-    NAMS      17d  tier=B      XENE      17d  tier=B
+    CHRS      14d  tier=C      KOD       16d  tier=A
+    CGEM      16d  tier=C      ERAS      17d  tier=A
+    ANRO      17d  tier=B      NAMS      17d  tier=B
+    XENE      17d  tier=B      ADCT      17d  tier=B
 
 5. RISK SANITY (portfolio)
 ------------------------------------------------------------------------
   Flag                  Current
   deep_drawdown               3
-  high_vol                    3
+  high_vol                    4
   high_beta                   3
   overbought_rsi              3
   low_confidence              0
 
 6. GUARDRAILS
 ------------------------------------------------------------------------
-  [PASS] Ruleset matches pinned Phase-2 ID (8f99d47e)
-  [PASS] A-tier count > 0 (25)
-  [PASS] Catalyst specific_days coverage > 50.0% (84.5%)
+  [PASS] Ruleset matches pinned Phase-2 ID (0c1129f6)
+  [PASS] A-tier count > 0 (19)
+  [PASS] Catalyst specific_days coverage > 50.0% (82.4%)

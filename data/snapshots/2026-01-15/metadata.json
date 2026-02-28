@@ -1,18 +1,18 @@
 {
   "as_of_date": "2026-01-15",
-  "saved_at": "2026-02-22T20:06:54.996552Z",
+  "saved_at": "2026-02-28T21:47:45.095481Z",
   "decision_mode": "phase2",
   "ranking_mode": "decision",
   "version": "1.6.0",
-  "ticker_count": 317,
+  "ticker_count": 295,
   "source_type": "live_pipeline_v3",
   "scoring_model": "module_5_v3_ic_enhanced",
-  "total_evaluated": 353,
-  "active_universe": 325,
+  "total_evaluated": 354,
+  "active_universe": 320,
   "clinical_excluded": 21,
   "clinical_exempted": 25,
   "archetype_distribution": {
-    "commercial_biotech": 72,
+    "commercial_biotech": 67,
     "commercial_pharma": 35,
     "drug_developer": 202,
     "platform_devices": 13,
@@ -21,75 +21,75 @@
   },
   "ranking_diagnostics": {
     "composite_rank": {
-      "n_total": 317,
-      "n_unique": 317,
+      "n_total": 295,
+      "n_unique": 295,
       "tie_pct": 0.0
     },
     "score_rank_pct": {
-      "n_total": 317,
-      "n_unique": 317,
+      "n_total": 295,
+      "n_unique": 295,
       "tie_pct": 0.0
     },
     "score_z": {
-      "n_total": 317,
-      "n_unique": 317,
+      "n_total": 295,
+      "n_unique": 295,
       "tie_pct": 0.0
     },
     "composite_score": {
-      "n_total": 317,
-      "n_unique": 308,
-      "tie_pct": 0.0284
+      "n_total": 295,
+      "n_unique": 286,
+      "tie_pct": 0.0305
     }
   },
   "score_diagnostics": {
     "composite_score": {
-      "n_total": 317,
-      "n_unique": 308,
-      "tie_pct": 0.0284
+      "n_total": 295,
+      "n_unique": 286,
+      "tie_pct": 0.0305
     },
     "momentum_score": {
-      "n_total": 317,
-      "n_unique": 293,
-      "tie_pct": 0.0757
+      "n_total": 295,
+      "n_unique": 275,
+      "tie_pct": 0.0678
     },
     "catalyst_score": {
-      "n_total": 317,
-      "n_unique": 155,
-      "tie_pct": 0.511,
-      "zero_signal_count": 115,
-      "signal_n": 202,
-      "signal_unique": 175,
-      "signal_tie_pct": 0.1337
+      "n_total": 295,
+      "n_unique": 140,
+      "tie_pct": 0.5254,
+      "zero_signal_count": 113,
+      "signal_n": 182,
+      "signal_unique": 161,
+      "signal_tie_pct": 0.1154
     },
     "smart_money_score": {
-      "n_total": 261,
-      "n_unique": 205,
-      "tie_pct": 0.2146
+      "n_total": 247,
+      "n_unique": 195,
+      "tie_pct": 0.2105
     },
     "valuation_score": {
-      "n_total": 317,
-      "n_unique": 302,
-      "tie_pct": 0.0473
+      "n_total": 295,
+      "n_unique": 259,
+      "tie_pct": 0.122
     },
     "clinical_score": {
-      "n_total": 317,
-      "n_unique": 248,
-      "tie_pct": 0.2177,
+      "n_total": 295,
+      "n_unique": 232,
+      "tie_pct": 0.2136,
       "zero_signal_count": 24,
       "zero_signal_raw": 32.92,
-      "signal_n": 293,
-      "signal_unique": 275,
-      "signal_tie_pct": 0.0614
+      "signal_n": 270,
+      "signal_unique": 256,
+      "signal_tie_pct": 0.0519
     },
     "financial_score": {
-      "n_total": 317,
-      "n_unique": 260,
-      "tie_pct": 0.1798
+      "n_total": 295,
+      "n_unique": 234,
+      "tie_pct": 0.2068
     },
     "confidence_overall": {
-      "n_total": 317,
-      "n_unique": 269,
-      "tie_pct": 0.1514
+      "n_total": 295,
+      "n_unique": 249,
+      "tie_pct": 0.1559
     },
     "_top_tied": [
       "catalyst_score",
@@ -97,14 +97,14 @@
       "smart_money_score",
       "financial_score",
       "confidence_overall",
-      "momentum_score",
       "valuation_score",
+      "momentum_score",
       "composite_score"
     ]
   },
   "dev_optionality_stats": {
-    "n_dev": 181,
-    "n_dev_with_clinical": 181,
+    "n_dev": 165,
+    "n_dev_with_clinical": 165,
     "min_clinical": 5.0,
     "max_clinical": 77.0
   },
@@ -273,6 +273,11 @@
     "catalyst_events_2026-02-19.json": "69c2fc24ae3928fe",
     "catalyst_events_2026-02-20.json": "57d81b559de5d434",
     "catalyst_events_2026-02-21.json": "bdcece5c48db7b0b",
+    "catalyst_events_2026-02-24.json": "388f5804c01986a2",
+    "catalyst_events_2026-02-25.json": "d32670e51f3fd64a",
+    "catalyst_events_2026-02-26.json": "1b11d901282fd54d",
+    "catalyst_events_2026-02-27.json": "db5849a96dda6f13",
+    "catalyst_events_2026-02-28.json": "914f3036960b819d",
     "catalyst_events_vnext_2023-01-15.json": "5d8698ae7dc05f46",
     "catalyst_events_vnext_2023-04-15.json": "944784087f2f8266",
     "catalyst_events_vnext_2023-07-15.json": "06d4232f61d3ceb7",
@@ -435,9 +440,14 @@
     "catalyst_events_vnext_2026-02-19.json": "96e0e93ef1807acb",
     "catalyst_events_vnext_2026-02-20.json": "efb315ec8ed7ac36",
     "catalyst_events_vnext_2026-02-21.json": "326d283dea8fff66",
+    "catalyst_events_vnext_2026-02-24.json": "ce8d70d927651e13",
+    "catalyst_events_vnext_2026-02-25.json": "c1805c2ad001e372",
+    "catalyst_events_vnext_2026-02-26.json": "425f9c60df5e04b2",
+    "catalyst_events_vnext_2026-02-27.json": "93db2c8b561ffb22",
+    "catalyst_events_vnext_2026-02-28.json": "bde9942f470245ee",
     "catalyst_overrides.json": "e4c587ce6c537d65",
     "cfo_data_2026-01-08.json": "33e0d93576eff5d0",
-    "corporate_catalysts.json": "8e8db689efba18c2",
+    "corporate_catalysts.json": "ad7d56deef131f58",
     "cusip_cache.json": "779f2c2e7cbeabdd",
     "cusip_static_map.json": "d365334982834af1",
     "defensive_cache_2026-01-29.json": "14247739cfbc4ae3",
@@ -452,13 +462,13 @@
     "financial.json": "d3f369f4c0299cb6",
     "financial_data.json": "563dcdde7797a528",
     "financial_data_cfo_2026-01-08.json": "4f53cda18c2baa0c",
-    "financial_records.json": "b4dd40943f156dbb",
+    "financial_records.json": "21a94f0fcb296bd1",
     "holdings_detailed.json": "6949aff8b935ac6a",
     "holdings_snapshots.json": "622f1eed41c4e99a",
     "inputs_manifest.json": "d469b8cbbfb59239",
     "m3_vnext_events_2026-02-07.json": "bb0472147eabc572",
     "manager_registry.json": "f76ba4f3c4cad4f9",
-    "market_data.json": "9aa38921fbf9d217",
+    "market_data.json": "088c1e36acff076c",
     "market_data.momentum_meta.json": "5e8f2cc2ccf8f8be",
     "market_snapshot.json": "7d165d8bb272eec8",
     "morningstar_data_manifest.json": "e553e2edb80abc24",
@@ -500,12 +510,12 @@
     "screening_results_2026-01-08.json": "fb01adc44e4f979b",
     "screening_results_2026-01-25.json": "df93550a922697a8",
     "short_interest.json": "7f866bca3ad6ef21",
-    "trial_records.json": "ab15a07866a15af9",
+    "trial_records.json": "433be934610ab206",
     "trial_records_backup.json": "361ded3bf36de67c",
     "trial_records_with_dates.json": "5aab3b0f8a3ed1f3",
     "trials.json": "3b0f70caa7e92697",
     "universe.backup.json": "32944fdc9c8e382e",
-    "universe.json": "9ddb31669c16c012",
+    "universe.json": "92134e828c805ecb",
     "universe_21stocks_backup.json": "47ff06a810cf97e0",
     "universe_44stocks_backup.json": "47ff06a810cf97e0",
     "universe_backup.backup.json": "b8511c792e9e51e0",
@@ -516,9 +526,9 @@
     "universe_mapped.json": "15f9c56365b4bad7"
   },
   "clinical_sort_telemetry": {
-    "n_nonzero_clin_adj_dev": 64,
-    "n_nonzero_clin_adj_comm": 62,
-    "ruleset_id": "8f99d47e",
+    "n_nonzero_clin_adj_dev": 61,
+    "n_nonzero_clin_adj_comm": 60,
+    "ruleset_id": "0c1129f6",
     "enable_clinical_sort_signal": true
   },
   "far_window_telemetry": {
@@ -532,42 +542,70 @@
     "table_path": "production_data/alpha_cohort_tables/v1.json",
     "shrink_k": 50.0
   },
+  "alpha_modifier_telemetry": {
+    "mode": "within_tier",
+    "weight": 0.05,
+    "table_policy": "if_missing",
+    "table_path": "/mnt/c/Projects/biotech_screener/biotech-screener/production_data/alpha_cohort_tables/daily/v1_2026-01-15.json",
+    "alpha_table_source": "preexisting_local",
+    "alpha_table_marker_present": false,
+    "table_build_info": {
+      "as_of_date": "2026-01-15",
+      "train_mode": "trailing-6",
+      "horizon": 84,
+      "n_train_dates": 6,
+      "train_dates": [
+        "2025-04-30",
+        "2025-05-30",
+        "2025-06-30",
+        "2025-07-31",
+        "2025-08-29",
+        "2025-09-30"
+      ]
+    },
+    "cells_populated": 26,
+    "alpha_score_present": 174,
+    "alpha_score_missing": 15
+  },
   "coinvest_coverage": {
-    "tickers_with_signal": 261,
-    "ticker_count": 317,
-    "coverage_pct": 82.3
+    "tickers_with_signal": 247,
+    "ticker_count": 295,
+    "coverage_pct": 83.7
   },
   "alpha_contract_telemetry": {
     "input": {
       "alpha_contract_version": "v1.1.0",
-      "n_tickers_checked": 317,
+      "n_tickers_checked": 295,
       "n_tickers_with_errors": 0,
-      "n_tickers_with_warnings": 317,
+      "n_tickers_with_warnings": 295,
       "total_errors": 0,
-      "total_warnings": 981,
+      "total_warnings": 917,
       "n_missing_rec": 0,
-      "n_missing_catalyst_trace": 951,
+      "n_missing_catalyst_trace": 885,
       "top_missing_required": {},
       "top_missing_recommended": {
-        "catalyst_decay.nearest_catalyst_event_id": 317,
-        "catalyst_decay.nearest_catalyst_disclosed_at": 317,
-        "catalyst_decay.nearest_catalyst_source_uid": 317,
-        "clinical_score_z": 30
+        "catalyst_decay.nearest_catalyst_event_id": 295,
+        "catalyst_decay.nearest_catalyst_disclosed_at": 295,
+        "catalyst_decay.nearest_catalyst_source_uid": 295,
+        "clinical_score_z": 29,
+        "clinical_alpha_z": 1,
+        "clinical_readout_days": 1,
+        "clinical_coverage_flag": 1
       },
       "sample_errors": []
     },
     "output": {
       "alpha_contract_version": "v1.1.0",
-      "n_tickers_checked": 317,
+      "n_tickers_checked": 295,
       "n_tickers_with_errors": 0,
-      "n_tickers_with_warnings": 30,
+      "n_tickers_with_warnings": 29,
       "total_errors": 0,
-      "total_warnings": 30,
+      "total_warnings": 29,
       "n_missing_rec": 0,
       "n_missing_catalyst_trace": 0,
       "top_missing_required": {},
       "top_missing_recommended": {
-        "clinical_score_z_tier": 30
+        "clinical_score_z_tier": 29
       },
       "sample_errors": []
     }
@@ -576,5 +614,12 @@
     "mode": "off",
     "path": null,
     "all_required_present": null
-  }
+  },
+  "cache_health_overall_status": "bad",
+  "cache_degraded_run": true,
+  "suppress_churn_comparisons": true,
+  "cache_refresh_sidecar": null,
+  "cache_refresh_had_rejections": false,
+  "cache_refresh_rejected_sources": [],
+  "cache_refresh_summary": null
 }

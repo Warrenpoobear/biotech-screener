@@ -1,57 +1,18 @@
 {
-  "generated_at": "2026-02-22T20:06:55Z",
+  "generated_at": "2026-02-28T21:47:45Z",
   "current": {
     "date": "2026-01-20",
-    "ruleset_id": "8f99d47e",
+    "ruleset_id": "0c1129f6",
     "has_native_portfolio": true,
     "portfolio_size": 20
   },
-  "prior": {
-    "date": "2026-01-19",
-    "ruleset_id": "96f655ee",
-    "has_native_portfolio": true,
-    "portfolio_size": 20
-  },
-  "portfolio_turnover": {
-    "entrants": [
-      "ALMS",
-      "CNTA",
-      "IMVT",
-      "IRON",
-      "KOD",
-      "NUVB",
-      "OCGN",
-      "PRAX",
-      "RVMD",
-      "SION"
-    ],
-    "exits": [
-      "AARD",
-      "ABEO",
-      "ACLX",
-      "ALLO",
-      "ATXS",
-      "AURA",
-      "NUVL",
-      "PRTA",
-      "RAPP",
-      "TENX"
-    ],
-    "name_turnover_pct": 50.0,
-    "weight_l1_delta": 108.2
-  },
+  "prior": null,
   "tier_distribution": {
     "current": {
-      "A": 25,
-      "B": 46,
-      "C": 61,
-      "D": 49
-    },
-    "prior": {
-      "A": 36,
-      "B": 37,
-      "C": 52,
-      "D": 56
+      "A": 20,
+      "B": 41,
+      "C": 45,
+      "D": 59
     }
   },
   "tier_in_portfolio": {
@@ -60,46 +21,24 @@
       "B": 0,
       "C": 0,
       "D": 0
-    },
-    "prior": {
-      "A": 20,
-      "B": 0,
-      "C": 0,
-      "D": 0
     }
   },
   "sizing": {
     "current": {
-      "L": 16,
-      "M": 2,
-      "S": 1,
+      "L": 18,
+      "M": 1,
+      "S": 0,
       "XS": 1
-    },
-    "prior": {
-      "L": 12,
-      "M": 7,
-      "S": 1,
-      "XS": 0
     }
   },
   "catalyst_coverage": {
     "current": {
-      "n_dev": 181,
-      "n_specific": 153,
-      "pct": 84.5,
+      "n_dev": 165,
+      "n_specific": 136,
+      "pct": 82.4,
       "mode_dist": {
-        "specific_days": 153,
-        "no_upcoming": 28
-      },
-      "backfill_share_pct": 0.0
-    },
-    "prior": {
-      "n_dev": 181,
-      "n_specific": 138,
-      "pct": 76.2,
-      "mode_dist": {
-        "specific_days": 138,
-        "no_upcoming": 43
+        "specific_days": 136,
+        "no_upcoming": 29
       },
       "backfill_share_pct": 0.0
     }
@@ -117,7 +56,7 @@
         "tier_dev": "C"
       },
       {
-        "ticker": "BEAM",
+        "ticker": "CHRS",
         "catalyst_days": 9,
         "tier_dev": "C"
       },
@@ -132,14 +71,14 @@
         "tier_dev": "C"
       },
       {
-        "ticker": "PHVS",
+        "ticker": "ERAS",
         "catalyst_days": 12,
         "tier_dev": "A"
       },
       {
-        "ticker": "ERAS",
+        "ticker": "ANRO",
         "catalyst_days": 12,
-        "tier_dev": "A"
+        "tier_dev": "B"
       },
       {
         "ticker": "NAMS",
@@ -156,86 +95,25 @@
         "catalyst_days": 12,
         "tier_dev": "B"
       }
-    ],
-    "prior": [
-      {
-        "ticker": "MBX",
-        "catalyst_days": 2,
-        "tier_dev": "C"
-      },
-      {
-        "ticker": "ALMS",
-        "catalyst_days": 2,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "PRTA",
-        "catalyst_days": 4,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "GLPG",
-        "catalyst_days": 9,
-        "tier_dev": "C"
-      },
-      {
-        "ticker": "ABEO",
-        "catalyst_days": 9,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "ACLX",
-        "catalyst_days": 9,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "INBX",
-        "catalyst_days": 9,
-        "tier_dev": "B"
-      },
-      {
-        "ticker": "HRTX",
-        "catalyst_days": 10,
-        "tier_dev": "C"
-      },
-      {
-        "ticker": "BEAM",
-        "catalyst_days": 10,
-        "tier_dev": "C"
-      },
-      {
-        "ticker": "ALLO",
-        "catalyst_days": 10,
-        "tier_dev": "A"
-      }
     ]
   },
   "risk_flags": {
     "current": {
       "deep_drawdown": 2,
-      "high_vol": 2,
-      "high_beta": 3,
+      "high_vol": 4,
+      "high_beta": 2,
       "overbought_rsi": 4,
-      "low_confidence": 0
-    },
-    "prior": {
-      "deep_drawdown": 5,
-      "high_vol": 0,
-      "high_beta": 0,
-      "overbought_rsi": 0,
       "low_confidence": 0
     }
   },
+  "churn_suppressed": true,
+  "churn_suppressed_reason": "cache_degraded",
   "guardrails": {
     "passed": [
-      "Ruleset matches pinned Phase-2 ID (8f99d47e)",
-      "A-tier count >= 1 (25)",
-      "Catalyst coverage 84.5% >= 50.0%"
+      "Ruleset matches pinned Phase-2 ID (0c1129f6)",
+      "A-tier count >= 1 (20)",
+      "Catalyst coverage 82.4% >= 50.0%"
     ],
-    "warnings": [
-      "Name turnover 50.0% > 40.0%",
-      "Ruleset changed: 96f655ee -> 8f99d47e",
-      "Name turnover 50.0% > 40.0% threshold"
-    ]
+    "warnings": []
   }
 }
