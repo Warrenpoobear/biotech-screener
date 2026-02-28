@@ -1,0 +1,559 @@
+{
+  "as_of_date": "2026-02-09",
+  "flag_summary": {
+    "far_future_count": 1281,
+    "malformed_count": 0,
+    "missing_disclosed_at_count": 0,
+    "pcd_after_cd_count": 0
+  },
+  "flags": {
+    "far_future_dates": [
+      {
+        "date": "2036-02-01",
+        "days_ahead": 3644,
+        "field": "primary_completion_date",
+        "nct_id": "NCT05708677",
+        "ticker": "ABEO"
+      },
+      {
+        "date": "2030-09-01",
+        "days_ahead": 1665,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06828458",
+        "ticker": "ABSI"
+      },
+      {
+        "date": "2029-08-30",
+        "days_ahead": 1298,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06277037",
+        "ticker": "ABUS"
+      },
+      {
+        "date": "2029-05-01",
+        "days_ahead": 1177,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06420297",
+        "ticker": "ACAD"
+      },
+      {
+        "date": "2029-02-01",
+        "days_ahead": 1088,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07095465",
+        "ticker": "ACAD"
+      },
+      {
+        "date": "2028-02-01",
+        "days_ahead": 722,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07029581",
+        "ticker": "ACAD"
+      },
+      {
+        "date": "2029-04-01",
+        "days_ahead": 1147,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06194799",
+        "ticker": "ACAD"
+      },
+      {
+        "date": "2028-01-01",
+        "days_ahead": 691,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06015841",
+        "ticker": "ACIU"
+      },
+      {
+        "date": "2028-07-01",
+        "days_ahead": 873,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06413498",
+        "ticker": "ACLX"
+      },
+      {
+        "date": "2032-05-31",
+        "days_ahead": 2303,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06374459",
+        "ticker": "ACRS"
+      },
+      {
+        "date": "2028-08-23",
+        "days_ahead": 926,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06597565",
+        "ticker": "ACRV"
+      },
+      {
+        "date": "2029-11-01",
+        "days_ahead": 1361,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06607549",
+        "ticker": "ADCT"
+      },
+      {
+        "date": "2031-02-01",
+        "days_ahead": 1818,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06919939",
+        "ticker": "ADCT"
+      },
+      {
+        "date": "2031-05-01",
+        "days_ahead": 1907,
+        "field": "primary_completion_date",
+        "nct_id": "NCT05991388",
+        "ticker": "ADCT"
+      },
+      {
+        "date": "2028-06-30",
+        "days_ahead": 872,
+        "field": "primary_completion_date",
+        "nct_id": "NCT05296070",
+        "ticker": "ADCT"
+      },
+      {
+        "date": "2029-08-01",
+        "days_ahead": 1269,
+        "field": "primary_completion_date",
+        "nct_id": "NCT05777993",
+        "ticker": "AGIO"
+      },
+      {
+        "date": "2028-01-17",
+        "days_ahead": 707,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07241234",
+        "ticker": "AGIO"
+      },
+      {
+        "date": "2029-09-01",
+        "days_ahead": 1300,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06528314",
+        "ticker": "AKRO"
+      },
+      {
+        "date": "2033-12-01",
+        "days_ahead": 2852,
+        "field": "primary_completion_date",
+        "nct_id": "NCT01246765",
+        "ticker": "ALKS"
+      },
+      {
+        "date": "2028-06-01",
+        "days_ahead": 843,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06767683",
+        "ticker": "ALKS"
+      },
+      {
+        "date": "2028-02-01",
+        "days_ahead": 722,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07085104",
+        "ticker": "ALLO"
+      },
+      {
+        "date": "2027-09-01",
+        "days_ahead": 569,
+        "field": "primary_completion_date",
+        "nct_id": "NCT04093596",
+        "ticker": "ALLO"
+      },
+      {
+        "date": "2039-01-01",
+        "days_ahead": 4709,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06925685",
+        "ticker": "ALLO"
+      },
+      {
+        "date": "2027-08-24",
+        "days_ahead": 561,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06500273",
+        "ticker": "ALLO"
+      },
+      {
+        "date": "2028-11-01",
+        "days_ahead": 996,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06846541",
+        "ticker": "ALMS"
+      },
+      {
+        "date": "2028-05-30",
+        "days_ahead": 841,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06679946",
+        "ticker": "ALNY"
+      },
+      {
+        "date": "2027-08-31",
+        "days_ahead": 568,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06845202",
+        "ticker": "ALNY"
+      },
+      {
+        "date": "2029-03-28",
+        "days_ahead": 1143,
+        "field": "primary_completion_date",
+        "nct_id": "NCT05231785",
+        "ticker": "ALNY"
+      },
+      {
+        "date": "2028-07-05",
+        "days_ahead": 877,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06585449",
+        "ticker": "ALNY"
+      },
+      {
+        "date": "2027-12-27",
+        "days_ahead": 686,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07223203",
+        "ticker": "ALNY"
+      },
+      {
+        "date": "2030-10-23",
+        "days_ahead": 1717,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07358078",
+        "ticker": "ALNY"
+      },
+      {
+        "date": "2030-10-29",
+        "days_ahead": 1723,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07181109",
+        "ticker": "ALNY"
+      },
+      {
+        "date": "2030-03-31",
+        "days_ahead": 1511,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07214727",
+        "ticker": "ALNY"
+      },
+      {
+        "date": "2028-01-05",
+        "days_ahead": 695,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06659640",
+        "ticker": "ALNY"
+      },
+      {
+        "date": "2027-12-01",
+        "days_ahead": 660,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06360289",
+        "ticker": "ALNY"
+      },
+      {
+        "date": "2029-10-01",
+        "days_ahead": 1330,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07203053",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2033-06-01",
+        "days_ahead": 2669,
+        "field": "primary_completion_date",
+        "nct_id": "NCT04307576",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2028-06-26",
+        "days_ahead": 868,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06180278",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2028-05-21",
+        "days_ahead": 832,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07366086",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2028-03-07",
+        "days_ahead": 757,
+        "field": "primary_completion_date",
+        "nct_id": "NCT04586660",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2032-10-31",
+        "days_ahead": 2456,
+        "field": "primary_completion_date",
+        "nct_id": "NCT05909761",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2028-10-27",
+        "days_ahead": 991,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06333951",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2029-03-13",
+        "days_ahead": 1128,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06878261",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2029-10-01",
+        "days_ahead": 1330,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07243470",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2028-01-14",
+        "days_ahead": 704,
+        "field": "primary_completion_date",
+        "nct_id": "NCT03392064",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2030-07-01",
+        "days_ahead": 1603,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07176546",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2027-09-29",
+        "days_ahead": 597,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07225686",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2030-04-29",
+        "days_ahead": 1540,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07297979",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2028-02-14",
+        "days_ahead": 735,
+        "field": "primary_completion_date",
+        "nct_id": "NCT06311721",
+        "ticker": "AMGN"
+      },
+      {
+        "date": "2028-12-05",
+        "days_ahead": 1030,
+        "field": "primary_completion_date",
+        "nct_id": "NCT07134088",
+        "ticker": "AMGN"
+      }
+    ],
+    "malformed_dates": [],
+    "missing_disclosed_at_with_future_dates": [],
+    "pcd_after_cd": []
+  },
+  "horizon_days": 540,
+  "metrics": {
+    "cd_horizon_buckets": {
+      "0-30d": 82,
+      "181-365d": 639,
+      "31-90d": 172,
+      "91-180d": 295,
+      ">365d": 2362
+    },
+    "future_completion_date": 3550,
+    "future_primary_completion_date": 2964,
+    "future_results_first_posted": 0,
+    "pcd_horizon_buckets": {
+      "0-30d": 106,
+      "181-365d": 666,
+      "31-90d": 205,
+      "91-180d": 336,
+      ">365d": 1651
+    },
+    "pct_future_completion_date": 19.55,
+    "pct_future_primary_completion_date": 16.32,
+    "pct_future_results_first_posted": 0.0,
+    "status_distribution": {
+      "ACTIVE_NOT_RECRUITING": 1261,
+      "APPROVED_FOR_MARKETING": 62,
+      "AVAILABLE": 37,
+      "COMPLETED": 10389,
+      "ENROLLING_BY_INVITATION": 148,
+      "NOT_YET_RECRUITING": 435,
+      "NO_LONGER_AVAILABLE": 60,
+      "RECRUITING": 2189,
+      "SUSPENDED": 25,
+      "TEMPORARILY_NOT_AVAILABLE": 3,
+      "TERMINATED": 1822,
+      "UNKNOWN": 1187,
+      "WITHDRAWN": 539
+    },
+    "tickers_covered": 309,
+    "total_trials": 18157
+  },
+  "schema": "ctgov_future_audit.v1",
+  "top_tickers_by_future_pcd": [
+    {
+      "earliest_future_pcd": "2026-02-28",
+      "future_pcd_count": 198,
+      "ticker": "DNA"
+    },
+    {
+      "earliest_future_pcd": "2026-02-18",
+      "future_pcd_count": 177,
+      "ticker": "REGN"
+    },
+    {
+      "earliest_future_pcd": "2026-02-18",
+      "future_pcd_count": 141,
+      "ticker": "TECH"
+    },
+    {
+      "earliest_future_pcd": "2026-02-28",
+      "future_pcd_count": 124,
+      "ticker": "LAB"
+    },
+    {
+      "earliest_future_pcd": "2026-02-15",
+      "future_pcd_count": 119,
+      "ticker": "GH"
+    },
+    {
+      "earliest_future_pcd": "2026-02-26",
+      "future_pcd_count": 111,
+      "ticker": "AZN"
+    },
+    {
+      "earliest_future_pcd": "2026-03-01",
+      "future_pcd_count": 108,
+      "ticker": "GILD"
+    },
+    {
+      "earliest_future_pcd": "2026-02-15",
+      "future_pcd_count": 101,
+      "ticker": "INCY"
+    },
+    {
+      "earliest_future_pcd": "2026-02-10",
+      "future_pcd_count": 85,
+      "ticker": "CAI"
+    },
+    {
+      "earliest_future_pcd": "2026-03-31",
+      "future_pcd_count": 75,
+      "ticker": "GRFS"
+    },
+    {
+      "earliest_future_pcd": "2026-02-28",
+      "future_pcd_count": 71,
+      "ticker": "AMGN"
+    },
+    {
+      "earliest_future_pcd": "2026-02-11",
+      "future_pcd_count": 63,
+      "ticker": "SNY"
+    },
+    {
+      "earliest_future_pcd": "2026-03-26",
+      "future_pcd_count": 49,
+      "ticker": "JAZZ"
+    },
+    {
+      "earliest_future_pcd": "2026-02-22",
+      "future_pcd_count": 46,
+      "ticker": "ONC"
+    },
+    {
+      "earliest_future_pcd": "2026-02-16",
+      "future_pcd_count": 45,
+      "ticker": "BIIB"
+    },
+    {
+      "earliest_future_pcd": "2026-03-31",
+      "future_pcd_count": 45,
+      "ticker": "EXEL"
+    },
+    {
+      "earliest_future_pcd": "2026-03-01",
+      "future_pcd_count": 44,
+      "ticker": "CDNA"
+    },
+    {
+      "earliest_future_pcd": "2026-02-21",
+      "future_pcd_count": 43,
+      "ticker": "MRNA"
+    },
+    {
+      "earliest_future_pcd": "2026-02-24",
+      "future_pcd_count": 41,
+      "ticker": "GMAB"
+    },
+    {
+      "earliest_future_pcd": "2026-03-01",
+      "future_pcd_count": 39,
+      "ticker": "BNTX"
+    },
+    {
+      "earliest_future_pcd": "2026-02-28",
+      "future_pcd_count": 37,
+      "ticker": "TEM"
+    },
+    {
+      "earliest_future_pcd": "2026-02-23",
+      "future_pcd_count": 32,
+      "ticker": "ARGX"
+    },
+    {
+      "earliest_future_pcd": "2026-04-01",
+      "future_pcd_count": 32,
+      "ticker": "CRL"
+    },
+    {
+      "earliest_future_pcd": "2026-03-03",
+      "future_pcd_count": 26,
+      "ticker": "VRTX"
+    },
+    {
+      "earliest_future_pcd": "2026-03-30",
+      "future_pcd_count": 25,
+      "ticker": "UTHR"
+    },
+    {
+      "earliest_future_pcd": "2026-06-01",
+      "future_pcd_count": 24,
+      "ticker": "BMRN"
+    },
+    {
+      "earliest_future_pcd": "2026-03-01",
+      "future_pcd_count": 24,
+      "ticker": "RCUS"
+    },
+    {
+      "earliest_future_pcd": "2026-03-15",
+      "future_pcd_count": 23,
+      "ticker": "IBRX"
+    },
+    {
+      "earliest_future_pcd": "2026-03-24",
+      "future_pcd_count": 21,
+      "ticker": "SMMT"
+    },
+    {
+      "earliest_future_pcd": "2026-03-01",
+      "future_pcd_count": 20,
+      "ticker": "IONS"
+    }
+  ]
+}
