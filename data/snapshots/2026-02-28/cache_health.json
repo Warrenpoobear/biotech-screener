@@ -45,11 +45,11 @@
   "cache_refresh_had_rejections": false,
   "cache_refresh_rejected_sources": [],
   "cache_refresh_summary": {
-    "ema_agenda": {
+    "ctgov": {
       "accepted": true,
       "reason": "",
-      "count": 305,
-      "prior_count": null,
+      "count": 18689,
+      "prior_count": 18689,
       "committed": true
     }
   }

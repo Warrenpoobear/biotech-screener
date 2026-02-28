@@ -1,6 +1,6 @@
 {
   "as_of_date": "2026-02-28",
-  "saved_at": "2026-02-28T21:12:36.117662Z",
+  "saved_at": "2026-02-28T21:38:33.217860Z",
   "decision_mode": "phase2",
   "ranking_mode": "decision",
   "version": "1.6.0",
@@ -58,8 +58,8 @@
       "tie_pct": 0.4613,
       "zero_signal_count": 92,
       "signal_n": 205,
-      "signal_unique": 178,
-      "signal_tie_pct": 0.1317
+      "signal_unique": 179,
+      "signal_tie_pct": 0.1268
     },
     "smart_money_score": {
       "n_total": 249,
@@ -277,6 +277,7 @@
     "catalyst_events_2026-02-25.json": "d32670e51f3fd64a",
     "catalyst_events_2026-02-26.json": "1b11d901282fd54d",
     "catalyst_events_2026-02-27.json": "db5849a96dda6f13",
+    "catalyst_events_2026-02-28.json": "914f3036960b819d",
     "catalyst_events_vnext_2023-01-15.json": "5d8698ae7dc05f46",
     "catalyst_events_vnext_2023-04-15.json": "944784087f2f8266",
     "catalyst_events_vnext_2023-07-15.json": "06d4232f61d3ceb7",
@@ -443,6 +444,7 @@
     "catalyst_events_vnext_2026-02-25.json": "c1805c2ad001e372",
     "catalyst_events_vnext_2026-02-26.json": "425f9c60df5e04b2",
     "catalyst_events_vnext_2026-02-27.json": "93db2c8b561ffb22",
+    "catalyst_events_vnext_2026-02-28.json": "3adc0e427c1f6323",
     "catalyst_overrides.json": "e4c587ce6c537d65",
     "cfo_data_2026-01-08.json": "33e0d93576eff5d0",
     "corporate_catalysts.json": "ad7d56deef131f58",
@@ -545,7 +547,7 @@
     "weight": 0.05,
     "table_policy": "if_missing",
     "table_path": "/mnt/c/Projects/biotech_screener/biotech-screener/production_data/alpha_cohort_tables/daily/v1_2026-02-28.json",
-    "alpha_table_source": "rebuilt_in_run",
+    "alpha_table_source": "preexisting_local",
     "alpha_table_marker_present": false,
     "table_build_info": {
       "as_of_date": "2026-02-28",
@@ -617,11 +619,11 @@
   "cache_refresh_had_rejections": false,
   "cache_refresh_rejected_sources": [],
   "cache_refresh_summary": {
-    "ema_agenda": {
+    "ctgov": {
       "accepted": true,
       "reason": "",
-      "count": 305,
-      "prior_count": null,
+      "count": 18689,
+      "prior_count": 18689,
       "committed": true
     }
   }
