@@ -1,7 +1,7 @@
 # Biotech Screener Model Documentation
 
-**Version:** 2.5.0
-**Last Updated:** February 25, 2026
+**Version:** 2.6.0
+**Last Updated:** March 1, 2026
 **System:** Wake Robin Capital Biotech Screening Pipeline
 
 ---
@@ -67,7 +67,7 @@ python run_screen.py \
 
 ### Recommended IC workflow
 
-1. **Portfolio**: Start with `decision_portfolio.csv` (Decision Engine output: A+B tier, top-K, sized). Under ruleset v1.5.1, `composite_score` is driven by alpha cohort signals (not Module 5 linear combination). This supersedes legacy Module 5 `composite_rank` for all investment decisions.
+1. **Portfolio**: Start with `decision_portfolio.csv` (Decision Engine output: A+B tier, top-K, sized). Under ruleset v1.6.1, `composite_score` is driven by alpha cohort signals (not Module 5 linear combination). This supersedes legacy Module 5 `composite_rank` for all investment decisions.
 2. **Risk gates**: Review `severity`, `risk_flags`, and `tier_reason` before any investment decision.
 3. **Thesis build**: Use catalyst provenance (`catalyst_source`, `catalyst_days`, `catalyst_strength`) + Module 4 (pipeline quality) as the thesis backbone.
 4. **Health check**: Review `phase2_health.json` — FAIL means do not act, WARN means review before acting.
@@ -998,7 +998,7 @@ clin_adj = clinical_sort_weight * cz_eff * stage_mult
 
 **Relationship to Module 5:** Module 5 continues to run and produce `composite_score`, `composite_rank`, and all component scores consumed by the Decision Engine. Alpha cohort scoring is an alternative ranking signal that replaces `composite_rank` in the sort key when enabled. Both `composite_score` and `alpha_cohort_pct` are written to the snapshot for diagnostic comparison.
 
-**Active status:** In ruleset v1.5.1 (ID=`88d7ae9a`), `composite_engine="alpha_cohort"` and `sort_anchor="alpha_cohort"` are both enabled, making alpha cohort the authoritative ranking signal for all portfolio decisions. Coinvest sort is DISABLED (weight=0.0) in this version; clinical sort remains ON.
+**Active status:** In ruleset v1.6.1 (ID=`0c1129f6`), `composite_engine="alpha_cohort"` and `sort_anchor="alpha_cohort"` are both enabled, making alpha cohort the authoritative ranking signal for all portfolio decisions. Alpha modifier (within_tier, w=0.05) is active. Clinical sort remains ON.
 
 ### Composite Engine Override
 
@@ -1038,10 +1038,10 @@ validate_alpha_outputs(csv_rows, schema_mode="warn", alpha_cohort_enabled=True)
 
 Decision rules are externalized as frozen `DecisionRuleset` dataclass instances, serialized to JSON with content-hash IDs for reproducibility.
 
-- **Active ruleset**: `v1.5.1_coinvest_off.json` (ID=`88d7ae9a`) — coinvest sort DISABLED (w=0.0) + alpha cohort ON + clinical sort ON + tiebreaker priority
+- **Active ruleset**: `v1.6.1_alpha_modifier_within_tier.json` (ID=`0c1129f6`) — alpha modifier within_tier (w=0.05) + alpha cohort ON + clinical sort ON
 - **Pinned in**: `run_screen.py` AND `run_phase2_snapshot_delta.py` (must stay in sync)
-- **Previous**: `v1.5.0_coinvest_candidate.json` (ID=`8f99d47e`), `v1.4.0_alpha_cohort_candidate.json` (ID=`aa0aaf28`)
-- **Candidate**: `v1.4.1_tier_first_candidate.json` (ID=`054bc5cc`) — commercial tier promotion with tier_first mode, pending replay
+- **Previous**: `v1.5.1_coinvest_off.json` (ID=`88d7ae9a`), `v1.5.0_coinvest_candidate.json` (ID=`8f99d47e`)
+- **Candidates**: `v1.4.1_tier_first_candidate.json` (ID=`054bc5cc`), `v1.4.0_candidate.json` (ID=`25f50278`), `v1.3.4_clinical_sort_candidate.json` (ID=`f9842e1f`)
 
 ### Phase-2 Health Gate
 
@@ -1140,14 +1140,14 @@ Five-step orchestrator that runs the complete screening pipeline with gates and 
 | 1 | Price Refresh | Extend `price_history.csv` through `as_of_date`; evaluate XBI staleness + input gates |
 | 2 | Run Screen | Launch `run_screen.py --decision-mode phase2`; produce rankings.csv + sidecar files |
 | 3 | Integrity Audit | Run `data_integrity_audit.py` (invariants + price recompute) |
-| 4 | Post-Screen Gates | Evaluate 14 WARN-only gates (drift, coverage, schema, weights, consistency) |
+| 4 | Post-Screen Gates | Evaluate 15 WARN-only gates (drift, coverage, schema, weights, consistency, health) |
 | 5 | Manifest + Promotion | Build `run_manifest.json`; promote to `data/snapshots/{date}/` if not FAIL |
 
 **Exit codes:** 0=PASS, 1=FAIL (snapshot stays in staging), 2=WARN (snapshot promoted with warnings)
 
-**20 production gates** in `GATE_ALLOWLIST`:
-- **Hard gates** (FAIL → abort): `xbi_staleness`, `ctgov_cache`, `inputs_present`, `market_data_schema`, `market_data_staleness`, `market_data_coverage`, `audit`, `missing_reason_fraction`, `turnover`
-- **Soft gates** (WARN only): `drift_monitoring`, `ctgov_pit_dates`, `sec_13f_cache`, `institutional_summary`, `institutional_delta`, `pnl_attribution`, `price_pit_cache`, `forward_eval`, `pit_bundle_health`, `decision_engine_schema`, `portfolio_weights`, `eligibility_consistency`
+**23 production gates** in `GATE_ALLOWLIST`:
+- **Hard gates** (FAIL → abort): `xbi_staleness`, `ctgov_cache`, `inputs_present`, `market_data_schema`, `market_data_staleness`, `market_data_coverage`, `screen`, `audit`, `missing_reason_fraction`, `turnover`
+- **Soft gates** (WARN only): `drift_monitoring`, `ctgov_pit_dates`, `sec_13f_cache`, `institutional_summary`, `institutional_delta`, `pnl_attribution`, `price_pit_cache`, `forward_eval`, `pit_bundle_health`, `decision_engine_schema`, `portfolio_weights`, `eligibility_consistency`, `cache_health`, `ruleset_health`
 
 ### Data Integrity Audit
 
@@ -1236,6 +1236,68 @@ python warm_caches.py --as-of-date 2026-02-19 --sources sec_13f
 ```
 
 **PIT selection algorithm:** Filter filings where `filing_date <= as_of_date` → latest `report_date` → prefer `13F-HR/A` over `13F-HR` → latest `filing_date` among ties.
+
+### Ruleset Health Monitor (Post-Promotion)
+
+**File:** `tools/ruleset_health_monitor.py`
+**Purpose:** Detect degradation after a ruleset promotion by comparing daily drift metrics against the promotion baseline.
+
+**Inputs:**
+- Current snapshot's `drift_report.json` (from `scripts/run_drift_report.py`)
+- Active ruleset's promotion receipt (from `artifacts/promotions/`)
+
+**Logic:**
+1. Load promotion receipt for active ruleset → extract `gate.mean_top60_overlap`, `gate.max_rank_shift`, `gate.mean_turnover`
+2. Load today's drift metrics from `drift_report.json`
+3. Compare: if today's metrics worse than baseline by configurable margin → WARN
+4. Track rolling history in `artifacts/ruleset_health_history.jsonl` (append-only, one JSON line per day)
+5. If degradation persists for K consecutive days → `recommend_rollback: true`
+
+**Output:** `ruleset_health.json` sidecar:
+```json
+{
+  "schema": "ruleset_health.v1",
+  "active_ruleset_id": "0c1129f6",
+  "promotion_date": "2026-02-26",
+  "days_since_promotion": 2,
+  "today": { "top60_overlap_pct": 92.0, "max_rank_shift": 12 },
+  "promotion_baseline": { "mean_top60_overlap": 98.5, "max_rank_shift": 4 },
+  "status": "OK",
+  "consecutive_warn_days": 0,
+  "recommend_rollback": false
+}
+```
+
+**Thresholds** (`HealthThresholds` dataclass):
+
+| Threshold | Default | Description |
+|-----------|---------|-------------|
+| `overlap_warn_delta` | 10.0 | WARN if today < baseline - delta |
+| `rank_shift_warn_factor` | 3.0 | WARN if today > baseline * factor |
+| `consecutive_warn_days_for_rollback` | 3 | Recommend rollback after K consecutive WARN days |
+
+**Graceful modes:** No receipt → PASS (cold start). No drift report → PASS (data gap). History resets after OK day.
+
+**Gate:** `ruleset_health` in `GATE_ALLOWLIST` (WARN-only, never FAIL).
+
+### Ruleset Rollback (First-Class)
+
+**File:** `scripts/promote_ruleset.py`
+**Purpose:** Governed rollback without `--force`, with audit trail and auto-discover of last-known-good (LKG) target.
+
+**Modes:**
+
+| Invocation | Behavior |
+|------------|----------|
+| `--rollback RULESET_ID --reason "..."` | Target specific retired entry |
+| `--rollback --reason "..."` | Auto-discover LKG via `_find_last_known_good()` |
+| `--rollback --force` | Backward-compatible emergency rollback |
+
+**LKG algorithm:** Walk manifest in reverse, find first retired entry whose `updated_by` starts with `"promote_ruleset.py"` (i.e., was actively promoted, not manually placed).
+
+**Receipt schema:** Rollback receipts include `"action": "rollback"` + `"reason"` field. Forward promotions include `"action": "promote"`. Receipt filename prefix: `rollback_*` or `promotion_*`.
+
+**Changelog:** Skipped for rollbacks (rollbacks are urgent; changelog entries not required).
 
 ### Catalyst Shadow Metrics (Telemetry)
 
@@ -1473,7 +1535,8 @@ python run_screen.py \
 | Alpha Signal Contract | `alpha_signal_contract.py` | DE boundary validation (v1.1.0) |
 | Signal Robustness Backtest | `scripts/backtest_signal_robustness.py` | Out-of-sample IC + coverage diagnostics |
 | PIT Coinvest Features | `scripts/build_coinvest_features_from_13f.py` | PIT-safe coinvest features from 13F cache |
-| Daily Production Runner | `tools/run_daily_production.py` | 5-step orchestrator with 20 gates |
+| Ruleset Health Monitor | `tools/ruleset_health_monitor.py` | Post-promotion health check + JSONL history |
+| Daily Production Runner | `tools/run_daily_production.py` | 5-step orchestrator with 23 gates |
 | Data Integrity Audit | `tools/data_integrity_audit.py` | Invariant checks + price recompute verification |
 | PnL Attribution | `scripts/pnl_attribution.py` | Position-level PnL decomposition |
 | PIT Price Cache | `tools/warm_price_cache.py` | Write-once anchor prices + forward-return backfill |
@@ -1489,7 +1552,8 @@ python run_screen.py \
 
 ## Changelog
 
-- **2026-02-25 v2.5.0**: Acquired ticker cleanup — AKRO (Eli Lilly, Dec 2025), MRUS (Dec 2025), CDTX (Jan 2026), ATXS (Jan 2026), GBIO (Feb 2026) marked `excluded_acquired` in universe.json. Fixed Module 1 `_classify_status()` to recognize `"excluded_acquired"` status. Defensive overlay false-positive fixes: self-sustaining exemption for `single_asset_early_stage` (burn_ttm<=0 + cash>=$500M, e.g. ILMN), debt-driven exemption for `survivability_critical` (cash/burn>=5yr, e.g. FTRE). AKRO CIK and SEC EDGAR financial data added. WSL2 `safe_mkdir` permissions fix. Added daily production workflow and data integrity audit documentation. Updated active ruleset to v1.5.1 (ID=`88d7ae9a`, coinvest OFF). Universe: 354 tickers, 313 ranked, 248 eligible, 9 red flags. ~7900+ tests across 233 files.
+- **2026-03-01 v2.6.0**: First-class rollback in `promote_ruleset.py` — `--rollback --reason` without `--force`, auto-discover LKG via `_find_last_known_good()`, receipt `action` field (`"promote"`/`"rollback"`), changelog skipped for rollbacks. New `tools/ruleset_health_monitor.py` — post-promotion health check comparing daily drift against promotion baseline, JSONL history tracking, consecutive WARN detection with rollback recommendation. `ruleset_health` gate added to daily production (WARN-only, 23 gates total). Eligibility false-positive fix: Gate 0 `financials_missing` now checks `cash_total > 0` — companies with cash via MarketableSecurities (not cash_and_equivalents) no longer misclassified (GILD, ARWR, ILMN, NTRA recovered). Active ruleset updated to v1.6.1 (ID=`0c1129f6`, alpha modifier within_tier w=0.05). Universe: 354 tickers, 297 ranked, 194 eligible, 103 ineligible. ~9370 tests across 281 files.
+- **2026-02-25 v2.5.0**: Acquired ticker cleanup — AKRO (Eli Lilly, Dec 2025), MRUS (Dec 2025), CDTX (Jan 2026), ATXS (Jan 2026), GBIO (Feb 2026) marked `excluded_acquired` in universe.json. Fixed Module 1 `_classify_status()` to recognize `"excluded_acquired"` status. Defensive overlay false-positive fixes: self-sustaining exemption for `single_asset_early_stage` (burn_ttm<=0 + cash>=$500M, e.g. ILMN), debt-driven exemption for `survivability_critical` (cash/burn>=5yr, e.g. FTRE). AKRO CIK and SEC EDGAR financial data added. WSL2 `safe_mkdir` permissions fix. Added daily production workflow and data integrity audit documentation. Updated active ruleset to v1.5.1 (ID=`88d7ae9a`, coinvest OFF). Universe: 354 tickers, 297 ranked, 194 eligible, 9 red flags. ~7900+ tests across 233 files.
 - **2026-02-22 v2.4.2**: Added PIT-safe coinvest features builder (`scripts/build_coinvest_features_from_13f.py`). Standalone script reads ONLY from quarterly PIT 13F caches to produce deterministic per-ticker coinvest features (conviction formula, position changes, tier counts). Eliminates lookahead bias from smart-money factor during historical simulation. Output schema `coinvest_features.v1` with provenance tracking. Live run: 29/29 managers, 277/353 tickers (78.5% coverage). 39 tests.
 - **2026-02-20 v2.4.1**: Added PIT-safe 13F institutional holdings warm cache (`tools/warm_13f_cache.py`). Schema-versioned index (`sec_13f_pit_index.v1`) with 12-invariant pure validator. WARN-only `sec_13f_cache` gate in daily production runner. Integrated into `warm_caches.py` dispatcher (`--sources sec_13f`) and CI workflow. 29 elite managers, 100% coverage on 2026-02-19 snapshot.
 - **2026-02-18 v2.4.0**: Alpha cohort composite engine promoted — pinned ruleset `f9842e1f` → `aa0aaf28` (`composite_engine="alpha_cohort"`, `sort_anchor="alpha_cohort"`). Added composite engine override (pre-DE rewrite of composite_score/rank/pct). Added `far_window` catalyst mode for far-horizon PCD detection. Added alpha signal contract v1.1.0 (`alpha_signal_contract.py`). Added PIT event ledger sidecar. Added signal robustness backtest (`backtest_signal_robustness.py`) with forward-return coverage diagnostics, data freshness metadata, and `--extend-prices` auto-fetch. Added `sort_anchor="optionality_pct"` option. Added catalyst coverage bucket telemetry to shadow metrics.
