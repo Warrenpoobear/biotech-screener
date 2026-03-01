@@ -68,6 +68,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "portfolio_weights",
     "eligibility_consistency",
     "cache_health",
+    "ruleset_health",
 })
 
 # Required fields in each market_data.json record for schema gate
@@ -724,6 +725,55 @@ def check_drift_monitoring(
         detail=detail,
         value=metrics,
         threshold=asdict(thresholds),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Ruleset health gate (WARN-only)
+# ---------------------------------------------------------------------------
+
+def check_ruleset_health(
+    staging_date_dir: Path,
+    receipts_dir: Optional[Path] = None,
+    history_path: Optional[Path] = None,
+    active_ruleset_id: Optional[str] = None,
+) -> GateResult:
+    """Post-promotion health check. WARN-only gate (never FAIL).
+
+    Compares today's drift metrics against the active ruleset's promotion baseline.
+    """
+    from tools.ruleset_health_monitor import (
+        HealthThresholds,
+        run_health_check,
+    )
+
+    if receipts_dir is None:
+        receipts_dir = REPO_ROOT / "artifacts" / "promotions"
+    if history_path is None:
+        history_path = REPO_ROOT / "artifacts" / "ruleset_health_history.jsonl"
+
+    drift_report_path = staging_date_dir / "drift_report.json"
+
+    result = run_health_check(
+        drift_report_path=drift_report_path,
+        receipts_dir=receipts_dir,
+        history_path=history_path,
+        output_dir=staging_date_dir,
+        active_ruleset_id=active_ruleset_id,
+    )
+
+    status = result.get("status", "OK")
+    # Map OK → PASS for gate consistency
+    gate_status = "PASS" if status == "OK" else "WARN"
+    detail = result.get("detail", "")
+    if result.get("recommend_rollback"):
+        detail = f"ROLLBACK RECOMMENDED: {detail}"
+
+    return GateResult(
+        name="ruleset_health",
+        status=gate_status,
+        detail=detail,
+        value=result,
     )
 
 
@@ -2357,6 +2407,11 @@ def run_daily(
         print(f"  Drift gate: {drift_gate.status} — {drift_gate.detail}")
     else:
         print("  Drift gate: skipped (--skip-drift)")
+
+    # --- Gate: ruleset_health (WARN-only) ---
+    rh_gate = check_ruleset_health(staging_date_dir)
+    gate_results.append(rh_gate)
+    print(f"  Ruleset health gate: {rh_gate.status} — {rh_gate.detail}")
 
     # --- Gate: ctgov PIT dates (WARN-only) ---
     pit_dates_gate = check_ctgov_pit_dates(_cache_dir, as_of_date)

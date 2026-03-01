@@ -9,6 +9,8 @@ CLI:
       --gate-summary /tmp/ruleset_gate_out/.../ruleset_eval.json
   python scripts/promote_ruleset.py 0c1129f6 --dry-run
   python scripts/promote_ruleset.py 0c1129f6 --force   # bypass gate + changelog
+  python scripts/promote_ruleset.py --rollback --reason "drift spike"  # auto-discover LKG
+  python scripts/promote_ruleset.py 0c1129f6 --rollback --reason "test"
   python scripts/promote_ruleset.py 0c1129f6 --rollback --force
 """
 from __future__ import annotations
@@ -65,6 +67,17 @@ def _find_by_id_and_status(manifest: Dict[str, Any], ruleset_id: str, status: st
 def _find_active(manifest: Dict[str, Any]):
     for entry in manifest["rulesets"]:
         if entry["status"] == "active":
+            return entry
+    return None
+
+
+def _find_last_known_good(manifest: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """Walk manifest in reverse, find first retired entry that was actively promoted."""
+    for entry in reversed(manifest["rulesets"]):
+        if entry.get("status") != "retired":
+            continue
+        updated_by = entry.get("updated_by", "")
+        if updated_by.startswith("promote_ruleset.py"):
             return entry
     return None
 
@@ -220,13 +233,16 @@ def write_receipt(
     gate_run_url: str,
     forced: bool,
     receipts_dir: Optional[Path] = None,
+    action: str = "promote",
+    reason: str = "",
 ) -> Path:
     """Write a promotion receipt JSON. Returns the receipt path."""
     if receipts_dir is None:
         receipts_dir = RECEIPTS_DIR
     receipts_dir.mkdir(parents=True, exist_ok=True)
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    receipt_path = receipts_dir / f"promotion_{today}_{new_active_id}.json"
+    prefix = "rollback" if action == "rollback" else "promotion"
+    receipt_path = receipts_dir / f"{prefix}_{today}_{new_active_id}.json"
 
     gate_summary = {}
     if gate_data:
@@ -246,6 +262,7 @@ def write_receipt(
         "schema": "promote_receipt.v1",
         "created_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "git_sha": _git_sha(),
+        "action": action,
         "old_active_id": old_active_id,
         "new_active_id": new_active_id,
         "candidate_path": candidate_path,
@@ -255,6 +272,8 @@ def write_receipt(
         "gate": gate_summary,
         "forced": forced,
     }
+    if reason:
+        receipt["reason"] = reason
 
     receipt_path.write_text(
         json.dumps(receipt, indent=2, sort_keys=True) + "\n",
@@ -343,7 +362,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     parser.add_argument(
         "ruleset_id",
-        help="The 8-char ruleset ID to promote.",
+        nargs="?",
+        default=None,
+        help="The 8-char ruleset ID to promote (optional for --rollback with auto-discover).",
     )
     parser.add_argument(
         "--gate-summary", type=Path,
@@ -378,6 +399,10 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="Rollback: promote a retired ruleset back to active.",
     )
     parser.add_argument(
+        "--reason", default="",
+        help="Reason for rollback (required for --rollback without --gate-summary).",
+    )
+    parser.add_argument(
         "--manifest", type=Path, default=MANIFEST_PATH,
         help=argparse.SUPPRESS,
     )
@@ -408,7 +433,6 @@ def main(argv: Optional[List[str]] = None) -> int:
     if resolved is not None:
         args.gate_summary = resolved
 
-    rid = args.ruleset_id
     manifest_path = args.manifest
     changelog_path = args.changelog
 
@@ -417,6 +441,24 @@ def main(argv: Optional[List[str]] = None) -> int:
         return 1
 
     manifest = _load_manifest(manifest_path)
+
+    # --- Rollback: auto-discover target if ruleset_id omitted ---
+    if args.rollback and not args.ruleset_id:
+        lkg = _find_last_known_good(manifest)
+        if not lkg:
+            print(
+                "ERROR: Cannot auto-discover last-known-good ruleset. "
+                "No retired entry with updated_by starting with 'promote_ruleset.py'.",
+                file=sys.stderr,
+            )
+            return 1
+        args.ruleset_id = lkg["id"]
+        print(f"Auto-discovered last-known-good: {lkg['id']} ({lkg['file']})")
+
+    rid = args.ruleset_id
+    if not rid:
+        print("ERROR: ruleset_id is required.", file=sys.stderr)
+        return 1
 
     # Check if already active
     active = _find_active(manifest)
@@ -428,9 +470,10 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     # Find target entry
     if args.rollback:
-        if not args.force:
+        # Rollback requires either --force, --gate-summary, or --reason
+        if not args.force and not args.gate_summary and not args.reason:
             print(
-                "ERROR: --rollback requires --force (emergency rollback).",
+                "ERROR: --rollback requires --reason, --gate-summary, or --force.",
                 file=sys.stderr,
             )
             return 1
@@ -465,19 +508,28 @@ def main(argv: Optional[List[str]] = None) -> int:
     # --- Gate validation ---
     gate_data: Dict[str, Any] = {}
     if not args.force:
-        if not args.gate_summary:
-            print(
-                "ERROR: --gate-summary is required (or use --force to bypass).",
-                file=sys.stderr,
-            )
-            return 1
+        if args.rollback:
+            # Rollbacks: gate summary is optional (--reason suffices)
+            if args.gate_summary:
+                gate_ok, gate_msg, gate_data = validate_gate(args.gate_summary, rid)
+                if not gate_ok:
+                    print(f"WARNING: Gate validation failed: {gate_msg}", file=sys.stderr)
+                else:
+                    print(f"Gate: {gate_msg}")
+        else:
+            if not args.gate_summary:
+                print(
+                    "ERROR: --gate-summary is required (or use --force to bypass).",
+                    file=sys.stderr,
+                )
+                return 1
 
-        gate_ok, gate_msg, gate_data = validate_gate(args.gate_summary, rid)
-        if not gate_ok:
-            print(f"ERROR: Gate validation failed.\n  {gate_msg}", file=sys.stderr)
-            print("Use --force to bypass gate validation.", file=sys.stderr)
-            return 1
-        print(f"Gate: {gate_msg}")
+            gate_ok, gate_msg, gate_data = validate_gate(args.gate_summary, rid)
+            if not gate_ok:
+                print(f"ERROR: Gate validation failed.\n  {gate_msg}", file=sys.stderr)
+                print("Use --force to bypass gate validation.", file=sys.stderr)
+                return 1
+            print(f"Gate: {gate_msg}")
     else:
         print("WARNING: --force specified, skipping gate validation.", file=sys.stderr)
         if args.gate_summary and args.gate_summary.exists():
@@ -486,8 +538,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             except Exception:
                 pass
 
-    # --- Changelog validation ---
-    if not args.force:
+    # --- Changelog validation (skip for rollbacks) ---
+    if not args.force and not args.rollback:
         ok, msg = _validate_changelog(rid, changelog_path)
         if not ok:
             print(f"ERROR: Changelog validation failed.\n  {msg}", file=sys.stderr)
@@ -509,19 +561,24 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     # Print summary
     print()
-    print(f"Promote: {rid} ({target['file']})")
+    action_label = "Rollback to" if args.rollback else "Promote"
+    print(f"{action_label}: {rid} ({target['file']})")
     if active:
         print(f"Retire:  {active['id']} ({active['file']})")
+    if args.reason:
+        print(f"Reason:  {args.reason}")
     print()
 
     if args.dry_run:
+        receipt_prefix = "rollback" if args.rollback else "promotion"
+        source_status = "retired" if args.rollback else "candidate"
         print("[dry-run] Would:")
-        print(f"  manifest: {target['file']}: candidate -> active")
+        print(f"  manifest: {target['file']}: {source_status} -> active")
         if active:
             print(f"  manifest: {active['file']}: active -> retired")
         print(f"  pin IDs: PHASE2_PINNED_RULESET_ID = \"{rid}\"")
         print(f"  default path: {target['file']}")
-        print(f"  receipt: artifacts/promotions/promotion_*_{rid}.json")
+        print(f"  receipt: artifacts/promotions/{receipt_prefix}_*_{rid}.json")
         return 0
 
     # --- Flip statuses ---
@@ -551,6 +608,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(f"  Updated default path: {target['file']}")
 
     # --- Write receipt ---
+    receipt_action = "rollback" if args.rollback else "promote"
     receipt_path = write_receipt(
         old_active_id=old_active_id,
         new_active_id=rid,
@@ -560,6 +618,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         gate_summary_path=str(args.gate_summary) if args.gate_summary else "",
         gate_run_url=args.gate_run_url,
         forced=args.force,
+        action=receipt_action,
+        reason=args.reason,
     )
     print(f"  Receipt: {receipt_path}")
 
