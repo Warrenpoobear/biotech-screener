@@ -502,14 +502,16 @@ def main() -> None:
     print("\n" + "=" * 110)
     print("# Anchor Replay Results")
     print(f"# Archives: {archives[0][0]} → {archives[-1][0]}, "
-          f"horizons: {horizons}, top_k: {args.top_k}, cost_bps: {args.cost_bps}")
+          f"horizons: {horizons}, top_k: {args.top_k}")
     print()
 
     # Header
     header = f"{'Config':<22s}"
     for h in horizons:
         header += f" {'IC('+str(h)+'d)':>10s} {'ΔIC':>8s} {'Hit':>6s} {'n':>4s}"
-    header += f" {'Turnover':>9s} {'Net(bps)':>9s}"
+    header += f" {'Turnover':>9s}"
+    for h in horizons:
+        header += f" {'Ret('+str(h)+'d)':>10s}"
     print(header)
     print("-" * len(header))
 
@@ -548,16 +550,15 @@ def main() -> None:
         row["mean_turnover"] = tv
         line += f" {tv:>9.3f}" if tv is not None else f" {'—':>9s}"
 
-        # Net return (60d if available, else longest horizon)
-        longest_h = max(horizons)
-        rets = acc["ret_by_h"][longest_h]
-        if rets and tv is not None:
-            gross = statistics.mean(rets)
-            net = gross - tv * args.cost_bps / 10000
-            row[f"net_{longest_h}d_bps"] = round(net * 10000, 1)
-            line += f" {net*10000:>8.1f}"
-        else:
-            line += f" {'—':>9s}"
+        # Gross returns per horizon
+        for h in horizons:
+            rets = acc["ret_by_h"][h]
+            if rets:
+                gross = statistics.mean(rets)
+                row[f"ret_{h}d"] = gross
+                line += f" {gross*100:>9.2f}%"
+            else:
+                line += f" {'—':>10s}"
 
         print(line)
         summary_rows.append(row)
