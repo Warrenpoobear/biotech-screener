@@ -2,12 +2,12 @@
   "schema": "eligibility_summary.v1",
   "as_of_date": "2026-01-20",
   "n_total": 295,
-  "n_eligible": 189,
-  "n_ineligible": 106,
+  "n_eligible": 193,
+  "n_ineligible": 102,
   "counts_by_reason": {
     "deep_drawdown": 56,
-    "financials_missing": 31,
-    "fundamental_red_flag": 29
+    "fundamental_red_flag": 29,
+    "financials_missing": 27
   },
   "examples_by_reason": {
     "deep_drawdown": [
@@ -22,18 +22,6 @@
       "BCYC",
       "BDTX"
     ],
-    "financials_missing": [
-      "ABVX",
-      "ACIU",
-      "ALVO",
-      "ARGX",
-      "ARWR",
-      "ASND",
-      "AZN",
-      "BIIB",
-      "BLTE",
-      "BNTX"
-    ],
     "fundamental_red_flag": [
       "AARD",
       "AMPH",
@@ -45,6 +33,18 @@
       "COLL",
       "CRL",
       "EOLS"
+    ],
+    "financials_missing": [
+      "ABVX",
+      "ACIU",
+      "ALVO",
+      "ARGX",
+      "ASND",
+      "AZN",
+      "BIIB",
+      "BLTE",
+      "BNTX",
+      "CLLS"
     ]
   }
 }

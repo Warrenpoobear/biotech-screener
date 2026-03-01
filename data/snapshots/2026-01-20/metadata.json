@@ -1,6 +1,6 @@
 {
   "as_of_date": "2026-01-20",
-  "saved_at": "2026-02-28T23:27:29.414456Z",
+  "saved_at": "2026-03-01T16:34:27.795163Z",
   "decision_mode": "phase2",
   "ranking_mode": "decision",
   "version": "1.6.0",
@@ -444,9 +444,10 @@
     "catalyst_events_vnext_2026-02-25.json": "c1805c2ad001e372",
     "catalyst_events_vnext_2026-02-26.json": "425f9c60df5e04b2",
     "catalyst_events_vnext_2026-02-27.json": "93db2c8b561ffb22",
-    "catalyst_events_vnext_2026-02-28.json": "1b9a8c42e06f2a61",
+    "catalyst_events_vnext_2026-02-28.json": "75e43965460dd88b",
     "catalyst_overrides.json": "e4c587ce6c537d65",
     "cfo_data_2026-01-08.json": "33e0d93576eff5d0",
+    "company_calendar_sources.json": "23b23898632e6ee2",
     "corporate_catalysts.json": "ad7d56deef131f58",
     "cusip_cache.json": "779f2c2e7cbeabdd",
     "cusip_static_map.json": "d365334982834af1",
@@ -567,7 +568,7 @@
       ]
     },
     "cells_populated": 26,
-    "alpha_score_present": 172,
+    "alpha_score_present": 176,
     "alpha_score_missing": 17
   },
   "coinvest_coverage": {

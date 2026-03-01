@@ -4,7 +4,7 @@
   "ruleset_id": "0c1129f6",
   "ruleset_path": "/mnt/c/Projects/biotech_screener/biotech-screener/production_data/decision_rulesets/v1.6.1_alpha_modifier_within_tier.json",
   "n_securities": 295,
-  "n_eligible": 189,
+  "n_eligible": 193,
   "positions": [
     {
       "ticker": "KALV",
@@ -1915,45 +1915,9 @@
       "composite_score": -0.014091942028985506
     },
     {
-      "ticker": "AXSM",
-      "company_name": "Axsome Therapeutics, Inc.",
-      "actionable_rank": 107,
-      "tier_any": "C",
-      "tier_dev": "",
-      "tier_commercial": "C",
-      "size_band": "L",
-      "tier_reason": "",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 320,
-      "mom_state": "tailwind",
-      "risk_flags": "",
-      "archetype": "commercial_biotech",
-      "eligible": "1",
-      "composite_rank": 285,
-      "composite_score": -0.014091942028985506
-    },
-    {
-      "ticker": "ALKS",
-      "company_name": "Alkermes plc",
-      "actionable_rank": 108,
-      "tier_any": "C",
-      "tier_dev": "",
-      "tier_commercial": "C",
-      "size_band": "L",
-      "tier_reason": "",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 868,
-      "mom_state": "headwind",
-      "risk_flags": "",
-      "archetype": "commercial_pharma",
-      "eligible": "1",
-      "composite_rank": 283,
-      "composite_score": -0.014091942028985506
-    },
-    {
       "ticker": "REGN",
       "company_name": "Regeneron Pharmaceuticals, Inc.",
-      "actionable_rank": 109,
+      "actionable_rank": 107,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -1969,9 +1933,27 @@
       "composite_score": 0.057253918032786885
     },
     {
+      "ticker": "AXSM",
+      "company_name": "Axsome Therapeutics, Inc.",
+      "actionable_rank": 108,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "L",
+      "tier_reason": "",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 320,
+      "mom_state": "tailwind",
+      "risk_flags": "",
+      "archetype": "commercial_biotech",
+      "eligible": "1",
+      "composite_rank": 285,
+      "composite_score": -0.014091942028985506
+    },
+    {
       "ticker": "MIRM",
       "company_name": "Mirum Pharmaceuticals, Inc.",
-      "actionable_rank": 110,
+      "actionable_rank": 109,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -1985,6 +1967,24 @@
       "eligible": "1",
       "composite_rank": 215,
       "composite_score": 0.0219054
+    },
+    {
+      "ticker": "ALKS",
+      "company_name": "Alkermes plc",
+      "actionable_rank": 110,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "L",
+      "tier_reason": "",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 868,
+      "mom_state": "headwind",
+      "risk_flags": "",
+      "archetype": "commercial_pharma",
+      "eligible": "1",
+      "composite_rank": 283,
+      "composite_score": -0.014091942028985506
     },
     {
       "ticker": "VRTX",
@@ -2041,9 +2041,27 @@
       "composite_score": 0.1
     },
     {
+      "ticker": "VNDA",
+      "company_name": "Vanda Pharmaceuticals Inc.",
+      "actionable_rank": 114,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "M",
+      "tier_reason": "",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 45,
+      "mom_state": "tailwind",
+      "risk_flags": "",
+      "archetype": "commercial_biotech",
+      "eligible": "1",
+      "composite_rank": 109,
+      "composite_score": 0.1
+    },
+    {
       "ticker": "INDV",
       "company_name": "Indivior PLC",
-      "actionable_rank": 114,
+      "actionable_rank": 115,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2061,7 +2079,7 @@
     {
       "ticker": "ESPR",
       "company_name": "Esperion Therapeutics, Inc.",
-      "actionable_rank": 115,
+      "actionable_rank": 116,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2079,7 +2097,7 @@
     {
       "ticker": "EBS",
       "company_name": "Emergent BioSolutions Inc.",
-      "actionable_rank": 116,
+      "actionable_rank": 117,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2093,24 +2111,6 @@
       "eligible": "1",
       "composite_rank": 204,
       "composite_score": 0.0219054
-    },
-    {
-      "ticker": "VNDA",
-      "company_name": "Vanda Pharmaceuticals Inc.",
-      "actionable_rank": 117,
-      "tier_any": "C",
-      "tier_dev": "",
-      "tier_commercial": "C",
-      "size_band": "M",
-      "tier_reason": "",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 45,
-      "mom_state": "tailwind",
-      "risk_flags": "",
-      "archetype": "commercial_biotech",
-      "eligible": "1",
-      "composite_rank": 109,
-      "composite_score": 0.1
     },
     {
       "ticker": "NVAX",
@@ -2131,9 +2131,27 @@
       "composite_score": 0.1
     },
     {
+      "ticker": "INCY",
+      "company_name": "Incyte Corporation",
+      "actionable_rank": 119,
+      "tier_any": "B",
+      "tier_dev": "",
+      "tier_commercial": "B",
+      "size_band": "L",
+      "tier_reason": "",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 17,
+      "mom_state": "tailwind",
+      "risk_flags": "",
+      "archetype": "commercial_biotech",
+      "eligible": "1",
+      "composite_rank": 160,
+      "composite_score": 0.057253918032786885
+    },
+    {
       "ticker": "ACAD",
       "company_name": "ACADIA Pharmaceuticals Inc.",
-      "actionable_rank": 119,
+      "actionable_rank": 120,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2151,7 +2169,7 @@
     {
       "ticker": "CAI",
       "company_name": "Caris Life Sciences, Inc.",
-      "actionable_rank": 120,
+      "actionable_rank": 121,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2164,24 +2182,6 @@
       "archetype": "commercial_biotech",
       "eligible": "1",
       "composite_rank": 154,
-      "composite_score": 0.057253918032786885
-    },
-    {
-      "ticker": "INCY",
-      "company_name": "Incyte Corporation",
-      "actionable_rank": 121,
-      "tier_any": "B",
-      "tier_dev": "",
-      "tier_commercial": "B",
-      "size_band": "L",
-      "tier_reason": "",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 17,
-      "mom_state": "tailwind",
-      "risk_flags": "",
-      "archetype": "commercial_biotech",
-      "eligible": "1",
-      "composite_rank": 160,
       "composite_score": 0.057253918032786885
     },
     {
@@ -2275,9 +2275,27 @@
       "composite_score": 0.1
     },
     {
+      "ticker": "GILD",
+      "company_name": "Gilead Sciences, Inc.",
+      "actionable_rank": 127,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "M",
+      "tier_reason": "",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 15,
+      "mom_state": "headwind",
+      "risk_flags": "",
+      "archetype": "commercial_pharma",
+      "eligible": "1",
+      "composite_rank": 158,
+      "composite_score": 0.057253918032786885
+    },
+    {
       "ticker": "TGTX",
       "company_name": "TG Therapeutics, Inc.",
-      "actionable_rank": 127,
+      "actionable_rank": 128,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2295,7 +2313,7 @@
     {
       "ticker": "TVTX",
       "company_name": "Travere Therapeutics, Inc.",
-      "actionable_rank": 128,
+      "actionable_rank": 129,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2313,7 +2331,7 @@
     {
       "ticker": "JAZZ",
       "company_name": "Jazz Pharmaceuticals plc",
-      "actionable_rank": 129,
+      "actionable_rank": 130,
       "tier_any": "A",
       "tier_dev": "",
       "tier_commercial": "A",
@@ -2331,7 +2349,7 @@
     {
       "ticker": "BMRN",
       "company_name": "BioMarin Pharmaceutical Inc.",
-      "actionable_rank": 130,
+      "actionable_rank": 131,
       "tier_any": "A",
       "tier_dev": "",
       "tier_commercial": "A",
@@ -2349,7 +2367,7 @@
     {
       "ticker": "NBIX",
       "company_name": "Neurocrine Biosciences, Inc.",
-      "actionable_rank": 131,
+      "actionable_rank": 132,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2363,24 +2381,6 @@
       "eligible": "1",
       "composite_rank": 72,
       "composite_score": 0.1
-    },
-    {
-      "ticker": "HROW",
-      "company_name": "Harrow, Inc.",
-      "actionable_rank": 132,
-      "tier_any": "C",
-      "tier_dev": "",
-      "tier_commercial": "C",
-      "size_band": "M",
-      "tier_reason": "",
-      "catalyst_mode": "no_upcoming",
-      "catalyst_days": "",
-      "mom_state": "neutral",
-      "risk_flags": "",
-      "archetype": "commercial_pharma",
-      "eligible": "1",
-      "composite_rank": 209,
-      "composite_score": 0.0219054
     },
     {
       "ticker": "APLS",
@@ -2419,9 +2419,27 @@
       "composite_score": 0.057253918032786885
     },
     {
+      "ticker": "HROW",
+      "company_name": "Harrow, Inc.",
+      "actionable_rank": 135,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "M",
+      "tier_reason": "",
+      "catalyst_mode": "no_upcoming",
+      "catalyst_days": "",
+      "mom_state": "neutral",
+      "risk_flags": "",
+      "archetype": "commercial_pharma",
+      "eligible": "1",
+      "composite_rank": 209,
+      "composite_score": 0.0219054
+    },
+    {
       "ticker": "PTCT",
       "company_name": "PTC Therapeutics, Inc.",
-      "actionable_rank": 135,
+      "actionable_rank": 136,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -2435,24 +2453,6 @@
       "eligible": "1",
       "composite_rank": 289,
       "composite_score": -0.014091942028985506
-    },
-    {
-      "ticker": "KNSA",
-      "company_name": "Kiniksa Pharmaceuticals, Ltd.",
-      "actionable_rank": 136,
-      "tier_any": "C",
-      "tier_dev": "",
-      "tier_commercial": "C",
-      "size_band": "M",
-      "tier_reason": "",
-      "catalyst_mode": "no_upcoming",
-      "catalyst_days": "",
-      "mom_state": "headwind",
-      "risk_flags": "",
-      "archetype": "commercial_pharma",
-      "eligible": "1",
-      "composite_rank": 213,
-      "composite_score": 0.0219054
     },
     {
       "ticker": "XERS",
@@ -2527,9 +2527,27 @@
       "composite_score": -0.006355834710743803
     },
     {
+      "ticker": "KNSA",
+      "company_name": "Kiniksa Pharmaceuticals, Ltd.",
+      "actionable_rank": 141,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "M",
+      "tier_reason": "",
+      "catalyst_mode": "no_upcoming",
+      "catalyst_days": "",
+      "mom_state": "headwind",
+      "risk_flags": "",
+      "archetype": "commercial_pharma",
+      "eligible": "1",
+      "composite_rank": 213,
+      "composite_score": 0.0219054
+    },
+    {
       "ticker": "RPRX",
       "company_name": "Royalty Pharma plc",
-      "actionable_rank": 141,
+      "actionable_rank": 142,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2547,7 +2565,7 @@
     {
       "ticker": "RGEN",
       "company_name": "Repligen Corporation",
-      "actionable_rank": 142,
+      "actionable_rank": 143,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2565,7 +2583,7 @@
     {
       "ticker": "PSNL",
       "company_name": "Personalis, Inc.",
-      "actionable_rank": 143,
+      "actionable_rank": 144,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2583,7 +2601,7 @@
     {
       "ticker": "PRVA",
       "company_name": "Privia Health Group, Inc.",
-      "actionable_rank": 144,
+      "actionable_rank": 145,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2601,7 +2619,7 @@
     {
       "ticker": "PAHC",
       "company_name": "Phibro Animal Health Corporatio",
-      "actionable_rank": 145,
+      "actionable_rank": 146,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2619,7 +2637,7 @@
     {
       "ticker": "PACB",
       "company_name": "Pacific Biosciences of Californ",
-      "actionable_rank": 146,
+      "actionable_rank": 147,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -2637,7 +2655,7 @@
     {
       "ticker": "OPCH",
       "company_name": "Option Care Health, Inc.",
-      "actionable_rank": 147,
+      "actionable_rank": 148,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2655,7 +2673,7 @@
     {
       "ticker": "MRVI",
       "company_name": "Maravai LifeSciences Holdings, Inc.",
-      "actionable_rank": 148,
+      "actionable_rank": 149,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2673,7 +2691,7 @@
     {
       "ticker": "MEDP",
       "company_name": "Medpace Holdings, Inc.",
-      "actionable_rank": 149,
+      "actionable_rank": 150,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2691,7 +2709,7 @@
     {
       "ticker": "LGND",
       "company_name": "Ligand Pharmaceuticals Incorporated",
-      "actionable_rank": 150,
+      "actionable_rank": 151,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2709,7 +2727,7 @@
     {
       "ticker": "LFCR",
       "company_name": "Lifecore Biomedical, Inc.",
-      "actionable_rank": 151,
+      "actionable_rank": 152,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2725,9 +2743,27 @@
       "composite_score": -0.006355834710743803
     },
     {
+      "ticker": "ILMN",
+      "company_name": "Illumina, Inc.",
+      "actionable_rank": 153,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "L",
+      "tier_reason": "",
+      "catalyst_mode": "no_upcoming",
+      "catalyst_days": "",
+      "mom_state": "tailwind",
+      "risk_flags": "",
+      "archetype": "platform_diagnostics",
+      "eligible": "1",
+      "composite_rank": 261,
+      "composite_score": -0.006355834710743803
+    },
+    {
       "ticker": "FTRE",
       "company_name": "Fortrea Holdings Inc.",
-      "actionable_rank": 152,
+      "actionable_rank": 154,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2745,7 +2781,7 @@
     {
       "ticker": "FLGT",
       "company_name": "Fulgent Genetics, Inc.",
-      "actionable_rank": 153,
+      "actionable_rank": 155,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2763,7 +2799,7 @@
     {
       "ticker": "ETON",
       "company_name": "Eton Pharmaceuticals, Inc.",
-      "actionable_rank": 154,
+      "actionable_rank": 156,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2781,7 +2817,7 @@
     {
       "ticker": "CTKB",
       "company_name": "Cytek Biosciences, Inc.",
-      "actionable_rank": 155,
+      "actionable_rank": 157,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2799,7 +2835,7 @@
     {
       "ticker": "ONC",
       "company_name": "BeOne Medicines Ltd.",
-      "actionable_rank": 156,
+      "actionable_rank": 158,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2817,7 +2853,7 @@
     {
       "ticker": "CSTL",
       "company_name": "Castle Biosciences, Inc.",
-      "actionable_rank": 157,
+      "actionable_rank": 159,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -2835,7 +2871,7 @@
     {
       "ticker": "BRKR",
       "company_name": "Bruker Corporation",
-      "actionable_rank": 158,
+      "actionable_rank": 160,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2853,7 +2889,7 @@
     {
       "ticker": "ADPT",
       "company_name": "Adaptive Biotechnologies Corpor",
-      "actionable_rank": 159,
+      "actionable_rank": 161,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2871,7 +2907,7 @@
     {
       "ticker": "ANAB",
       "company_name": "AnaptysBio, Inc.",
-      "actionable_rank": 160,
+      "actionable_rank": 162,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2889,7 +2925,7 @@
     {
       "ticker": "BEAM",
       "company_name": "Beam Therapeutics Inc.",
-      "actionable_rank": 161,
+      "actionable_rank": 163,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -2907,7 +2943,7 @@
     {
       "ticker": "HRMY",
       "company_name": "Harmony Biosciences Holdings, I",
-      "actionable_rank": 162,
+      "actionable_rank": 164,
       "tier_any": "A",
       "tier_dev": "",
       "tier_commercial": "A",
@@ -2925,7 +2961,7 @@
     {
       "ticker": "FOLD",
       "company_name": "Amicus Therapeutics, Inc.",
-      "actionable_rank": 163,
+      "actionable_rank": 165,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2943,7 +2979,7 @@
     {
       "ticker": "MDGL",
       "company_name": "Madrigal Pharmaceuticals, Inc.",
-      "actionable_rank": 164,
+      "actionable_rank": 166,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2961,7 +2997,7 @@
     {
       "ticker": "TEM",
       "company_name": "Tempus AI, Inc.",
-      "actionable_rank": 165,
+      "actionable_rank": 167,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -2979,7 +3015,7 @@
     {
       "ticker": "RGNX",
       "company_name": "REGENXBIO Inc.",
-      "actionable_rank": 166,
+      "actionable_rank": 168,
       "tier_any": "A",
       "tier_dev": "",
       "tier_commercial": "A",
@@ -2997,7 +3033,7 @@
     {
       "ticker": "LAB",
       "company_name": "Standard BioTools Inc.",
-      "actionable_rank": 167,
+      "actionable_rank": 169,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -3015,7 +3051,7 @@
     {
       "ticker": "IMCR",
       "company_name": "Immunocore Holdings plc",
-      "actionable_rank": 168,
+      "actionable_rank": 170,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -3033,7 +3069,7 @@
     {
       "ticker": "GH",
       "company_name": "Guardant Health, Inc.",
-      "actionable_rank": 169,
+      "actionable_rank": 171,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3051,7 +3087,7 @@
     {
       "ticker": "DAWN",
       "company_name": "Day One Biopharmaceuticals, Inc.",
-      "actionable_rank": 170,
+      "actionable_rank": 172,
       "tier_any": "A",
       "tier_dev": "",
       "tier_commercial": "A",
@@ -3069,7 +3105,7 @@
     {
       "ticker": "CMPS",
       "company_name": "COMPASS Pathways Plc - American",
-      "actionable_rank": 171,
+      "actionable_rank": 173,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3087,7 +3123,7 @@
     {
       "ticker": "CDNA",
       "company_name": "CareDx, Inc.",
-      "actionable_rank": 172,
+      "actionable_rank": 174,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -3105,7 +3141,7 @@
     {
       "ticker": "ANIP",
       "company_name": "ANI Pharmaceuticals, Inc.",
-      "actionable_rank": 173,
+      "actionable_rank": 175,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -3123,7 +3159,7 @@
     {
       "ticker": "ARQT",
       "company_name": "Arcutis Biotherapeutics, Inc.",
-      "actionable_rank": 174,
+      "actionable_rank": 176,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3141,7 +3177,7 @@
     {
       "ticker": "KRYS",
       "company_name": "Krystal Biotech, Inc.",
-      "actionable_rank": 175,
+      "actionable_rank": 177,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -3157,9 +3193,27 @@
       "composite_score": 0.05985007981220658
     },
     {
+      "ticker": "ARWR",
+      "company_name": "Arrowhead Pharmaceuticals, Inc.",
+      "actionable_rank": 178,
+      "tier_any": "B",
+      "tier_dev": "",
+      "tier_commercial": "B",
+      "size_band": "L",
+      "tier_reason": "",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 45,
+      "mom_state": "tailwind",
+      "risk_flags": "",
+      "archetype": "commercial_biotech",
+      "eligible": "1",
+      "composite_rank": 137,
+      "composite_score": 0.05985007981220658
+    },
+    {
       "ticker": "ARVN",
       "company_name": "Arvinas, Inc.",
-      "actionable_rank": 176,
+      "actionable_rank": 179,
       "tier_any": "A",
       "tier_dev": "",
       "tier_commercial": "A",
@@ -3177,7 +3231,7 @@
     {
       "ticker": "PBYI",
       "company_name": "Puma Biotechnology Inc",
-      "actionable_rank": 177,
+      "actionable_rank": 180,
       "tier_any": "A",
       "tier_dev": "",
       "tier_commercial": "A",
@@ -3195,7 +3249,7 @@
     {
       "ticker": "AMLX",
       "company_name": "Amylyx Pharmaceuticals, Inc.",
-      "actionable_rank": 178,
+      "actionable_rank": 181,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -3211,9 +3265,27 @@
       "composite_score": 0.05985007981220658
     },
     {
+      "ticker": "NTRA",
+      "company_name": "Natera, Inc.",
+      "actionable_rank": 182,
+      "tier_any": "C",
+      "tier_dev": "",
+      "tier_commercial": "C",
+      "size_band": "L",
+      "tier_reason": "",
+      "catalyst_mode": "specific_days",
+      "catalyst_days": 229,
+      "mom_state": "tailwind",
+      "risk_flags": "",
+      "archetype": "platform_diagnostics",
+      "eligible": "1",
+      "composite_rank": 129,
+      "composite_score": 0.06488273684210526
+    },
+    {
       "ticker": "CERS",
       "company_name": "Cerus Corporation",
-      "actionable_rank": 179,
+      "actionable_rank": 183,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3231,7 +3303,7 @@
     {
       "ticker": "BCRX",
       "company_name": "BioCryst Pharmaceuticals, Inc.",
-      "actionable_rank": 180,
+      "actionable_rank": 184,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3249,7 +3321,7 @@
     {
       "ticker": "ZYME",
       "company_name": "Zymeworks Inc.",
-      "actionable_rank": 181,
+      "actionable_rank": 185,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3267,7 +3339,7 @@
     {
       "ticker": "STOK",
       "company_name": "Stoke Therapeutics, Inc.",
-      "actionable_rank": 182,
+      "actionable_rank": 186,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3285,7 +3357,7 @@
     {
       "ticker": "KROS",
       "company_name": "Keros Therapeutics, Inc.",
-      "actionable_rank": 183,
+      "actionable_rank": 187,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -3303,7 +3375,7 @@
     {
       "ticker": "IDYA",
       "company_name": "IDEAYA Biosciences, Inc.",
-      "actionable_rank": 184,
+      "actionable_rank": 188,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3321,7 +3393,7 @@
     {
       "ticker": "DVAX",
       "company_name": "Dynavax Technologies Corporation",
-      "actionable_rank": 185,
+      "actionable_rank": 189,
       "tier_any": "B",
       "tier_dev": "",
       "tier_commercial": "B",
@@ -3339,7 +3411,7 @@
     {
       "ticker": "BIOA",
       "company_name": "BioAge Labs, Inc.",
-      "actionable_rank": 186,
+      "actionable_rank": 190,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3357,7 +3429,7 @@
     {
       "ticker": "AUPH",
       "company_name": "Aurinia Pharmaceuticals Inc",
-      "actionable_rank": 187,
+      "actionable_rank": 191,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3375,7 +3447,7 @@
     {
       "ticker": "ALNY",
       "company_name": "Alnylam Pharmaceuticals, Inc.",
-      "actionable_rank": 188,
+      "actionable_rank": 192,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -3393,7 +3465,7 @@
     {
       "ticker": "ADMA",
       "company_name": "ADMA Biologics Inc",
-      "actionable_rank": 189,
+      "actionable_rank": 193,
       "tier_any": "C",
       "tier_dev": "",
       "tier_commercial": "C",
@@ -4165,24 +4237,6 @@
       "composite_score": 0.08283323404255319
     },
     {
-      "ticker": "NTRA",
-      "company_name": "Natera, Inc.",
-      "actionable_rank": "",
-      "tier_any": "D",
-      "tier_dev": "",
-      "tier_commercial": "D",
-      "size_band": "XS",
-      "tier_reason": "",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 229,
-      "mom_state": "tailwind",
-      "risk_flags": "",
-      "archetype": "platform_diagnostics",
-      "eligible": "0",
-      "composite_rank": 129,
-      "composite_score": 0.06488273684210526
-    },
-    {
       "ticker": "DRUG",
       "company_name": "Bright Minds Biosciences Inc.",
       "actionable_rank": "",
@@ -4217,24 +4271,6 @@
       "eligible": "0",
       "composite_rank": 132,
       "composite_score": 0.06273883333333333
-    },
-    {
-      "ticker": "ARWR",
-      "company_name": "Arrowhead Pharmaceuticals, Inc.",
-      "actionable_rank": "",
-      "tier_any": "D",
-      "tier_dev": "",
-      "tier_commercial": "D",
-      "size_band": "XS",
-      "tier_reason": "",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 45,
-      "mom_state": "tailwind",
-      "risk_flags": "",
-      "archetype": "commercial_biotech",
-      "eligible": "0",
-      "composite_rank": 137,
-      "composite_score": 0.05985007981220658
     },
     {
       "ticker": "ASND",
@@ -4468,24 +4504,6 @@
       "archetype": "commercial_biotech",
       "eligible": "0",
       "composite_rank": 157,
-      "composite_score": 0.057253918032786885
-    },
-    {
-      "ticker": "GILD",
-      "company_name": "Gilead Sciences, Inc.",
-      "actionable_rank": "",
-      "tier_any": "D",
-      "tier_dev": "",
-      "tier_commercial": "D",
-      "size_band": "XS",
-      "tier_reason": "",
-      "catalyst_mode": "specific_days",
-      "catalyst_days": 15,
-      "mom_state": "headwind",
-      "risk_flags": "",
-      "archetype": "commercial_pharma",
-      "eligible": "0",
-      "composite_rank": 158,
       "composite_score": 0.057253918032786885
     },
     {
@@ -5152,24 +5170,6 @@
       "archetype": "platform_devices",
       "eligible": "0",
       "composite_rank": 253,
-      "composite_score": -0.006355834710743803
-    },
-    {
-      "ticker": "ILMN",
-      "company_name": "Illumina, Inc.",
-      "actionable_rank": "",
-      "tier_any": "D",
-      "tier_dev": "",
-      "tier_commercial": "D",
-      "size_band": "XS",
-      "tier_reason": "",
-      "catalyst_mode": "no_upcoming",
-      "catalyst_days": "",
-      "mom_state": "tailwind",
-      "risk_flags": "",
-      "archetype": "platform_diagnostics",
-      "eligible": "0",
-      "composite_rank": 261,
       "composite_score": -0.006355834710743803
     },
     {
