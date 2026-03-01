@@ -1,11 +1,13 @@
 {
-  "total_events": 1394,
-  "unique_tickers_with_events": 262,
+  "total_events": 1545,
+  "unique_tickers_with_events": 286,
   "by_source": {
     "CTGOV_CALENDAR": 1086,
     "EMA_CHMP_AGENDA": 66,
     "EMA_MEETING_HIGHLIGHTS": 17,
     "FDA_ADCOM_CALENDAR": 6,
+    "IR_EVENTS": 133,
+    "PRESS_RELEASE": 18,
     "SEC_8K_FILING": 219
   },
   "pre_dedup_by_source": {
@@ -13,15 +15,17 @@
     "EMA_CHMP_AGENDA": 303,
     "EMA_MEETING_HIGHLIGHTS": 44,
     "FDA_ADCOM_CALENDAR": 6,
+    "IR_EVENTS": 243,
+    "PRESS_RELEASE": 19,
     "SEC_8K_FILING": 226
   },
   "by_confidence": {
     "HIGH": 160,
     "LOW": 919,
-    "MED": 315
+    "MED": 466
   },
   "by_date_precision": {
-    "DAY": 1004,
+    "DAY": 1155,
     "HALF_YEAR": 130,
     "QUARTER": 25,
     "RANGE": 235
