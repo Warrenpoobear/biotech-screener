@@ -7560,6 +7560,15 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
     return health
 
 
+def _default_output_path(*, as_of_date: str, data_dir: Path, snapshot_dir: Optional[Path]) -> Path:
+    """Derive a deterministic output path when --output is omitted."""
+    if snapshot_dir is not None:
+        base = snapshot_dir
+    else:
+        base = data_dir.parent / "data" / "snapshots"
+    return base / as_of_date / "screen_output.json"
+
+
 def main() -> int:
     """CLI entrypoint."""
     parser = argparse.ArgumentParser(
@@ -8170,7 +8179,13 @@ Module 3 Catalyst Detection:
     # Validate argument combinations
     # =========================================================================
     if not args.dry_run and args.output is None:
-        parser.error("--output is required unless --dry-run is specified")
+        args.output = _default_output_path(
+            as_of_date=args.as_of_date,
+            data_dir=Path(args.data_dir),
+            snapshot_dir=getattr(args, "snapshot_dir", None),
+        )
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        logger.info(f"[OUTPUT] --output not provided; defaulting to {args.output}")
 
     if args.resume_from and not args.checkpoint_dir:
         parser.error("--resume-from requires --checkpoint-dir")
