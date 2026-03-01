@@ -69,6 +69,8 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "eligibility_consistency",
     "cache_health",
     "ruleset_health",
+    "exposure_missingness",
+    "risk_concentration",
 })
 
 # Required fields in each market_data.json record for schema gate
@@ -130,6 +132,24 @@ class GateConfig:
 
     portfolio_weight_sum_tolerance: float = 1.0
     """Max absolute deviation from 100% for target_weight_pct sum (pp)."""
+
+    exposure_missing_warn_frac: float = 0.10
+    """Per-exposure WARN threshold: fraction of eligible tickers missing a value."""
+
+    exposure_missing_fail_frac: float = 0.25
+    """Per-exposure FAIL threshold: fraction of eligible tickers missing a value."""
+
+    risk_conc_catalyst_7d_warn: float = 0.30
+    """WARN if > 30% of top-K weight has catalyst_days <= 7."""
+
+    risk_conc_catalyst_7d_fail: float = 0.50
+    """FAIL if > 50% of top-K weight has catalyst_days <= 7."""
+
+    risk_conc_high_beta_warn: float = 0.50
+    """WARN if > 50% of top-K weight has beta >= 1.5 or drawdown <= -0.30."""
+
+    risk_conc_stacked_warn: float = 0.20
+    """WARN if > 20% of top-K weight has catalyst <= 7d AND (beta >= 1.5 or drawdown <= -0.30)."""
 
     @staticmethod
     def from_json(path: Path) -> "GateConfig":
@@ -381,6 +401,256 @@ def check_missing_reason_fraction(
         name="missing_reason_fraction", status=status,
         detail=f"{missing_count}/{total} tickers ({frac:.1%}) have missing_reason",
         value=round(frac, 4), threshold=max_frac,
+    )
+
+
+_EXPOSURE_COLUMNS_BASE: tuple[str, ...] = (
+    "de_beta_xbi_60d",
+    "de_drawdown",
+    "de_rsi_14d",
+    "de_alpha_60d",
+)
+"""Always-expected exposure value columns (present in all post-DE v1.3 snapshots)."""
+
+_EXPOSURE_COLUMNS_EXTENDED: tuple[str, ...] = (
+    "de_vol_60d",
+    "de_drawdown_rel_xbi",
+)
+"""Columns only checked if they exist in the CSV header (post-fix additions)."""
+
+
+def check_exposure_missingness(
+    snapshot_date_dir: Path,
+    warn_frac: float,
+    fail_frac: float,
+) -> GateResult:
+    """Check per-exposure missingness among eligible tickers.
+
+    Schema-aware: columns absent from the CSV header are **skipped** (not
+    counted as missing).  This prevents false FAILs on legacy snapshots that
+    predate a column's introduction.
+
+    For each column present in the header, computes the fraction of eligible
+    tickers whose value is empty / NaN.  The *worst* column determines the
+    gate verdict:
+
+    - FAIL if worst fraction > ``fail_frac``
+    - WARN if worst fraction > ``warn_frac``
+    - PASS otherwise
+
+    ``GateResult.value`` is a dict with ``eligible_n``, ``missing_fracs``,
+    and ``skipped`` (columns not in the header).
+    """
+    rankings_path = snapshot_date_dir / "rankings.csv"
+    if not rankings_path.exists():
+        return GateResult(
+            name="exposure_missingness", status="FAIL",
+            detail="rankings.csv not found",
+        )
+
+    with open(rankings_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        header = set(reader.fieldnames or [])
+        eligible_rows = [r for r in reader if r.get("eligible") == "1"]
+
+    n = len(eligible_rows)
+    if n == 0:
+        return GateResult(
+            name="exposure_missingness", status="FAIL",
+            detail="No eligible tickers in rankings.csv",
+        )
+
+    # Determine which columns to check (skip absent ones)
+    all_candidates = list(_EXPOSURE_COLUMNS_BASE) + list(_EXPOSURE_COLUMNS_EXTENDED)
+    check_cols = [c for c in all_candidates if c in header]
+    skipped_cols = [c for c in all_candidates if c not in header]
+
+    if not check_cols:
+        return GateResult(
+            name="exposure_missingness", status="PASS",
+            detail=f"SKIP: no exposure columns in header ({n} eligible, legacy schema)",
+            value={"eligible_n": n, "missing_fracs": {}, "skipped": skipped_cols},
+            threshold=warn_frac,
+        )
+
+    worst_col = ""
+    worst_frac = 0.0
+    missing_fracs: dict[str, float] = {}
+    per_col: list[str] = []
+
+    for col in check_cols:
+        missing = 0
+        for row in eligible_rows:
+            val = (row.get(col) or "").strip()
+            if not val or val.lower() in ("nan", "none"):
+                missing += 1
+        frac = missing / n
+        missing_fracs[col] = round(frac, 4)
+        per_col.append(f"{col}={frac:.1%}")
+        if frac > worst_frac:
+            worst_frac = frac
+            worst_col = col
+
+    if skipped_cols:
+        per_col.append(f"SKIP: {','.join(skipped_cols)}")
+
+    summary = ", ".join(per_col)
+    value_dict = {
+        "eligible_n": n,
+        "missing_fracs": missing_fracs,
+        "skipped": skipped_cols,
+    }
+
+    if worst_frac > fail_frac:
+        return GateResult(
+            name="exposure_missingness", status="FAIL",
+            detail=f"Worst: {worst_col} ({worst_frac:.1%} missing > {fail_frac:.0%}). {summary}",
+            value=value_dict, threshold=fail_frac,
+        )
+    if worst_frac > warn_frac:
+        return GateResult(
+            name="exposure_missingness", status="WARN",
+            detail=f"Worst: {worst_col} ({worst_frac:.1%} missing > {warn_frac:.0%}). {summary}",
+            value=value_dict, threshold=warn_frac,
+        )
+    return GateResult(
+        name="exposure_missingness", status="PASS",
+        detail=f"All exposures OK ({n} eligible). {summary}",
+        value=value_dict, threshold=warn_frac,
+    )
+
+
+def check_risk_concentration(
+    snapshot_date_dir: Path,
+    top_k: int = 20,
+    *,
+    catalyst_7d_warn: float = 0.30,
+    catalyst_7d_fail: float = 0.50,
+    high_risk_warn: float = 0.50,
+    stacked_warn: float = 0.20,
+    beta_threshold: float = 1.5,
+    drawdown_threshold: float = -0.30,
+) -> GateResult:
+    """Check risk concentration in the top-K portfolio.
+
+    Three buckets (all measured as fraction of top-K target weight):
+
+    1. **Catalyst <=7d**: tickers with imminent catalysts (binary outcome risk).
+    2. **High-risk**: tickers with beta >= threshold OR drawdown <= threshold.
+    3. **Stacked risk**: tickers in BOTH bucket 1 AND bucket 2.
+
+    Verdicts (worst wins):
+
+    - FAIL if catalyst_7d weight > ``catalyst_7d_fail``
+    - WARN if any bucket breaches its warn threshold
+    - PASS otherwise
+
+    ``GateResult.value`` is a dict with per-bucket fractions.
+    """
+    rankings_path = snapshot_date_dir / "rankings.csv"
+    if not rankings_path.exists():
+        return GateResult(
+            name="risk_concentration", status="FAIL",
+            detail="rankings.csv not found",
+        )
+
+    with open(rankings_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+
+    # Select top-K by actionable_rank
+    ranked = []
+    for r in rows:
+        ar = r.get("actionable_rank", "")
+        if ar and ar.isdigit():
+            ranked.append((int(ar), r))
+    ranked.sort(key=lambda x: x[0])
+    topk = [r for _, r in ranked[:top_k]]
+
+    if not topk:
+        return GateResult(
+            name="risk_concentration", status="PASS",
+            detail="No ranked tickers; skipped",
+            value={"catalyst_7d_wt": 0.0, "high_risk_wt": 0.0, "stacked_wt": 0.0},
+        )
+
+    def _fval(row: dict, col: str, default: float = 0.0) -> float:
+        v = row.get(col, "")
+        if not v or str(v).lower() in ("", "nan", "none"):
+            return default
+        try:
+            return float(v)
+        except (ValueError, TypeError):
+            return default
+
+    # Compute per-ticker weights (normalised to sum=1 within top-K)
+    raw_weights = [_fval(r, "target_weight_pct", 0.0) for r in topk]
+    total_wt = sum(raw_weights)
+    if total_wt <= 0:
+        # Fall back to equal weight
+        weights = [1.0 / len(topk)] * len(topk)
+    else:
+        weights = [w / total_wt for w in raw_weights]
+
+    cat7d_wt = 0.0
+    high_risk_wt = 0.0
+    stacked_wt = 0.0
+
+    for r, w in zip(topk, weights):
+        cat_days = _fval(r, "catalyst_days", 9999)
+        beta = _fval(r, "de_beta_xbi_60d", 0.0)
+        dd = _fval(r, "de_drawdown", 0.0)
+
+        is_cat7 = cat_days <= 7
+        is_high_risk = beta >= beta_threshold or dd <= drawdown_threshold
+
+        if is_cat7:
+            cat7d_wt += w
+        if is_high_risk:
+            high_risk_wt += w
+        if is_cat7 and is_high_risk:
+            stacked_wt += w
+
+    value_dict = {
+        "catalyst_7d_wt": round(cat7d_wt, 4),
+        "high_risk_wt": round(high_risk_wt, 4),
+        "stacked_wt": round(stacked_wt, 4),
+        "top_k": len(topk),
+    }
+
+    # Determine status (worst wins)
+    status = "PASS"
+    detail_parts: list[str] = []
+
+    if cat7d_wt > catalyst_7d_fail:
+        status = "FAIL"
+        detail_parts.append(f"catalyst<=7d={cat7d_wt:.0%} > {catalyst_7d_fail:.0%} FAIL")
+    elif cat7d_wt > catalyst_7d_warn:
+        status = "WARN"
+        detail_parts.append(f"catalyst<=7d={cat7d_wt:.0%} > {catalyst_7d_warn:.0%} WARN")
+    else:
+        detail_parts.append(f"catalyst<=7d={cat7d_wt:.0%}")
+
+    if high_risk_wt > high_risk_warn:
+        if status != "FAIL":
+            status = "WARN"
+        detail_parts.append(f"high_risk={high_risk_wt:.0%} > {high_risk_warn:.0%} WARN")
+    else:
+        detail_parts.append(f"high_risk={high_risk_wt:.0%}")
+
+    if stacked_wt > stacked_warn:
+        if status != "FAIL":
+            status = "WARN"
+        detail_parts.append(f"stacked={stacked_wt:.0%} > {stacked_warn:.0%} WARN")
+    else:
+        detail_parts.append(f"stacked={stacked_wt:.0%}")
+
+    detail = "; ".join(detail_parts)
+    threshold = catalyst_7d_fail if status == "FAIL" else catalyst_7d_warn
+
+    return GateResult(
+        name="risk_concentration", status=status,
+        detail=detail, value=value_dict, threshold=threshold,
     )
 
 
@@ -2496,6 +2766,26 @@ def run_daily(
     )
     gate_results.append(ch_gate)
     print(f"  Cache health gate: {ch_gate.status} — {ch_gate.detail}")
+
+    # --- Gate: exposure_missingness (WARN/FAIL) ---
+    exp_gate = check_exposure_missingness(
+        staging_date_dir,
+        warn_frac=config.exposure_missing_warn_frac,
+        fail_frac=config.exposure_missing_fail_frac,
+    )
+    gate_results.append(exp_gate)
+    print(f"  Exposure missingness gate: {exp_gate.status} — {exp_gate.detail}")
+
+    # --- Gate: risk_concentration (WARN/FAIL) ---
+    rc_gate = check_risk_concentration(
+        staging_date_dir,
+        catalyst_7d_warn=config.risk_conc_catalyst_7d_warn,
+        catalyst_7d_fail=config.risk_conc_catalyst_7d_fail,
+        high_risk_warn=config.risk_conc_high_beta_warn,
+        stacked_warn=config.risk_conc_stacked_warn,
+    )
+    gate_results.append(rc_gate)
+    print(f"  Risk concentration gate: {rc_gate.status} — {rc_gate.detail}")
 
     # --- Step 5: Build manifest ---
     print(f"\n[5/5] Building run manifest ...")

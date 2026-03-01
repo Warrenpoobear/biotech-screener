@@ -42,7 +42,9 @@ from run_daily_production import (
     check_market_data_coverage,
     check_market_data_schema,
     check_market_data_staleness,
+    check_exposure_missingness,
     check_missing_reason_fraction,
+    check_risk_concentration,
     check_portfolio_weights,
     check_turnover,
     check_xbi_staleness,
@@ -983,6 +985,8 @@ class TestOpsContract:
             "eligibility_consistency",
             "cache_health",
             "ruleset_health",
+            "exposure_missingness",
+            "risk_concentration",
         }
         assert expected == GATE_ALLOWLIST
 
@@ -1450,5 +1454,376 @@ class TestOpsContractWithNewGates:
         assert "eligibility_consistency" in GATE_ALLOWLIST
 
     def test_allowlist_count_updated(self):
-        """Allowlist has 24 entries (19 original + 3 new + cache_health + ruleset_health)."""
-        assert len(GATE_ALLOWLIST) == 24
+        """Allowlist has 26 entries."""
+        assert len(GATE_ALLOWLIST) == 26
+
+    def test_new_gates_in_allowlist_v2(self):
+        assert "exposure_missingness" in GATE_ALLOWLIST
+        assert "risk_concentration" in GATE_ALLOWLIST
+
+
+# ---------------------------------------------------------------------------
+# Helpers for exposure missingness tests
+# ---------------------------------------------------------------------------
+
+def _write_exposure_csv(
+    path: Path,
+    rows: list[dict[str, str]],
+) -> None:
+    """Write a rankings.csv with exposure value columns."""
+    cols = [
+        "ticker", "actionable_rank", "eligible",
+        "de_beta_xbi_60d", "de_drawdown", "de_rsi_14d", "de_alpha_60d",
+    ]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=cols)
+        writer.writeheader()
+        for r in rows:
+            writer.writerow({c: r.get(c, "") for c in cols})
+
+
+# ---------------------------------------------------------------------------
+# Tests: Exposure missingness gate
+# ---------------------------------------------------------------------------
+
+class TestExposureMissingnessGate:
+
+    def test_all_present_pass(self, tmp_path):
+        """All exposures present → PASS."""
+        snap = tmp_path / "snap"
+        _write_exposure_csv(snap / "rankings.csv", [
+            {"ticker": "ACRS", "eligible": "1",
+             "de_beta_xbi_60d": "1.2", "de_drawdown": "-0.15",
+             "de_rsi_14d": "55", "de_alpha_60d": "0.03"},
+            {"ticker": "BMRN", "eligible": "1",
+             "de_beta_xbi_60d": "0.8", "de_drawdown": "-0.10",
+             "de_rsi_14d": "48", "de_alpha_60d": "0.01"},
+        ])
+        result = check_exposure_missingness(snap, warn_frac=0.10, fail_frac=0.25)
+        assert result.status == "PASS"
+        assert result.value["eligible_n"] == 2
+        assert all(v == 0.0 for v in result.value["missing_fracs"].values())
+
+    def test_below_warn_pass(self, tmp_path):
+        """5% missing (1 of 20) < 10% warn → PASS."""
+        snap = tmp_path / "snap"
+        rows = []
+        for i in range(20):
+            row = {
+                "ticker": f"T{i}", "eligible": "1",
+                "de_beta_xbi_60d": "1.0", "de_drawdown": "-0.1",
+                "de_rsi_14d": "50", "de_alpha_60d": "0.02",
+            }
+            if i == 0:
+                row["de_beta_xbi_60d"] = ""  # 1 missing
+            rows.append(row)
+        _write_exposure_csv(snap / "rankings.csv", rows)
+        result = check_exposure_missingness(snap, warn_frac=0.10, fail_frac=0.25)
+        assert result.status == "PASS"
+        assert result.value["missing_fracs"]["de_beta_xbi_60d"] == 0.05
+
+    def test_warn_threshold(self, tmp_path):
+        """15% missing > 10% warn, < 25% fail → WARN."""
+        snap = tmp_path / "snap"
+        rows = []
+        for i in range(20):
+            row = {
+                "ticker": f"T{i}", "eligible": "1",
+                "de_beta_xbi_60d": "1.0", "de_drawdown": "-0.1",
+                "de_rsi_14d": "50", "de_alpha_60d": "0.02",
+            }
+            if i < 3:
+                row["de_rsi_14d"] = ""  # 3/20 = 15%
+            rows.append(row)
+        _write_exposure_csv(snap / "rankings.csv", rows)
+        result = check_exposure_missingness(snap, warn_frac=0.10, fail_frac=0.25)
+        assert result.status == "WARN"
+        assert result.value["missing_fracs"]["de_rsi_14d"] == 0.15
+
+    def test_fail_threshold(self, tmp_path):
+        """30% missing > 25% fail → FAIL."""
+        snap = tmp_path / "snap"
+        rows = []
+        for i in range(20):
+            row = {
+                "ticker": f"T{i}", "eligible": "1",
+                "de_beta_xbi_60d": "1.0", "de_drawdown": "-0.1",
+                "de_rsi_14d": "50", "de_alpha_60d": "0.02",
+            }
+            if i < 6:
+                row["de_drawdown"] = ""  # 6/20 = 30%
+            rows.append(row)
+        _write_exposure_csv(snap / "rankings.csv", rows)
+        result = check_exposure_missingness(snap, warn_frac=0.10, fail_frac=0.25)
+        assert result.status == "FAIL"
+        assert result.value["missing_fracs"]["de_drawdown"] == 0.3
+
+    def test_ineligible_excluded(self, tmp_path):
+        """Ineligible tickers are excluded from the check."""
+        snap = tmp_path / "snap"
+        _write_exposure_csv(snap / "rankings.csv", [
+            {"ticker": "GOOD", "eligible": "1",
+             "de_beta_xbi_60d": "1.0", "de_drawdown": "-0.1",
+             "de_rsi_14d": "50", "de_alpha_60d": "0.02"},
+            {"ticker": "BAD", "eligible": "0",
+             "de_beta_xbi_60d": "", "de_drawdown": "",
+             "de_rsi_14d": "", "de_alpha_60d": ""},
+        ])
+        result = check_exposure_missingness(snap, warn_frac=0.10, fail_frac=0.25)
+        assert result.status == "PASS"
+        assert result.value["eligible_n"] == 1
+
+    def test_no_rankings_file(self, tmp_path):
+        """Missing rankings.csv → FAIL."""
+        snap = tmp_path / "snap"
+        snap.mkdir(parents=True)
+        result = check_exposure_missingness(snap, warn_frac=0.10, fail_frac=0.25)
+        assert result.status == "FAIL"
+
+    def test_no_eligible_tickers(self, tmp_path):
+        """No eligible tickers → FAIL."""
+        snap = tmp_path / "snap"
+        _write_exposure_csv(snap / "rankings.csv", [
+            {"ticker": "T1", "eligible": "0",
+             "de_beta_xbi_60d": "1.0", "de_drawdown": "-0.1",
+             "de_rsi_14d": "50", "de_alpha_60d": "0.02"},
+        ])
+        result = check_exposure_missingness(snap, warn_frac=0.10, fail_frac=0.25)
+        assert result.status == "FAIL"
+
+    def test_nan_treated_as_missing(self, tmp_path):
+        """NaN values treated as missing."""
+        snap = tmp_path / "snap"
+        _write_exposure_csv(snap / "rankings.csv", [
+            {"ticker": "T1", "eligible": "1",
+             "de_beta_xbi_60d": "nan", "de_drawdown": "NaN",
+             "de_rsi_14d": "None", "de_alpha_60d": "0.02"},
+        ])
+        result = check_exposure_missingness(snap, warn_frac=0.0, fail_frac=0.50)
+        # 3 of 4 columns have 100% missing → worst = 1.0 > fail
+        assert result.status == "FAIL"
+        assert result.value["missing_fracs"]["de_beta_xbi_60d"] == 1.0
+
+    def test_worst_column_reported(self, tmp_path):
+        """Detail string names the worst column."""
+        snap = tmp_path / "snap"
+        rows = []
+        for i in range(10):
+            row = {
+                "ticker": f"T{i}", "eligible": "1",
+                "de_beta_xbi_60d": "1.0", "de_drawdown": "-0.1",
+                "de_rsi_14d": "50", "de_alpha_60d": "0.02",
+            }
+            if i < 3:
+                row["de_rsi_14d"] = ""  # 30% missing on rsi
+            rows.append(row)
+        _write_exposure_csv(snap / "rankings.csv", rows)
+        result = check_exposure_missingness(snap, warn_frac=0.10, fail_frac=0.25)
+        assert result.status == "FAIL"
+        assert "de_rsi_14d" in result.detail
+
+    def test_legacy_schema_skip(self, tmp_path):
+        """Snapshot with no exposure columns → PASS (legacy schema skip)."""
+        snap = tmp_path / "snap"
+        snap.mkdir(parents=True)
+        # Write CSV with only ticker/eligible — no de_* columns
+        csv_path = snap / "rankings.csv"
+        with open(csv_path, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["ticker", "eligible"])
+            writer.writeheader()
+            writer.writerow({"ticker": "ACRS", "eligible": "1"})
+        result = check_exposure_missingness(snap, warn_frac=0.10, fail_frac=0.25)
+        assert result.status == "PASS"
+        assert "SKIP" in result.detail
+
+    def test_extended_column_skipped_if_absent(self, tmp_path):
+        """de_vol_60d absent from header → skipped, not FAIL."""
+        snap = tmp_path / "snap"
+        _write_exposure_csv(snap / "rankings.csv", [
+            {"ticker": "T1", "eligible": "1",
+             "de_beta_xbi_60d": "1.0", "de_drawdown": "-0.1",
+             "de_rsi_14d": "50", "de_alpha_60d": "0.02"},
+        ])
+        # No de_vol_60d column in header → should be in skipped list
+        result = check_exposure_missingness(snap, warn_frac=0.10, fail_frac=0.25)
+        assert result.status == "PASS"
+        assert "de_vol_60d" in result.value["skipped"]
+
+    def test_value_is_dict(self, tmp_path):
+        """GateResult.value is a dict with expected keys."""
+        snap = tmp_path / "snap"
+        _write_exposure_csv(snap / "rankings.csv", [
+            {"ticker": "T1", "eligible": "1",
+             "de_beta_xbi_60d": "1.0", "de_drawdown": "-0.1",
+             "de_rsi_14d": "50", "de_alpha_60d": "0.02"},
+        ])
+        result = check_exposure_missingness(snap, warn_frac=0.10, fail_frac=0.25)
+        assert "eligible_n" in result.value
+        assert "missing_fracs" in result.value
+        assert "skipped" in result.value
+
+    def test_gate_config_defaults(self):
+        """GateConfig has exposure missingness thresholds."""
+        config = GateConfig()
+        assert config.exposure_missing_warn_frac == 0.10
+        assert config.exposure_missing_fail_frac == 0.25
+
+
+# ---------------------------------------------------------------------------
+# Helpers for risk concentration tests
+# ---------------------------------------------------------------------------
+
+_CONC_COLS = [
+    "ticker", "actionable_rank", "eligible", "target_weight_pct",
+    "catalyst_days", "de_beta_xbi_60d", "de_drawdown",
+]
+
+
+def _write_concentration_csv(
+    path: Path,
+    rows: list[dict[str, str]],
+) -> None:
+    """Write a rankings.csv with concentration-relevant columns."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=_CONC_COLS)
+        writer.writeheader()
+        for r in rows:
+            writer.writerow({c: r.get(c, "") for c in _CONC_COLS})
+
+
+# ---------------------------------------------------------------------------
+# Tests: Risk concentration gate
+# ---------------------------------------------------------------------------
+
+class TestRiskConcentrationGate:
+
+    def _make_row(self, rank, wt=5.0, cat_days=90, beta=1.0, dd=-0.10):
+        return {
+            "ticker": f"T{rank}", "actionable_rank": str(rank),
+            "eligible": "1", "target_weight_pct": str(wt),
+            "catalyst_days": str(cat_days),
+            "de_beta_xbi_60d": str(beta), "de_drawdown": str(dd),
+        }
+
+    def test_all_safe_pass(self, tmp_path):
+        """No concentration issues → PASS."""
+        snap = tmp_path / "snap"
+        rows = [self._make_row(i + 1) for i in range(20)]
+        _write_concentration_csv(snap / "rankings.csv", rows)
+        result = check_risk_concentration(snap)
+        assert result.status == "PASS"
+        assert result.value["catalyst_7d_wt"] == 0.0
+        assert result.value["stacked_wt"] == 0.0
+
+    def test_catalyst_7d_warn(self, tmp_path):
+        """35% weight in catalyst <= 7d → WARN."""
+        snap = tmp_path / "snap"
+        rows = []
+        for i in range(20):
+            cat = 5 if i < 7 else 90  # 7/20 = 35% (equal weight)
+            rows.append(self._make_row(i + 1, cat_days=cat))
+        _write_concentration_csv(snap / "rankings.csv", rows)
+        result = check_risk_concentration(snap, catalyst_7d_warn=0.30, catalyst_7d_fail=0.50)
+        assert result.status == "WARN"
+        assert result.value["catalyst_7d_wt"] == 0.35
+
+    def test_catalyst_7d_fail(self, tmp_path):
+        """55% weight in catalyst <= 7d → FAIL."""
+        snap = tmp_path / "snap"
+        rows = []
+        for i in range(20):
+            cat = 3 if i < 11 else 100  # 11/20 = 55%
+            rows.append(self._make_row(i + 1, cat_days=cat))
+        _write_concentration_csv(snap / "rankings.csv", rows)
+        result = check_risk_concentration(snap, catalyst_7d_warn=0.30, catalyst_7d_fail=0.50)
+        assert result.status == "FAIL"
+        assert result.value["catalyst_7d_wt"] == 0.55
+
+    def test_high_risk_warn_beta(self, tmp_path):
+        """55% weight with beta >= 1.5 → WARN."""
+        snap = tmp_path / "snap"
+        rows = []
+        for i in range(20):
+            beta = 1.8 if i < 11 else 0.9  # 11/20 = 55%
+            rows.append(self._make_row(i + 1, beta=beta))
+        _write_concentration_csv(snap / "rankings.csv", rows)
+        result = check_risk_concentration(snap, high_risk_warn=0.50)
+        assert result.status == "WARN"
+        assert result.value["high_risk_wt"] == 0.55
+
+    def test_high_risk_warn_drawdown(self, tmp_path):
+        """55% weight with drawdown <= -0.30 → WARN."""
+        snap = tmp_path / "snap"
+        rows = []
+        for i in range(20):
+            dd = -0.45 if i < 11 else -0.05  # 11/20 = 55%
+            rows.append(self._make_row(i + 1, dd=dd))
+        _write_concentration_csv(snap / "rankings.csv", rows)
+        result = check_risk_concentration(snap, high_risk_warn=0.50)
+        assert result.status == "WARN"
+        assert result.value["high_risk_wt"] == 0.55
+
+    def test_stacked_risk_warn(self, tmp_path):
+        """25% weight with catalyst <= 7d AND high beta → WARN."""
+        snap = tmp_path / "snap"
+        rows = []
+        for i in range(20):
+            if i < 5:  # 5/20 = 25% stacked
+                rows.append(self._make_row(i + 1, cat_days=3, beta=2.0))
+            else:
+                rows.append(self._make_row(i + 1, cat_days=100, beta=0.8))
+        _write_concentration_csv(snap / "rankings.csv", rows)
+        result = check_risk_concentration(snap, stacked_warn=0.20)
+        assert result.status == "WARN"
+        assert result.value["stacked_wt"] == 0.25
+
+    def test_no_rankings_file(self, tmp_path):
+        """Missing rankings.csv → FAIL."""
+        snap = tmp_path / "snap"
+        snap.mkdir(parents=True)
+        result = check_risk_concentration(snap)
+        assert result.status == "FAIL"
+
+    def test_no_ranked_tickers(self, tmp_path):
+        """No tickers with actionable_rank → PASS (empty portfolio)."""
+        snap = tmp_path / "snap"
+        _write_concentration_csv(snap / "rankings.csv", [
+            {"ticker": "T1", "eligible": "1", "actionable_rank": "",
+             "target_weight_pct": "5.0", "catalyst_days": "3",
+             "de_beta_xbi_60d": "2.0", "de_drawdown": "-0.5"},
+        ])
+        result = check_risk_concentration(snap)
+        assert result.status == "PASS"
+
+    def test_weighted_not_equal(self, tmp_path):
+        """Weight-based calculation: 1 ticker with 60% weight and cat <= 7d → WARN."""
+        snap = tmp_path / "snap"
+        rows = [
+            self._make_row(1, wt=60.0, cat_days=3, beta=0.8),  # 60% weight, cat <= 7d
+            self._make_row(2, wt=40.0, cat_days=100, beta=0.8),  # 40% weight, safe
+        ]
+        _write_concentration_csv(snap / "rankings.csv", rows)
+        result = check_risk_concentration(snap, top_k=2, catalyst_7d_warn=0.30, catalyst_7d_fail=0.50)
+        assert result.status == "FAIL"  # 60% > 50% fail
+        assert abs(result.value["catalyst_7d_wt"] - 0.60) < 0.01
+
+    def test_value_dict_keys(self, tmp_path):
+        """GateResult.value has expected keys."""
+        snap = tmp_path / "snap"
+        rows = [self._make_row(i + 1) for i in range(5)]
+        _write_concentration_csv(snap / "rankings.csv", rows)
+        result = check_risk_concentration(snap, top_k=5)
+        assert "catalyst_7d_wt" in result.value
+        assert "high_risk_wt" in result.value
+        assert "stacked_wt" in result.value
+        assert "top_k" in result.value
+
+    def test_gate_config_defaults(self):
+        """GateConfig has risk concentration thresholds."""
+        config = GateConfig()
+        assert config.risk_conc_catalyst_7d_warn == 0.30
+        assert config.risk_conc_catalyst_7d_fail == 0.50
+        assert config.risk_conc_high_beta_warn == 0.50
+        assert config.risk_conc_stacked_warn == 0.20

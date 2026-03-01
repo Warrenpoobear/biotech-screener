@@ -22,7 +22,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass, fields as dc_fields
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
 from decision_engine_codes import canonicalize_reasons
 
@@ -957,48 +957,34 @@ def _compute_size_band(
 
 
 # =============================================================================
-# LAYER 4 — DEV TIER
+# CATALYST STRENGTH RESOLUTION (shared by dev + commercial tier)
 # =============================================================================
 
-def _compute_tier_dev(
-    archetype: str,
-    eligible: bool,
-    optionality: Optional[float],
+def _resolve_catalyst_strength(
     catalyst_in_window: str,
     catalyst_days: Any,
     ruleset: DecisionRuleset,
     catalyst_decay_w: float = 0.0,
-) -> Tuple[str, str]:
-    """Compute dev tier (A/B/C/D) and tier_reason.
+) -> Tuple[str, bool, bool, str]:
+    """Resolve catalyst proximity into strength band, actionability, and reason tag.
 
-    Only for drug_developer archetype.
-    Degrades gracefully when catalyst data is missing: tiers on optionality
-    alone and marks the reason.
+    Determines catalyst proximity and strength band from raw inputs:
+      - days_to_catalyst > 0 → specific upcoming catalyst with known distance
+      - days_to_catalyst == 0 + in_optimal_window == "1" → blended proximity mode
+      - both absent → no catalyst data
 
-    Returns (tier_letter, tier_reason).
+    Returns (strength, is_actionable, has_catalyst_data, cat_tag) where:
+      - strength: "near" | "mid" | "far" | "missing"
+      - is_actionable: True when strength is near or mid
+      - has_catalyst_data: True when any catalyst proximity info exists
+      - cat_tag: reason fragment for tier_reason (e.g. "catalyst_near")
     """
-    if archetype != "drug_developer":
-        return "", ""
-
-    if not eligible:
-        return "D", "ineligible"
-
-    if optionality is None:
-        return "C", "no_optionality_data"
-
-    # Determine catalyst proximity and strength band.
-    # days_to_catalyst > 0 means a specific upcoming catalyst with known distance.
-    # days_to_catalyst == 0 + in_optimal_window == "1" means "blended proximity mode"
-    #   (pipeline couldn't pin exact days but proximity scoring is active).
-    # days_to_catalyst absent + in_optimal_window absent/False = no catalyst data.
     c_days_float = _safe_float(catalyst_days, default=0.0)
     has_specific_days = c_days_float > 0
     has_blended_window = catalyst_in_window == "1"
     has_catalyst_data = has_specific_days or has_blended_window
 
-    # Catalyst strength: near/mid/far/missing
     if ruleset.catalyst_time_decay_mode == "logistic" and has_catalyst_data:
-        # Smooth: map continuous decay_w back to discrete strength labels
         decay_w = _safe_float(catalyst_decay_w, default=0.0)
         if decay_w >= 0.5:
             strength = "near"
@@ -1033,6 +1019,43 @@ def _compute_tier_dev(
         cat_tag = "catalyst_far"
     else:
         cat_tag = ""
+
+    return strength, is_actionable, has_catalyst_data, cat_tag
+
+
+# =============================================================================
+# LAYER 4 — DEV TIER
+# =============================================================================
+
+def _compute_tier_dev(
+    archetype: str,
+    eligible: bool,
+    optionality: Optional[float],
+    catalyst_in_window: str,
+    catalyst_days: Any,
+    ruleset: DecisionRuleset,
+    catalyst_decay_w: float = 0.0,
+) -> Tuple[str, str]:
+    """Compute dev tier (A/B/C/D) and tier_reason.
+
+    Only for drug_developer archetype.
+    Degrades gracefully when catalyst data is missing: tiers on optionality
+    alone and marks the reason.
+
+    Returns (tier_letter, tier_reason).
+    """
+    if archetype != "drug_developer":
+        return "", ""
+
+    if not eligible:
+        return "D", "ineligible"
+
+    if optionality is None:
+        return "C", "no_optionality_data"
+
+    strength, is_actionable, has_catalyst_data, cat_tag = _resolve_catalyst_strength(
+        catalyst_in_window, catalyst_days, ruleset, catalyst_decay_w,
+    )
 
     if has_catalyst_data:
         if optionality >= ruleset.tier_a_optionality_floor and is_actionable:
@@ -1071,8 +1094,7 @@ def _compute_tier_commercial(
     """Compute commercial tier (A/B/C/D) and tier_reason.
 
     For non-drug-developer archetypes (commercial_* and platform_*).
-    Mirrors _compute_tier_dev structure but uses commercial_quality_pct
-    instead of optionality_pct_dev.
+    Uses commercial_quality_pct instead of optionality_pct_dev.
 
     Returns (tier_letter, tier_reason).
     """
@@ -1086,47 +1108,9 @@ def _compute_tier_commercial(
     if quality_pct is None:
         return "C", "no_quality_data"
 
-    # Determine catalyst proximity (same logic as _compute_tier_dev)
-    c_days_float = _safe_float(catalyst_days, default=0.0)
-    has_specific_days = c_days_float > 0
-    has_blended_window = catalyst_in_window == "1"
-    has_catalyst_data = has_specific_days or has_blended_window
-
-    if ruleset.catalyst_time_decay_mode == "logistic" and has_catalyst_data:
-        decay_w = _safe_float(catalyst_decay_w, default=0.0)
-        if decay_w >= 0.5:
-            strength = "near"
-        elif decay_w >= 0.2:
-            strength = "mid"
-        else:
-            strength = "far"
-        is_actionable = decay_w >= 0.2
-    elif has_blended_window:
-        strength = "near"
-        is_actionable = True
-    elif has_specific_days:
-        if c_days_float <= ruleset.catalyst_near_days:
-            strength = "near"
-        elif c_days_float <= ruleset.catalyst_mid_days:
-            strength = "mid"
-        else:
-            strength = "far"
-        is_actionable = strength in ("near", "mid")
-    else:
-        strength = "missing"
-        is_actionable = False
-
-    # Catalyst tag for tier_reason
-    if has_blended_window and not has_specific_days:
-        cat_tag = "catalyst_window"
-    elif strength == "near":
-        cat_tag = "catalyst_near"
-    elif strength == "mid":
-        cat_tag = "catalyst_mid"
-    elif strength == "far":
-        cat_tag = "catalyst_far"
-    else:
-        cat_tag = ""
+    strength, is_actionable, has_catalyst_data, cat_tag = _resolve_catalyst_strength(
+        catalyst_in_window, catalyst_days, ruleset, catalyst_decay_w,
+    )
 
     if has_catalyst_data:
         if quality_pct >= ruleset.tier_a_commercial_floor and is_actionable:
@@ -1191,6 +1175,88 @@ def resolve_catalyst_priority(
 
     # No rule matched — return default
     return ruleset.catalyst_priority_default
+
+
+# =============================================================================
+# SORT CONTRIBUTION HELPERS
+# =============================================================================
+
+class SortContribution(NamedTuple):
+    """One signal's adjustment to the sort anchor."""
+    name: str       # signal identifier ("clinical", "coinvest", etc.)
+    raw: float      # input z-score before clamp
+    weight: float   # effective weight applied
+    delta: float    # final adjustment (subtracted from anchor)
+
+
+def _build_sort_contributions(
+    decision_fields: Dict[str, Any],
+    ruleset: "DecisionRuleset",
+    *,
+    alpha_raw: float,
+    catalyst_bonus: float,
+) -> List[SortContribution]:
+    """Compute all sort-anchor adjustments as structured contributions.
+
+    Each contribution's ``delta`` is subtracted from the anchor value by the
+    caller.  The logic here is identical to the former inline blocks — same
+    clamp, positive-only gate, and weight multiplication.
+
+    ``catalyst_bonus`` is non-zero only in blended mode (caller resolves from
+    the priority map).  ``alpha_raw`` feeds the within_tier modifier only;
+    the tiebreak mode lives in a separate tuple position and is NOT included.
+    """
+    contribs: List[SortContribution] = []
+
+    # 1. Clinical sort signal
+    if ruleset.enable_clinical_sort_signal:
+        cz_tier = _safe_float(decision_fields.get("clinical_score_z_tier"), default=0.0)
+        stage = str(decision_fields.get("stage_bucket", ""))
+        stage_mult = dict(ruleset.clinical_stage_mults).get(stage, 0.0)
+        if ruleset.clinical_positive_only:
+            cz_eff = min(2.0, max(0.0, cz_tier))
+        else:
+            cz_eff = max(-2.0, min(2.0, cz_tier))
+        delta = ruleset.clinical_sort_weight * cz_eff * stage_mult
+        contribs.append(SortContribution("clinical", cz_tier, ruleset.clinical_sort_weight, delta))
+
+    # 2. Coinvest sort tilt
+    if ruleset.enable_coinvest_sort_signal:
+        cz = _safe_float(decision_fields.get("coinvest_score_z"), default=0.0)
+        if ruleset.coinvest_positive_only:
+            cz_eff = min(2.0, max(0.0, cz))
+        else:
+            cz_eff = max(-2.0, min(2.0, cz))
+        delta = ruleset.coinvest_sort_weight * cz_eff
+        contribs.append(SortContribution("coinvest", cz, ruleset.coinvest_sort_weight, delta))
+
+    # 3. Institutional delta sort tilt
+    if ruleset.enable_institutional_sort_signal:
+        iz = _safe_float(decision_fields.get("inst_delta_z"), default=0.0)
+        if ruleset.institutional_positive_only:
+            iz_eff = min(2.0, max(0.0, iz))
+        else:
+            iz_eff = max(-2.0, min(2.0, iz))
+        delta = ruleset.institutional_sort_weight * iz_eff
+        contribs.append(SortContribution("institutional", iz, ruleset.institutional_sort_weight, delta))
+
+    # 4. Calendar Alpha v2 sort tilt
+    if ruleset.enable_calendar_alpha_sort:
+        cv2_z = _safe_float(decision_fields.get("clinical_score_v2_z"), default=0.0)
+        cv2_eff = min(2.0, max(0.0, cv2_z))  # positive-only
+        delta = ruleset.calendar_alpha_sort_weight * cv2_eff
+        contribs.append(SortContribution("calendar_alpha", cv2_z, ruleset.calendar_alpha_sort_weight, delta))
+
+    # 5. Alpha modifier (within_tier mode only; tiebreak lives in a separate tuple position)
+    if ruleset.alpha_modifier_mode == "within_tier":
+        delta = ruleset.alpha_modifier_weight * alpha_raw
+        contribs.append(SortContribution("alpha_modifier", alpha_raw, ruleset.alpha_modifier_weight, delta))
+
+    # 6. Catalyst bonus (non-zero only in blended mode)
+    if catalyst_bonus != 0.0:
+        contribs.append(SortContribution("catalyst_bonus", catalyst_bonus, 1.0, catalyst_bonus))
+
+    return contribs
 
 
 # Fields injected by run_screen.py (not computed by the DE itself).
@@ -1294,69 +1360,33 @@ def compute_actionable_sort_key(
     if rs.enable_missingness_sort_penalty:
         missing_count = int(_safe_float(decision_fields.get("missingness_penalty", 0), default=0))
 
-    # Clinical sort signal: blended into anchor term (0 when disabled).
-    # Uses tier-local z-score, gated by stage_bucket (early=0, mid/late active).
-    # Positive-only mode: only boosts high-clinical, never penalises low.
-    # Clamped to ±2.0 to prevent spiky z in small tier cohorts.
-    clin_adj = 0.0
-    if rs.enable_clinical_sort_signal:
-        cz_tier = _safe_float(decision_fields.get("clinical_score_z_tier"), default=0.0)
-        stage = str(decision_fields.get("stage_bucket", ""))
-        stage_mult = dict(rs.clinical_stage_mults).get(stage, 0.0)
-        if rs.clinical_positive_only:
-            cz_eff = min(2.0, max(0.0, cz_tier))
-        else:
-            cz_eff = max(-2.0, min(2.0, cz_tier))
-        clin_adj = rs.clinical_sort_weight * cz_eff * stage_mult
-
-    # Coinvest sort tilt: blended into anchor (same pattern as clinical).
-    # Uses cross-sectional z-score of tier1_count, positive-only default.
-    # Clamped to ±2.0 to prevent spiky z in small cohorts.
-    coinvest_adj = 0.0
-    if rs.enable_coinvest_sort_signal:
-        cz = _safe_float(decision_fields.get("coinvest_score_z"), default=0.0)
-        if rs.coinvest_positive_only:
-            cz_eff = min(2.0, max(0.0, cz))
-        else:
-            cz_eff = max(-2.0, min(2.0, cz))
-        coinvest_adj = rs.coinvest_sort_weight * cz_eff
-
-    # Institutional delta sort tilt: blended into anchor (same pattern).
-    # Uses cross-sectional z-score of net_elite_holders_delta.
-    # Clamped to ±2.0; positive-only default avoids penalising decreases.
-    inst_adj = 0.0
-    if rs.enable_institutional_sort_signal:
-        iz = _safe_float(decision_fields.get("inst_delta_z"), default=0.0)
-        if rs.institutional_positive_only:
-            iz_eff = min(2.0, max(0.0, iz))
-        else:
-            iz_eff = max(-2.0, min(2.0, iz))
-        inst_adj = rs.institutional_sort_weight * iz_eff
-
-    # Calendar Alpha v2 sort tilt: blended into anchor (same pattern).
-    # Uses cross-sectional z-score of clinical_score_v2.
-    # Positive-only: only boosts high-v2 names, never penalises low.
-    cal_adj = 0.0
-    if rs.enable_calendar_alpha_sort:
-        cv2_z = _safe_float(decision_fields.get("clinical_score_v2_z"), default=0.0)
-        cv2_eff = min(2.0, max(0.0, cv2_z))  # positive-only
-        cal_adj = rs.calendar_alpha_sort_weight * cv2_eff
-
     # Alpha modifier signal (0.0 when mode=off or missing)
     _alpha_sig = _safe_float(alpha_raw, default=0.0)
+    _alpha_tie = -_alpha_sig if rs.alpha_modifier_mode == "tiebreak" else 0.0
+
+    # --- Build structured contributions and compute total adjustment ---
+    # Catalyst bonus is only non-zero in blended mode.
+    catalyst_bonus = 0.0
+    if mode == "blended":
+        bonus_map = dict(rs.catalyst_priority_rank_bonuses)
+        catalyst_bonus = bonus_map.get(cat_priority, 0.0)
+
+    contribs = _build_sort_contributions(
+        decision_fields, rs,
+        alpha_raw=_alpha_sig,
+        catalyst_bonus=catalyst_bonus,
+    )
+    total_adj = sum(c.delta for c in contribs)
 
     # --- Mode dispatch ---
     # prefix is (is_eligible, is_dev, tier_ord) in dev_first mode
     # or (is_eligible, tier_ord, is_dev) in tier_first mode
-    # Alpha modifier adjustments (0.0 when mode=off)
-    _alpha_within = rs.alpha_modifier_weight * _alpha_sig if rs.alpha_modifier_mode == "within_tier" else 0.0
-    _alpha_tie = -_alpha_sig if rs.alpha_modifier_mode == "tiebreak" else 0.0
 
     if mode == "tiebreaker":
         # anchor dominates after tier; priority only breaks ties
-        effective_comp_rank = anchor - clin_adj - coinvest_adj - inst_adj - cal_adj - _alpha_within
+        effective_comp_rank = anchor - total_adj
         return prefix + (
-            effective_comp_rank,  # anchor with clinical tilt + alpha within_tier
+            effective_comp_rank,  # anchor with signal tilts
             missing_count,  # fewer missing components first
             cat_priority,   # priority breaks comp_rank ties
             cat_days,       # ascending days
@@ -1369,12 +1399,10 @@ def compute_actionable_sort_key(
         )
 
     if mode == "blended":
-        # Build bonus map from ruleset tuples
-        bonus_map = dict(rs.catalyst_priority_rank_bonuses)
-        bonus = bonus_map.get(cat_priority, 0.0)
-        effective_comp_rank = anchor - bonus - clin_adj - coinvest_adj - inst_adj - cal_adj - _alpha_within
+        # catalyst_bonus already included in contribs
+        effective_comp_rank = anchor - total_adj
         return prefix + (
-            effective_comp_rank,  # anchor with bonus + clinical tilt + alpha within_tier
+            effective_comp_rank,  # anchor with bonus + signal tilts
             missing_count,        # fewer missing components first
             cat_mode_ord,         # specific < blended < no_upcoming < missing
             cat_days,             # ascending days
@@ -1387,13 +1415,13 @@ def compute_actionable_sort_key(
         )
 
     # mode == "off" (default)
-    effective_opt_neg = opt_neg - clin_adj - coinvest_adj - inst_adj - cal_adj - _alpha_within  # higher z → more negative → sorts earlier
+    effective_opt_neg = opt_neg - total_adj  # higher z → more negative → sorts earlier
     return prefix + (
         cat_priority,       # 0 (neutral) — no effect on ordering
         cat_mode_ord,       # specific < blended < no_upcoming < missing
         cat_days,           # ascending days (missing=9999)
         missing_count,      # fewer missing components first
-        effective_opt_neg,  # optionality with clinical tilt (negated)
+        effective_opt_neg,  # optionality with signal tilts (negated)
         sponsor_neg,        # descending sponsor count (negated)
         mom_ord,            # tailwind < neutral < headwind
         anchor,             # ascending composite rank (or negated pct)

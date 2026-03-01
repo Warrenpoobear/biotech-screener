@@ -89,6 +89,8 @@ EXPOSURE_MAP = {
 # Ordinal encoding for market_cap_bucket
 MCAP_ORDINAL = {"xs": 1.0, "small": 2.0, "mid": 3.0, "large": 4.0}
 
+DEFAULT_MISSINGNESS_THRESHOLD = 0.15  # 15%
+
 
 # ---------------------------------------------------------------------------
 # Data loading (lightweight, no pandas)
@@ -145,6 +147,26 @@ def discover_snapshot_dates(
     if date_to:
         dates = [d for d in dates if d <= date_to]
     return dates
+
+
+def filter_date_grid(dates: List[str], grid: str) -> List[str]:
+    """Filter dates to the requested grid frequency.
+
+    Grids:
+      - "all": no filtering
+      - "monthly": keep only the last date per calendar month
+    """
+    if grid == "all":
+        return dates
+    if grid != "monthly":
+        raise ValueError(f"Unknown date-grid: {grid!r}")
+
+    # Group by YYYY-MM, keep last date per month
+    by_month: Dict[str, str] = {}
+    for d in sorted(dates):
+        ym = d[:7]  # "YYYY-MM"
+        by_month[ym] = d  # last seen date in this month wins
+    return sorted(by_month.values())
 
 
 # ---------------------------------------------------------------------------
@@ -329,6 +351,168 @@ def _extract_anchor(row: Dict[str, str], ruleset: DecisionRuleset) -> Optional[f
 
 
 # ---------------------------------------------------------------------------
+# On-the-fly exposure hydration (fills gaps in legacy snapshots)
+# ---------------------------------------------------------------------------
+
+def _get_closes(
+    tseries: Dict[str, float],
+    sorted_dates: List[str],
+    start_idx: int,
+    end_idx: int,
+) -> List[Optional[float]]:
+    """Extract closes from a ticker's price dict for the given date range."""
+    return [tseries.get(sorted_dates[i]) for i in range(start_idx, end_idx + 1)]
+
+
+def _log_returns(closes: List[Optional[float]]) -> List[float]:
+    """Compute log returns from closes, skipping None/non-positive."""
+    rets = []
+    prev = None
+    for c in closes:
+        if c is not None and c > 0:
+            if prev is not None and prev > 0:
+                rets.append(math.log(c / prev))
+            prev = c
+        else:
+            prev = None
+    return rets
+
+
+def hydrate_missing_exposures(
+    rows: List[Dict[str, str]],
+    prices: Dict[str, Dict[str, float]],
+    snap_date: str,
+    sorted_dates: List[str],
+    window: int = 60,
+) -> Dict[str, int]:
+    """Fill missing de_vol_60d, de_beta_xbi_60d, de_rsi_14d from prices.
+
+    Returns {exposure: count_hydrated}.
+    """
+    counts: Dict[str, int] = {"vol": 0, "beta": 0, "rsi": 0}
+    try:
+        snap_idx = sorted_dates.index(snap_date)
+    except ValueError:
+        return counts
+    start_idx = max(0, snap_idx - window)
+    if snap_idx - start_idx < 20:
+        return counts
+
+    # Pre-compute XBI returns for beta
+    xbi_series = prices.get("XBI", {})
+    xbi_closes = _get_closes(xbi_series, sorted_dates, start_idx, snap_idx)
+    xbi_rets = _log_returns(xbi_closes)
+
+    for row in rows:
+        ticker = (row.get("ticker") or "").strip().upper()
+        tseries = prices.get(ticker)
+        if not tseries:
+            continue
+        closes_raw = _get_closes(tseries, sorted_dates, start_idx, snap_idx)
+        ticker_rets = _log_returns(closes_raw)
+
+        # --- Vol ---
+        if not row.get("de_vol_60d") and len(ticker_rets) >= 20:
+            stdev = statistics.stdev(ticker_rets)
+            row["de_vol_60d"] = f"{stdev * math.sqrt(252):.6f}"
+            counts["vol"] += 1
+
+        # --- Beta vs XBI ---
+        if not row.get("de_beta_xbi_60d") and len(xbi_rets) >= 20:
+            # Align returns by date index (both computed from same date range)
+            # Use paired returns where both are available
+            ticker_closes = [c for c in closes_raw if c is not None and c > 0]
+            xbi_closes_clean = [c for c in xbi_closes if c is not None and c > 0]
+            # Rebuild aligned pairs from the raw close arrays
+            paired_t = []
+            paired_x = []
+            prev_t = prev_x = None
+            for i in range(len(closes_raw)):
+                tc = closes_raw[i]
+                xc = xbi_closes[i] if i < len(xbi_closes) else None
+                if (tc is not None and tc > 0 and prev_t is not None and prev_t > 0
+                        and xc is not None and xc > 0 and prev_x is not None and prev_x > 0):
+                    paired_t.append(math.log(tc / prev_t))
+                    paired_x.append(math.log(xc / prev_x))
+                prev_t = tc if (tc is not None and tc > 0) else None
+                prev_x = xc if (xc is not None and xc > 0) else None
+            if len(paired_t) >= 20:
+                mx = statistics.mean(paired_x)
+                cov = sum((paired_t[i] - statistics.mean(paired_t)) * (paired_x[i] - mx)
+                          for i in range(len(paired_t)))
+                var_x = sum((paired_x[i] - mx) ** 2 for i in range(len(paired_x)))
+                if var_x > 1e-12:
+                    beta = cov / var_x
+                    row["de_beta_xbi_60d"] = f"{beta:.6f}"
+                    counts["beta"] += 1
+
+        # --- RSI(14) ---
+        if not row.get("de_rsi_14d"):
+            rsi_start = max(0, snap_idx - 14)
+            rsi_closes = _get_closes(tseries, sorted_dates, rsi_start, snap_idx)
+            clean = [c for c in rsi_closes if c is not None and c > 0]
+            if len(clean) >= 10:
+                gains = []
+                losses = []
+                for i in range(1, len(clean)):
+                    change = clean[i] - clean[i - 1]
+                    if change > 0:
+                        gains.append(change)
+                        losses.append(0.0)
+                    else:
+                        gains.append(0.0)
+                        losses.append(abs(change))
+                avg_gain = statistics.mean(gains) if gains else 0.0
+                avg_loss = statistics.mean(losses) if losses else 0.0
+                if avg_loss > 1e-12:
+                    rs = avg_gain / avg_loss
+                    rsi = 100.0 - (100.0 / (1.0 + rs))
+                else:
+                    rsi = 100.0 if avg_gain > 0 else 50.0
+                row["de_rsi_14d"] = f"{rsi:.2f}"
+                counts["rsi"] += 1
+
+    return counts
+
+
+def filter_universe_by_prices(
+    rows: List[Dict[str, str]],
+    prices: Dict[str, Dict[str, float]],
+    snap_date: str,
+) -> List[Dict[str, str]]:
+    """Keep only rows whose ticker has a price on snap_date.
+
+    Use with ``--universe-mode price_available`` to avoid data-availability bias
+    in OLS neutralization (only fit on tickers we can actually evaluate).
+    """
+    return [
+        r for r in rows
+        if (r.get("ticker") or "").strip().upper() in prices
+        and prices[(r.get("ticker") or "").strip().upper()].get(snap_date) is not None
+    ]
+
+
+# ---------------------------------------------------------------------------
+# Missingness reporting
+# ---------------------------------------------------------------------------
+
+def compute_exposure_missingness(
+    rows: List[Dict[str, str]],
+    exposure_names: List[str],
+) -> Dict[str, float]:
+    """Return {exposure_name: fraction_missing} across eligible rows."""
+    eligible = [r for r in rows if r.get("eligible") == "1"]
+    n = len(eligible)
+    if n == 0:
+        return {exp: 1.0 for exp in exposure_names}
+    result: Dict[str, float] = {}
+    for exp_name in exposure_names:
+        missing = sum(1 for r in eligible if _extract_exposure(r, exp_name) is None)
+        result[exp_name] = missing / n
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Exposure neutralization
 # ---------------------------------------------------------------------------
 
@@ -441,6 +625,7 @@ def rerank_faithful(
                   if r.get("archetype", "").startswith("commercial_")
                   else safe_float(r.get("clinical_optionality_pct_dev")))
         ),
+        alpha_raw=safe_float(r.get("alpha_cohort_raw")),
     ))
 
     rank = 1
@@ -469,6 +654,7 @@ class DateMetrics:
     n_held: Dict[int, int] = field(default_factory=dict)
     top_k_tickers: List[str] = field(default_factory=list)
     exposure_means_topk: Dict[str, Optional[float]] = field(default_factory=dict)
+    exposure_missingness: Dict[str, float] = field(default_factory=dict)
     ols_r2: Optional[float] = None
     ols_coefficients: List[float] = field(default_factory=list)
     skipped: bool = False
@@ -593,6 +779,7 @@ class ExperimentResult:
     mean_ic: Dict[int, Optional[float]] = field(default_factory=dict)
     mean_gross: Dict[int, Optional[float]] = field(default_factory=dict)
     mean_exposure_topk: Dict[str, Optional[float]] = field(default_factory=dict)
+    mean_exposure_missingness: Dict[str, Optional[float]] = field(default_factory=dict)
     mean_ols_r2: Optional[float] = None
 
     def aggregate(self) -> None:
@@ -614,6 +801,12 @@ class ExperimentResult:
                     if m.exposure_means_topk.get(exp) is not None]
             self.mean_exposure_topk[exp] = statistics.mean(vals) if vals else None
 
+            miss_vals = [m.exposure_missingness.get(exp) for m in valid
+                         if m.exposure_missingness.get(exp) is not None]
+            self.mean_exposure_missingness[exp] = (
+                statistics.mean(miss_vals) if miss_vals else None
+            )
+
         r2s = [m.ols_r2 for m in valid if m.ols_r2 is not None]
         self.mean_ols_r2 = statistics.mean(r2s) if r2s else None
 
@@ -632,6 +825,9 @@ class ExperimentResult:
             "mean_exposure_topk": {
                 k: _round_opt(v, 4) for k, v in self.mean_exposure_topk.items()
             },
+            "mean_exposure_missingness": {
+                k: _round_opt(v, 4) for k, v in self.mean_exposure_missingness.items()
+            },
             "mean_ols_r2": _round_opt(self.mean_ols_r2, 4),
             "by_date": [
                 {
@@ -644,6 +840,9 @@ class ExperimentResult:
                     "top_k_tickers": m.top_k_tickers[:10],
                     "exposure_means_topk": {
                         k: _round_opt(v, 4) for k, v in m.exposure_means_topk.items()
+                    },
+                    "exposure_missingness": {
+                        k: _round_opt(v, 4) for k, v in m.exposure_missingness.items()
                     },
                     "ols_r2": _round_opt(m.ols_r2, 4),
                 }
@@ -675,18 +874,27 @@ def run_experiment(
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
     min_cols: int = 50,
+    date_grid: str = "all",
+    universe_mode: str = "current",
+    missingness_threshold: float = DEFAULT_MISSINGNESS_THRESHOLD,
 ) -> Tuple[ExperimentResult, Optional[ExperimentResult]]:
     """Run the experiment: baseline, and optionally neutralized.
 
     Args:
         mode: "baseline" (baseline only), "neutralize" (neutralized only),
               or "compare" (both baseline + neutralized).
+        date_grid: "all" or "monthly" (keep last date per calendar month).
+        universe_mode: "current" (all rows in snapshot) or "price_available"
+                       (filter to rows with a price on snap_date).
+        missingness_threshold: hard FAIL if any exposure exceeds this
+                               fraction missing in a date's eligible rows.
 
     Returns:
         (baseline_result, neutralized_result_or_None)
     """
     # Discover dates
     snap_dates = discover_snapshot_dates(snapshot_root, date_from, date_to)
+    snap_dates = filter_date_grid(snap_dates, date_grid)
     print(f"Discovered {len(snap_dates)} snapshot dates")
 
     # Load prices
@@ -725,6 +933,8 @@ def run_experiment(
         ruleset_id=ruleset.ruleset_id,
     ) if run_neutral else None
 
+    missingness_fails: List[str] = []
+
     for snap_date in snap_dates:
         snap_dir = snapshot_root / snap_date
         raw_rows = load_rankings(snap_dir)
@@ -740,6 +950,33 @@ def run_experiment(
                 neutralized.date_metrics.append(copy.deepcopy(skip_metrics))
             continue
 
+        # --- Hydrate missing exposures from prices ---
+        hydrated = hydrate_missing_exposures(
+            raw_rows, prices, snap_date, sorted_dates,
+        )
+        filled = {k: v for k, v in hydrated.items() if v > 0}
+        if filled:
+            parts = ", ".join(f"{k}={v}" for k, v in filled.items())
+            print(f"  {snap_date}: hydrated {parts}")
+
+        # --- Universe filter ---
+        if universe_mode == "price_available":
+            before = len(raw_rows)
+            raw_rows = filter_universe_by_prices(raw_rows, prices, snap_date)
+            after = len(raw_rows)
+            if after < before:
+                print(f"  {snap_date}: universe filter {before} → {after} rows")
+
+        # --- Missingness check ---
+        miss = compute_exposure_missingness(raw_rows, exposure_names)
+        breached = {k: v for k, v in miss.items() if v > missingness_threshold}
+        if breached:
+            msg = (f"{snap_date}: MISSINGNESS FAIL — "
+                   + ", ".join(f"{k}={v:.1%}" for k, v in breached.items()))
+            missingness_fails.append(msg)
+            print(f"  SKIP: {msg}")
+            continue  # refuse to OLS-neutralize on junk coverage
+
         # --- Baseline ---
         if run_baseline:
             base_rows = copy.deepcopy(raw_rows)
@@ -749,6 +986,7 @@ def run_experiment(
                 snap_date, base_rows, prices, sorted_dates,
                 horizons, top_k, exposure_names,
             )
+            base_metrics.exposure_missingness = miss
             baseline.date_metrics.append(base_metrics)
             print(f"  {snap_date} baseline: "
                   f"eligible={base_metrics.n_eligible}, "
@@ -773,11 +1011,18 @@ def run_experiment(
             )
             neut_metrics.ols_r2 = r2
             neut_metrics.ols_coefficients = coeffs
+            neut_metrics.exposure_missingness = miss
             neutralized.date_metrics.append(neut_metrics)
             print(f"  {snap_date} neutral:  "
                   f"eligible={neut_metrics.n_eligible}, "
                   f"IC(20d)={_round_opt(neut_metrics.ics.get(20), 3)}, "
                   f"R²={_round_opt(r2, 3)}")
+
+    # Hard FAIL summary
+    if missingness_fails:
+        print(f"\nMISSINGNESS FAILURES ({len(missingness_fails)} dates):")
+        for msg in missingness_fails:
+            print(f"  {msg}")
 
     # Aggregate
     if run_baseline:
@@ -937,6 +1182,50 @@ def generate_comparison_report(
                     lines.append(f"- **{name}**: {last.ols_coefficients[i]:.6f}")
         lines.append("")
 
+    # --- Exposure Missingness ---
+    if baseline.mean_exposure_missingness:
+        lines.append("## Exposure Missingness (mean % eligible rows missing)")
+        lines.append("")
+        lines.append("| Exposure | Missing % | Status |")
+        lines.append("|----------|-----------|--------|")
+        for exp in exposure_names:
+            miss = baseline.mean_exposure_missingness.get(exp)
+            if miss is not None:
+                pct_str = f"{miss:.1%}"
+                status = "FAIL" if miss > 0.15 else ("WARN" if miss > 0.05 else "OK")
+            else:
+                pct_str = "—"
+                status = "—"
+            lines.append(f"| {exp:<8s} | {pct_str:>9s} | {status:>6s} |")
+        lines.append("")
+
+    # --- Hit-Rate (% months with positive IC) ---
+    lines.append(f"## Hit-Rate (% dates with positive {ref_h}d IC)")
+    lines.append("")
+    if baseline.n_dates > 0:
+        b_positive = sum(
+            1 for m in baseline.date_metrics
+            if not m.skipped and m.ics.get(ref_h) is not None and m.ics[ref_h] > 0
+        )
+        b_total = sum(
+            1 for m in baseline.date_metrics
+            if not m.skipped and m.ics.get(ref_h) is not None
+        )
+        b_hr = b_positive / max(b_total, 1)
+        lines.append(f"- Baseline: {b_positive}/{b_total} = **{b_hr:.1%}**")
+    if neutralized and neutralized.n_dates > 0:
+        n_positive = sum(
+            1 for m in neutralized.date_metrics
+            if not m.skipped and m.ics.get(ref_h) is not None and m.ics[ref_h] > 0
+        )
+        n_total = sum(
+            1 for m in neutralized.date_metrics
+            if not m.skipped and m.ics.get(ref_h) is not None
+        )
+        n_hr = n_positive / max(n_total, 1)
+        lines.append(f"- Neutralized: {n_positive}/{n_total} = **{n_hr:.1%}**")
+    lines.append("")
+
     # --- Recommendation ---
     lines.append("## Recommendation")
     lines.append("")
@@ -1023,6 +1312,14 @@ def main() -> None:
     parser.add_argument("--min-cols", type=int, default=50,
                         help="Skip snapshots with fewer columns")
     parser.add_argument("--cost-bps", type=float, default=DEFAULT_COST_BPS)
+    parser.add_argument("--date-grid", choices=["all", "monthly"], default="all",
+                        help="Date frequency: all (every snapshot) or monthly (last per month)")
+    parser.add_argument("--universe-mode", choices=["current", "price_available"],
+                        default="current",
+                        help="current: all rows; price_available: only rows with snap_date price")
+    parser.add_argument("--missingness-threshold", type=float,
+                        default=DEFAULT_MISSINGNESS_THRESHOLD,
+                        help="Hard FAIL if any exposure exceeds this fraction missing (default 0.15)")
     args = parser.parse_args()
 
     # Parse list args
@@ -1069,6 +1366,9 @@ def main() -> None:
         date_from=args.date_from,
         date_to=args.date_to,
         min_cols=args.min_cols,
+        date_grid=args.date_grid,
+        universe_mode=args.universe_mode,
+        missingness_threshold=args.missingness_threshold,
     )
     elapsed = time.time() - t0
 
