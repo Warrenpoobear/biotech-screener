@@ -169,3 +169,71 @@ class TestFinancialsMissingGate:
         )
         assert result["eligible"] == "0"
         assert "financials_missing" in result["ineligible_reasons"]
+
+
+class TestFinancialsMissingBypass:
+    """Mega-cap bypass for the financials_missing gate."""
+
+    def test_bypass_mega_cap(self):
+        """cash_total=0, both flags, market_cap=10B, threshold=5B → eligible + financials_partial."""
+        rec = _rec(
+            ticker="AZN",
+            fundamental_red_flag=False,
+            survivability_coverage=["missing_cash", "missing_burn_data"],
+            surv_metrics={"cash_total": 0.0, "burn_ttm": 0.0},
+        )
+        rs = DecisionRuleset(financials_missing_bypass_market_cap=5_000_000_000.0)
+        result = compute_decision_fields(
+            rec, archetype="commercial_pharma", optionality_pct_dev=0.50,
+            ruleset=rs, market_cap=10_000_000_000.0,
+        )
+        assert result["eligible"] == "1"
+        assert "financials_missing" not in result["ineligible_reasons"]
+        assert "financials_partial" in result["risk_flags"]
+
+    def test_bypass_disabled_by_default(self):
+        """Default ruleset (threshold=0) → financials_missing still fires."""
+        rec = _rec(
+            ticker="BIIB",
+            fundamental_red_flag=False,
+            survivability_coverage=["missing_cash", "missing_burn_data"],
+            surv_metrics={"cash_total": 0.0, "burn_ttm": 0.0},
+        )
+        result = compute_decision_fields(
+            rec, archetype="commercial_biotech", optionality_pct_dev=0.50,
+            market_cap=50_000_000_000.0,
+        )
+        assert result["eligible"] == "0"
+        assert "financials_missing" in result["ineligible_reasons"]
+
+    def test_bypass_below_threshold(self):
+        """market_cap=3B, threshold=5B → financials_missing still fires."""
+        rec = _rec(
+            ticker="SMALL",
+            fundamental_red_flag=False,
+            survivability_coverage=["missing_cash", "missing_burn_data"],
+            surv_metrics={"cash_total": 0.0, "burn_ttm": 0.0},
+        )
+        rs = DecisionRuleset(financials_missing_bypass_market_cap=5_000_000_000.0)
+        result = compute_decision_fields(
+            rec, archetype="drug_developer", optionality_pct_dev=0.50,
+            ruleset=rs, market_cap=3_000_000_000.0,
+        )
+        assert result["eligible"] == "0"
+        assert "financials_missing" in result["ineligible_reasons"]
+
+    def test_bypass_no_market_cap(self):
+        """market_cap=None, threshold=5B → financials_missing still fires."""
+        rec = _rec(
+            ticker="NOMC",
+            fundamental_red_flag=False,
+            survivability_coverage=["missing_cash", "missing_burn_data"],
+            surv_metrics={"cash_total": 0.0, "burn_ttm": 0.0},
+        )
+        rs = DecisionRuleset(financials_missing_bypass_market_cap=5_000_000_000.0)
+        result = compute_decision_fields(
+            rec, archetype="drug_developer", optionality_pct_dev=0.50,
+            ruleset=rs, market_cap=None,
+        )
+        assert result["eligible"] == "0"
+        assert "financials_missing" in result["ineligible_reasons"]

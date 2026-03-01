@@ -43,6 +43,7 @@ class DecisionRuleset:
     drawdown_gate_mode: str = "hard"      # "hard" (v1 behavior) or "soft" (sizing penalty)
     drawdown_size_penalty: int = -1       # band steps to subtract when soft + breached
     drawdown_hard_floor: float = -0.75    # hard-exclude even in soft mode if below this
+    financials_missing_bypass_market_cap: float = 0.0  # USD raw; 0 = disabled
 
     # Layer 2 — Risk flag thresholds
     vol_high_threshold: float = 1.20
@@ -537,20 +538,24 @@ def _compute_missing_components(decision_fields: dict) -> list:
 # =============================================================================
 
 def _compute_eligibility(
-    rec: Dict, ruleset: DecisionRuleset
-) -> Tuple[bool, List[str], bool]:
+    rec: Dict, ruleset: DecisionRuleset,
+    market_cap: Optional[float] = None,
+) -> Tuple[bool, List[str], bool, bool]:
     """Check eligibility gates.
 
     Hard gates only — survivability, liquidity, drawdown.
     Confidence is deliberately NOT a hard gate (sparse dev-stage coverage
     would exclude the exact optionality names we want to keep).
 
-    Returns (eligible, list_of_reasons, dd_rel_margin_rescued).
+    Returns (eligible, list_of_reasons, dd_rel_margin_rescued, financials_bypassed).
     dd_rel_margin_rescued is True when a drawdown failure was overridden
     because the relative margin was close to the gate (sector-driven drawdown).
+    financials_bypassed is True when the financials_missing gate was skipped
+    because market_cap exceeds the bypass threshold.
     """
     reasons: List[str] = []
     dd_rel_margin_rescued = False
+    financials_bypassed = False
 
     # Gate 0: financials missing — if survivability data is truly absent,
     # don't trust red flag checks (they'd produce false positives).
@@ -564,7 +569,16 @@ def _compute_eligibility(
     cash_total = surv_metrics.get("cash_total") or 0
     if ("missing_cash" in surv_coverage and "missing_burn_data" in surv_coverage
             and cash_total <= 0):
-        reasons.append("financials_missing")
+        # Mega-cap bypass: skip financials_missing for very large names
+        _bypass = (
+            ruleset.financials_missing_bypass_market_cap > 0
+            and market_cap is not None
+            and market_cap >= ruleset.financials_missing_bypass_market_cap
+        )
+        if _bypass:
+            financials_bypassed = True
+        else:
+            reasons.append("financials_missing")
     else:
         # Gate 1: fundamental red flag (runway < 6m, survivability critical, etc.)
         # If the boolean is present (live run), use it; if absent (archive run),
@@ -628,7 +642,7 @@ def _compute_eligibility(
             break
 
     eligible = len(reasons) == 0
-    return eligible, reasons, dd_rel_margin_rescued
+    return eligible, reasons, dd_rel_margin_rescued, financials_bypassed
 
 
 # =============================================================================
@@ -1463,6 +1477,7 @@ def compute_decision_fields(
     ruleset: Optional[DecisionRuleset] = None,
     est_cost_bps: Optional[float] = None,
     commercial_quality_pct: Optional[float] = None,
+    market_cap: Optional[float] = None,
 ) -> Dict[str, Any]:
     """Compute all decision engine fields for a single ticker.
 
@@ -1473,6 +1488,7 @@ def compute_decision_fields(
         ruleset: DecisionRuleset config (defaults to DEFAULT_RULESET)
         est_cost_bps: estimated round-trip trading cost in basis points (float or None)
         commercial_quality_pct: pre-computed quality percentile for commercial archetypes (float or None)
+        market_cap: market capitalisation in USD (float or None)
 
     Returns:
         dict with all decision engine column values
@@ -1480,10 +1496,15 @@ def compute_decision_fields(
     rs = ruleset or DEFAULT_RULESET
 
     # Layer 0 — Eligibility
-    eligible, reasons, dd_rel_margin_rescued = _compute_eligibility(rec, rs)
+    eligible, reasons, dd_rel_margin_rescued, financials_bypassed = _compute_eligibility(rec, rs, market_cap=market_cap)
 
     # Layer 2 — Overlays
     overlays = _compute_overlays(rec, rs)
+
+    # Tag financials_partial when mega-cap bypass was used
+    if financials_bypassed:
+        rf = overlays.get("risk_flags", "")
+        overlays["risk_flags"] = (rf + "|financials_partial") if rf else "financials_partial"
 
     # Layer 4 — Dev Tier (before sizing, since tier affects size)
     tier_dev, tier_reason = _compute_tier_dev(

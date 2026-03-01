@@ -217,6 +217,7 @@
   "enable_mom_state_tilt": false,
   "far_window_days": 0,
   "far_window_decay_mult": 0.15,
+  "financials_missing_bypass_market_cap": 0.0,
   "institutional_positive_only": true,
   "institutional_sort_weight": 0.3,
   "mom_state_tilt_mults": [

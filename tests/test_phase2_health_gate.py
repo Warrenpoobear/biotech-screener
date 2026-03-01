@@ -82,7 +82,7 @@ def _make_portfolio_df(
         "actionable_rank": actionable_ranks or list(range(1, n + 1)),
         "archetype": ["drug_developer"] * n,
         "catalyst_mode": ["specific_days"] * n,
-        "catalyst_days": list(range(1, n + 1)),
+        "catalyst_days": list(range(30, 30 + n)),
         "decision_engine_ruleset_id": [PHASE2_PINNED_RULESET_ID] * n,
         "decision_engine_version": ["v1.2.0"] * n,
     }
@@ -419,7 +419,7 @@ class TestPinnedThresholds:
     def test_default_thresholds_id_pinned(self):
         """Default thresholds must produce the pinned ID."""
         from run_phase2_snapshot_delta import DEFAULT_HEALTH_THRESHOLDS
-        assert DEFAULT_HEALTH_THRESHOLDS.thresholds_id == "74457e8f"
+        assert DEFAULT_HEALTH_THRESHOLDS.thresholds_id == "70636854"
 
     def test_production_json_matches_defaults(self):
         """Production v1.json must round-trip to the same thresholds as defaults."""

@@ -65,6 +65,31 @@ class Phase2HealthThresholds:
     warn_sponsor_coverage_min: float = 90.0    # dev-stage sponsorship coverage
     warn_catalyst_comp_coverage_min: float = 85.0  # dev-stage catalyst component coverage
 
+    # Exposure guardrails — catalyst timing
+    warn_catalyst_le_7d_weight_pct: float = 20.0
+    fail_catalyst_le_7d_weight_pct: float = 35.0
+    warn_catalyst_le_7d_count: int = 4
+    fail_catalyst_le_7d_count: int = 7
+    # Risk-flag exposure
+    warn_high_vol_weight_pct: float = 25.0
+    fail_high_vol_weight_pct: float = 35.0
+    warn_high_beta_weight_pct: float = 25.0
+    fail_high_beta_weight_pct: float = 35.0
+    warn_high_vol_or_beta_weight_pct: float = 35.0
+    fail_high_vol_or_beta_weight_pct: float = 50.0
+    warn_drawdown_rel_xbi_weight_pct: float = 25.0
+    fail_drawdown_rel_xbi_weight_pct: float = 40.0
+    warn_overbought_rsi_weight_pct: float = 25.0
+    fail_overbought_rsi_weight_pct: float = 40.0
+    # Stacked risk
+    warn_catalyst_le_7d_and_drawdown_weight_pct: float = 10.0
+    fail_catalyst_le_7d_and_drawdown_weight_pct: float = 20.0
+    # Momentum / concentration
+    warn_headwind_weight_pct: float = 30.0
+    fail_headwind_weight_pct: float = 45.0
+    warn_top5_weight_pct: float = 40.0
+    fail_top5_weight_pct: float = 55.0
+
     def _canonical_json(self) -> str:
         """Deterministic JSON representation for hashing."""
         d = {f.name: getattr(self, f.name) for f in dc_fields(self)}
@@ -108,6 +133,7 @@ RECON_TOP_K = 20
 # Risk flag vocabulary
 RISK_FLAGS_ALL = [
     "deep_drawdown",
+    "deep_drawdown_rel_xbi",
     "high_vol",
     "high_beta",
     "overbought_rsi",
@@ -625,6 +651,135 @@ def _optionality_diagnostic(rankings: pd.DataFrame, a_floor: float) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Exposure metrics
+# ---------------------------------------------------------------------------
+
+def compute_exposure_metrics(portfolio_df) -> Dict[str, Any]:
+    """Compute portfolio-level exposure concentrations.
+
+    Args:
+        portfolio_df: DataFrame with columns target_weight_pct, catalyst_days,
+                      risk_flags, mom_state.
+
+    Returns:
+        Flat dict of exposure metric values (all floats/ints).
+    """
+    if portfolio_df is None or len(portfolio_df) == 0:
+        return {
+            "catalyst_le_7d_weight_pct": 0.0,
+            "catalyst_le_7d_count": 0,
+            "catalyst_le_30d_weight_pct": 0.0,
+            "high_vol_weight_pct": 0.0,
+            "high_beta_weight_pct": 0.0,
+            "high_vol_or_beta_weight_pct": 0.0,
+            "drawdown_rel_xbi_weight_pct": 0.0,
+            "overbought_rsi_weight_pct": 0.0,
+            "catalyst_le_7d_and_drawdown_weight_pct": 0.0,
+            "headwind_weight_pct": 0.0,
+            "top5_weight_pct": 0.0,
+            "max_single_weight_pct": 0.0,
+        }
+
+    cat7_w = 0.0
+    cat7_n = 0
+    cat30_w = 0.0
+    hvol_w = 0.0
+    hbeta_w = 0.0
+    hvol_or_beta_w = 0.0
+    dd_rel_w = 0.0
+    rsi_w = 0.0
+    stacked_w = 0.0
+    headwind_w = 0.0
+    weights = []
+
+    for _, row in portfolio_df.iterrows():
+        w = float(row.get("target_weight_pct") or 0)
+        weights.append(w)
+
+        # Parse catalyst_days
+        cat_raw = row.get("catalyst_days")
+        cat_days = None
+        if cat_raw is not None and str(cat_raw).strip() not in ("", "nan"):
+            try:
+                cat_days = int(float(str(cat_raw)))
+            except (ValueError, TypeError):
+                pass
+
+        is_cat7 = cat_days is not None and cat_days <= 7
+        is_cat30 = cat_days is not None and cat_days <= 30
+
+        if is_cat7:
+            cat7_w += w
+            cat7_n += 1
+        if is_cat30:
+            cat30_w += w
+
+        # Parse risk_flags (pipe-separated)
+        rf_raw = str(row.get("risk_flags") or "")
+        rf_set = set(rf_raw.split("|")) if rf_raw.strip() else set()
+
+        has_hvol = "high_vol" in rf_set
+        has_hbeta = "high_beta" in rf_set
+        has_dd_rel = "deep_drawdown_rel_xbi" in rf_set
+        has_rsi = "overbought_rsi" in rf_set
+
+        if has_hvol:
+            hvol_w += w
+        if has_hbeta:
+            hbeta_w += w
+        if has_hvol or has_hbeta:
+            hvol_or_beta_w += w
+        if has_dd_rel:
+            dd_rel_w += w
+        if has_rsi:
+            rsi_w += w
+
+        # Stacked: catalyst<=7d AND drawdown
+        if is_cat7 and has_dd_rel:
+            stacked_w += w
+
+        # Momentum headwind
+        mom = str(row.get("mom_state") or "").lower()
+        if mom == "headwind":
+            headwind_w += w
+
+    # Top-5 concentration
+    weights_sorted = sorted(weights, reverse=True)
+    top5_w = sum(weights_sorted[:5])
+    max_w = weights_sorted[0] if weights_sorted else 0.0
+
+    return {
+        "catalyst_le_7d_weight_pct": round(cat7_w, 2),
+        "catalyst_le_7d_count": cat7_n,
+        "catalyst_le_30d_weight_pct": round(cat30_w, 2),
+        "high_vol_weight_pct": round(hvol_w, 2),
+        "high_beta_weight_pct": round(hbeta_w, 2),
+        "high_vol_or_beta_weight_pct": round(hvol_or_beta_w, 2),
+        "drawdown_rel_xbi_weight_pct": round(dd_rel_w, 2),
+        "overbought_rsi_weight_pct": round(rsi_w, 2),
+        "catalyst_le_7d_and_drawdown_weight_pct": round(stacked_w, 2),
+        "headwind_weight_pct": round(headwind_w, 2),
+        "top5_weight_pct": round(top5_w, 2),
+        "max_single_weight_pct": round(max_w, 2),
+    }
+
+
+# Exposure check table: (metric_key, warn_threshold_attr, fail_threshold_attr, reason_tag)
+_EXPOSURE_CHECKS = [
+    ("catalyst_le_7d_weight_pct", "warn_catalyst_le_7d_weight_pct", "fail_catalyst_le_7d_weight_pct", "catalyst_7d_weight_high"),
+    ("catalyst_le_7d_count", "warn_catalyst_le_7d_count", "fail_catalyst_le_7d_count", "catalyst_7d_count_high"),
+    ("high_vol_weight_pct", "warn_high_vol_weight_pct", "fail_high_vol_weight_pct", "high_vol_exposure"),
+    ("high_beta_weight_pct", "warn_high_beta_weight_pct", "fail_high_beta_weight_pct", "high_beta_exposure"),
+    ("high_vol_or_beta_weight_pct", "warn_high_vol_or_beta_weight_pct", "fail_high_vol_or_beta_weight_pct", "high_vol_or_beta_exposure"),
+    ("drawdown_rel_xbi_weight_pct", "warn_drawdown_rel_xbi_weight_pct", "fail_drawdown_rel_xbi_weight_pct", "drawdown_rel_xbi_exposure"),
+    ("overbought_rsi_weight_pct", "warn_overbought_rsi_weight_pct", "fail_overbought_rsi_weight_pct", "overbought_rsi_exposure"),
+    ("catalyst_le_7d_and_drawdown_weight_pct", "warn_catalyst_le_7d_and_drawdown_weight_pct", "fail_catalyst_le_7d_and_drawdown_weight_pct", "stacked_catalyst_drawdown"),
+    ("headwind_weight_pct", "warn_headwind_weight_pct", "fail_headwind_weight_pct", "headwind_exposure"),
+    ("top5_weight_pct", "warn_top5_weight_pct", "fail_top5_weight_pct", "top5_concentration"),
+]
+
+
+# ---------------------------------------------------------------------------
 # Health gate
 # ---------------------------------------------------------------------------
 
@@ -779,6 +934,26 @@ def compute_health_gate(
                 if not fail_reasons:
                     status = "WARN"
                     reasons = warn_reasons
+
+    # --- Exposure guardrails (portfolio concentration) ---
+    if len(current.portfolio) > 0:
+        exposure = compute_exposure_metrics(current.portfolio)
+        metrics["exposure"] = exposure
+
+        for metric_key, warn_key, fail_key, reason in _EXPOSURE_CHECKS:
+            val = exposure[metric_key]
+            if val >= getattr(th, fail_key):
+                fail_reasons.append(reason)
+            elif val >= getattr(th, warn_key):
+                warn_reasons.append(reason)
+
+        # Re-resolve status after exposure checks
+        if fail_reasons:
+            status = "FAIL"
+            reasons = fail_reasons
+        elif warn_reasons:
+            status = "WARN"
+            reasons = warn_reasons
 
     return HealthResult(status=status, reasons=reasons, metrics=metrics)
 

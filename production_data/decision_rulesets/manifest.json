@@ -84,16 +84,16 @@
       "updated_at": "2026-02-14T00:00:00Z"
     },
     {
-      "id": "cdd0661d",
+      "id": "260a85ab",
       "file": "v1.json",
       "created_at": "2026-03-01",
       "engine_version": "v1.3.0",
-      "description": "Defaults + adaptive alpha training + alpha modifier + calendar alpha v2 fields",
+      "description": "Defaults + financials_missing_bypass_market_cap field (disabled by default)",
       "status": "retired",
       "requires_replay": false,
-      "notes": "Schema expansion: added enable_calendar_alpha_sort=false, calendar_alpha_sort_weight=0.5, enable_clinical_sizing=false. No behavioral change (all off by default). Supersedes 80937e07.",
+      "notes": "Schema expansion: added financials_missing_bypass_market_cap=0.0. No behavioral change (disabled by default). Supersedes cdd0661d.",
       "updated_by": "manual_bootstrap",
-      "updated_at": "2026-02-25T00:00:00Z"
+      "updated_at": "2026-03-01T00:00:00Z"
     },
     {
       "id": "96f655ee",

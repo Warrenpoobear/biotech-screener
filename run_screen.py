@@ -1516,7 +1516,7 @@ PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
 )
-PHASE2_PINNED_THRESHOLDS_ID = "74457e8f"
+PHASE2_PINNED_THRESHOLDS_ID = "70636854"
 
 
 # =============================================================================
@@ -3484,9 +3484,13 @@ def save_validation_snapshot(
         cq_pct = row.get("commercial_quality_pct")
         cq_pct_float = float(cq_pct) if cq_pct is not None else None
 
+        _md = market_data_by_ticker.get(ticker, {}) if market_data_by_ticker else {}
+        _mkt_cap = _md.get("market_cap")
+
         decision = compute_decision_fields(
             rec, arch, opt_float, ruleset=ruleset, est_cost_bps=est_cost_bps,
             commercial_quality_pct=cq_pct_float,
+            market_cap=float(_mkt_cap) if _mkt_cap is not None else None,
         )
         row.update(decision)
 
@@ -7683,6 +7687,28 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
         generate_delta_csv(current, prior, csv_path)
         with open(health_path, "w") as f:
             json.dump(health_json, f, indent=2)
+        # Exposure sidecar — per-check PASS/WARN/FAIL detail
+        exposure_raw = health.metrics.get("exposure")
+        if exposure_raw:
+            from run_phase2_snapshot_delta import _EXPOSURE_CHECKS
+            exposure_sidecar = {"metrics": exposure_raw, "checks": {}}
+            for metric_key, warn_key, fail_key, reason in _EXPOSURE_CHECKS:
+                val = exposure_raw.get(metric_key, 0)
+                w_th = getattr(health_thresholds, warn_key)
+                f_th = getattr(health_thresholds, fail_key)
+                if val >= f_th:
+                    chk = "FAIL"
+                elif val >= w_th:
+                    chk = "WARN"
+                else:
+                    chk = "PASS"
+                exposure_sidecar["checks"][reason] = {
+                    "value": val, "warn_threshold": w_th,
+                    "fail_threshold": f_th, "status": chk,
+                }
+            exp_path = output_dir / "health_exposure_metrics.json"
+            with open(exp_path, "w") as f:
+                json.dump(exposure_sidecar, f, indent=2)
         logger.info(f"Delta artifacts: {report_path.name}, {details_path.name}, {csv_path.name}, {health_path.name}")
     except OSError as e:
         logger.warning(f"Delta: could not write artifacts: {e}")
