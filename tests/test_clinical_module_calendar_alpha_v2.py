@@ -444,3 +444,42 @@ class TestPITEnforcement:
         result = compute_readout_density(trials, AS_OF)
         rd = result.get("ACME", {})
         assert rd["readout_density_30"] == 1
+
+
+class TestCalendarAlphaSortIntegration:
+    """Regression: clinical_score_v2_z must be injected for sort tilt to work."""
+
+    def test_sort_tilt_nonzero_when_enabled(self):
+        """With enable_calendar_alpha_sort=True, a ticker with high v2 z-score
+        gets a different sort key than one with low v2 z-score."""
+        from decision_engine import compute_actionable_sort_key, DecisionRuleset
+
+        rs = DecisionRuleset(
+            enable_calendar_alpha_sort=True,
+            calendar_alpha_sort_weight=0.5,
+            catalyst_priority_mode="tiebreaker",
+        )
+
+        base_fields = {
+            "eligible": "1",
+            "tier_dev": "A",
+            "catalyst_mode": "specific_days",
+            "catalyst_days": "30",
+            "mom_state": "neutral",
+            "sponsor_tier1_count": 3,
+        }
+
+        # High v2 z-score ticker
+        high_fields = {**base_fields, "clinical_score_v2_z": 1.5}
+        low_fields = {**base_fields, "clinical_score_v2_z": 0.0}
+
+        key_high = compute_actionable_sort_key(
+            high_fields, "drug_developer", 0.8, 10, "HIGH", ruleset=rs,
+        )
+        key_low = compute_actionable_sort_key(
+            low_fields, "drug_developer", 0.8, 10, "LOW", ruleset=rs,
+        )
+        # Higher v2 z → lower effective_comp_rank → sorts first
+        assert key_high < key_low, (
+            f"Sort tilt should boost high v2 z-score ticker: {key_high} vs {key_low}"
+        )

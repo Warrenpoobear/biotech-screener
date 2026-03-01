@@ -1412,6 +1412,7 @@ SNAPSHOT_COLUMNS = [
     "financial_score",
     # --- Clinical Calendar Alpha v2 (informational, sort/sizing off by default) ---
     "clinical_score_v2",
+    "clinical_score_v2_z",
     "lead_program_phase",
     "lead_program_readout_days",
     "program_count",
@@ -3641,6 +3642,31 @@ def save_validation_snapshot(
                 csv_rows[idx]["clinical_score_z_tier"] = round((s - _t_mean) / _t_std, 4)
             else:
                 csv_rows[idx]["clinical_score_z_tier"] = 0.0
+
+    # --- Clinical Calendar Alpha v2 z-score (cross-sectional, ddof=0) ---
+    # Computed over all tickers with a non-empty clinical_score_v2.
+    _cv2_pairs = []  # [(index, value)]
+    for _ci, _cr in enumerate(csv_rows):
+        _cv2_raw = _cr.get("clinical_score_v2")
+        if _cv2_raw is not None and _cv2_raw != "":
+            try:
+                _cv2_pairs.append((_ci, float(_cv2_raw)))
+            except (ValueError, TypeError):
+                pass
+    if _cv2_pairs:
+        _cv2_vals = [v for _, v in _cv2_pairs]
+        _cv2_mean = sum(_cv2_vals) / len(_cv2_vals)
+        _cv2_var = sum((v - _cv2_mean) ** 2 for v in _cv2_vals) / len(_cv2_vals)
+        _cv2_std = _cv2_var ** 0.5
+        for _ci, _cv2_v in _cv2_pairs:
+            if _cv2_std > 0:
+                csv_rows[_ci]["clinical_score_v2_z"] = round((_cv2_v - _cv2_mean) / _cv2_std, 4)
+            else:
+                csv_rows[_ci]["clinical_score_v2_z"] = 0.0
+    # Default for tickers without clinical_score_v2
+    for _cr in csv_rows:
+        if "clinical_score_v2_z" not in _cr:
+            _cr["clinical_score_v2_z"] = 0.0
 
     # --- Coinvest z-score: cross-sectional z of sponsor_tier1_count ---
     # Computed over all eligible tickers (all archetypes).
