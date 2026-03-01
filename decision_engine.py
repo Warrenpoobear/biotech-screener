@@ -544,10 +544,18 @@ def _compute_eligibility(
     reasons: List[str] = []
     dd_rel_margin_rescued = False
 
-    # Gate 0: financials missing — if survivability data is absent,
+    # Gate 0: financials missing — if survivability data is truly absent,
     # don't trust red flag checks (they'd produce false positives).
-    surv_coverage = (rec.get("survivability_signal") or {}).get("coverage") or []
-    if "missing_cash" in surv_coverage and "missing_burn_data" in surv_coverage:
+    # The coverage flags can be misleading for profitable companies where
+    # cash arrives via MarketableSecurities (not cash_and_equivalents) and
+    # positive OCF means zero burn (not missing burn data).  Use cash_total
+    # from the metrics as the ground-truth indicator of data presence.
+    surv = rec.get("survivability_signal") or {}
+    surv_coverage = surv.get("coverage") or []
+    surv_metrics = surv.get("metrics") or {}
+    cash_total = surv_metrics.get("cash_total") or 0
+    if ("missing_cash" in surv_coverage and "missing_burn_data" in surv_coverage
+            and cash_total <= 0):
         reasons.append("financials_missing")
     else:
         # Gate 1: fundamental red flag (runway < 6m, survivability critical, etc.)

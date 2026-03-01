@@ -22,6 +22,7 @@ def _rec(
     ticker: str = "TEST",
     fundamental_red_flag: bool = False,
     survivability_coverage: list | None = None,
+    surv_metrics: dict | None = None,
 ) -> Dict[str, Any]:
     """Build a minimal synthetic rec for financials_missing gate testing."""
     rec: Dict[str, Any] = {
@@ -40,7 +41,12 @@ def _rec(
         "momentum_signal": {},
     }
     if survivability_coverage is not None:
-        rec["survivability_signal"] = {"coverage": survivability_coverage}
+        surv_signal: Dict[str, Any] = {"coverage": survivability_coverage}
+        if surv_metrics is not None:
+            surv_signal["metrics"] = surv_metrics
+        else:
+            surv_signal["metrics"] = {"cash_total": 0.0, "burn_ttm": 0.0}
+        rec["survivability_signal"] = surv_signal
     return rec
 
 
@@ -115,3 +121,51 @@ class TestFinancialsMissingGate:
         )
         assert "fundamental_red_flag" in result["ineligible_reasons"]
         assert "financials_missing" not in result["ineligible_reasons"]
+
+    def test_cash_present_via_sti_not_financials_missing(self):
+        """Coverage flags say missing but cash_total > 0 → NOT financials_missing.
+
+        Regression test for GILD-like commercial pharma where cash arrives via
+        MarketableSecurities (not cash_and_equivalents) and positive OCF means
+        zero burn (not missing burn data).
+        """
+        rec = _rec(
+            ticker="GILD",
+            fundamental_red_flag=False,
+            survivability_coverage=["missing_cash", "missing_burn_data",
+                                    "missing_interest_expense"],
+            surv_metrics={"cash_total": 68_000_000.0, "burn_ttm": 0.0},
+        )
+        result = compute_decision_fields(
+            rec, archetype="commercial_pharma", optionality_pct_dev=0.50,
+        )
+        assert result["eligible"] == "1"
+        assert "financials_missing" not in result["ineligible_reasons"]
+
+    def test_cash_present_large_amount_eligible(self):
+        """ARWR-like: $715M cash, coverage flags present, should be eligible."""
+        rec = _rec(
+            ticker="ARWR",
+            fundamental_red_flag=False,
+            survivability_coverage=["missing_cash", "missing_burn_data"],
+            surv_metrics={"cash_total": 714_967_000.0, "burn_ttm": 0.0},
+        )
+        result = compute_decision_fields(
+            rec, archetype="commercial_biotech", optionality_pct_dev=0.60,
+        )
+        assert result["eligible"] == "1"
+        assert "financials_missing" not in result["ineligible_reasons"]
+
+    def test_zero_cash_still_financials_missing(self):
+        """True data absence: cash_total=0 with both flags → financials_missing."""
+        rec = _rec(
+            ticker="NODATA",
+            fundamental_red_flag=False,
+            survivability_coverage=["missing_cash", "missing_burn_data"],
+            surv_metrics={"cash_total": 0.0, "burn_ttm": 0.0},
+        )
+        result = compute_decision_fields(
+            rec, archetype="drug_developer", optionality_pct_dev=0.50,
+        )
+        assert result["eligible"] == "0"
+        assert "financials_missing" in result["ineligible_reasons"]
