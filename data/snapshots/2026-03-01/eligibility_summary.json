@@ -1,0 +1,50 @@
+{
+  "schema": "eligibility_summary.v1",
+  "as_of_date": "2026-03-01",
+  "n_total": 297,
+  "n_eligible": 194,
+  "n_ineligible": 103,
+  "counts_by_reason": {
+    "deep_drawdown": 57,
+    "fundamental_red_flag": 30,
+    "financials_missing": 27
+  },
+  "examples_by_reason": {
+    "deep_drawdown": [
+      "ABCL",
+      "ABSI",
+      "ACRV",
+      "ALT",
+      "ALVO",
+      "AQST",
+      "AVTR",
+      "AVXL",
+      "BCYC",
+      "BDTX"
+    ],
+    "fundamental_red_flag": [
+      "AARD",
+      "AMPH",
+      "AMRX",
+      "ARDX",
+      "AVXL",
+      "BBIO",
+      "CADL",
+      "COLL",
+      "CRL",
+      "EOLS"
+    ],
+    "financials_missing": [
+      "ABVX",
+      "ACIU",
+      "ALVO",
+      "ARGX",
+      "ASND",
+      "AZN",
+      "BIIB",
+      "BLTE",
+      "BNTX",
+      "CLLS"
+    ]
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "generated_at": "2026-03-01T18:47:33Z",
+  "current": {
+    "date": "2026-03-01",
+    "ruleset_id": "31f399e0",
+    "has_native_portfolio": true,
+    "portfolio_size": 20
+  },
+  "prior": null,
+  "tier_distribution": {
+    "current": {
+      "A": 28,
+      "B": 35,
+      "C": 45,
+      "D": 59
+    }
+  },
+  "tier_in_portfolio": {
+    "current": {
+      "A": 20,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    }
+  },
+  "sizing": {
+    "current": {
+      "L": 16,
+      "M": 2,
+      "S": 1,
+      "XS": 1
+    }
+  },
+  "catalyst_coverage": {
+    "current": {
+      "n_dev": 167,
+      "n_specific": 153,
+      "pct": 91.6,
+      "mode_dist": {
+        "specific_days": 153,
+        "no_upcoming": 14
+      },
+      "backfill_share_pct": 0.0
+    }
+  },
+  "top_catalysts": {
+    "current": [
+      {
+        "ticker": "DNLI",
+        "catalyst_days": 8,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "ARGX",
+        "catalyst_days": 10,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "VERA",
+        "catalyst_days": 14,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "SMMT",
+        "catalyst_days": 23,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "GMAB",
+        "catalyst_days": 25,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "MLTX",
+        "catalyst_days": 26,
+        "tier_dev": "D"
+      },
+      {
+        "ticker": "CCCC",
+        "catalyst_days": 30,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "REPL",
+        "catalyst_days": 30,
+        "tier_dev": "A"
+      },
+      {
+        "ticker": "VIR",
+        "catalyst_days": 30,
+        "tier_dev": "B"
+      },
+      {
+        "ticker": "CGEM",
+        "catalyst_days": 30,
+        "tier_dev": "C"
+      }
+    ]
+  },
+  "risk_flags": {
+    "current": {
+      "deep_drawdown": 3,
+      "high_vol": 4,
+      "high_beta": 4,
+      "overbought_rsi": 5,
+      "low_confidence": 0
+    }
+  },
+  "churn_suppressed": true,
+  "churn_suppressed_reason": "cache_degraded",
+  "guardrails": {
+    "passed": [
+      "Ruleset matches pinned Phase-2 ID (31f399e0)",
+      "A-tier count >= 1 (28)",
+      "Catalyst coverage 91.6% >= 50.0%"
+    ],
+    "warnings": []
+  }
+}
