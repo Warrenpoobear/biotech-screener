@@ -204,11 +204,11 @@
       "updated_at": "2026-03-01T17:04:19Z"
     },
     {
-      "id": "e549e067",
+      "id": "31f399e0",
       "file": "v1.7.0_calendar_alpha_sort.json",
       "created_at": "2026-03-01",
       "engine_version": "v1.3.0",
-      "description": "Calendar alpha v2 sort tilt: clinical_score_v2_z blended into sort anchor (w=0.5, pos-only)",
+      "description": "Calendar alpha v2 sort tilt: clinical_score_v2_z blended into sort anchor (w=0.3, pos-only)",
       "status": "active",
       "requires_replay": true,
       "notes": "Same params as v1.6.1 + enable_calendar_alpha_sort=true, calendar_alpha_sort_weight=0.5. 113 rank changes, max +35 (GH), max -15. Improvers are clinical-rich dev names; decliners are non-clinical. Tier A count stable at 28.",
