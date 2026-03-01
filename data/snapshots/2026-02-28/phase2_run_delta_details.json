@@ -1,49 +1,22 @@
 {
-  "generated_at": "2026-03-01T14:38:08Z",
+  "generated_at": "2026-03-01T16:48:31Z",
   "current": {
     "date": "2026-02-28",
-    "ruleset_id": "0c1129f6",
+    "ruleset_id": "e549e067",
     "has_native_portfolio": true,
     "portfolio_size": 20
   },
-  "prior": {
-    "date": "2026-02-27",
-    "ruleset_id": "0c1129f6",
-    "has_native_portfolio": true,
-    "portfolio_size": 20
-  },
-  "portfolio_turnover": {
-    "entrants": [
-      "ELDN"
-    ],
-    "exits": [
-      "ADCT"
-    ],
-    "name_turnover_pct": 5.0,
-    "weight_l1_delta": 8.5
-  },
+  "prior": null,
   "tier_distribution": {
     "current": {
       "A": 28,
       "B": 36,
       "C": 44,
       "D": 59
-    },
-    "prior": {
-      "A": 27,
-      "B": 35,
-      "C": 44,
-      "D": 61
     }
   },
   "tier_in_portfolio": {
     "current": {
-      "A": 20,
-      "B": 0,
-      "C": 0,
-      "D": 0
-    },
-    "prior": {
       "A": 20,
       "B": 0,
       "C": 0,
@@ -56,26 +29,10 @@
       "M": 3,
       "S": 1,
       "XS": 1
-    },
-    "prior": {
-      "L": 14,
-      "M": 5,
-      "S": 0,
-      "XS": 1
     }
   },
   "catalyst_coverage": {
     "current": {
-      "n_dev": 167,
-      "n_specific": 153,
-      "pct": 91.6,
-      "mode_dist": {
-        "specific_days": 153,
-        "no_upcoming": 14
-      },
-      "backfill_share_pct": 0.0
-    },
-    "prior": {
       "n_dev": 167,
       "n_specific": 153,
       "pct": 91.6,
@@ -138,58 +95,6 @@
         "catalyst_days": 1,
         "tier_dev": "B"
       }
-    ],
-    "prior": [
-      {
-        "ticker": "ADCT",
-        "catalyst_days": 1,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "NMRA",
-        "catalyst_days": 2,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "PVLA",
-        "catalyst_days": 2,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "IMVT",
-        "catalyst_days": 2,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "REPL",
-        "catalyst_days": 2,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "OLMA",
-        "catalyst_days": 2,
-        "tier_dev": "A"
-      },
-      {
-        "ticker": "ANRO",
-        "catalyst_days": 2,
-        "tier_dev": "B"
-      },
-      {
-        "ticker": "KYTX",
-        "catalyst_days": 2,
-        "tier_dev": "B"
-      },
-      {
-        "ticker": "VIR",
-        "catalyst_days": 2,
-        "tier_dev": "B"
-      },
-      {
-        "ticker": "CLDX",
-        "catalyst_days": 2,
-        "tier_dev": "B"
-      }
     ]
   },
   "risk_flags": {
@@ -199,23 +104,17 @@
       "high_beta": 4,
       "overbought_rsi": 5,
       "low_confidence": 0
-    },
-    "prior": {
-      "deep_drawdown": 3,
-      "high_vol": 5,
-      "high_beta": 4,
-      "overbought_rsi": 4,
-      "low_confidence": 0
     }
   },
   "churn_suppressed": false,
   "guardrails": {
     "passed": [
-      "Ruleset matches pinned Phase-2 ID (0c1129f6)",
       "A-tier count >= 1 (28)",
-      "Catalyst coverage 91.6% >= 50.0%",
-      "Name turnover 5.0% <= 40.0%"
+      "Catalyst coverage 91.6% >= 50.0%"
     ],
-    "warnings": []
+    "warnings": [
+      "Ruleset e549e067 != pinned 0c1129f6",
+      "Ruleset e549e067 does not match pinned Phase-2 ID (0c1129f6)"
+    ]
   }
 }

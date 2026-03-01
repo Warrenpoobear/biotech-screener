@@ -26,8 +26,8 @@
     "ema_outcomes_bad_ratio_high": 3.0
   },
   "comparisons": {
-    "sec8k_ratio_vs_prior": 1.0273,
-    "ctgov_ratio_vs_prior": 0.9991,
+    "sec8k_ratio_vs_prior": null,
+    "ctgov_ratio_vs_prior": null,
     "ema_agenda_ratio_vs_prior": null,
     "ema_outcomes_ratio_vs_prior": null
   },

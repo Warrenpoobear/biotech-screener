@@ -1,6 +1,6 @@
 {
   "as_of_date": "2026-02-28",
-  "saved_at": "2026-03-01T14:38:08.064219Z",
+  "saved_at": "2026-03-01T16:48:31.817045Z",
   "decision_mode": "phase2",
   "ranking_mode": "decision",
   "version": "1.6.0",
@@ -532,7 +532,7 @@
   "clinical_sort_telemetry": {
     "n_nonzero_clin_adj_dev": 65,
     "n_nonzero_clin_adj_comm": 60,
-    "ruleset_id": "0c1129f6",
+    "ruleset_id": "e549e067",
     "enable_clinical_sort_signal": true
   },
   "far_window_telemetry": {
