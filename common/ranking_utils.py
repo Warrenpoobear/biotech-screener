@@ -169,3 +169,6 @@ def backfill_columns(rows: List[Dict[str, str]]) -> None:
     if "clinical_score_v2_z" not in sample:
         for r in rows:
             r["clinical_score_v2_z"] = "0"
+    if "de_vol_60d" not in sample:
+        for r in rows:
+            r["de_vol_60d"] = ""

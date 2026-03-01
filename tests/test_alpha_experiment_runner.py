@@ -70,6 +70,7 @@ def _make_row(
     beta: str = "1.0",
     drawdown: str = "-0.10",
     rsi: str = "50.0",
+    vol_60d: str = "0.80",
     mcap_bucket: str = "small",
     archetype: str = "drug_developer",
     tier_dev: str = "B",
@@ -85,6 +86,8 @@ def _make_row(
         "de_beta_xbi_60d": beta,
         "de_drawdown": drawdown,
         "de_rsi_14d": rsi,
+        "de_vol_60d": vol_60d,
+        "de_drawdown_rel_xbi": drawdown,
         "market_cap_bucket": mcap_bucket,
         "archetype": archetype,
         "tier_dev": tier_dev,
@@ -122,6 +125,7 @@ def _make_test_rows(n: int = 20) -> List[Dict[str, str]]:
             beta=f"{beta:.4f}",
             drawdown=f"{-0.05 - i * 0.01:.4f}",
             rsi=f"{40 + i * 1.5:.1f}",
+            vol_60d=f"{0.50 + i * 0.05:.4f}",
             mcap_bucket="small" if i < 10 else "mid",
             actionable_rank=str(i + 1),
         ))
@@ -196,8 +200,16 @@ class TestExposureExtraction:
         assert _extract_exposure(row, "drawdown") == -0.25
 
     def test_vol_extraction(self):
+        row = _make_row("TEST", vol_60d="1.25")
+        assert _extract_exposure(row, "vol") == 1.25
+
+    def test_rsi_extraction(self):
         row = _make_row("TEST", rsi="65.5")
-        assert _extract_exposure(row, "vol") == 65.5
+        assert _extract_exposure(row, "rsi") == 65.5
+
+    def test_drawdown_rel_xbi_extraction(self):
+        row = _make_row("TEST", drawdown="-0.15")
+        assert _extract_exposure(row, "drawdown_rel_xbi") == -0.15
 
     def test_mcap_ordinal(self):
         for bucket, expected in MCAP_ORDINAL.items():

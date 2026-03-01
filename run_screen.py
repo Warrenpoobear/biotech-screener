@@ -1390,6 +1390,7 @@ SNAPSHOT_COLUMNS = [
     "de_drawdown",
     "de_drawdown_missing_reason",
     "de_rsi_14d",
+    "de_vol_60d",
     "de_drawdown_xbi",
     "de_drawdown_rel_xbi",
     # --- Context / provenance ---
@@ -3543,6 +3544,7 @@ def save_validation_snapshot(
         row["de_drawdown"] = df.get("drawdown", "")
         row["de_drawdown_missing_reason"] = df.get("drawdown_missing_reason", "")
         row["de_rsi_14d"] = df.get("rsi_14d", "")
+        row["de_vol_60d"] = df.get("vol_60d", "")
         row["de_drawdown_xbi"] = df.get("drawdown_xbi", "")
         row["de_drawdown_rel_xbi"] = df.get("drawdown_rel_xbi", "")
 

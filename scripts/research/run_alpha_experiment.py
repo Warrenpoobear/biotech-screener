@@ -80,7 +80,9 @@ DEFAULT_COST_BPS = 30
 EXPOSURE_MAP = {
     "beta": "de_beta_xbi_60d",
     "drawdown": "de_drawdown",
-    "vol": "de_rsi_14d",
+    "vol": "de_vol_60d",
+    "rsi": "de_rsi_14d",
+    "drawdown_rel_xbi": "de_drawdown_rel_xbi",
     "mcap": "market_cap_bucket",
 }
 

@@ -963,7 +963,7 @@ class TestSnapshotInputContract:
         "de_alpha_60d", "de_alpha_60d_source", "de_alpha_60d_missing_reason",
         "de_tier1_count",
         "de_beta_xbi_60d", "de_beta_xbi_60d_source", "de_beta_xbi_60d_missing_reason",
-        "de_drawdown", "de_drawdown_missing_reason", "de_rsi_14d",
+        "de_drawdown", "de_drawdown_missing_reason", "de_rsi_14d", "de_vol_60d",
         "de_drawdown_xbi", "de_drawdown_rel_xbi",
     })
 
