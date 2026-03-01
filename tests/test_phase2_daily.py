@@ -982,6 +982,7 @@ class TestOpsContract:
             "decision_engine_schema", "portfolio_weights",
             "eligibility_consistency",
             "cache_health",
+            "ruleset_health",
         }
         assert expected == GATE_ALLOWLIST
 
@@ -1449,5 +1450,5 @@ class TestOpsContractWithNewGates:
         assert "eligibility_consistency" in GATE_ALLOWLIST
 
     def test_allowlist_count_updated(self):
-        """Allowlist has 23 entries (19 original + 3 new + cache_health)."""
-        assert len(GATE_ALLOWLIST) == 23
+        """Allowlist has 24 entries (19 original + 3 new + cache_health + ruleset_health)."""
+        assert len(GATE_ALLOWLIST) == 24
