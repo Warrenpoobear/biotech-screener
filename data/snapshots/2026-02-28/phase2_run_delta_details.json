@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-03-01T16:48:31Z",
+  "generated_at": "2026-03-01T18:43:10Z",
   "current": {
     "date": "2026-02-28",
-    "ruleset_id": "e549e067",
+    "ruleset_id": "31f399e0",
     "has_native_portfolio": true,
     "portfolio_size": 20
   },
@@ -109,12 +109,10 @@
   "churn_suppressed": false,
   "guardrails": {
     "passed": [
+      "Ruleset matches pinned Phase-2 ID (31f399e0)",
       "A-tier count >= 1 (28)",
       "Catalyst coverage 91.6% >= 50.0%"
     ],
-    "warnings": [
-      "Ruleset e549e067 != pinned 0c1129f6",
-      "Ruleset e549e067 does not match pinned Phase-2 ID (0c1129f6)"
-    ]
+    "warnings": []
   }
 }
