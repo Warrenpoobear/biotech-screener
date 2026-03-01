@@ -689,6 +689,35 @@ def warm_merged_trials(as_of_date: date, data_dir: Path, cache_root: Path) -> in
     return len(merged)
 
 
+def _merge_calendar_sources(universe: list, data_dir: Path) -> list:
+    """Merge curated company calendar source URLs into universe rows."""
+    sources_path = data_dir / "company_calendar_sources.json"
+    if not sources_path.exists():
+        return universe
+    try:
+        from wake_robin_data_pipeline.company_calendar_sources import (
+            load_company_calendar_sources,
+            merge_universe_with_company_calendar_sources,
+        )
+        sources = load_company_calendar_sources(sources_path)
+        if not sources:
+            return universe
+        merged, stats = merge_universe_with_company_calendar_sources(universe, sources)
+        logger.info(
+            "Company calendar sources merged: ir_added=%d pr_added=%d "
+            "tickers_with_urls=%d->%d/%d unmapped=%d",
+            stats["ir_url_added"], stats["pr_rss_url_added"],
+            stats["ir_url_before"] + stats["pr_rss_url_before"],
+            stats["ir_url_after"] + stats["pr_rss_url_after"],
+            stats["tickers_total"],
+            stats["unmapped_sources_count"],
+        )
+        return merged
+    except Exception as e:
+        logger.warning("Failed to merge company calendar sources: %s", e)
+        return universe
+
+
 def warm_ir_events(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
     """Fetch and cache IR events from company events pages. Returns count."""
     from wake_robin_data_pipeline.collectors.ir_events_collector import collect_ir_events
@@ -710,6 +739,8 @@ def warm_ir_events(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
     universe = _load_universe(data_dir)
     if not universe:
         return 0
+
+    universe = _merge_calendar_sources(universe, data_dir)
 
     logger.info("Fetching IR events for %d tickers, as_of %s...", len(universe), as_of_date)
     events = collect_ir_events(
@@ -742,6 +773,8 @@ def warm_press_release_events(as_of_date: date, data_dir: Path, cache_dir: Path)
     universe = _load_universe(data_dir)
     if not universe:
         return 0
+
+    universe = _merge_calendar_sources(universe, data_dir)
 
     logger.info("Fetching press release events for %d tickers, as_of %s...", len(universe), as_of_date)
     events = collect_press_release_events(

@@ -126,6 +126,24 @@ def backfill(
         print("ERROR: empty universe", file=sys.stderr)
         return {}
 
+    # Merge curated company calendar source URLs (ir_url, pr_rss_url)
+    sources_path = data_dir / "company_calendar_sources.json"
+    if sources_path.exists():
+        try:
+            from wake_robin_data_pipeline.company_calendar_sources import (
+                load_company_calendar_sources,
+                merge_universe_with_company_calendar_sources,
+            )
+            cal_sources = load_company_calendar_sources(sources_path)
+            if cal_sources:
+                universe, merge_stats = merge_universe_with_company_calendar_sources(
+                    universe, cal_sources,
+                )
+                print(f"Calendar sources merged: ir_added={merge_stats['ir_url_added']} "
+                      f"pr_added={merge_stats['pr_rss_url_added']}")
+        except Exception as e:
+            logger.warning("Failed to merge company calendar sources: %s", e)
+
     do_ir = "ir_events" in sources
     do_pr = "press_releases" in sources
 

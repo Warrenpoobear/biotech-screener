@@ -1,0 +1,62 @@
+{
+  "_schema": "company_calendar_sources.v1",
+  "_updated_at": "2026-02-28",
+  "sources": {
+    "VRTX": {
+      "ir_url": "https://investors.vrtx.com/events-presentations",
+      "pr_rss_url": "https://investors.vrtx.com/rss/news-releases.xml?items=15"
+    },
+    "REGN": {
+      "ir_url": "https://investor.regeneron.com/events-and-presentations/events-and-recent",
+      "pr_rss_url": "https://newsroom.regeneron.com/rss/news-releases.xml"
+    },
+    "GILD": {
+      "ir_url": "https://investors.gilead.com/events-and-presentations/default.aspx"
+    },
+    "MRNA": {
+      "ir_url": "https://investors.modernatx.com/events-presentations"
+    },
+    "BIIB": {
+      "ir_url": "https://investors.biogen.com/events-presentations/events",
+      "pr_rss_url": "https://investors.biogen.com/rss/news-releases.xml"
+    },
+    "AMGN": {
+      "ir_url": "https://investors.amgen.com/news-and-events/events-calendar",
+      "pr_rss_url": "https://investors.amgen.com/rss/news-releases.xml"
+    },
+    "INCY": {
+      "ir_url": "https://investor.incyte.com/events-presentations",
+      "pr_rss_url": "https://investor.incyte.com/rss/news-releases.xml"
+    },
+    "ALNY": {
+      "ir_url": "https://investors.alnylam.com/events",
+      "pr_rss_url": "https://alnylampharmaceuticalsinc.gcs-web.com/rss/news-releases.xml"
+    },
+    "BMRN": {
+      "ir_url": "https://investors.biomarin.com/events-and-presentations/default.aspx"
+    },
+    "EXEL": {
+      "ir_url": "https://ir.exelixis.com/event-calendar",
+      "pr_rss_url": "https://ir.exelixis.com/rss/news-releases.xml"
+    },
+    "IONS": {
+      "ir_url": "https://ir.ionis.com/events",
+      "pr_rss_url": "https://ir.ionis.com/rss/news-releases.xml"
+    },
+    "JAZZ": {
+      "ir_url": "https://investor.jazzpharma.com/investors/events-presentations",
+      "pr_rss_url": "https://investor.jazzpharma.com/rss/news-releases.xml"
+    },
+    "ARGX": {
+      "ir_url": "https://argenx.com/investors/events-presentations"
+    },
+    "BEAM": {
+      "ir_url": "https://investors.beamtx.com/events",
+      "pr_rss_url": "https://investors.beamtx.com/rss/news-releases.xml"
+    },
+    "PCVX": {
+      "ir_url": "https://investors.vaxcyte.com/events-and-presentations/",
+      "pr_rss_url": "https://investors.vaxcyte.com/rss/news-releases.xml"
+    }
+  }
+}
