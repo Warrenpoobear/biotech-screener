@@ -33,7 +33,7 @@
       "description": "No logic change. Version bump to pair with drift guardrail calibration (496b27b).",
       "status": "retired",
       "requires_replay": false,
-      "notes": "Identical parameters to v1.2.1_candidate. Drift guardrails tightened: rs_morningstar 70→85%, rs_unknown 10→8.5%, cat_eligible 80→95%, cs_ctgov 50→37%. Superseded by v1.3.0_candidate (enable_catalyst_priority).",
+      "notes": "Identical parameters to v1.2.1_candidate. Drift guardrails tightened: rs_morningstar 70\u219285%, rs_unknown 10\u21928.5%, cat_eligible 80\u219295%, cs_ctgov 50\u219237%. Superseded by v1.3.0_candidate (enable_catalyst_priority).",
       "updated_by": "promote_ruleset.py",
       "updated_at": "2026-02-13T00:00:00Z"
     },
@@ -127,7 +127,7 @@
       "description": "Commercial tier promotion: tier_first mode (commercial A-tier competes with dev B/C in portfolio)",
       "status": "candidate",
       "requires_replay": true,
-      "notes": "Same params as v1.3.3 + tiering_priority_mode=tier_first, tier_a_commercial_floor=0.85, tier_b_commercial_floor=0.60. Candidate — no promotion until replay + review.",
+      "notes": "Same params as v1.3.3 + tiering_priority_mode=tier_first, tier_a_commercial_floor=0.85, tier_b_commercial_floor=0.60. Candidate \u2014 no promotion until replay + review.",
       "updated_by": "manual_bootstrap",
       "updated_at": "2026-02-16T00:00:00Z"
     },
@@ -136,7 +136,7 @@
       "file": "v1.3.4_clinical_sort_candidate.json",
       "created_at": "2026-02-16",
       "engine_version": "v1.3.0",
-      "description": "Clinical sort signal: tier-local z, stage-gated (mid=1.0, late=1.5), pos-only, clamped ±2.0, w=1.0",
+      "description": "Clinical sort signal: tier-local z, stage-gated (mid=1.0, late=1.5), pos-only, clamped \u00b12.0, w=1.0",
       "status": "candidate",
       "requires_replay": true,
       "notes": "Same params as v1.3.3 + enable_clinical_sort_signal=true, clinical_sort_weight=1.0, clinical_positive_only=true, clinical_stage_mults early=0/mid=1/late=1.5. Replay shows: 100% top-20/60 overlap, max churn 2, zero tier changes. Clinical affects within-tier ordering only.",
@@ -163,7 +163,7 @@
       "description": "Alpha modifier tiebreak mode: OOS alpha nudges within-tier ordering as last tiebreaker",
       "status": "retired",
       "requires_replay": true,
-      "notes": "Same params as v1.5.1_coinvest_off + alpha_modifier_mode=tiebreak, alpha_modifier_weight=0.05, alpha_table_rebuild_policy=if_missing. RETIRED: tiebreak slot unreachable — unique upstream floats (alpha_cohort_pct) in sort key mean no two rows ever tie at positions 0-7. Zero rank shifts across 9 dates. Superseded by v1.6.1 (within_tier).",
+      "notes": "Same params as v1.5.1_coinvest_off + alpha_modifier_mode=tiebreak, alpha_modifier_weight=0.05, alpha_table_rebuild_policy=if_missing. RETIRED: tiebreak slot unreachable \u2014 unique upstream floats (alpha_cohort_pct) in sort key mean no two rows ever tie at positions 0-7. Zero rank shifts across 9 dates. Superseded by v1.6.1 (within_tier).",
       "updated_by": "manual_bootstrap",
       "updated_at": "2026-02-26T00:00:00Z"
     },
@@ -184,7 +184,7 @@
       "file": "v1.5.1_coinvest_off.json",
       "created_at": "2026-02-21",
       "engine_version": "v1.3.0",
-      "description": "Coinvest sort OFF (w=0.0) + alpha cohort + clinical sort — actual pinned production ruleset",
+      "description": "Coinvest sort OFF (w=0.0) + alpha cohort + clinical sort \u2014 actual pinned production ruleset",
       "status": "retired",
       "requires_replay": true,
       "notes": "Was PHASE2_PINNED_RULESET_ID in run_screen.py but missing from manifest (oversight). Same as v1.5.0 but coinvest_sort_weight=0.0 (disabled). Superseded by v1.6.1 (alpha modifier within-tier, 0c1129f6).",
@@ -197,11 +197,23 @@
       "created_at": "2026-02-26",
       "engine_version": "v1.3.0",
       "description": "Alpha modifier within-tier: OOS alpha blended into effective_comp_rank (w=0.05)",
-      "status": "active",
+      "status": "retired",
       "requires_replay": true,
       "notes": "Promoted from v1.6.1 candidate. Tiebreak mode (v1.6.0) was structurally unreachable; within_tier blends weight*alpha_raw into effective_comp_rank. Promotion check: 9 dates, 100% top-60 overlap, max shift=2, 0 tier-A regressions, 2.4% mean rows changed. Live pipeline run confirmed: alpha_modifier_ab.json sidecar + telemetry emitted.",
       "updated_by": "promote_ruleset.py",
-      "updated_at": "2026-02-26T00:00:00Z"
+      "updated_at": "2026-03-01T17:04:19Z"
+    },
+    {
+      "id": "e549e067",
+      "file": "v1.7.0_calendar_alpha_sort.json",
+      "created_at": "2026-03-01",
+      "engine_version": "v1.3.0",
+      "description": "Calendar alpha v2 sort tilt: clinical_score_v2_z blended into sort anchor (w=0.5, pos-only)",
+      "status": "active",
+      "requires_replay": true,
+      "notes": "Same params as v1.6.1 + enable_calendar_alpha_sort=true, calendar_alpha_sort_weight=0.5. 113 rank changes, max +35 (GH), max -15. Improvers are clinical-rich dev names; decliners are non-clinical. Tier A count stable at 28.",
+      "updated_by": "promote_ruleset.py",
+      "updated_at": "2026-03-01T17:04:19Z"
     }
   ]
 }
