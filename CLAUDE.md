@@ -55,16 +55,16 @@ When a test or script fails, diagnose the root cause rather than retrying blindl
 # Install in development mode
 pip install -e ".[dev]"
 
-# Run tests (~6870 tests)
+# Run tests (~9370 tests)
 pytest tests/ -v
 
 # Run the full screening pipeline (Decision Engine + Phase-2)
-python3 run_screen.py --as-of-date 2026-02-25 --decision-mode phase2 \
+python3 run_screen.py --as-of-date 2026-02-28 --decision-mode phase2 \
   --data-dir production_data --output results.json
 
 # Run via daily production runner (price refresh + screen + audit + gates)
-python3 tools/run_daily_production.py --as-of-date 2026-02-25 \
-  --data-dir production_data --snapshot-dir data/snapshots/2026-02-25
+python3 tools/run_daily_production.py --as-of-date 2026-02-28 \
+  --data-dir production_data --snapshot-dir data/snapshots/2026-02-28
 ```
 
 ## Architecture Overview
@@ -86,7 +86,7 @@ Universe (Module 1)
 
 ## Decision Engine (v1.3.0+)
 
-The Decision Engine (`decision_engine.py`, ~620 lines) is the primary post-processing layer that converts raw Module 5 composite scores into actionable investment tiers and position sizes. It supersedes Module 5's built-in position sizing.
+The Decision Engine (`decision_engine.py`, ~1785 lines) is the primary post-processing layer that converts raw Module 5 composite scores into actionable investment tiers and position sizes. It supersedes Module 5's built-in position sizing.
 
 ### Key Concepts
 
@@ -124,8 +124,8 @@ ruleset.far_window_days          # 0 = off; >0 enables far-horizon PCD catalyst 
 ```
 
 **Pinned IDs:**
-- `PHASE2_PINNED_RULESET_ID` in `run_screen.py` = `"88d7ae9a"` (must match delta module)
-- `PHASE2_PINNED_RULESET_ID` in `run_phase2_snapshot_delta.py` = `"88d7ae9a"` (must match run_screen)
+- `PHASE2_PINNED_RULESET_ID` in `run_screen.py` = `"0c1129f6"` (must match delta module)
+- `PHASE2_PINNED_RULESET_ID` in `run_phase2_snapshot_delta.py` = `"0c1129f6"` (must match run_screen)
 - Both pins MUST be updated together — `run_screen.py` imports the delta module's pin
 
 ### Ruleset Promotion Pipeline
@@ -134,8 +134,14 @@ ruleset.far_window_days          # 0 = off; >0 enables far-horizon PCD catalyst 
 # Bump version and create candidate
 python scripts/bump_ruleset.py --from-json production_data/decision_rulesets/v1.json
 
-# Promote candidate to active
-python scripts/promote_ruleset.py production_data/decision_rulesets/v1.3.2_candidate.json
+# Promote candidate to active (requires gate summary or --force)
+python scripts/promote_ruleset.py RULESET_ID --gate-summary ruleset_eval.json
+
+# Rollback to last-known-good (auto-discover)
+python scripts/promote_ruleset.py --rollback --reason "drift spike detected"
+
+# Rollback to specific retired entry
+python scripts/promote_ruleset.py RETIRED_ID --rollback --reason "reverting to stable"
 ```
 
 ### Snapshot Outputs
@@ -330,7 +336,7 @@ data/caches/sec_13f/PIT/{as_of_date}/
 | `scripts/run_drift_report.py` | Daily drift monitoring + rollback triggers |
 | `scripts/calibrate_ruleset_from_panel.py` | 2D sweep for optimal ruleset params |
 | `scripts/bump_ruleset.py` | Create new ruleset candidate |
-| `scripts/promote_ruleset.py` | Promote candidate to active |
+| `scripts/promote_ruleset.py` | Promote candidate to active; first-class rollback with audit trail |
 | `scripts/audit_catalyst_coverage.py` | Comprehensive offline catalyst coverage audit |
 | `scripts/audit_drawdown_coverage.py` | Drawdown data coverage diagnostic |
 | `scripts/backfill_missing_prices.py` | Manual yfinance price backfill (NOT for CI) |
@@ -411,7 +417,7 @@ def validate_tickers(tickers: list[str]) -> ValidationResult:
 
 ## Testing
 
-**~7900+ tests across 233 test files.**
+**~9370+ tests across 281 test files.**
 
 ### Key Test Files
 
@@ -428,6 +434,9 @@ def validate_tickers(tickers: list[str]) -> ValidationResult:
 | `tests/test_warm_13f_cache.py` | 42 | PIT selection, schema validation, rate limiter, gate health |
 | `tests/test_build_coinvest_features.py` | 39 | PIT coinvest features: conviction, changes, prior quarter, schema |
 | `tests/test_decision_engine_qa_report.py` | 41 | QA gate cascade |
+| `tests/test_promote_ruleset_rollback.py` | 10 | First-class rollback: LKG, receipts, pins, backward compat |
+| `tests/test_ruleset_health_monitor.py` | 10 | Post-promotion health: baseline compare, WARN/OK, JSONL history |
+| `tests/test_financials_missing_gate.py` | 7 | Financials_missing gate: cash_total guard, false positive regression |
 | `tests/integration/test_run_screen.py` | — | End-to-end pipeline |
 
 ### Running Tests
@@ -465,6 +474,8 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 15. **Coinvest z-score timing** — `coinvest_score_z` is computed in `run_screen.py` after overlay extraction but before the DE sort; the column must exist in `csv_rows` before `compute_actionable_sort_key()` is called. When replaying old CSVs that lack `coinvest_score_z`, `_safe_float(None, default=0.0)` → `coinvest_adj=0.0` (zero impact, safe)
 16. **Module 1 status values** — `_classify_status()` must recognize ALL status values used in universe.json: `"delisted"`, `"d"`, `"acquired"`, `"m&a"`, `"excluded_acquired"`. Missing a value silently passes tickers through as ACTIVE.
 17. **Defensive red flag exemptions** — `detect_fundamental_red_flags()` has two exemptions: (a) self-sustaining companies skip `single_asset_early_stage` (burn_ttm<=0 + cash>=$500M), (b) debt-driven companies skip `survivability_critical` (cash/burn >= 5 years operational runway)
+18. **`financials_missing` gate has cash_total guard** — Gate 0 requires BOTH `missing_cash` + `missing_burn_data` coverage flags AND `cash_total <= 0`. Companies with cash via MarketableSecurities (not `cash_and_equivalents`) have positive `cash_total` and skip the gate. Without this guard, profitable commercial pharma (GILD, ILMN) would be false-positively flagged.
+19. **Rollback does not require `--force`** — `promote_ruleset.py --rollback --reason "..."` is the governed path; `--force` still works for backward compat. Rollback receipts have `"action": "rollback"` + `"reason"` field.
 
 ## Important Files Reference
 
@@ -488,14 +499,25 @@ pytest tests/test_decision_engine.py tests/test_phase2_health_gate.py -x
 | `scripts/build_coinvest_features_from_13f.py` | PIT-safe coinvest features from 13F cache (conviction formula, position changes) |
 | `tools/warm_13f_cache.py` | PIT-safe 13F cache builder + schema validator |
 | `tools/data_integrity_audit.py` | Invariant checks + price recompute verification |
-| `tools/run_daily_production.py` | Daily production runner (price refresh + screen + audit + 20 gates) |
+| `tools/run_daily_production.py` | Daily production runner (price refresh + screen + audit + 23 gates) |
+| `tools/ruleset_health_monitor.py` | Post-promotion health check + JSONL history + rollback recommendation |
 | `collect_financial_data.py` | SEC EDGAR XBRL financial data collector |
 | `elite_managers.py` | Manager registry (Tier 1 elite + full list) |
 | `tests/conftest.py` | Shared test fixtures |
 
 ## Recent Changes
 
-### v2.5.0 (February 2026 - Current)
+### v2.6.0 (March 2026 - Current)
+
+- **First-Class Rollback** (`scripts/promote_ruleset.py`): `--rollback --reason` without `--force`, auto-discover LKG via `_find_last_known_good()`, receipt `action` field (`"promote"`/`"rollback"`), changelog validation skipped for rollbacks. 10 new tests in `test_promote_ruleset_rollback.py`.
+- **Post-Promotion Health Monitor** (`tools/ruleset_health_monitor.py`): Compares daily drift metrics against promotion baseline. `HealthThresholds` dataclass with configurable overlap delta, rank shift factor, consecutive WARN threshold. JSONL append-only history. `ruleset_health` gate in daily production (WARN-only).
+- **Eligibility False-Positive Fix**: Gate 0 `financials_missing` now checks `cash_total > 0` — companies with cash via MarketableSecurities (not `cash_and_equivalents`) no longer misclassified. Recovered: GILD, ARWR, ILMN, NTRA. Ineligible: 107→103. 3 regression tests added to `test_financials_missing_gate.py`.
+- **Active Ruleset**: v1.6.1 (ID=`0c1129f6`) — alpha modifier within_tier (w=0.05) + alpha cohort + clinical sort
+- **Universe**: 354 total, 297 ranked, 194 eligible, 103 ineligible
+- **23 production gates** (added `cache_health`, `ruleset_health`)
+- **9370+ tests across 281 test files**
+
+### v2.5.0 (February 2026)
 
 - **Acquired Ticker Exclusion**: AKRO (Eli Lilly), MRUS, CDTX, ATXS, GBIO marked `excluded_acquired` in universe.json. Module 1 `_classify_status()` fixed to recognize `"excluded_acquired"` status. Universe: 354 total, 313 ranked, 248 eligible.
 - **Defensive Overlay False-Positive Fixes** (`defensive_overlay_adapter.py`):
