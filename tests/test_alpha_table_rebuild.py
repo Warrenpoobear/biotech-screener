@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from scripts.build_alpha_cohort_table_oos import (
     build_oos_table,
     parse_train_mode,
+    write_table_with_marker,
     _build_equal_weight_table,
     _build_weighted_table,
     ALL_KEYS,
@@ -471,3 +472,93 @@ class TestBuildOosTableMocked:
             assert key in result["cells"]
         assert result["_build_info"]["as_of_date"] == "2026-01-01"
         assert result["_build_info"]["n_train_dates"] == 2
+
+
+# =============================================================================
+# write_table_with_marker
+# =============================================================================
+
+class TestWriteTableWithMarker:
+    """Tests for artifact marker write alongside table JSON."""
+
+    def _sample_table(self):
+        return {
+            "_schema": {"name": "alpha_cohort_table", "version": "1"},
+            "shrink_k_default": 50,
+            "alpha_clip": {"min": -0.10, "max": 0.10},
+            "cells": {"early|none|pos": {"mean_excess_ret_6m": 0.05, "n": 10}},
+            "_build_info": {
+                "as_of_date": "2026-03-01",
+                "train_mode": "trailing-6",
+                "horizon": 84,
+                "n_train_dates": 6,
+                "train_dates": ["2025-04-30"],
+            },
+        }
+
+    def test_writes_table_file(self, tmp_path):
+        dest = tmp_path / "daily" / "v1_2026-03-01.json"
+        write_table_with_marker(self._sample_table(), dest, as_of_date="2026-03-01")
+        assert dest.exists()
+        data = json.loads(dest.read_text())
+        assert data["_schema"]["name"] == "alpha_cohort_table"
+
+    def test_writes_marker_file(self, tmp_path):
+        dest = tmp_path / "v1_2026-03-01.json"
+        write_table_with_marker(self._sample_table(), dest, as_of_date="2026-03-01")
+        marker_path = dest.with_suffix(".artifact.json")
+        assert marker_path.exists()
+
+    def test_marker_sha256_matches_table(self, tmp_path):
+        dest = tmp_path / "v1_2026-03-01.json"
+        write_table_with_marker(self._sample_table(), dest, as_of_date="2026-03-01")
+        marker = json.loads(dest.with_suffix(".artifact.json").read_text())
+        actual_sha = hashlib.sha256(dest.read_bytes()).hexdigest()
+        assert marker["sha256"] == actual_sha
+
+    def test_marker_fields_present(self, tmp_path):
+        dest = tmp_path / "v1_2026-03-01.json"
+        write_table_with_marker(self._sample_table(), dest, as_of_date="2026-03-01")
+        marker = json.loads(dest.with_suffix(".artifact.json").read_text())
+        assert marker["as_of_date"] == "2026-03-01"
+        assert "built_at_utc" in marker
+        assert "sha256" in marker
+        assert marker["target_path"] == str(dest)
+        assert marker["source"] == "oos_build"
+        assert marker["train_mode"] == "trailing-6"
+        assert marker["n_train_dates"] == 6
+
+    def test_custom_source_tag(self, tmp_path):
+        dest = tmp_path / "v1_2026-03-01.json"
+        write_table_with_marker(
+            self._sample_table(), dest,
+            as_of_date="2026-03-01", source="rebuilt_in_run",
+        )
+        marker = json.loads(dest.with_suffix(".artifact.json").read_text())
+        assert marker["source"] == "rebuilt_in_run"
+
+    def test_creates_parent_dirs(self, tmp_path):
+        dest = tmp_path / "a" / "b" / "c" / "v1.json"
+        write_table_with_marker(self._sample_table(), dest, as_of_date="2026-03-01")
+        assert dest.exists()
+
+    def test_validated_by_check_artifact_marker(self, tmp_path):
+        """Marker written by write_table_with_marker passes _check_artifact_marker."""
+        from run_screen import _check_artifact_marker
+        dest = tmp_path / "v1_2026-03-01.json"
+        write_table_with_marker(self._sample_table(), dest, as_of_date="2026-03-01")
+        present, valid, data = _check_artifact_marker(dest)
+        assert present is True
+        assert valid is True
+
+    def test_rebuilt_in_run_gets_artifact_source(self, tmp_path, monkeypatch):
+        """When _resolve_alpha_table_path rebuilds, the marker lets reload detect 'artifact'."""
+        from run_screen import _check_artifact_marker
+        dest = tmp_path / "v1_2026-03-01.json"
+        write_table_with_marker(
+            self._sample_table(), dest,
+            as_of_date="2026-03-01", source="rebuilt_in_run",
+        )
+        # On next load, _check_artifact_marker will find valid marker
+        present, valid, _ = _check_artifact_marker(dest)
+        assert present and valid

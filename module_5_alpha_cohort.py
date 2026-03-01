@@ -97,10 +97,26 @@ def compute_alpha_raw(
     """Lookup cell mean, apply shrinkage and clipping.
 
     Shrinkage: ``w = n / (n + shrink_k)``, ``alpha = mean * w``.
-    Missing key or n=0 → alpha=0.0.
+
+    **Horizon fallback**: if the exact cell has ``n=0`` and the horizon
+    component is not ``"none"``, the lookup falls back to
+    ``{stage}|none|{sign}``.  This fixes empty early-stage catalyst cells
+    (e.g. ``early|near_0_30|pos``) by inheriting the stage-level aggregate.
+
+    Missing key or n=0 after fallback → alpha=0.0.
     """
     cells = table.get("cells", {})
     cell = cells.get(key)
+
+    # Horizon fallback: if this cell is empty, try the stage-level "none" bucket
+    if (cell is None or cell.get("n", 0) <= 0):
+        parts = key.split("|")
+        if len(parts) == 3 and parts[1] != "none":
+            fallback_key = f"{parts[0]}|none|{parts[2]}"
+            fallback_cell = cells.get(fallback_key)
+            if fallback_cell is not None and fallback_cell.get("n", 0) > 0:
+                cell = fallback_cell
+
     if cell is None:
         return 0.0
     n = cell.get("n", 0)

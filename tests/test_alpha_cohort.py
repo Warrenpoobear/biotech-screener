@@ -222,6 +222,101 @@ class TestAlphaRaw:
 
 
 # ======================================================================
+# compute_alpha_raw — horizon fallback
+# ======================================================================
+
+class TestAlphaRawHorizonFallback:
+    """When a specific horizon cell has n=0, fall back to stage|none|sign."""
+
+    def test_empty_near_falls_back_to_none(self):
+        table = _make_table({
+            "early|near_0_30|pos": {"mean_excess_ret_6m": 0.0, "n": 0},
+            "early|none|pos": {"mean_excess_ret_6m": 0.20, "n": 190},
+        })
+        alpha = compute_alpha_raw("early|near_0_30|pos", table, 50, -0.10, 0.10)
+        # Should use early|none|pos: w=190/240=0.7917, alpha=0.20*0.7917=0.1583 → clipped to 0.10
+        assert alpha == 0.10
+
+    def test_empty_far_falls_back_to_none(self):
+        table = _make_table({
+            "early|far_271_540|nonpos": {"mean_excess_ret_6m": 0.0, "n": 0},
+            "early|none|nonpos": {"mean_excess_ret_6m": -0.01, "n": 192},
+        })
+        alpha = compute_alpha_raw("early|far_271_540|nonpos", table, 50, -0.10, 0.10)
+        # w=192/242=0.7934, alpha=-0.01*0.7934≈-0.0079
+        assert alpha == pytest.approx(-0.01 * (192 / 242), abs=1e-4)
+
+    def test_populated_cell_does_not_fallback(self):
+        """A cell with n>0 uses its own data, not the parent."""
+        table = _make_table({
+            "mid|near_31_90|pos": {"mean_excess_ret_6m": 0.05, "n": 23},
+            "mid|none|pos": {"mean_excess_ret_6m": 0.20, "n": 91},
+        })
+        alpha = compute_alpha_raw("mid|near_31_90|pos", table, 50, -0.10, 0.10)
+        # Uses own cell: w=23/73=0.3151, alpha=0.05*0.3151≈0.01575
+        expected = 0.05 * (23 / 73)
+        assert alpha == pytest.approx(expected, abs=1e-4)
+
+    def test_fallback_parent_also_empty_returns_zero(self):
+        """If both the cell and its none-parent have n=0, return 0.0."""
+        table = _make_table({
+            "early|near_91_180|pos": {"mean_excess_ret_6m": 0.0, "n": 0},
+            "early|none|pos": {"mean_excess_ret_6m": 0.0, "n": 0},
+        })
+        assert compute_alpha_raw("early|near_91_180|pos", table, 50, -0.10, 0.10) == 0.0
+
+    def test_none_horizon_does_not_self_fallback(self):
+        """A none-horizon cell with n=0 returns 0.0 (no infinite recursion)."""
+        table = _make_table({
+            "early|none|pos": {"mean_excess_ret_6m": 0.0, "n": 0},
+        })
+        assert compute_alpha_raw("early|none|pos", table, 50, -0.10, 0.10) == 0.0
+
+    def test_missing_parent_key_returns_zero(self):
+        """If the fallback key doesn't exist in the table at all, return 0.0."""
+        table = _make_table({
+            "early|near_0_30|pos": {"mean_excess_ret_6m": 0.0, "n": 0},
+            # no early|none|pos
+        })
+        assert compute_alpha_raw("early|near_0_30|pos", table, 50, -0.10, 0.10) == 0.0
+
+    def test_all_early_near_cells_use_fallback(self):
+        """All 10 empty early|near_*|{sign} cells now produce signal."""
+        table = _make_table({
+            "early|none|pos": {"mean_excess_ret_6m": 0.228, "n": 190},
+            "early|none|nonpos": {"mean_excess_ret_6m": -0.008, "n": 192},
+        })
+        # Fill in the 10 empty early cells
+        for h in ("near_0_30", "near_31_90", "near_91_180", "near_181_270", "far_271_540"):
+            for s in ("pos", "nonpos"):
+                key = f"early|{h}|{s}"
+                table["cells"][key] = {"mean_excess_ret_6m": 0.0, "n": 0}
+
+        for h in ("near_0_30", "near_31_90", "near_91_180", "near_181_270", "far_271_540"):
+            alpha_pos = compute_alpha_raw(f"early|{h}|pos", table, 50, -0.10, 0.10)
+            alpha_neg = compute_alpha_raw(f"early|{h}|nonpos", table, 50, -0.10, 0.10)
+            assert alpha_pos != 0.0, f"early|{h}|pos should produce signal via fallback"
+            assert alpha_neg != 0.0, f"early|{h}|nonpos should produce signal via fallback"
+
+    def test_fallback_preserves_shrinkage(self):
+        """Fallback uses parent's n for shrinkage, not a synthetic count."""
+        table = _make_table({
+            "early|near_0_30|pos": {"mean_excess_ret_6m": 0.0, "n": 0},
+            "early|none|pos": {"mean_excess_ret_6m": 0.10, "n": 50},
+        })
+        alpha = compute_alpha_raw("early|near_0_30|pos", table, 50, -0.10, 0.10)
+        # w = 50/100 = 0.5, alpha = 0.10 * 0.5 = 0.05
+        assert alpha == pytest.approx(0.05)
+
+    def test_malformed_key_no_crash(self):
+        """Key with wrong number of pipe segments doesn't crash."""
+        table = _make_table({})
+        assert compute_alpha_raw("bad_key", table, 50, -0.10, 0.10) == 0.0
+        assert compute_alpha_raw("a|b", table, 50, -0.10, 0.10) == 0.0
+        assert compute_alpha_raw("", table, 50, -0.10, 0.10) == 0.0
+
+
+# ======================================================================
 # attach_alpha_scores — percentile assignment
 # ======================================================================
 

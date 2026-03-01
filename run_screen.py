@@ -2871,7 +2871,7 @@ def _resolve_alpha_table_path(
         f"  Alpha table ({policy}): building OOS table for {as_of_date} "
         f"(mode={ruleset.alpha_train_mode}, horizon={ruleset.alpha_train_horizon})"
     )
-    from scripts.build_alpha_cohort_table_oos import build_oos_table
+    from scripts.build_alpha_cohort_table_oos import build_oos_table, write_table_with_marker
 
     table = build_oos_table(
         as_of_date=as_of_date,
@@ -2888,13 +2888,11 @@ def _resolve_alpha_table_path(
         )
         return project_root / ruleset.alpha_cohort_table_path, "static_fallback"
 
-    # Write to dated path
-    daily_dir.mkdir(parents=True, exist_ok=True)
-    import json as _json
-    with open(dated_path, "w", encoding="utf-8") as f:
-        _json.dump(table, f, indent=2)
-        f.write("\n")
-    logger.info(f"  Alpha table: wrote {dated_path}")
+    # Write table + provenance marker
+    write_table_with_marker(
+        table, dated_path, as_of_date=as_of_date, source="rebuilt_in_run",
+    )
+    logger.info(f"  Alpha table: wrote {dated_path} + marker")
     return dated_path, "rebuilt_in_run"
 
 

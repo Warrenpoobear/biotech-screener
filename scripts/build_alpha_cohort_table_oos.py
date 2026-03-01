@@ -17,12 +17,14 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
 import math
 import statistics
 import sys
 from collections import defaultdict
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -325,6 +327,49 @@ def _build_weighted_table(
 
 
 # ---------------------------------------------------------------------------
+# Artifact marker write
+# ---------------------------------------------------------------------------
+
+def write_table_with_marker(
+    table: Dict[str, Any],
+    dest: Path,
+    *,
+    as_of_date: str,
+    source: str = "oos_build",
+) -> Path:
+    """Write alpha cohort table JSON and a companion .artifact.json marker.
+
+    The marker contains a SHA-256 hash that ``_check_artifact_marker()`` in
+    ``run_screen.py`` validates on reload, giving the table the ``"artifact"``
+    source tag instead of ``"preexisting_local"``.
+
+    Returns the *dest* path (unchanged).
+    """
+    dest = Path(dest)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+
+    table_bytes = json.dumps(table, indent=2).encode("utf-8") + b"\n"
+    dest.write_bytes(table_bytes)
+
+    build_info = table.get("_build_info", {})
+    marker = {
+        "as_of_date": as_of_date,
+        "built_at_utc": datetime.now(timezone.utc).isoformat(),
+        "sha256": hashlib.sha256(table_bytes).hexdigest(),
+        "target_path": str(dest),
+        "source": source,
+        "train_mode": build_info.get("train_mode", ""),
+        "n_train_dates": build_info.get("n_train_dates", 0),
+    }
+    marker_path = dest.with_suffix(".artifact.json")
+    with open(marker_path, "w", encoding="utf-8") as f:
+        json.dump(marker, f, indent=2)
+        f.write("\n")
+
+    return dest
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
@@ -381,12 +426,12 @@ def main() -> None:
         log.error("Could not build table — insufficient data")
         sys.exit(1)
 
-    # Write output
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    with open(args.output, "w", encoding="utf-8") as f:
-        json.dump(table, f, indent=2)
-        f.write("\n")
+    # Write output + provenance marker
+    write_table_with_marker(
+        table, args.output, as_of_date=args.as_of_date, source="oos_build_cli",
+    )
     log.info("Wrote %s", args.output)
+    log.info("Wrote %s", args.output.with_suffix(".artifact.json"))
 
     # Summary
     cells = table.get("cells", {})
