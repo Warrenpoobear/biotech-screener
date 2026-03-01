@@ -167,6 +167,48 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # ── Warm IR/PR calendar caches ─────────────────────────────
+      - name: Warm IR/PR calendar caches
+        run: |
+          DATE="${{ steps.date.outputs.as_of_date }}"
+          echo "Warming IR + PR caches for ${DATE}..."
+          python warm_caches.py --sources ir_events,press_releases \
+            --as-of-date "$DATE" --data-dir production_data || {
+            echo "::warning::IR/PR cache warming failed — calendar gate will WARN"
+          }
+
+      # ── Evaluate company calendar gate ─────────────────────────
+      - name: Evaluate company calendar gate
+        id: calendar_gate
+        run: |
+          DATE="${{ steps.date.outputs.as_of_date }}"
+          OUT_DIR="data/snapshots/${DATE}/company_calendar_gate"
+          mkdir -p "$OUT_DIR"
+
+          set +e
+          python scripts/eval_company_calendar_gate.py \
+            --as-of-date "$DATE" \
+            --out-dir "$OUT_DIR"
+          GATE_RC=$?
+          set -e
+
+          echo "calendar_gate_rc=$GATE_RC" >> "$GITHUB_OUTPUT"
+
+          # Append summary to step summary
+          GATE_MD="${OUT_DIR}/company_calendar_gate.md"
+          if [ -f "$GATE_MD" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            head -40 "$GATE_MD" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          # FAIL (exit 2) → hard stop; WARN (exit 1) → continue; PASS (0) → continue
+          if [ "$GATE_RC" -eq 2 ]; then
+            echo "::error::Company calendar gate FAIL — past dates or non-day precision detected"
+            exit 1
+          elif [ "$GATE_RC" -eq 1 ]; then
+            echo "::warning::Company calendar gate WARN — empty or low-coverage caches"
+          fi
+
       # ── Production daily run (includes audit + all gates) ──────
       # NOTE: nothing above this step should create files in-repo,
       # otherwise git_pre_run will report dirty=true from CI artifacts.
