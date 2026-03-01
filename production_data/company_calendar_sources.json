@@ -2,61 +2,993 @@
   "_schema": "company_calendar_sources.v1",
   "_updated_at": "2026-02-28",
   "sources": {
-    "VRTX": {
-      "ir_url": "https://investors.vrtx.com/events-presentations",
-      "pr_rss_url": "https://investors.vrtx.com/rss/news-releases.xml?items=15"
+    "AARD": {
+      "ir_url": "https://ir.aardvarktherapeutics.com/news-events/events",
+      "pr_rss_url": "https://ir.aardvarktherapeutics.com/rss/news-releases.xml"
     },
-    "REGN": {
-      "ir_url": "https://investor.regeneron.com/events-and-presentations/events-and-recent",
-      "pr_rss_url": "https://newsroom.regeneron.com/rss/news-releases.xml"
+    "ABEO": {
+      "ir_url": "https://investors.abeonatherapeutics.com/events"
     },
-    "GILD": {
-      "ir_url": "https://investors.gilead.com/events-and-presentations/default.aspx"
+    "ABOS": {
+      "ir_url": "https://investors.acumenpharm.com/news-events/events",
+      "pr_rss_url": "https://investors.acumenpharm.com/rss/news-releases.xml"
     },
-    "MRNA": {
-      "ir_url": "https://investors.modernatx.com/events-presentations"
+    "ABSI": {
+      "pr_rss_url": "https://investors.absci.com/rss/news-releases.xml"
     },
-    "BIIB": {
-      "ir_url": "https://investors.biogen.com/events-presentations/events",
-      "pr_rss_url": "https://investors.biogen.com/rss/news-releases.xml"
+    "ABUS": {
+      "ir_url": "https://investor.arbutusbio.com/events-presentations",
+      "pr_rss_url": "https://investor.arbutusbio.com/rss/news-releases.xml"
     },
-    "AMGN": {
-      "ir_url": "https://investors.amgen.com/news-and-events/events-calendar",
-      "pr_rss_url": "https://investors.amgen.com/rss/news-releases.xml"
+    "ABVX": {
+      "pr_rss_url": "https://ir.abivax.com/rss/news-releases.xml"
     },
-    "INCY": {
-      "ir_url": "https://investor.incyte.com/events-presentations",
-      "pr_rss_url": "https://investor.incyte.com/rss/news-releases.xml"
+    "ACIU": {
+      "ir_url": "https://ir.acimmune.com/events",
+      "pr_rss_url": "https://ir.acimmune.com/rss/news-releases.xml"
+    },
+    "ACRS": {
+      "ir_url": "https://investor.aclaristx.com/events",
+      "pr_rss_url": "https://investor.aclaristx.com/rss/news-releases.xml"
+    },
+    "ACRV": {
+      "pr_rss_url": "https://ir.acrivon.com/rss/news-releases.xml"
+    },
+    "ADCT": {
+      "ir_url": "https://ir.adctherapeutics.com/events-presentations"
+    },
+    "ADMA": {
+      "pr_rss_url": "https://ir.admabiologics.com/rss/news-releases.xml"
+    },
+    "ADPT": {
+      "ir_url": "https://investors.adaptivebiotech.com/news-events/events",
+      "pr_rss_url": "https://investors.adaptivebiotech.com/rss/news-releases.xml"
+    },
+    "AGIO": {
+      "pr_rss_url": "https://investor.agios.com/rss/news-releases.xml"
+    },
+    "AKTX": {
+      "ir_url": "https://investor.akaritx.com/events-and-presentations",
+      "pr_rss_url": "https://investor.akaritx.com/rss/news-releases.xml"
+    },
+    "ALDX": {
+      "ir_url": "https://ir.aldeyra.com/events",
+      "pr_rss_url": "https://ir.aldeyra.com/rss/news-releases.xml"
+    },
+    "ALGS": {
+      "pr_rss_url": "https://investor.aligos.com/rss/news-releases.xml"
+    },
+    "ALKS": {
+      "pr_rss_url": "https://investor.alkermes.com/rss/news-releases.xml"
+    },
+    "ALLO": {
+      "ir_url": "https://ir.allogene.com/events",
+      "pr_rss_url": "https://ir.allogene.com/rss/news-releases.xml"
+    },
+    "ALMS": {
+      "ir_url": "https://investors.alumis.com/news-events/events",
+      "pr_rss_url": "https://investors.alumis.com/rss/news-releases.xml"
     },
     "ALNY": {
       "ir_url": "https://investors.alnylam.com/events",
       "pr_rss_url": "https://alnylampharmaceuticalsinc.gcs-web.com/rss/news-releases.xml"
     },
-    "BMRN": {
-      "ir_url": "https://investors.biomarin.com/events-and-presentations/default.aspx"
+    "ALT": {
+      "pr_rss_url": "https://ir.altimmune.com/rss/news-releases.xml"
     },
-    "EXEL": {
-      "ir_url": "https://ir.exelixis.com/event-calendar",
-      "pr_rss_url": "https://ir.exelixis.com/rss/news-releases.xml"
+    "ALVO": {
+      "ir_url": "https://investors.alvotech.com/news-events/events",
+      "pr_rss_url": "https://investors.alvotech.com/rss/news-releases.xml"
     },
-    "IONS": {
-      "ir_url": "https://ir.ionis.com/events",
-      "pr_rss_url": "https://ir.ionis.com/rss/news-releases.xml"
+    "AMGN": {
+      "ir_url": "https://investors.amgen.com/news-and-events/events-calendar",
+      "pr_rss_url": "https://investors.amgen.com/rss/news-releases.xml"
     },
-    "JAZZ": {
-      "ir_url": "https://investor.jazzpharma.com/investors/events-presentations",
-      "pr_rss_url": "https://investor.jazzpharma.com/rss/news-releases.xml"
+    "AMLX": {
+      "ir_url": "https://investors.amylyx.com/events-presentations",
+      "pr_rss_url": "https://investors.amylyx.com/rss/news-releases.xml"
+    },
+    "AMPH": {
+      "ir_url": "https://ir.amphastar.com/events-presentations"
+    },
+    "AMRX": {
+      "ir_url": "https://investors.amneal.com/events-and-presentations"
+    },
+    "ANAB": {
+      "ir_url": "https://ir.anaptysbio.com/events",
+      "pr_rss_url": "https://ir.anaptysbio.com/rss/news-releases.xml"
+    },
+    "ANIP": {
+      "ir_url": "https://investor.anipharmaceuticals.com/events-presentations",
+      "pr_rss_url": "https://investor.anipharmaceuticals.com/rss/news-releases.xml"
+    },
+    "ANNX": {
+      "ir_url": "https://ir.annexonbio.com/events-and-presentations/events",
+      "pr_rss_url": "https://ir.annexonbio.com/rss/news-releases.xml"
+    },
+    "APGE": {
+      "ir_url": "https://investors.apogeetherapeutics.com/news-events/events",
+      "pr_rss_url": "https://investors.apogeetherapeutics.com/rss/news-releases.xml"
+    },
+    "APLS": {
+      "ir_url": "https://investors.apellis.com/events-and-presentations",
+      "pr_rss_url": "https://investors.apellis.com/rss/news-releases.xml"
+    },
+    "AQST": {
+      "ir_url": "https://investors.aquestive.com/events-and-presentations",
+      "pr_rss_url": "https://investors.aquestive.com/rss/news-releases.xml"
+    },
+    "ARCT": {
+      "ir_url": "https://ir.arcturusrx.com/events-and-presentations",
+      "pr_rss_url": "https://ir.arcturusrx.com/rss/news-releases.xml"
+    },
+    "ARDX": {
+      "ir_url": "https://ir.ardelyx.com/events-and-presentations",
+      "pr_rss_url": "https://ir.ardelyx.com/rss/news-releases.xml"
     },
     "ARGX": {
       "ir_url": "https://argenx.com/investors/events-presentations"
+    },
+    "ARQT": {
+      "pr_rss_url": "https://investors.arcutis.com/rss/news-releases.xml"
+    },
+    "ARVN": {
+      "ir_url": "https://ir.arvinas.com/events-and-presentations",
+      "pr_rss_url": "https://ir.arvinas.com/rss/news-releases.xml"
+    },
+    "ARWR": {
+      "ir_url": "https://ir.arrowheadpharma.com/events-and-presentations",
+      "pr_rss_url": "https://ir.arrowheadpharma.com/rss/news-releases.xml"
+    },
+    "ASMB": {
+      "ir_url": "https://investor.assemblybio.com/events-presentations",
+      "pr_rss_url": "https://investor.assemblybio.com/rss/news-releases.xml"
+    },
+    "ASND": {
+      "ir_url": "https://investors.ascendispharma.com/events-and-presentations",
+      "pr_rss_url": "https://investors.ascendispharma.com/rss/news-releases.xml"
+    },
+    "ATAI": {
+      "ir_url": "https://ir.ataibeckley.com/news-events/events",
+      "pr_rss_url": "https://ir.ataibeckley.com/rss/news-releases.xml"
+    },
+    "ATXS": {
+      "ir_url": "https://ir.astriatx.com/events-presentations"
+    },
+    "AURA": {
+      "ir_url": "https://ir.aurabiosciences.com/events-and-presentations",
+      "pr_rss_url": "https://ir.aurabiosciences.com/rss/news-releases.xml"
+    },
+    "AVBP": {
+      "pr_rss_url": "https://ir.arrivent.com/rss/news-releases.xml"
+    },
+    "AVIR": {
+      "pr_rss_url": "https://ir.ateapharma.com/rss/news-releases.xml"
+    },
+    "BBOT": {
+      "ir_url": "https://investors.bbotx.com/news-events/events",
+      "pr_rss_url": "https://investors.bbotx.com/rss/news-releases.xml"
+    },
+    "BCAX": {
+      "pr_rss_url": "https://ir.bicara.com/rss/news-releases.xml"
+    },
+    "BCRX": {
+      "ir_url": "https://ir.biocryst.com/news-events/events",
+      "pr_rss_url": "https://ir.biocryst.com/rss/news-releases.xml"
+    },
+    "BCYC": {
+      "ir_url": "https://investors.bicycletherapeutics.com/events-and-presentations",
+      "pr_rss_url": "https://investors.bicycletherapeutics.com/rss/news-releases.xml"
+    },
+    "BDTX": {
+      "ir_url": "https://investors.blackdiamondtherapeutics.com/events-presentations",
+      "pr_rss_url": "https://investors.blackdiamondtherapeutics.com/rss/news-releases.xml"
     },
     "BEAM": {
       "ir_url": "https://investors.beamtx.com/events",
       "pr_rss_url": "https://investors.beamtx.com/rss/news-releases.xml"
     },
+    "BHVN": {
+      "ir_url": "https://ir.biohaven.com/events-presentations/events",
+      "pr_rss_url": "https://ir.biohaven.com/rss/news-releases.xml"
+    },
+    "BIIB": {
+      "ir_url": "https://investors.biogen.com/events-presentations/events",
+      "pr_rss_url": "https://investors.biogen.com/rss/news-releases.xml"
+    },
+    "BIOA": {
+      "ir_url": "https://ir.bioagelabs.com/news-events/events",
+      "pr_rss_url": "https://ir.bioagelabs.com/rss/news-releases.xml"
+    },
+    "BLTE": {
+      "ir_url": "https://investors.belitebio.com/news-events/events",
+      "pr_rss_url": "https://investors.belitebio.com/rss/news-releases.xml"
+    },
+    "BMEA": {
+      "ir_url": "https://investors.biomeafusion.com/news-events/events",
+      "pr_rss_url": "https://investors.biomeafusion.com/rss/news-releases.xml"
+    },
+    "BMRN": {
+      "ir_url": "https://investors.biomarin.com/events-and-presentations/default.aspx"
+    },
+    "BNTX": {
+      "ir_url": "https://investors.biontech.de/events-presentations",
+      "pr_rss_url": "https://investors.biontech.de/rss/news-releases.xml"
+    },
+    "CABA": {
+      "ir_url": "https://investors.cabalettabio.com/events-presentations"
+    },
+    "CADL": {
+      "pr_rss_url": "https://ir.candeltx.com/rss/news-releases.xml"
+    },
+    "CAI": {
+      "ir_url": "https://investor.carislifesciences.com/news-events/events",
+      "pr_rss_url": "https://investor.carislifesciences.com/rss/news-releases.xml"
+    },
+    "CCCC": {
+      "ir_url": "https://ir.c4therapeutics.com/events-presentations",
+      "pr_rss_url": "https://ir.c4therapeutics.com/rss/news-releases.xml"
+    },
+    "CDTX": {
+      "ir_url": "https://ir.cidara.com/events-presentations"
+    },
+    "CELC": {
+      "ir_url": "https://ir.celcuity.com/events-presentations",
+      "pr_rss_url": "https://ir.celcuity.com/rss/news-releases.xml"
+    },
+    "CERS": {
+      "ir_url": "https://cerus.com/events"
+    },
+    "CGEM": {
+      "ir_url": "https://investors.cullinantherapeutics.com/events",
+      "pr_rss_url": "https://investors.cullinantherapeutics.com/rss/news-releases.xml"
+    },
+    "CGON": {
+      "pr_rss_url": "https://ir.cgoncology.com/rss/news-releases.xml"
+    },
+    "CHRS": {
+      "ir_url": "https://investors.coherus.com/events-presentations",
+      "pr_rss_url": "https://investors.coherus.com/rss/news-releases.xml"
+    },
+    "CLDX": {
+      "ir_url": "https://ir.celldex.com/events-presentations",
+      "pr_rss_url": "https://ir.celldex.com/rss/news-releases.xml"
+    },
+    "CLYM": {
+      "ir_url": "https://ir.climbbio.com/events-and-presentations",
+      "pr_rss_url": "https://ir.climbbio.com/rss/news-releases.xml"
+    },
+    "CMPX": {
+      "ir_url": "https://investors.compasstherapeutics.com/news-events/events",
+      "pr_rss_url": "https://investors.compasstherapeutics.com/rss/news-releases.xml"
+    },
+    "CNTA": {
+      "ir_url": "https://investors.centessa.com/events-presentations",
+      "pr_rss_url": "https://investors.centessa.com/rss/news-releases.xml"
+    },
+    "CNTX": {
+      "pr_rss_url": "https://ir.contexttherapeutics.com/rss/news-releases.xml"
+    },
+    "COGT": {
+      "ir_url": "https://investors.cogentbio.com/events",
+      "pr_rss_url": "https://investors.cogentbio.com/rss/news-releases.xml"
+    },
+    "COLL": {
+      "pr_rss_url": "https://ir.collegiumpharma.com/rss/news-releases.xml"
+    },
+    "CRBU": {
+      "ir_url": "https://investor.cariboubio.com/news-events/events",
+      "pr_rss_url": "https://investor.cariboubio.com/rss/news-releases.xml"
+    },
+    "CRL": {
+      "pr_rss_url": "https://ir.criver.com/rss/news-releases.xml"
+    },
+    "CRSP": {
+      "ir_url": "https://ir.crisprtx.com/events",
+      "pr_rss_url": "https://ir.crisprtx.com/rss/news-releases.xml"
+    },
+    "CRVS": {
+      "pr_rss_url": "https://investor.corvuspharma.com/rss/news-releases.xml"
+    },
+    "CTKB": {
+      "pr_rss_url": "https://investors.cytekbio.com/rss/news-releases.xml"
+    },
+    "CTMX": {
+      "ir_url": "https://ir.cytomx.com/events-and-presentations",
+      "pr_rss_url": "https://ir.cytomx.com/rss/news-releases.xml"
+    },
+    "CTNM": {
+      "pr_rss_url": "https://ir.contineum-tx.com/rss/news-releases.xml"
+    },
+    "DAWN": {
+      "ir_url": "https://ir.dayonebio.com/events-and-presentations",
+      "pr_rss_url": "https://ir.dayonebio.com/rss/news-releases.xml"
+    },
+    "DNLI": {
+      "ir_url": "https://investors.denalitherapeutics.com/events",
+      "pr_rss_url": "https://investors.denalitherapeutics.com/rss/news-releases.xml"
+    },
+    "DNTH": {
+      "pr_rss_url": "https://investor.dianthustx.com/rss/news-releases.xml"
+    },
+    "DRUG": {
+      "ir_url": "https://investors.brightmindsbio.com/news-events/events",
+      "pr_rss_url": "https://investors.brightmindsbio.com/rss/news-releases.xml"
+    },
+    "DSGN": {
+      "ir_url": "https://investors.designtx.com/events-and-presentations",
+      "pr_rss_url": "https://investors.designtx.com/rss/news-releases.xml"
+    },
+    "DYN": {
+      "pr_rss_url": "https://investors.dyne-tx.com/rss/news-releases.xml"
+    },
+    "EBS": {
+      "pr_rss_url": "https://investors.emergentbiosolutions.com/rss/news-releases.xml"
+    },
+    "EDIT": {
+      "ir_url": "https://ir.editasmedicine.com/events-and-presentations",
+      "pr_rss_url": "https://ir.editasmedicine.com/rss/news-releases.xml"
+    },
+    "ELDN": {
+      "pr_rss_url": "https://ir.eledon.com/rss/news-releases.xml"
+    },
+    "ELVN": {
+      "ir_url": "https://ir.enliventherapeutics.com/events",
+      "pr_rss_url": "https://ir.enliventherapeutics.com/rss/news-releases.xml"
+    },
+    "ENTA": {
+      "ir_url": "https://ir.enanta.com/events-presentations",
+      "pr_rss_url": "https://ir.enanta.com/rss/news-releases.xml"
+    },
+    "EPRX": {
+      "pr_rss_url": "https://investors.eupraxiapharma.com/rss/news-releases.xml"
+    },
+    "ERAS": {
+      "ir_url": "https://investors.erasca.com/news-events/events",
+      "pr_rss_url": "https://investors.erasca.com/rss/news-releases.xml"
+    },
+    "ESPR": {
+      "ir_url": "https://investor.esperion.com/events-presentations"
+    },
+    "ETON": {
+      "pr_rss_url": "https://ir.etonpharma.com/rss/news-releases.xml"
+    },
+    "EWTX": {
+      "ir_url": "https://investors.edgewisetx.com/events-and-presentations"
+    },
+    "EXEL": {
+      "ir_url": "https://ir.exelixis.com/event-calendar",
+      "pr_rss_url": "https://ir.exelixis.com/rss/news-releases.xml"
+    },
+    "EYPT": {
+      "ir_url": "https://investors.eyepoint.bio/events-and-presentations",
+      "pr_rss_url": "https://investors.eyepoint.bio/rss/news-releases.xml"
+    },
+    "FATE": {
+      "ir_url": "https://ir.fatetherapeutics.com/events-and-presentations",
+      "pr_rss_url": "https://ir.fatetherapeutics.com/rss/news-releases.xml"
+    },
+    "FDMT": {
+      "ir_url": "https://ir.4dmoleculartherapeutics.com/events",
+      "pr_rss_url": "https://ir.4dmoleculartherapeutics.com/rss/news-releases.xml"
+    },
+    "FGEN": {
+      "ir_url": "https://investor.fibrogen.com/events-presentations"
+    },
+    "FHTX": {
+      "ir_url": "https://ir.foghorntx.com/events-and-presentations/events",
+      "pr_rss_url": "https://ir.foghorntx.com/rss/news-releases.xml"
+    },
+    "FLGT": {
+      "ir_url": "https://ir.fulgentgenetics.com/events-and-presentations",
+      "pr_rss_url": "https://ir.fulgentgenetics.com/rss/news-releases.xml"
+    },
+    "FOLD": {
+      "ir_url": "https://ir.amicusrx.com/events-and-presentations",
+      "pr_rss_url": "https://ir.amicusrx.com/rss/news-releases.xml"
+    },
+    "FTRE": {
+      "pr_rss_url": "https://investors.fortrea.com/rss/news-releases.xml"
+    },
+    "FULC": {
+      "ir_url": "https://ir.fulcrumtx.com/events-and-presentations",
+      "pr_rss_url": "https://ir.fulcrumtx.com/rss/news-releases.xml"
+    },
+    "GBIO": {
+      "ir_url": "https://investors.generationbio.com/news-events/events",
+      "pr_rss_url": "https://investors.generationbio.com/rss/news-releases.xml"
+    },
+    "GERN": {
+      "pr_rss_url": "https://ir.geron.com/rss/news-releases.xml"
+    },
+    "GHRS": {
+      "ir_url": "https://investor.ghres.com/events",
+      "pr_rss_url": "https://investor.ghres.com/rss/news-releases.xml"
+    },
+    "GILD": {
+      "ir_url": "https://investors.gilead.com/events-and-presentations/default.aspx"
+    },
+    "GLUE": {
+      "pr_rss_url": "https://ir.monterosatx.com/rss/news-releases.xml"
+    },
+    "GMAB": {
+      "ir_url": "https://ir.genmab.com/events-and-presentations",
+      "pr_rss_url": "https://ir.genmab.com/rss/news-releases.xml"
+    },
+    "GOSS": {
+      "ir_url": "https://ir.gossamerbio.com/events-and-presentations/events",
+      "pr_rss_url": "https://ir.gossamerbio.com/rss/news-releases.xml"
+    },
+    "GPCR": {
+      "ir_url": "https://ir.structuretx.com/events-presentations/events",
+      "pr_rss_url": "https://ir.structuretx.com/rss/news-releases.xml"
+    },
+    "GRAL": {
+      "ir_url": "https://investors.grail.com/news-events/events",
+      "pr_rss_url": "https://investors.grail.com/rss/news-releases.xml"
+    },
+    "GRFS": {
+      "ir_url": "https://investors.grifols.com/events-and-presentations/default.aspx"
+    },
+    "HALO": {
+      "ir_url": "https://ir.halozyme.com/events-and-presentations"
+    },
+    "HOWL": {
+      "pr_rss_url": "https://investors.werewolftx.com/rss/news-releases.xml"
+    },
+    "HRMY": {
+      "pr_rss_url": "https://ir.harmonybiosciences.com/rss/news-releases.xml"
+    },
+    "HROW": {
+      "pr_rss_url": "https://investors.harrow.com/rss/news-releases.xml"
+    },
+    "HRTX": {
+      "ir_url": "https://ir.herontx.com/events",
+      "pr_rss_url": "https://ir.herontx.com/rss/news-releases.xml"
+    },
+    "HUMA": {
+      "pr_rss_url": "https://investors.humacyte.com/rss/news-releases.xml"
+    },
+    "IBRX": {
+      "pr_rss_url": "https://ir.immunitybio.com/rss/news-releases.xml"
+    },
+    "IDYA": {
+      "ir_url": "https://ir.ideayabio.com/events"
+    },
+    "ILMN": {
+      "ir_url": "https://investor.illumina.com/events-and-presentations"
+    },
+    "IMCR": {
+      "ir_url": "https://ir.immunocore.com/events-presentations",
+      "pr_rss_url": "https://ir.immunocore.com/rss/news-releases.xml"
+    },
+    "IMMP": {
+      "ir_url": "https://primabiomed.com.au/events-presentations"
+    },
+    "IMRX": {
+      "pr_rss_url": "https://ir.immuneering.com/rss/news-releases.xml"
+    },
+    "IMTX": {
+      "ir_url": "https://investors.immatics.com/events-presentations",
+      "pr_rss_url": "https://investors.immatics.com/rss/news-releases.xml"
+    },
+    "INCY": {
+      "ir_url": "https://investor.incyte.com/events-presentations",
+      "pr_rss_url": "https://investor.incyte.com/rss/news-releases.xml"
+    },
+    "INDV": {
+      "ir_url": "https://ir.indivior.com/news-events/events",
+      "pr_rss_url": "https://ir.indivior.com/rss/news-releases.xml"
+    },
+    "INSM": {
+      "ir_url": "https://investor.insmed.com/events-and-presentations"
+    },
+    "INVA": {
+      "pr_rss_url": "https://investor.inva.com/rss/news-releases.xml"
+    },
+    "IONS": {
+      "ir_url": "https://ir.ionis.com/events",
+      "pr_rss_url": "https://ir.ionis.com/rss/news-releases.xml"
+    },
+    "IOVA": {
+      "pr_rss_url": "https://ir.iovance.com/rss/news-releases.xml"
+    },
+    "IRON": {
+      "ir_url": "https://ir.discmedicine.com/events-presentations",
+      "pr_rss_url": "https://ir.discmedicine.com/rss/news-releases.xml"
+    },
+    "IRWD": {
+      "ir_url": "https://investor.ironwoodpharma.com/events-and-presentations"
+    },
+    "IVVD": {
+      "pr_rss_url": "https://investors.invivyd.com/rss/news-releases.xml"
+    },
+    "JAZZ": {
+      "ir_url": "https://investor.jazzpharma.com/investors/events-presentations",
+      "pr_rss_url": "https://investor.jazzpharma.com/rss/news-releases.xml"
+    },
+    "KALA": {
+      "pr_rss_url": "https://investors.kalarx.com/rss/news-releases.xml"
+    },
+    "KALV": {
+      "ir_url": "https://ir.kalvista.com/event-calendar",
+      "pr_rss_url": "https://ir.kalvista.com/rss/news-releases.xml"
+    },
+    "KNSA": {
+      "ir_url": "https://investors.kiniksa.com/news-events/events",
+      "pr_rss_url": "https://investors.kiniksa.com/rss/news-releases.xml"
+    },
+    "KOD": {
+      "ir_url": "https://ir.kodiak.com/events-and-presentations",
+      "pr_rss_url": "https://ir.kodiak.com/rss/news-releases.xml"
+    },
+    "KROS": {
+      "pr_rss_url": "https://ir.kerostx.com/rss/news-releases.xml"
+    },
+    "KRYS": {
+      "ir_url": "https://ir.krystalbio.com/events-and-presentations/events",
+      "pr_rss_url": "https://ir.krystalbio.com/rss/news-releases.xml"
+    },
+    "KURA": {
+      "ir_url": "https://ir.kuraoncology.com/events-presentations",
+      "pr_rss_url": "https://ir.kuraoncology.com/rss/news-releases.xml"
+    },
+    "KYMR": {
+      "ir_url": "https://investors.kymeratx.com/events-and-presentations",
+      "pr_rss_url": "https://investors.kymeratx.com/rss/news-releases.xml"
+    },
+    "KYTX": {
+      "pr_rss_url": "https://ir.kyvernatx.com/rss/news-releases.xml"
+    },
+    "LAB": {
+      "ir_url": "https://investors.standardbio.com/events-presentations",
+      "pr_rss_url": "https://investors.standardbio.com/rss/news-releases.xml"
+    },
+    "LBRX": {
+      "ir_url": "https://ir.lbpharma.us/events-presentations/events"
+    },
+    "LCTX": {
+      "pr_rss_url": "https://investor.lineagecell.com/rss/news-releases.xml"
+    },
+    "LEGN": {
+      "ir_url": "https://investors.legendbiotech.com/events-and-presentations",
+      "pr_rss_url": "https://investors.legendbiotech.com/rss/news-releases.xml"
+    },
+    "LFCR": {
+      "ir_url": "https://ir.lifecore.com/events-presentations",
+      "pr_rss_url": "https://ir.lifecore.com/rss/news-releases.xml"
+    },
+    "LGND": {
+      "ir_url": "https://investor.ligand.com/news-and-events/events-calendar"
+    },
+    "LQDA": {
+      "pr_rss_url": "https://investors.liquidia.com/rss/news-releases.xml"
+    },
+    "LRMR": {
+      "ir_url": "https://investors.larimartx.com/events-and-presentations",
+      "pr_rss_url": "https://investors.larimartx.com/rss/news-releases.xml"
+    },
+    "LXEO": {
+      "ir_url": "https://ir.lexeotx.com/news-events/events",
+      "pr_rss_url": "https://ir.lexeotx.com/rss/news-releases.xml"
+    },
+    "LYEL": {
+      "ir_url": "https://ir.lyell.com/news-events/events",
+      "pr_rss_url": "https://ir.lyell.com/rss/news-releases.xml"
+    },
+    "LYRA": {
+      "pr_rss_url": "https://investors.lyratherapeutics.com/rss/news-releases.xml"
+    },
+    "MAZE": {
+      "pr_rss_url": "https://ir.mazetx.com/rss/news-releases.xml"
+    },
+    "MBX": {
+      "ir_url": "https://investors.mbxbio.com/news-events/events",
+      "pr_rss_url": "https://investors.mbxbio.com/rss/news-releases.xml"
+    },
+    "MCRB": {
+      "pr_rss_url": "https://ir.serestherapeutics.com/rss/news-releases.xml"
+    },
+    "MDGL": {
+      "ir_url": "https://ir.madrigalpharma.com/events-and-presentations",
+      "pr_rss_url": "https://ir.madrigalpharma.com/rss/news-releases.xml"
+    },
+    "MEDP": {
+      "ir_url": "https://investor.medpace.com/events-presentations",
+      "pr_rss_url": "https://investor.medpace.com/rss/news-releases.xml"
+    },
+    "MGTX": {
+      "ir_url": "https://investors.meiragtx.com/events-presentations",
+      "pr_rss_url": "https://investors.meiragtx.com/rss/news-releases.xml"
+    },
+    "MLTX": {
+      "ir_url": "https://ir.moonlaketx.com/events-presentations",
+      "pr_rss_url": "https://ir.moonlaketx.com/rss/news-releases.xml"
+    },
+    "MNKD": {
+      "ir_url": "https://investors.mannkindcorp.com/events-and-presentations",
+      "pr_rss_url": "https://investors.mannkindcorp.com/rss/news-releases.xml"
+    },
+    "MRNA": {
+      "ir_url": "https://investors.modernatx.com/events-presentations"
+    },
+    "MRUS": {
+      "ir_url": "https://ir.merus.nl/event-calendar",
+      "pr_rss_url": "https://ir.merus.nl/rss/news-releases.xml"
+    },
+    "MYGN": {
+      "ir_url": "https://investor.myriad.com/events-and-presentations"
+    },
+    "NAMS": {
+      "pr_rss_url": "https://ir.newamsterdampharma.com/rss/news-releases.xml"
+    },
+    "NAUT": {
+      "ir_url": "https://investors.nautilus.bio/news-events/events",
+      "pr_rss_url": "https://investors.nautilus.bio/rss/news-releases.xml"
+    },
+    "NGNE": {
+      "pr_rss_url": "https://ir.neurogene.com/rss/news-releases.xml"
+    },
+    "NKTX": {
+      "ir_url": "https://ir.nkartatx.com/events-and-presentations",
+      "pr_rss_url": "https://ir.nkartatx.com/rss/news-releases.xml"
+    },
+    "NMRA": {
+      "pr_rss_url": "https://ir.neumoratx.com/rss/news-releases.xml"
+    },
+    "NRIX": {
+      "ir_url": "https://ir.nurixtx.com/events",
+      "pr_rss_url": "https://ir.nurixtx.com/rss/news-releases.xml"
+    },
+    "NTLA": {
+      "pr_rss_url": "https://ir.intelliatx.com/rss/news-releases.xml"
+    },
+    "NUVL": {
+      "ir_url": "https://investors.nuvalent.com/events"
+    },
+    "NVAX": {
+      "ir_url": "https://ir.novavax.com/events"
+    },
+    "OBIO": {
+      "pr_rss_url": "https://investors.orchestrabiomed.com/rss/news-releases.xml"
+    },
+    "OCGN": {
+      "ir_url": "https://ir.ocugen.com/events-and-presentations",
+      "pr_rss_url": "https://ir.ocugen.com/rss/news-releases.xml"
+    },
+    "OCS": {
+      "ir_url": "https://investors.oculis.com/events-presentations",
+      "pr_rss_url": "https://investors.oculis.com/rss/news-releases.xml"
+    },
+    "OCUL": {
+      "ir_url": "https://investors.ocutx.com/events-presentations",
+      "pr_rss_url": "https://investors.ocutx.com/rss/news-releases.xml"
+    },
+    "OLMA": {
+      "pr_rss_url": "https://ir.olema.com/rss/news-releases.xml"
+    },
+    "OMER": {
+      "pr_rss_url": "https://investor.omeros.com/rss/news-releases.xml"
+    },
+    "ONC": {
+      "ir_url": "https://ir.beonemedicines.com/events-presentations"
+    },
+    "OPCH": {
+      "ir_url": "https://investors.optioncarehealth.com/events-and-presentations",
+      "pr_rss_url": "https://investors.optioncarehealth.com/rss/news-releases.xml"
+    },
+    "ORIC": {
+      "ir_url": "https://investors.oricpharma.com/events-and-presentations",
+      "pr_rss_url": "https://investors.oricpharma.com/rss/news-releases.xml"
+    },
+    "ORKA": {
+      "pr_rss_url": "https://ir.orukatx.com/rss/news-releases.xml"
+    },
+    "PBYI": {
+      "ir_url": "https://investor.pumabiotechnology.com/events-and-presentations/default.aspx",
+      "pr_rss_url": "https://investor.pumabiotechnology.com/rss/news-releases.xml"
+    },
+    "PCRX": {
+      "ir_url": "https://investor.pacira.com/events",
+      "pr_rss_url": "https://investor.pacira.com/rss/news-releases.xml"
+    },
     "PCVX": {
       "ir_url": "https://investors.vaxcyte.com/events-and-presentations/",
       "pr_rss_url": "https://investors.vaxcyte.com/rss/news-releases.xml"
+    },
+    "PEPG": {
+      "pr_rss_url": "https://investors.pepgen.com/rss/news-releases.xml"
+    },
+    "PGEN": {
+      "ir_url": "https://investors.precigen.com/events-presentations",
+      "pr_rss_url": "https://investors.precigen.com/rss/news-releases.xml"
+    },
+    "PHAT": {
+      "pr_rss_url": "https://investors.phathompharma.com/rss/news-releases.xml"
+    },
+    "PHVS": {
+      "pr_rss_url": "https://ir.pharvaris.com/rss/news-releases.xml"
+    },
+    "PRAX": {
+      "ir_url": "https://investors.praxismedicines.com/events-and-presentations",
+      "pr_rss_url": "https://investors.praxismedicines.com/rss/news-releases.xml"
+    },
+    "PRLD": {
+      "pr_rss_url": "https://investors.preludetx.com/rss/news-releases.xml"
+    },
+    "PRME": {
+      "pr_rss_url": "https://investors.primemedicine.com/rss/news-releases.xml"
+    },
+    "PRQR": {
+      "ir_url": "https://ir.proqr.com/events-presentations"
+    },
+    "PRVA": {
+      "ir_url": "https://investors.priviahealth.com/events",
+      "pr_rss_url": "https://ir.priviahealth.com/rss/news-releases.xml"
+    },
+    "PSNL": {
+      "pr_rss_url": "https://investors.personalis.com/rss/news-releases.xml"
+    },
+    "PTCT": {
+      "ir_url": "https://ir.ptcbio.com/events-presentations",
+      "pr_rss_url": "https://ir.ptcbio.com/rss/news-releases.xml"
+    },
+    "PVLA": {
+      "pr_rss_url": "https://ir.palvellatx.com/rss/news-releases.xml"
+    },
+    "PYXS": {
+      "ir_url": "https://ir.pyxisoncology.com/events-and-presentations",
+      "pr_rss_url": "https://ir.pyxisoncology.com/rss/news-releases.xml"
+    },
+    "QSI": {
+      "ir_url": "https://ir.quantum-si.com/events-and-presentations/events",
+      "pr_rss_url": "https://ir.quantum-si.com/rss/news-releases.xml"
+    },
+    "QTRX": {
+      "pr_rss_url": "https://ir.quanterix.com/rss/news-releases.xml"
+    },
+    "RANI": {
+      "ir_url": "https://ir.ranitherapeutics.com/news-events/events",
+      "pr_rss_url": "https://ir.ranitherapeutics.com/rss/news-releases.xml"
+    },
+    "RAPP": {
+      "ir_url": "https://investors.rapportrx.com/news-events/events",
+      "pr_rss_url": "https://investors.rapportrx.com/rss/news-releases.xml"
+    },
+    "RAPT": {
+      "ir_url": "https://investors.rapt.com/events-and-presentations",
+      "pr_rss_url": "https://investors.rapt.com/rss/news-releases.xml"
+    },
+    "RARE": {
+      "ir_url": "https://ir.ultragenyx.com/events-presentations",
+      "pr_rss_url": "https://ir.ultragenyx.com/rss/news-releases.xml"
+    },
+    "RCKT": {
+      "ir_url": "https://ir.rocketpharma.com/events-presentations",
+      "pr_rss_url": "https://ir.rocketpharma.com/rss/news-releases.xml"
+    },
+    "REGN": {
+      "ir_url": "https://investor.regeneron.com/events-and-presentations/events-and-recent",
+      "pr_rss_url": "https://newsroom.regeneron.com/rss/news-releases.xml"
+    },
+    "REPL": {
+      "ir_url": "https://ir.replimune.com/events-and-presentations/events",
+      "pr_rss_url": "https://ir.replimune.com/rss/news-releases.xml"
+    },
+    "RGNX": {
+      "ir_url": "https://ir.regenxbio.com/events",
+      "pr_rss_url": "https://ir.regenxbio.com/rss/news-releases.xml"
+    },
+    "RLAY": {
+      "pr_rss_url": "https://ir.relaytx.com/rss/news-releases.xml"
+    },
+    "ROIV": {
+      "ir_url": "https://investor.roivant.com/news-events/events",
+      "pr_rss_url": "https://investor.roivant.com/rss/news-releases.xml"
+    },
+    "RVMD": {
+      "ir_url": "https://ir.revmed.com/events-and-presentations",
+      "pr_rss_url": "https://ir.revmed.com/rss/news-releases.xml"
+    },
+    "RXRX": {
+      "ir_url": "https://ir.recursion.com/events",
+      "pr_rss_url": "https://ir.recursion.com/rss/news-releases.xml"
+    },
+    "RYTM": {
+      "ir_url": "https://ir.rhythmtx.com/events-presentations",
+      "pr_rss_url": "https://ir.rhythmtx.com/rss/news-releases.xml"
+    },
+    "SABS": {
+      "ir_url": "https://ir.sabbiotherapeutics.com/news-events/events"
+    },
+    "SANA": {
+      "ir_url": "https://ir.sana.com/events-and-presentations",
+      "pr_rss_url": "https://ir.sana.com/rss/news-releases.xml"
+    },
+    "SEPN": {
+      "ir_url": "https://ir.septerna.com/events-presentations",
+      "pr_rss_url": "https://ir.septerna.com/rss/news-releases.xml"
+    },
+    "SGMO": {
+      "ir_url": "https://investor.sangamo.com/events-and-presentations",
+      "pr_rss_url": "https://investor.sangamo.com/rss/news-releases.xml"
+    },
+    "SGMT": {
+      "ir_url": "https://ir.sagimet.com/events-and-presentations",
+      "pr_rss_url": "https://ir.sagimet.com/rss/news-releases.xml"
+    },
+    "SION": {
+      "ir_url": "https://investors.sionnatx.com/news-events/events",
+      "pr_rss_url": "https://investors.sionnatx.com/rss/news-releases.xml"
+    },
+    "SLDB": {
+      "ir_url": "https://investors.solidbio.com/events-and-presentations",
+      "pr_rss_url": "https://investors.solidbio.com/rss/news-releases.xml"
+    },
+    "SNDX": {
+      "ir_url": "https://ir.syndax.com/events-presentations",
+      "pr_rss_url": "https://ir.syndax.com/rss/news-releases.xml"
+    },
+    "SPRY": {
+      "ir_url": "https://ir.ars-pharma.com/events-and-presentations",
+      "pr_rss_url": "https://ir.ars-pharma.com/rss/news-releases.xml"
+    },
+    "SRRK": {
+      "ir_url": "https://investors.scholarrock.com/events",
+      "pr_rss_url": "https://investors.scholarrock.com/rss/news-releases.xml"
+    },
+    "SRZN": {
+      "ir_url": "https://investors.surrozen.com/events-presentations"
+    },
+    "STOK": {
+      "ir_url": "https://investor.stoketherapeutics.com/events-and-presentations",
+      "pr_rss_url": "https://investor.stoketherapeutics.com/rss/news-releases.xml"
+    },
+    "STRO": {
+      "ir_url": "https://ir.sutrobio.com/events-presentations"
+    },
+    "SUPN": {
+      "ir_url": "https://ir.supernus.com/events-and-presentations",
+      "pr_rss_url": "https://ir.supernus.com/rss/news-releases.xml"
+    },
+    "SYRE": {
+      "ir_url": "https://ir.spyre.com/events-and-presentations",
+      "pr_rss_url": "https://ir.spyre.com/rss/news-releases.xml"
+    },
+    "TARA": {
+      "pr_rss_url": "https://ir.protaratx.com/rss/news-releases.xml"
+    },
+    "TARS": {
+      "ir_url": "https://ir.tarsusrx.com/events-and-presentations/events",
+      "pr_rss_url": "https://ir.tarsusrx.com/rss/news-releases.xml"
+    },
+    "TBPH": {
+      "ir_url": "https://investor.theravance.com/events-and-presentations",
+      "pr_rss_url": "https://investor.theravance.com/rss/news-releases.xml"
+    },
+    "TCRX": {
+      "pr_rss_url": "https://ir.tscan.com/rss/news-releases.xml"
+    },
+    "TECX": {
+      "ir_url": "https://investors.tectonictx.com/events-and-presentations",
+      "pr_rss_url": "https://investors.tectonictx.com/rss/news-releases.xml"
+    },
+    "TEM": {
+      "pr_rss_url": "https://investors.tempus.com/rss/news-releases.xml"
+    },
+    "TENX": {
+      "ir_url": "https://investors.tenaxthera.com/events-and-presentations",
+      "pr_rss_url": "https://investors.tenaxthera.com/rss/news-releases.xml"
+    },
+    "TERN": {
+      "ir_url": "https://ir.ternspharma.com/events-and-presentations",
+      "pr_rss_url": "https://ir.ternspharma.com/rss/news-releases.xml"
+    },
+    "TGTX": {
+      "ir_url": "https://ir.tgtherapeutics.com/events",
+      "pr_rss_url": "https://ir.tgtherapeutics.com/rss/news-releases.xml"
+    },
+    "TKNO": {
+      "pr_rss_url": "https://ir.teknova.com/rss/news-releases.xml"
+    },
+    "TNGX": {
+      "pr_rss_url": "https://ir.tangotx.com/rss/news-releases.xml"
+    },
+    "TNYA": {
+      "ir_url": "https://investors.tenayatherapeutics.com/events-and-presentations/events",
+      "pr_rss_url": "https://investors.tenayatherapeutics.com/rss/news-releases.xml"
+    },
+    "TRDA": {
+      "ir_url": "https://ir.entradatx.com/events-and-presentations",
+      "pr_rss_url": "https://ir.entradatx.com/rss/news-releases.xml"
+    },
+    "TRVI": {
+      "ir_url": "https://ir.trevitherapeutics.com/events-presentations",
+      "pr_rss_url": "https://ir.trevitherapeutics.com/rss/news-releases.xml"
+    },
+    "TSHA": {
+      "pr_rss_url": "https://ir.tayshagtx.com/rss/news-releases.xml"
+    },
+    "TWST": {
+      "ir_url": "https://investors.twistbioscience.com/events-and-presentations",
+      "pr_rss_url": "https://investors.twistbioscience.com/rss/news-releases.xml"
+    },
+    "TYRA": {
+      "ir_url": "https://ir.tyra.bio/events",
+      "pr_rss_url": "https://ir.tyra.bio/rss/news-releases.xml"
+    },
+    "UPB": {
+      "ir_url": "https://investors.upstreambio.com/news-events/events",
+      "pr_rss_url": "https://investors.upstreambio.com/rss/news-releases.xml"
+    },
+    "URGN": {
+      "ir_url": "https://investors.urogen.com/events-and-presentations",
+      "pr_rss_url": "https://investors.urogen.com/rss/news-releases.xml"
+    },
+    "UTHR": {
+      "ir_url": "https://ir.unither.com/events-and-presentations"
+    },
+    "VCEL": {
+      "ir_url": "https://investors.vcel.com/events-presentations",
+      "pr_rss_url": "https://investors.vcel.com/rss/news-releases.xml"
+    },
+    "VCYT": {
+      "ir_url": "https://investor.veracyte.com/events-presentations",
+      "pr_rss_url": "https://investor.veracyte.com/rss/news-releases.xml"
+    },
+    "VERA": {
+      "pr_rss_url": "https://ir.veratx.com/rss/news-releases.xml"
+    },
+    "VKTX": {
+      "ir_url": "https://ir.vikingtherapeutics.com/news-and-events/events-calendar"
+    },
+    "VOR": {
+      "ir_url": "https://ir.vorbio.com/events-presentations",
+      "pr_rss_url": "https://ir.vorbio.com/rss/news-releases.xml"
+    },
+    "VRTX": {
+      "ir_url": "https://investors.vrtx.com/events-presentations",
+      "pr_rss_url": "https://investors.vrtx.com/rss/news-releases.xml?items=15"
+    },
+    "VTRS": {
+      "ir_url": "https://investor.viatris.com/events-and-presentations",
+      "pr_rss_url": "https://investor.viatris.com/rss/news-releases.xml"
+    },
+    "VTYX": {
+      "pr_rss_url": "https://ir.ventyxbio.com/rss/news-releases.xml"
+    },
+    "VYGR": {
+      "ir_url": "https://ir.voyagertherapeutics.com/events-presentations",
+      "pr_rss_url": "https://ir.voyagertherapeutics.com/rss/news-releases.xml"
+    },
+    "WVE": {
+      "pr_rss_url": "https://ir.wavelifesciences.com/rss/news-releases.xml"
+    },
+    "XENE": {
+      "pr_rss_url": "https://investor.xenon-pharma.com/rss/news-releases.xml"
+    },
+    "XERS": {
+      "ir_url": "https://investors.xerispharma.com/events-and-presentations/events",
+      "pr_rss_url": "https://investors.xerispharma.com/rss/news-releases.xml"
+    },
+    "XNCR": {
+      "ir_url": "https://investors.xencor.com/events-and-presentations",
+      "pr_rss_url": "https://investors.xencor.com/rss/news-releases.xml"
+    },
+    "ZBIO": {
+      "ir_url": "https://investors.zenasbio.com/events-and-presentations",
+      "pr_rss_url": "https://investors.zenasbio.com/rss/news-releases.xml"
+    },
+    "ZLAB": {
+      "pr_rss_url": "https://ir.zailaboratory.com/rss/news-releases.xml"
+    },
+    "ZVRA": {
+      "ir_url": "https://investors.zevra.com/events-and-presentations",
+      "pr_rss_url": "https://investors.zevra.com/rss/news-releases.xml"
+    },
+    "ZYME": {
+      "ir_url": "https://ir.zymeworks.com/events-and-presentations",
+      "pr_rss_url": "https://ir.zymeworks.com/rss/news-releases.xml"
     }
   }
 }
