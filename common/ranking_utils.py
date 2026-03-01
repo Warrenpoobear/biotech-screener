@@ -155,3 +155,17 @@ def backfill_columns(rows: List[Dict[str, str]]) -> None:
     if "catalyst_mode" not in sample:
         for r in rows:
             r["catalyst_mode"] = r.get("de_catalyst_mode", "") or ""
+
+    # Clinical Calendar Alpha v2 backfill defaults
+    if "clinical_score_v2" not in sample:
+        for r in rows:
+            r["clinical_score_v2"] = r.get("clinical_score", "")
+    if "competitive_intensity_z" not in sample:
+        for r in rows:
+            r["competitive_intensity_z"] = "0"
+    if "sizing_multiplier_clinical" not in sample:
+        for r in rows:
+            r["sizing_multiplier_clinical"] = "1.0"
+    if "clinical_score_v2_z" not in sample:
+        for r in rows:
+            r["clinical_score_v2_z"] = "0"

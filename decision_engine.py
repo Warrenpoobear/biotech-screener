@@ -128,6 +128,14 @@ class DecisionRuleset:
     institutional_sort_weight: float = 0.3
     institutional_positive_only: bool = True
 
+    # Clinical Calendar Alpha v2 sort tilt (opt-in, default OFF)
+    # When enabled, blends clinical_score_v2_z into sort anchor,
+    # following the institutional/coinvest pattern. Positive-only default.
+    enable_calendar_alpha_sort: bool = False
+    calendar_alpha_sort_weight: float = 0.5
+    # Clinical Calendar Alpha v2 sizing (opt-in, default OFF)
+    enable_clinical_sizing: bool = False
+
     # Far-horizon catalyst (opt-in, off by default; set far_window_days > 0 to enable)
     far_window_days: int = 0                          # max PCD horizon for far_window mode (0 = off)
     far_window_decay_mult: float = 0.15               # catalyst_decay_w for far_window tickers
@@ -1179,6 +1187,7 @@ _EXTERNAL_SORT_FIELDS: frozenset = frozenset({
     "coinvest_score_z",
     "inst_delta_z",
     "stage_bucket",
+    "clinical_score_v2_z",
 })
 
 
@@ -1310,6 +1319,15 @@ def compute_actionable_sort_key(
             iz_eff = max(-2.0, min(2.0, iz))
         inst_adj = rs.institutional_sort_weight * iz_eff
 
+    # Calendar Alpha v2 sort tilt: blended into anchor (same pattern).
+    # Uses cross-sectional z-score of clinical_score_v2.
+    # Positive-only: only boosts high-v2 names, never penalises low.
+    cal_adj = 0.0
+    if rs.enable_calendar_alpha_sort:
+        cv2_z = _safe_float(decision_fields.get("clinical_score_v2_z"), default=0.0)
+        cv2_eff = min(2.0, max(0.0, cv2_z))  # positive-only
+        cal_adj = rs.calendar_alpha_sort_weight * cv2_eff
+
     # Alpha modifier signal (0.0 when mode=off or missing)
     _alpha_sig = _safe_float(alpha_raw, default=0.0)
 
@@ -1322,7 +1340,7 @@ def compute_actionable_sort_key(
 
     if mode == "tiebreaker":
         # anchor dominates after tier; priority only breaks ties
-        effective_comp_rank = anchor - clin_adj - coinvest_adj - inst_adj - _alpha_within
+        effective_comp_rank = anchor - clin_adj - coinvest_adj - inst_adj - cal_adj - _alpha_within
         return prefix + (
             effective_comp_rank,  # anchor with clinical tilt + alpha within_tier
             missing_count,  # fewer missing components first
@@ -1340,7 +1358,7 @@ def compute_actionable_sort_key(
         # Build bonus map from ruleset tuples
         bonus_map = dict(rs.catalyst_priority_rank_bonuses)
         bonus = bonus_map.get(cat_priority, 0.0)
-        effective_comp_rank = anchor - bonus - clin_adj - coinvest_adj - inst_adj - _alpha_within
+        effective_comp_rank = anchor - bonus - clin_adj - coinvest_adj - inst_adj - cal_adj - _alpha_within
         return prefix + (
             effective_comp_rank,  # anchor with bonus + clinical tilt + alpha within_tier
             missing_count,        # fewer missing components first
@@ -1355,7 +1373,7 @@ def compute_actionable_sort_key(
         )
 
     # mode == "off" (default)
-    effective_opt_neg = opt_neg - clin_adj - coinvest_adj - inst_adj - _alpha_within  # higher z → more negative → sorts earlier
+    effective_opt_neg = opt_neg - clin_adj - coinvest_adj - inst_adj - cal_adj - _alpha_within  # higher z → more negative → sorts earlier
     return prefix + (
         cat_priority,       # 0 (neutral) — no effect on ordering
         cat_mode_ord,       # specific < blended < no_upcoming < missing

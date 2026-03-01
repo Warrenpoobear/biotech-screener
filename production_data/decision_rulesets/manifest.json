@@ -84,14 +84,14 @@
       "updated_at": "2026-02-14T00:00:00Z"
     },
     {
-      "id": "80937e07",
+      "id": "cdd0661d",
       "file": "v1.json",
-      "created_at": "2026-02-25",
+      "created_at": "2026-03-01",
       "engine_version": "v1.3.0",
-      "description": "Defaults + adaptive alpha training + alpha modifier fields",
+      "description": "Defaults + adaptive alpha training + alpha modifier + calendar alpha v2 fields",
       "status": "retired",
       "requires_replay": false,
-      "notes": "Schema expansion from f94f2ef1: added alpha_modifier_mode=off, alpha_modifier_weight=0.0. No behavioral change (mode=off is default). Supersedes f94f2ef1 (alpha training fields).",
+      "notes": "Schema expansion: added enable_calendar_alpha_sort=false, calendar_alpha_sort_weight=0.5, enable_clinical_sizing=false. No behavioral change (all off by default). Supersedes 80937e07.",
       "updated_by": "manual_bootstrap",
       "updated_at": "2026-02-25T00:00:00Z"
     },

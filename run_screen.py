@@ -1410,6 +1410,22 @@ SNAPSHOT_COLUMNS = [
     "valuation_score",
     "clinical_score",
     "financial_score",
+    # --- Clinical Calendar Alpha v2 (informational, sort/sizing off by default) ---
+    "clinical_score_v2",
+    "lead_program_phase",
+    "lead_program_readout_days",
+    "program_count",
+    "program_diversification",
+    "readout_curve_score",
+    "readout_density_90",
+    "late_stage_readouts_180",
+    "execution_momentum",
+    "design_quality_score",
+    "endpoint_strength_score",
+    "therapeutic_area",
+    "competitive_intensity_z",
+    "crowding_level",
+    "sizing_multiplier_clinical",
     # --- Legacy Module 5 composite fields (far right) ---
     "composite_rank",
     "composite_score",
@@ -3262,6 +3278,125 @@ def save_validation_snapshot(
 
     # NOTE: clinical_score_z_tier computed AFTER DE loop (needs tier_dev + tier_commercial)
     from collections import defaultdict as _defaultdict
+
+    # --- Clinical Calendar Alpha v2 features ---
+    if trial_records:
+        from common.clinical_calendar_alpha import (
+            compute_program_features,
+            compute_readout_density,
+            compute_execution_momentum,
+            compute_design_quality,
+            compute_endpoint_strength,
+            compute_competitive_intensity,
+            compose_clinical_score_v2,
+            CalendarAlphaConfig,
+            z_score_dict,
+        )
+        _active_tickers = [r.get("ticker", "") for r in csv_rows if r.get("ticker")]
+        _ccav2_program = compute_program_features(trial_records, as_of_date)
+        _ccav2_readout = compute_readout_density(trial_records, as_of_date)
+        _ccav2_design = compute_design_quality(trial_records, as_of_date)
+        _ccav2_endpoint = compute_endpoint_strength(trial_records, as_of_date)
+
+        # Prior trial loading for execution momentum
+        _prior_trials = None
+        _ctgov_root = Path(__file__).parent / "cache" / "ctgov"
+        if _ctgov_root.is_dir():
+            import re as _re_mod
+            _date_files = sorted(
+                [f.stem.replace("trial_records_", "")
+                 for f in _ctgov_root.glob("trial_records_*.json")
+                 if _re_mod.match(r"^trial_records_\d{4}-\d{2}-\d{2}\.json$", f.name)],
+                reverse=True,
+            )
+            _prior_date = next((d for d in _date_files if d < as_of_date), None)
+            if _prior_date:
+                _prior_path = _ctgov_root / f"trial_records_{_prior_date}.json"
+                try:
+                    import json as _json_mod
+                    with open(_prior_path) as _pf:
+                        _prior_trials = _json_mod.load(_pf)
+                    logger.info(f"  Calendar Alpha v2: prior trials loaded from {_prior_date}")
+                except Exception as _pt_err:
+                    logger.warning(f"  Calendar Alpha v2: failed to load prior trials: {_pt_err}")
+
+        _ccav2_momentum = compute_execution_momentum(trial_records, _prior_trials, as_of_date)
+
+        # Competitive intensity (build landscape once, score all tickers)
+        try:
+            _ccav2_competition = compute_competitive_intensity(
+                trial_records, _active_tickers, as_of_date,
+            )
+        except Exception as _comp_err:
+            logger.warning(f"  Calendar Alpha v2: competitive intensity failed: {_comp_err}")
+            _ccav2_competition = {}
+
+        # Cross-sectional z-scores for composition
+        _z_rc = z_score_dict({tk: v["readout_curve_score"] for tk, v in _ccav2_readout.items()})
+        _z_rd = z_score_dict({tk: v.get("readout_density_90", 0) for tk, v in _ccav2_readout.items()})
+        _z_mom = z_score_dict({tk: v["execution_momentum_score"] for tk, v in _ccav2_momentum.items()})
+        _z_des = z_score_dict({tk: v["design_quality_score"] for tk, v in _ccav2_design.items()})
+        _z_ep = z_score_dict({tk: v["endpoint_strength_score"] for tk, v in _ccav2_endpoint.items()})
+        # competition z already computed inside compute_competitive_intensity
+
+        _ccav2_config = CalendarAlphaConfig()
+
+        # Compose v2 score and write columns into csv_rows
+        _ccav2_count = 0
+        for row in csv_rows:
+            tk = row.get("ticker", "").upper()
+            if not tk:
+                continue
+
+            prog = _ccav2_program.get(tk, {})
+            rd = _ccav2_readout.get(tk, {})
+            mom = _ccav2_momentum.get(tk, {})
+            des = _ccav2_design.get(tk, {})
+            ep = _ccav2_endpoint.get(tk, {})
+            comp = _ccav2_competition.get(tk, {})
+
+            # Merge features for compose call
+            merged = {}
+            merged.update(prog)
+            merged.update(rd)
+            merged.update(mom)
+            merged.update(des)
+            merged.update(ep)
+            merged.update(comp)
+
+            # Base clinical_score
+            cs_raw = row.get("clinical_score")
+            cs = float(cs_raw) if cs_raw is not None and cs_raw != "" else None
+
+            v2_score, sizing_mult, _tags = compose_clinical_score_v2(
+                cs, merged, _ccav2_config,
+                z_readout_curve=_z_rc.get(tk, 0.0),
+                z_readout_density=_z_rd.get(tk, 0.0),
+                z_momentum=_z_mom.get(tk, 0.0),
+                z_design=_z_des.get(tk, 0.0),
+                z_endpoint=_z_ep.get(tk, 0.0),
+                z_competition=comp.get("competitive_intensity_z", 0.0),
+            )
+
+            row["clinical_score_v2"] = v2_score if v2_score is not None else ""
+            row["lead_program_phase"] = prog.get("lead_program_phase", "")
+            row["lead_program_readout_days"] = prog.get("lead_program_readout_days") if prog.get("lead_program_readout_days") is not None else ""
+            row["program_count"] = prog.get("program_count", "")
+            row["program_diversification"] = prog.get("program_diversification_score", "")
+            row["readout_curve_score"] = rd.get("readout_curve_score", "")
+            row["readout_density_90"] = rd.get("readout_density_90", "")
+            row["late_stage_readouts_180"] = rd.get("late_stage_readouts_180", "")
+            row["execution_momentum"] = mom.get("execution_momentum_score", "")
+            row["design_quality_score"] = des.get("design_quality_score", "")
+            row["endpoint_strength_score"] = ep.get("endpoint_strength_score", "")
+            row["therapeutic_area"] = ep.get("therapeutic_area", "")
+            row["competitive_intensity_z"] = comp.get("competitive_intensity_z", "")
+            row["crowding_level"] = comp.get("crowding_level", "")
+            row["sizing_multiplier_clinical"] = sizing_mult
+            if v2_score is not None:
+                _ccav2_count += 1
+
+        logger.info(f"  Calendar Alpha v2: {_ccav2_count} tickers scored")
 
     # --- Compute commercial_quality_pct (percentile within commercial cohort) ---
     _CQ_WEIGHTS = {"financial": 0.45, "valuation": 0.35, "momentum": 0.20}
