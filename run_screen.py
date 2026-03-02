@@ -2807,25 +2807,11 @@ def _ensure_defaults(csv_rows, defaults=_ALWAYS_NUMERIC_DEFAULTS):
             row.setdefault(flag, flag_default)
 
 
-def _check_artifact_marker(dated_path: Path) -> tuple:
-    """Check if an artifact provenance marker exists and matches.
-
-    Returns ``(marker_present, marker_valid, marker_data)`` where
-    *marker_valid* means the marker SHA-256 matches the file on disk.
-    """
-    import hashlib as _hl
-    marker_path = dated_path.with_suffix(".artifact.json")
-    if not marker_path.exists():
-        return False, False, None
-    try:
-        marker = json.loads(marker_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return True, False, None
-    expected_sha = marker.get("sha256", "")
-    if not expected_sha or not dated_path.exists():
-        return True, False, marker
-    actual_sha = _hl.sha256(dated_path.read_bytes()).hexdigest()
-    return True, actual_sha == expected_sha, marker
+# Alpha table resolution — delegated to common.alpha_table
+from common.alpha_table import (
+    check_artifact_marker as _check_artifact_marker,
+    resolve_alpha_table_path as _resolve_alpha_table_path_shared,
+)
 
 
 def _resolve_alpha_table_path(
@@ -2833,67 +2819,16 @@ def _resolve_alpha_table_path(
     as_of_date: str,
     logger: logging.Logger,
 ) -> tuple:
-    """Resolve alpha cohort table path based on rebuild policy.
+    """Thin wrapper preserving the original 3-arg call signature.
 
-    Policies:
-      - "never": use static ``alpha_cohort_table_path`` from ruleset (legacy)
-      - "if_missing": build OOS table only if dated path does not exist
-      - "daily": rebuild OOS table every run
-
-    Returns ``(resolved_path, source_tag)`` where *source_tag* is one of:
-      ``"artifact"`` — CI-fetched table with valid provenance marker
-      ``"preexisting_local"`` — dated file exists without marker
-      ``"rebuilt_in_run"`` — built OOS in this process
-      ``"static_fallback"`` — fell back to the static table
-      ``"static"`` — policy is "never" (always uses static)
+    Derives project_root from ``__file__`` at call time (not import time)
+    so tests can monkeypatch ``run_screen.__file__``.
     """
-    project_root = Path(__file__).resolve().parent
-    policy = ruleset.alpha_table_rebuild_policy
-
-    if policy == "never":
-        return project_root / ruleset.alpha_cohort_table_path, "static"
-
-    # daily / if_missing: target path includes date
-    daily_dir = project_root / "production_data" / "alpha_cohort_tables" / "daily"
-    dated_path = daily_dir / f"v1_{as_of_date}.json"
-
-    if policy == "if_missing" and dated_path.exists():
-        marker_present, marker_valid, _ = _check_artifact_marker(dated_path)
-        if marker_present and marker_valid:
-            source = "artifact"
-        else:
-            source = "preexisting_local"
-        logger.info(f"  Alpha table (if_missing): reusing {dated_path} [source={source}]")
-        return dated_path, source
-
-    # Build OOS table in-process
-    logger.info(
-        f"  Alpha table ({policy}): building OOS table for {as_of_date} "
-        f"(mode={ruleset.alpha_train_mode}, horizon={ruleset.alpha_train_horizon})"
+    import run_screen as _self_mod
+    project_root = Path(_self_mod.__file__).resolve().parent
+    return _resolve_alpha_table_path_shared(
+        ruleset, as_of_date, project_root, logger,
     )
-    from scripts.build_alpha_cohort_table_oos import build_oos_table, write_table_with_marker
-
-    table = build_oos_table(
-        as_of_date=as_of_date,
-        train_mode=ruleset.alpha_train_mode,
-        horizon=ruleset.alpha_train_horizon,
-        min_train_dates=ruleset.alpha_train_min_train_dates,
-        shrink_k=ruleset.alpha_cohort_shrink_k,
-    )
-
-    if table is None:
-        logger.warning(
-            "  Alpha table rebuild returned None (insufficient data) — "
-            "falling back to static table"
-        )
-        return project_root / ruleset.alpha_cohort_table_path, "static_fallback"
-
-    # Write table + provenance marker
-    write_table_with_marker(
-        table, dated_path, as_of_date=as_of_date, source="rebuilt_in_run",
-    )
-    logger.info(f"  Alpha table: wrote {dated_path} + marker")
-    return dated_path, "rebuilt_in_run"
 
 
 def _compute_alpha_modifier_ab(

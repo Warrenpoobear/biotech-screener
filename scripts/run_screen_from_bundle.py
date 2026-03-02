@@ -17,6 +17,7 @@ import argparse
 import csv
 import hashlib
 import json
+import logging
 import math
 import statistics
 import sys
@@ -736,6 +737,25 @@ def _tier_group_for_z(archetype: str, tier_dev: str, tier_commercial: str) -> st
     return f"{archetype}_"
 
 
+def _resolve_alpha_table_for_bundle(
+    as_of_date: str,
+    ruleset: Any,
+) -> Tuple[Path, str]:
+    """Resolve alpha cohort table path for a PIT bundle date.
+
+    Delegates to the shared resolver in ``common.alpha_table``, with
+    ``allow_rebuild=False`` (batch bundle runs should not build OOS
+    tables in-process — use prebuilt per-date tables or nearest earlier).
+    """
+    from common.alpha_table import resolve_alpha_table_path
+
+    _logger = logging.getLogger("run_screen_from_bundle.alpha")
+    return resolve_alpha_table_path(
+        ruleset, as_of_date, _PROJECT_ROOT, _logger,
+        allow_rebuild=False,
+    )
+
+
 def run_screen_for_date(
     as_of_date: str,
     clinical: dict,
@@ -981,10 +1001,14 @@ def run_screen_for_date(
     )
 
     # --- Alpha cohort scoring ---
+    # Resolve per-date OOS table when available (PIT-safe); fall back to static.
+    _alpha_table_source = "none"
+    _alpha_table_path_resolved = ""
     try:
-        table_path = Path(ruleset.alpha_cohort_table_path)
-        if not table_path.is_absolute():
-            table_path = _PROJECT_ROOT / table_path
+        table_path, _alpha_table_source = _resolve_alpha_table_for_bundle(
+            as_of_date, ruleset,
+        )
+        _alpha_table_path_resolved = str(table_path)
         table = load_alpha_cohort_table(table_path)
         attach_alpha_scores(
             rows, table,
@@ -1002,7 +1026,7 @@ def run_screen_for_date(
     # --- Composite rank override for alpha_cohort engine ---
     if ruleset.composite_engine == "alpha_cohort":
         # Sort by alpha_cohort_raw DESC, ticker ASC → assign composite_rank
-        rows_sorted = sorted(rows, key=lambda r: (-(r.get("alpha_cohort_raw") or 0.0), r.get("ticker", "")))
+        rows_sorted = sorted(rows, key=lambda r: (-(_safe_float(r.get("alpha_cohort_raw")) or 0.0), r.get("ticker", "")))
         n = len(rows_sorted)
         for i, r in enumerate(rows_sorted, start=1):
             r["composite_rank"] = i
@@ -1058,6 +1082,8 @@ def run_screen_for_date(
         },
         "pit_quality": pq,
         "bundle_manifest_schema": manifest.get("schema_version", ""),
+        "alpha_table_source": _alpha_table_source,
+        "alpha_table_path_resolved": _alpha_table_path_resolved,
     }
 
     return rows, metadata
@@ -1251,6 +1277,12 @@ def main() -> None:
     )
     parser.add_argument("--date-from", type=str, default=None)
     parser.add_argument("--date-to", type=str, default=None)
+    parser.add_argument(
+        "--alpha-table-policy",
+        choices=["never", "if_missing", "daily"],
+        default="if_missing",
+        help="Alpha table rebuild policy (default: if_missing for PIT safety)",
+    )
 
     args = parser.parse_args()
 
@@ -1272,7 +1304,14 @@ def main() -> None:
             ruleset = DecisionRuleset.from_json(str(default_rs))
         else:
             ruleset = DecisionRuleset()
+    # Override alpha table policy from CLI (default: if_missing for PIT safety)
+    import dataclasses
+    ruleset = dataclasses.replace(
+        ruleset,
+        alpha_table_rebuild_policy=args.alpha_table_policy,
+    )
     print(f"Ruleset: {ruleset.ruleset_id}", file=sys.stderr)
+    print(f"Alpha table policy: {ruleset.alpha_table_rebuild_policy}", file=sys.stderr)
 
     # Load shared data
     print("Loading universe...", file=sys.stderr)
