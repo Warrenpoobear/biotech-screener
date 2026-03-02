@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Generate PIT-lite monthly archives from 2020-01 through present.
+"""Generate PIT-lite monthly or weekly archives from 2020-01 through present.
 
 Uses run_screen.py --pit-mode degrade + archive_snapshot.py to build
-self-contained archives for each end-of-month date.
+self-contained archives for each end-of-period date.
 
 PIT caveat: fundamentals/trials/13F use current-state production_data.
 Prices/timing are true as-of.  This is "PIT-lite".
 
 Usage:
     python scripts/generate_monthly_archives.py
+    python scripts/generate_monthly_archives.py --grid weekly
     python scripts/generate_monthly_archives.py --start 2020-01 --end 2023-12
     python scripts/generate_monthly_archives.py --dry-run
     python scripts/generate_monthly_archives.py --single 2020-01-31
@@ -17,12 +18,13 @@ from __future__ import annotations
 
 import argparse
 import calendar
+import csv
 import subprocess
 import sys
 import time
 from datetime import date, timedelta
 from pathlib import Path
-from typing import List
+from typing import Dict, List, Set
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -53,6 +55,52 @@ def generate_date_grid(
             m = 1
             y += 1
     return dates
+
+
+def _load_trading_dates(price_csv: Path) -> List[str]:
+    """Load unique sorted trading dates from price_history.csv."""
+    dates: Set[str] = set()
+    with open(price_csv, newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            d = (row.get("date") or "").strip()
+            if d:
+                dates.add(d)
+    return sorted(dates)
+
+
+def generate_weekly_grid(
+    start_ym: str, end_ym: str, price_csv: Path,
+) -> List[str]:
+    """Generate last-trading-day-per-ISO-week dates.
+
+    Uses actual trading dates from price_history.csv to find the
+    last trading day in each ISO week within the range.
+    """
+    trading_dates = _load_trading_dates(price_csv)
+    if not trading_dates:
+        return []
+
+    start_d = date(int(start_ym[:4]), int(start_ym[5:7]), 1)
+    # End at last day of end month
+    end_y, end_m = int(end_ym[:4]), int(end_ym[5:7])
+    end_d = date(end_y, end_m, calendar.monthrange(end_y, end_m)[1])
+
+    # Group trading dates by ISO year-week
+    by_week: Dict[str, List[str]] = {}
+    for ds in trading_dates:
+        d = date.fromisoformat(ds)
+        if d < start_d or d > end_d:
+            continue
+        iso = d.isocalendar()
+        wk = f"{iso[0]:04d}-W{iso[1]:02d}"
+        by_week.setdefault(wk, []).append(ds)
+
+    # Take last trading day per week
+    result: List[str] = []
+    for wk in sorted(by_week.keys()):
+        result.append(by_week[wk][-1])  # last = latest in week
+    return result
 
 
 def run_one_date(
@@ -119,12 +167,15 @@ def run_one_date(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Generate PIT-lite monthly archives",
+        description="Generate PIT-lite monthly or weekly archives",
     )
     parser.add_argument("--start", default="2020-01",
                         help="Start YYYY-MM (default: 2020-01)")
     parser.add_argument("--end", default="2026-02",
                         help="End YYYY-MM (default: 2026-02)")
+    parser.add_argument("--grid", default="monthly",
+                        choices=["monthly", "weekly"],
+                        help="Date grid: monthly or weekly (default: monthly)")
     parser.add_argument("--single", type=str, default=None,
                         help="Run a single date (YYYY-MM-DD)")
     parser.add_argument("--dry-run", action="store_true")
@@ -133,6 +184,7 @@ def main() -> None:
     args = parser.parse_args()
 
     data_dir = PROJECT_ROOT / "production_data"
+    price_csv = data_dir / "price_history.csv"
     snapshot_dir = PROJECT_ROOT / "data" / "snapshots"
     archive_dir = PROJECT_ROOT / "data" / "archives"
     output_dir = PROJECT_ROOT / "backfill_results"
@@ -143,6 +195,8 @@ def main() -> None:
 
     if args.single:
         dates = [args.single]
+    elif args.grid == "weekly":
+        dates = generate_weekly_grid(args.start, args.end, price_csv)
     else:
         dates = generate_date_grid(args.start, args.end)
 
@@ -155,9 +209,11 @@ def main() -> None:
         else:
             todo.append(d)
 
+    grid_label = args.grid.upper()
     print("=" * 70)
-    print("MONTHLY ARCHIVE GENERATION (PIT-lite)")
+    print(f"{grid_label} ARCHIVE GENERATION (PIT-lite)")
     print("=" * 70)
+    print(f"  Grid:        {args.grid}")
     print(f"  Date range:  {dates[0]} → {dates[-1]}")
     print(f"  Total dates: {len(dates)}")
     print(f"  To generate: {len(todo)}")
