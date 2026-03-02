@@ -148,6 +148,9 @@ production_data/price_history_split_adj.csv
 # --- Cache directories (regenerated at runtime) ---
 cache/
 .mcp.json
+data/snapshots/
+data/snapshots_pit/
+data/snapshots_reranked/
 data/snapshots_v3_tiltfix/
 data/grid_search/
 data/diag/
