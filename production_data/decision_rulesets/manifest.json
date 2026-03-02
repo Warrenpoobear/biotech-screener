@@ -221,11 +221,23 @@
       "created_at": "2026-03-02",
       "engine_version": "v1.3.0",
       "description": "Candidate: optionality sort anchor (sort_anchor=optionality_pct)",
-      "status": "active",
+      "status": "retired",
       "requires_replay": true,
       "notes": "E_optionality ablation: sort_anchor=optionality_pct. Backtest 63/84/126d (2020-2026, 347 dates): spread +2.68/+3.23/+3.78pp vs baseline +0.64/+0.31/+1.53pp; turnover -15% (0.088 vs 0.103); IC -0.023/-0.031/-0.044 vs -0.028/-0.035/-0.049. Beats E+B combined at 126d.",
       "updated_by": "promote_ruleset.py",
-      "updated_at": "2026-03-02T17:47:35Z"
+      "updated_at": "2026-03-02T18:51:49Z"
+    },
+    {
+      "id": "fb0af0ac",
+      "file": "v1.8.1_alpha_modifier_off.json",
+      "created_at": "2026-03-02",
+      "engine_version": "v1.3.0",
+      "description": "Simplification: alpha_modifier_mode=off (was within_tier w=0.05, proven zero-impact)",
+      "status": "active",
+      "requires_replay": false,
+      "notes": "5-way backtest 2020-2026 showed C_momentum_off==A_baseline exactly. Disabling within_tier at w=0.05 has no measurable effect on sort order. tiebreak mode is structurally dead. Ruleset-only change; no code behavior change.",
+      "updated_by": "promote_ruleset.py",
+      "updated_at": "2026-03-02T18:51:49Z"
     }
   ]
 }

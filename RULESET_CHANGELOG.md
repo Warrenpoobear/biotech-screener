@@ -6,6 +6,20 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.8.1] fb0af0ac — 2026-03-02 — Disable alpha_modifier (simplification)
+
+**Active ruleset change**: `873e65e0` (v1.8.0_optionality_anchor_candidate) → `fb0af0ac` (v1.8.1_alpha_modifier_off)
+
+**Parameters changed** (vs 873e65e0):
+- `alpha_modifier_mode`: `"within_tier"` → `"off"`
+- `alpha_modifier_weight`: `0.05` → `0.0`
+
+**Rationale**: 5-way backtest (2020–2026, 347 dates, 63/84/126 trading days) confirmed `C_momentum_off == A_baseline` exactly — `within_tier` at weight=0.05 produces zero measurable change in Top-K spread, Bottom-K, IC, or turnover. `tiebreak` mode is structurally dead (unique `alpha_cohort_pct` floats prevent ties at sort tuple position 3). Removing active config reduces future confusion.
+
+**Code**: deprecation comment added to `alpha_modifier_mode`/`alpha_modifier_weight` fields and `within_tier` branch in `decision_engine.py`. No behavioral change — branch is guarded by `weight > 0.0` condition.
+
+---
+
 ## [v1.8.0] 873e65e0 — 2026-03-02 — Optionality sort anchor (promoted)
 
 **Active ruleset change**: `31f399e0` (v1.7.0_calendar_alpha_sort) → `873e65e0` (v1.8.0_optionality_anchor_candidate)
