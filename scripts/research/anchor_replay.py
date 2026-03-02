@@ -127,6 +127,56 @@ def load_archive_rankings(tar_path: Path, date_str: str) -> List[Dict[str, str]]
         return []
 
 
+def discover_snapshots(
+    snapshot_root: Path,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    date_grid: str = "monthly",
+) -> List[Tuple[str, Path]]:
+    """Find PIT snapshot directories in date range."""
+    import re
+    pattern = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    all_snaps: List[Tuple[str, Path]] = []
+    for p in sorted(snapshot_root.iterdir()):
+        if not p.is_dir() or not pattern.match(p.name):
+            continue
+        if not (p / "rankings.csv").exists():
+            continue
+        d = p.name
+        if date_from and d < date_from:
+            continue
+        if date_to and d > date_to:
+            continue
+        all_snaps.append((d, p))
+
+    if date_grid == "all":
+        return all_snaps
+    if date_grid == "monthly":
+        by_month: Dict[str, Tuple[str, Path]] = {}
+        for d, p in all_snaps:
+            by_month[d[:7]] = (d, p)
+        return sorted(by_month.values(), key=lambda x: x[0])
+    if date_grid == "weekly":
+        from datetime import date as dt_date
+        by_week: Dict[str, Tuple[str, Path]] = {}
+        for d, p in all_snaps:
+            parts = d.split("-")
+            iso = dt_date(int(parts[0]), int(parts[1]), int(parts[2])).isocalendar()
+            wk = f"{iso[0]:04d}-W{iso[1]:02d}"
+            by_week[wk] = (d, p)
+        return sorted(by_week.values(), key=lambda x: x[0])
+    return all_snaps
+
+
+def load_snapshot_rankings(snap_dir: Path) -> List[Dict[str, str]]:
+    """Load rankings.csv from a PIT snapshot directory."""
+    csv_path = snap_dir / "rankings.csv"
+    if not csv_path.exists():
+        return []
+    with open(csv_path, newline="", encoding="utf-8-sig") as f:
+        return list(csv.DictReader(f))
+
+
 # ---------------------------------------------------------------------------
 # Price loading
 # ---------------------------------------------------------------------------
@@ -662,6 +712,8 @@ def main() -> None:
     )
     parser.add_argument("--archive-dir", type=Path,
                         default=PROJECT_ROOT / "data" / "archives")
+    parser.add_argument("--snapshot-root", type=Path, default=None,
+                        help="Use PIT snapshot dirs instead of archives")
     parser.add_argument("--price-csv", type=Path,
                         default=PROJECT_ROOT / "production_data" / "price_history.csv")
     parser.add_argument("--date-from", type=str, default="2020-01-31")
@@ -688,15 +740,26 @@ def main() -> None:
     horizons = [int(h.strip()) for h in args.horizons.split(",")]
     blend_weights = [float(w.strip()) for w in args.blend_weights.split(",")]
 
-    # ---- Discover archives ----
-    archives = discover_archives(
-        args.archive_dir, args.date_from, args.date_to, args.date_grid,
-    )
-    if not archives:
-        print("No archives found in range.")
-        return
-    print(f"Archives: {len(archives)} ({args.date_grid} grid, "
-          f"{archives[0][0]} → {archives[-1][0]})")
+    # ---- Discover data sources ----
+    use_snapshots = args.snapshot_root is not None
+    if use_snapshots:
+        archives = discover_snapshots(
+            args.snapshot_root, args.date_from, args.date_to, args.date_grid,
+        )
+        if not archives:
+            print("No PIT snapshots found in range.")
+            return
+        print(f"Snapshots: {len(archives)} ({args.date_grid} grid, "
+              f"{archives[0][0]} → {archives[-1][0]})")
+    else:
+        archives = discover_archives(
+            args.archive_dir, args.date_from, args.date_to, args.date_grid,
+        )
+        if not archives:
+            print("No archives found in range.")
+            return
+        print(f"Archives: {len(archives)} ({args.date_grid} grid, "
+              f"{archives[0][0]} → {archives[-1][0]})")
 
     # ---- Load prices ----
     print("Loading prices ...")
@@ -738,26 +801,29 @@ def main() -> None:
 
     print(f"Configs: {[c.label for c in configs]}")
 
-    # ---- Pre-build PIT alpha tables ----
-    print("\nPre-building PIT alpha tables ...")
+    # ---- Pre-build PIT alpha tables (skip for snapshot mode — already baked in) ----
     alpha_tables: Dict[str, Optional[dict]] = {}
-    for date_str, tar_path in archives:
-        t0 = time.time()
-        table = build_oos_table(
-            as_of_date=date_str,
-            train_mode="trailing-6",
-            horizon=84,
-            min_train_dates=6,
-            archive_dir=args.archive_dir,
-            price_csv=args.price_csv,
-        )
-        dt = time.time() - t0
-        if table is not None:
-            populated = sum(1 for c in table.get("cells", {}).values() if c.get("n", 0) > 0)
-            print(f"  {date_str}: {populated}/36 cells ({dt:.1f}s)")
-        else:
-            print(f"  {date_str}: NONE (insufficient training data) ({dt:.1f}s)")
-        alpha_tables[date_str] = table
+    if use_snapshots:
+        print("\nSnapshot mode: using pre-baked alpha scores (PIT-correct)")
+    else:
+        print("\nPre-building PIT alpha tables ...")
+        for date_str, tar_path in archives:
+            t0 = time.time()
+            table = build_oos_table(
+                as_of_date=date_str,
+                train_mode="trailing-6",
+                horizon=84,
+                min_train_dates=6,
+                archive_dir=args.archive_dir,
+                price_csv=args.price_csv,
+            )
+            dt = time.time() - t0
+            if table is not None:
+                populated = sum(1 for c in table.get("cells", {}).values() if c.get("n", 0) > 0)
+                print(f"  {date_str}: {populated}/36 cells ({dt:.1f}s)")
+            else:
+                print(f"  {date_str}: NONE (insufficient training data) ({dt:.1f}s)")
+            alpha_tables[date_str] = table
 
     # ---- Main evaluation loop ----
     print(f"\nEvaluating {len(configs)} configs × {len(archives)} dates ...")
@@ -780,29 +846,37 @@ def main() -> None:
     # Track by-date output
     all_by_date: Dict[str, Dict[str, Dict[str, Any]]] = {}
 
-    for date_str, tar_path in archives:
-        raw_rows = load_archive_rankings(tar_path, date_str)
+    for date_str, source_path in archives:
+        if use_snapshots:
+            raw_rows = load_snapshot_rankings(source_path)
+        else:
+            raw_rows = load_archive_rankings(source_path, date_str)
         if not raw_rows:
             print(f"  {date_str}: no rankings — skip")
             continue
 
         backfill_columns(raw_rows)
-        backfill_clinical_z_tier(raw_rows)
+        if not use_snapshots:
+            backfill_clinical_z_tier(raw_rows)
 
-        alpha_table = alpha_tables.get(date_str)
-        alpha_built = alpha_table is not None
-        if alpha_built:
-            attach_alpha_scores(
-                raw_rows, alpha_table,
-                shrink_k=base_rs.alpha_cohort_shrink_k,
-                clip_min=base_rs.alpha_cohort_clip_min,
-                clip_max=base_rs.alpha_cohort_clip_max,
-            )
+        if use_snapshots:
+            # PIT snapshots have PIT-correct alpha scores already baked in
+            alpha_built = True
         else:
-            for r in raw_rows:
-                r["alpha_cohort_raw"] = 0.0
-                r["alpha_cohort_pct"] = 0.5
-                r["alpha_cohort_key"] = "early|none|nonpos"
+            alpha_table = alpha_tables.get(date_str)
+            alpha_built = alpha_table is not None
+            if alpha_built:
+                attach_alpha_scores(
+                    raw_rows, alpha_table,
+                    shrink_k=base_rs.alpha_cohort_shrink_k,
+                    clip_min=base_rs.alpha_cohort_clip_min,
+                    clip_max=base_rs.alpha_cohort_clip_max,
+                )
+            else:
+                for r in raw_rows:
+                    r["alpha_cohort_raw"] = 0.0
+                    r["alpha_cohort_pct"] = 0.5
+                    r["alpha_cohort_key"] = "early|none|nonpos"
 
         date_entry: Dict[str, Dict[str, Any]] = {}
 
