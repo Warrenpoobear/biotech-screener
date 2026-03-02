@@ -722,6 +722,10 @@ def main() -> None:
                         choices=["monthly", "weekly", "all"],
                         help="Date sampling grid (default: monthly)")
     parser.add_argument("--horizons", type=str, default="20,60")
+    parser.add_argument("--alpha-table-horizon", type=int, default=None,
+                        help="Trading-day horizon for PIT alpha table build. "
+                             "Defaults to max(horizons). Pass explicitly to "
+                             "override (e.g. --alpha-table-horizon 84).")
     parser.add_argument("--top-k", type=int, default=20)
     parser.add_argument("--min-eval-dates", type=int, default=12,
                         help="Minimum eval dates with matured returns for reporting")
@@ -739,6 +743,7 @@ def main() -> None:
 
     horizons = [int(h.strip()) for h in args.horizons.split(",")]
     blend_weights = [float(w.strip()) for w in args.blend_weights.split(",")]
+    alpha_table_horizon = args.alpha_table_horizon if args.alpha_table_horizon is not None else max(horizons)
 
     # ---- Discover data sources ----
     use_snapshots = args.snapshot_root is not None
@@ -812,7 +817,7 @@ def main() -> None:
             table = build_oos_table(
                 as_of_date=date_str,
                 train_mode="trailing-6",
-                horizon=84,
+                horizon=alpha_table_horizon,
                 min_train_dates=6,
                 archive_dir=args.archive_dir,
                 price_csv=args.price_csv,

@@ -1445,6 +1445,9 @@ def evaluate(
                         "pct_ties": _round_opt(comp_pct_ties, 4),
                         "flat_signal": flat_signal,
                     }
+                    # Store full decile curve (d1=best-ranked .. d10=worst-ranked)
+                    for _di, _dv in enumerate(decile_means if not flat_signal else [], 1):
+                        _comp_row[f"d{_di}"] = _round_opt(_dv, 6)
                     # Coinvest staleness diagnostic
                     if col == "coinvest_score_z" and _coinvest_age_vals:
                         _comp_row["coinvest_staleness_days"] = _round_opt(
@@ -1733,7 +1736,7 @@ def _write_component_eval(
                   "n_with_signal",
                   "mean_return_top_decile", "mean_return_bottom_decile", "monotonic_slope",
                   "signal_stdev", "pct_ties", "flat_signal",
-                  "coinvest_staleness_days"]
+                  "coinvest_staleness_days"] + [f"d{i}" for i in range(1, 11)]
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, restval="")
         writer.writeheader()
@@ -1792,6 +1795,43 @@ def _write_component_eval(
     lines.append("")
     with open(md_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
+
+    # --- Decile curve summary (mean return per decile, averaged across dates) ---
+    decile_path = out_dir / "component_decile_curves.md"
+    dclines = [
+        "# Component Decile Return Curves",
+        "",
+        "Mean return per decile (D1=best-ranked → D10=worst-ranked), averaged across eval dates.",
+        "Only shown for components with real signal dispersion (non-flat).",
+        "",
+    ]
+    for h in horizons:
+        comps = sorted(set(r["component"] for r in component_results if r["horizon"] == h))
+        has_decile = [
+            comp for comp in comps
+            if any(f"d1" in r for r in agg[(h, comp)])
+        ]
+        if not has_decile:
+            continue
+        dclines.append(f"## Horizon {h}d")
+        dclines.append("")
+        header = "| Component | D1 (best) | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | D10 (worst) | D1−D10 |"
+        sep    = "|-----------|-----------|----|----|----|----|----|----|----|----|-------------|--------|"
+        dclines += [header, sep]
+        for comp in has_decile:
+            rows_with = [r for r in agg[(h, comp)] if "d1" in r]
+            if not rows_with:
+                continue
+            means = []
+            for di in range(1, 11):
+                vals = [r[f"d{di}"] for r in rows_with if r.get(f"d{di}") is not None]
+                means.append(statistics.mean(vals) if vals else None)
+            d1_d10 = (means[0] - means[9]) if (means[0] is not None and means[9] is not None) else None
+            cells = " | ".join(_fmt_pct(m) for m in means)
+            dclines.append(f"| {comp} | {cells} | {_fmt_pct(d1_d10)} |")
+        dclines.append("")
+    with open(decile_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(dclines))
 
 
 def _write_coinvest_audit(

@@ -33,9 +33,25 @@ from decision_engine import DecisionRuleset, compute_actionable_sort_key
 # Re-ranking
 # ---------------------------------------------------------------------------
 
-def rerank(rows: List[Dict[str, str]], ruleset: DecisionRuleset) -> List[Dict[str, str]]:
-    """Re-sort rows using the target ruleset and assign fresh actionable_rank."""
+def rerank(
+    rows: List[Dict[str, str]],
+    ruleset: DecisionRuleset,
+    col_aliases: Optional[Dict[str, str]] = None,
+) -> List[Dict[str, str]]:
+    """Re-sort rows using the target ruleset and assign fresh actionable_rank.
+
+    col_aliases: maps destination column → source column.  Before sorting,
+    each row's destination value is overwritten with the source value.
+    E.g. ``{"clinical_score_z_tier": "clinical_alpha_z"}`` routes the
+    clinical_alpha_z signal into the clinical-sort slot.
+    """
     backfill_columns(rows)
+
+    # Apply column aliases (pre-processing substitution for ablations)
+    if col_aliases:
+        for row in rows:
+            for dest, src in col_aliases.items():
+                row[dest] = row.get(src, "")
 
     # Sort using production-identical logic
     rows.sort(key=lambda r: compute_actionable_sort_key(
@@ -94,7 +110,26 @@ def main() -> None:
         "--min-cols", type=int, default=50,
         help="Skip snapshots with fewer than this many columns (default: 50)",
     )
+    parser.add_argument(
+        "--col-alias", action="append", default=[], metavar="DEST=SRC",
+        help="Substitute column values before ranking. Format: DEST=SRC. "
+             "E.g. --col-alias clinical_score_z_tier=clinical_alpha_z "
+             "routes clinical_alpha_z into the clinical-sort slot. "
+             "Can be repeated for multiple substitutions.",
+    )
     args = parser.parse_args()
+
+    # Parse column aliases
+    col_aliases: Optional[Dict[str, str]] = None
+    if args.col_alias:
+        col_aliases = {}
+        for alias in args.col_alias:
+            if "=" not in alias:
+                print(f"ERROR: --col-alias must be DEST=SRC, got: {alias!r}")
+                sys.exit(1)
+            dest, src = alias.split("=", 1)
+            col_aliases[dest.strip()] = src.strip()
+        print(f"Column aliases: {col_aliases}")
 
     # Load ruleset
     if args.ruleset:
@@ -143,7 +178,7 @@ def main() -> None:
             continue
 
         # Re-rank
-        rows = rerank(rows, ruleset)
+        rows = rerank(rows, ruleset, col_aliases=col_aliases)
 
         # Write output
         out_dir = args.out_root / snap_date

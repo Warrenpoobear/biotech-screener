@@ -6,6 +6,24 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.8.0] 873e65e0 — 2026-03-02 — Optionality sort anchor (promoted)
+
+**Active ruleset change**: `31f399e0` (v1.7.0_calendar_alpha_sort) → `873e65e0` (v1.8.0_optionality_anchor_candidate)
+
+**Sort anchor change**: `sort_anchor: "alpha_cohort"` → `"optionality_pct"`. Composite ranking now anchored to `clinical_optionality_pct_dev` (the dev-tier percentile rank of clinical optionality score) instead of the OOS alpha-cohort lookup table.
+
+**Promotion evidence** (weekly grid 2020–2026, 347 dates, horizons 63/84/126 trading days):
+- Top-K vs Bottom-K spread: **+2.68% / +3.23% / +3.78%** vs baseline +0.64% / +0.31% / +1.53%
+- Mean turnover: **0.087** vs baseline 0.103 (−15%)
+- Mean IC: −0.023 / −0.031 / −0.044 vs baseline −0.028 / −0.035 / −0.049
+- Sign mismatches: 99 / 106 / 119 vs baseline 133 / 128 / 124
+
+**E+B combined tested and rejected at 126d**: EB (optionality + clinical_alpha_z substitution) showed −2pp spread regression at 126d vs E alone; E is the consistent winner across all three horizons.
+
+**No code change**: only ruleset parameter change (`sort_anchor: "alpha_cohort" → "optionality_pct"`).
+
+---
+
 ## Registry 50b8d8deef73 — 2026-02-27 — Add financials_missing to eligibility codes
 
 Added `financials_missing` reason code to `_ELIGIBILITY_CODE_LIST` in
