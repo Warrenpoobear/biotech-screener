@@ -13,9 +13,9 @@ Configs:
 
 Promotion criteria (pre-registered):
   ΔIC(60d)  ≥ +0.005 vs A
-  ΔHit(60d) ≥ +5pp
+  ΔSpread(60d) ≥ +1.0% AND bootstrap 95% CI lower bound > 0
   Turnover not worse by > 0.05
-  Gates don't degrade
+  (Hit-rate, monotonicity reported but not binding)
 
 Usage:
     python scripts/research/anchor_replay.py \
@@ -363,6 +363,9 @@ class QuintileResult:
     q1_excess: Optional[float] = None
     q5_excess: Optional[float] = None
     n_ranked: int = 0
+    monotone: bool = False            # Q1>Q2>Q3>Q4>Q5
+    q1_gt_q5: bool = False            # Q1>Q5 (weak monotonicity)
+    slope: Optional[float] = None     # linear fit: quintile index vs return
 
 
 @dataclass
@@ -454,6 +457,11 @@ def evaluate_date(
                 end = start + bucket_size if qi < 4 else n_q
                 q_means.append(statistics.mean(ordered_rets[start:end]))
             uni_mean = statistics.mean(ordered_rets)
+            # Monotonicity: strict Q1>Q2>Q3>Q4>Q5
+            mono = all(q_means[i] > q_means[i + 1] for i in range(4))
+            # Slope: linear fit of quintile index (1..5) vs q_means
+            # x_mean=3, x_var=2, slope = sum((xi-3)*yi) / 10
+            slope = sum((i + 1 - 3) * q_means[i] for i in range(5)) / 10.0
             qr = QuintileResult(
                 q_means=q_means,
                 spread=q_means[0] - q_means[4],
@@ -461,6 +469,9 @@ def evaluate_date(
                 q1_excess=q_means[0] - uni_mean,
                 q5_excess=q_means[4] - uni_mean,
                 n_ranked=n_q,
+                monotone=mono,
+                q1_gt_q5=q_means[0] > q_means[4],
+                slope=slope,
             )
             result.quintiles[h] = qr
         else:
@@ -503,7 +514,7 @@ def write_summary_md(
     for h in horizons:
         h_parts += [f"Ret({h}d)"]
     for h in horizons:
-        h_parts += [f"Sprd({h}d)", f"ΔSprd", f"S>0"]
+        h_parts += [f"Sprd({h}d)", f"ΔSprd", f"S>0", f"Mono%", f"Q1>5", f"Slope"]
     lines.append("| " + " | ".join(h_parts) + " |")
     lines.append("|" + "|".join(["---"] * len(h_parts)) + "|")
 
@@ -543,7 +554,13 @@ def write_summary_md(
             else:
                 d_sp = "—"
             sp_hit_s = f"{sp_hit:.0%}" if sp_hit is not None else "—"
-            parts += [sp_s, d_sp, sp_hit_s]
+            mono = sr.get(f"mono_{h}d")
+            q1g5 = sr.get(f"q1_gt_q5_{h}d")
+            sl = sr.get(f"slope_{h}d")
+            mono_s = f"{mono:.0%}" if mono is not None else "—"
+            q1g5_s = f"{q1g5:.0%}" if q1g5 is not None else "—"
+            sl_s = f"{sl*100:+.3f}%" if sl is not None else "—"
+            parts += [sp_s, d_sp, sp_hit_s, mono_s, q1g5_s, sl_s]
 
         lines.append("| " + " | ".join(parts) + " |")
 
@@ -581,21 +598,44 @@ def write_summary_md(
         lines.append("")
 
     # Promotion check
-    lines.append("## Promotion Gate\n")
+    lines.append("## Promotion Gate (ΔIC + ΔSpread + CI + Turnover)\n")
+    lines.append("Gates: ΔIC(60d) ≥ +0.005, ΔSpread(60d) ≥ +1.0% with CI_lo > 0, "
+                 "ΔTurnover ≤ +0.05\n")
     ref_row = summary_rows[0]
     for sr in summary_rows[1:]:
         checks = []
+        info = []
         for h in horizons:
             ref_ic = ref_row.get(f"ic_{h}d")
             cand_ic = sr.get(f"ic_{h}d")
-            ref_hit = ref_row.get(f"hit_{h}d")
-            cand_hit = sr.get(f"hit_{h}d")
             if cand_ic is not None and ref_ic is not None:
                 d_ic = cand_ic - ref_ic
                 checks.append(f"ΔIC({h}d)={d_ic:+.4f} {'PASS' if d_ic >= 0.005 else 'FAIL'}")
+
+            # ΔSpread gate
+            ref_sp_list = ref["spread_by_h"][h]
+            cand_sp_list = config_results[sr["label"]]["spread_by_h"][h]
+            if len(ref_sp_list) >= 3 and len(cand_sp_list) >= 3:
+                ps_sp = paired_stats(ref_sp_list, cand_sp_list)
+                d_spread = ps_sp["mean_delta"]
+                ci_lo = ps_sp["ci_lo_95"]
+                if d_spread is not None and ci_lo is not None:
+                    sp_pass = d_spread >= 0.01 and ci_lo > 0
+                    checks.append(
+                        f"ΔSpread({h}d)={d_spread*100:+.2f}%, "
+                        f"CI_lo={ci_lo*100:+.2f}% "
+                        f"{'PASS' if sp_pass else 'FAIL'}"
+                    )
+
+            # Info: ΔHit, monotonicity
+            ref_hit = ref_row.get(f"hit_{h}d")
+            cand_hit = sr.get(f"hit_{h}d")
             if cand_hit is not None and ref_hit is not None:
-                d_hit = cand_hit - ref_hit
-                checks.append(f"ΔHit({h}d)={d_hit:+.0%} {'PASS' if d_hit >= 0.05 else 'FAIL'}")
+                info.append(f"ΔHit({h}d)={cand_hit - ref_hit:+.0%}")
+            mono = sr.get(f"mono_{h}d")
+            q1g5 = sr.get(f"q1_gt_q5_{h}d")
+            if mono is not None:
+                info.append(f"Mono({h}d)={mono:.0%}, Q1>Q5={q1g5:.0%}")
 
         tv_ref = ref_row.get("mean_turnover") or 0
         tv_cand = sr.get("mean_turnover") or 0
@@ -605,6 +645,8 @@ def write_summary_md(
         lines.append(f"**{sr['label']}**: {status}")
         for c in checks:
             lines.append(f"- {c}")
+        if info:
+            lines.append(f"- _(info: {', '.join(info)})_")
         lines.append("")
 
     out_path.write_text("\n".join(lines), encoding="utf-8")
@@ -809,6 +851,9 @@ def main() -> None:
                     entry[f"q5_ret_{h}d"] = qr.q_means[4]
                     entry[f"q1_excess_{h}d"] = qr.q1_excess
                     entry[f"q5_excess_{h}d"] = qr.q5_excess
+                    entry[f"monotone_{h}d"] = qr.monotone
+                    entry[f"q1_gt_q5_{h}d"] = qr.q1_gt_q5
+                    entry[f"slope_{h}d"] = qr.slope
             date_entry[cfg.label] = entry
 
         all_by_date[date_str] = date_entry
@@ -848,6 +893,9 @@ def main() -> None:
         acc["ic_by_h"] = {h: [] for h in horizons}
         acc["ret_by_h"] = {h: [] for h in horizons}
         acc["spread_by_h"] = {h: [] for h in horizons}
+        acc["slope_by_h"] = {h: [] for h in horizons}
+        acc["monotone_by_h"] = {h: [] for h in horizons}
+        acc["q1_gt_q5_by_h"] = {h: [] for h in horizons}
         acc["turnovers"] = []
         acc["eval_dates"] = []
         prev_topk: List[str] = []
@@ -864,6 +912,10 @@ def main() -> None:
                 qr = dr.quintiles.get(h)
                 if qr is not None and qr.spread is not None:
                     acc["spread_by_h"][h].append(qr.spread)
+                    acc["monotone_by_h"][h].append(qr.monotone)
+                    acc["q1_gt_q5_by_h"][h].append(qr.q1_gt_q5)
+                    if qr.slope is not None:
+                        acc["slope_by_h"][h].append(qr.slope)
             curr_topk = dr.top_k_tickers[:args.top_k]
             if prev_topk:
                 acc["turnovers"].append(compute_turnover(prev_topk, curr_topk))
@@ -883,7 +935,7 @@ def main() -> None:
     for h in horizons:
         header += f" {'Ret('+str(h)+'d)':>10s}"
     for h in horizons:
-        header += f" {'Sprd('+str(h)+'d)':>11s} {'ΔSprd':>8s} {'S>0':>5s}"
+        header += f" {'Sprd('+str(h)+'d)':>11s} {'ΔSprd':>8s} {'S>0':>5s} {'Mono%':>6s} {'Q1>5':>5s} {'Slope':>8s}"
     print(header)
     print("-" * len(header))
 
@@ -931,15 +983,24 @@ def main() -> None:
             else:
                 line += f" {'—':>10s}"
 
-        # Spread columns
+        # Spread + monotonicity columns
         for h in horizons:
             spreads = acc["spread_by_h"][h]
             ref_spreads = ref["spread_by_h"][h]
+            monos = acc["monotone_by_h"][h]
+            q1g5s = acc["q1_gt_q5_by_h"][h]
+            slopes = acc["slope_by_h"][h]
             if spreads:
                 sp_mean = statistics.mean(spreads)
                 sp_hit = sum(1 for s in spreads if s > 0) / len(spreads)
+                mono_pct = sum(1 for m in monos if m) / len(monos) if monos else 0
+                q1g5_pct = sum(1 for q in q1g5s if q) / len(q1g5s) if q1g5s else 0
+                slope_mean = statistics.mean(slopes) if slopes else 0
                 row[f"spread_{h}d"] = sp_mean
                 row[f"hit_spread_{h}d"] = sp_hit
+                row[f"mono_{h}d"] = mono_pct
+                row[f"q1_gt_q5_{h}d"] = q1g5_pct
+                row[f"slope_{h}d"] = slope_mean
                 line += f" {sp_mean*100:>10.2f}%"
                 if cfg.label != ref_label and ref_spreads:
                     ref_sp = statistics.mean(ref_spreads)
@@ -948,10 +1009,16 @@ def main() -> None:
                 else:
                     line += f" {'—':>8s}"
                 line += f" {sp_hit:>5.0%}"
+                line += f" {mono_pct:>5.0%}"
+                line += f" {q1g5_pct:>5.0%}"
+                line += f" {slope_mean*100:>+7.3f}%"
             else:
                 row[f"spread_{h}d"] = None
                 row[f"hit_spread_{h}d"] = None
-                line += f" {'—':>11s} {'—':>8s} {'—':>5s}"
+                row[f"mono_{h}d"] = None
+                row[f"q1_gt_q5_{h}d"] = None
+                row[f"slope_{h}d"] = None
+                line += f" {'—':>11s} {'—':>8s} {'—':>5s} {'—':>6s} {'—':>5s} {'—':>8s}"
 
         print(line)
         summary_rows.append(row)
@@ -991,28 +1058,58 @@ def main() -> None:
                       f"(ref={len(ref_sp)}, cand={len(cand_sp)})")
 
     # ---- Promotion check ----
+    # Gates (all must PASS):
+    #   1. ΔIC(60d) >= +0.005
+    #   2. ΔSpread(60d) >= +1.0% AND bootstrap 95% CI lower bound > 0
+    #   3. ΔTurnover <= +0.05
+    # Reporting only (no gate): ΔHit, monotonicity
     print()
+    print("Promotion Gate (ΔIC + ΔSpread + CI + Turnover):")
+    print("-" * 80)
     ref_row = summary_rows[0]
     for sr in summary_rows[1:]:
         label = sr["label"]
         checks = []
-        for h in horizons:
-            ic_key = f"ic_{h}d"
-            hit_key = f"hit_{h}d"
-            ref_ic = ref_row.get(ic_key)
-            cand_ic = sr.get(ic_key)
-            ref_hit = ref_row.get(hit_key)
-            cand_hit = sr.get(hit_key)
+        info = []  # reporting-only metrics
 
+        for h in horizons:
+            # Gate: ΔIC
+            ref_ic = ref_row.get(f"ic_{h}d")
+            cand_ic = sr.get(f"ic_{h}d")
             if cand_ic is not None and ref_ic is not None:
                 d_ic = cand_ic - ref_ic
                 ic_pass = d_ic >= 0.005
                 checks.append(f"ΔIC({h}d)={d_ic:+.4f} {'PASS' if ic_pass else 'FAIL'}")
+
+            # Gate: ΔSpread + CI
+            ref_sp_list = ref["spread_by_h"][h]
+            cand_sp_list = config_results[sr["label"]]["spread_by_h"][h]
+            if len(ref_sp_list) >= 3 and len(cand_sp_list) >= 3:
+                ps_sp = paired_stats(ref_sp_list, cand_sp_list)
+                d_spread = ps_sp["mean_delta"]
+                ci_lo = ps_sp["ci_lo_95"]
+                if d_spread is not None and ci_lo is not None:
+                    sp_pass = d_spread >= 0.01 and ci_lo > 0
+                    checks.append(
+                        f"ΔSpread({h}d)={d_spread*100:+.2f}%, "
+                        f"CI_lo={ci_lo*100:+.2f}% "
+                        f"{'PASS' if sp_pass else 'FAIL'}"
+                    )
+
+            # Info: ΔHit (reporting only)
+            ref_hit = ref_row.get(f"hit_{h}d")
+            cand_hit = sr.get(f"hit_{h}d")
             if cand_hit is not None and ref_hit is not None:
                 d_hit = cand_hit - ref_hit
-                hit_pass = d_hit >= 0.05
-                checks.append(f"ΔHit({h}d)={d_hit:+.0%} {'PASS' if hit_pass else 'FAIL'}")
+                info.append(f"ΔHit({h}d)={d_hit:+.0%}")
 
+            # Info: monotonicity (reporting only)
+            mono = sr.get(f"mono_{h}d")
+            q1g5 = sr.get(f"q1_gt_q5_{h}d")
+            if mono is not None:
+                info.append(f"Mono({h}d)={mono:.0%}, Q1>Q5={q1g5:.0%}")
+
+        # Gate: Turnover
         tv_ref = ref_row.get("mean_turnover") or 0
         tv_cand = sr.get("mean_turnover") or 0
         tv_pass = (tv_cand - tv_ref) <= 0.05
@@ -1022,6 +1119,8 @@ def main() -> None:
         print(f"  {label}: {status}")
         for c in checks:
             print(f"    {c}")
+        if info:
+            print(f"    (info: {', '.join(info)})")
 
     # ---- Write outputs ----
     out_dir = args.out or (PROJECT_ROOT / "output" / "anchor_replay")
