@@ -1,315 +1,224 @@
-# Biotech Screener Runbook
+# Phase-2 Daily Production Runbook
 
-## Quick Reference
-
-| Task | Command |
-|------|---------|
-| Health check | `python doctor.py` |
-| Run pipeline | `python run_screen.py --as-of-date YYYY-MM-DD --data-dir production_data --output results.json` |
-| Validate output | `python validate_pipeline.py --output results.json` |
-| Run tests | `pytest tests/test_minimum_suite.py -v` |
-| Create baseline | `pytest tests/test_golden_baseline.py::test_create_baseline -v` |
+**Active ruleset:** `fb0af0ac` — v1.8.1 alpha_modifier_off
+**Engine:** v1.3.0
+**Last updated:** 2026-03-05
 
 ---
 
-## 1. Prerequisites
-
-### Check Your Environment
+## 1. Daily command (single entrypoint)
 
 ```bash
-python doctor.py
+python3 tools/run_daily_production.py --as-of-date YYYY-MM-DD
 ```
 
-This checks:
-- Python version (3.10+ required)
-- Dependencies installed
-- Input files present
-- Schemas valid
-- Config file correct
+No manual pre-warm steps. The runner is self-sufficient:
 
-**If FAIL**, fix the errors shown before proceeding.
+| Step | What it does |
+|---|---|
+| 1 | Incremental `price_history.csv` refresh via Yahoo Finance |
+| 1.5 | Warm `sec_8k`, `ctgov`, `sec_13f` caches (idempotent — skips if already fresh) |
+| 2 | Run screen → staging dir |
+| 2.5 | Create PIT price anchor from staging `rankings.csv` (before gates) |
+| 3 | Data integrity audit |
+| 4 | Evaluate all gates |
+| 5 | Build run manifest + atomic promotion to `data/snapshots/YYYY-MM-DD/` |
+| 6 | (opt-in) PIT price backfill via `--price-pit-backfill` |
 
-### Required Input Files
+If `market_data.json` is stale the runner auto-calls `collect_market_data.py` before aborting.
 
-All files should be in `production_data/`:
-
-| File | Required | Description |
-|------|----------|-------------|
-| `universe.json` | Yes | List of tickers with metadata |
-| `financial_records.json` | Yes | Financial data (Cash, NetIncome, etc.) |
-| `trial_records.json` | Yes | Clinical trial data from CT.gov |
-| `market_data.json` | Yes | Price, volume, market cap |
-| `short_interest.json` | No | Short interest signals |
-| `market_snapshot.json` | No | VIX, regime data |
-
----
-
-## 2. Running the Pipeline
-
-### Basic Run
+**Escape hatches:**
 
 ```bash
-python run_screen.py \
-  --as-of-date 2026-01-20 \
-  --data-dir production_data \
-  --output results.json
-```
+# Skip all PIT warming (CI handles externally):
+python3 tools/run_daily_production.py --as-of-date DATE --skip-pit-warm
 
-### With All Features
+# Use prior ctgov cache if today's isn't available yet (WARN instead of FAIL):
+python3 tools/run_daily_production.py --as-of-date DATE --allow-date-fallback
 
-```bash
-python run_screen.py \
-  --as-of-date 2026-01-20 \
-  --data-dir production_data \
-  --output results.json \
-  --enable-enhancements \
-  --checkpoint-dir checkpoints \
-  --audit-log audit.jsonl
-```
-
-### Dry Run (Validate Only)
-
-```bash
-python run_screen.py \
-  --as-of-date 2026-01-20 \
-  --data-dir production_data \
-  --dry-run
+# Override warm sources (empty string = skip warm entirely):
+python3 tools/run_daily_production.py --as-of-date DATE --warm-sources "ctgov,sec_13f"
 ```
 
 ---
 
-## 3. Validating Results
+## 2. Exit codes
 
-### Quick Validation
+| Code | Meaning |
+|---|---|
+| 0 | All gates PASS — snapshot promoted |
+| 1 | Hard gate FAIL — snapshot stays in staging, not promoted |
+| 2 | Soft gate WARN — snapshot promoted but flagged |
 
-```bash
-python validate_pipeline.py --output results.json
+---
+
+## 3. Gate reference and expected daily status
+
+### Hard gates (FAIL = snapshot not promoted)
+
+| Gate | Normal | FAIL condition |
+|---|---|---|
+| `xbi_staleness` | PASS | XBI price gap > 3 trading days |
+| `ctgov_cache` | PASS | ctgov cache absent after warm attempt |
+| `inputs_present` | PASS | `market_data.json` or `universe.json` missing |
+| `market_data_schema` | PASS | Required fields absent/malformed |
+| `market_data_staleness` | PASS | `market_data.json` age > 3d (auto-refresh fires first) |
+| `market_data_coverage` | PASS | < 90% of universe tickers have market data |
+| `screen` | PASS | `run_screen.py` exits non-zero |
+| `audit` | PASS | `data_integrity_audit.py` exits non-zero |
+| `sort_contrib_sanity` | PASS | Any sort contrib > 50 or non-finite |
+| `exposure_missingness` | PASS | > 25% eligible tickers missing an exposure |
+| `risk_concentration` | PASS | > 50% top-K weight has catalyst ≤ 7d |
+
+### Soft gates (WARN = promoted with flag)
+
+These should be **PASS on a healthy day** after 2026-03-05:
+
+| Gate | Normal | WARN condition |
+|---|---|---|
+| `drift_monitoring` | PASS | > 30% top-20 turnover vs prior (day-1 after promotion is normal) |
+| `ruleset_health` | PASS | Rank drift vs baseline exceeds 3× warn factor |
+| `sec_13f_cache` | PASS | 13F warm failed or < 80% coverage |
+| `price_pit_cache` | PASS | Price anchor missing for as-of date |
+| `pit_bundle_health` | PASS | ctgov or 13F prerequisite missing |
+| `institutional_summary` | PASS | Sidecar missing or low coverage |
+| `institutional_delta` | PASS | Delta sidecar not written |
+| `cache_health` | PASS | sec_8k or ctgov cache marked bad |
+| `forward_eval` | PASS (cold-start until horizons fill) | Rolling IC below floor |
+| `pnl_attribution` | **WARN expected** (see §4) | Price data unavailable for attribution period |
+| `risk_concentration` | **WARN expected** (see §4) | > 50% top-K high-beta or drawdown positions |
+
+---
+
+## 4. Known persistent WARNs (not actionable)
+
+### `pnl_attribution` — price lag
+
+```
+PnL coverage 0.0% below 80.0%
 ```
 
-### Compare to Baseline
+PnL attribution computes returns between T-1 and T positions, requiring closing prices for both dates. During the burn-in period we're running for dates ahead of available Yahoo Finance data, so `n_priced=0`. This resolves automatically once the runner operates in a T+1 workflow (e.g. running Monday evening for Monday's close).
 
-```bash
-python validate_pipeline.py --output results.json --baseline golden/baseline_output.json
+**This is not a model failure.** The turnover and position-action breakdown still populate correctly.
+
+### `risk_concentration` — portfolio composition signal
+
+```
+high_risk=55% > 50% WARN
 ```
 
-### Strict Mode (Warnings = Errors)
+55% of top-20 positions have beta ≥ 1.5 or drawdown ≤ -30%. This reflects structural biotech characteristics (high beta is sector-wide). The 50% warn threshold is intentionally conservative to surface real crowding events. **Review if this rises above 70%** or if `stacked_wt` (catalyst ≤ 7d AND high-risk) becomes non-zero.
+
+---
+
+## 5. Burn-in results (new self-sufficient runner)
+
+Gate key: ✓ PASS · ! WARN · ✗ FAIL · — not run
+
+| Gate | 03-03 pre-fix | 03-04 pre-fix | **03-05 new runner** |
+|---|:---:|:---:|:---:|
+| `cache_health` | ✓ | ✓ | ✓ |
+| `drift_monitoring` | ✓ | ✓ | ✓ |
+| `ruleset_health` | ✓ | ✓ | ✓ |
+| `sec_13f_cache` | ! | ! | **✓** |
+| `price_pit_cache` | ! | ! | **✓** |
+| `pit_bundle_health` | ! | ! | **✓** |
+| `institutional_summary` | ! | ! | **✓** |
+| `institutional_delta` | ! | ! | **✓** |
+| `pnl_attribution` | ! | ! | ! (price lag — expected) |
+| `forward_eval` | — | — | ✓ cold-start |
+
+03-06 aborted: XBI staleness FAIL — no new Yahoo data available yet for that week.
+
+---
+
+## 6. Ruleset health and rollback
+
+### Monitor
 
 ```bash
-python validate_pipeline.py --output results.json --strict
+tail -10 artifacts/ruleset_health_history.jsonl | python3 -c "
+import json, sys
+for line in sys.stdin:
+    d = json.loads(line)
+    print(d.get('as_of_date'), d.get('status'), d.get('detail','')[:70])
+"
+```
+
+**Rollback trigger:** 3 consecutive `ruleset_health` WARN days.
+
+### Rollback to last known good
+
+```bash
+python3 tools/promote_ruleset.py --rollback --reason "3 consecutive ruleset_health WARNs"
+```
+
+Then update `PHASE2_PINNED_RULESET_ID` in both `run_screen.py` and `scripts/run_phase2_snapshot_delta.py` to match the new active ID.
+
+### Check active ruleset
+
+```bash
+python3 -c "
+import json
+m = json.load(open('production_data/decision_rulesets/manifest.json'))
+r = next(r for r in m['rulesets'] if r['status']=='active')
+print(r['id'], r['file'], r['description'])
+"
 ```
 
 ---
 
-## 4. Common Errors and Fixes
+## 7. Artifact locations
 
-### Error: "PIT violation" / "Future data"
+| Artifact | Path |
+|---|---|
+| Daily snapshots | `data/snapshots/YYYY-MM-DD/` |
+| Run manifest | `data/snapshots/YYYY-MM-DD/run_manifest.json` |
+| Rankings | `data/snapshots/YYYY-MM-DD/rankings.csv` |
+| Institutional sidecar | `data/snapshots/YYYY-MM-DD/institutional_summary.json` |
+| PnL attribution | `data/snapshots/YYYY-MM-DD/pnl_attribution.json` |
+| Ruleset manifest | `production_data/decision_rulesets/manifest.json` |
+| Promotion receipts | `production_data/decision_rulesets/promote_receipt_*.json` |
+| Ruleset health history | `artifacts/ruleset_health_history.jsonl` |
+| PIT price cache | `data/caches/price_pit/PIT/YYYY-MM-DD/` |
+| 13F PIT cache | `data/caches/sec_13f/PIT/YYYY-MM-DD/` |
+| ctgov cache | `cache/ctgov/trial_records_YYYY-MM-DD.json` |
+| Fallback manifest (CI) | `output/run_manifest.json` |
 
-**Cause**: The `as_of_date` is before the data's last update date.
+---
 
-**Fix Options**:
-1. Use a more recent `as_of_date`
-2. The pipeline now filters future data automatically (1.4% tolerance)
-3. Refresh your data files with older data for backtesting
+## 8. Common failures and fixes
 
-### Error: "Missing required file"
+### XBI staleness FAIL
+```
+XBI last=2026-03-02, as_of=2026-03-06, gap=4 trading days
+```
+Yahoo Finance data usually appears 15–30 min after 4 pm ET. Re-run after market close, or run for the prior trading day.
 
-**Cause**: One of the required input files is missing.
-
-**Fix**: Ensure all required files exist in `production_data/`:
+### ctgov cache FAIL (after warm)
+```
+CTGov cache gate: FAIL — PIT cache missing after warm
+```
+CTGov API is down or network error. Retry manually:
 ```bash
-ls production_data/*.json
+python3 warm_caches.py --as-of-date DATE --sources ctgov
 ```
+Or use `--allow-date-fallback` to fall back to prior day's cache (WARN instead of FAIL).
 
-### Error: "All Module 2 scores are zero"
+### Screen FAIL
+```
+Screen FAILED (exit 1)
+```
+Run `run_screen.py` manually with the same args to see the full traceback. Most common causes: missing data dependency, PIT violation, or DE schema mismatch.
 
-**Cause**: Financial data missing for all tickers.
-
-**Fix**:
-1. Check `financial_records.json` has data
-2. Ensure ticker names match between universe and financial data
-3. Check for uppercase/lowercase ticker mismatches
-
-### Error: "Weights don't sum to target"
-
-**Cause**: Position sizing issue in Module 5.
-
-**Fix**: Check that there are enough rankable (non-excluded) tickers. SEV3 tickers are excluded.
-
-### Warning: "Universe size changed"
-
-**Cause**: The number of tickers changed from baseline.
-
-**Why this happens**:
-- Added/removed tickers from universe.json
-- Market cap filtering changed
-- Shell company detection changed
-
-**Action**: Review if the change is expected.
-
----
-
-## 5. Testing
-
-### Run All Tests
-
+### Market data stale + auto-refresh failure
+```
+Market data stale — auto-refreshing ...
+Market data refresh FAILED (exit 1)
+```
+Run manually:
 ```bash
-pytest tests/test_minimum_suite.py -v
+python3 collect_market_data.py --universe production_data/universe.json
 ```
-
-### Run Specific Test Categories
-
-```bash
-# Smoke tests only
-pytest tests/test_minimum_suite.py -v -k smoke
-
-# Schema tests
-pytest tests/test_minimum_suite.py -v -k schema
-
-# PIT tests
-pytest tests/test_minimum_suite.py -v -k pit
-```
-
-### Create/Update Golden Baseline
-
-```bash
-pytest tests/test_golden_baseline.py::test_create_baseline -v
-```
-
-### Run Regression Test
-
-```bash
-pytest tests/test_golden_baseline.py::test_output_matches_baseline -v
-```
-
----
-
-## 6. Configuration
-
-Configuration lives in `config.yml`. Key settings:
-
-### Module 2 (Financial Health)
-
-```yaml
-module_2:
-  weights:
-    runway: 0.50      # Cash runway weight
-    dilution: 0.30    # Dilution risk weight
-    liquidity: 0.20   # Liquidity weight
-
-  runway_thresholds:
-    sev3_critical: 6  # Months for SEV3 (excluded)
-    sev2_warning: 12  # Months for SEV2
-    sev1_caution: 18  # Months for SEV1
-```
-
-### Module 5 (Composite)
-
-```yaml
-module_5:
-  weights:
-    clinical: 0.40    # Clinical development weight
-    financial: 0.35   # Financial health weight
-    catalyst: 0.25    # Catalyst momentum weight
-
-  position_sizing:
-    max_positions: 60
-    target_weight_sum: 0.90
-```
-
----
-
-## 7. Output Interpretation
-
-### Summary Metrics
-
-| Metric | Description | Healthy Range |
-|--------|-------------|---------------|
-| `total_evaluated` | Tickers in universe | 100-500 |
-| `active_universe` | After status filtering | 80-90% of total |
-| `final_ranked` | After severity filtering | 30-50% of active |
-| `catalyst_events` | Events detected | 50-200 |
-| `severe_negatives` | Bad trial news | 0-5 |
-
-### Severity Levels
-
-| Severity | Meaning | Action |
-|----------|---------|--------|
-| `none` | Healthy (18+ months runway) | Fully rankable |
-| `sev1` | Caution (12-18 months) | Minor penalty |
-| `sev2` | Warning (6-12 months) | Soft gate (capped) |
-| `sev3` | Critical (<6 months) | Hard gate (excluded) |
-
-### Exclusion Reasons
-
-| Reason | Cause |
-|--------|-------|
-| `sev3_gate` | Critical financial health |
-| `shell_company` | Detected as SPAC/shell |
-| `delisted` | Ticker no longer active |
-
----
-
-## 8. Troubleshooting Checklist
-
-If the pipeline fails:
-
-1. [ ] Run `python doctor.py` - fix any errors
-2. [ ] Check `as_of_date` is not in the future
-3. [ ] Verify all required files exist
-4. [ ] Check file permissions (can write to output dir)
-5. [ ] Review error message for specific module failure
-6. [ ] Check `production_data/run_log_*.json` for details
-7. [ ] Try with `--dry-run` to validate inputs first
-
-If output looks wrong:
-
-1. [ ] Run `python validate_pipeline.py --output results.json`
-2. [ ] Check severity distribution in Module 2
-3. [ ] Verify data freshness (staleness warnings)
-4. [ ] Compare to baseline if available
-5. [ ] Review excluded tickers and reasons
-
----
-
-## 9. Data Refresh Workflow
-
-### Weekly Refresh
-
-```bash
-# 1. Refresh trial data from CT.gov
-python collect_ctgov_data.py --output production_data/trial_records.json
-
-# 2. Refresh market data
-python collect_market_data.py --output production_data/market_data.json
-
-# 3. Run pipeline
-python run_screen.py --as-of-date $(date +%Y-%m-%d) \
-  --data-dir production_data \
-  --output results_$(date +%Y-%m-%d).json
-
-# 4. Validate
-python validate_pipeline.py --output results_$(date +%Y-%m-%d).json
-```
-
----
-
-## 10. File Reference
-
-| File | Purpose |
-|------|---------|
-| `run_screen.py` | Main pipeline orchestrator |
-| `doctor.py` | Health check |
-| `validate_pipeline.py` | Output validation |
-| `config.yml` | Configuration |
-| `requirements.txt` | Dependencies |
-| `module_1_universe.py` | Universe filtering |
-| `module_2_financial.py` | Financial health |
-| `module_3_catalyst.py` | Catalyst detection |
-| `module_4_clinical_dev.py` | Clinical development |
-| `module_5_composite_with_defensive.py` | Composite ranking |
-
----
-
-## Contact
-
-For issues, see: https://github.com/Warrenpoobear/biotech-screener/issues
+Then re-run the daily runner.
