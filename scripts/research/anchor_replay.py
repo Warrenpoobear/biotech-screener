@@ -356,6 +356,16 @@ def rerank_rows(
 # ---------------------------------------------------------------------------
 
 @dataclass
+class QuintileResult:
+    q_means: List[float] = field(default_factory=list)  # [q1..q5]
+    spread: Optional[float] = None   # q1 - q5
+    universe_mean: Optional[float] = None
+    q1_excess: Optional[float] = None
+    q5_excess: Optional[float] = None
+    n_ranked: int = 0
+
+
+@dataclass
 class DateResult:
     date: str = ""
     n_eligible: int = 0
@@ -365,6 +375,7 @@ class DateResult:
     returns: Dict[int, Optional[float]] = field(default_factory=dict)
     n_held: Dict[int, int] = field(default_factory=dict)
     top_k_tickers: List[str] = field(default_factory=list)
+    quintiles: Dict[int, Optional[QuintileResult]] = field(default_factory=dict)
 
 
 def evaluate_date(
@@ -432,6 +443,29 @@ def evaluate_date(
         if not result.top_k_tickers:
             result.top_k_tickers = held
 
+        # Quintile spread
+        if len(signal_tickers) >= 25:
+            ordered_rets = [fwd_rets[t] for t in signal_tickers]
+            n_q = len(ordered_rets)
+            bucket_size = n_q // 5
+            q_means = []
+            for qi in range(5):
+                start = qi * bucket_size
+                end = start + bucket_size if qi < 4 else n_q
+                q_means.append(statistics.mean(ordered_rets[start:end]))
+            uni_mean = statistics.mean(ordered_rets)
+            qr = QuintileResult(
+                q_means=q_means,
+                spread=q_means[0] - q_means[4],
+                universe_mean=uni_mean,
+                q1_excess=q_means[0] - uni_mean,
+                q5_excess=q_means[4] - uni_mean,
+                n_ranked=n_q,
+            )
+            result.quintiles[h] = qr
+        else:
+            result.quintiles[h] = None
+
     return result
 
 
@@ -468,6 +502,8 @@ def write_summary_md(
     h_parts += ["Turnover"]
     for h in horizons:
         h_parts += [f"Ret({h}d)"]
+    for h in horizons:
+        h_parts += [f"Sprd({h}d)", f"ΔSprd", f"S>0"]
     lines.append("| " + " | ".join(h_parts) + " |")
     lines.append("|" + "|".join(["---"] * len(h_parts)) + "|")
 
@@ -497,6 +533,18 @@ def write_summary_md(
             ret = sr.get(f"ret_{h}d")
             parts.append(f"{ret*100:.2f}%" if ret is not None else "—")
 
+        for h in horizons:
+            sp = sr.get(f"spread_{h}d")
+            sp_hit = sr.get(f"hit_spread_{h}d")
+            ref_sp = summary_rows[0].get(f"spread_{h}d")
+            sp_s = f"{sp*100:.2f}%" if sp is not None else "—"
+            if sp is not None and ref_sp is not None and sr["label"] != ref_label:
+                d_sp = f"{(sp - ref_sp)*100:+.2f}%"
+            else:
+                d_sp = "—"
+            sp_hit_s = f"{sp_hit:.0%}" if sp_hit is not None else "—"
+            parts += [sp_s, d_sp, sp_hit_s]
+
         lines.append("| " + " | ".join(parts) + " |")
 
     # Paired stats section
@@ -521,6 +569,15 @@ def write_summary_md(
                          f"std={ps_r['std_delta']}, t={ps_r['t_stat']}, "
                          f"p={ps_r['p_value']}, "
                          f"95%CI=[{ps_r['ci_lo_95']}, {ps_r['ci_hi_95']}]")
+
+            ref_sp = ref["spread_by_h"][h]
+            cand_sp = config_results[cfg.label]["spread_by_h"][h]
+            if len(ref_sp) >= 3 and len(cand_sp) >= 3:
+                ps_s = paired_stats(ref_sp, cand_sp)
+                lines.append(f"**Spread({h}d)**: ΔSpread={ps_s['mean_delta']}, "
+                             f"std={ps_s['std_delta']}, t={ps_s['t_stat']}, "
+                             f"p={ps_s['p_value']}, "
+                             f"95%CI=[{ps_s['ci_lo_95']}, {ps_s['ci_hi_95']}]")
         lines.append("")
 
     # Promotion check
@@ -745,6 +802,13 @@ def main() -> None:
                 entry[f"ic_{h}d"] = metrics.ics.get(h)
                 entry[f"ret_{h}d"] = metrics.returns.get(h)
                 entry[f"n_held_{h}d"] = metrics.n_held.get(h, 0)
+                qr = metrics.quintiles.get(h)
+                if qr is not None:
+                    entry[f"spread_{h}d"] = qr.spread
+                    entry[f"q1_ret_{h}d"] = qr.q_means[0]
+                    entry[f"q5_ret_{h}d"] = qr.q_means[4]
+                    entry[f"q1_excess_{h}d"] = qr.q1_excess
+                    entry[f"q5_excess_{h}d"] = qr.q5_excess
             date_entry[cfg.label] = entry
 
         all_by_date[date_str] = date_entry
@@ -783,6 +847,7 @@ def main() -> None:
         acc = config_results[cfg.label]
         acc["ic_by_h"] = {h: [] for h in horizons}
         acc["ret_by_h"] = {h: [] for h in horizons}
+        acc["spread_by_h"] = {h: [] for h in horizons}
         acc["turnovers"] = []
         acc["eval_dates"] = []
         prev_topk: List[str] = []
@@ -796,6 +861,9 @@ def main() -> None:
                 ret = dr.returns.get(h)
                 if ret is not None:
                     acc["ret_by_h"][h].append(ret)
+                qr = dr.quintiles.get(h)
+                if qr is not None and qr.spread is not None:
+                    acc["spread_by_h"][h].append(qr.spread)
             curr_topk = dr.top_k_tickers[:args.top_k]
             if prev_topk:
                 acc["turnovers"].append(compute_turnover(prev_topk, curr_topk))
@@ -814,6 +882,8 @@ def main() -> None:
     header += f" {'Turnover':>9s}"
     for h in horizons:
         header += f" {'Ret('+str(h)+'d)':>10s}"
+    for h in horizons:
+        header += f" {'Sprd('+str(h)+'d)':>11s} {'ΔSprd':>8s} {'S>0':>5s}"
     print(header)
     print("-" * len(header))
 
@@ -861,6 +931,28 @@ def main() -> None:
             else:
                 line += f" {'—':>10s}"
 
+        # Spread columns
+        for h in horizons:
+            spreads = acc["spread_by_h"][h]
+            ref_spreads = ref["spread_by_h"][h]
+            if spreads:
+                sp_mean = statistics.mean(spreads)
+                sp_hit = sum(1 for s in spreads if s > 0) / len(spreads)
+                row[f"spread_{h}d"] = sp_mean
+                row[f"hit_spread_{h}d"] = sp_hit
+                line += f" {sp_mean*100:>10.2f}%"
+                if cfg.label != ref_label and ref_spreads:
+                    ref_sp = statistics.mean(ref_spreads)
+                    d_sp = sp_mean - ref_sp
+                    line += f" {d_sp*100:>+7.2f}%"
+                else:
+                    line += f" {'—':>8s}"
+                line += f" {sp_hit:>5.0%}"
+            else:
+                row[f"spread_{h}d"] = None
+                row[f"hit_spread_{h}d"] = None
+                line += f" {'—':>11s} {'—':>8s} {'—':>5s}"
+
         print(line)
         summary_rows.append(row)
 
@@ -878,6 +970,25 @@ def main() -> None:
                   f"95%CI=[{ps['ci_lo_95']:+.4f}, {ps['ci_hi_95']:+.4f}]"
                   if ps['mean_delta'] is not None else
                   f"  {cfg.label} IC({h}d): insufficient data")
+
+    # Spread paired stats
+    print()
+    print("Paired Spread Statistics (vs A_alpha):")
+    print("-" * 80)
+    for cfg in configs[1:]:
+        for h in horizons:
+            ref_sp = ref["spread_by_h"][h]
+            cand_sp = config_results[cfg.label]["spread_by_h"][h]
+            if len(ref_sp) >= 3 and len(cand_sp) >= 3:
+                ps = paired_stats(ref_sp, cand_sp)
+                print(f"  {cfg.label} Spread({h}d): Δ={ps['mean_delta']:+.4f}, "
+                      f"t={ps['t_stat']:.2f}, p={ps['p_value']:.3f}, "
+                      f"95%CI=[{ps['ci_lo_95']:+.4f}, {ps['ci_hi_95']:+.4f}]"
+                      if ps['mean_delta'] is not None else
+                      f"  {cfg.label} Spread({h}d): insufficient data")
+            else:
+                print(f"  {cfg.label} Spread({h}d): insufficient data "
+                      f"(ref={len(ref_sp)}, cand={len(cand_sp)})")
 
     # ---- Promotion check ----
     print()
@@ -939,6 +1050,11 @@ def main() -> None:
             ref_rets = ref["ret_by_h"][h]
             cand_rets = config_results[cfg.label]["ret_by_h"][h]
             paired_out[cfg.label][f"ret_{h}d"] = paired_stats(ref_rets, cand_rets)
+
+            ref_sp = ref["spread_by_h"][h]
+            cand_sp = config_results[cfg.label]["spread_by_h"][h]
+            if len(ref_sp) >= 3 and len(cand_sp) >= 3:
+                paired_out[cfg.label][f"spread_{h}d"] = paired_stats(ref_sp, cand_sp)
     with open(out_dir / "paired_stats.json", "w") as f:
         json.dump(paired_out, f, indent=2, default=str)
 
