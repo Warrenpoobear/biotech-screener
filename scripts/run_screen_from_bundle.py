@@ -1003,13 +1003,12 @@ def run_screen_for_date(
     # --- Alpha cohort scoring ---
     # Resolve per-date OOS table when available (PIT-safe); fall back to static.
     _alpha_table_source = "none"
-    _alpha_table_path_resolved = ""
+    _alpha_table_path_resolved = Path()
     try:
-        table_path, _alpha_table_source = _resolve_alpha_table_for_bundle(
+        _alpha_table_path_resolved, _alpha_table_source = _resolve_alpha_table_for_bundle(
             as_of_date, ruleset,
         )
-        _alpha_table_path_resolved = str(table_path)
-        table = load_alpha_cohort_table(table_path)
+        table = load_alpha_cohort_table(_alpha_table_path_resolved)
         attach_alpha_scores(
             rows, table,
             shrink_k=ruleset.alpha_cohort_shrink_k,
@@ -1022,6 +1021,15 @@ def run_screen_for_date(
             r.setdefault("alpha_cohort_key", "")
             r.setdefault("alpha_cohort_raw", "")
             r.setdefault("alpha_cohort_pct", "")
+
+    # Warn loudly if static fallback was used for a date that should have per-date tables
+    from common.alpha_table import EARLIEST_DAILY_TABLE_DATE
+    if "static" in _alpha_table_source and as_of_date >= EARLIEST_DAILY_TABLE_DATE:
+        print(
+            f"  WARNING: alpha table static fallback for {as_of_date} "
+            f"(source={_alpha_table_source}) — PIT-unsafe!",
+            file=sys.stderr,
+        )
 
     # --- Composite rank override for alpha_cohort engine ---
     if ruleset.composite_engine == "alpha_cohort":
@@ -1082,9 +1090,13 @@ def run_screen_for_date(
         },
         "pit_quality": pq,
         "bundle_manifest_schema": manifest.get("schema_version", ""),
-        "alpha_table_source": _alpha_table_source,
-        "alpha_table_path_resolved": _alpha_table_path_resolved,
     }
+
+    # Alpha table audit metadata
+    from common.alpha_table import alpha_table_metadata
+    metadata.update(alpha_table_metadata(
+        as_of_date, _alpha_table_path_resolved, _alpha_table_source,
+    ))
 
     return rows, metadata
 

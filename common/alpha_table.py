@@ -17,7 +17,13 @@ from typing import Any, Optional, Tuple
 __all__ = [
     "check_artifact_marker",
     "resolve_alpha_table_path",
+    "alpha_table_metadata",
+    "EARLIEST_DAILY_TABLE_DATE",
 ]
+
+# First available daily table date — any as_of_date after this should
+# never silently fall back to static in PIT/bundle mode.
+EARLIEST_DAILY_TABLE_DATE = "2020-02-14"
 
 
 def check_artifact_marker(
@@ -204,3 +210,54 @@ def _static_path(ruleset: Any, project_root: Path) -> Path:
     if not p.is_absolute():
         p = project_root / p
     return p
+
+
+def alpha_table_metadata(
+    as_of_date: str,
+    resolved_path: Path,
+    source: str,
+) -> dict:
+    """Build audit metadata for the resolved alpha table.
+
+    Returns a dict with:
+      - ``alpha_table_source``: source tag from resolver
+      - ``alpha_table_path_resolved``: filename of resolved table
+      - ``alpha_table_date_used``: the effective table date (from filename or source)
+      - ``alpha_table_gap_days``: days between as_of_date and table date (0 = exact)
+      - ``alpha_table_static_warning``: True if static was used when daily was expected
+    """
+    from datetime import date as _date
+
+    # Extract effective date from source tag or filename
+    table_date: Optional[str] = None
+    if source.startswith("nearest_earlier:"):
+        table_date = source.split(":", 1)[1]
+    elif resolved_path.stem.startswith("v1_") and len(resolved_path.stem) == 13:
+        # v1_YYYY-MM-DD → extract date
+        table_date = resolved_path.stem[3:]
+    elif source in ("artifact", "preexisting_local", "rebuilt_in_run"):
+        # Exact match — table date == as_of_date
+        table_date = as_of_date
+
+    # Compute gap
+    gap_days: Optional[int] = None
+    if table_date is not None:
+        try:
+            gap_days = (_date.fromisoformat(as_of_date) - _date.fromisoformat(table_date)).days
+        except ValueError:
+            pass
+
+    # Static warning: if we fell back to static for a date that should have
+    # had a per-date table available
+    static_warning = (
+        "static" in source
+        and as_of_date >= EARLIEST_DAILY_TABLE_DATE
+    )
+
+    return {
+        "alpha_table_source": source,
+        "alpha_table_path_resolved": resolved_path.name,
+        "alpha_table_date_used": table_date,
+        "alpha_table_gap_days": gap_days,
+        "alpha_table_static_warning": static_warning,
+    }
