@@ -46,6 +46,7 @@ from run_daily_production import (
     check_missing_reason_fraction,
     check_risk_concentration,
     check_portfolio_weights,
+    check_sort_contrib_sanity,
     check_turnover,
     check_xbi_staleness,
     promote_snapshot,
@@ -981,8 +982,8 @@ class TestOpsContract:
             "pnl_attribution",
             "price_pit_cache", "forward_eval",
             "pit_bundle_health",
-            "decision_engine_schema", "portfolio_weights",
-            "eligibility_consistency",
+            "decision_engine_schema", "sort_contrib_sanity",
+            "portfolio_weights", "eligibility_consistency",
             "cache_health",
             "ruleset_health",
             "exposure_missingness",
@@ -1454,8 +1455,8 @@ class TestOpsContractWithNewGates:
         assert "eligibility_consistency" in GATE_ALLOWLIST
 
     def test_allowlist_count_updated(self):
-        """Allowlist has 26 entries."""
-        assert len(GATE_ALLOWLIST) == 26
+        """Allowlist has 27 entries."""
+        assert len(GATE_ALLOWLIST) == 27
 
     def test_new_gates_in_allowlist_v2(self):
         assert "exposure_missingness" in GATE_ALLOWLIST
@@ -1827,3 +1828,165 @@ class TestRiskConcentrationGate:
         assert config.risk_conc_catalyst_7d_fail == 0.50
         assert config.risk_conc_high_beta_warn == 0.50
         assert config.risk_conc_stacked_warn == 0.20
+
+
+# ---------------------------------------------------------------------------
+# Helper: write rankings.csv with sort contribution columns
+# ---------------------------------------------------------------------------
+
+_SORT_CONTRIB_COLS = [
+    "de_sort_total_adj",
+    "de_sort_contrib_clinical",
+    "de_sort_contrib_coinvest",
+    "de_sort_contrib_institutional",
+    "de_sort_contrib_calendar_alpha",
+    "de_sort_contrib_alpha_modifier",
+    "de_sort_contrib_catalyst_bonus",
+]
+
+
+def _write_contrib_rankings_csv(
+    path: Path,
+    rows: List[Dict[str, str]],
+) -> None:
+    """Write rankings.csv with DE columns + sort contrib columns."""
+    from decision_engine import ACTIONABLE_COLUMNS, DECISION_COLUMNS
+
+    all_cols = ["ticker"] + DECISION_COLUMNS + ACTIONABLE_COLUMNS + _SORT_CONTRIB_COLS
+    for r in rows:
+        for k in r:
+            if k not in all_cols:
+                all_cols.append(k)
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=all_cols)
+        writer.writeheader()
+        for r in rows:
+            writer.writerow({c: r.get(c, "") for c in all_cols})
+
+
+# ---------------------------------------------------------------------------
+# Tests: Sort contribution sanity gate
+# ---------------------------------------------------------------------------
+
+class TestSortContribSanityGate:
+
+    @staticmethod
+    def _valid_row(ticker: str, rank: str, total: str = "0.12",
+                   clinical: str = "0.10", coinvest: str = "0.0",
+                   institutional: str = "0.0", calendar: str = "0.02",
+                   alpha_mod: str = "0.0", catalyst: str = "0.0") -> dict:
+        return {
+            "ticker": ticker, "eligible": "1", "actionable_rank": rank,
+            "tier_dev": "A", "tier_any": "A",
+            "de_sort_total_adj": total,
+            "de_sort_contrib_clinical": clinical,
+            "de_sort_contrib_coinvest": coinvest,
+            "de_sort_contrib_institutional": institutional,
+            "de_sort_contrib_calendar_alpha": calendar,
+            "de_sort_contrib_alpha_modifier": alpha_mod,
+            "de_sort_contrib_catalyst_bonus": catalyst,
+        }
+
+    def test_pass_valid(self, tmp_path):
+        """All columns present, valid values, sums match → PASS."""
+        snap = tmp_path / "snap"
+        _write_contrib_rankings_csv(snap / "rankings.csv", [
+            self._valid_row("ACRS", "1"),
+            self._valid_row("BMRN", "2", total="0.05", clinical="0.05",
+                            calendar="0.0"),
+        ])
+        result = check_sort_contrib_sanity(snap, GateConfig())
+        assert result.status == "PASS"
+        assert result.value["eligible_n"] == 2
+        assert result.value["missing_frac"] == 0.0
+        assert result.value["sum_mismatch_frac"] == 0.0
+        assert result.value["hard_fail_count"] == 0
+
+    def test_warn_missing_columns(self, tmp_path):
+        """Sort contrib columns missing entirely → WARN."""
+        snap = tmp_path / "snap"
+        # Write CSV WITHOUT sort contrib columns
+        _write_full_rankings_csv(snap / "rankings.csv", [
+            {"ticker": "ACRS", "eligible": "1", "tier_dev": "A", "tier_any": "A",
+             "actionable_rank": "1"},
+        ])
+        result = check_sort_contrib_sanity(snap, GateConfig())
+        assert result.status == "WARN"
+        assert "columns missing" in result.detail
+
+    def test_warn_missingness(self, tmp_path):
+        """Blank contrib values on eligible rows → WARN when above threshold."""
+        snap = tmp_path / "snap"
+        rows = [self._valid_row(f"T{i}", str(i)) for i in range(1, 11)]
+        # Blank out 2/10 rows → 20% missing (threshold default 1%)
+        rows[0]["de_sort_total_adj"] = ""
+        rows[1]["de_sort_contrib_clinical"] = ""
+        _write_contrib_rankings_csv(snap / "rankings.csv", rows)
+        result = check_sort_contrib_sanity(snap, GateConfig())
+        assert result.status == "WARN"
+        assert "missing contribs" in result.detail
+
+    def test_warn_sum_mismatch(self, tmp_path):
+        """Sum of contribs != total_adj → WARN."""
+        snap = tmp_path / "snap"
+        _write_contrib_rankings_csv(snap / "rankings.csv", [
+            self._valid_row("ACRS", "1", total="0.50", clinical="0.10",
+                            calendar="0.02"),  # sum=0.12 != 0.50
+        ])
+        result = check_sort_contrib_sanity(snap, GateConfig())
+        assert result.status == "WARN"
+        assert "sum mismatch" in result.detail
+
+    def test_fail_absurd_value(self, tmp_path):
+        """Absurdly large total_adj → FAIL."""
+        snap = tmp_path / "snap"
+        _write_contrib_rankings_csv(snap / "rankings.csv", [
+            self._valid_row("ACRS", "1", total="1e9", clinical="1e9"),
+        ])
+        result = check_sort_contrib_sanity(snap, GateConfig())
+        assert result.status == "FAIL"
+        assert "non-finite or absurd" in result.detail
+
+    def test_fail_nan_value(self, tmp_path):
+        """NaN in total_adj → treated as missing (not hard fail)."""
+        snap = tmp_path / "snap"
+        # NaN is caught as missing (blank/NaN check), not hard fail.
+        # 1/10 = 10% missing, well above the 1% default threshold.
+        rows = [self._valid_row(f"T{i}", str(i)) for i in range(1, 11)]
+        rows[0]["de_sort_total_adj"] = "nan"
+        _write_contrib_rankings_csv(snap / "rankings.csv", rows)
+        result = check_sort_contrib_sanity(snap, GateConfig())
+        assert result.status == "WARN"
+        assert "missing contribs" in result.detail
+
+    def test_fail_inf_value(self, tmp_path):
+        """Infinite value → FAIL."""
+        snap = tmp_path / "snap"
+        _write_contrib_rankings_csv(snap / "rankings.csv", [
+            self._valid_row("ACRS", "1", total="inf", clinical="inf"),
+        ])
+        result = check_sort_contrib_sanity(snap, GateConfig())
+        assert result.status == "FAIL"
+
+    def test_ineligible_rows_ignored(self, tmp_path):
+        """Ineligible rows are not checked."""
+        snap = tmp_path / "snap"
+        row = self._valid_row("ACRS", "")
+        row["eligible"] = "0"
+        row["de_sort_total_adj"] = ""  # would be missing, but ineligible
+        _write_contrib_rankings_csv(snap / "rankings.csv", [
+            row,
+            self._valid_row("BMRN", "1"),
+        ])
+        result = check_sort_contrib_sanity(snap, GateConfig())
+        assert result.status == "PASS"
+        assert result.value["eligible_n"] == 1
+
+    def test_gate_config_defaults(self):
+        """GateConfig has sort contrib thresholds."""
+        config = GateConfig()
+        assert config.sort_contrib_missing_max_frac == 0.01
+        assert config.sort_contrib_sum_tolerance == 1e-6
+        assert config.sort_contrib_hard_abs_max == 50.0

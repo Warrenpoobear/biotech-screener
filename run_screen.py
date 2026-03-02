@@ -126,9 +126,11 @@ from decision_engine import (
     VERSION as DE_VERSION,
     compute_decision_fields,
     compute_actionable_sort_key,
+    compute_sort_contribs,
     compute_target_weights,
     resolve_catalyst_priority,
     ACTIONABLE_COLUMNS,
+    SORT_CONTRIB_KEYS,
     _safe_float,
 )
 from backtest.cost_model import CostSchedule, estimate_trade_cost
@@ -1436,7 +1438,9 @@ SNAPSHOT_COLUMNS = [
     "composite_score_attn",
     "score_rank_pct_attn",
     "score_z_attn",
-]
+    # --- Sort contribution diagnostics (populated at sort time) ---
+    "de_sort_total_adj",
+] + [f"de_sort_contrib_{k}" for k in SORT_CONTRIB_KEYS]
 
 # Phase-2 decision portfolio output columns
 PHASE2_PORTFOLIO_COLUMNS = [
@@ -3834,6 +3838,27 @@ def save_validation_snapshot(
         ),
         alpha_raw=_safe_float(r.get("alpha_cohort_raw")),
     ))
+
+    # Populate sort contribution diagnostics (same inputs as sort key above)
+    for r in csv_rows:
+        total_adj, cmap = compute_sort_contribs(
+            decision_fields=r,
+            archetype=r.get("archetype", ""),
+            ruleset=ruleset,
+            tiebreaker_pct=(
+                _safe_float(r.get("alpha_cohort_pct"))
+                if ruleset and ruleset.sort_anchor == "alpha_cohort"
+                else (_safe_float(r.get("commercial_quality_pct"))
+                      if r.get("archetype", "").startswith("commercial_")
+                      else _safe_float(r.get("clinical_optionality_pct_dev")))
+            ),
+            alpha_raw=_safe_float(r.get("alpha_cohort_raw")),
+            catalyst_event_type=r.get("catalyst_event_type", ""),
+            catalyst_source=r.get("catalyst_source", ""),
+        )
+        r["de_sort_total_adj"] = round(total_adj, 6)
+        for k in SORT_CONTRIB_KEYS:
+            r[f"de_sort_contrib_{k}"] = round(cmap[k], 6)
 
     # Assign actionable_rank: eligible rows get 1..N, ineligible get blank
     eligible_rows = [r for r in csv_rows if r.get("eligible") == "1"]

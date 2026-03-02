@@ -775,8 +775,10 @@ def run_screen_for_date(
     sys.path.insert(0, str(_PROJECT_ROOT))
     from decision_engine import (
         DecisionRuleset,
+        SORT_CONTRIB_KEYS,
         compute_actionable_sort_key,
         compute_decision_fields,
+        compute_sort_contribs,
     )
     from module_5_alpha_cohort import (
         attach_alpha_scores,
@@ -1060,6 +1062,27 @@ def run_screen_for_date(
         ),
     ))
 
+    # Populate sort contribution diagnostics (same inputs as sort key above)
+    for r in rows:
+        total_adj, cmap = compute_sort_contribs(
+            decision_fields=r,
+            archetype=r.get("archetype", ""),
+            ruleset=ruleset,
+            tiebreaker_pct=(
+                _safe_float(r.get("alpha_cohort_pct"))
+                if ruleset.sort_anchor == "alpha_cohort"
+                else (_safe_float(r.get("commercial_quality_pct"))
+                      if r.get("archetype", "").startswith("commercial_")
+                      else _safe_float(r.get("clinical_optionality_pct_dev")))
+            ),
+            alpha_raw=_safe_float(r.get("alpha_cohort_raw")),
+            catalyst_event_type=r.get("catalyst_event_type", ""),
+            catalyst_source=r.get("catalyst_source", ""),
+        )
+        r["de_sort_total_adj"] = round(total_adj, 6)
+        for k in SORT_CONTRIB_KEYS:
+            r[f"de_sort_contrib_{k}"] = round(cmap[k], 6)
+
     # Assign actionable_rank
     rank = 1
     for r in rows:
@@ -1142,6 +1165,14 @@ SNAPSHOT_COLUMNS = [
     "valuation_score", "clinical_score", "financial_score",
     "composite_rank", "composite_score", "score_rank_pct", "score_z",
     "composite_score_attn", "score_rank_pct_attn", "score_z_attn",
+    # --- Sort contribution diagnostics ---
+    "de_sort_total_adj",
+    "de_sort_contrib_clinical",
+    "de_sort_contrib_coinvest",
+    "de_sort_contrib_institutional",
+    "de_sort_contrib_calendar_alpha",
+    "de_sort_contrib_alpha_modifier",
+    "de_sort_contrib_catalyst_bonus",
 ]
 
 

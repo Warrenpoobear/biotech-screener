@@ -20,6 +20,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -65,6 +66,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset({
     "forward_eval",
     "pit_bundle_health",
     "decision_engine_schema",
+    "sort_contrib_sanity",
     "portfolio_weights",
     "eligibility_consistency",
     "cache_health",
@@ -132,6 +134,15 @@ class GateConfig:
 
     portfolio_weight_sum_tolerance: float = 1.0
     """Max absolute deviation from 100% for target_weight_pct sum (pp)."""
+
+    sort_contrib_missing_max_frac: float = 0.01
+    """WARN if > 1% of eligible rows have blank/NaN in any sort contrib column."""
+
+    sort_contrib_sum_tolerance: float = 1e-6
+    """WARN if any row's sum(contribs) != total_adj beyond this tolerance."""
+
+    sort_contrib_hard_abs_max: float = 50.0
+    """FAIL if any contrib or total_adj exceeds this absolute bound (or is non-finite)."""
 
     exposure_missing_warn_frac: float = 0.10
     """Per-exposure WARN threshold: fraction of eligible tickers missing a value."""
@@ -1651,6 +1662,188 @@ def check_decision_engine_schema(
 
 
 # ---------------------------------------------------------------------------
+# Sort contribution sanity gate (WARN/FAIL)
+# ---------------------------------------------------------------------------
+
+# Column names expected in rankings.csv for sort contribution diagnostics.
+_SORT_CONTRIB_COLUMNS = (
+    "de_sort_total_adj",
+    "de_sort_contrib_clinical",
+    "de_sort_contrib_coinvest",
+    "de_sort_contrib_institutional",
+    "de_sort_contrib_calendar_alpha",
+    "de_sort_contrib_alpha_modifier",
+    "de_sort_contrib_catalyst_bonus",
+)
+
+
+def check_sort_contrib_sanity(
+    snapshot_date_dir: Path,
+    config: GateConfig,
+) -> GateResult:
+    """Validate sort contribution columns in rankings.csv. WARN or FAIL.
+
+    Checks on eligible rows:
+    (i)   Column presence — WARN if any expected column missing entirely.
+    (ii)  Missingness — WARN if blank/NaN fraction exceeds threshold.
+    (iii) Sum identity — WARN if sum(contribs) != total_adj beyond tolerance.
+    (iv)  Hard sanity — FAIL if any value is absurdly large or non-finite.
+    """
+    rankings_path = snapshot_date_dir / "rankings.csv"
+    if not rankings_path.exists():
+        return GateResult(
+            name="sort_contrib_sanity", status="WARN",
+            detail="rankings.csv not found",
+        )
+
+    with open(rankings_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        headers = set(reader.fieldnames or [])
+
+        # (i) Column presence
+        missing_cols = [c for c in _SORT_CONTRIB_COLUMNS if c not in headers]
+        if missing_cols:
+            return GateResult(
+                name="sort_contrib_sanity", status="WARN",
+                detail=f"columns missing; likely older snapshot: {missing_cols}",
+            )
+
+        eligible_n = 0
+        missing_count = 0
+        sum_mismatch_count = 0
+        hard_fail_count = 0
+        hard_fail_tickers: List[str] = []
+        sum_mismatch_tickers: List[str] = []
+
+        contrib_cols = [c for c in _SORT_CONTRIB_COLUMNS if c != "de_sort_total_adj"]
+
+        for row in reader:
+            if (row.get("eligible") or "").strip() != "1":
+                continue
+            eligible_n += 1
+            ticker = row.get("ticker", "?")
+
+            # Parse values
+            total_str = (row.get("de_sort_total_adj") or "").strip()
+            contrib_strs = {c: (row.get(c) or "").strip() for c in contrib_cols}
+
+            # (ii) Missingness: blank or NaN
+            row_missing = False
+            if not total_str or total_str.lower() == "nan":
+                row_missing = True
+            for v in contrib_strs.values():
+                if not v or v.lower() == "nan":
+                    row_missing = True
+                    break
+            if row_missing:
+                missing_count += 1
+                continue  # skip sum/sanity checks for incomplete rows
+
+            # Parse floats
+            try:
+                total_val = float(total_str)
+            except ValueError:
+                hard_fail_count += 1
+                if len(hard_fail_tickers) < 5:
+                    hard_fail_tickers.append(ticker)
+                continue
+
+            contrib_vals = {}
+            parse_ok = True
+            for c, v in contrib_strs.items():
+                try:
+                    contrib_vals[c] = float(v)
+                except ValueError:
+                    hard_fail_count += 1
+                    if len(hard_fail_tickers) < 5:
+                        hard_fail_tickers.append(ticker)
+                    parse_ok = False
+                    break
+            if not parse_ok:
+                continue
+
+            # (iv) Hard sanity: non-finite or absurdly large
+            all_vals = [total_val] + list(contrib_vals.values())
+            for av in all_vals:
+                if not math.isfinite(av) or abs(av) > config.sort_contrib_hard_abs_max:
+                    hard_fail_count += 1
+                    if len(hard_fail_tickers) < 5:
+                        hard_fail_tickers.append(ticker)
+                    break
+            else:
+                # (iii) Sum identity: sum(contribs) == total_adj
+                contrib_sum = sum(contrib_vals.values())
+                if abs(contrib_sum - total_val) > config.sort_contrib_sum_tolerance:
+                    sum_mismatch_count += 1
+                    if len(sum_mismatch_tickers) < 5:
+                        sum_mismatch_tickers.append(ticker)
+
+    if eligible_n == 0:
+        return GateResult(
+            name="sort_contrib_sanity", status="WARN",
+            detail="no eligible rows found",
+        )
+
+    value_dict = {
+        "eligible_n": eligible_n,
+        "missing_frac": round(missing_count / eligible_n, 4) if eligible_n else 0,
+        "sum_mismatch_frac": round(sum_mismatch_count / eligible_n, 4) if eligible_n else 0,
+        "hard_fail_count": hard_fail_count,
+    }
+    threshold_dict = {
+        "missing_max_frac": config.sort_contrib_missing_max_frac,
+        "sum_tolerance": config.sort_contrib_sum_tolerance,
+        "hard_abs_max": config.sort_contrib_hard_abs_max,
+    }
+
+    # (iv) Hard sanity failures → FAIL
+    if hard_fail_count > 0:
+        return GateResult(
+            name="sort_contrib_sanity", status="FAIL",
+            detail=(
+                f"{hard_fail_count} row(s) with non-finite or absurd values "
+                f"(>{config.sort_contrib_hard_abs_max}): {hard_fail_tickers}"
+            ),
+            value=value_dict,
+            threshold=threshold_dict,
+        )
+
+    # Accumulate WARN reasons
+    warn_reasons: List[str] = []
+
+    # (ii) Missingness
+    missing_frac = missing_count / eligible_n
+    if missing_frac > config.sort_contrib_missing_max_frac:
+        warn_reasons.append(
+            f"missing contribs: {missing_count}/{eligible_n} "
+            f"({missing_frac:.1%} > {config.sort_contrib_missing_max_frac:.0%})"
+        )
+
+    # (iii) Sum identity
+    if sum_mismatch_count > 0:
+        mismatch_frac = sum_mismatch_count / eligible_n
+        warn_reasons.append(
+            f"sum mismatch: {sum_mismatch_count}/{eligible_n} "
+            f"({mismatch_frac:.1%}): {sum_mismatch_tickers}"
+        )
+
+    if warn_reasons:
+        return GateResult(
+            name="sort_contrib_sanity", status="WARN",
+            detail="; ".join(warn_reasons),
+            value=value_dict,
+            threshold=threshold_dict,
+        )
+
+    return GateResult(
+        name="sort_contrib_sanity", status="PASS",
+        detail=f"{eligible_n} eligible rows, all contribs valid",
+        value=value_dict,
+        threshold=threshold_dict,
+    )
+
+
+# ---------------------------------------------------------------------------
 # Portfolio weights gate (WARN-only)
 # ---------------------------------------------------------------------------
 
@@ -2747,6 +2940,11 @@ def run_daily(
     de_schema_gate = check_decision_engine_schema(staging_date_dir)
     gate_results.append(de_schema_gate)
     print(f"  DE schema gate: {de_schema_gate.status} — {de_schema_gate.detail}")
+
+    # --- Gate: sort_contrib_sanity (WARN/FAIL) ---
+    sc_gate = check_sort_contrib_sanity(staging_date_dir, config)
+    gate_results.append(sc_gate)
+    print(f"  Sort contrib sanity gate: {sc_gate.status} — {sc_gate.detail}")
 
     # --- Gate: portfolio_weights (WARN-only) ---
     pw_gate = check_portfolio_weights(

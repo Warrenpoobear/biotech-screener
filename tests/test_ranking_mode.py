@@ -161,12 +161,22 @@ class TestColumnLayout:
         ]
 
     def test_snapshot_composite_last(self):
-        """rankings.csv: legacy Module 5 composite fields at far right."""
-        assert SNAPSHOT_COLUMNS[-7:] == [
+        """rankings.csv: legacy Module 5 composite fields at far right
+        (only sort contribution diagnostics may follow)."""
+        # Find the composite block — must be contiguous and near the end.
+        comp_start = SNAPSHOT_COLUMNS.index("composite_rank")
+        comp_block = SNAPSHOT_COLUMNS[comp_start:comp_start + 7]
+        assert comp_block == [
             "composite_rank", "composite_score",
             "score_rank_pct", "score_z",
             "composite_score_attn", "score_rank_pct_attn", "score_z_attn",
         ]
+        # Only sort contribution diagnostics (de_sort_*) may follow.
+        trailing = SNAPSHOT_COLUMNS[comp_start + 7:]
+        assert all(c.startswith("de_sort_") for c in trailing), (
+            f"unexpected columns after composite block: "
+            f"{[c for c in trailing if not c.startswith('de_sort_')]}"
+        )
 
     def test_portfolio_de_first(self):
         """decision_portfolio.csv: DE output immediately after identity (no weights)."""

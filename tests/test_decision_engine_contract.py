@@ -965,6 +965,11 @@ class TestSnapshotInputContract:
         "de_beta_xbi_60d", "de_beta_xbi_60d_source", "de_beta_xbi_60d_missing_reason",
         "de_drawdown", "de_drawdown_missing_reason", "de_rsi_14d", "de_vol_60d",
         "de_drawdown_xbi", "de_drawdown_rel_xbi",
+        # Sort contribution diagnostics (populated at sort time, not by DE)
+        "de_sort_total_adj",
+        "de_sort_contrib_clinical", "de_sort_contrib_coinvest",
+        "de_sort_contrib_institutional", "de_sort_contrib_calendar_alpha",
+        "de_sort_contrib_alpha_modifier", "de_sort_contrib_catalyst_bonus",
     })
 
     def test_de_input_columns_present(self):

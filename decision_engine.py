@@ -1181,6 +1181,19 @@ def resolve_catalyst_priority(
 # SORT CONTRIBUTION HELPERS
 # =============================================================================
 
+# Authoritative ordered list of contribution keys.  Order matters for
+# deterministic CSV column emission.  Every name that _build_sort_contributions
+# can emit must appear here.
+SORT_CONTRIB_KEYS: Tuple[str, ...] = (
+    "clinical",
+    "coinvest",
+    "institutional",
+    "calendar_alpha",
+    "alpha_modifier",
+    "catalyst_bonus",
+)
+
+
 class SortContribution(NamedTuple):
     """One signal's adjustment to the sort anchor."""
     name: str       # signal identifier ("clinical", "coinvest", etc.)
@@ -1428,6 +1441,50 @@ def compute_actionable_sort_key(
         _alpha_tie,         # alpha tiebreak (0 unless mode=tiebreak)
         ticker,             # alphabetic tiebreak
     )
+
+
+def compute_sort_contribs(
+    decision_fields: Dict[str, Any],
+    archetype: str,
+    *,
+    ruleset: Optional["DecisionRuleset"] = None,
+    tiebreaker_pct: Optional[float] = None,
+    alpha_raw: Optional[float] = None,
+    catalyst_event_type: str = "",
+    catalyst_source: str = "",
+) -> Tuple[float, Dict[str, float]]:
+    """Return sort contribution deltas without recomputing the full sort key.
+
+    Returns ``(total_adj, contrib_map)`` where *contrib_map* has an entry
+    for **every** key in :data:`SORT_CONTRIB_KEYS` (0.0 when inactive).
+    Callers can rely on ``total_adj == sum(contrib_map.values())`` within
+    floating-point tolerance.
+    """
+    rs = ruleset or DEFAULT_RULESET
+    _alpha_sig = _safe_float(alpha_raw, default=0.0)
+
+    mode = rs.catalyst_priority_mode
+    catalyst_bonus = 0.0
+    if mode == "blended":
+        bonus_map = dict(rs.catalyst_priority_rank_bonuses)
+        cat_priority = resolve_catalyst_priority(
+            catalyst_event_type, catalyst_source, rs,
+        )
+        catalyst_bonus = bonus_map.get(cat_priority, 0.0)
+
+    contribs = _build_sort_contributions(
+        decision_fields, rs,
+        alpha_raw=_alpha_sig,
+        catalyst_bonus=catalyst_bonus,
+    )
+
+    # Build the output map — every key present, 0.0 when inactive.
+    contrib_map: Dict[str, float] = {k: 0.0 for k in SORT_CONTRIB_KEYS}
+    for c in contribs:
+        contrib_map[c.name] = c.delta
+
+    total_adj = sum(contrib_map.values())
+    return total_adj, contrib_map
 
 
 # =============================================================================
