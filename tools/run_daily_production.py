@@ -2652,6 +2652,10 @@ def run_daily(
     price_cache_dir: Optional[Path] = None,
     fail_on_bad_cache: bool = False,
     skip_pit_warm: bool = False,
+    warm_sources: str = "sec_8k,ctgov,sec_13f",
+    warm_price_pit: bool = True,
+    price_pit_backfill: bool = False,
+    auto_refresh_market_data: bool = True,
 ) -> Dict[str, Any]:
     """Execute the full daily Phase-2 pipeline.
 
@@ -2699,6 +2703,30 @@ def run_daily(
             data_dir=data_dir,
         )
         return manifest
+
+    # --- Step 1.5: Pre-warm caches (sec_8k, ctgov, sec_13f) ---
+    # Must run BEFORE the ctgov gate so the gate sees the freshly-warmed cache.
+    # All three sources are idempotent (short-circuit if cache already exists).
+    if not skip_pit_warm and warm_sources:
+        print(f"\n[1.5] Warming caches ({warm_sources}) for {as_of_date} ...")
+        _warm_proc = subprocess.run(
+            [
+                sys.executable,
+                str(REPO_ROOT / "warm_caches.py"),
+                "--as-of-date", as_of_date,
+                "--sources", warm_sources,
+            ],
+            capture_output=True, text=True, cwd=str(REPO_ROOT),
+        )
+        if _warm_proc.returncode == 0:
+            print(f"  Cache warm OK")
+        else:
+            print(f"  Cache warm FAILED (exit {_warm_proc.returncode}) — dependent gates may WARN")
+            if _warm_proc.stderr:
+                for _line in _warm_proc.stderr.strip().splitlines()[-5:]:
+                    print(f"    {_line}")
+    elif skip_pit_warm:
+        print(f"\n[1.5] Cache warm skipped (--skip-pit-warm)")
 
     # --- Gate: ctgov PIT cache availability ---
     _cache_dir = ctgov_cache_dir or (REPO_ROOT / "cache" / "ctgov")
@@ -2759,6 +2787,25 @@ def run_daily(
 
     # --- Gate: market data staleness ---
     mkt_gate = check_market_data_staleness(data_dir, as_of_date, config.market_data_max_age_days)
+    if mkt_gate.status == "FAIL" and auto_refresh_market_data:
+        print(f"  Market data stale — auto-refreshing ...")
+        _mkt_proc = subprocess.run(
+            [
+                sys.executable,
+                str(REPO_ROOT / "collect_market_data.py"),
+                "--universe", str(data_dir / "universe.json"),
+                "--output", str(data_dir / "market_data.json"),
+            ],
+            capture_output=True, text=True, cwd=str(REPO_ROOT),
+        )
+        if _mkt_proc.returncode == 0:
+            print(f"  Market data refresh OK — re-checking staleness gate")
+            mkt_gate = check_market_data_staleness(data_dir, as_of_date, config.market_data_max_age_days)
+        else:
+            print(f"  Market data refresh FAILED (exit {_mkt_proc.returncode})")
+            if _mkt_proc.stderr:
+                for _line in _mkt_proc.stderr.strip().splitlines()[-3:]:
+                    print(f"    {_line}")
     gate_results.append(mkt_gate)
     print(f"  Market data staleness gate: {mkt_gate.status} — {mkt_gate.detail}")
     if mkt_gate.status == "FAIL":
@@ -2789,34 +2836,6 @@ def run_daily(
             data_dir=data_dir,
         )
         return manifest
-
-    # --- Step 1.5: Warm 13F PIT cache (WARN-only; skip if already present) ---
-    _sec_13f_base = REPO_ROOT / "data" / "caches" / "sec_13f" / "PIT"
-    _sec_13f_index = _sec_13f_base / as_of_date / "index.json"
-    if not skip_pit_warm:
-        if _sec_13f_index.exists():
-            print(f"\n[1.5] 13F PIT cache already present — skipping warm")
-        else:
-            print(f"\n[1.5] Warming 13F PIT cache for {as_of_date} ...")
-            _13f_proc = subprocess.run(
-                [
-                    sys.executable,
-                    str(REPO_ROOT / "tools" / "warm_13f_cache.py"),
-                    "--as-of-date", as_of_date,
-                    "--elite-only",
-                    "--max-workers", "2",
-                ],
-                capture_output=True, text=True, cwd=str(REPO_ROOT),
-            )
-            if _13f_proc.returncode == 0:
-                print(f"  13F PIT warm OK")
-            else:
-                print(f"  13F PIT warm FAILED (exit {_13f_proc.returncode}) — gate will WARN")
-                if _13f_proc.stderr:
-                    for _line in _13f_proc.stderr.strip().splitlines()[-5:]:
-                        print(f"    {_line}")
-    else:
-        print(f"\n[1.5] 13F PIT warm skipped (--skip-pit-warm)")
 
     # --- Step 2: Run screen into staging dir ---
     print(f"\n[2/5] Running screen (phase2, ranking_mode=decision) ...")
@@ -2865,6 +2884,36 @@ def run_daily(
             data_dir=data_dir,
         )
         return manifest
+
+    # --- Step 2.5: PIT price anchor from staging rankings.csv (before gates) ---
+    # Creating the anchor here (not post-promotion) means price_pit_cache gate
+    # can see the file and pass on the same run.
+    _price_cache_base = price_cache_dir or (REPO_ROOT / "data" / "caches" / "price_pit" / "PIT")
+    if not skip_pit_warm and warm_price_pit:
+        _staging_rankings = staging_date_dir / "rankings.csv"
+        if _staging_rankings.exists():
+            print(f"\n[2.5] Creating PIT price anchor for {as_of_date} ...")
+            _anchor_proc = subprocess.run(
+                [
+                    sys.executable,
+                    str(REPO_ROOT / "tools" / "warm_price_cache.py"),
+                    "--snapshot",
+                    "--as-of-date", as_of_date,
+                    "--rankings-csv", str(_staging_rankings),
+                    "--price-csv", str(price_csv),
+                    "--cache-base", str(_price_cache_base),
+                ],
+                capture_output=True, text=True, cwd=str(REPO_ROOT),
+            )
+            if _anchor_proc.returncode == 0:
+                print(f"  PIT price anchor OK")
+            else:
+                print(f"  PIT price anchor FAILED (exit {_anchor_proc.returncode}) — price_pit_cache gate will WARN")
+                if _anchor_proc.stderr:
+                    for _line in _anchor_proc.stderr.strip().splitlines()[-5:]:
+                        print(f"    {_line}")
+        else:
+            print(f"\n[2.5] PIT price anchor skipped — rankings.csv not found in staging")
 
     # --- Step 3: Run integrity audit ---
     audit_proc = None
@@ -2942,7 +2991,7 @@ def run_daily(
     print(f"  PnL attribution gate: {pnl_gate.status} — {pnl_gate.detail}")
 
     # --- Gate: price_pit_cache (WARN-only) ---
-    _price_cache_base = price_cache_dir or (REPO_ROOT / "data" / "caches" / "price_pit" / "PIT")
+    # _price_cache_base already set in step 2.5 above
     pit_price_gate = check_price_pit_cache(_price_cache_base / as_of_date, as_of_date)
     gate_results.append(pit_price_gate)
     print(f"  PIT price cache gate: {pit_price_gate.status} — {pit_price_gate.detail}")
@@ -3057,40 +3106,18 @@ def run_daily(
                     print(f"  [{g.status}] {g.name}: {g.detail}")
         print(f"{'='*70}")
 
-        # --- Step 6: PIT price anchor (create snapshot cache for this date) ---
-        _price_cache_base_post = price_cache_dir or (REPO_ROOT / "data" / "caches" / "price_pit" / "PIT")
-        if not skip_pit_warm:
-            rankings_csv = final_path / "rankings.csv"
-            print(f"\n[6] Creating PIT price anchor for {as_of_date} ...")
-            _anchor_proc = subprocess.run(
-                [
-                    sys.executable,
-                    str(REPO_ROOT / "tools" / "warm_price_cache.py"),
-                    "--snapshot",
-                    "--as-of-date", as_of_date,
-                    "--rankings-csv", str(rankings_csv),
-                    "--price-csv", str(price_csv),
-                    "--cache-base", str(_price_cache_base_post),
-                ],
-                capture_output=True, text=True, cwd=str(REPO_ROOT),
-            )
-            if _anchor_proc.returncode == 0:
-                print(f"  PIT price anchor OK")
-            else:
-                print(f"  PIT price anchor FAILED (exit {_anchor_proc.returncode}) — gate will WARN on next run")
-                if _anchor_proc.stderr:
-                    for _line in _anchor_proc.stderr.strip().splitlines()[-5:]:
-                        print(f"    {_line}")
-
-            # --- Step 7: Backfill matured forward horizons for all existing caches ---
-            print(f"\n[7] Backfilling PIT price forward returns through {as_of_date} ...")
+        # --- Step 6: Backfill matured PIT price forward returns (optional) ---
+        # The price anchor was already created in step 2.5 (before gates).
+        # Backfill is opt-in (--price-pit-backfill) since it can be slow.
+        if not skip_pit_warm and price_pit_backfill:
+            print(f"\n[6] Backfilling PIT price forward returns through {as_of_date} ...")
             _backfill_proc = subprocess.run(
                 [
                     sys.executable,
                     str(REPO_ROOT / "tools" / "warm_price_cache.py"),
                     "--backfill-all",
                     "--price-csv", str(price_csv),
-                    "--cache-base", str(_price_cache_base_post),
+                    "--cache-base", str(_price_cache_base),
                     "--through-date", as_of_date,
                 ],
                 capture_output=True, text=True, cwd=str(REPO_ROOT),
@@ -3098,12 +3125,10 @@ def run_daily(
             if _backfill_proc.returncode == 0:
                 print(f"  PIT price backfill OK")
             else:
-                print(f"  PIT price backfill FAILED (exit {_backfill_proc.returncode}) — forward_eval gate will WARN")
+                print(f"  PIT price backfill FAILED (exit {_backfill_proc.returncode})")
                 if _backfill_proc.stderr:
                     for _line in _backfill_proc.stderr.strip().splitlines()[-5:]:
                         print(f"    {_line}")
-        else:
-            print(f"\n[6/7] PIT price anchor/backfill skipped (--skip-pit-warm)")
 
     return manifest
 
@@ -3186,9 +3211,28 @@ def main():
     parser.add_argument(
         "--skip-pit-warm", action="store_true",
         help=(
-            "Skip 13F PIT cache warm (step 1.5) and PIT price anchor/backfill (steps 6-7). "
+            "Skip all PIT warm steps (cache warm, price anchor, backfill). "
             "Use when CI handles PIT warming externally."
         ),
+    )
+    parser.add_argument(
+        "--warm-sources", default="sec_8k,ctgov,sec_13f",
+        help=(
+            "Comma-separated sources passed to warm_caches.py in step 1.5 "
+            "(default: sec_8k,ctgov,sec_13f). Use empty string to skip."
+        ),
+    )
+    parser.add_argument(
+        "--no-warm-price-pit", action="store_true",
+        help="Skip PIT price anchor creation in step 2.5.",
+    )
+    parser.add_argument(
+        "--price-pit-backfill", action="store_true",
+        help="After promotion, backfill matured forward returns for all PIT price caches.",
+    )
+    parser.add_argument(
+        "--no-auto-refresh-market-data", action="store_true",
+        help="Do not auto-refresh market_data.json when staleness gate fires; abort instead.",
     )
     args = parser.parse_args()
 
@@ -3217,6 +3261,10 @@ def main():
         price_cache_dir=args.price_cache_dir,
         fail_on_bad_cache=args.fail_on_bad_cache,
         skip_pit_warm=args.skip_pit_warm,
+        warm_sources=args.warm_sources,
+        warm_price_pit=not args.no_warm_price_pit,
+        price_pit_backfill=args.price_pit_backfill,
+        auto_refresh_market_data=not args.no_auto_refresh_market_data,
     )
 
     # Always write manifest to output/ for CI discoverability
