@@ -468,6 +468,57 @@ class TestGate:
         assert gate["verdict"] == "WARN"
         assert "zero_evaluated_dates" in gate["warn_reasons"]
 
+    # --- No-op override (rerank-only cross-comparison) ---
+
+    def _noop_eval(self, shift=150):
+        """Eval result with perfect cross-comparison but high temporal shift."""
+        return {
+            "n_evaluated": 36,
+            "temporal_stability": {
+                "mean_top60_overlap": 95.0,
+                "max_rank_shift": {
+                    "ticker": "IBRX", "shift": shift, "date": "2026-02-24",
+                    "from": 32, "to": 221,
+                },
+            },
+            "cross_comparison": {
+                "mean_pct_rank_changed": 0.0,
+                "mean_spearman": 0.9999,
+                "mean_top60_overlap": 100.0,
+            },
+            "performance": {},
+        }
+
+    def test_noop_temporal_fail_becomes_pass(self):
+        """High temporal shift + perfect cross-comparison => PASS (not FAIL/WARN).
+
+        The baseline_temporal_instability entry lands in warn_reasons for audit
+        but does not block PASS so promote_ruleset.py can accept without --force.
+        """
+        gate = evaluate_gate(self._noop_eval(shift=150))
+        assert gate["verdict"] == "PASS", gate
+        assert not gate["fail_reasons"]
+        # Audit trail still present in warn_reasons
+        assert any("baseline_temporal_instability" in w for w in gate["warn_reasons"])
+        assert "IBRX" in " ".join(gate["warn_reasons"])
+
+    def test_noop_override_includes_shift_info(self):
+        """Audit warn_reason carries shift magnitude and date for triage."""
+        gate = evaluate_gate(self._noop_eval(shift=189))
+        assert gate["verdict"] == "PASS", gate
+        warn_text = " ".join(gate["warn_reasons"])
+        assert "shift=189" in warn_text
+        assert "2026-02-24" in warn_text
+
+    def test_non_noop_temporal_fail_stays_fail(self):
+        """High temporal shift + degraded cross top60 => FAIL (no override)."""
+        result = self._noop_eval(shift=150)
+        result["cross_comparison"]["mean_top60_overlap"] = 85.0   # below no-op floor
+        result["cross_comparison"]["mean_spearman"] = 0.95        # below no-op floor
+        gate = evaluate_gate(result)
+        assert gate["verdict"] == "FAIL"
+        assert any("max_rank_shift" in r for r in gate["fail_reasons"])
+
 
 # ---------------------------------------------------------------------------
 # Tests: CLI

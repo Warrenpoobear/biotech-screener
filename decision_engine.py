@@ -192,9 +192,12 @@ class DecisionRuleset:
     catalyst_priority_default: int = 9
     catalyst_priority_unknown: int = 99
 
-    # Alpha modifier (nudges ordering using OOS alpha signal, does NOT replace composite)
-    alpha_modifier_mode: str = "off"           # "off" | "tiebreak" | "within_tier"
-    alpha_modifier_weight: float = 0.00        # weight for within_tier mode; capped [0, 0.25]
+    # Alpha modifier — DEPRECATED.  5-way backtest (2020-2026, 347 dates) confirmed
+    # within_tier at weight=0.05 produces zero measurable change in sort order vs off.
+    # tiebreak mode is structurally unreachable (unique alpha_cohort_pct floats prevent
+    # ties at sort tuple position 3).  Keep fields for backward compat; default is "off".
+    alpha_modifier_mode: str = "off"           # "off" | "within_tier" (tiebreak: dead)
+    alpha_modifier_weight: float = 0.00        # deprecated; leave at 0.0
 
     # Actionable ordering — catalyst priority mode (supersedes enable_catalyst_priority)
     catalyst_priority_mode: str = "off"       # "off" | "tiebreaker" | "blended"
@@ -319,6 +322,8 @@ class DecisionRuleset:
                 f"got '{self.alpha_table_rebuild_policy}'"
             )
         # Validate alpha_modifier_mode
+        # "tiebreak" accepted for backward compat with archived rulesets but is
+        # structurally inert — _alpha_tie is hardcoded to 0.0 in the sort key.
         if self.alpha_modifier_mode not in ("off", "tiebreak", "within_tier"):
             raise ValueError(
                 f"alpha_modifier_mode must be 'off', 'tiebreak', or 'within_tier', "
@@ -1260,8 +1265,9 @@ def _build_sort_contributions(
         delta = ruleset.calendar_alpha_sort_weight * cv2_eff
         contribs.append(SortContribution("calendar_alpha", cv2_z, ruleset.calendar_alpha_sort_weight, delta))
 
-    # 5. Alpha modifier (within_tier mode only; tiebreak lives in a separate tuple position)
-    if ruleset.alpha_modifier_mode == "within_tier":
+    # 5. Alpha modifier — deprecated; branch kept for backward compat with old rulesets.
+    #    within_tier at weight≤0.05 proven zero-impact (ablation 2026-03-02).
+    if ruleset.alpha_modifier_mode == "within_tier" and ruleset.alpha_modifier_weight > 0.0:
         delta = ruleset.alpha_modifier_weight * alpha_raw
         contribs.append(SortContribution("alpha_modifier", alpha_raw, ruleset.alpha_modifier_weight, delta))
 
@@ -1373,9 +1379,9 @@ def compute_actionable_sort_key(
     if rs.enable_missingness_sort_penalty:
         missing_count = int(_safe_float(decision_fields.get("missingness_penalty", 0), default=0))
 
-    # Alpha modifier signal (0.0 when mode=off or missing)
+    # Alpha modifier signal (deprecated; tiebreak mode is structurally dead)
     _alpha_sig = _safe_float(alpha_raw, default=0.0)
-    _alpha_tie = -_alpha_sig if rs.alpha_modifier_mode == "tiebreak" else 0.0
+    _alpha_tie = 0.0  # tiebreak mode retired: unique upstream floats prevent ties
 
     # --- Build structured contributions and compute total adjustment ---
     # Catalyst bonus is only non-zero in blended mode.
