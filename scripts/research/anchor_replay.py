@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Promotion-grade anchor replay on monthly archive grid.
+"""Promotion-grade anchor replay on monthly/weekly archive grid.
 
 Tests A (alpha_cohort) vs E (optionality) vs E+blend variants on the full
 archive history with matured forward returns.
@@ -19,8 +19,11 @@ Promotion criteria (pre-registered):
 
 Usage:
     python scripts/research/anchor_replay.py \
-        --date-from 2024-01-31 --date-to 2025-10-31 \
-        --horizons 20,60 --top-k 20 --cost-bps 15
+        --date-from 2020-01-31 --date-to 2026-02-28 \
+        --date-grid monthly --horizons 20,60 --top-k 20
+
+    python scripts/research/anchor_replay.py \
+        --date-grid weekly --date-from 2024-01-01 --date-to 2025-12-31
 """
 from __future__ import annotations
 
@@ -30,6 +33,7 @@ import csv
 import json
 import logging
 import math
+import random
 import statistics
 import sys
 import tarfile
@@ -54,15 +58,22 @@ log = logging.getLogger(__name__)
 # Archive loading
 # ---------------------------------------------------------------------------
 
-def discover_monthly_archives(
+def discover_archives(
     archive_dir: Path,
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
+    date_grid: str = "monthly",
 ) -> List[Tuple[str, Path]]:
-    """Find monthly archives (last day of month) in date range."""
+    """Find archives in date range, optionally filtering to monthly grid.
+
+    date_grid:
+      "all"     — use every archive in the range
+      "monthly" — keep only one archive per calendar month (prefer last day)
+      "weekly"  — keep only one archive per ISO week (prefer last day)
+    """
     import re
     pattern = re.compile(r"(\d{4}-\d{2}-\d{2})\.tar\.gz$")
-    results: List[Tuple[str, Path]] = []
+    all_archives: List[Tuple[str, Path]] = []
     for p in sorted(archive_dir.glob("*.tar.gz")):
         m = pattern.search(p.name)
         if not m:
@@ -72,9 +83,32 @@ def discover_monthly_archives(
             continue
         if date_to and d > date_to:
             continue
-        results.append((d, p))
-    results.sort(key=lambda x: x[0])
-    return results
+        all_archives.append((d, p))
+    all_archives.sort(key=lambda x: x[0])
+
+    if date_grid == "all":
+        return all_archives
+
+    if date_grid == "monthly":
+        # Keep last archive per YYYY-MM
+        by_month: Dict[str, Tuple[str, Path]] = {}
+        for d, p in all_archives:
+            ym = d[:7]
+            by_month[ym] = (d, p)  # last one wins
+        return sorted(by_month.values(), key=lambda x: x[0])
+
+    if date_grid == "weekly":
+        # Keep last archive per ISO year-week
+        from datetime import date as dt_date
+        by_week: Dict[str, Tuple[str, Path]] = {}
+        for d, p in all_archives:
+            parts = d.split("-")
+            iso = dt_date(int(parts[0]), int(parts[1]), int(parts[2])).isocalendar()
+            wk = f"{iso[0]:04d}-W{iso[1]:02d}"
+            by_week[wk] = (d, p)
+        return sorted(by_week.values(), key=lambda x: x[0])
+
+    return all_archives
 
 
 def load_archive_rankings(tar_path: Path, date_str: str) -> List[Dict[str, str]]:
@@ -94,7 +128,7 @@ def load_archive_rankings(tar_path: Path, date_str: str) -> List[Dict[str, str]]
 
 
 # ---------------------------------------------------------------------------
-# Price loading (reused from run_alpha_experiment)
+# Price loading
 # ---------------------------------------------------------------------------
 
 def load_price_series(csv_path: Path) -> Dict[str, Dict[str, float]]:
@@ -185,6 +219,74 @@ def compute_turnover(prev_set: List[str], curr_set: List[str]) -> float:
 
 
 # ---------------------------------------------------------------------------
+# Paired statistics
+# ---------------------------------------------------------------------------
+
+def paired_stats(
+    a_vals: List[float],
+    b_vals: List[float],
+    n_boot: int = 5000,
+    seed: int = 42,
+) -> Dict[str, Any]:
+    """Compute paired difference statistics between two aligned series.
+
+    Returns: mean_delta, std_delta, t_stat, p_value, ci_lo_95, ci_hi_95.
+    """
+    n = min(len(a_vals), len(b_vals))
+    if n < 3:
+        return {
+            "n": n, "mean_delta": None, "std_delta": None,
+            "t_stat": None, "p_value": None,
+            "ci_lo_95": None, "ci_hi_95": None,
+        }
+
+    deltas = [b_vals[i] - a_vals[i] for i in range(n)]
+    mean_d = statistics.mean(deltas)
+    std_d = statistics.stdev(deltas) if n > 1 else 0.0
+    se = std_d / math.sqrt(n) if n > 0 else 0.0
+    t_stat = mean_d / se if se > 0 else 0.0
+
+    # Two-tailed p-value approximation (t-distribution with n-1 df)
+    # Using normal approximation for simplicity (accurate for n > 20)
+    z = abs(t_stat)
+    # Abramowitz-Stegun approximation for normal CDF tail
+    p_val = 2.0 * _normal_sf(z)
+
+    # Bootstrap 95% CI on mean delta
+    rng = random.Random(seed)
+    boot_means: List[float] = []
+    for _ in range(n_boot):
+        sample = [rng.choice(deltas) for _ in range(n)]
+        boot_means.append(statistics.mean(sample))
+    boot_means.sort()
+    lo_idx = int(0.025 * n_boot)
+    hi_idx = int(0.975 * n_boot)
+    ci_lo = boot_means[lo_idx]
+    ci_hi = boot_means[min(hi_idx, len(boot_means) - 1)]
+
+    return {
+        "n": n,
+        "mean_delta": round(mean_d, 6),
+        "std_delta": round(std_d, 6),
+        "t_stat": round(t_stat, 4),
+        "p_value": round(p_val, 4),
+        "ci_lo_95": round(ci_lo, 6),
+        "ci_hi_95": round(ci_hi, 6),
+    }
+
+
+def _normal_sf(z: float) -> float:
+    """Survival function for standard normal (1 - CDF), Abramowitz-Stegun."""
+    if z < 0:
+        return 1.0 - _normal_sf(-z)
+    t = 1.0 / (1.0 + 0.2316419 * z)
+    d = 0.3989422804014327  # 1/sqrt(2*pi)
+    poly = t * (0.319381530 + t * (-0.356563782 + t * (1.781477937
+           + t * (-1.821255978 + t * 1.330274429))))
+    return d * math.exp(-0.5 * z * z) * poly
+
+
+# ---------------------------------------------------------------------------
 # Re-ranking
 # ---------------------------------------------------------------------------
 
@@ -216,7 +318,6 @@ def rerank_rows(
     if config.anchor_source == "blend":
         compute_blend_pct(rows, config.blend_w)
 
-    # Determine tiebreaker_pct source
     def _get_tiebreaker(r: Dict[str, str]) -> float:
         if config.anchor_source == "alpha_pct":
             return safe_float(r.get("alpha_cohort_pct")) or 0.0
@@ -259,6 +360,7 @@ class DateResult:
     date: str = ""
     n_eligible: int = 0
     skipped: bool = False
+    alpha_table_built: bool = False
     ics: Dict[int, Optional[float]] = field(default_factory=dict)
     returns: Dict[int, Optional[float]] = field(default_factory=dict)
     n_held: Dict[int, int] = field(default_factory=dict)
@@ -334,22 +436,142 @@ def evaluate_date(
 
 
 # ---------------------------------------------------------------------------
+# Report generation
+# ---------------------------------------------------------------------------
+
+def write_summary_md(
+    out_path: Path,
+    summary_rows: List[Dict[str, Any]],
+    horizons: List[int],
+    configs: List[AnchorConfig],
+    config_results: Dict[str, Dict[str, Any]],
+    common_dates: List[str],
+    all_by_date: Dict[str, Dict[str, Dict[str, Any]]],
+    args: argparse.Namespace,
+) -> None:
+    """Write human-readable summary.md report."""
+    lines: List[str] = []
+    lines.append("# Anchor Replay Results\n")
+    lines.append(f"**Date grid**: {args.date_grid}")
+    lines.append(f"**Range**: {args.date_from} → {args.date_to}")
+    lines.append(f"**Common eval dates**: {len(common_dates)}")
+    lines.append(f"**Horizons**: {horizons}")
+    lines.append(f"**Top-K**: {args.top_k}")
+    lines.append(f"**Configs**: {[c.label for c in configs]}")
+    lines.append("")
+
+    # Aggregate table
+    lines.append("## Aggregate Metrics (common-date intersection)\n")
+    h_parts = ["Config"]
+    for h in horizons:
+        h_parts += [f"IC({h}d)", f"ΔIC", f"Hit", f"n"]
+    h_parts += ["Turnover"]
+    for h in horizons:
+        h_parts += [f"Ret({h}d)"]
+    lines.append("| " + " | ".join(h_parts) + " |")
+    lines.append("|" + "|".join(["---"] * len(h_parts)) + "|")
+
+    ref_label = configs[0].label
+    ref = config_results[ref_label]
+
+    for sr in summary_rows:
+        parts = [sr["label"]]
+        for h in horizons:
+            ic = sr.get(f"ic_{h}d")
+            hit = sr.get(f"hit_{h}d")
+            n = sr.get(f"n_{h}d", 0)
+            ref_ic = summary_rows[0].get(f"ic_{h}d")
+
+            ic_s = f"{ic:.4f}" if ic is not None else "—"
+            if ic is not None and ref_ic is not None and sr["label"] != ref_label:
+                d_s = f"{ic - ref_ic:+.4f}"
+            else:
+                d_s = "—"
+            hit_s = f"{hit:.0%}" if hit is not None else "—"
+            parts += [ic_s, d_s, hit_s, str(n)]
+
+        tv = sr.get("mean_turnover")
+        parts.append(f"{tv:.3f}" if tv is not None else "—")
+
+        for h in horizons:
+            ret = sr.get(f"ret_{h}d")
+            parts.append(f"{ret*100:.2f}%" if ret is not None else "—")
+
+        lines.append("| " + " | ".join(parts) + " |")
+
+    # Paired stats section
+    lines.append("")
+    lines.append("## Paired Statistics (vs A_alpha)\n")
+
+    for cfg in configs[1:]:
+        lines.append(f"### {cfg.label}\n")
+        for h in horizons:
+            ref_ics = ref["ic_by_h"][h]
+            cand_ics = config_results[cfg.label]["ic_by_h"][h]
+            ps = paired_stats(ref_ics, cand_ics)
+            lines.append(f"**IC({h}d)**: ΔIC={ps['mean_delta']}, "
+                         f"std={ps['std_delta']}, t={ps['t_stat']}, "
+                         f"p={ps['p_value']}, "
+                         f"95%CI=[{ps['ci_lo_95']}, {ps['ci_hi_95']}]")
+
+            ref_rets = ref["ret_by_h"][h]
+            cand_rets = config_results[cfg.label]["ret_by_h"][h]
+            ps_r = paired_stats(ref_rets, cand_rets)
+            lines.append(f"**Ret({h}d)**: ΔRet={ps_r['mean_delta']}, "
+                         f"std={ps_r['std_delta']}, t={ps_r['t_stat']}, "
+                         f"p={ps_r['p_value']}, "
+                         f"95%CI=[{ps_r['ci_lo_95']}, {ps_r['ci_hi_95']}]")
+        lines.append("")
+
+    # Promotion check
+    lines.append("## Promotion Gate\n")
+    ref_row = summary_rows[0]
+    for sr in summary_rows[1:]:
+        checks = []
+        for h in horizons:
+            ref_ic = ref_row.get(f"ic_{h}d")
+            cand_ic = sr.get(f"ic_{h}d")
+            ref_hit = ref_row.get(f"hit_{h}d")
+            cand_hit = sr.get(f"hit_{h}d")
+            if cand_ic is not None and ref_ic is not None:
+                d_ic = cand_ic - ref_ic
+                checks.append(f"ΔIC({h}d)={d_ic:+.4f} {'PASS' if d_ic >= 0.005 else 'FAIL'}")
+            if cand_hit is not None and ref_hit is not None:
+                d_hit = cand_hit - ref_hit
+                checks.append(f"ΔHit({h}d)={d_hit:+.0%} {'PASS' if d_hit >= 0.05 else 'FAIL'}")
+
+        tv_ref = ref_row.get("mean_turnover") or 0
+        tv_cand = sr.get("mean_turnover") or 0
+        checks.append(f"ΔTurnover={tv_cand - tv_ref:+.3f} {'PASS' if (tv_cand - tv_ref) <= 0.05 else 'FAIL'}")
+
+        status = "PROMOTE" if all("PASS" in c for c in checks) else "NO_PROMOTE"
+        lines.append(f"**{sr['label']}**: {status}")
+        for c in checks:
+            lines.append(f"- {c}")
+        lines.append("")
+
+    out_path.write_text("\n".join(lines), encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Promotion-grade anchor replay on monthly archives",
+        description="Promotion-grade anchor replay on monthly/weekly archives",
     )
     parser.add_argument("--archive-dir", type=Path,
                         default=PROJECT_ROOT / "data" / "archives")
     parser.add_argument("--price-csv", type=Path,
                         default=PROJECT_ROOT / "production_data" / "price_history.csv")
-    parser.add_argument("--date-from", type=str, default="2024-01-31")
-    parser.add_argument("--date-to", type=str, default="2025-10-31")
+    parser.add_argument("--date-from", type=str, default="2020-01-31")
+    parser.add_argument("--date-to", type=str, default="2026-02-28")
+    parser.add_argument("--date-grid", type=str, default="monthly",
+                        choices=["monthly", "weekly", "all"],
+                        help="Date sampling grid (default: monthly)")
     parser.add_argument("--horizons", type=str, default="20,60")
     parser.add_argument("--top-k", type=int, default=20)
-    parser.add_argument("--cost-bps", type=int, default=15)
     parser.add_argument("--min-eval-dates", type=int, default=12,
                         help="Minimum eval dates with matured returns for reporting")
     parser.add_argument("--blend-weights", type=str, default="0.02,0.05,0.10")
@@ -368,8 +590,14 @@ def main() -> None:
     blend_weights = [float(w.strip()) for w in args.blend_weights.split(",")]
 
     # ---- Discover archives ----
-    archives = discover_monthly_archives(args.archive_dir, args.date_from, args.date_to)
-    print(f"Archives: {len(archives)} ({archives[0][0]} → {archives[-1][0]})")
+    archives = discover_archives(
+        args.archive_dir, args.date_from, args.date_to, args.date_grid,
+    )
+    if not archives:
+        print("No archives found in range.")
+        return
+    print(f"Archives: {len(archives)} ({args.date_grid} grid, "
+          f"{archives[0][0]} → {archives[-1][0]})")
 
     # ---- Load prices ----
     print("Loading prices ...")
@@ -381,18 +609,21 @@ def main() -> None:
     print(f"  {len(prices)} tickers, {len(sorted_dates)} trading dates")
 
     # ---- Build base ruleset ----
+    snap_dir = PROJECT_ROOT / "data" / "snapshots"
     dates_with_rs = sorted([
-        p.name for p in (PROJECT_ROOT / "data" / "snapshots").iterdir()
+        p.name for p in snap_dir.iterdir()
         if p.is_dir() and len(p.name) == 10 and p.name[4] == "-"
         and (p / "decision_ruleset.json").exists()
-    ])
-    rs_path = PROJECT_ROOT / "data" / "snapshots" / dates_with_rs[-1] / "decision_ruleset.json"
-    base_rs = DecisionRuleset.from_json(str(rs_path))
+    ]) if snap_dir.exists() else []
+    if dates_with_rs:
+        rs_path = snap_dir / dates_with_rs[-1] / "decision_ruleset.json"
+        base_rs = DecisionRuleset.from_json(str(rs_path))
+    else:
+        base_rs = DecisionRuleset()
     print(f"Base ruleset: {base_rs.ruleset_id}")
 
     from dataclasses import replace as dc_replace
 
-    # Make a ruleset with alpha anchor (for config A) and off modifier
     rs_alpha = dc_replace(base_rs,
                           sort_anchor="alpha_cohort",
                           alpha_modifier_mode="off",
@@ -432,7 +663,11 @@ def main() -> None:
     # ---- Main evaluation loop ----
     print(f"\nEvaluating {len(configs)} configs × {len(archives)} dates ...")
 
-    # Per-config accumulators
+    # Per-config accumulators: store per-date results
+    config_date_results: Dict[str, Dict[str, DateResult]] = {
+        cfg.label: {} for cfg in configs
+    }
+
     config_results: Dict[str, Dict[str, Any]] = {}
     for cfg in configs:
         config_results[cfg.label] = {
@@ -443,19 +678,21 @@ def main() -> None:
             "eval_dates": [],
         }
 
+    # Track by-date output
+    all_by_date: Dict[str, Dict[str, Dict[str, Any]]] = {}
+
     for date_str, tar_path in archives:
         raw_rows = load_archive_rankings(tar_path, date_str)
         if not raw_rows:
             print(f"  {date_str}: no rankings — skip")
             continue
 
-        # Backfill columns for old archives
         backfill_columns(raw_rows)
         backfill_clinical_z_tier(raw_rows)
 
-        # Attach alpha scores if table available
         alpha_table = alpha_tables.get(date_str)
-        if alpha_table is not None:
+        alpha_built = alpha_table is not None
+        if alpha_built:
             attach_alpha_scores(
                 raw_rows, alpha_table,
                 shrink_k=base_rs.alpha_cohort_shrink_k,
@@ -463,17 +700,20 @@ def main() -> None:
                 clip_max=base_rs.alpha_cohort_clip_max,
             )
         else:
-            # No alpha table — set defaults
             for r in raw_rows:
                 r["alpha_cohort_raw"] = 0.0
                 r["alpha_cohort_pct"] = 0.5
                 r["alpha_cohort_key"] = "early|none|nonpos"
 
-        # Evaluate each config
+        date_entry: Dict[str, Dict[str, Any]] = {}
+
         for cfg in configs:
             rows = copy.deepcopy(raw_rows)
             rows = rerank_rows(rows, cfg, rs_alpha)
             metrics = evaluate_date(rows, date_str, prices, sorted_dates, horizons, args.top_k)
+
+            metrics.alpha_table_built = alpha_built
+            config_date_results[cfg.label][date_str] = metrics
 
             if metrics.skipped:
                 continue
@@ -495,17 +735,79 @@ def main() -> None:
                 acc["turnovers"].append(t)
             acc["prev_topk"] = curr_topk
 
+            # by-date entry
+            entry: Dict[str, Any] = {
+                "n_eligible": metrics.n_eligible,
+                "alpha_table_built": alpha_built,
+                "top_k": metrics.top_k_tickers[:args.top_k],
+            }
+            for h in horizons:
+                entry[f"ic_{h}d"] = metrics.ics.get(h)
+                entry[f"ret_{h}d"] = metrics.returns.get(h)
+                entry[f"n_held_{h}d"] = metrics.n_held.get(h, 0)
+            date_entry[cfg.label] = entry
+
+        all_by_date[date_str] = date_entry
+
         print(f"  {date_str}: {len(raw_rows)} tickers, "
-              f"alpha_table={'YES' if alpha_table else 'NO'}")
+              f"alpha_table={'YES' if alpha_built else 'NO'}")
+
+    # ---- Common-date intersection ----
+    # Find dates where ALL configs have valid IC for all horizons.
+    # Alpha-dependent configs (alpha_pct, blend) additionally require
+    # alpha_table_built == True so A vs E comparisons are honest.
+    _ALPHA_SOURCES = {"alpha_pct", "blend"}
+
+    common_dates: List[str] = []
+    for date_str, _ in archives:
+        ok = True
+        for cfg in configs:
+            dr = config_date_results[cfg.label].get(date_str)
+            if dr is None or dr.skipped:
+                ok = False
+                break
+            if not all(dr.ics.get(h) is not None for h in horizons):
+                ok = False
+                break
+            # Alpha-dependent configs must have a real alpha table
+            if cfg.anchor_source in _ALPHA_SOURCES and not dr.alpha_table_built:
+                ok = False
+                break
+        if ok:
+            common_dates.append(date_str)
+
+    print(f"\nCommon eval dates: {len(common_dates)} / {len(archives)}")
+
+    # Rebuild accumulators on common-date intersection only
+    for cfg in configs:
+        acc = config_results[cfg.label]
+        acc["ic_by_h"] = {h: [] for h in horizons}
+        acc["ret_by_h"] = {h: [] for h in horizons}
+        acc["turnovers"] = []
+        acc["eval_dates"] = []
+        prev_topk: List[str] = []
+        for d in common_dates:
+            dr = config_date_results[cfg.label][d]
+            acc["eval_dates"].append(d)
+            for h in horizons:
+                ic = dr.ics.get(h)
+                if ic is not None:
+                    acc["ic_by_h"][h].append(ic)
+                ret = dr.returns.get(h)
+                if ret is not None:
+                    acc["ret_by_h"][h].append(ret)
+            curr_topk = dr.top_k_tickers[:args.top_k]
+            if prev_topk:
+                acc["turnovers"].append(compute_turnover(prev_topk, curr_topk))
+            prev_topk = curr_topk
 
     # ---- Aggregate + report ----
-    print("\n" + "=" * 110)
-    print("# Anchor Replay Results")
-    print(f"# Archives: {archives[0][0]} → {archives[-1][0]}, "
+    print("\n" + "=" * 120)
+    print("# Anchor Replay Results (common-date intersection)")
+    print(f"# Grid: {args.date_grid}, dates: {len(common_dates)}, "
           f"horizons: {horizons}, top_k: {args.top_k}")
     print()
 
-    # Header
     header = f"{'Config':<22s}"
     for h in horizons:
         header += f" {'IC('+str(h)+'d)':>10s} {'ΔIC':>8s} {'Hit':>6s} {'n':>4s}"
@@ -550,7 +852,6 @@ def main() -> None:
         row["mean_turnover"] = tv
         line += f" {tv:>9.3f}" if tv is not None else f" {'—':>9s}"
 
-        # Gross returns per horizon
         for h in horizons:
             rets = acc["ret_by_h"][h]
             if rets:
@@ -562,6 +863,21 @@ def main() -> None:
 
         print(line)
         summary_rows.append(row)
+
+    # ---- Paired statistics ----
+    print()
+    print("Paired Statistics (vs A_alpha, common-date intersection):")
+    print("-" * 80)
+    for cfg in configs[1:]:
+        for h in horizons:
+            ref_ics = ref["ic_by_h"][h]
+            cand_ics = config_results[cfg.label]["ic_by_h"][h]
+            ps = paired_stats(ref_ics, cand_ics)
+            print(f"  {cfg.label} IC({h}d): ΔIC={ps['mean_delta']:+.4f}, "
+                  f"t={ps['t_stat']:.2f}, p={ps['p_value']:.3f}, "
+                  f"95%CI=[{ps['ci_lo_95']:+.4f}, {ps['ci_hi_95']:+.4f}]"
+                  if ps['mean_delta'] is not None else
+                  f"  {cfg.label} IC({h}d): insufficient data")
 
     # ---- Promotion check ----
     print()
@@ -596,12 +912,45 @@ def main() -> None:
         for c in checks:
             print(f"    {c}")
 
-    # ---- Write JSON ----
+    # ---- Write outputs ----
     out_dir = args.out or (PROJECT_ROOT / "output" / "anchor_replay")
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # results.json
     with open(out_dir / "results.json", "w") as f:
         json.dump(summary_rows, f, indent=2, default=str)
-    print(f"\nJSON: {out_dir / 'results.json'}")
+
+    # by_date.json
+    by_date_out: Dict[str, Any] = {}
+    for d in sorted(all_by_date.keys()):
+        by_date_out[d] = all_by_date[d]
+    with open(out_dir / "by_date.json", "w") as f:
+        json.dump(by_date_out, f, indent=2, default=str)
+
+    # paired_stats.json
+    paired_out: Dict[str, Dict[str, Any]] = {}
+    for cfg in configs[1:]:
+        paired_out[cfg.label] = {}
+        for h in horizons:
+            ref_ics = ref["ic_by_h"][h]
+            cand_ics = config_results[cfg.label]["ic_by_h"][h]
+            paired_out[cfg.label][f"ic_{h}d"] = paired_stats(ref_ics, cand_ics)
+
+            ref_rets = ref["ret_by_h"][h]
+            cand_rets = config_results[cfg.label]["ret_by_h"][h]
+            paired_out[cfg.label][f"ret_{h}d"] = paired_stats(ref_rets, cand_rets)
+    with open(out_dir / "paired_stats.json", "w") as f:
+        json.dump(paired_out, f, indent=2, default=str)
+
+    # summary.md
+    write_summary_md(
+        out_dir / "summary.md",
+        summary_rows, horizons, configs, config_results,
+        common_dates, all_by_date, args,
+    )
+
+    print(f"\nOutput: {out_dir}")
+    print(f"  results.json, by_date.json, paired_stats.json, summary.md")
 
 
 if __name__ == "__main__":
