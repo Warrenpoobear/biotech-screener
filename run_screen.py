@@ -1512,11 +1512,11 @@ PORTFOLIO_POSITIONS_COLUMNS = [
 # Phase-2 operational defaults
 PHASE2_DEFAULT_RULESET_PATH = (
     Path(__file__).resolve().parent
-    / "production_data" / "decision_rulesets" / "v1.8.1_alpha_modifier_off.json"
+    / "production_data" / "decision_rulesets" / "v1.8.2_clinical_sort_off_candidate.json"
 )
 PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
 PHASE2_DEFAULT_TOP_K = 20
-PHASE2_PINNED_RULESET_ID = "fb0af0ac"
+PHASE2_PINNED_RULESET_ID = "4f12a7f8"
 PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
@@ -3014,6 +3014,7 @@ def save_validation_snapshot(
     ranking_mode: str = "decision",
     prior_snapshot_dir: Optional[Path] = None,
     alpha_ab_diagnostics: bool = False,
+    ctgov_cache_date: Optional[str] = None,
 ) -> Optional[Path]:
     """
     Save a lightweight validation snapshot for future forward-looking backtests.
@@ -4559,6 +4560,19 @@ def save_validation_snapshot(
         "cache_refresh_rejected_sources": _cr["rejected_sources"],
         "cache_refresh_summary": _cr["summary"] or None,
     }
+
+    # --- data_sources provenance (for anti-lookahead validation) ---
+    _data_sources: Dict[str, Any] = {}
+    if inst_summary and inst_summary.get("cache_as_of_date"):
+        _data_sources["sec_13f"] = {
+            "effective_date": inst_summary["cache_as_of_date"],
+            "lag_days": 45,
+        }
+    if ctgov_cache_date:
+        _data_sources["ctgov"] = {"effective_date": ctgov_cache_date}
+    # 8-K cache is always keyed by as_of_date in the production pipeline
+    _data_sources["sec_8k"] = {"effective_date": as_of_date}
+    metadata["data_sources"] = _data_sources
 
     meta_path = snap_path / "metadata.json"
     try:
@@ -8655,8 +8669,10 @@ Module 3 Catalyst Detection:
                 else Path(__file__).parent / "cache" / "ctgov"
             )
             _ctgov_snap = _ctgov_dir / f"trial_records_{args.as_of_date}.json"
+            _ctgov_cache_date: Optional[str] = None
             if _ctgov_snap.exists():
                 trial_records = json.loads(_ctgov_snap.read_text())
+                _ctgov_cache_date = args.as_of_date
             else:
                 _tr_path = args.data_dir / "trial_records.json"
                 trial_records = json.loads(_tr_path.read_text()) if _tr_path.exists() else None
@@ -8709,6 +8725,7 @@ Module 3 Catalyst Detection:
                 ranking_mode=args.ranking_mode,
                 prior_snapshot_dir=prior_snapshot_dir,
                 alpha_ab_diagnostics=getattr(args, "alpha_ab_diagnostics", False),
+                ctgov_cache_date=_ctgov_cache_date,
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")

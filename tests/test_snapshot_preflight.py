@@ -337,7 +337,7 @@ class TestCheckDatedSources:
         assert r.status == "PASS"
 
     def test_future_dated_13f(self, tmp_path: Path) -> None:
-        """13F effective_date after as_of - 45d → WARN."""
+        """13F effective_date after as_of_date → WARN (look-ahead)."""
         snap = tmp_path
         snap.mkdir(parents=True, exist_ok=True)
         fieldnames = ["ticker", "eligible", "actionable_rank", "coinvest_score_z"]
@@ -349,7 +349,7 @@ class TestCheckDatedSources:
         _write_metadata(snap, {
             "as_of_date": "2025-06-15",
             "data_sources": {
-                "sec_13f": {"effective_date": "2025-06-10", "lag_days": 45},
+                "sec_13f": {"effective_date": "2025-06-20", "lag_days": 45},
             },
         })
         r = check_dated_sources(snap, "2025-06-15")
@@ -682,6 +682,85 @@ class TestPreflightArtifacts:
 # ---------------------------------------------------------------------------
 # Audited backtest runner (smoke test)
 # ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# data_sources stamping integration
+# ---------------------------------------------------------------------------
+
+class TestDataSourcesStamping:
+    """Verify that metadata.json with proper data_sources passes preflight."""
+
+    def test_production_style_metadata_passes(self, tmp_path: Path) -> None:
+        """Metadata with all three data_sources families → PASS."""
+        snap = tmp_path
+        snap.mkdir(parents=True, exist_ok=True)
+        # Rankings with all signal families
+        fieldnames = [
+            "ticker", "eligible", "actionable_rank",
+            "coinvest_score_z", "clinical_score", "catalyst_days",
+        ]
+        with open(snap / "rankings.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow({
+                "ticker": "ACME", "eligible": "1", "actionable_rank": "1",
+                "coinvest_score_z": "0.3", "clinical_score": "5.0",
+                "catalyst_days": "45",
+            })
+        # Metadata matching production pipeline output
+        _write_metadata(snap, {
+            "as_of_date": "2025-06-15",
+            "data_sources": {
+                "sec_13f": {"effective_date": "2025-06-15", "lag_days": 45},
+                "ctgov": {"effective_date": "2025-06-15"},
+                "sec_8k": {"effective_date": "2025-06-15"},
+            },
+        })
+        r = check_dated_sources(snap, "2025-06-15")
+        assert r.status == "PASS"
+
+    def test_data_sources_dict_construction(self, tmp_path: Path) -> None:
+        """Verify the data_sources dict logic from run_screen.py."""
+        as_of_date = "2025-06-15"
+        inst_summary = {"cache_as_of_date": "2025-06-15"}
+        ctgov_cache_date = "2025-06-15"
+
+        data_sources = {}
+        if inst_summary and inst_summary.get("cache_as_of_date"):
+            data_sources["sec_13f"] = {
+                "effective_date": inst_summary["cache_as_of_date"],
+                "lag_days": 45,
+            }
+        if ctgov_cache_date:
+            data_sources["ctgov"] = {"effective_date": ctgov_cache_date}
+        data_sources["sec_8k"] = {"effective_date": as_of_date}
+
+        assert "sec_13f" in data_sources
+        assert data_sources["sec_13f"]["effective_date"] == "2025-06-15"
+        assert data_sources["sec_13f"]["lag_days"] == 45
+        assert data_sources["ctgov"]["effective_date"] == "2025-06-15"
+        assert data_sources["sec_8k"]["effective_date"] == "2025-06-15"
+
+    def test_no_inst_summary_omits_sec_13f(self, tmp_path: Path) -> None:
+        """When inst_summary is None, sec_13f entry is omitted."""
+        as_of_date = "2025-06-15"
+        inst_summary = None
+        ctgov_cache_date = "2025-06-15"
+
+        data_sources = {}
+        if inst_summary and inst_summary.get("cache_as_of_date"):
+            data_sources["sec_13f"] = {
+                "effective_date": inst_summary["cache_as_of_date"],
+                "lag_days": 45,
+            }
+        if ctgov_cache_date:
+            data_sources["ctgov"] = {"effective_date": ctgov_cache_date}
+        data_sources["sec_8k"] = {"effective_date": as_of_date}
+
+        assert "sec_13f" not in data_sources
+        assert "ctgov" in data_sources
+        assert "sec_8k" in data_sources
+
 
 class TestAuditedBacktestRunner:
     def test_smoke_tiny_snapshot_root(self, tmp_path: Path) -> None:

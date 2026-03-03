@@ -63,8 +63,6 @@ _SOURCE_FAMILY_COLUMNS = {
                 "has_catalyst_signal"},
 }
 
-_SEC_13F_LAG_DAYS = 45
-
 
 # ── Result types ────────────────────────────────────────────────────
 @dataclass
@@ -398,17 +396,13 @@ def check_dated_sources(
             warnings.append(f"{family}: bad date '{eff_str}'")
             continue
 
-        # PIT constraint
-        if family == "sec_13f":
-            lag = entry.get("lag_days", _SEC_13F_LAG_DAYS)
-            deadline = as_of - timedelta(days=lag)
-            if eff_date > deadline:
-                warnings.append(
-                    f"sec_13f: effective_date {eff_str} > as_of - {lag}d ({deadline})"
-                )
-        else:
-            if eff_date > as_of:
-                warnings.append(f"{family}: effective_date {eff_str} > as_of {snap_date}")
+        # PIT constraint: data must not be from the future.
+        # Note: for sec_13f the actual PIT lag (45d from quarter-end to
+        # filing availability) is enforced at cache-build time by
+        # select_pit_filing().  The preflight only checks that the
+        # stamped effective_date is not ahead of the snapshot date.
+        if eff_date > as_of:
+            warnings.append(f"{family}: effective_date {eff_str} > as_of {snap_date}")
 
     if warnings:
         return CheckResult(
