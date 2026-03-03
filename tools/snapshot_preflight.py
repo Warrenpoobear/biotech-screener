@@ -40,7 +40,11 @@ log = logging.getLogger("snapshot_preflight")
 # ── Constants ───────────────────────────────────────────────────────
 REQUIRED_COLS = {"ticker", "eligible", "actionable_rank"}
 HYDRATION_SOURCE_COLS = ("de_beta_xbi_60d_source", "de_alpha_60d_source")
+HYDRATION_REASON_COLS = ("de_beta_xbi_60d_missing_reason", "de_alpha_60d_missing_reason")
 HYDRATED_VALUE = "price_history"
+# Tickers with these reasons (or empty source) couldn't have been hydrated —
+# exclude from the denominator so early dates aren't penalised for pre-IPO tickers.
+_NON_HYDRATABLE_REASONS = {"series_too_short"}
 
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
@@ -213,33 +217,55 @@ def check_hydration_coverage(
                     "source columns absent (pre-hydration vintage)",
                 )
 
+            has_reason_cols = all(c in fieldnames for c in HYDRATION_REASON_COLS)
             n_elig = 0
             n_hydrated = 0
+            n_non_hydratable = 0
             for row in reader:
                 if row.get("eligible") != "1":
                     continue
                 n_elig += 1
-                if all(
-                    row.get(c) == HYDRATED_VALUE for c in HYDRATION_SOURCE_COLS
-                ):
+
+                sources = [row.get(c, "") for c in HYDRATION_SOURCE_COLS]
+
+                if all(s == HYDRATED_VALUE for s in sources):
                     n_hydrated += 1
+                    continue
+
+                # Exclude non-hydratable tickers from the denominator:
+                # empty source (pre-hydration vintage) or series_too_short.
+                if all(s == "" for s in sources):
+                    n_non_hydratable += 1
+                elif has_reason_cols and any(
+                    row.get(c, "") in _NON_HYDRATABLE_REASONS
+                    for c in HYDRATION_REASON_COLS
+                ):
+                    n_non_hydratable += 1
     except (OSError, csv.Error) as exc:
         return CheckResult("hydration_coverage", "FAIL", f"read error: {exc}")
 
     if n_elig == 0:
         return CheckResult("hydration_coverage", "WARN", "no eligible rows")
 
-    coverage = n_hydrated / n_elig
+    denom = n_elig - n_non_hydratable
+    if denom == 0:
+        # All eligible tickers are non-hydratable (pre-hydration era)
+        return CheckResult(
+            "hydration_coverage", "PASS",
+            f"hydration n/a ({n_elig} eligible, all non-hydratable)",
+        )
+
+    coverage = n_hydrated / denom
     if coverage < warn_threshold:
         return CheckResult(
             "hydration_coverage", "WARN",
             f"hydration {coverage:.0%} < {warn_threshold:.0%} "
-            f"({n_hydrated}/{n_elig} eligible)",
+            f"({n_hydrated}/{denom} hydratable of {n_elig} eligible)",
         )
 
     return CheckResult(
         "hydration_coverage", "PASS",
-        f"hydration {coverage:.0%} ({n_hydrated}/{n_elig} eligible)",
+        f"hydration {coverage:.0%} ({n_hydrated}/{denom} hydratable of {n_elig} eligible)",
     )
 
 

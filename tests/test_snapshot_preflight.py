@@ -71,6 +71,8 @@ def _make_full_row(
     rank: str = "1",
     beta_src: str = "price_history",
     alpha_src: str = "price_history",
+    beta_reason: str = "",
+    alpha_reason: str = "",
 ) -> Dict[str, str]:
     """Build a row with all required + hydration columns (25+ cols total)."""
     base = {
@@ -79,9 +81,11 @@ def _make_full_row(
         "actionable_rank": rank,
         "de_beta_xbi_60d_source": beta_src,
         "de_alpha_60d_source": alpha_src,
+        "de_beta_xbi_60d_missing_reason": beta_reason,
+        "de_alpha_60d_missing_reason": alpha_reason,
     }
     # Pad to 25+ columns
-    for i in range(20):
+    for i in range(18):
         base[f"col_{i}"] = ""
     return base
 
@@ -226,6 +230,43 @@ class TestCheckHydrationCoverage:
         _write_rankings(tmp_path, rows)
         r = check_hydration_coverage(tmp_path, warn_threshold=0.80)
         assert r.status == "PASS"
+
+    def test_series_too_short_excluded_from_denominator(self, tmp_path: Path) -> None:
+        """Tickers with series_too_short should not count against hydration."""
+        rows = [_make_full_row(f"T{i}") for i in range(8)]  # 8 hydrated
+        # 2 tickers that couldn't be hydrated (not enough trading bars)
+        rows.append(_make_full_row(
+            "NEW1", beta_src="", alpha_src="",
+            beta_reason="series_too_short", alpha_reason="series_too_short",
+        ))
+        rows.append(_make_full_row(
+            "NEW2", beta_src="", alpha_src="",
+            beta_reason="series_too_short", alpha_reason="series_too_short",
+        ))
+        _write_rankings(tmp_path, rows)
+        r = check_hydration_coverage(tmp_path, warn_threshold=0.80)
+        # 8/8 hydratable = 100%, not 8/10 = 80%
+        assert r.status == "PASS"
+        assert "8/8 hydratable" in r.detail
+
+    def test_empty_source_excluded_from_denominator(self, tmp_path: Path) -> None:
+        """Tickers with empty source (pre-hydration vintage) excluded."""
+        rows = [_make_full_row(f"T{i}") for i in range(5)]
+        # 3 tickers with empty source (never hydrated)
+        for j in range(3):
+            rows.append(_make_full_row(f"OLD{j}", beta_src="", alpha_src=""))
+        _write_rankings(tmp_path, rows)
+        r = check_hydration_coverage(tmp_path, warn_threshold=0.80)
+        # 5/5 hydratable = 100%
+        assert r.status == "PASS"
+
+    def test_all_non_hydratable_passes(self, tmp_path: Path) -> None:
+        """All eligible tickers are non-hydratable → PASS (n/a)."""
+        rows = [_make_full_row(f"T{i}", beta_src="", alpha_src="") for i in range(5)]
+        _write_rankings(tmp_path, rows)
+        r = check_hydration_coverage(tmp_path)
+        assert r.status == "PASS"
+        assert "non-hydratable" in r.detail
 
 
 # ---------------------------------------------------------------------------
