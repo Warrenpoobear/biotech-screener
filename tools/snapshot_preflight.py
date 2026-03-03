@@ -4,6 +4,13 @@ Validates snapshot structural quality before consumption by
 eval_forward_returns.py and rerank_snapshots.py.  Failing snapshots
 are dropped with a one-line exclusion reason.
 
+Artifact schema (v1):
+    preflight_summary.csv — one row per snapshot date with status, reasons,
+        and key metrics (eligible_n, rankings_cols_n, hydration_coverage_pct,
+        pit_cache_status, split_warning_count).
+    preflight_manifest.json — run_id, created_at, git_sha, inputs, hashes,
+        horizons, strict flag.
+
 Usage (standalone):
     python tools/snapshot_preflight.py \
         --snapshot-root data/snapshots \
@@ -14,11 +21,14 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import logging
 import re
+import subprocess
 import sys
 from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -33,6 +43,12 @@ HYDRATION_SOURCE_COLS = ("de_beta_xbi_60d_source", "de_alpha_60d_source")
 HYDRATED_VALUE = "price_history"
 
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+SUMMARY_CSV_COLUMNS = [
+    "date", "status", "fail_reasons", "warn_reasons",
+    "eligible_n", "rankings_cols_n", "hydration_coverage_pct",
+    "pit_cache_status", "split_warning_count",
+]
 
 
 # ── Result types ────────────────────────────────────────────────────
@@ -52,9 +68,30 @@ class SnapshotPreflightResult:
     date: str
     status: str          # worst across checks
     checks: List[CheckResult] = field(default_factory=list)
+    metrics: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
+
+    def to_summary_row(self) -> Dict[str, str]:
+        """Flatten to a single CSV row for preflight_summary.csv."""
+        fail_reasons = "; ".join(
+            c.detail for c in self.checks if c.status == "FAIL" and c.detail
+        )
+        warn_reasons = "; ".join(
+            c.detail for c in self.checks if c.status == "WARN" and c.detail
+        )
+        return {
+            "date": self.date,
+            "status": self.status,
+            "fail_reasons": fail_reasons,
+            "warn_reasons": warn_reasons,
+            "eligible_n": str(self.metrics.get("eligible_n", "")),
+            "rankings_cols_n": str(self.metrics.get("rankings_cols_n", "")),
+            "hydration_coverage_pct": str(self.metrics.get("hydration_coverage_pct", "")),
+            "pit_cache_status": self.metrics.get("pit_cache_status", ""),
+            "split_warning_count": str(self.metrics.get("split_warning_count", "")),
+        }
 
 
 @dataclass
@@ -104,13 +141,14 @@ def check_rankings_exist(
             f"missing required columns: {sorted(missing)}",
         )
 
-    if len(cols) < min_cols:
+    n_cols = len(cols)
+    if n_cols < min_cols:
         return CheckResult(
             "rankings_exist", "WARN",
-            f"only {len(cols)} columns (expected >= {min_cols})",
+            f"only {n_cols} columns (expected >= {min_cols})",
         )
 
-    return CheckResult("rankings_exist", "PASS")
+    return CheckResult("rankings_exist", "PASS", f"{n_cols} columns")
 
 
 # ── Check 2: eligible count ────────────────────────────────────────
@@ -287,6 +325,10 @@ def run_preflight(
     c1 = check_rankings_exist(snapshot_dir, min_cols=min_cols)
     result.checks.append(c1)
     result.status = _worst(result.status, c1.status)
+    # Extract col count from detail
+    m = re.search(r"(\d+) columns", c1.detail)
+    if m:
+        result.metrics["rankings_cols_n"] = int(m.group(1))
     if c1.status == "FAIL":
         return result
 
@@ -294,21 +336,35 @@ def run_preflight(
     c2 = check_eligible_count(snapshot_dir, min_eligible=min_eligible)
     result.checks.append(c2)
     result.status = _worst(result.status, c2.status)
+    m = re.search(r"(\d+) eligible", c2.detail)
+    if m:
+        result.metrics["eligible_n"] = int(m.group(1))
 
     # Check 3: hydration coverage
     c3 = check_hydration_coverage(snapshot_dir, warn_threshold=warn_threshold)
     result.checks.append(c3)
     result.status = _worst(result.status, c3.status)
+    m = re.search(r"hydration (\d+)%", c3.detail)
+    if m:
+        result.metrics["hydration_coverage_pct"] = int(m.group(1))
 
     # Check 4 & 5: PIT price cache (optional)
     if check_pit and pit_cache_base is not None:
         c4 = check_pit_price_cache(snap_date, pit_cache_base)
         result.checks.append(c4)
         result.status = _worst(result.status, c4.status)
+        if c4.status == "PASS":
+            result.metrics["pit_cache_status"] = "OK"
+        elif "no PIT cache" in c4.detail:
+            result.metrics["pit_cache_status"] = "MISSING"
+        else:
+            result.metrics["pit_cache_status"] = "SCHEMA_FAIL"
 
         c5 = check_split_warnings(snap_date, pit_cache_base, eval_horizons)
         result.checks.append(c5)
         result.status = _worst(result.status, c5.status)
+        m = re.search(r"(\d+) split warning", c5.detail)
+        result.metrics["split_warning_count"] = int(m.group(1)) if m else 0
 
     return result
 
@@ -350,6 +406,113 @@ def run_preflight_batch(
             report.n_fail += 1
 
     return report
+
+
+# ── Artifact helpers ────────────────────────────────────────────────
+
+def _git_sha() -> str:
+    """Return the current git HEAD SHA (short), or 'unknown'."""
+    try:
+        out = subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=str(REPO_ROOT), stderr=subprocess.DEVNULL, text=True,
+        )
+        return out.strip()
+    except (subprocess.SubprocessError, FileNotFoundError):
+        return "unknown"
+
+
+def _sha256_file(path: Path) -> str:
+    """Return hex sha256 of a file, or empty string if missing."""
+    if not path.is_file():
+        return ""
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(8192), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def write_preflight_summary_csv(
+    report: PreflightReport,
+    output_dir: Path,
+) -> Path:
+    """Write preflight_summary.csv — one row per snapshot date."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    out_path = output_dir / "preflight_summary.csv"
+    with open(out_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=SUMMARY_CSV_COLUMNS)
+        writer.writeheader()
+        for pf in report.results:
+            writer.writerow(pf.to_summary_row())
+    return out_path
+
+
+def write_preflight_manifest(
+    report: PreflightReport,
+    output_dir: Path,
+    *,
+    run_id: str,
+    snapshot_root: Optional[Path] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    horizons: Optional[List[int]] = None,
+    strict: bool = False,
+    file_hashes: Optional[Dict[str, str]] = None,
+) -> Path:
+    """Write preflight_manifest.json — provenance + input hashes."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    manifest = {
+        "run_id": run_id,
+        "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "git_sha": _git_sha(),
+        "snapshot_root": str(snapshot_root) if snapshot_root else "",
+        "date_from": date_from or "",
+        "date_to": date_to or "",
+        "horizons": horizons or [],
+        "preflight_strict": strict,
+        "counts": {
+            "total": report.n_total,
+            "pass": report.n_pass,
+            "warn": report.n_warn,
+            "fail": report.n_fail,
+        },
+        "file_hashes": file_hashes or {},
+    }
+    out_path = output_dir / "preflight_manifest.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=2)
+    return out_path
+
+
+def write_preflight_artifacts(
+    report: PreflightReport,
+    output_dir: Path,
+    *,
+    run_id: str,
+    snapshot_root: Optional[Path] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    horizons: Optional[List[int]] = None,
+    strict: bool = False,
+    file_hashes: Optional[Dict[str, str]] = None,
+) -> Tuple[Path, Path]:
+    """Write both preflight_summary.csv and preflight_manifest.json.
+
+    Returns (summary_csv_path, manifest_json_path).
+    """
+    csv_path = write_preflight_summary_csv(report, output_dir)
+    manifest_path = write_preflight_manifest(
+        report, output_dir,
+        run_id=run_id,
+        snapshot_root=snapshot_root,
+        date_from=date_from,
+        date_to=date_to,
+        horizons=horizons,
+        strict=strict,
+        file_hashes=file_hashes,
+    )
+    return csv_path, manifest_path
 
 
 # ── CLI ─────────────────────────────────────────────────────────────
@@ -404,6 +567,14 @@ def main() -> None:
         help="Write JSON report to this path",
     )
     parser.add_argument(
+        "--artifact-dir", type=Path, default=None,
+        help="Write preflight_summary.csv + preflight_manifest.json to this directory",
+    )
+    parser.add_argument(
+        "--run-id", default=None,
+        help="Run identifier for artifact manifest (auto-generated if omitted)",
+    )
+    parser.add_argument(
         "--strict", action="store_true", default=False,
         help="Exit 1 if any snapshot FAILs",
     )
@@ -453,6 +624,19 @@ def main() -> None:
         with open(args.out, "w", encoding="utf-8") as f:
             json.dump(report.to_dict(), f, indent=2)
         print(f"Report → {args.out}")
+
+    if args.artifact_dir:
+        run_id = args.run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        csv_p, manifest_p = write_preflight_artifacts(
+            report, args.artifact_dir,
+            run_id=run_id,
+            snapshot_root=args.snapshot_root,
+            date_from=args.date_from,
+            date_to=args.date_to,
+            horizons=eval_horizons,
+            strict=args.strict,
+        )
+        print(f"Artifacts → {csv_p}, {manifest_p}")
 
     if args.strict and report.n_fail > 0:
         sys.exit(1)
