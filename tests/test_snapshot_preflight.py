@@ -32,6 +32,7 @@ from snapshot_preflight import (
     CheckResult,
     PreflightReport,
     SnapshotPreflightResult,
+    check_dated_sources,
     check_eligible_count,
     check_hydration_coverage,
     check_pit_price_cache,
@@ -283,6 +284,168 @@ class TestCheckSplitWarnings:
 
 
 # ---------------------------------------------------------------------------
+# Check 6: dated-source provenance
+# ---------------------------------------------------------------------------
+
+def _write_metadata(snap_dir: Path, meta: Dict) -> None:
+    snap_dir.mkdir(parents=True, exist_ok=True)
+    with open(snap_dir / "metadata.json", "w", encoding="utf-8") as f:
+        json.dump(meta, f, indent=2)
+
+
+class TestCheckDatedSources:
+    def test_missing_metadata(self, tmp_path: Path) -> None:
+        """No metadata.json + active signal columns → WARN."""
+        snap = tmp_path
+        snap.mkdir(parents=True, exist_ok=True)
+        fieldnames = ["ticker", "eligible", "actionable_rank", "clinical_score"]
+        with open(snap / "rankings.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow({"ticker": "T0", "eligible": "1",
+                             "actionable_rank": "1", "clinical_score": "3"})
+        r = check_dated_sources(snap, "2025-06-15")
+        assert r.status == "WARN"
+        assert "metadata.json missing" in r.detail
+
+    def test_missing_data_sources_map(self, tmp_path: Path) -> None:
+        """metadata.json exists but no data_sources key → WARN listing active families."""
+        snap = tmp_path
+        snap.mkdir(parents=True, exist_ok=True)
+        fieldnames = ["ticker", "eligible", "actionable_rank", "coinvest_score_z"]
+        with open(snap / "rankings.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow({"ticker": "T0", "eligible": "1",
+                             "actionable_rank": "1", "coinvest_score_z": "0.5"})
+        _write_metadata(snap, {"as_of_date": "2025-06-15"})
+        r = check_dated_sources(snap, "2025-06-15")
+        assert r.status == "WARN"
+        assert "data_sources map missing" in r.detail
+
+    def test_no_signal_families(self, tmp_path: Path) -> None:
+        """Rankings with no signal columns → PASS (nothing to check)."""
+        snap = tmp_path
+        snap.mkdir(parents=True, exist_ok=True)
+        # Write CSV with only basic columns, no signal-family columns
+        with open(snap / "rankings.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=["ticker", "eligible", "actionable_rank"])
+            writer.writeheader()
+            writer.writerow({"ticker": "T0", "eligible": "1", "actionable_rank": "1"})
+        _write_metadata(snap, {"as_of_date": "2025-06-15"})
+        r = check_dated_sources(snap, "2025-06-15")
+        assert r.status == "PASS"
+
+    def test_future_dated_13f(self, tmp_path: Path) -> None:
+        """13F effective_date after as_of - 45d → WARN."""
+        snap = tmp_path
+        snap.mkdir(parents=True, exist_ok=True)
+        fieldnames = ["ticker", "eligible", "actionable_rank", "coinvest_score_z"]
+        with open(snap / "rankings.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow({"ticker": "T0", "eligible": "1",
+                             "actionable_rank": "1", "coinvest_score_z": "0.5"})
+        _write_metadata(snap, {
+            "as_of_date": "2025-06-15",
+            "data_sources": {
+                "sec_13f": {"effective_date": "2025-06-10", "lag_days": 45},
+            },
+        })
+        r = check_dated_sources(snap, "2025-06-15")
+        assert r.status == "WARN"
+        assert "sec_13f" in r.detail
+        assert "effective_date" in r.detail
+
+    def test_valid_all_families(self, tmp_path: Path) -> None:
+        """All families present with valid dates → PASS."""
+        snap = tmp_path
+        snap.mkdir(parents=True, exist_ok=True)
+        # Rankings with all signal families
+        fieldnames = [
+            "ticker", "eligible", "actionable_rank",
+            "coinvest_score_z", "clinical_score", "catalyst_days",
+        ]
+        with open(snap / "rankings.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow({
+                "ticker": "T0", "eligible": "1", "actionable_rank": "1",
+                "coinvest_score_z": "0.5", "clinical_score": "3.0",
+                "catalyst_days": "30",
+            })
+        _write_metadata(snap, {
+            "as_of_date": "2025-06-15",
+            "data_sources": {
+                "sec_13f": {"effective_date": "2025-03-31", "lag_days": 45},
+                "ctgov": {"effective_date": "2025-06-14"},
+                "sec_8k": {"effective_date": "2025-06-10"},
+            },
+        })
+        r = check_dated_sources(snap, "2025-06-15")
+        assert r.status == "PASS"
+        assert "3 families valid" in r.detail
+
+    def test_future_ctgov(self, tmp_path: Path) -> None:
+        """CTgov effective_date after as_of → WARN."""
+        snap = tmp_path
+        snap.mkdir(parents=True, exist_ok=True)
+        fieldnames = ["ticker", "eligible", "actionable_rank", "clinical_score"]
+        with open(snap / "rankings.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow({"ticker": "T0", "eligible": "1",
+                             "actionable_rank": "1", "clinical_score": "3"})
+        _write_metadata(snap, {
+            "as_of_date": "2025-06-15",
+            "data_sources": {
+                "ctgov": {"effective_date": "2025-06-20"},
+            },
+        })
+        r = check_dated_sources(snap, "2025-06-15")
+        assert r.status == "WARN"
+        assert "ctgov" in r.detail
+
+    def test_missing_family_entry(self, tmp_path: Path) -> None:
+        """data_sources exists but active family has no entry → WARN."""
+        snap = tmp_path
+        snap.mkdir(parents=True, exist_ok=True)
+        fieldnames = ["ticker", "eligible", "actionable_rank", "catalyst_days"]
+        with open(snap / "rankings.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow({"ticker": "T0", "eligible": "1",
+                             "actionable_rank": "1", "catalyst_days": "30"})
+        _write_metadata(snap, {
+            "as_of_date": "2025-06-15",
+            "data_sources": {},  # sec_8k entry missing
+        })
+        r = check_dated_sources(snap, "2025-06-15")
+        assert r.status == "WARN"
+        assert "sec_8k: entry missing" in r.detail
+
+    def test_missing_effective_date_field(self, tmp_path: Path) -> None:
+        """Family entry exists but effective_date field is absent → WARN."""
+        snap = tmp_path
+        snap.mkdir(parents=True, exist_ok=True)
+        fieldnames = ["ticker", "eligible", "actionable_rank", "coinvest_score_z"]
+        with open(snap / "rankings.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow({"ticker": "T0", "eligible": "1",
+                             "actionable_rank": "1", "coinvest_score_z": "0.5"})
+        _write_metadata(snap, {
+            "as_of_date": "2025-06-15",
+            "data_sources": {
+                "sec_13f": {"lag_days": 45},  # missing effective_date
+            },
+        })
+        r = check_dated_sources(snap, "2025-06-15")
+        assert r.status == "WARN"
+        assert "effective_date missing" in r.detail
+
+
+# ---------------------------------------------------------------------------
 # Orchestrator
 # ---------------------------------------------------------------------------
 
@@ -293,7 +456,7 @@ class TestRunPreflight:
         _write_rankings(snap, rows)
         pf = run_preflight(snap, "2025-01-15", min_cols=5)
         assert pf.status == "PASS"
-        assert len(pf.checks) == 3  # rankings, eligible, hydration
+        assert len(pf.checks) == 4  # rankings, eligible, hydration, dated_sources
 
     def test_one_warn(self, tmp_path: Path) -> None:
         snap = tmp_path / "2025-01-15"
@@ -318,13 +481,13 @@ class TestRunPreflight:
         _write_pit_index(pit_base / "2025-01-15", "2025-01-15")
 
         pf_no_pit = run_preflight(snap, "2025-01-15", min_cols=5, check_pit=False)
-        assert len(pf_no_pit.checks) == 3
+        assert len(pf_no_pit.checks) == 4  # rankings, eligible, hydration, dated_sources
 
         pf_pit = run_preflight(
             snap, "2025-01-15", min_cols=5,
             check_pit=True, pit_cache_base=pit_base,
         )
-        assert len(pf_pit.checks) == 5
+        assert len(pf_pit.checks) == 6  # + pit_price_cache, split_warnings
 
 
 # ---------------------------------------------------------------------------

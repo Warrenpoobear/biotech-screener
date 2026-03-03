@@ -28,7 +28,7 @@ import re
 import subprocess
 import sys
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -48,7 +48,22 @@ SUMMARY_CSV_COLUMNS = [
     "date", "status", "fail_reasons", "warn_reasons",
     "eligible_n", "rankings_cols_n", "hydration_coverage_pct",
     "pit_cache_status", "split_warning_count",
+    "dated_source_status", "dated_source_details",
 ]
+
+# Columns that indicate a data-source family is active in the snapshot.
+# If ANY column in a family is present in the rankings header, the
+# corresponding data_sources entry is expected in metadata.json.
+_SOURCE_FAMILY_COLUMNS = {
+    "sec_13f": {"coinvest_score_z", "sponsor_tier1_count", "inst_delta_z",
+                "has_coinvest_signal", "has_inst_delta"},
+    "ctgov":   {"clinical_score", "clinical_score_z", "clinical_score_v2",
+                "clinical_readout_days", "clinical_coverage_flag"},
+    "sec_8k":  {"catalyst_days", "catalyst_decay_w", "catalyst_source",
+                "has_catalyst_signal"},
+}
+
+_SEC_13F_LAG_DAYS = 45
 
 
 # ── Result types ────────────────────────────────────────────────────
@@ -91,6 +106,8 @@ class SnapshotPreflightResult:
             "hydration_coverage_pct": str(self.metrics.get("hydration_coverage_pct", "")),
             "pit_cache_status": self.metrics.get("pit_cache_status", ""),
             "split_warning_count": str(self.metrics.get("split_warning_count", "")),
+            "dated_source_status": self.metrics.get("dated_source_status", ""),
+            "dated_source_details": self.metrics.get("dated_source_details", ""),
         }
 
 
@@ -306,6 +323,102 @@ def check_split_warnings(
     )
 
 
+# ── Check 6: dated-source provenance ───────────────────────────────
+def check_dated_sources(
+    snapshot_dir: Path,
+    snap_date: str,
+) -> CheckResult:
+    """WARN if metadata.json lacks data_sources or dates violate PIT rules.
+
+    For each signal family present in rankings.csv, verifies that
+    metadata.json contains a data_sources.<family>.effective_date field
+    and that the date satisfies PIT constraints:
+      - sec_13f: effective_date <= as_of_date - 45d (filing lag)
+      - ctgov:   effective_date <= as_of_date
+      - sec_8k:  effective_date <= as_of_date
+    """
+    meta_path = snapshot_dir / "metadata.json"
+    csv_path = snapshot_dir / "rankings.csv"
+
+    # Detect which signal families are present in rankings FIRST
+    if not csv_path.exists():
+        return CheckResult("dated_sources", "PASS", "no rankings (deferred)")
+    try:
+        with open(csv_path, newline="", encoding="utf-8") as f:
+            header_line = f.readline().strip()
+    except OSError:
+        return CheckResult("dated_sources", "PASS", "rankings unreadable (deferred)")
+
+    csv_cols = {c.strip() for c in header_line.split(",")}
+    active_families = []
+    for family, indicator_cols in _SOURCE_FAMILY_COLUMNS.items():
+        if csv_cols & indicator_cols:
+            active_families.append(family)
+
+    if not active_families:
+        return CheckResult("dated_sources", "PASS", "no dated-source families detected")
+
+    # Load metadata (only if we have active families to check)
+    if not meta_path.exists():
+        return CheckResult(
+            "dated_sources", "WARN",
+            f"metadata.json missing; active families: {', '.join(sorted(active_families))}",
+        )
+    try:
+        with open(meta_path, encoding="utf-8") as f:
+            meta = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        return CheckResult("dated_sources", "WARN", f"metadata.json unreadable: {exc}")
+
+    data_sources = meta.get("data_sources")
+    if data_sources is None:
+        return CheckResult(
+            "dated_sources", "WARN",
+            f"data_sources map missing; active families: {', '.join(sorted(active_families))}",
+        )
+
+    # Validate each active family
+    as_of = date.fromisoformat(snap_date)
+    warnings: List[str] = []
+
+    for family in sorted(active_families):
+        entry = data_sources.get(family)
+        if entry is None:
+            warnings.append(f"{family}: entry missing")
+            continue
+
+        eff_str = entry.get("effective_date")
+        if not eff_str:
+            warnings.append(f"{family}: effective_date missing")
+            continue
+
+        try:
+            eff_date = date.fromisoformat(eff_str)
+        except ValueError:
+            warnings.append(f"{family}: bad date '{eff_str}'")
+            continue
+
+        # PIT constraint
+        if family == "sec_13f":
+            lag = entry.get("lag_days", _SEC_13F_LAG_DAYS)
+            deadline = as_of - timedelta(days=lag)
+            if eff_date > deadline:
+                warnings.append(
+                    f"sec_13f: effective_date {eff_str} > as_of - {lag}d ({deadline})"
+                )
+        else:
+            if eff_date > as_of:
+                warnings.append(f"{family}: effective_date {eff_str} > as_of {snap_date}")
+
+    if warnings:
+        return CheckResult(
+            "dated_sources", "WARN",
+            "; ".join(warnings),
+        )
+
+    return CheckResult("dated_sources", "PASS", f"all {len(active_families)} families valid")
+
+
 # ── Orchestrator ────────────────────────────────────────────────────
 def run_preflight(
     snapshot_dir: Path,
@@ -347,6 +460,13 @@ def run_preflight(
     m = re.search(r"hydration (\d+)%", c3.detail)
     if m:
         result.metrics["hydration_coverage_pct"] = int(m.group(1))
+
+    # Check 6: dated-source provenance
+    c6 = check_dated_sources(snapshot_dir, snap_date)
+    result.checks.append(c6)
+    result.status = _worst(result.status, c6.status)
+    result.metrics["dated_source_status"] = c6.status
+    result.metrics["dated_source_details"] = c6.detail
 
     # Check 4 & 5: PIT price cache (optional)
     if check_pit and pit_cache_base is not None:

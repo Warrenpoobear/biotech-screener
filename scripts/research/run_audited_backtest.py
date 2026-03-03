@@ -260,6 +260,28 @@ def _write_audit_md(
         lines.append(f"- Total split warnings: {total_sw}")
         lines.append("")
 
+    # Dated-source provenance
+    ds_results = [r for r in report.results if "dated_source_status" in r.metrics]
+    if ds_results:
+        n_ds_pass = sum(1 for r in ds_results if r.metrics["dated_source_status"] == "PASS")
+        n_ds_warn = sum(1 for r in ds_results if r.metrics["dated_source_status"] == "WARN")
+        lines.append("## Dated-Source Provenance")
+        lines.append("")
+        lines.append(f"- PASS: {n_ds_pass}")
+        lines.append(f"- WARN: {n_ds_warn}")
+        if n_ds_warn > 0:
+            lines.append("")
+            lines.append("### Top dated-source warnings")
+            lines.append("")
+            warn_details: Dict[str, int] = {}
+            for r in ds_results:
+                if r.metrics["dated_source_status"] == "WARN":
+                    detail = r.metrics.get("dated_source_details", "unknown")
+                    warn_details[detail] = warn_details.get(detail, 0) + 1
+            for detail, count in sorted(warn_details.items(), key=lambda x: -x[1])[:10]:
+                lines.append(f"- ({count}x) {detail}")
+        lines.append("")
+
     # Output paths
     lines.append("## Output Paths")
     lines.append("")
