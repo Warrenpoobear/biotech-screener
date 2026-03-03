@@ -942,6 +942,8 @@ def evaluate(
     coinvest_eval_mode: str = "default",
     catalyst_eval_mode: str = "default",
     ruleset: Optional[DecisionRuleset] = None,
+    preflight: bool = False,
+    preflight_strict: bool = False,
 ) -> Tuple[EvalSummary, List[DateResult], List[Dict[str, str]]]:
     """Run the full walk-forward evaluation.
 
@@ -1032,6 +1034,25 @@ def evaluate(
                                     skip_reason=f"PIT: {reason}")
                     date_results.append(dr)
                 skips.append({"date": snap_date, "reason": f"PIT: {reason}"})
+                continue
+
+        # Preflight check
+        if preflight or preflight_strict:
+            from tools.snapshot_preflight import run_preflight as _run_preflight
+            pf = _run_preflight(snap_dir, snap_date)
+            skip_pf = (pf.status == "FAIL"
+                       or (preflight_strict and pf.status == "WARN"))
+            if skip_pf:
+                details = "; ".join(
+                    c.detail for c in pf.checks if c.status != "PASS"
+                )
+                tag = f"preflight_{pf.status}"
+                for h in horizons:
+                    dr = DateResult(date=snap_date, horizon=h, skipped=True,
+                                    skip_reason=f"{tag}: {details}")
+                    date_results.append(dr)
+                skips.append({"date": snap_date,
+                              "reason": f"{tag}: {details}"})
                 continue
 
         # Resolve trade_date from anchor_mode
@@ -1285,12 +1306,31 @@ def evaluate(
                     excess_ret = gross - bm_ret
 
             # Enhanced sign consistency check
+            # Uses winsorized top-bottom to avoid false alerts from extreme
+            # return outliers (e.g. small-cap binary events in bottom bucket).
+            # See output/sign_mismatch_triage.md for analysis.
             mismatch = False
             top_minus_bottom = None
+            top_minus_bottom_winsorized = None
             if ic is not None and gross is not None and bottom_gross is not None:
                 top_minus_bottom = gross - bottom_gross
-                if (ic > 0.02 and top_minus_bottom < -0.005) or \
-                   (ic < -0.02 and top_minus_bottom > 0.005):
+                # Winsorize bucket returns at p5/p95 before mismatch check
+                top_k_rets = [fwd_rets[t] for t in tickers_ranked[:top_k] if t in fwd_rets]
+                bot_k_rets = [fwd_rets[t] for t in tickers_ranked[-top_k:] if t in fwd_rets]
+                all_bucket_rets = top_k_rets + bot_k_rets
+                if len(all_bucket_rets) >= 10:
+                    s = sorted(all_bucket_rets)
+                    p5 = s[max(0, len(s) // 20)]
+                    p95 = s[min(len(s) - 1, 19 * len(s) // 20)]
+                    top_w = [max(p5, min(p95, r)) for r in top_k_rets]
+                    bot_w = [max(p5, min(p95, r)) for r in bot_k_rets]
+                    if top_w and bot_w:
+                        top_minus_bottom_winsorized = (
+                            sum(top_w) / len(top_w) - sum(bot_w) / len(bot_w)
+                        )
+                tmb_check = top_minus_bottom_winsorized if top_minus_bottom_winsorized is not None else top_minus_bottom
+                if (ic > 0.02 and tmb_check < -0.005) or \
+                   (ic < -0.02 and tmb_check > 0.005):
                     mismatch = True
             if ic is not None and slope is not None:
                 if (ic > 0.02 and slope < -0.02) or \
@@ -1328,6 +1368,7 @@ def evaluate(
                         "top_k_return": _round_opt(gross, 6),
                         "bottom_k_return": _round_opt(bottom_gross, 6),
                         "top_minus_bottom": _round_opt(top_minus_bottom, 6),
+                        "top_minus_bottom_winsorized": _round_opt(top_minus_bottom_winsorized, 6),
                         "monotonic_slope": _round_opt(slope, 4),
                         "decile_curve": curve,
                         "top_tickers": top_detail,
@@ -1399,6 +1440,7 @@ def evaluate(
                     comp_top_decile_ret = None
                     comp_bot_decile_ret = None
                     comp_mono_slope = None
+                    decile_means = []
                     if n_sig >= 10 and not flat_signal:
                         # Sort tickers by component score descending
                         comp_sorted = sorted(
@@ -2334,6 +2376,14 @@ def main() -> None:
         "--no-warn-if-stale", action="store_true", default=False,
         help="Suppress staleness warning when price data is short",
     )
+    parser.add_argument(
+        "--preflight", action="store_true", default=False,
+        help="Run snapshot preflight; skip dates that FAIL structural checks",
+    )
+    parser.add_argument(
+        "--preflight-strict", action="store_true", default=False,
+        help="Run snapshot preflight; skip dates that FAIL or WARN",
+    )
     args = parser.parse_args()
 
     horizons = [int(h.strip()) for h in args.horizons.split(",")]
@@ -2403,6 +2453,8 @@ def main() -> None:
         coinvest_eval_mode=args.coinvest_eval_mode,
         catalyst_eval_mode=args.catalyst_eval_mode,
         ruleset=eval_ruleset,
+        preflight=args.preflight,
+        preflight_strict=args.preflight_strict,
     )
 
     write_summary_json(summary, args.out_dir)

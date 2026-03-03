@@ -1,0 +1,462 @@
+"""Snapshot eligibility preflight for research backtests.
+
+Validates snapshot structural quality before consumption by
+eval_forward_returns.py and rerank_snapshots.py.  Failing snapshots
+are dropped with a one-line exclusion reason.
+
+Usage (standalone):
+    python tools/snapshot_preflight.py \
+        --snapshot-root data/snapshots \
+        --check-pit --pit-cache-base data/caches/price_pit/PIT \
+        --verbose --out output/preflight_report.json --strict
+"""
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+import logging
+import re
+import sys
+from dataclasses import asdict, dataclass, field
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT))
+
+log = logging.getLogger("snapshot_preflight")
+
+# ── Constants ───────────────────────────────────────────────────────
+REQUIRED_COLS = {"ticker", "eligible", "actionable_rank"}
+HYDRATION_SOURCE_COLS = ("de_beta_xbi_60d_source", "de_alpha_60d_source")
+HYDRATED_VALUE = "price_history"
+
+_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+# ── Result types ────────────────────────────────────────────────────
+@dataclass
+class CheckResult:
+    name: str
+    status: str          # "PASS", "WARN", "FAIL"
+    detail: str = ""
+
+    def __repr__(self) -> str:
+        tag = f"[{self.status}]"
+        return f"{tag} {self.name}: {self.detail}" if self.detail else f"{tag} {self.name}"
+
+
+@dataclass
+class SnapshotPreflightResult:
+    date: str
+    status: str          # worst across checks
+    checks: List[CheckResult] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class PreflightReport:
+    n_total: int = 0
+    n_pass: int = 0
+    n_warn: int = 0
+    n_fail: int = 0
+    results: List[SnapshotPreflightResult] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+# ── Status helpers ──────────────────────────────────────────────────
+_STATUS_ORDER = {"PASS": 0, "WARN": 1, "FAIL": 2}
+
+
+def _worst(a: str, b: str) -> str:
+    return a if _STATUS_ORDER.get(a, 0) >= _STATUS_ORDER.get(b, 0) else b
+
+
+# ── Check 1: rankings exist ────────────────────────────────────────
+def check_rankings_exist(
+    snapshot_dir: Path,
+    min_cols: int = 25,
+) -> CheckResult:
+    """FAIL if rankings.csv is missing, empty, or lacks required columns."""
+    csv_path = snapshot_dir / "rankings.csv"
+    if not csv_path.exists():
+        return CheckResult("rankings_exist", "FAIL", "rankings.csv missing")
+
+    try:
+        with open(csv_path, newline="", encoding="utf-8") as f:
+            header = f.readline().strip()
+    except OSError as exc:
+        return CheckResult("rankings_exist", "FAIL", f"unreadable: {exc}")
+
+    if not header:
+        return CheckResult("rankings_exist", "FAIL", "rankings.csv empty")
+
+    cols = {c.strip() for c in header.split(",")}
+    missing = REQUIRED_COLS - cols
+    if missing:
+        return CheckResult(
+            "rankings_exist", "FAIL",
+            f"missing required columns: {sorted(missing)}",
+        )
+
+    if len(cols) < min_cols:
+        return CheckResult(
+            "rankings_exist", "WARN",
+            f"only {len(cols)} columns (expected >= {min_cols})",
+        )
+
+    return CheckResult("rankings_exist", "PASS")
+
+
+# ── Check 2: eligible count ────────────────────────────────────────
+def check_eligible_count(
+    snapshot_dir: Path,
+    min_eligible: int = 10,
+) -> CheckResult:
+    """FAIL if fewer than *min_eligible* rows have eligible == '1'."""
+    csv_path = snapshot_dir / "rankings.csv"
+    if not csv_path.exists():
+        return CheckResult("eligible_count", "FAIL", "rankings.csv missing")
+
+    try:
+        with open(csv_path, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            n_elig = sum(1 for row in reader if row.get("eligible") == "1")
+    except (OSError, csv.Error) as exc:
+        return CheckResult("eligible_count", "FAIL", f"read error: {exc}")
+
+    if n_elig < min_eligible:
+        return CheckResult(
+            "eligible_count", "FAIL",
+            f"{n_elig} eligible rows (need >= {min_eligible})",
+        )
+
+    return CheckResult("eligible_count", "PASS", f"{n_elig} eligible")
+
+
+# ── Check 3: hydration coverage ────────────────────────────────────
+def check_hydration_coverage(
+    snapshot_dir: Path,
+    warn_threshold: float = 0.80,
+) -> CheckResult:
+    """WARN if beta/alpha source columns are absent or coverage < threshold."""
+    csv_path = snapshot_dir / "rankings.csv"
+    if not csv_path.exists():
+        return CheckResult("hydration_coverage", "FAIL", "rankings.csv missing")
+
+    try:
+        with open(csv_path, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            fieldnames = reader.fieldnames or []
+            has_source_cols = all(c in fieldnames for c in HYDRATION_SOURCE_COLS)
+            if not has_source_cols:
+                return CheckResult(
+                    "hydration_coverage", "WARN",
+                    "source columns absent (pre-hydration vintage)",
+                )
+
+            n_elig = 0
+            n_hydrated = 0
+            for row in reader:
+                if row.get("eligible") != "1":
+                    continue
+                n_elig += 1
+                if all(
+                    row.get(c) == HYDRATED_VALUE for c in HYDRATION_SOURCE_COLS
+                ):
+                    n_hydrated += 1
+    except (OSError, csv.Error) as exc:
+        return CheckResult("hydration_coverage", "FAIL", f"read error: {exc}")
+
+    if n_elig == 0:
+        return CheckResult("hydration_coverage", "WARN", "no eligible rows")
+
+    coverage = n_hydrated / n_elig
+    if coverage < warn_threshold:
+        return CheckResult(
+            "hydration_coverage", "WARN",
+            f"hydration {coverage:.0%} < {warn_threshold:.0%} "
+            f"({n_hydrated}/{n_elig} eligible)",
+        )
+
+    return CheckResult(
+        "hydration_coverage", "PASS",
+        f"hydration {coverage:.0%} ({n_hydrated}/{n_elig} eligible)",
+    )
+
+
+# ── Check 4: PIT price cache ───────────────────────────────────────
+def check_pit_price_cache(
+    snap_date: str,
+    pit_cache_base: Path,
+) -> CheckResult:
+    """WARN if PIT cache dir is missing; FAIL if index.json fails validation."""
+    cache_dir = pit_cache_base / snap_date
+    index_path = cache_dir / "index.json"
+
+    if not index_path.exists():
+        return CheckResult(
+            "pit_price_cache", "WARN",
+            f"no PIT cache for {snap_date}",
+        )
+
+    try:
+        with open(index_path, encoding="utf-8") as f:
+            index = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        return CheckResult(
+            "pit_price_cache", "FAIL",
+            f"index.json unreadable: {exc}",
+        )
+
+    # Lazy import to avoid import-time failures
+    from tools.warm_price_cache import validate_price_pit_index
+
+    ok, detail = validate_price_pit_index(index, snap_date)
+    if not ok:
+        return CheckResult("pit_price_cache", "FAIL", f"schema: {detail}")
+
+    return CheckResult("pit_price_cache", "PASS")
+
+
+# ── Check 5: split warnings ────────────────────────────────────────
+def check_split_warnings(
+    snap_date: str,
+    pit_cache_base: Path,
+    eval_horizons: Optional[List[int]] = None,
+) -> CheckResult:
+    """WARN if PIT index has split_warnings matching eval horizons."""
+    cache_dir = pit_cache_base / snap_date
+    index_path = cache_dir / "index.json"
+
+    if not index_path.exists():
+        return CheckResult("split_warnings", "PASS", "no PIT cache (vacuous)")
+
+    try:
+        with open(index_path, encoding="utf-8") as f:
+            index = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        # Already caught by check_pit_price_cache; don't double-fail
+        return CheckResult("split_warnings", "PASS", "index unreadable (deferred)")
+
+    warnings = index.get("split_warnings", [])
+    if not warnings:
+        return CheckResult("split_warnings", "PASS", "no split warnings")
+
+    if eval_horizons:
+        horizon_set = set(eval_horizons)
+        relevant = [
+            w for w in warnings
+            if w.get("horizon") in horizon_set
+        ]
+    else:
+        relevant = list(warnings)
+
+    if not relevant:
+        return CheckResult("split_warnings", "PASS", "no relevant split warnings")
+
+    tickers = sorted({w.get("ticker", "?") for w in relevant})
+    return CheckResult(
+        "split_warnings", "WARN",
+        f"{len(relevant)} split warning(s): {', '.join(tickers[:5])}"
+        + (f" +{len(tickers) - 5} more" if len(tickers) > 5 else ""),
+    )
+
+
+# ── Orchestrator ────────────────────────────────────────────────────
+def run_preflight(
+    snapshot_dir: Path,
+    snap_date: str,
+    *,
+    min_cols: int = 25,
+    min_eligible: int = 10,
+    warn_threshold: float = 0.80,
+    check_pit: bool = False,
+    pit_cache_base: Optional[Path] = None,
+    eval_horizons: Optional[List[int]] = None,
+) -> SnapshotPreflightResult:
+    """Run all preflight checks for a single snapshot date."""
+    result = SnapshotPreflightResult(date=snap_date, status="PASS")
+
+    # Check 1: rankings exist (short-circuit on FAIL)
+    c1 = check_rankings_exist(snapshot_dir, min_cols=min_cols)
+    result.checks.append(c1)
+    result.status = _worst(result.status, c1.status)
+    if c1.status == "FAIL":
+        return result
+
+    # Check 2: eligible count
+    c2 = check_eligible_count(snapshot_dir, min_eligible=min_eligible)
+    result.checks.append(c2)
+    result.status = _worst(result.status, c2.status)
+
+    # Check 3: hydration coverage
+    c3 = check_hydration_coverage(snapshot_dir, warn_threshold=warn_threshold)
+    result.checks.append(c3)
+    result.status = _worst(result.status, c3.status)
+
+    # Check 4 & 5: PIT price cache (optional)
+    if check_pit and pit_cache_base is not None:
+        c4 = check_pit_price_cache(snap_date, pit_cache_base)
+        result.checks.append(c4)
+        result.status = _worst(result.status, c4.status)
+
+        c5 = check_split_warnings(snap_date, pit_cache_base, eval_horizons)
+        result.checks.append(c5)
+        result.status = _worst(result.status, c5.status)
+
+    return result
+
+
+# ── Batch runner ────────────────────────────────────────────────────
+def run_preflight_batch(
+    snapshot_root: Path,
+    *,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    **kwargs: Any,
+) -> PreflightReport:
+    """Discover YYYY-MM-DD snapshot dirs and run preflight on each."""
+    report = PreflightReport()
+
+    if not snapshot_root.is_dir():
+        return report
+
+    snap_dates = sorted(
+        p.name for p in snapshot_root.iterdir()
+        if p.is_dir() and _DATE_RE.match(p.name)
+    )
+
+    if date_from:
+        snap_dates = [d for d in snap_dates if d >= date_from]
+    if date_to:
+        snap_dates = [d for d in snap_dates if d <= date_to]
+
+    for snap_date in snap_dates:
+        snap_dir = snapshot_root / snap_date
+        pf = run_preflight(snap_dir, snap_date, **kwargs)
+        report.results.append(pf)
+        report.n_total += 1
+        if pf.status == "PASS":
+            report.n_pass += 1
+        elif pf.status == "WARN":
+            report.n_warn += 1
+        else:
+            report.n_fail += 1
+
+    return report
+
+
+# ── CLI ─────────────────────────────────────────────────────────────
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Snapshot eligibility preflight for research backtests",
+    )
+    parser.add_argument(
+        "--snapshot-root", type=Path,
+        default=REPO_ROOT / "data" / "snapshots",
+        help="Root directory containing YYYY-MM-DD snapshot subdirectories",
+    )
+    parser.add_argument(
+        "--date-from", default=None,
+        help="Earliest date to check (YYYY-MM-DD, inclusive)",
+    )
+    parser.add_argument(
+        "--date-to", default=None,
+        help="Latest date to check (YYYY-MM-DD, inclusive)",
+    )
+    parser.add_argument(
+        "--min-cols", type=int, default=25,
+        help="Minimum expected column count in rankings.csv (default: 25)",
+    )
+    parser.add_argument(
+        "--min-eligible", type=int, default=10,
+        help="Minimum eligible row count (default: 10)",
+    )
+    parser.add_argument(
+        "--warn-threshold", type=float, default=0.80,
+        help="Hydration coverage WARN threshold (default: 0.80)",
+    )
+    parser.add_argument(
+        "--check-pit", action="store_true", default=False,
+        help="Enable PIT price cache checks (checks 4 & 5)",
+    )
+    parser.add_argument(
+        "--pit-cache-base", type=Path,
+        default=REPO_ROOT / "data" / "caches" / "price_pit" / "PIT",
+        help="Base directory for PIT price caches",
+    )
+    parser.add_argument(
+        "--eval-horizons", default=None,
+        help="Comma-separated horizons for split warning filter (e.g. 5,20,63)",
+    )
+    parser.add_argument(
+        "--verbose", action="store_true", default=False,
+        help="Print per-check details",
+    )
+    parser.add_argument(
+        "--out", type=Path, default=None,
+        help="Write JSON report to this path",
+    )
+    parser.add_argument(
+        "--strict", action="store_true", default=False,
+        help="Exit 1 if any snapshot FAILs",
+    )
+    args = parser.parse_args()
+
+    logging.basicConfig(
+        level=logging.DEBUG if args.verbose else logging.INFO,
+        format="%(message)s",
+    )
+
+    eval_horizons = None
+    if args.eval_horizons:
+        eval_horizons = [int(h.strip()) for h in args.eval_horizons.split(",")]
+
+    report = run_preflight_batch(
+        args.snapshot_root,
+        date_from=args.date_from,
+        date_to=args.date_to,
+        min_cols=args.min_cols,
+        min_eligible=args.min_eligible,
+        warn_threshold=args.warn_threshold,
+        check_pit=args.check_pit,
+        pit_cache_base=args.pit_cache_base,
+        eval_horizons=eval_horizons,
+    )
+
+    # Print summary
+    for pf in report.results:
+        tag = f"[{pf.status}]"
+        line = f"  {pf.date} {tag}"
+        if args.verbose or pf.status != "PASS":
+            details = [
+                c.detail for c in pf.checks
+                if c.detail and (args.verbose or c.status != "PASS")
+            ]
+            if details:
+                line += f"  {'; '.join(details)}"
+        print(line)
+
+    print(
+        f"\nPreflight: {report.n_total} snapshots — "
+        f"{report.n_pass} PASS, {report.n_warn} WARN, {report.n_fail} FAIL"
+    )
+
+    if args.out:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        with open(args.out, "w", encoding="utf-8") as f:
+            json.dump(report.to_dict(), f, indent=2)
+        print(f"Report → {args.out}")
+
+    if args.strict and report.n_fail > 0:
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
