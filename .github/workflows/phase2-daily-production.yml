@@ -404,6 +404,16 @@ jobs:
             echo "::warning::PIT price backfill failed"
           }
 
+      # ── Live performance tracker ──────────────────────────────
+      - name: Run live performance tracker
+        if: always() && steps.runner.outputs.exit_code != '1' && env.DEGRADED != '1'
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          echo "Running live performance tracker through ${DATE}..."
+          python3 tools/live_performance_tracker.py --as-of-date "$DATE" || {
+            echo "::warning::Live performance tracker failed (non-blocking)"
+          }
+
       # ── Build replay bundle ───────────────────────────────────
       - name: Build replay bundle
         if: always() && steps.runner.outputs.exit_code != '1'
@@ -673,6 +683,17 @@ print('production_data/decision_rulesets/' + active['file'])
             output/health_packets/health_${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}.md
             output/health_packets/health_${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}.json
           retention-days: 180
+          if-no-files-found: warn
+
+      - name: Upload live performance timeseries
+        if: always() && steps.runner.outputs.exit_code != '1' && env.DEGRADED != '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-performance-${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}
+          path: |
+            output/live_performance.csv
+            output/live_performance_summary.json
+          retention-days: 365
           if-no-files-found: warn
 
       # ── Evaluate outcome (AFTER uploads) ────────────────────────

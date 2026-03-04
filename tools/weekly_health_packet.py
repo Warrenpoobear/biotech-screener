@@ -168,6 +168,7 @@ def _action_items(
     ruleset_health: Optional[Dict],
     turnover: Dict,
     cache: Optional[Dict],
+    live_performance: Optional[Dict] = None,
 ) -> List[Dict]:
     items: List[Dict] = []
 
@@ -209,6 +210,21 @@ def _action_items(
         items.append({"severity": "WARN", "type": "cache_health",
                       "detail": f"overall_status={cache['overall_status']}"})
 
+    # Live performance: warn if 4w mean_net_return is negative
+    if live_performance:
+        last_4w = live_performance.get("last_4w", {})
+        mean_net = last_4w.get("mean_net_return")
+        n_dates = last_4w.get("n_dates", 0)
+        if mean_net is not None and n_dates >= 3 and mean_net < 0:
+            items.append({
+                "severity": "WARN",
+                "type": "live_performance_negative",
+                "detail": (
+                    f"4-week mean net return is negative: "
+                    f"{mean_net:.4f} ({n_dates} dates)"
+                ),
+            })
+
     return items
 
 
@@ -221,6 +237,41 @@ def _preflight_summary(snap_dir: Path) -> Optional[Dict]:
         if p.is_file():
             return _load_json(p)
     return None
+
+
+# ── Live performance section ─────────────────────────────────────────
+
+def _live_performance_section() -> Dict:
+    """Read output/live_performance_summary.json and return a compact section.
+
+    Returns an empty dict if the file does not exist (tracker not yet run).
+    """
+    summary_path = PROJECT_ROOT / "output" / "live_performance_summary.json"
+    if not summary_path.is_file():
+        return {}
+    try:
+        data = json.loads(summary_path.read_text())
+    except Exception:
+        return {}
+
+    def _w(window_key: str) -> Dict:
+        w = data.get(window_key, {})
+        return {
+            "n_dates": w.get("n_dates", 0),
+            "mean_net_return": w.get("mean_net_return"),
+            "mean_ic": w.get("mean_ic"),
+            "mean_excess_return": w.get("mean_excess_return"),
+        }
+
+    return {
+        "total_dates": data.get("total_dates", 0),
+        "first_date": data.get("first_date"),
+        "last_date": data.get("last_date"),
+        "horizon": data.get("horizon"),
+        "last_4w": _w("last_4w"),
+        "last_13w": _w("last_13w"),
+        "inception": _w("inception"),
+    }
 
 
 # ── Main packet builder ──────────────────────────────────────────────
@@ -308,6 +359,9 @@ def build_health_packet(as_of_date: str, *, relaxed: bool = False) -> Dict:
     # ── Portfolio ────────────────────────────────────────────────────
     portfolio = _portfolio_shape(snap_dir)
 
+    # ── Live performance ─────────────────────────────────────────────
+    live_performance = _live_performance_section()
+
     # ── Action items ─────────────────────────────────────────────────
     action_items = _action_items(
         gates=gates,
@@ -315,6 +369,7 @@ def build_health_packet(as_of_date: str, *, relaxed: bool = False) -> Dict:
         ruleset_health=rh_data,
         turnover=turnover,
         cache=cache_data,
+        live_performance=live_performance,
     )
 
     return {
@@ -336,6 +391,7 @@ def build_health_packet(as_of_date: str, *, relaxed: bool = False) -> Dict:
         "cache": cache_data,
         "turnover": turnover,
         "portfolio": portfolio,
+        "live_performance": live_performance,
         "action_items": action_items,
     }
 
