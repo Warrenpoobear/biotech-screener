@@ -5,6 +5,43 @@ on:
   pull_request:
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install lint tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8==7.0.0 black==23.12.1 isort==5.13.2
+
+      - name: Check formatting (black)
+        run: |
+          black --check --diff \
+            common/ decision_engine.py run_screen.py tools/ scripts/ \
+            wake_robin_data_pipeline/ mcp_server/ 2>&1 | head -100
+        continue-on-error: true
+
+      - name: Check import order (isort)
+        run: |
+          isort --check-only --diff \
+            common/ decision_engine.py run_screen.py tools/ scripts/ \
+            wake_robin_data_pipeline/ mcp_server/ 2>&1 | head -100
+        continue-on-error: true
+
+      - name: Lint (flake8)
+        run: |
+          flake8 common/ decision_engine.py run_screen.py tools/ scripts/ \
+            wake_robin_data_pipeline/ mcp_server/ \
+            --max-line-length 120 \
+            --extend-ignore E501,W503,E203,E266,E402 \
+            --count --statistics
+
   pytest:
     runs-on: ubuntu-latest
     steps:
@@ -24,13 +61,33 @@ jobs:
           pip install pytest-xdist yfinance
           pip install -e .
 
-      - name: Run tests
+      - name: Run tests with coverage
         env:
           PYTHONHASHSEED: "0"
         run: |
           python -m pytest tests/ -q \
+            --cov=common --cov=tools --cov=scripts \
+            --cov-report=term-missing:skip-covered \
+            --cov-report=html:coverage-html \
+            --cov-report=xml:coverage.xml \
             --ignore=tests/integration \
             --ignore=tests/test_minimum_suite.py \
             --ignore=tests/test_golden_baseline.py \
             --ignore=tests/test_run_screen.py \
             --ignore=tests/test_module_5_defensive.py
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          python -m coverage report --format=total 2>/dev/null || \
+          python -m coverage report | tail -1
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            coverage-html/
+            coverage.xml
+          retention-days: 30

@@ -32,12 +32,12 @@ numpy==1.26.3
 requests==2.31.0
 
 # ----------------------------------------------------------------------------
-# Development Tools (Optional)
+# Development Tools (Linting & Formatting)
 # ----------------------------------------------------------------------------
-# black==23.12.1
-# isort==5.13.2
+black==23.12.1
+isort==5.13.2
+flake8==7.0.0
 # mypy==1.8.0
-# flake8==7.0.0
 
 # ----------------------------------------------------------------------------
 # Data Collection (Optional - for SEC/market data scripts)
