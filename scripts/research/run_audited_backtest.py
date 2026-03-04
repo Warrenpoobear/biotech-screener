@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Audited backtest runner — preflight + optional rerank + eval + AUDIT.md.
+"""Audited backtest runner — preflight + optional rerank + eval + AUDIT.md + VERDICT.md.
 
 Single entrypoint that produces a reproducible audit package:
   1. Runs snapshot preflight batch (writes artifacts)
   2. Optionally re-ranks snapshots through a ruleset (with --preflight)
   3. Runs eval_forward_returns.py (with --preflight-strict by default)
   4. Writes output/<run_id>/AUDIT.md summarizing everything
+  5. Writes output/<run_id>/VERDICT.md + VERDICT.json (signed result page)
 
 Defaults to STRICT mode (preflight-strict=True).  For archive/OOS data where
 all snapshots are WARN-status, add --relaxed to include WARN dates.  Use
@@ -158,6 +159,270 @@ def _run_eval(
     print(f"  eval cmd: {' '.join(cmd)}")
     result = subprocess.run(cmd, cwd=str(PROJECT_ROOT))
     return result.returncode
+
+
+# ── Verdict ──────────────────────────────────────────────────────────
+
+# Promotion thresholds (pp = percentage points, not fraction)
+_PRIMARY_THRESHOLD_PP: float = 0.20    # 126d net Δ must be ≥ this
+_GUARDRAIL_THRESHOLD_PP: float = -0.05  # 84d net Δ must be ≥ this
+_MIN_DATES_FOR_VERDICT: int = 50        # fewer → NEEDS_MORE regardless
+
+
+def _load_eval_summary(eval_dir: Path) -> Optional[Dict[str, Any]]:
+    """Load summary.json from eval output dir, or None if missing/corrupt."""
+    p = eval_dir / "summary.json"
+    if not p.is_file():
+        return None
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
+def _compute_verdict(
+    cand: Dict[str, Any],
+    baseline: Optional[Dict[str, Any]],
+    *,
+    primary_threshold_pp: float = _PRIMARY_THRESHOLD_PP,
+    guardrail_threshold_pp: float = _GUARDRAIL_THRESHOLD_PP,
+    min_dates: int = _MIN_DATES_FOR_VERDICT,
+) -> Dict[str, Any]:
+    """Compute a signed verdict dict from eval summary dicts.
+
+    Args:
+        cand:      candidate summary.json dict
+        baseline:  baseline summary.json dict (None → absolute-only, no delta)
+
+    Returns a dict with schema 'verdict.v1'.
+    """
+    horizons_raw = cand.get("horizons", [])
+    horizons = sorted(int(h) for h in horizons_raw)
+    primary_h = max(horizons) if horizons else None
+    guardrail_h = sorted(horizons)[-2] if len(horizons) >= 2 else None
+    n_evaluated = cand.get("n_evaluated", 0)
+
+    def _h(summary: Dict, h: int) -> Dict[str, Any]:
+        return summary.get("by_horizon", {}).get(str(h), {})
+
+    def _pct(val: Optional[float]) -> Optional[float]:
+        return round(val * 100, 4) if val is not None else None
+
+    results: Dict[str, Any] = {}
+    for h in horizons:
+        ch = _h(cand, h)
+        row: Dict[str, Any] = {
+            "net_pct": _pct(ch.get("mean_net_return")),
+            "excess_pct": _pct(ch.get("mean_excess_return")),
+            "hedged_pct": _pct(ch.get("mean_hedged_return")),
+            "turnover_pct": _pct(ch.get("mean_turnover")),
+            "mean_ic": round(ch["mean_ic"], 6) if ch.get("mean_ic") is not None else None,
+            "ic_t_stat": round(ch["ic_t_stat"], 3) if ch.get("ic_t_stat") is not None else None,
+            "delta_net_pp": None,
+        }
+        if baseline is not None:
+            bh = _h(baseline, h)
+            b_net = bh.get("mean_net_return")
+            c_net = ch.get("mean_net_return")
+            if b_net is not None and c_net is not None:
+                row["delta_net_pp"] = round((c_net - b_net) * 100, 4)
+        results[str(h)] = row
+
+    # ── Verdict logic ────────────────────────────────────────────────
+    reasons: List[str] = []
+    verdict: str
+
+    if n_evaluated < min_dates:
+        verdict = "NEEDS_MORE"
+        reasons.append(f"n_evaluated={n_evaluated} < min {min_dates} dates for verdict")
+    elif baseline is None:
+        verdict = "NEEDS_MORE"
+        reasons.append("no baseline provided — pass --baseline-summary for PROMOTE/ARCHIVE verdict")
+    else:
+        primary_delta = results.get(str(primary_h), {}).get("delta_net_pp") if primary_h else None
+        guardrail_delta = results.get(str(guardrail_h), {}).get("delta_net_pp") if guardrail_h else None
+
+        primary_pass = primary_delta is not None and primary_delta >= primary_threshold_pp
+        guardrail_pass = (guardrail_delta is None  # single-horizon: no guardrail check
+                         or guardrail_delta >= guardrail_threshold_pp)
+
+        if primary_pass and guardrail_pass:
+            verdict = "PROMOTE"
+            reasons.append(
+                f"{primary_h}d Δ = {primary_delta:+.3f}pp ≥ threshold {primary_threshold_pp:+.2f}pp"
+            )
+            if guardrail_delta is not None:
+                reasons.append(
+                    f"{guardrail_h}d Δ = {guardrail_delta:+.3f}pp ≥ guardrail {guardrail_threshold_pp:+.2f}pp"
+                )
+        else:
+            verdict = "ARCHIVE"
+            if primary_delta is not None and not primary_pass:
+                reasons.append(
+                    f"{primary_h}d Δ = {primary_delta:+.3f}pp < threshold {primary_threshold_pp:+.2f}pp"
+                )
+            if guardrail_delta is not None and not guardrail_pass:
+                reasons.append(
+                    f"{guardrail_h}d Δ = {guardrail_delta:+.3f}pp < guardrail {guardrail_threshold_pp:+.2f}pp"
+                )
+
+    return {
+        "schema": "verdict.v1",
+        "n_evaluated": n_evaluated,
+        "primary_horizon": primary_h,
+        "guardrail_horizon": guardrail_h,
+        "results": results,
+        "thresholds": {
+            "primary_delta_pp": primary_threshold_pp,
+            "guardrail_delta_pp": guardrail_threshold_pp,
+            "min_dates": min_dates,
+        },
+        "verdict": verdict,
+        "verdict_reasons": reasons,
+    }
+
+
+def _write_verdict(
+    out_dir: Path,
+    verdict: Dict[str, Any],
+    *,
+    name: str,
+    git_sha: str,
+    run_id: str,
+    candidate_ruleset: Optional[str],
+    baseline_ruleset: Optional[str],
+    date_from: Optional[str],
+    date_to: Optional[str],
+    relaxed: bool,
+) -> Path:
+    """Write VERDICT.md and VERDICT.json to out_dir."""
+    v = verdict["verdict"]
+    ph = verdict["primary_horizon"]
+    gh = verdict["guardrail_horizon"]
+    res = verdict["results"]
+    thresholds = verdict["thresholds"]
+
+    # ── JSON ────────────────────────────────────────────────────────
+    full = dict(verdict)
+    full.update({
+        "name": name,
+        "run_id": run_id,
+        "git_sha": git_sha,
+        "candidate_ruleset": candidate_ruleset,
+        "baseline_ruleset": baseline_ruleset,
+        "date_from": date_from,
+        "date_to": date_to,
+        "relaxed": relaxed,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+    })
+    json_path = out_dir / "VERDICT.json"
+    json_path.write_text(json.dumps(full, indent=2, default=str), encoding="utf-8")
+
+    # ── Markdown ────────────────────────────────────────────────────
+    icon = {"PROMOTE": "🟢", "ARCHIVE": "🔴", "NEEDS_MORE": "🟡"}.get(v, "⚪")
+    lines: List[str] = []
+    lines += [
+        f"# Research Verdict — {name}",
+        "",
+        f"| Field | Value |",
+        f"|-------|-------|",
+        f"| Verdict | **{icon} {v}** |",
+        f"| Run ID | `{run_id}` |",
+        f"| Git SHA | `{git_sha}` |",
+        f"| Candidate | `{candidate_ruleset or '—'}` |",
+        f"| Baseline | `{baseline_ruleset or '—'}` |",
+        f"| Window | {date_from or '—'} → {date_to or '—'} ({verdict['n_evaluated']} dates) |",
+        f"| Mode | {'relaxed' if relaxed else 'strict'} |",
+        "",
+    ]
+
+    # Results table
+    def _fmt(val: Optional[float], suffix: str = "") -> str:
+        return f"{val:.4f}{suffix}" if val is not None else "—"
+
+    def _fmt_delta(val: Optional[float]) -> str:
+        if val is None:
+            return "—"
+        sign = "+" if val >= 0 else ""
+        return f"{sign}{val:.3f}pp"
+
+    primary_label = f"{ph}d _(primary)_" if ph else "—"
+    guardrail_label = f"{gh}d _(guardrail)_" if gh else "—"
+
+    lines += [
+        "## Results",
+        "",
+        f"| Horizon | Net% | Excess% | Hedged% | Turnover% | Δ Net (pp) |",
+        f"|---------|------|---------|---------|-----------|------------|",
+    ]
+    for h_str, row in sorted(res.items(), key=lambda x: int(x[0])):
+        h_int = int(h_str)
+        label = (f"{h_int}d (primary)" if h_int == ph
+                 else f"{h_int}d (guardrail)" if h_int == gh
+                 else f"{h_int}d")
+        delta_str = _fmt_delta(row.get("delta_net_pp"))
+        lines.append(
+            f"| {label} | {_fmt(row.get('net_pct'), '%')} "
+            f"| {_fmt(row.get('excess_pct'), '%')} "
+            f"| {_fmt(row.get('hedged_pct'), '%')} "
+            f"| {_fmt(row.get('turnover_pct'), '%')} "
+            f"| {delta_str} |"
+        )
+    lines.append("")
+
+    # Thresholds
+    lines += [
+        "## Thresholds",
+        "",
+        f"| | Threshold | Result |",
+        f"|--|-----------|--------|",
+    ]
+    if ph:
+        ph_delta = res.get(str(ph), {}).get("delta_net_pp")
+        ph_pass = ph_delta is not None and ph_delta >= thresholds["primary_delta_pp"]
+        ph_icon = "✅" if ph_pass else ("—" if ph_delta is None else "❌")
+        lines.append(
+            f"| Primary ({ph}d Δ net) | ≥ {thresholds['primary_delta_pp']:+.2f}pp "
+            f"| {ph_icon} {_fmt_delta(ph_delta)} |"
+        )
+    if gh:
+        gh_delta = res.get(str(gh), {}).get("delta_net_pp")
+        gh_pass = gh_delta is None or gh_delta >= thresholds["guardrail_delta_pp"]
+        gh_icon = "✅" if gh_pass else ("—" if gh_delta is None else "❌")
+        lines.append(
+            f"| Guardrail ({gh}d Δ net) | ≥ {thresholds['guardrail_delta_pp']:+.2f}pp "
+            f"| {gh_icon} {_fmt_delta(gh_delta)} |"
+        )
+    lines.append("")
+
+    # Verdict reasons
+    lines += ["## Verdict Reasons", ""]
+    for reason in verdict["verdict_reasons"]:
+        lines.append(f"- {reason}")
+    lines.append("")
+
+    # Next steps
+    if v == "PROMOTE":
+        lines += [
+            "## Next Step",
+            "",
+            "```bash",
+            f"python3 scripts/promote_ruleset.py <ruleset_id> "
+            f"--reason \"verdict: {name}\"",
+            "```",
+            "",
+        ]
+    elif v == "ARCHIVE":
+        lines += [
+            "## Next Step",
+            "",
+            "Move research rulesets to `production_data/decision_rulesets/research_archive/`.",
+            "",
+        ]
+
+    md_path = out_dir / "VERDICT.md"
+    md_path.write_text("\n".join(lines), encoding="utf-8")
+    return md_path
 
 
 # ── AUDIT.md writer ─────────────────────────────────────────────────
@@ -334,6 +599,8 @@ def run_audited_backtest(
     horizons: List[int],
     out_root: Path,
     ruleset_path: Optional[Path] = None,
+    baseline_summary_path: Optional[Path] = None,
+    verdict_name: Optional[str] = None,
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
     date_manifest: Optional[Path] = None,
@@ -472,7 +739,7 @@ def run_audited_backtest(
     print()
 
     # ── Step 4: AUDIT.md ────────────────────────────────────────────
-    print("Step 4/4: Writing AUDIT.md...")
+    print("Step 4/5: Writing AUDIT.md...")
     audit_path = _write_audit_md(
         run_dir,
         run_id=run_id,
@@ -498,6 +765,45 @@ def run_audited_backtest(
         eval_dir=eval_dir,
     )
     print(f"  audit → {audit_path}")
+    print()
+
+    # ── Step 5: VERDICT.md ──────────────────────────────────────────
+    print("Step 5/5: Writing VERDICT.md...")
+    cand_summary = _load_eval_summary(eval_dir)
+    # --baseline-summary accepts either path/to/summary.json or path/to/eval/dir/
+    baseline_summary: Optional[Dict[str, Any]] = None
+    if baseline_summary_path:
+        if baseline_summary_path.is_file():
+            try:
+                baseline_summary = json.loads(
+                    baseline_summary_path.read_text(encoding="utf-8")
+                )
+            except Exception:
+                print(f"  WARN: could not parse baseline summary {baseline_summary_path}")
+        elif baseline_summary_path.is_dir():
+            baseline_summary = _load_eval_summary(baseline_summary_path)
+
+    if cand_summary:
+        eff_verdict_name = verdict_name or (
+            ruleset_path.stem if ruleset_path else run_id
+        )
+        verdict = _compute_verdict(cand_summary, baseline_summary)
+        verdict_path = _write_verdict(
+            run_dir,
+            verdict,
+            name=eff_verdict_name,
+            git_sha=git_sha,
+            run_id=run_id,
+            candidate_ruleset=str(ruleset_path) if ruleset_path else None,
+            baseline_ruleset=str(baseline_summary_path) if baseline_summary_path else None,
+            date_from=eff_date_from,
+            date_to=eff_date_to,
+            relaxed=relaxed,
+        )
+        v = verdict["verdict"]
+        print(f"  verdict → {verdict_path}  [{v}]")
+    else:
+        print("  WARN: eval summary.json not found — VERDICT.md skipped")
     print()
     print(f"=== Audited Backtest Complete: {run_dir} ===")
     return 0
@@ -579,6 +885,21 @@ def main() -> None:
         "--run-id", default=None,
         help="Run identifier (auto-generated if omitted)",
     )
+    parser.add_argument(
+        "--baseline-summary", type=Path, default=None,
+        help=(
+            "Path to baseline eval summary.json (or its parent dir) for delta "
+            "computation in VERDICT.md. Without this, verdict is NEEDS_MORE. "
+            "Example: output/audited_backtests/baseline/eval/summary.json"
+        ),
+    )
+    parser.add_argument(
+        "--verdict-name", type=str, default=None,
+        help=(
+            "Human-readable name for VERDICT.md header "
+            "(default: ruleset filename stem or run_id)"
+        ),
+    )
     args = parser.parse_args()
 
     horizons = [int(h.strip()) for h in args.horizons.split(",")]
@@ -589,6 +910,8 @@ def main() -> None:
         horizons=horizons,
         out_root=args.out_root,
         ruleset_path=args.ruleset,
+        baseline_summary_path=args.baseline_summary,
+        verdict_name=args.verdict_name,
         date_from=args.date_from,
         date_to=args.date_to,
         date_manifest=args.date_manifest,
