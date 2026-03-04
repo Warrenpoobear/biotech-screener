@@ -52,7 +52,45 @@ python3 tools/run_daily_production.py --as-of-date DATE --warm-sources "ctgov,se
 
 ---
 
-## 3. Gate reference and expected daily status
+## 3. Notifications
+
+The CI pipeline sends push notifications when a hard FAIL or rollback-recommended condition is detected.
+
+### Email (always on, no config required)
+
+GitHub Actions automatically emails the repository owner when a workflow job fails (exit code 1).
+Configure in: **GitHub repo → Settings → Notifications → Email notifications for workflow failures**.
+
+### Slack webhook (optional)
+
+Add a `SLACK_WEBHOOK_URL` repository secret to receive Slack alerts on FAIL or rollback:
+
+1. Create a Slack incoming webhook at https://api.slack.com/messaging/webhooks
+2. Add the webhook URL as a repository secret:
+   - GitHub repo → Settings → Secrets and variables → Actions → New repository secret
+   - Name: `SLACK_WEBHOOK_URL`
+   - Value: `https://hooks.slack.com/services/...`
+
+When configured, the CI `notify_on_degradation` step calls `tools/send_alert.py`, which:
+- Posts a formatted attachment with gate summary, action items, and 4w net return
+- Is **non-blocking**: a Slack delivery failure never fails the CI job
+- Posts for `exit_code == 1` (hard FAIL) **or** `rollback_recommended == true`
+
+### WARN annotations
+
+WARN-level issues are emitted as `::warning::` annotations in GitHub Actions, visible in
+the Actions UI under "Annotations" on the commit or PR.
+
+### Manual alert test
+
+```bash
+python3 tools/send_alert.py --level WARN --date 2026-03-05 --dry-run
+python3 tools/send_alert.py --level FAIL --date 2026-03-05 --webhook "$SLACK_WEBHOOK_URL"
+```
+
+---
+
+## 4. Gate reference and expected daily status
 
 ### Hard gates (FAIL = snapshot not promoted)
 
@@ -90,7 +128,7 @@ These should be **PASS on a healthy day** after 2026-03-05:
 
 ---
 
-## 4. Known persistent WARNs (not actionable)
+## 5. Known persistent WARNs (not actionable)
 
 ### `pnl_attribution` — price lag
 
@@ -112,7 +150,7 @@ high_risk=55% > 50% WARN
 
 ---
 
-## 5. Burn-in results (new self-sufficient runner)
+## 6. Burn-in results (new self-sufficient runner)
 
 Gate key: ✓ PASS · ! WARN · ✗ FAIL · — not run
 
@@ -133,7 +171,7 @@ Gate key: ✓ PASS · ! WARN · ✗ FAIL · — not run
 
 ---
 
-## 6. Ruleset health and rollback
+## 7. Ruleset health and rollback
 
 ### Monitor
 
@@ -169,7 +207,7 @@ print(r['id'], r['file'], r['description'])
 
 ---
 
-## 7. Artifact locations
+## 8. Artifact locations
 
 | Artifact | Path |
 |---|---|
@@ -188,7 +226,7 @@ print(r['id'], r['file'], r['description'])
 
 ---
 
-## 8. Common failures and fixes
+## 9. Common failures and fixes
 
 ### XBI staleness FAIL
 ```
@@ -251,7 +289,7 @@ and is safe for gate verdicts, but does not compute forward returns.
 
 ---
 
-## 9. Weekly health packet
+## 10. Weekly health packet
 
 ### Generating
 

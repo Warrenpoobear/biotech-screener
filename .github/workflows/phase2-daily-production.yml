@@ -643,6 +643,39 @@ print('production_data/decision_rulesets/' + active['file'])
             cat "$HEALTH_MD" >> "$GITHUB_STEP_SUMMARY"
           fi
 
+          # Emit rollback_recommended as a step output for notification step
+          HEALTH_JSON="output/health_packets/health_${DATE}.json"
+          ROLLBACK_REC="false"
+          if [ -f "$HEALTH_JSON" ]; then
+            ROLLBACK_REC=$(python3 -c "
+import json, sys
+d = json.load(open('$HEALTH_JSON'))
+print('true' if d.get('ruleset_health',{}).get('recommend_rollback') else 'false')
+" 2>/dev/null || echo "false")
+          fi
+          echo "rollback_recommended=${ROLLBACK_REC}" >> "$GITHUB_OUTPUT"
+        id: health_packet
+
+      # ── Notify on degradation ────────────────────────────────────
+      - name: Notify on degradation
+        if: always() && (steps.runner.outputs.exit_code == '1' || steps.health_packet.outputs.rollback_recommended == 'true')
+        continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          RC="${{ steps.runner.outputs.exit_code }}"
+          LEVEL="WARN"
+          if [ "$RC" = "1" ]; then LEVEL="FAIL"; fi
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            python3 tools/send_alert.py \
+              --level "$LEVEL" \
+              --date "$DATE" \
+              --webhook "$SLACK_WEBHOOK_URL"
+          else
+            echo "::notice::SLACK_WEBHOOK_URL not configured — skipping notification"
+          fi
+
       # ── Upload snapshot artifacts ───────────────────────────────
       - name: Upload snapshot
         if: always()
