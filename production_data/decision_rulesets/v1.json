@@ -3,6 +3,7 @@
   "alpha_cohort_clip_min": -0.1,
   "alpha_cohort_shrink_k": 50.0,
   "alpha_cohort_table_path": "production_data/alpha_cohort_tables/v1.json",
+  "alpha_cohort_tiebreak_weight": 0.0,
   "alpha_headwind": -0.05,
   "alpha_modifier_mode": "off",
   "alpha_modifier_weight": 0.0,
@@ -234,6 +235,7 @@
       1.0
     ]
   ],
+  "rebalance_buffer_ranks": 0,
   "rsi_overbought": 70.0,
   "sizing_weights": {
     "L": 1.0,

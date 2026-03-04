@@ -6,6 +6,36 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## Archived research (not promoted)
+
+### Alpha cohort tiebreak sweep — 2026-03-04 — ARCHIVED, no edge
+
+**Hypothesis**: `alpha_cohort_pct` (unique per ticker, no 0.1-ceiling ties) as a small
+secondary sort contribution: `delta = w * alpha_cohort_pct` subtracted from effective rank.
+
+**Sweep**: OOS 2020-03-31–2024-12-31, n=282 dates, `--rerank`, buffer=30, top-k=20, cost=30bps.
+Baseline: v1.8.3 / `82982998`. Weights tested: **0.005 / 0.01 / 0.02**.
+
+| Weight | 126d Δ Net | 84d Δ Net |
+|--------|-----------|-----------|
+| 0.005  | +0.000pp  | +0.000pp  |
+| 0.010  | −0.047pp  | −0.008pp  |
+| 0.020  | −0.054pp  | −0.020pp  |
+
+**Verdict**: Flat at 0.005, monotonically negative thereafter. No promotable weight.
+`alpha_cohort_tiebreak_weight` stays in schema at default 0.0 — no behavior change.
+Research rulesets archived at `production_data/decision_rulesets/research_archive/alpha_cohort_tiebreak/`.
+Full audited output at `output/ac_tiebreak_sweep/compare.md`.
+
+**Infra bugs found and fixed during this sweep**:
+- `run_audited_backtest.py`: argparse prefix-matching caused `--preflight` to silently activate
+  `--preflight-strict` (zero dates evaluated). Fixed with `allow_abbrev=False` on ArgumentParser.
+- `eval_forward_returns.py`: `--ruleset` alone does NOT re-sort for sort-weight changes (tiebreak,
+  clinical, calendar alpha). Only affects buffer inheritance + coinvest rescoring. `--rerank` in
+  `run_audited_backtest.py` is required for sort-weight A/B tests. Clarified in help text.
+
+---
+
 ## [v1.8.3] 82982998 — 2026-03-03 — Portfolio mechanics: rebalance buffer=30
 
 **Active ruleset change**: `4f12a7f8` (v1.8.2_clinical_sort_off_candidate) → `82982998` (v1.8.3_buffer30_candidate)

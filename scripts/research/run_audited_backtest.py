@@ -454,6 +454,7 @@ def run_audited_backtest(
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Run an audited backtest with preflight + optional rerank + eval",
+        allow_abbrev=False,  # prevent --preflight silently matching --preflight-strict
     )
     parser.add_argument(
         "--snapshot-root", type=Path,

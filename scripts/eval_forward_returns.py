@@ -2366,7 +2366,12 @@ def main() -> None:
     )
     parser.add_argument(
         "--ruleset", type=Path, default=None,
-        help="DecisionRuleset JSON for faithful rescore (required when --coinvest-eval-mode != default)",
+        help=(
+            "DecisionRuleset JSON. Affects: (1) rebalance_buffer_ranks inheritance, "
+            "(2) coinvest rescoring when --coinvest-eval-mode != default. "
+            "NOTE: sort-weight changes (tiebreak, clinical, calendar alpha) require "
+            "--rerank in run_audited_backtest.py — passing --ruleset alone does NOT re-sort."
+        ),
     )
     parser.add_argument(
         "--fail-if-stale", action="store_true", default=False,
