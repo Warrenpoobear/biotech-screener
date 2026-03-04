@@ -1,0 +1,35 @@
+{
+  "schema_version": "pit_bundle_manifest.v1",
+  "version": "1.0.0",
+  "as_of_date": "2022-12-31",
+  "created_at": "2026-02-23T16:23:44Z",
+  "bundle_root": "/mnt/c/Projects/biotech_screener/biotech-screener/data/bundles/PIT",
+  "pit_mode": "strict",
+  "components": {
+    "clinical_features": {
+      "file": "clinical_features.json",
+      "schema_version": "clinical_features_pit.v1",
+      "sha256": "55867b2c6ebffa5640a60a0756de797e63f5428d545a49777ca609f30a5ec4c0",
+      "coverage_pct": 87.5
+    },
+    "catalyst_events": {
+      "file": "catalyst_events.json",
+      "schema_version": "catalyst_events_pit.v1",
+      "sha256": "a93a8b0ca918ab1b482720af34c502fe7518fba297c47fa679c68d69edc3bf99",
+      "coverage_pct": 13.9
+    },
+    "coinvest_features": {
+      "file": "coinvest_features.json",
+      "schema_version": "coinvest_features.v1",
+      "sha256": "a15052b1ae454a8fc6f47e45d230fa312be301adfacdaea78c4e69c420a0c9b4",
+      "coverage_pct": 75.4
+    }
+  },
+  "pit_quality": {
+    "ctgov_trials_filtered_future_posted": 4140,
+    "catalyst_tickers_missing_disclosed_at": 0,
+    "catalyst_tickers_future_disclosed_at": 0
+  },
+  "universe_size": 353,
+  "build_duration_seconds": 2.48
+}

@@ -57,7 +57,7 @@
     },
     {
       "cusip": "002120202",
-      "ticker": "ATYR",
+      "ticker": "",
       "issuer": "ATYR PHARMA INC",
       "shares": 800000,
       "value_usd_thousands": 1408000,
@@ -81,7 +81,7 @@
     },
     {
       "cusip": "09627Y109",
-      "ticker": "2L9",
+      "ticker": "",
       "issuer": "BLUEPRINT MEDICINES CORP",
       "shares": 140000,
       "value_usd_thousands": 12950000,
@@ -241,7 +241,7 @@
     },
     {
       "cusip": "670100205",
-      "ticker": "NVO",
+      "ticker": "",
       "issuer": "NOVO-NORDISK A S",
       "shares": 110000,
       "value_usd_thousands": 13097700,
@@ -265,7 +265,7 @@
     },
     {
       "cusip": "46489V302",
-      "ticker": "CATX",
+      "ticker": "",
       "issuer": "PERSPECTIVE THERAPEUTICS INC",
       "shares": 750000,
       "value_usd_thousands": 10012500,
@@ -273,7 +273,7 @@
     },
     {
       "cusip": "71722W107",
-      "ticker": "PHAT",
+      "ticker": "",
       "issuer": "PHATHOM PHARMACEUTICALS INC",
       "shares": 375000,
       "value_usd_thousands": 6780000,
@@ -377,7 +377,7 @@
     },
     {
       "cusip": "87164F105",
-      "ticker": "SNDX",
+      "ticker": "",
       "issuer": "SYNDAX PHARMACEUTICALS INC",
       "shares": 450000,
       "value_usd_thousands": 8662500,
@@ -401,7 +401,7 @@
     },
     {
       "cusip": "87990A106",
-      "ticker": "TNYA",
+      "ticker": "",
       "issuer": "TENAYA THERAPEUTICS INC",
       "shares": 1500000,
       "value_usd_thousands": 2895000,

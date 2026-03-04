@@ -1,0 +1,2317 @@
+{
+  "schema_version": "coinvest_features.v1",
+  "version": "1.0.0",
+  "created_at": "2026-02-23T16:55:47Z",
+  "as_of_date": "2025-09-30",
+  "cache_as_of_date": "2025-09-30",
+  "period_of_report": "2025-06-30",
+  "prior_period_of_report": "2025-03-31",
+  "prior_cache_as_of_date": "2025-06-30",
+  "managers_total": 2,
+  "managers_with_filing": 2,
+  "tickers_in_universe": 353,
+  "tickers_with_signal": 111,
+  "signal_coverage_pct": 31.4,
+  "tickers": {
+    "ABCL": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.4821,
+      "tier1_conviction_overlap": 1.4821,
+      "max_tier1_position_pct": 0.92,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "ABOS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.6692,
+      "tier1_conviction_overlap": 0.6692,
+      "max_tier1_position_pct": 0.29,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "HOLD"
+      }
+    },
+    "ACAD": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 3.0972,
+      "tier1_conviction_overlap": 3.0972,
+      "max_tier1_position_pct": 8.98,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "ACLX": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 3.0482,
+      "tier1_conviction_overlap": 3.0482,
+      "max_tier1_position_pct": 3.37,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "NEW",
+        "RA Capital": "HOLD"
+      }
+    },
+    "ACRV": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.9292,
+      "tier1_conviction_overlap": 0.9292,
+      "max_tier1_position_pct": 0.17,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE",
+        "RA Capital": "DECREASE"
+      }
+    },
+    "AGIO": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.06,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "NEW"
+      }
+    },
+    "AKRO": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.17,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "ALGS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.01,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "ALKS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 2.0657,
+      "tier1_conviction_overlap": 2.0657,
+      "max_tier1_position_pct": 1.78,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "ALMS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.05,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "ARGX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.2,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "ARTV": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4652,
+      "tier1_conviction_overlap": 0.4652,
+      "max_tier1_position_pct": 0.25,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "ARWR": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.14,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "NEW"
+      }
+    },
+    "ASND": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 3.0972,
+      "tier1_conviction_overlap": 3.0972,
+      "max_tier1_position_pct": 29.9,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "BCAX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.9695,
+      "tier1_conviction_overlap": 0.9695,
+      "max_tier1_position_pct": 1.09,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "BCYC": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.796,
+      "tier1_conviction_overlap": 0.796,
+      "max_tier1_position_pct": 0.73,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "BNTX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.956,
+      "tier1_conviction_overlap": 0.956,
+      "max_tier1_position_pct": 0.38,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "CDTX": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 3.3479,
+      "tier1_conviction_overlap": 3.3479,
+      "max_tier1_position_pct": 2.76,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "NEW",
+        "RA Capital": "INCREASE"
+      }
+    },
+    "CELC": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.3011,
+      "tier1_conviction_overlap": 1.3011,
+      "max_tier1_position_pct": 0.71,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "CERS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.18,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "CLDX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.13,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "CLYM": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.0037,
+      "tier1_conviction_overlap": 1.0037,
+      "max_tier1_position_pct": 0.66,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "HOLD"
+      }
+    },
+    "CRNX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.08,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "NEW"
+      }
+    },
+    "CTMX": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 1.5486,
+      "tier1_conviction_overlap": 1.5486,
+      "max_tier1_position_pct": 0.1,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "NEW",
+        "RA Capital": "INCREASE"
+      }
+    },
+    "CTNM": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.01,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "DNLI": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.8817,
+      "tier1_conviction_overlap": 0.8817,
+      "max_tier1_position_pct": 0.51,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD"
+      }
+    },
+    "DNTH": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 1.9495,
+      "tier1_conviction_overlap": 1.9495,
+      "max_tier1_position_pct": 0.9,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "NEW",
+        "RA Capital": "HOLD"
+      }
+    },
+    "DSGN": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.06,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "DYN": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.5464,
+      "tier1_conviction_overlap": 1.5464,
+      "max_tier1_position_pct": 1.56,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "HOLD"
+      }
+    },
+    "ELDN": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.16,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "ELVN": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 1.2831,
+      "tier1_conviction_overlap": 1.2831,
+      "max_tier1_position_pct": 0.29,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD",
+        "RA Capital": "HOLD"
+      }
+    },
+    "EWTX": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 2.2698,
+      "tier1_conviction_overlap": 2.2698,
+      "max_tier1_position_pct": 2.19,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE",
+        "RA Capital": "DECREASE"
+      }
+    },
+    "FATE": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.6194,
+      "tier1_conviction_overlap": 0.6194,
+      "max_tier1_position_pct": 0.03,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD"
+      }
+    },
+    "FDMT": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.827,
+      "tier1_conviction_overlap": 0.827,
+      "max_tier1_position_pct": 0.29,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "FULC": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.6862,
+      "tier1_conviction_overlap": 1.6862,
+      "max_tier1_position_pct": 1.19,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "GBIO": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.01,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "GERN": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.1128,
+      "tier1_conviction_overlap": 1.1128,
+      "max_tier1_position_pct": 1.43,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "GHRS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.9444,
+      "tier1_conviction_overlap": 1.9444,
+      "max_tier1_position_pct": 1.58,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "GLUE": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.6194,
+      "tier1_conviction_overlap": 0.6194,
+      "max_tier1_position_pct": 0.22,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD"
+      }
+    },
+    "GPCR": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 2.2279,
+      "tier1_conviction_overlap": 2.2279,
+      "max_tier1_position_pct": 0.53,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE",
+        "RA Capital": "INCREASE"
+      }
+    },
+    "GRAL": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.3965,
+      "tier1_conviction_overlap": 1.3965,
+      "max_tier1_position_pct": 0.81,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "HOWL": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.12,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "IDYA": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.0179,
+      "tier1_conviction_overlap": 1.0179,
+      "max_tier1_position_pct": 0.43,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "IMCR": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.0418,
+      "tier1_conviction_overlap": 1.0418,
+      "max_tier1_position_pct": 0.71,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD"
+      }
+    },
+    "IMTX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.1282,
+      "tier1_conviction_overlap": 1.1282,
+      "max_tier1_position_pct": 0.53,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "IMVT": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.1403,
+      "tier1_conviction_overlap": 1.1403,
+      "max_tier1_position_pct": 0.85,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD"
+      }
+    },
+    "INCY": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 3.0972,
+      "tier1_conviction_overlap": 3.0972,
+      "max_tier1_position_pct": 20.31,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "INSM": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 3.0972,
+      "tier1_conviction_overlap": 3.0972,
+      "max_tier1_position_pct": 7.53,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "IRON": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 2.2439,
+      "tier1_conviction_overlap": 2.2439,
+      "max_tier1_position_pct": 1.41,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE",
+        "RA Capital": "HOLD"
+      }
+    },
+    "JANX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.8583,
+      "tier1_conviction_overlap": 1.8583,
+      "max_tier1_position_pct": 4.35,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "JBIO": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.18,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "NEW"
+      }
+    },
+    "KALA": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.06,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "KNSA": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.3485,
+      "tier1_conviction_overlap": 1.3485,
+      "max_tier1_position_pct": 0.76,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "KOD": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.2257,
+      "tier1_conviction_overlap": 1.2257,
+      "max_tier1_position_pct": 0.63,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "KYMR": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 2.5987,
+      "tier1_conviction_overlap": 2.5987,
+      "max_tier1_position_pct": 2.82,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "LENZ": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 2.2245,
+      "tier1_conviction_overlap": 2.2245,
+      "max_tier1_position_pct": 2.06,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "LRMR": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.8402,
+      "tier1_conviction_overlap": 0.8402,
+      "max_tier1_position_pct": 0.29,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "MBX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.07,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "MDGL": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 2.4778,
+      "tier1_conviction_overlap": 2.4778,
+      "max_tier1_position_pct": 5.8,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD"
+      }
+    },
+    "MLYS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.0999,
+      "tier1_conviction_overlap": 1.0999,
+      "max_tier1_position_pct": 1.4,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "MRUS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.8384,
+      "tier1_conviction_overlap": 0.8384,
+      "max_tier1_position_pct": 0.29,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "NAMS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.6342,
+      "tier1_conviction_overlap": 1.6342,
+      "max_tier1_position_pct": 3.09,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "NGNE": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.14,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "NKTX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.681,
+      "tier1_conviction_overlap": 0.681,
+      "max_tier1_position_pct": 0.3,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "HOLD"
+      }
+    },
+    "NMRA": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.01,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "NRIX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.8114,
+      "tier1_conviction_overlap": 0.8114,
+      "max_tier1_position_pct": 0.43,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD"
+      }
+    },
+    "NTLA": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.24,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "NUVL": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.11,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "NEW"
+      }
+    },
+    "PCVX": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 2.3229,
+      "tier1_conviction_overlap": 2.3229,
+      "max_tier1_position_pct": 6.55,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE",
+        "RA Capital": "DECREASE"
+      }
+    },
+    "PEPG": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.2,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "PRAX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.8213,
+      "tier1_conviction_overlap": 0.8213,
+      "max_tier1_position_pct": 0.28,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "PRLD": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.6194,
+      "tier1_conviction_overlap": 0.6194,
+      "max_tier1_position_pct": 0.08,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD"
+      }
+    },
+    "RAPP": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.06,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "NEW"
+      }
+    },
+    "RARE": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.5315,
+      "tier1_conviction_overlap": 1.5315,
+      "max_tier1_position_pct": 0.98,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "RCKT": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.01,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "RCUS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.6194,
+      "tier1_conviction_overlap": 0.6194,
+      "max_tier1_position_pct": 0.16,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "HOLD"
+      }
+    },
+    "REPL": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.2361,
+      "tier1_conviction_overlap": 1.2361,
+      "max_tier1_position_pct": 1.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD"
+      }
+    },
+    "RLAY": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.04,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "RNA": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 2.8875,
+      "tier1_conviction_overlap": 2.8875,
+      "max_tier1_position_pct": 3.48,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "ROIV": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.9939,
+      "tier1_conviction_overlap": 0.9939,
+      "max_tier1_position_pct": 0.41,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "RVMD": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 2.8312,
+      "tier1_conviction_overlap": 2.8312,
+      "max_tier1_position_pct": 3.34,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "RYTM": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 5.3482,
+      "tier1_conviction_overlap": 5.3482,
+      "max_tier1_position_pct": 5.92,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE",
+        "RA Capital": "HOLD"
+      }
+    },
+    "SANA": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.05,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "SEPN": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.7285,
+      "tier1_conviction_overlap": 1.7285,
+      "max_tier1_position_pct": 1.25,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "SERA": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.15,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "SGMT": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.07,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "SION": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 3.4802,
+      "tier1_conviction_overlap": 3.4802,
+      "max_tier1_position_pct": 3.05,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE",
+        "RA Capital": "INCREASE"
+      }
+    },
+    "SKYE": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.06,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "SLDB": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.0693,
+      "tier1_conviction_overlap": 1.0693,
+      "max_tier1_position_pct": 0.48,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "SMMT": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 3.0972,
+      "tier1_conviction_overlap": 3.0972,
+      "max_tier1_position_pct": 6.96,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "SPRY": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 2.7672,
+      "tier1_conviction_overlap": 2.7672,
+      "max_tier1_position_pct": 3.19,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "SRRK": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.2753,
+      "tier1_conviction_overlap": 1.2753,
+      "max_tier1_position_pct": 0.68,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "SRZN": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.9292,
+      "tier1_conviction_overlap": 0.9292,
+      "max_tier1_position_pct": 0.09,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE",
+        "RA Capital": "DECREASE"
+      }
+    },
+    "STOK": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.1062,
+      "tier1_conviction_overlap": 1.1062,
+      "max_tier1_position_pct": 0.51,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "SYRE": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.09,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "NEW"
+      }
+    },
+    "TARA": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.9292,
+      "tier1_conviction_overlap": 0.9292,
+      "max_tier1_position_pct": 0.05,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE",
+        "RA Capital": "DECREASE"
+      }
+    },
+    "TCRX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.6194,
+      "tier1_conviction_overlap": 0.6194,
+      "max_tier1_position_pct": 0.04,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD"
+      }
+    },
+    "TECX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.02,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "TNGX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.17,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "NEW"
+      }
+    },
+    "TRDA": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.5233,
+      "tier1_conviction_overlap": 0.5233,
+      "max_tier1_position_pct": 0.32,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "TSHA": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 2.257,
+      "tier1_conviction_overlap": 2.257,
+      "max_tier1_position_pct": 0.92,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE",
+        "RA Capital": "INCREASE"
+      }
+    },
+    "TVTX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4976,
+      "tier1_conviction_overlap": 0.4976,
+      "max_tier1_position_pct": 0.29,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "TXG": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.09,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "TYRA": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 2.7912,
+      "tier1_conviction_overlap": 2.7912,
+      "max_tier1_position_pct": 1.97,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD",
+        "RA Capital": "INCREASE"
+      }
+    },
+    "VERV": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.18,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE"
+      }
+    },
+    "VIR": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.03,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "VOR": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.6109,
+      "tier1_conviction_overlap": 1.6109,
+      "max_tier1_position_pct": 1.08,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "INCREASE"
+      }
+    },
+    "VRDN": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.7743,
+      "tier1_conviction_overlap": 0.7743,
+      "max_tier1_position_pct": 0.24,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "NEW"
+      }
+    },
+    "WVE": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 1.7764,
+      "tier1_conviction_overlap": 1.7764,
+      "max_tier1_position_pct": 1.99,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE",
+        "RA Capital": "DECREASE"
+      }
+    },
+    "XENE": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.6194,
+      "tier1_conviction_overlap": 0.6194,
+      "max_tier1_position_pct": 0.11,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD"
+      }
+    },
+    "XNCR": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.4646,
+      "max_tier1_position_pct": 0.05,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE"
+      }
+    }
+  },
+  "provenance": {
+    "builder": "build_coinvest_features_from_13f.py",
+    "builder_version": "1.0.0",
+    "cache_schema_version": "sec_13f_pit_index.v1",
+    "cusip_map_entries": 391,
+    "unresolved_holdings": 11,
+    "prior_available": true,
+    "managers_used": [
+      {
+        "cik": "0001263508",
+        "name": "Baker Bros",
+        "period_of_report": "2025-06-30",
+        "filed_at": "2025-08-14"
+      },
+      {
+        "cik": "0001346824",
+        "name": "RA Capital",
+        "period_of_report": "2025-06-30",
+        "filed_at": "2025-08-14"
+      }
+    ],
+    "change_summary": {
+      "NEW": 13,
+      "INCREASE": 52,
+      "HOLD": 23,
+      "DECREASE": 40,
+      "EXIT": 26
+    }
+  }
+}

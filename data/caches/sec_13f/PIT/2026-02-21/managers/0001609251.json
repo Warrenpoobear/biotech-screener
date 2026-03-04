@@ -1,0 +1,155 @@
+{
+  "manager_cik": "0001609251",
+  "manager_name": "Krensavage Asset Management",
+  "as_of_date": "2026-02-21",
+  "period_of_report": "2025-12-31",
+  "filed_at": "2026-02-18",
+  "form_type": "13F-HR",
+  "accession": "000160925126000003",
+  "holdings": [
+    {
+      "cusip": "G01767105",
+      "ticker": "ALKS",
+      "issuer": "ALKERMES PLC",
+      "shares": 107822,
+      "value_usd_thousands": 3017,
+      "put_call": ""
+    },
+    {
+      "cusip": "G29687103",
+      "ticker": "",
+      "issuer": "AVADEL PHARMACEUTICALS",
+      "shares": 855860,
+      "value_usd_thousands": 18444,
+      "put_call": ""
+    },
+    {
+      "cusip": "09062X103",
+      "ticker": "BIIB",
+      "issuer": "BIOGEN INC",
+      "shares": 10000,
+      "value_usd_thousands": 1760,
+      "put_call": ""
+    },
+    {
+      "cusip": "09061G101",
+      "ticker": "BMRN",
+      "issuer": "BIOMARIN PHARMACEUTICAL INC",
+      "shares": 524786,
+      "value_usd_thousands": 31188,
+      "put_call": ""
+    },
+    {
+      "cusip": "09075V102",
+      "ticker": "BNTX",
+      "issuer": "BIONTECH SE-ADR",
+      "shares": 99523,
+      "value_usd_thousands": 9475,
+      "put_call": ""
+    },
+    {
+      "cusip": "14149Y108",
+      "ticker": "",
+      "issuer": "CARDINAL HEALTH INC",
+      "shares": 73745,
+      "value_usd_thousands": 15155,
+      "put_call": ""
+    },
+    {
+      "cusip": "29251M106",
+      "ticker": "ENTA",
+      "issuer": "ENANTA PHARMACEUTICALS INC",
+      "shares": 2766390,
+      "value_usd_thousands": 43626,
+      "put_call": ""
+    },
+    {
+      "cusip": "30052C107",
+      "ticker": "",
+      "issuer": "EVOLUS INC",
+      "shares": 100000,
+      "value_usd_thousands": 665,
+      "put_call": ""
+    },
+    {
+      "cusip": "30161Q104",
+      "ticker": "EXEL",
+      "issuer": "EXELIXIS INC",
+      "shares": 493526,
+      "value_usd_thousands": 21631,
+      "put_call": ""
+    },
+    {
+      "cusip": "37733W204",
+      "ticker": "",
+      "issuer": "GSK PLC-SPON ADR",
+      "shares": 96729,
+      "value_usd_thousands": 4744,
+      "put_call": ""
+    },
+    {
+      "cusip": "G4766E116",
+      "ticker": "",
+      "issuer": "INDIVIOR PLC",
+      "shares": 339532,
+      "value_usd_thousands": 12182,
+      "put_call": ""
+    },
+    {
+      "cusip": "G50871105",
+      "ticker": "JAZZ",
+      "issuer": "JAZZ PHARMACEUTICALS PLC",
+      "shares": 167816,
+      "value_usd_thousands": 28529,
+      "put_call": ""
+    },
+    {
+      "cusip": "75886F107",
+      "ticker": "REGN",
+      "issuer": "REGENERON PHARMACEUTICALS",
+      "shares": 4000,
+      "value_usd_thousands": 3087,
+      "put_call": ""
+    },
+    {
+      "cusip": "80105N105",
+      "ticker": "SNY",
+      "issuer": "SANOFI-ADR",
+      "shares": 323946,
+      "value_usd_thousands": 15698,
+      "put_call": ""
+    },
+    {
+      "cusip": "868459108",
+      "ticker": "SUPN",
+      "issuer": "SUPERNUS PHARMACEUTICALS INC",
+      "shares": 313499,
+      "value_usd_thousands": 15581,
+      "put_call": ""
+    },
+    {
+      "cusip": "90400D108",
+      "ticker": "RARE",
+      "issuer": "ULTRAGENYX PHARMACEUTICAL IN",
+      "shares": 149634,
+      "value_usd_thousands": 3442,
+      "put_call": ""
+    },
+    {
+      "cusip": "91307C102",
+      "ticker": "UTHR",
+      "issuer": "UNITED THERAPEUTICS CORP",
+      "shares": 91282,
+      "value_usd_thousands": 44477,
+      "put_call": ""
+    },
+    {
+      "cusip": "921659108",
+      "ticker": "VNDA",
+      "issuer": "VANDA PHARMACEUTICALS INC",
+      "shares": 1180388,
+      "value_usd_thousands": 10411,
+      "put_call": ""
+    }
+  ]
+}

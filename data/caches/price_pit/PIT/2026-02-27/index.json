@@ -1,0 +1,21 @@
+{
+  "schema_version": "price_pit_index.v1",
+  "cache_type": "price_pit",
+  "as_of_date": "2026-02-27",
+  "created_at": "2026-02-27T15:43:30Z",
+  "source_csv_sha256": "1672b46249f33cf4b27e757f75398898afc66455cb1a7a5e5cdf55489bef1090",
+  "ticker_count": 297,
+  "anchor_date": "2026-02-27",
+  "horizons_filled": [],
+  "horizons_pending": [
+    5,
+    20,
+    63
+  ],
+  "split_warnings": [],
+  "coverage_pct": 99.33,
+  "tickers_missing_anchor": [
+    "CLLS",
+    "DVAX"
+  ]
+}

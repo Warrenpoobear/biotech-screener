@@ -1,0 +1,171 @@
+{
+  "manager_cik": "0001822947",
+  "manager_name": "Ally Bridge Group",
+  "as_of_date": "2026-02-27",
+  "period_of_report": "2025-12-31",
+  "filed_at": "2026-02-17",
+  "form_type": "13F-HR",
+  "accession": "000119312526055035",
+  "holdings": [
+    {
+      "cusip": "00370M103",
+      "ticker": "ABVX",
+      "issuer": "ABIVAX SA",
+      "shares": 70000,
+      "value_usd_thousands": 9439850,
+      "put_call": ""
+    },
+    {
+      "cusip": "N0731H103",
+      "ticker": "",
+      "issuer": "ATAI BECKLEY NV",
+      "shares": 1713105,
+      "value_usd_thousands": 7006599,
+      "put_call": ""
+    },
+    {
+      "cusip": "20451W101",
+      "ticker": "CMPS",
+      "issuer": "COMPASS PATHWAYS PLC",
+      "shares": 1100000,
+      "value_usd_thousands": 7590000,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "28036F105",
+      "ticker": "EWTX",
+      "issuer": "EDGEWISE THERAPEUTICS INC",
+      "shares": 195000,
+      "value_usd_thousands": 4838925,
+      "put_call": ""
+    },
+    {
+      "cusip": "28036F105",
+      "ticker": "EWTX",
+      "issuer": "EDGEWISE THERAPEUTICS INC",
+      "shares": 225800,
+      "value_usd_thousands": 5603227,
+      "put_call": "Put"
+    },
+    {
+      "cusip": "28036F105",
+      "ticker": "EWTX",
+      "issuer": "EDGEWISE THERAPEUTICS INC",
+      "shares": 24200,
+      "value_usd_thousands": 600523,
+      "put_call": "Put"
+    },
+    {
+      "cusip": "29842P105",
+      "ticker": "EPRX",
+      "issuer": "EUPRAXIA PHARMACEUTICALS INC",
+      "shares": 397895,
+      "value_usd_thousands": 3004107,
+      "put_call": ""
+    },
+    {
+      "cusip": "46124U107",
+      "ticker": "IVA",
+      "issuer": "INVENTIVA SA",
+      "shares": 1500000,
+      "value_usd_thousands": 6975000,
+      "put_call": ""
+    },
+    {
+      "cusip": "603380205",
+      "ticker": "NERV",
+      "issuer": "MINERVA NEUROSCIENCES INC",
+      "shares": 1655500,
+      "value_usd_thousands": 6655110,
+      "put_call": ""
+    },
+    {
+      "cusip": "690469101",
+      "ticker": "",
+      "issuer": "OVID THERAPEUTICS INC",
+      "shares": 1785000,
+      "value_usd_thousands": 2909550,
+      "put_call": ""
+    },
+    {
+      "cusip": "74006W207",
+      "ticker": "PRAX",
+      "issuer": "PRAXIS PRECISION MEDICINES I",
+      "shares": 19882,
+      "value_usd_thousands": 5860021,
+      "put_call": ""
+    },
+    {
+      "cusip": "74346M505",
+      "ticker": "PMN",
+      "issuer": "PROMIS NEUROSCIENCES INC",
+      "shares": 249339,
+      "value_usd_thousands": 1701739,
+      "put_call": ""
+    },
+    {
+      "cusip": "76029N106",
+      "ticker": "",
+      "issuer": "REPLIMUNE GROUP INC",
+      "shares": 1200000,
+      "value_usd_thousands": 11664000,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "834203309",
+      "ticker": "SLNO",
+      "issuer": "SOLENO THERAPEUTICS INC",
+      "shares": 168029,
+      "value_usd_thousands": 7779743,
+      "put_call": ""
+    },
+    {
+      "cusip": "83422E204",
+      "ticker": "SLDB",
+      "issuer": "SOLID BIOSCIENCES INC",
+      "shares": 413625,
+      "value_usd_thousands": 2332845,
+      "put_call": ""
+    },
+    {
+      "cusip": "877619106",
+      "ticker": "",
+      "issuer": "TAYSHA GENE THERAPIES INC",
+      "shares": 457132,
+      "value_usd_thousands": 2514226,
+      "put_call": ""
+    },
+    {
+      "cusip": "877619106",
+      "ticker": "",
+      "issuer": "TAYSHA GENE THERAPIES INC",
+      "shares": 500000,
+      "value_usd_thousands": 2750000,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "N90064101",
+      "ticker": "QURE",
+      "issuer": "UNIQURE NV",
+      "shares": 100000,
+      "value_usd_thousands": 2393000,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "N90064101",
+      "ticker": "QURE",
+      "issuer": "UNIQURE NV",
+      "shares": 100000,
+      "value_usd_thousands": 2393000,
+      "put_call": "Call"
+    },
+    {
+      "cusip": "00032Q104",
+      "ticker": "WHWK",
+      "issuer": "WHITEHAWK THERAPEUTICS INC",
+      "shares": 817939,
+      "value_usd_thousands": 1979412,
+      "put_call": ""
+    }
+  ]
+}

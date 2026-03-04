@@ -1,0 +1,20 @@
+{
+  "schema_version": "price_pit_index.v1",
+  "cache_type": "price_pit",
+  "as_of_date": "2026-03-05",
+  "created_at": "2026-03-02T23:11:06Z",
+  "source_csv_sha256": "a7a175a4102a9f69de5da29d93370d2a58780b461d38c9ed490b4dde1f5bdb26",
+  "ticker_count": 297,
+  "anchor_date": "2026-03-02",
+  "horizons_filled": [],
+  "horizons_pending": [
+    5,
+    20,
+    63
+  ],
+  "split_warnings": [],
+  "coverage_pct": 99.66,
+  "tickers_missing_anchor": [
+    "DVAX"
+  ]
+}

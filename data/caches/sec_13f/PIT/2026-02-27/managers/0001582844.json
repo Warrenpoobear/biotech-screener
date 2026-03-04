@@ -1,0 +1,251 @@
+{
+  "manager_cik": "0001582844",
+  "manager_name": "Acuta Capital Partners",
+  "as_of_date": "2026-02-27",
+  "period_of_report": "2025-12-31",
+  "filed_at": "2026-02-17",
+  "form_type": "13F-HR",
+  "accession": "000110465926016119",
+  "holdings": [
+    {
+      "cusip": "03237H101",
+      "ticker": "AMLX",
+      "issuer": "AMYLYX PHARMACEUTICALS INC",
+      "shares": 333258,
+      "value_usd_thousands": 4025757,
+      "put_call": ""
+    },
+    {
+      "cusip": "04016X101",
+      "ticker": "ARGX",
+      "issuer": "ARGEN SE - ADR",
+      "shares": 4851,
+      "value_usd_thousands": 4079448,
+      "put_call": ""
+    },
+    {
+      "cusip": "10919W405",
+      "ticker": "DRUG",
+      "issuer": "BRIGHT MINDS BIOSCIENCES INC",
+      "shares": 84477,
+      "value_usd_thousands": 6592585,
+      "put_call": ""
+    },
+    {
+      "cusip": "171757206",
+      "ticker": "CDTX",
+      "issuer": "CIDARA THERAPEUTICS INC",
+      "shares": 89145,
+      "value_usd_thousands": 19691239,
+      "put_call": ""
+    },
+    {
+      "cusip": "20454B104",
+      "ticker": "",
+      "issuer": "COMPASS THERAPEUTICS INC",
+      "shares": 1093300,
+      "value_usd_thousands": 5871021,
+      "put_call": ""
+    },
+    {
+      "cusip": "25056L103",
+      "ticker": "",
+      "issuer": "DESIGN THERAPEUTICS INC",
+      "shares": 150906,
+      "value_usd_thousands": 1415498,
+      "put_call": ""
+    },
+    {
+      "cusip": "252828108",
+      "ticker": "DNTH",
+      "issuer": "DIANTHUS THERAPEUTICS INC",
+      "shares": 16708,
+      "value_usd_thousands": 688537,
+      "put_call": ""
+    },
+    {
+      "cusip": "45720N103",
+      "ticker": "INBX",
+      "issuer": "INHIBRX BIOSCIENCES INC",
+      "shares": 16377,
+      "value_usd_thousands": 1293783,
+      "put_call": ""
+    },
+    {
+      "cusip": "457669307",
+      "ticker": "INSM",
+      "issuer": "INSMED INC",
+      "shares": 25878,
+      "value_usd_thousands": 4503807,
+      "put_call": ""
+    },
+    {
+      "cusip": "G50871105",
+      "ticker": "JAZZ",
+      "issuer": "JAZZ PHARMACEUTICALS PLC",
+      "shares": 29008,
+      "value_usd_thousands": 4931360,
+      "put_call": ""
+    },
+    {
+      "cusip": "50180M108",
+      "ticker": "LBRX",
+      "issuer": "LB PHARMACEUTICALS INC",
+      "shares": 30000,
+      "value_usd_thousands": 667800,
+      "put_call": ""
+    },
+    {
+      "cusip": "578784100",
+      "ticker": "MAZE",
+      "issuer": "MAZE THERAPEUTICS INC",
+      "shares": 20000,
+      "value_usd_thousands": 828600,
+      "put_call": ""
+    },
+    {
+      "cusip": "603380205",
+      "ticker": "NERV",
+      "issuer": "MINERVA NEUROSCIENCES",
+      "shares": 709500,
+      "value_usd_thousands": 2852190,
+      "put_call": ""
+    },
+    {
+      "cusip": "61559X104",
+      "ticker": "MLTX",
+      "issuer": "MOONLAKE IMMUNOTHERAPEUTICS",
+      "shares": 59280,
+      "value_usd_thousands": 781310,
+      "put_call": ""
+    },
+    {
+      "cusip": "67080N119",
+      "ticker": "",
+      "issuer": "NUVATION BIO INC -CW27",
+      "shares": 90832,
+      "value_usd_thousands": 29975,
+      "put_call": ""
+    },
+    {
+      "cusip": "67576A100",
+      "ticker": "OCUL",
+      "issuer": "OCULAR THERAPEUTIX INC",
+      "shares": 1052995,
+      "value_usd_thousands": 12783359,
+      "put_call": ""
+    },
+    {
+      "cusip": "H5870P102",
+      "ticker": "OCS",
+      "issuer": "OCULIS HOLDING AG",
+      "shares": 101777,
+      "value_usd_thousands": 2032487,
+      "put_call": ""
+    },
+    {
+      "cusip": "70261F202",
+      "ticker": "",
+      "issuer": "PASITHEA THERAPEUTICS CORP",
+      "shares": 450000,
+      "value_usd_thousands": 580500,
+      "put_call": ""
+    },
+    {
+      "cusip": "74006W207",
+      "ticker": "PRAX",
+      "issuer": "PRAXIS PRECISION MEDICINES I",
+      "shares": 83036,
+      "value_usd_thousands": 24474031,
+      "put_call": ""
+    },
+    {
+      "cusip": "76155X100",
+      "ticker": "RVMD",
+      "issuer": "REVOLUTION MEDICINES INC",
+      "shares": 8411,
+      "value_usd_thousands": 669936,
+      "put_call": ""
+    },
+    {
+      "cusip": "86889P208",
+      "ticker": "",
+      "issuer": "SURROZEN INC",
+      "shares": 178415,
+      "value_usd_thousands": 4032179,
+      "put_call": ""
+    },
+    {
+      "cusip": "869367201",
+      "ticker": "",
+      "issuer": "SUTRO BIOPHARMA INC",
+      "shares": 67451,
+      "value_usd_thousands": 780408,
+      "put_call": ""
+    },
+    {
+      "cusip": "87583X109",
+      "ticker": "TNGX",
+      "issuer": "TANGO THERAPEUTICS INC",
+      "shares": 282732,
+      "value_usd_thousands": 2505006,
+      "put_call": ""
+    },
+    {
+      "cusip": "877619106",
+      "ticker": "",
+      "issuer": "TAYSHA GENE THERAPIES INC",
+      "shares": 454827,
+      "value_usd_thousands": 2501549,
+      "put_call": ""
+    },
+    {
+      "cusip": "880881107",
+      "ticker": "",
+      "issuer": "TERNS PHARMACEUTICALS INC",
+      "shares": 637095,
+      "value_usd_thousands": 25738638,
+      "put_call": ""
+    },
+    {
+      "cusip": "90466Y202",
+      "ticker": "UNCY",
+      "issuer": "UNICYCIVE THERAPEUTICS INC",
+      "shares": 59985,
+      "value_usd_thousands": 346113,
+      "put_call": ""
+    },
+    {
+      "cusip": "91307C102",
+      "ticker": "UTHR",
+      "issuer": "UNITED THERAPEUTICS CORP",
+      "shares": 2296,
+      "value_usd_thousands": 1118726,
+      "put_call": ""
+    },
+    {
+      "cusip": "92337C203",
+      "ticker": "",
+      "issuer": "VERASTEM INC",
+      "shares": 143446,
+      "value_usd_thousands": 1107403,
+      "put_call": ""
+    },
+    {
+      "cusip": "00032Q104",
+      "ticker": "",
+      "issuer": "WHITEHAWK THERAPEUTICS INC",
+      "shares": 3410402,
+      "value_usd_thousands": 8253173,
+      "put_call": ""
+    },
+    {
+      "cusip": "98985Y108",
+      "ticker": "ZYME",
+      "issuer": "ZYMEWORKS INC",
+      "shares": 80143,
+      "value_usd_thousands": 2110165,
+      "put_call": ""
+    }
+  ]
+}

@@ -1,0 +1,4923 @@
+{
+  "schema_version": "catalyst_events_pit.v1",
+  "version": "1.0.0",
+  "created_at": "2026-02-23T16:23:29Z",
+  "as_of_date": "2021-06-30",
+  "tickers_in_universe": 353,
+  "tickers_with_catalyst": 35,
+  "catalyst_coverage_pct": 9.9,
+  "ledger_total_entries": 6784,
+  "tickers": {
+    "AARD": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ABCL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ABEO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "ABOS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ABSI": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "ABUS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 9,
+      "source_mix": {
+        "CTGOV": 9
+      }
+    },
+    "ABVX": {
+      "days_to_catalyst": 730,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_CD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03897543 CD 2023-06-30",
+      "nearest_disclosed_at": "2021-03-26",
+      "nearest_event_date": "2023-06-30",
+      "event_count": 6,
+      "source_mix": {
+        "CTGOV": 6
+      }
+    },
+    "ACAD": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 25,
+      "source_mix": {
+        "CTGOV": 25
+      }
+    },
+    "ACIU": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ACLX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ACRS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 29,
+      "source_mix": {
+        "CTGOV": 29
+      }
+    },
+    "ACRV": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ADCT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 5,
+      "source_mix": {
+        "CTGOV": 5
+      }
+    },
+    "ADMA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "ADPT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "AGIO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 30,
+      "source_mix": {
+        "CTGOV": 30
+      }
+    },
+    "AKRO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "AKTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "ALDX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ALGS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ALKS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 91,
+      "source_mix": {
+        "CTGOV": 91
+      }
+    },
+    "ALLO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ALMS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ALNY": {
+      "days_to_catalyst": 915,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03999840 PCD 2024-01-01",
+      "nearest_disclosed_at": "2021-03-10",
+      "nearest_event_date": "2024-01-01",
+      "event_count": 37,
+      "source_mix": {
+        "CTGOV": 37
+      }
+    },
+    "ALT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ALVO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "AMGN": {
+      "days_to_catalyst": 17,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03343847 PCD 2021-07-17",
+      "nearest_disclosed_at": "2018-01-19",
+      "nearest_event_date": "2021-07-17",
+      "event_count": 589,
+      "source_mix": {
+        "CTGOV": 589
+      }
+    },
+    "AMLX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "AMPH": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 29,
+      "source_mix": {
+        "CTGOV": 29
+      }
+    },
+    "AMRX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 16,
+      "source_mix": {
+        "CTGOV": 16
+      }
+    },
+    "ANAB": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ANIP": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 7,
+      "source_mix": {
+        "CTGOV": 7
+      }
+    },
+    "ANNX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "ANRO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "APGE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "APLS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 7,
+      "source_mix": {
+        "CTGOV": 7
+      }
+    },
+    "AQST": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 12,
+      "source_mix": {
+        "CTGOV": 12
+      }
+    },
+    "ARCT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ARDX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 26,
+      "source_mix": {
+        "CTGOV": 26
+      }
+    },
+    "ARGX": {
+      "days_to_catalyst": 63,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04274452 PCD 2021-09-01",
+      "nearest_disclosed_at": "2020-09-14",
+      "nearest_event_date": "2021-09-01",
+      "event_count": 9,
+      "source_mix": {
+        "CTGOV": 9
+      }
+    },
+    "ARQT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ARTV": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ARVN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ARWR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ASMB": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 16,
+      "source_mix": {
+        "CTGOV": 16
+      }
+    },
+    "ASND": {
+      "days_to_catalyst": 275,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04326374 PCD 2022-04-01",
+      "nearest_disclosed_at": "2020-03-30",
+      "nearest_event_date": "2022-04-01",
+      "event_count": 7,
+      "source_mix": {
+        "CTGOV": 7
+      }
+    },
+    "ATAI": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ATXS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "AUPH": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 9,
+      "source_mix": {
+        "CTGOV": 9
+      }
+    },
+    "AURA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "AUTL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "AVBP": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "AVIR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "AVTR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "AVXL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 5,
+      "source_mix": {
+        "CTGOV": 5
+      }
+    },
+    "AXSM": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "AZN": {
+      "days_to_catalyst": 1,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT02822157 PCD 2021-07-01",
+      "nearest_disclosed_at": "2021-01-29",
+      "nearest_event_date": "2021-07-01",
+      "event_count": 454,
+      "source_mix": {
+        "CTGOV": 454
+      }
+    },
+    "BBIO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "BBOT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "BCAX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "BCRX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 52,
+      "source_mix": {
+        "CTGOV": 52
+      }
+    },
+    "BCYC": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "BDTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "BEAM": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "BHVN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "BIIB": {
+      "days_to_catalyst": 205,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04106050 PCD 2022-01-21",
+      "nearest_disclosed_at": "2021-03-22",
+      "nearest_event_date": "2022-01-21",
+      "event_count": 322,
+      "source_mix": {
+        "CTGOV": 322
+      }
+    },
+    "BIOA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "BLTE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "BLUE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "BMEA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "BMRN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 76,
+      "source_mix": {
+        "CTGOV": 76
+      }
+    },
+    "BNTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 11,
+      "source_mix": {
+        "CTGOV": 11
+      }
+    },
+    "BRKR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CABA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CADL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CAI": {
+      "days_to_catalyst": 1,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_CD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04148898 CD 2021-07-01",
+      "nearest_disclosed_at": "2019-11-04",
+      "nearest_event_date": "2021-07-01",
+      "event_count": 185,
+      "source_mix": {
+        "CTGOV": 185
+      }
+    },
+    "CATX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CCCC": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CDNA": {
+      "days_to_catalyst": 3380,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT01757223 PCD 2030-10-01",
+      "nearest_disclosed_at": "2021-01-27",
+      "nearest_event_date": "2030-10-01",
+      "event_count": 63,
+      "source_mix": {
+        "CTGOV": 63
+      }
+    },
+    "CDTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 5,
+      "source_mix": {
+        "CTGOV": 5
+      }
+    },
+    "CDXS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CELC": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CERS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 13,
+      "source_mix": {
+        "CTGOV": 13
+      }
+    },
+    "CGEM": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CGON": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 4,
+      "source_mix": {
+        "CTGOV": 4
+      }
+    },
+    "CHRS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 11,
+      "source_mix": {
+        "CTGOV": 11
+      }
+    },
+    "CLDX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 53,
+      "source_mix": {
+        "CTGOV": 53
+      }
+    },
+    "CLLS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "CLYM": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CMPS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CNTA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CNTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "COGT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "COLL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "CRBU": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CRL": {
+      "days_to_catalyst": 92,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT01704716 PCD 2021-09-30",
+      "nearest_disclosed_at": "2020-10-23",
+      "nearest_event_date": "2021-09-30",
+      "event_count": 12,
+      "source_mix": {
+        "CTGOV": 12
+      }
+    },
+    "CRMD": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "CRNX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "CRSP": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CRVS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "CSTL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CTKB": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CTMX": {
+      "days_to_catalyst": 519,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_CD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03706274 CD 2022-12-01",
+      "nearest_disclosed_at": "2021-05-05",
+      "nearest_event_date": "2022-12-01",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "CTNM": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "CVAC": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 13,
+      "source_mix": {
+        "CTGOV": 13
+      }
+    },
+    "CYTK": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 20,
+      "source_mix": {
+        "CTGOV": 20
+      }
+    },
+    "DAWN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "DNA": {
+      "days_to_catalyst": 1,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03977792 PCD 2021-07-01",
+      "nearest_disclosed_at": "2020-09-07",
+      "nearest_event_date": "2021-07-01",
+      "event_count": 253,
+      "source_mix": {
+        "CTGOV": 253
+      }
+    },
+    "DNLI": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 4,
+      "source_mix": {
+        "CTGOV": 4
+      }
+    },
+    "DNTH": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "DRMA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 5,
+      "source_mix": {
+        "CTGOV": 5
+      }
+    },
+    "DRUG": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "DSGN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "DVAX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 28,
+      "source_mix": {
+        "CTGOV": 28
+      }
+    },
+    "DYN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "EBS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 10,
+      "source_mix": {
+        "CTGOV": 10
+      }
+    },
+    "EDIT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ELDN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ELVN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ENGN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ENTA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 30,
+      "source_mix": {
+        "CTGOV": 30
+      }
+    },
+    "EOLS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 6,
+      "source_mix": {
+        "CTGOV": 6
+      }
+    },
+    "EPRX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ERAS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ESPR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 24,
+      "source_mix": {
+        "CTGOV": 24
+      }
+    },
+    "ETON": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "EWTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "EXEL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 54,
+      "source_mix": {
+        "CTGOV": 54
+      }
+    },
+    "EYPT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "FATE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 8,
+      "source_mix": {
+        "CTGOV": 8
+      }
+    },
+    "FDMT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "FGEN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "FHTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "FLGT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "FOLD": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 26,
+      "source_mix": {
+        "CTGOV": 26
+      }
+    },
+    "FTRE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "FULC": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "GBIO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "GERN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 17,
+      "source_mix": {
+        "CTGOV": 17
+      }
+    },
+    "GH": {
+      "days_to_catalyst": 305,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_CD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03252353 CD 2022-05-01",
+      "nearest_disclosed_at": "2020-11-23",
+      "nearest_event_date": "2022-05-01",
+      "event_count": 272,
+      "source_mix": {
+        "CTGOV": 272
+      }
+    },
+    "GHRS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "GILD": {
+      "days_to_catalyst": 458,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04483700 PCD 2022-10-01",
+      "nearest_disclosed_at": "2021-01-11",
+      "nearest_event_date": "2022-10-01",
+      "event_count": 610,
+      "source_mix": {
+        "CTGOV": 610
+      }
+    },
+    "GLPG": {
+      "days_to_catalyst": 458,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04483700 PCD 2022-10-01",
+      "nearest_disclosed_at": "2021-01-11",
+      "nearest_event_date": "2022-10-01",
+      "event_count": 121,
+      "source_mix": {
+        "CTGOV": 121
+      }
+    },
+    "GLUE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "GMAB": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 5,
+      "source_mix": {
+        "CTGOV": 5
+      }
+    },
+    "GOSS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "GPCR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "GRAL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "GRFS": {
+      "days_to_catalyst": 608,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03977103 PCD 2023-02-28",
+      "nearest_disclosed_at": "2020-01-13",
+      "nearest_event_date": "2023-02-28",
+      "event_count": 16,
+      "source_mix": {
+        "CTGOV": 16
+      }
+    },
+    "HALO": {
+      "days_to_catalyst": 499,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_CD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04134468 CD 2022-11-11",
+      "nearest_disclosed_at": "2020-01-31",
+      "nearest_event_date": "2022-11-11",
+      "event_count": 40,
+      "source_mix": {
+        "CTGOV": 40
+      }
+    },
+    "HOWL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "HRMY": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "HROW": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "HRTX": {
+      "days_to_catalyst": 519,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_CD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04085393 CD 2022-12-01",
+      "nearest_disclosed_at": "2020-09-30",
+      "nearest_event_date": "2022-12-01",
+      "event_count": 6,
+      "source_mix": {
+        "CTGOV": 6
+      }
+    },
+    "HUMA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "IBRX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "IDYA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "IKT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ILMN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "IMCR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "IMMP": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 12,
+      "source_mix": {
+        "CTGOV": 12
+      }
+    },
+    "IMRX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "IMTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 11,
+      "source_mix": {
+        "CTGOV": 11
+      }
+    },
+    "IMVT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "INBX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "INCY": {
+      "days_to_catalyst": 31,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04354714 PCD 2021-07-31",
+      "nearest_disclosed_at": "2020-05-21",
+      "nearest_event_date": "2021-07-31",
+      "event_count": 131,
+      "source_mix": {
+        "CTGOV": 131
+      }
+    },
+    "INDV": {
+      "days_to_catalyst": 184,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04523792 PCD 2021-12-31",
+      "nearest_disclosed_at": "2021-02-12",
+      "nearest_event_date": "2021-12-31",
+      "event_count": 26,
+      "source_mix": {
+        "CTGOV": 26
+      }
+    },
+    "INSM": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 18,
+      "source_mix": {
+        "CTGOV": 18
+      }
+    },
+    "INVA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "IONS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 91,
+      "source_mix": {
+        "CTGOV": 91
+      }
+    },
+    "IOVA": {
+      "days_to_catalyst": 154,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "mid",
+      "catalyst_decay_w": 0.7,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03419559 PCD 2021-12-01",
+      "nearest_disclosed_at": "2019-04-16",
+      "nearest_event_date": "2021-12-01",
+      "event_count": 4,
+      "source_mix": {
+        "CTGOV": 4
+      }
+    },
+    "IRON": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "IRWD": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 37,
+      "source_mix": {
+        "CTGOV": 37
+      }
+    },
+    "IVVD": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "JANX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "JAZZ": {
+      "days_to_catalyst": 305,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_CD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT02718755 CD 2022-05-01",
+      "nearest_disclosed_at": "2018-06-26",
+      "nearest_event_date": "2022-05-01",
+      "event_count": 86,
+      "source_mix": {
+        "CTGOV": 86
+      }
+    },
+    "JBIO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "KALA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "KALV": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "KMDA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 11,
+      "source_mix": {
+        "CTGOV": 11
+      }
+    },
+    "KNSA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 4,
+      "source_mix": {
+        "CTGOV": 4
+      }
+    },
+    "KOD": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "KROS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "KRYS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "KURA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "KYMR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "KYTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "LAB": {
+      "days_to_catalyst": 62,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_CD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04004234 CD 2021-08-31",
+      "nearest_disclosed_at": "2019-07-09",
+      "nearest_event_date": "2021-08-31",
+      "event_count": 341,
+      "source_mix": {
+        "CTGOV": 341
+      }
+    },
+    "LBRX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "LCTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "LEGN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 5,
+      "source_mix": {
+        "CTGOV": 5
+      }
+    },
+    "LENZ": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "LFCR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "LGND": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "LQDA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "LRMR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "LXEO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "LYEL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "LYRA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "MAZE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "MBX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "MCRB": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 4,
+      "source_mix": {
+        "CTGOV": 4
+      }
+    },
+    "MDGL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 9,
+      "source_mix": {
+        "CTGOV": 9
+      }
+    },
+    "MEDP": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "MENS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "MESO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 26,
+      "source_mix": {
+        "CTGOV": 26
+      }
+    },
+    "MGTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "MIRM": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 12,
+      "source_mix": {
+        "CTGOV": 12
+      }
+    },
+    "MLTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "MLYS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "MNKD": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 75,
+      "source_mix": {
+        "CTGOV": 75
+      }
+    },
+    "MNMD": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "MRNA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 4,
+      "source_mix": {
+        "CTGOV": 4
+      }
+    },
+    "MRSN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "MRUS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "MRVI": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "MYGN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "NAMS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "NAUT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "NBIX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 53,
+      "source_mix": {
+        "CTGOV": 53
+      }
+    },
+    "NBP": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "NGNE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "NKTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "NMRA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "NRIX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "NTLA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "NTRA": {
+      "days_to_catalyst": 92,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT01704716 PCD 2021-09-30",
+      "nearest_disclosed_at": "2020-10-23",
+      "nearest_event_date": "2021-09-30",
+      "event_count": 29,
+      "source_mix": {
+        "CTGOV": 29
+      }
+    },
+    "NUVB": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "NUVL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "NVAX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 21,
+      "source_mix": {
+        "CTGOV": 21
+      }
+    },
+    "NVCR": {
+      "days_to_catalyst": 154,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "mid",
+      "catalyst_decay_w": 0.7,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03980249 PCD 2021-12-01",
+      "nearest_disclosed_at": "2021-04-12",
+      "nearest_event_date": "2021-12-01",
+      "event_count": 15,
+      "source_mix": {
+        "CTGOV": 15
+      }
+    },
+    "OABI": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "OBIO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "OCGN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "OCS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "OCUL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 19,
+      "source_mix": {
+        "CTGOV": 19
+      }
+    },
+    "OLMA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "OMER": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 25,
+      "source_mix": {
+        "CTGOV": 25
+      }
+    },
+    "ONC": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "OPCH": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "OPK": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 5,
+      "source_mix": {
+        "CTGOV": 5
+      }
+    },
+    "ORIC": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "ORKA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PACB": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PAHC": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PBYI": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 41,
+      "source_mix": {
+        "CTGOV": 41
+      }
+    },
+    "PCRX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PCVX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PEPG": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PGEN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "PHAT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PHVS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PRAX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PRLD": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PRME": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PRQR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "PRTA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 9,
+      "source_mix": {
+        "CTGOV": 9
+      }
+    },
+    "PRVA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PSNL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PTCT": {
+      "days_to_catalyst": 31,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03642145 PCD 2021-07-31",
+      "nearest_disclosed_at": "2019-06-21",
+      "nearest_event_date": "2021-07-31",
+      "event_count": 41,
+      "source_mix": {
+        "CTGOV": 41
+      }
+    },
+    "PTGX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PVLA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "PYXS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "QSI": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 18,
+      "source_mix": {
+        "CTGOV": 18
+      }
+    },
+    "QTRX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "QURE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 5,
+      "source_mix": {
+        "CTGOV": 5
+      }
+    },
+    "RANI": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "RAPP": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "RAPT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "RARE": {
+      "days_to_catalyst": 216,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_CD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT02696044 CD 2022-02-01",
+      "nearest_disclosed_at": "2020-07-17",
+      "nearest_event_date": "2022-02-01",
+      "event_count": 29,
+      "source_mix": {
+        "CTGOV": 29
+      }
+    },
+    "RCKT": {
+      "days_to_catalyst": 244,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_CD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03814408 CD 2022-03-01",
+      "nearest_disclosed_at": "2020-11-24",
+      "nearest_event_date": "2022-03-01",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "RCUS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "REGN": {
+      "days_to_catalyst": 93,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03085784 PCD 2021-10-01",
+      "nearest_disclosed_at": "2020-12-08",
+      "nearest_event_date": "2021-10-01",
+      "event_count": 303,
+      "source_mix": {
+        "CTGOV": 303
+      }
+    },
+    "REPL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "RGEN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "RGNX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "RIGL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 21,
+      "source_mix": {
+        "CTGOV": 21
+      }
+    },
+    "RLAY": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "RNA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ROIV": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "RPRX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "RVMD": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "RXRX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "RYTM": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "SABS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "SANA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "SEPN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "SERA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "SGMO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 16,
+      "source_mix": {
+        "CTGOV": 16
+      }
+    },
+    "SGMT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "SIGA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 4,
+      "source_mix": {
+        "CTGOV": 4
+      }
+    },
+    "SION": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "SKYE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "SLDB": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "SLN": {
+      "days_to_catalyst": 92,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "near",
+      "catalyst_decay_w": 1.0,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT04176653 PCD 2021-09-30",
+      "nearest_disclosed_at": "2020-04-27",
+      "nearest_event_date": "2021-09-30",
+      "event_count": 6,
+      "source_mix": {
+        "CTGOV": 6
+      }
+    },
+    "SMMT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 7,
+      "source_mix": {
+        "CTGOV": 7
+      }
+    },
+    "SNDX": {
+      "days_to_catalyst": 366,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03760614 PCD 2022-07-01",
+      "nearest_disclosed_at": "2021-01-15",
+      "nearest_event_date": "2022-07-01",
+      "event_count": 12,
+      "source_mix": {
+        "CTGOV": 12
+      }
+    },
+    "SNY": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 613,
+      "source_mix": {
+        "CTGOV": 613
+      }
+    },
+    "SPRY": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "SRPT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 32,
+      "source_mix": {
+        "CTGOV": 32
+      }
+    },
+    "SRRK": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "SRZN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "STOK": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "STRO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "STVN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "SUPN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 18,
+      "source_mix": {
+        "CTGOV": 18
+      }
+    },
+    "SVRA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 7,
+      "source_mix": {
+        "CTGOV": 7
+      }
+    },
+    "SYRE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TARA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TARS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TBPH": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 49,
+      "source_mix": {
+        "CTGOV": 49
+      }
+    },
+    "TCRX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TECH": {
+      "days_to_catalyst": 124,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "mid",
+      "catalyst_decay_w": 0.7,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03394911 PCD 2021-11-01",
+      "nearest_disclosed_at": "2020-10-19",
+      "nearest_event_date": "2021-11-01",
+      "event_count": 254,
+      "source_mix": {
+        "CTGOV": 254
+      }
+    },
+    "TECX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TEM": {
+      "days_to_catalyst": 154,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "mid",
+      "catalyst_decay_w": 0.7,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT02528708 PCD 2021-12-01",
+      "nearest_disclosed_at": "2021-03-15",
+      "nearest_event_date": "2021-12-01",
+      "event_count": 38,
+      "source_mix": {
+        "CTGOV": 38
+      }
+    },
+    "TENX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 4,
+      "source_mix": {
+        "CTGOV": 4
+      }
+    },
+    "TERN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TGTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 4,
+      "source_mix": {
+        "CTGOV": 4
+      }
+    },
+    "TKNO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TNGX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TNYA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TRDA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TRVI": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 2,
+      "source_mix": {
+        "CTGOV": 2
+      }
+    },
+    "TSHA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TVTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "TWST": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TXG": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "TYRA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "UPB": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "URGN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 10,
+      "source_mix": {
+        "CTGOV": 10
+      }
+    },
+    "UTHR": {
+      "days_to_catalyst": 154,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "mid",
+      "catalyst_decay_w": 0.7,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03055234 PCD 2021-12-01",
+      "nearest_disclosed_at": "2017-04-11",
+      "nearest_event_date": "2021-12-01",
+      "event_count": 72,
+      "source_mix": {
+        "CTGOV": 72
+      }
+    },
+    "VCEL": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 15,
+      "source_mix": {
+        "CTGOV": 15
+      }
+    },
+    "VCYT": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "VERA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "VERV": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "VIR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "VKTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "VNDA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 23,
+      "source_mix": {
+        "CTGOV": 23
+      }
+    },
+    "VOR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "VRDN": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "VRTX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 139,
+      "source_mix": {
+        "CTGOV": 139
+      }
+    },
+    "VTRS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "VTYX": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "VYGR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "WVE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 3,
+      "source_mix": {
+        "CTGOV": 3
+      }
+    },
+    "XENE": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 13,
+      "source_mix": {
+        "CTGOV": 13
+      }
+    },
+    "XERS": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "XNCR": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 7,
+      "source_mix": {
+        "CTGOV": 7
+      }
+    },
+    "ZBIO": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "ZLAB": {
+      "days_to_catalyst": 213,
+      "catalyst_mode": "specific_days",
+      "catalyst_strength": "far",
+      "catalyst_decay_w": 0.3,
+      "nearest_event_type": "CLINICAL_PCD",
+      "nearest_event_source": "CTGOV",
+      "nearest_event_name": "NCT03709316 PCD 2022-01-29",
+      "nearest_disclosed_at": "2021-06-02",
+      "nearest_event_date": "2022-01-29",
+      "event_count": 13,
+      "source_mix": {
+        "CTGOV": 13
+      }
+    },
+    "ZVRA": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 1,
+      "source_mix": {
+        "CTGOV": 1
+      }
+    },
+    "ZYME": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    },
+    "_XBI_BENCHMARK_": {
+      "days_to_catalyst": null,
+      "catalyst_mode": "missing",
+      "catalyst_strength": "missing",
+      "catalyst_decay_w": 0.0,
+      "nearest_event_type": "",
+      "nearest_event_source": "",
+      "nearest_event_name": "",
+      "nearest_disclosed_at": "",
+      "nearest_event_date": "",
+      "event_count": 0,
+      "source_mix": {}
+    }
+  },
+  "provenance": {
+    "builder": "build_catalyst_events_pit.py",
+    "builder_version": "1.0.0",
+    "ledger_sources": {
+      "CTGOV": 6784
+    },
+    "catalyst_near_days": 120,
+    "catalyst_mid_days": 180,
+    "decay_mode": "step"
+  }
+}

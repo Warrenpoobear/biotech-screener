@@ -1,0 +1,65 @@
+========================================================================
+PHASE-2 RUN DELTA REPORT
+========================================================================
+Generated: 2026-02-26T13:44:41Z
+Current:   2026-02-25 (ruleset 0c1129f6)
+Prior:     (none)
+
+HEALTH: FAIL [ruleset_mismatch]
+  catalyst=92.1%  A=34  ruleset=0c1129f6
+
+WARNINGS:
+  - Ruleset 0c1129f6 does not match pinned Phase-2 ID (88d7ae9a)
+
+1. PORTFOLIO TURNOVER
+------------------------------------------------------------------------
+  Portfolio: 20 names (no prior for comparison)
+
+2. TIER DISTRIBUTION (dev-stage universe)
+------------------------------------------------------------------------
+                Current
+  A                  34
+  B                  46
+  C                  59
+  D                  38
+
+  In portfolio:
+    A: 20 (100%)
+    B: 0 (0%)
+
+3. SIZING (portfolio)
+------------------------------------------------------------------------
+                Current
+  L                  15
+  M                   4
+  S                   1
+  XS                  0
+
+4. CATALYST COVERAGE (dev-stage)
+------------------------------------------------------------------------
+  specific_days:  92.1%
+  Mode distribution:
+    no_upcoming: 14
+    specific_days: 163
+
+  Nearest 10 catalysts:
+    ADCT       3d  tier=A      NMRA       4d  tier=A
+    PVLA       4d  tier=A      IMVT       4d  tier=A
+    VRDN       4d  tier=A      REPL       4d  tier=A
+    OLMA       4d  tier=A      NUVL       4d  tier=A
+    IVVD       4d  tier=A      ABVX       4d  tier=B
+
+5. RISK SANITY (portfolio)
+------------------------------------------------------------------------
+  Flag                  Current
+  deep_drawdown               1
+  high_vol                    3
+  high_beta                   4
+  overbought_rsi              5
+  low_confidence              0
+
+6. GUARDRAILS
+------------------------------------------------------------------------
+  [WARN] Ruleset 0c1129f6 != pinned 88d7ae9a
+  [PASS] A-tier count > 0 (34)
+  [PASS] Catalyst specific_days coverage > 50.0% (92.1%)

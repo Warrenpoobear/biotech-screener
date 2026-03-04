@@ -1,0 +1,19 @@
+{
+  "as_of_date": "2025-08-31",
+  "source_type": "pit_bundle",
+  "ruleset_id": "e094cbec",
+  "decision_engine_version": "v1.3.0",
+  "ticker_count": 353,
+  "eligible_count": 182,
+  "component_coverage": {
+    "clinical_features": 87.5,
+    "catalyst_events": 50.1,
+    "coinvest_features": 92.6
+  },
+  "pit_quality": {
+    "ctgov_trials_filtered_future_posted": 640,
+    "catalyst_tickers_missing_disclosed_at": 0,
+    "catalyst_tickers_future_disclosed_at": 0
+  },
+  "bundle_manifest_schema": "pit_bundle_manifest.v1"
+}

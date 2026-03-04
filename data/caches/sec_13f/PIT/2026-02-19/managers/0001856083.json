@@ -9,7 +9,7 @@
   "holdings": [
     {
       "cusip": "00704R109",
-      "ticker": "ANL",
+      "ticker": "",
       "issuer": "ADLAI NORTYE LTD",
       "shares": 34852,
       "value_usd_thousands": 49490,
@@ -137,7 +137,7 @@
     },
     {
       "cusip": "21077P108",
-      "ticker": "CNTX",
+      "ticker": "",
       "issuer": "CONTEXT THERAPEUTICS INC",
       "shares": 7419355,
       "value_usd_thousands": 10906452,
@@ -169,7 +169,7 @@
     },
     {
       "cusip": "23282W605",
-      "ticker": "CYTK",
+      "ticker": "",
       "issuer": "CYTOKINETICS INC",
       "shares": 3336998,
       "value_usd_thousands": 212032853,
@@ -193,7 +193,7 @@
     },
     {
       "cusip": "29251M106",
-      "ticker": "ENTA",
+      "ticker": "",
       "issuer": "ENANTA PHARMACEUTICALS INC",
       "shares": 1956867,
       "value_usd_thousands": 30859793,
@@ -281,7 +281,7 @@
     },
     {
       "cusip": "578784100",
-      "ticker": "MAZE",
+      "ticker": "",
       "issuer": "MAZE THERAPEUTICS INC",
       "shares": 4246440,
       "value_usd_thousands": 175930009,

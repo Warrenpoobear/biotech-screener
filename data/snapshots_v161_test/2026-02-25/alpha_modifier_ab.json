@@ -1,0 +1,21 @@
+{
+  "n_rows": 252,
+  "n_alpha_nonzero": 234,
+  "alpha_modifier_mode": "within_tier",
+  "alpha_modifier_weight": 0.05,
+  "top60_overlap": 1.0,
+  "mean_abs_rank_shift": 0.03,
+  "max_rank_shift": 2,
+  "pct_rows_rank_changed": 2.8,
+  "tier_dist_modified_top60": {
+    "A": 34,
+    "B": 26
+  },
+  "tier_dist_baseline_top60": {
+    "A": 34,
+    "B": 26
+  },
+  "alpha_coverage_present": 234,
+  "alpha_coverage_missing": 18,
+  "alpha_coverage_pct": 92.9
+}

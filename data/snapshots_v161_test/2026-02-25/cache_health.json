@@ -1,0 +1,28 @@
+{
+  "schema": "cache_health.v1",
+  "as_of_date": "2026-02-25",
+  "sec8k": {
+    "count": 0,
+    "status": "bad",
+    "reason": "SEC 8-K cache empty (0 events)"
+  },
+  "ctgov": {
+    "count": 1082,
+    "status": "ok",
+    "reason": ""
+  },
+  "overall_status": "bad",
+  "degraded_run": true,
+  "thresholds": {
+    "sec8k_min_count": 0,
+    "sec8k_min_ratio_vs_prior": 0.3,
+    "ctgov_warn_ratio_low": 0.8,
+    "ctgov_warn_ratio_high": 1.25,
+    "ctgov_bad_ratio_low": 0.6,
+    "ctgov_bad_ratio_high": 1.5
+  },
+  "comparisons": {
+    "sec8k_ratio_vs_prior": null,
+    "ctgov_ratio_vs_prior": null
+  }
+}

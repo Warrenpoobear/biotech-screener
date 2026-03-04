@@ -1,0 +1,16 @@
+{
+  "total_events": 1039,
+  "unique_tickers_with_events": 229,
+  "by_source": {
+    "CTGOV_CALENDAR": 1039
+  },
+  "by_confidence": {
+    "HIGH": 113,
+    "LOW": 757,
+    "MED": 169
+  },
+  "by_date_precision": {
+    "DAY": 809,
+    "RANGE": 230
+  }
+}

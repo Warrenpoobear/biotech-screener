@@ -1,0 +1,252 @@
+{
+  "alpha_cohort_clip_max": 0.1,
+  "alpha_cohort_clip_min": -0.1,
+  "alpha_cohort_shrink_k": 50.0,
+  "alpha_cohort_table_path": "production_data/alpha_cohort_tables/v1.json",
+  "alpha_headwind": -0.05,
+  "alpha_modifier_mode": "off",
+  "alpha_modifier_weight": 0.0,
+  "alpha_table_rebuild_policy": "if_missing",
+  "alpha_tailwind": 0.05,
+  "alpha_train_horizon": 84,
+  "alpha_train_min_train_dates": 6,
+  "alpha_train_mode": "trailing-6",
+  "beta_high_threshold": 1.8,
+  "calendar_alpha_sort_weight": 0.3,
+  "catalyst_logistic_midpoint_days": 150,
+  "catalyst_logistic_scale_days": 30.0,
+  "catalyst_mid_days": 180,
+  "catalyst_near_days": 120,
+  "catalyst_priority_default": 9,
+  "catalyst_priority_map": [
+    [
+      "FDA_PDUFA_DATE",
+      "*",
+      1
+    ],
+    [
+      "FDA_ADCOM",
+      "*",
+      1
+    ],
+    [
+      "FDA_CRL",
+      "*",
+      1
+    ],
+    [
+      "FDA_RTF",
+      "*",
+      1
+    ],
+    [
+      "FDA_WARNING_LETTER",
+      "*",
+      1
+    ],
+    [
+      "FDA_DECISION",
+      "*",
+      1
+    ],
+    [
+      "FDA_APPROVAL",
+      "*",
+      1
+    ],
+    [
+      "FDA_SUBMISSION",
+      "*",
+      1
+    ],
+    [
+      "DATA_READOUT",
+      "CTGOV_CALENDAR",
+      2
+    ],
+    [
+      "DATA_READOUT",
+      "*",
+      2
+    ],
+    [
+      "CT_PRIMARY_COMPLETION",
+      "*",
+      3
+    ],
+    [
+      "CT_STUDY_COMPLETION",
+      "*",
+      3
+    ],
+    [
+      "TRIAL_ONGOING",
+      "*",
+      3
+    ],
+    [
+      "*",
+      "CORPORATE_CALENDAR",
+      3
+    ],
+    [
+      "*",
+      "SEC_8K_FILING",
+      2
+    ],
+    [
+      "*",
+      "SEC_10Q_FILING",
+      2
+    ],
+    [
+      "*",
+      "SEC_10K_FILING",
+      2
+    ],
+    [
+      "*",
+      "SEC_6K_FILING",
+      2
+    ],
+    [
+      "*",
+      "FEDERAL_REGISTER",
+      3
+    ]
+  ],
+  "catalyst_priority_mode": "tiebreaker",
+  "catalyst_priority_rank_bonuses": [
+    [
+      1,
+      5.0
+    ],
+    [
+      2,
+      2.0
+    ],
+    [
+      3,
+      0.0
+    ],
+    [
+      9,
+      0.0
+    ],
+    [
+      99,
+      0.0
+    ]
+  ],
+  "catalyst_priority_unknown": 99,
+  "catalyst_tilt_mults": [
+    [
+      "NEAR",
+      1.1
+    ],
+    [
+      "MID",
+      1.05
+    ],
+    [
+      "FAR",
+      0.95
+    ],
+    [
+      "MISSING",
+      0.9
+    ]
+  ],
+  "catalyst_time_decay_mode": "hard",
+  "clinical_positive_only": true,
+  "clinical_sort_weight": 1.0,
+  "clinical_stage_mults": [
+    [
+      "early",
+      0.0
+    ],
+    [
+      "mid",
+      1.0
+    ],
+    [
+      "late",
+      1.5
+    ]
+  ],
+  "coinvest_positive_only": false,
+  "coinvest_score_mode": "tier1_count",
+  "coinvest_sort_weight": 0.05,
+  "composite_engine": "alpha_cohort",
+  "confidence_low_threshold": 0.3,
+  "cost_haircut_buckets": [
+    [
+      400,
+      1.0
+    ],
+    [
+      1000,
+      0.85
+    ],
+    [
+      2000,
+      0.7
+    ]
+  ],
+  "cost_haircut_floor_mult": 0.55,
+  "cost_impact_cap_bps": 1000.0,
+  "dd_rel_margin_rescue_threshold": -0.05,
+  "drawdown_flag_threshold": -0.35,
+  "drawdown_gate": -0.4,
+  "drawdown_gate_mode": "hard",
+  "drawdown_gate_require_both": true,
+  "drawdown_hard_floor": -0.75,
+  "drawdown_rel_xbi_gate": -0.25,
+  "drawdown_size_penalty": -1,
+  "enable_calendar_alpha_sort": true,
+  "enable_catalyst_priority": false,
+  "enable_catalyst_tilt": false,
+  "enable_clinical_sizing": false,
+  "enable_clinical_sort_signal": true,
+  "enable_coinvest_sort_signal": true,
+  "enable_cost_haircut": true,
+  "enable_dd_rel_margin_rescue": false,
+  "enable_institutional_sort_signal": false,
+  "enable_missingness_size_penalty": false,
+  "enable_missingness_sort_penalty": true,
+  "enable_mom_state_tilt": false,
+  "far_window_days": 0,
+  "far_window_decay_mult": 0.15,
+  "institutional_positive_only": true,
+  "institutional_sort_weight": 0.3,
+  "mom_state_tilt_mults": [
+    [
+      "tailwind",
+      1.0
+    ],
+    [
+      "neutral",
+      1.0
+    ],
+    [
+      "headwind",
+      1.0
+    ]
+  ],
+  "rsi_overbought": 70.0,
+  "sizing_weights": {
+    "L": 1.0,
+    "M": 0.6,
+    "S": 0.3,
+    "XS": 0.15
+  },
+  "sort_anchor": "optionality_pct",
+  "sparse_signal_mode": "legacy",
+  "sponsor_confirm_threshold": 2,
+  "tier_a_commercial_floor": 0.85,
+  "tier_a_optionality_floor": 0.6,
+  "tier_b_commercial_floor": 0.6,
+  "tier_b_optionality_floor": 0.3,
+  "tiering_priority_mode": "dev_first",
+  "vol_high_threshold": 1.2
+}

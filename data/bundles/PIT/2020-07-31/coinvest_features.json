@@ -1,0 +1,5758 @@
+{
+  "schema_version": "coinvest_features.v1",
+  "version": "1.0.0",
+  "created_at": "2026-02-23T16:54:39Z",
+  "as_of_date": "2020-06-30",
+  "cache_as_of_date": "2020-06-30",
+  "period_of_report": "2020-03-31",
+  "prior_period_of_report": "2019-12-31",
+  "prior_cache_as_of_date": "2020-03-31",
+  "managers_total": 35,
+  "managers_with_filing": 31,
+  "tickers_in_universe": 353,
+  "tickers_with_signal": 171,
+  "signal_coverage_pct": 48.4,
+  "tickers": {
+    "ABUS": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.9995,
+      "tier1_conviction_overlap": 1.6279,
+      "max_tier1_position_pct": 0.3,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management",
+        "RTW Investments",
+        "Acuta Capital"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2,
+        "RTW Investments": 1,
+        "Acuta Capital": 1
+      },
+      "position_changes": {
+        "Millennium Management": "HOLD",
+        "RTW Investments": "NEW",
+        "Acuta Capital": "NEW"
+      }
+    },
+    "ACAD": {
+      "tier1_count": 9,
+      "sponsor_tier1_count": 9,
+      "sponsor_overlap_count": 12,
+      "coinvest_overlap_count": 12,
+      "conviction_overlap": 17.8681,
+      "tier1_conviction_overlap": 16.9373,
+      "max_tier1_position_pct": 10.9,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Baker Bros",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Great Point",
+        "Palo Alto Investors",
+        "Boxer Capital",
+        "EcoR1 Capital",
+        "Rock Springs",
+        "Opaleye Management",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Great Point": 1,
+        "Palo Alto Investors": 1,
+        "Boxer Capital": 1,
+        "EcoR1 Capital": 1,
+        "Rock Springs": 1,
+        "Opaleye Management": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "HOLD",
+        "Renaissance Technologies": "DECREASE",
+        "Baker Bros": "HOLD",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "INCREASE",
+        "Great Point": "INCREASE",
+        "Palo Alto Investors": "DECREASE",
+        "Boxer Capital": "NEW",
+        "EcoR1 Capital": "DECREASE",
+        "Rock Springs": "INCREASE",
+        "Opaleye Management": "DECREASE"
+      }
+    },
+    "ACRS": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 3.618,
+      "tier1_conviction_overlap": 3.3392,
+      "max_tier1_position_pct": 1.56,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "EcoR1 Capital",
+        "Rock Springs",
+        "Sofinnova Investments",
+        "Samsara BioCapital"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "EcoR1 Capital": 1,
+        "Rock Springs": 1,
+        "Sofinnova Investments": 1,
+        "Samsara BioCapital": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "DECREASE",
+        "EcoR1 Capital": "DECREASE",
+        "Rock Springs": "DECREASE",
+        "Sofinnova Investments": "DECREASE",
+        "Samsara BioCapital": "NEW"
+      }
+    },
+    "ADMA": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.2787,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "ADPT": {
+      "tier1_count": 7,
+      "sponsor_tier1_count": 7,
+      "sponsor_overlap_count": 9,
+      "coinvest_overlap_count": 9,
+      "conviction_overlap": 9.2887,
+      "tier1_conviction_overlap": 7.8987,
+      "max_tier1_position_pct": 2.34,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Deerfield Management",
+        "Viking Global",
+        "Balyasny Asset",
+        "Baker Bros",
+        "Sectoral Asset",
+        "Redmile Group",
+        "Casdin Capital",
+        "Rock Springs",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "Deerfield Management": 1,
+        "Viking Global": 2,
+        "Balyasny Asset": 2,
+        "Baker Bros": 1,
+        "Sectoral Asset": 1,
+        "Redmile Group": 1,
+        "Casdin Capital": 1,
+        "Rock Springs": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "Deerfield Management": "DECREASE",
+        "Viking Global": "DECREASE",
+        "Balyasny Asset": "DECREASE",
+        "Baker Bros": "DECREASE",
+        "Sectoral Asset": "DECREASE",
+        "Redmile Group": "HOLD",
+        "Casdin Capital": "INCREASE",
+        "Rock Springs": "HOLD"
+      }
+    },
+    "AGIO": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 6.6402,
+      "tier1_conviction_overlap": 6.0815,
+      "max_tier1_position_pct": 4.03,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Casdin Capital",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Casdin Capital": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Orbimed Advisors": "NEW",
+        "Millennium Management": "DECREASE",
+        "Casdin Capital": "HOLD",
+        "Rock Springs": "INCREASE"
+      }
+    },
+    "AKRO": {
+      "tier1_count": 7,
+      "sponsor_tier1_count": 7,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 7.0097,
+      "tier1_conviction_overlap": 6.5451,
+      "max_tier1_position_pct": 56.91,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management",
+        "Redmile Group",
+        "Boxer Capital",
+        "Cormorant Asset",
+        "Rock Springs",
+        "Sofinnova Investments",
+        "Samsara BioCapital",
+        "Venbio Partners"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2,
+        "Redmile Group": 1,
+        "Boxer Capital": 1,
+        "Cormorant Asset": 1,
+        "Rock Springs": 1,
+        "Sofinnova Investments": 1,
+        "Samsara BioCapital": 1,
+        "Venbio Partners": 1
+      },
+      "position_changes": {
+        "Millennium Management": "NEW",
+        "Redmile Group": "DECREASE",
+        "Boxer Capital": "DECREASE",
+        "Cormorant Asset": "DECREASE",
+        "Rock Springs": "HOLD",
+        "Sofinnova Investments": "NEW",
+        "Samsara BioCapital": "NEW",
+        "Venbio Partners": "DECREASE"
+      }
+    },
+    "ALDX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.21,
+      "tier1_conviction_overlap": 0.4667,
+      "max_tier1_position_pct": 0.02,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Millennium Management",
+        "Palo Alto Investors"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "Palo Alto Investors": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "INCREASE",
+        "Millennium Management": "DECREASE",
+        "Palo Alto Investors": "DECREASE"
+      }
+    },
+    "ALKS": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 4.3233,
+      "tier1_conviction_overlap": 3.3,
+      "max_tier1_position_pct": 5.42,
+      "days_since_latest_filing": 43,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Baker Bros",
+        "Millennium Management",
+        "Krensavage Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Krensavage Asset": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Baker Bros": "INCREASE",
+        "Millennium Management": "INCREASE",
+        "Krensavage Asset": "HOLD"
+      }
+    },
+    "ALLO": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 2.6366,
+      "tier1_conviction_overlap": 2.3579,
+      "max_tier1_position_pct": 1.03,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management",
+        "Casdin Capital",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2,
+        "Casdin Capital": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "Millennium Management": "DECREASE",
+        "Casdin Capital": "NEW",
+        "Rock Springs": "NEW"
+      }
+    },
+    "ALNY": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 11.615,
+      "tier1_conviction_overlap": 10.403,
+      "max_tier1_position_pct": 7.88,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Sectoral Asset",
+        "RTW Investments",
+        "Casdin Capital",
+        "Rock Springs",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "RTW Investments": 1,
+        "Casdin Capital": 1,
+        "Rock Springs": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Balyasny Asset": "NEW",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "DECREASE",
+        "RTW Investments": "NEW",
+        "Casdin Capital": "HOLD",
+        "Rock Springs": "HOLD",
+        "Logos Global": "NEW"
+      }
+    },
+    "ALT": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "INCREASE"
+      }
+    },
+    "AMGN": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 3.69,
+      "tier1_conviction_overlap": 2.2105,
+      "max_tier1_position_pct": 1.06,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "HOLD",
+        "Orbimed Advisors": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "DECREASE",
+        "Rock Springs": "DECREASE"
+      }
+    },
+    "AMPH": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.2787,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "DECREASE"
+      }
+    },
+    "AMRX": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 1.49,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Balyasny Asset": "INCREASE",
+        "Millennium Management": "INCREASE"
+      }
+    },
+    "ANAB": {
+      "tier1_count": 8,
+      "sponsor_tier1_count": 8,
+      "sponsor_overlap_count": 11,
+      "coinvest_overlap_count": 11,
+      "conviction_overlap": 12.4533,
+      "tier1_conviction_overlap": 11.3367,
+      "max_tier1_position_pct": 4.55,
+      "days_since_latest_filing": 43,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Tang Capital",
+        "Baker Bros",
+        "Millennium Management",
+        "Boxer Capital",
+        "Cormorant Asset",
+        "EcoR1 Capital",
+        "Rock Springs",
+        "Krensavage Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Tang Capital": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Boxer Capital": 1,
+        "Cormorant Asset": 1,
+        "EcoR1 Capital": 1,
+        "Rock Springs": 1,
+        "Krensavage Asset": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "HOLD",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Tang Capital": "HOLD",
+        "Baker Bros": "INCREASE",
+        "Millennium Management": "DECREASE",
+        "Boxer Capital": "DECREASE",
+        "Cormorant Asset": "INCREASE",
+        "EcoR1 Capital": "INCREASE",
+        "Rock Springs": "INCREASE",
+        "Krensavage Asset": "DECREASE"
+      }
+    },
+    "ANIP": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.0233,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "NEW"
+      }
+    },
+    "APLS": {
+      "tier1_count": 8,
+      "sponsor_tier1_count": 8,
+      "sponsor_overlap_count": 10,
+      "coinvest_overlap_count": 10,
+      "conviction_overlap": 11.7496,
+      "tier1_conviction_overlap": 10.8183,
+      "max_tier1_position_pct": 11.45,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Orbimed Advisors",
+        "Baker Bros",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Suvretta Capital",
+        "Acuta Capital",
+        "Cormorant Asset",
+        "Sofinnova Investments",
+        "Venbio Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Orbimed Advisors": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Suvretta Capital": 1,
+        "Acuta Capital": 1,
+        "Cormorant Asset": 1,
+        "Sofinnova Investments": 1,
+        "Venbio Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Orbimed Advisors": "NEW",
+        "Baker Bros": "INCREASE",
+        "Millennium Management": "INCREASE",
+        "Sectoral Asset": "DECREASE",
+        "Suvretta Capital": "NEW",
+        "Acuta Capital": "HOLD",
+        "Cormorant Asset": "DECREASE",
+        "Sofinnova Investments": "DECREASE",
+        "Venbio Partners": "NEW"
+      }
+    },
+    "AQST": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.0233,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "ARCT": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 1.2424,
+      "tier1_conviction_overlap": 0.7778,
+      "max_tier1_position_pct": 0.17,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management",
+        "Cormorant Asset"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2,
+        "Cormorant Asset": 1
+      },
+      "position_changes": {
+        "Millennium Management": "NEW",
+        "Cormorant Asset": "NEW"
+      }
+    },
+    "ARDX": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 4.7881,
+      "tier1_conviction_overlap": 3.7647,
+      "max_tier1_position_pct": 1.15,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Millennium Management",
+        "RA Capital",
+        "Redmile Group",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "RA Capital": 1,
+        "Redmile Group": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Deerfield Management": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "NEW",
+        "RA Capital": "HOLD",
+        "Redmile Group": "DECREASE",
+        "Rock Springs": "DECREASE"
+      }
+    },
+    "ARGX": {
+      "tier1_count": 9,
+      "sponsor_tier1_count": 9,
+      "sponsor_overlap_count": 11,
+      "coinvest_overlap_count": 11,
+      "conviction_overlap": 9.3969,
+      "tier1_conviction_overlap": 8.4678,
+      "max_tier1_position_pct": 4.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Baker Bros",
+        "Millennium Management",
+        "Redmile Group",
+        "Boxer Capital",
+        "RTW Investments",
+        "Suvretta Capital",
+        "Cormorant Asset",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Redmile Group": 1,
+        "Boxer Capital": 1,
+        "RTW Investments": 1,
+        "Suvretta Capital": 1,
+        "Cormorant Asset": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "Deerfield Management": "DECREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "INCREASE",
+        "Redmile Group": "DECREASE",
+        "Boxer Capital": "DECREASE",
+        "RTW Investments": "NEW",
+        "Suvretta Capital": "NEW",
+        "Cormorant Asset": "DECREASE",
+        "Rock Springs": "DECREASE"
+      }
+    },
+    "ARQT": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 7.5847,
+      "tier1_conviction_overlap": 7.1201,
+      "max_tier1_position_pct": 20.05,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Orbimed Advisors",
+        "Millennium Management",
+        "RA Capital",
+        "Bain Capital Life"
+      ],
+      "holder_tiers": {
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "RA Capital": 1,
+        "Bain Capital Life": 1
+      },
+      "position_changes": {
+        "Orbimed Advisors": "NEW",
+        "Millennium Management": "NEW",
+        "RA Capital": "NEW",
+        "Bain Capital Life": "NEW"
+      }
+    },
+    "ARVN": {
+      "tier1_count": 10,
+      "sponsor_tier1_count": 10,
+      "sponsor_overlap_count": 13,
+      "coinvest_overlap_count": 13,
+      "conviction_overlap": 15.7176,
+      "tier1_conviction_overlap": 14.6009,
+      "max_tier1_position_pct": 6.43,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Great Point",
+        "RA Capital",
+        "RTW Investments",
+        "Suvretta Capital",
+        "Acuta Capital",
+        "EcoR1 Capital",
+        "Rock Springs",
+        "Ghost Tree"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Great Point": 1,
+        "RA Capital": 1,
+        "RTW Investments": 1,
+        "Suvretta Capital": 1,
+        "Acuta Capital": 1,
+        "EcoR1 Capital": 1,
+        "Rock Springs": 1,
+        "Ghost Tree": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "HOLD",
+        "Deerfield Management": "HOLD",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Great Point": "DECREASE",
+        "RA Capital": "HOLD",
+        "RTW Investments": "NEW",
+        "Suvretta Capital": "NEW",
+        "Acuta Capital": "DECREASE",
+        "EcoR1 Capital": "INCREASE",
+        "Rock Springs": "INCREASE",
+        "Ghost Tree": "DECREASE"
+      }
+    },
+    "ARWR": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 2.4909,
+      "tier1_conviction_overlap": 1.9321,
+      "max_tier1_position_pct": 1.53,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Acuta Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Acuta Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Orbimed Advisors": "NEW",
+        "Acuta Capital": "DECREASE"
+      }
+    },
+    "ASND": {
+      "tier1_count": 10,
+      "sponsor_tier1_count": 10,
+      "sponsor_overlap_count": 13,
+      "coinvest_overlap_count": 13,
+      "conviction_overlap": 19.4332,
+      "tier1_conviction_overlap": 18.2232,
+      "max_tier1_position_pct": 17.48,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Baker Bros",
+        "Millennium Management",
+        "RA Capital",
+        "Acuta Capital",
+        "Cormorant Asset",
+        "Rock Springs",
+        "Ghost Tree",
+        "Sofinnova Investments",
+        "Avidity Partners",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "RA Capital": 1,
+        "Acuta Capital": 1,
+        "Cormorant Asset": 1,
+        "Rock Springs": 1,
+        "Ghost Tree": 1,
+        "Sofinnova Investments": 1,
+        "Avidity Partners": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "RA Capital": "HOLD",
+        "Acuta Capital": "INCREASE",
+        "Cormorant Asset": "DECREASE",
+        "Rock Springs": "DECREASE",
+        "Ghost Tree": "DECREASE",
+        "Sofinnova Investments": "DECREASE",
+        "Logos Global": "DECREASE"
+      }
+    },
+    "ATXS": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 1.6359,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Viking Global",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Viking Global": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Viking Global": "HOLD",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "AUPH": {
+      "tier1_count": 6,
+      "sponsor_tier1_count": 6,
+      "sponsor_overlap_count": 9,
+      "coinvest_overlap_count": 9,
+      "conviction_overlap": 8.2101,
+      "tier1_conviction_overlap": 7.0001,
+      "max_tier1_position_pct": 5.42,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Baker Bros",
+        "Millennium Management",
+        "Suvretta Capital",
+        "Acuta Capital",
+        "Ghost Tree",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Suvretta Capital": 1,
+        "Acuta Capital": 1,
+        "Ghost Tree": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "NEW",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Suvretta Capital": "NEW",
+        "Acuta Capital": "DECREASE",
+        "Ghost Tree": "DECREASE"
+      }
+    },
+    "AUTL": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 2.3308,
+      "tier1_conviction_overlap": 0.9333,
+      "max_tier1_position_pct": 0.13,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Baker Bros",
+        "Millennium Management",
+        "Cormorant Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Cormorant Asset": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Balyasny Asset": "HOLD",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Cormorant Asset": "DECREASE"
+      }
+    },
+    "AVTR": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 1.474,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Viking Global",
+        "Balyasny Asset",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Viking Global": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "NEW",
+        "Viking Global": "DECREASE",
+        "Balyasny Asset": "DECREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "AVXL": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.3025,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "HOLD",
+        "Renaissance Technologies": "INCREASE",
+        "Millennium Management": "INCREASE"
+      }
+    },
+    "AXSM": {
+      "tier1_count": 10,
+      "sponsor_tier1_count": 10,
+      "sponsor_overlap_count": 13,
+      "coinvest_overlap_count": 13,
+      "conviction_overlap": 16.4058,
+      "tier1_conviction_overlap": 15.3817,
+      "max_tier1_position_pct": 8.8,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Baker Bros",
+        "Millennium Management",
+        "Great Point",
+        "RA Capital",
+        "Boxer Capital",
+        "RTW Investments",
+        "Acuta Capital",
+        "Cormorant Asset",
+        "Ghost Tree",
+        "Sofinnova Investments",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Great Point": 1,
+        "RA Capital": 1,
+        "Boxer Capital": 1,
+        "RTW Investments": 1,
+        "Acuta Capital": 1,
+        "Cormorant Asset": 1,
+        "Ghost Tree": 1,
+        "Sofinnova Investments": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Great Point": "DECREASE",
+        "RA Capital": "INCREASE",
+        "Boxer Capital": "NEW",
+        "RTW Investments": "NEW",
+        "Acuta Capital": "DECREASE",
+        "Cormorant Asset": "DECREASE",
+        "Ghost Tree": "DECREASE",
+        "Sofinnova Investments": "NEW"
+      }
+    },
+    "AZN": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 2.6256,
+      "tier1_conviction_overlap": 1.4704,
+      "max_tier1_position_pct": 1.42,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Sectoral Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Sectoral Asset": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Balyasny Asset": "HOLD",
+        "Sectoral Asset": "HOLD"
+      }
+    },
+    "BBIO": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 4.5224,
+      "tier1_conviction_overlap": 2.4811,
+      "max_tier1_position_pct": 3.98,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Viking Global",
+        "Millennium Management",
+        "Cormorant Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Viking Global": 2,
+        "Millennium Management": 2,
+        "Cormorant Asset": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "NEW",
+        "Viking Global": "DECREASE",
+        "Millennium Management": "NEW",
+        "Cormorant Asset": "HOLD"
+      }
+    },
+    "BCRX": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 3.8898,
+      "tier1_conviction_overlap": 2.8644,
+      "max_tier1_position_pct": 1.06,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Balyasny Asset",
+        "Baker Bros",
+        "Millennium Management",
+        "Acuta Capital",
+        "Ghost Tree",
+        "Sofinnova Investments"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Balyasny Asset": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Acuta Capital": 1,
+        "Ghost Tree": 1,
+        "Sofinnova Investments": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Deerfield Management": "DECREASE",
+        "Balyasny Asset": "NEW",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Acuta Capital": "DECREASE",
+        "Ghost Tree": "DECREASE",
+        "Sofinnova Investments": "DECREASE"
+      }
+    },
+    "BCYC": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.9292,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "NEW",
+        "Millennium Management": "INCREASE"
+      }
+    },
+    "BDTX": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 9.5389,
+      "tier1_conviction_overlap": 9.0743,
+      "max_tier1_position_pct": 3.43,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Deerfield Management",
+        "Millennium Management",
+        "RA Capital",
+        "Boxer Capital",
+        "Casdin Capital",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "Deerfield Management": 1,
+        "Millennium Management": 2,
+        "RA Capital": 1,
+        "Boxer Capital": 1,
+        "Casdin Capital": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "Deerfield Management": "NEW",
+        "Millennium Management": "NEW",
+        "RA Capital": "NEW",
+        "Boxer Capital": "NEW",
+        "Casdin Capital": "NEW",
+        "Logos Global": "NEW"
+      }
+    },
+    "BEAM": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 3.7595,
+      "tier1_conviction_overlap": 3.2949,
+      "max_tier1_position_pct": 1.7,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management",
+        "Redmile Group",
+        "Cormorant Asset"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2,
+        "Redmile Group": 1,
+        "Cormorant Asset": 1
+      },
+      "position_changes": {
+        "Millennium Management": "NEW",
+        "Redmile Group": "NEW",
+        "Cormorant Asset": "NEW"
+      }
+    },
+    "BIIB": {
+      "tier1_count": 9,
+      "sponsor_tier1_count": 9,
+      "sponsor_overlap_count": 13,
+      "coinvest_overlap_count": 13,
+      "conviction_overlap": 20.6348,
+      "tier1_conviction_overlap": 18.8791,
+      "max_tier1_position_pct": 11.27,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Redmile Group",
+        "Suvretta Capital",
+        "Rock Springs",
+        "Ghost Tree",
+        "Krensavage Asset",
+        "Sofinnova Investments",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Redmile Group": 1,
+        "Suvretta Capital": 1,
+        "Rock Springs": 1,
+        "Ghost Tree": 1,
+        "Krensavage Asset": 1,
+        "Sofinnova Investments": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "HOLD",
+        "Orbimed Advisors": "INCREASE",
+        "Balyasny Asset": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "INCREASE",
+        "Redmile Group": "INCREASE",
+        "Suvretta Capital": "NEW",
+        "Rock Springs": "NEW",
+        "Ghost Tree": "NEW",
+        "Krensavage Asset": "HOLD",
+        "Sofinnova Investments": "DECREASE"
+      }
+    },
+    "BMRN": {
+      "tier1_count": 8,
+      "sponsor_tier1_count": 8,
+      "sponsor_overlap_count": 13,
+      "coinvest_overlap_count": 13,
+      "conviction_overlap": 16.1553,
+      "tier1_conviction_overlap": 14.5347,
+      "max_tier1_position_pct": 10.93,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Viking Global",
+        "Balyasny Asset",
+        "Baker Bros",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Palo Alto Investors",
+        "Boxer Capital",
+        "Rock Springs",
+        "Sofinnova Investments",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Viking Global": 2,
+        "Balyasny Asset": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Palo Alto Investors": 1,
+        "Boxer Capital": 1,
+        "Rock Springs": 1,
+        "Sofinnova Investments": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Orbimed Advisors": "INCREASE",
+        "Viking Global": "DECREASE",
+        "Balyasny Asset": "DECREASE",
+        "Baker Bros": "HOLD",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "DECREASE",
+        "Palo Alto Investors": "DECREASE",
+        "Boxer Capital": "HOLD",
+        "Rock Springs": "INCREASE",
+        "Sofinnova Investments": "DECREASE"
+      }
+    },
+    "BNTX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 1.0999,
+      "tier1_conviction_overlap": 0.8212,
+      "max_tier1_position_pct": 0.28,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management",
+        "Redmile Group"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2,
+        "Redmile Group": 1
+      },
+      "position_changes": {
+        "Millennium Management": "DECREASE",
+        "Redmile Group": "INCREASE"
+      }
+    },
+    "BRKR": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.0233,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "NEW",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "CABA": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 3.836,
+      "tier1_conviction_overlap": 3.0927,
+      "max_tier1_position_pct": 0.78,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Baker Bros",
+        "Millennium Management",
+        "Redmile Group",
+        "Boxer Capital",
+        "Cormorant Asset"
+      ],
+      "holder_tiers": {
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Redmile Group": 1,
+        "Boxer Capital": 1,
+        "Cormorant Asset": 1
+      },
+      "position_changes": {
+        "Deerfield Management": "DECREASE",
+        "Renaissance Technologies": "NEW",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Redmile Group": "DECREASE",
+        "Boxer Capital": "DECREASE",
+        "Cormorant Asset": "DECREASE"
+      }
+    },
+    "CDNA": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 3.1806,
+      "tier1_conviction_overlap": 2.1552,
+      "max_tier1_position_pct": 3.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Casdin Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Casdin Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Balyasny Asset": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Casdin Capital": "HOLD"
+      }
+    },
+    "CDXS": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 3.7333,
+      "tier1_conviction_overlap": 3.7333,
+      "max_tier1_position_pct": 6.01,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Casdin Capital",
+        "Opaleye Management"
+      ],
+      "holder_tiers": {
+        "Casdin Capital": 1,
+        "Opaleye Management": 1
+      },
+      "position_changes": {
+        "Casdin Capital": "DECREASE",
+        "Opaleye Management": "DECREASE"
+      }
+    },
+    "CELC": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.3717,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "HOLD"
+      }
+    },
+    "CERS": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 2.6067,
+      "tier1_conviction_overlap": 1.8621,
+      "max_tier1_position_pct": 0.39,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Baker Bros",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Deerfield Management": "NEW",
+        "Baker Bros": "INCREASE",
+        "Millennium Management": "INCREASE"
+      }
+    },
+    "CHRS": {
+      "tier1_count": 6,
+      "sponsor_tier1_count": 6,
+      "sponsor_overlap_count": 9,
+      "coinvest_overlap_count": 9,
+      "conviction_overlap": 8.7854,
+      "tier1_conviction_overlap": 7.7612,
+      "max_tier1_position_pct": 2.9,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Tang Capital",
+        "Millennium Management",
+        "Suvretta Capital",
+        "Rock Springs",
+        "Ghost Tree",
+        "Sofinnova Investments",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Tang Capital": 1,
+        "Millennium Management": 2,
+        "Suvretta Capital": 1,
+        "Rock Springs": 1,
+        "Ghost Tree": 1,
+        "Sofinnova Investments": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Tang Capital": "NEW",
+        "Millennium Management": "DECREASE",
+        "Suvretta Capital": "NEW",
+        "Rock Springs": "HOLD",
+        "Ghost Tree": "DECREASE",
+        "Sofinnova Investments": "HOLD"
+      }
+    },
+    "CLDX": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.2787,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "DECREASE"
+      }
+    },
+    "CLLS": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.5587,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "COLL": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 3.0088,
+      "tier1_conviction_overlap": 2.6371,
+      "max_tier1_position_pct": 1.39,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Sectoral Asset",
+        "Rock Springs",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Sectoral Asset": 1,
+        "Rock Springs": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "HOLD",
+        "Sectoral Asset": "DECREASE",
+        "Rock Springs": "DECREASE"
+      }
+    },
+    "CRMD": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "INCREASE"
+      }
+    },
+    "CRNX": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 4.2789,
+      "tier1_conviction_overlap": 4.2789,
+      "max_tier1_position_pct": 1.44,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Orbimed Advisors",
+        "Baker Bros",
+        "RA Capital",
+        "EcoR1 Capital",
+        "Opaleye Management"
+      ],
+      "holder_tiers": {
+        "Orbimed Advisors": 1,
+        "Baker Bros": 1,
+        "RA Capital": 1,
+        "EcoR1 Capital": 1,
+        "Opaleye Management": 1
+      },
+      "position_changes": {
+        "Orbimed Advisors": "DECREASE",
+        "Baker Bros": "DECREASE",
+        "RA Capital": "DECREASE",
+        "EcoR1 Capital": "NEW",
+        "Opaleye Management": "DECREASE"
+      }
+    },
+    "CRSP": {
+      "tier1_count": 6,
+      "sponsor_tier1_count": 6,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 7.6524,
+      "tier1_conviction_overlap": 6.907,
+      "max_tier1_position_pct": 1.7,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Sectoral Asset",
+        "Casdin Capital",
+        "Cormorant Asset",
+        "EcoR1 Capital",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Sectoral Asset": 1,
+        "Casdin Capital": 1,
+        "Cormorant Asset": 1,
+        "EcoR1 Capital": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Sectoral Asset": "NEW",
+        "Casdin Capital": "NEW",
+        "Cormorant Asset": "DECREASE",
+        "EcoR1 Capital": "NEW",
+        "Logos Global": "NEW"
+      }
+    },
+    "CRVS": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 1.4908,
+      "tier1_conviction_overlap": 0.9333,
+      "max_tier1_position_pct": 0.24,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "EcoR1 Capital"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "EcoR1 Capital": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "DECREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "EcoR1 Capital": "DECREASE"
+      }
+    },
+    "CSTL": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 2.4015,
+      "tier1_conviction_overlap": 1.4723,
+      "max_tier1_position_pct": 0.9,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Millennium Management",
+        "RTW Investments"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "RTW Investments": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "NEW",
+        "Millennium Management": "NEW",
+        "RTW Investments": "NEW"
+      }
+    },
+    "CTMX": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 4.4489,
+      "tier1_conviction_overlap": 3.5185,
+      "max_tier1_position_pct": 0.35,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Tang Capital",
+        "Baker Bros",
+        "Millennium Management",
+        "Great Point",
+        "RTW Investments",
+        "EcoR1 Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Tang Capital": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Great Point": 1,
+        "RTW Investments": 1,
+        "EcoR1 Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "HOLD",
+        "Tang Capital": "NEW",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Great Point": "NEW",
+        "RTW Investments": "NEW",
+        "EcoR1 Capital": "DECREASE"
+      }
+    },
+    "CYTK": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 4.1912,
+      "tier1_conviction_overlap": 3.6324,
+      "max_tier1_position_pct": 0.87,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management",
+        "Great Point",
+        "Palo Alto Investors",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2,
+        "Great Point": 1,
+        "Palo Alto Investors": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Great Point": "INCREASE",
+        "Palo Alto Investors": "INCREASE",
+        "Logos Global": "NEW"
+      }
+    },
+    "DNLI": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 5.5605,
+      "tier1_conviction_overlap": 5.0938,
+      "max_tier1_position_pct": 2.7,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Balyasny Asset",
+        "Baker Bros",
+        "Casdin Capital",
+        "EcoR1 Capital"
+      ],
+      "holder_tiers": {
+        "Balyasny Asset": 2,
+        "Baker Bros": 1,
+        "Casdin Capital": 1,
+        "EcoR1 Capital": 1
+      },
+      "position_changes": {
+        "Balyasny Asset": "NEW",
+        "Baker Bros": "NEW",
+        "Casdin Capital": "INCREASE",
+        "EcoR1 Capital": "NEW"
+      }
+    },
+    "DVAX": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 6.1277,
+      "tier1_conviction_overlap": 4.2835,
+      "max_tier1_position_pct": 5.21,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Rock Springs",
+        "Bain Capital Life",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Rock Springs": 1,
+        "Bain Capital Life": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "HOLD",
+        "Balyasny Asset": "NEW",
+        "Millennium Management": "DECREASE",
+        "Rock Springs": "DECREASE",
+        "Bain Capital Life": "DECREASE"
+      }
+    },
+    "EBS": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.0254,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Balyasny Asset": "NEW"
+      }
+    },
+    "EDIT": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 2.0979,
+      "tier1_conviction_overlap": 0.797,
+      "max_tier1_position_pct": 0.73,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Viking Global",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Viking Global": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Deerfield Management": "DECREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Viking Global": "DECREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "ENTA": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 5.0468,
+      "tier1_conviction_overlap": 3.9306,
+      "max_tier1_position_pct": 11.58,
+      "days_since_latest_filing": 43,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Tang Capital",
+        "Millennium Management",
+        "Krensavage Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Tang Capital": 1,
+        "Millennium Management": 2,
+        "Krensavage Asset": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "HOLD",
+        "Tang Capital": "NEW",
+        "Millennium Management": "INCREASE",
+        "Krensavage Asset": "INCREASE"
+      }
+    },
+    "EOLS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 2.132,
+      "tier1_conviction_overlap": 1.2933,
+      "max_tier1_position_pct": 1.92,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Balyasny Asset",
+        "Tang Capital",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Balyasny Asset": 2,
+        "Tang Capital": 1,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Balyasny Asset": "DECREASE",
+        "Tang Capital": "DECREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "ESPR": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 3.5392,
+      "tier1_conviction_overlap": 2.7005,
+      "max_tier1_position_pct": 2.1,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Boxer Capital",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Boxer Capital": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Balyasny Asset": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Boxer Capital": "DECREASE"
+      }
+    },
+    "ETON": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 3.5581,
+      "tier1_conviction_overlap": 3.0935,
+      "max_tier1_position_pct": 3.95,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Opaleye Management"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Opaleye Management": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "NEW",
+        "Opaleye Management": "INCREASE"
+      }
+    },
+    "EXEL": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 9,
+      "coinvest_overlap_count": 9,
+      "conviction_overlap": 10.2228,
+      "tier1_conviction_overlap": 8.7675,
+      "max_tier1_position_pct": 2.58,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Sectoral Asset",
+        "RA Capital",
+        "EcoR1 Capital",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "RA Capital": 1,
+        "EcoR1 Capital": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "HOLD",
+        "Orbimed Advisors": "DECREASE",
+        "Balyasny Asset": "DECREASE",
+        "Millennium Management": "INCREASE",
+        "Sectoral Asset": "NEW",
+        "RA Capital": "NEW",
+        "EcoR1 Capital": "NEW"
+      }
+    },
+    "FATE": {
+      "tier1_count": 8,
+      "sponsor_tier1_count": 8,
+      "sponsor_overlap_count": 10,
+      "coinvest_overlap_count": 10,
+      "conviction_overlap": 16.0673,
+      "tier1_conviction_overlap": 15.3219,
+      "max_tier1_position_pct": 6.98,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Millennium Management",
+        "Redmile Group",
+        "Casdin Capital",
+        "Cormorant Asset",
+        "EcoR1 Capital",
+        "Ghost Tree",
+        "Sofinnova Investments",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Millennium Management": 2,
+        "Redmile Group": 1,
+        "Casdin Capital": 1,
+        "Cormorant Asset": 1,
+        "EcoR1 Capital": 1,
+        "Ghost Tree": 1,
+        "Sofinnova Investments": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Deerfield Management": "HOLD",
+        "Millennium Management": "DECREASE",
+        "Redmile Group": "INCREASE",
+        "Casdin Capital": "INCREASE",
+        "Cormorant Asset": "NEW",
+        "EcoR1 Capital": "INCREASE",
+        "Ghost Tree": "HOLD",
+        "Sofinnova Investments": "DECREASE",
+        "Logos Global": "NEW"
+      }
+    },
+    "FLGT": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 1.9878,
+      "tier1_conviction_overlap": 1.2444,
+      "max_tier1_position_pct": 0.04,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Baker Bros",
+        "Millennium Management",
+        "RTW Investments"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "RTW Investments": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "DECREASE",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "NEW",
+        "RTW Investments": "NEW"
+      }
+    },
+    "FOLD": {
+      "tier1_count": 9,
+      "sponsor_tier1_count": 9,
+      "sponsor_overlap_count": 12,
+      "coinvest_overlap_count": 12,
+      "conviction_overlap": 15.7253,
+      "tier1_conviction_overlap": 14.7944,
+      "max_tier1_position_pct": 6.52,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Palo Alto Investors",
+        "Redmile Group",
+        "Boxer Capital",
+        "EcoR1 Capital",
+        "Rock Springs",
+        "Sofinnova Investments",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Palo Alto Investors": 1,
+        "Redmile Group": 1,
+        "Boxer Capital": 1,
+        "EcoR1 Capital": 1,
+        "Rock Springs": 1,
+        "Sofinnova Investments": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "HOLD",
+        "Deerfield Management": "NEW",
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "DECREASE",
+        "Palo Alto Investors": "HOLD",
+        "Redmile Group": "HOLD",
+        "Boxer Capital": "HOLD",
+        "EcoR1 Capital": "NEW",
+        "Rock Springs": "HOLD",
+        "Sofinnova Investments": "HOLD",
+        "Logos Global": "NEW"
+      }
+    },
+    "FULC": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 4.0392,
+      "tier1_conviction_overlap": 3.5746,
+      "max_tier1_position_pct": 2.42,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management",
+        "Casdin Capital",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2,
+        "Casdin Capital": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "Millennium Management": "INCREASE",
+        "Casdin Capital": "DECREASE",
+        "Logos Global": "INCREASE"
+      }
+    },
+    "GERN": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 0.8387,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Balyasny Asset",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Balyasny Asset": "DECREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "GH": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 2.5787,
+      "tier1_conviction_overlap": 1.461,
+      "max_tier1_position_pct": 0.55,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Viking Global",
+        "Sectoral Asset",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Viking Global": 2,
+        "Sectoral Asset": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "NEW",
+        "Viking Global": "DECREASE",
+        "Sectoral Asset": "NEW",
+        "Rock Springs": "DECREASE"
+      }
+    },
+    "GILD": {
+      "tier1_count": 6,
+      "sponsor_tier1_count": 6,
+      "sponsor_overlap_count": 9,
+      "coinvest_overlap_count": 9,
+      "conviction_overlap": 12.6236,
+      "tier1_conviction_overlap": 11.5293,
+      "max_tier1_position_pct": 2.83,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Sectoral Asset",
+        "RA Capital",
+        "Casdin Capital",
+        "Krensavage Asset",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "RA Capital": 1,
+        "Casdin Capital": 1,
+        "Krensavage Asset": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Orbimed Advisors": "INCREASE",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "INCREASE",
+        "RA Capital": "NEW",
+        "Casdin Capital": "HOLD",
+        "Krensavage Asset": "INCREASE"
+      }
+    },
+    "GLPG": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 4.504,
+      "tier1_conviction_overlap": 3.294,
+      "max_tier1_position_pct": 1.42,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Baker Bros",
+        "Millennium Management",
+        "Cormorant Asset",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Cormorant Asset": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Baker Bros": "HOLD",
+        "Millennium Management": "DECREASE",
+        "Cormorant Asset": "HOLD",
+        "Rock Springs": "HOLD"
+      }
+    },
+    "GMAB": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 5.0355,
+      "tier1_conviction_overlap": 3.3639,
+      "max_tier1_position_pct": 1.45,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Viking Global",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Redmile Group",
+        "EcoR1 Capital"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Viking Global": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Redmile Group": 1,
+        "EcoR1 Capital": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "NEW",
+        "Viking Global": "INCREASE",
+        "Balyasny Asset": "DECREASE",
+        "Millennium Management": "INCREASE",
+        "Redmile Group": "INCREASE",
+        "EcoR1 Capital": "NEW"
+      }
+    },
+    "GOSS": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 2.8242,
+      "tier1_conviction_overlap": 2.0808,
+      "max_tier1_position_pct": 1.51,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Millennium Management",
+        "Redmile Group",
+        "Boxer Capital",
+        "Cormorant Asset"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "Redmile Group": 1,
+        "Boxer Capital": 1,
+        "Cormorant Asset": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "NEW",
+        "Millennium Management": "DECREASE",
+        "Redmile Group": "DECREASE",
+        "Boxer Capital": "DECREASE",
+        "Cormorant Asset": "DECREASE"
+      }
+    },
+    "GRFS": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.0242,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "DECREASE",
+        "Balyasny Asset": "NEW",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "HALO": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 0.9308,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "HOLD",
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "HROW": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.7433,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "NEW"
+      }
+    },
+    "HRTX": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 6.1761,
+      "tier1_conviction_overlap": 5.1528,
+      "max_tier1_position_pct": 4.78,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Tang Capital",
+        "Baker Bros",
+        "Millennium Management",
+        "Suvretta Capital",
+        "Sofinnova Investments"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Tang Capital": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Suvretta Capital": 1,
+        "Sofinnova Investments": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "NEW",
+        "Tang Capital": "DECREASE",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Suvretta Capital": "NEW",
+        "Sofinnova Investments": "INCREASE"
+      }
+    },
+    "IDYA": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.2121,
+      "tier1_conviction_overlap": 0.9333,
+      "max_tier1_position_pct": 0.21,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "Millennium Management",
+        "Boxer Capital"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Boxer Capital": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Boxer Capital": "DECREASE"
+      }
+    },
+    "ILMN": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 2.9934,
+      "tier1_conviction_overlap": 1.5034,
+      "max_tier1_position_pct": 0.87,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Casdin Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Casdin Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "NEW",
+        "Balyasny Asset": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "DECREASE",
+        "Casdin Capital": "DECREASE"
+      }
+    },
+    "IMMP": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.9292,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "INCREASE",
+        "Millennium Management": "NEW"
+      }
+    },
+    "IMVT": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 7.0153,
+      "tier1_conviction_overlap": 6.5507,
+      "max_tier1_position_pct": 2.93,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Orbimed Advisors",
+        "Millennium Management",
+        "RTW Investments",
+        "Suvretta Capital",
+        "Rock Springs",
+        "Ghost Tree"
+      ],
+      "holder_tiers": {
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "RTW Investments": 1,
+        "Suvretta Capital": 1,
+        "Rock Springs": 1,
+        "Ghost Tree": 1
+      },
+      "position_changes": {
+        "Orbimed Advisors": "NEW",
+        "Millennium Management": "NEW",
+        "RTW Investments": "NEW",
+        "Suvretta Capital": "NEW",
+        "Rock Springs": "NEW",
+        "Ghost Tree": "DECREASE"
+      }
+    },
+    "INCY": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 4.7461,
+      "tier1_conviction_overlap": 3.2954,
+      "max_tier1_position_pct": 14.42,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Baker Bros",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "HOLD",
+        "Balyasny Asset": "INCREASE",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "HOLD",
+        "Rock Springs": "DECREASE"
+      }
+    },
+    "INSM": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 5.7637,
+      "tier1_conviction_overlap": 4.7403,
+      "max_tier1_position_pct": 8.13,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Baker Bros",
+        "Millennium Management",
+        "Palo Alto Investors",
+        "RA Capital",
+        "Suvretta Capital",
+        "Cormorant Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Palo Alto Investors": 1,
+        "RA Capital": 1,
+        "Suvretta Capital": 1,
+        "Cormorant Asset": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "NEW",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Palo Alto Investors": "DECREASE",
+        "RA Capital": "NEW",
+        "Suvretta Capital": "NEW",
+        "Cormorant Asset": "NEW"
+      }
+    },
+    "INVA": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 0.8387,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Balyasny Asset": "DECREASE"
+      }
+    },
+    "IONS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 2.8832,
+      "tier1_conviction_overlap": 1.579,
+      "max_tier1_position_pct": 1.03,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Millennium Management",
+        "EcoR1 Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "EcoR1 Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Balyasny Asset": "NEW",
+        "Millennium Management": "DECREASE",
+        "EcoR1 Capital": "NEW"
+      }
+    },
+    "IOVA": {
+      "tier1_count": 6,
+      "sponsor_tier1_count": 6,
+      "sponsor_overlap_count": 9,
+      "coinvest_overlap_count": 9,
+      "conviction_overlap": 12.061,
+      "tier1_conviction_overlap": 10.756,
+      "max_tier1_position_pct": 7.47,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Orbimed Advisors",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Great Point",
+        "Suvretta Capital",
+        "Acuta Capital",
+        "Ghost Tree",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Orbimed Advisors": 1,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Great Point": 1,
+        "Suvretta Capital": 1,
+        "Acuta Capital": 1,
+        "Ghost Tree": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Orbimed Advisors": "HOLD",
+        "Balyasny Asset": "NEW",
+        "Millennium Management": "HOLD",
+        "Great Point": "DECREASE",
+        "Suvretta Capital": "NEW",
+        "Acuta Capital": "DECREASE",
+        "Ghost Tree": "DECREASE",
+        "Logos Global": "INCREASE"
+      }
+    },
+    "IRWD": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 7.8999,
+      "tier1_conviction_overlap": 6.5516,
+      "max_tier1_position_pct": 4.63,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Suvretta Capital",
+        "EcoR1 Capital",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Suvretta Capital": 1,
+        "EcoR1 Capital": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Balyasny Asset": "NEW",
+        "Millennium Management": "DECREASE",
+        "Suvretta Capital": "NEW",
+        "EcoR1 Capital": "DECREASE"
+      }
+    },
+    "JAZZ": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 0.8805,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "KALV": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 4.6605,
+      "tier1_conviction_overlap": 4.1959,
+      "max_tier1_position_pct": 0.74,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Suvretta Capital",
+        "Ghost Tree",
+        "Opaleye Management",
+        "Samsara BioCapital"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Suvretta Capital": 1,
+        "Ghost Tree": 1,
+        "Opaleye Management": 1,
+        "Samsara BioCapital": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "NEW",
+        "Orbimed Advisors": "INCREASE",
+        "Suvretta Capital": "NEW",
+        "Ghost Tree": "DECREASE",
+        "Opaleye Management": "NEW",
+        "Samsara BioCapital": "DECREASE"
+      }
+    },
+    "KMDA": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.2787,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "DECREASE"
+      }
+    },
+    "KOD": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 3.6449,
+      "tier1_conviction_overlap": 2.8074,
+      "max_tier1_position_pct": 3.4,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Baker Bros",
+        "Millennium Management",
+        "Boxer Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Boxer Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Boxer Capital": "NEW"
+      }
+    },
+    "KRYS": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.9871,
+      "tier1_conviction_overlap": 1.5225,
+      "max_tier1_position_pct": 1.28,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Baker Bros",
+        "Redmile Group"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "Redmile Group": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "NEW",
+        "Baker Bros": "DECREASE",
+        "Redmile Group": "DECREASE"
+      }
+    },
+    "KURA": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 5.4593,
+      "tier1_conviction_overlap": 4.4359,
+      "max_tier1_position_pct": 3.65,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management",
+        "Great Point",
+        "Boxer Capital",
+        "Acuta Capital",
+        "Cormorant Asset",
+        "EcoR1 Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "Great Point": 1,
+        "Boxer Capital": 1,
+        "Acuta Capital": 1,
+        "Cormorant Asset": 1,
+        "EcoR1 Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "NEW",
+        "Millennium Management": "DECREASE",
+        "Great Point": "DECREASE",
+        "Boxer Capital": "DECREASE",
+        "Acuta Capital": "DECREASE",
+        "Cormorant Asset": "DECREASE",
+        "EcoR1 Capital": "DECREASE"
+      }
+    },
+    "LFCR": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.2092,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "NEW",
+        "Millennium Management": "NEW"
+      }
+    },
+    "LGND": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 2.6555,
+      "tier1_conviction_overlap": 1.4455,
+      "max_tier1_position_pct": 1.03,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "INCREASE"
+      }
+    },
+    "LQDA": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 4.1839,
+      "tier1_conviction_overlap": 3.8123,
+      "max_tier1_position_pct": 2.75,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management",
+        "Great Point",
+        "Samsara BioCapital"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2,
+        "Great Point": 1,
+        "Samsara BioCapital": 1
+      },
+      "position_changes": {
+        "Millennium Management": "HOLD",
+        "Great Point": "INCREASE",
+        "Samsara BioCapital": "INCREASE"
+      }
+    },
+    "MDGL": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 2.6816,
+      "tier1_conviction_overlap": 1.7524,
+      "max_tier1_position_pct": 0.69,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Baker Bros",
+        "Millennium Management",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "NEW",
+        "Baker Bros": "HOLD",
+        "Millennium Management": "NEW",
+        "Rock Springs": "DECREASE"
+      }
+    },
+    "MEDP": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.9313,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "INCREASE"
+      }
+    },
+    "MGTX": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 2.6386,
+      "tier1_conviction_overlap": 2.0798,
+      "max_tier1_position_pct": 0.81,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Sectoral Asset",
+        "EcoR1 Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Sectoral Asset": 1,
+        "EcoR1 Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Sectoral Asset": "DECREASE",
+        "EcoR1 Capital": "NEW"
+      }
+    },
+    "MIRM": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 4.6822,
+      "tier1_conviction_overlap": 4.2176,
+      "max_tier1_position_pct": 1.53,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Deerfield Management",
+        "Baker Bros",
+        "Millennium Management",
+        "Boxer Capital",
+        "Rock Springs",
+        "Sofinnova Investments"
+      ],
+      "holder_tiers": {
+        "Deerfield Management": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Boxer Capital": 1,
+        "Rock Springs": 1,
+        "Sofinnova Investments": 1
+      },
+      "position_changes": {
+        "Deerfield Management": "DECREASE",
+        "Baker Bros": "HOLD",
+        "Millennium Management": "INCREASE",
+        "Boxer Capital": "DECREASE",
+        "Rock Springs": "DECREASE",
+        "Sofinnova Investments": "NEW"
+      }
+    },
+    "MNKD": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.7446,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Millennium Management": "INCREASE"
+      }
+    },
+    "MRNA": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 6.659,
+      "tier1_conviction_overlap": 5.6369,
+      "max_tier1_position_pct": 5.24,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Viking Global",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Avidity Partners",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Viking Global": 2,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Avidity Partners": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Viking Global": "DECREASE",
+        "Millennium Management": "NEW",
+        "Sectoral Asset": "NEW",
+        "Logos Global": "NEW"
+      }
+    },
+    "MRSN": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 8.0534,
+      "tier1_conviction_overlap": 7.0301,
+      "max_tier1_position_pct": 3.09,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Acuta Capital",
+        "Rock Springs",
+        "Ghost Tree",
+        "Sofinnova Investments"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Acuta Capital": 1,
+        "Rock Springs": 1,
+        "Ghost Tree": 1,
+        "Sofinnova Investments": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Acuta Capital": "NEW",
+        "Rock Springs": "HOLD",
+        "Ghost Tree": "INCREASE",
+        "Sofinnova Investments": "NEW"
+      }
+    },
+    "MRUS": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 4.0325,
+      "tier1_conviction_overlap": 3.7538,
+      "max_tier1_position_pct": 2.19,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Baker Bros",
+        "Cormorant Asset",
+        "EcoR1 Capital",
+        "Sofinnova Investments"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "Cormorant Asset": 1,
+        "EcoR1 Capital": 1,
+        "Sofinnova Investments": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "DECREASE",
+        "Baker Bros": "DECREASE",
+        "Cormorant Asset": "DECREASE",
+        "EcoR1 Capital": "DECREASE",
+        "Sofinnova Investments": "DECREASE"
+      }
+    },
+    "MYGN": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.5587,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "NBIX": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 7.1819,
+      "tier1_conviction_overlap": 6.2511,
+      "max_tier1_position_pct": 4.83,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Baker Bros",
+        "Millennium Management",
+        "Cormorant Asset",
+        "Rock Springs",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Cormorant Asset": 1,
+        "Rock Springs": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "HOLD",
+        "Renaissance Technologies": "DECREASE",
+        "Orbimed Advisors": "HOLD",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Cormorant Asset": "DECREASE",
+        "Rock Springs": "DECREASE"
+      }
+    },
+    "NTLA": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.9333,
+      "tier1_conviction_overlap": 0.9333,
+      "max_tier1_position_pct": 0.05,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Orbimed Advisors",
+        "Baker Bros"
+      ],
+      "holder_tiers": {
+        "Orbimed Advisors": 1,
+        "Baker Bros": 1
+      },
+      "position_changes": {
+        "Orbimed Advisors": "DECREASE",
+        "Baker Bros": "DECREASE"
+      }
+    },
+    "NTRA": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 9.3571,
+      "tier1_conviction_overlap": 7.5875,
+      "max_tier1_position_pct": 8.56,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Balyasny Asset",
+        "Millennium Management",
+        "RTW Investments",
+        "Sofinnova Investments"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "RTW Investments": 1,
+        "Sofinnova Investments": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "NEW",
+        "Deerfield Management": "NEW",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "INCREASE",
+        "Balyasny Asset": "INCREASE",
+        "Millennium Management": "HOLD",
+        "RTW Investments": "NEW",
+        "Sofinnova Investments": "DECREASE"
+      }
+    },
+    "NVAX": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.9313,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Millennium Management": "INCREASE"
+      }
+    },
+    "NVCR": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 2.8297,
+      "tier1_conviction_overlap": 1.8064,
+      "max_tier1_position_pct": 0.55,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management",
+        "RA Capital",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "RA Capital": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "NEW",
+        "RA Capital": "NEW",
+        "Rock Springs": "DECREASE"
+      }
+    },
+    "OCGN": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "INCREASE"
+      }
+    },
+    "OCUL": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 4.0424,
+      "tier1_conviction_overlap": 3.1111,
+      "max_tier1_position_pct": 6.72,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management",
+        "Opaleye Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2,
+        "Opaleye Management": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "NEW",
+        "Millennium Management": "INCREASE",
+        "Opaleye Management": "INCREASE"
+      }
+    },
+    "OMER": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 3.2523,
+      "tier1_conviction_overlap": 1.9478,
+      "max_tier1_position_pct": 1.57,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Cormorant Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Cormorant Asset": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "HOLD",
+        "Balyasny Asset": "NEW",
+        "Millennium Management": "NEW",
+        "Cormorant Asset": "INCREASE"
+      }
+    },
+    "OPCH": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.9292,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "NEW",
+        "Millennium Management": "NEW"
+      }
+    },
+    "OPK": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "Millennium Management": "INCREASE"
+      }
+    },
+    "PACB": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.5587,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "PAHC": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.1171,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "HOLD",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "PCRX": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 4.0201,
+      "tier1_conviction_overlap": 3.0896,
+      "max_tier1_position_pct": 1.73,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Millennium Management",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Deerfield Management": "NEW",
+        "Renaissance Technologies": "HOLD",
+        "Millennium Management": "DECREASE",
+        "Rock Springs": "DECREASE"
+      }
+    },
+    "PCVX": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.5587,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "PGEN": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.9313,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "NEW",
+        "Millennium Management": "NEW"
+      }
+    },
+    "PHAT": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.623,
+      "tier1_conviction_overlap": 1.623,
+      "max_tier1_position_pct": 3.02,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "RA Capital"
+      ],
+      "holder_tiers": {
+        "RA Capital": 1
+      },
+      "position_changes": {
+        "RA Capital": "DECREASE"
+      }
+    },
+    "PRQR": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 2.4906,
+      "tier1_conviction_overlap": 1.6531,
+      "max_tier1_position_pct": 1.13,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management",
+        "RTW Investments"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "RTW Investments": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "RTW Investments": "NEW"
+      }
+    },
+    "PRTA": {
+      "tier1_count": 6,
+      "sponsor_tier1_count": 6,
+      "sponsor_overlap_count": 9,
+      "coinvest_overlap_count": 9,
+      "conviction_overlap": 7.1031,
+      "tier1_conviction_overlap": 6.2656,
+      "max_tier1_position_pct": 10.54,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Tang Capital",
+        "Millennium Management",
+        "Great Point",
+        "Palo Alto Investors",
+        "EcoR1 Capital",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Tang Capital": 1,
+        "Millennium Management": 2,
+        "Great Point": 1,
+        "Palo Alto Investors": 1,
+        "EcoR1 Capital": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Tang Capital": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Great Point": "DECREASE",
+        "Palo Alto Investors": "DECREASE",
+        "EcoR1 Capital": "DECREASE",
+        "Rock Springs": "NEW"
+      }
+    },
+    "PSNL": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 1.2424,
+      "tier1_conviction_overlap": 0.7778,
+      "max_tier1_position_pct": 0.09,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management",
+        "RTW Investments"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2,
+        "RTW Investments": 1
+      },
+      "position_changes": {
+        "Millennium Management": "INCREASE",
+        "RTW Investments": "NEW"
+      }
+    },
+    "PTCT": {
+      "tier1_count": 10,
+      "sponsor_tier1_count": 10,
+      "sponsor_overlap_count": 13,
+      "coinvest_overlap_count": 13,
+      "conviction_overlap": 16.8215,
+      "tier1_conviction_overlap": 15.7981,
+      "max_tier1_position_pct": 8.22,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Tang Capital",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Great Point",
+        "Palo Alto Investors",
+        "RTW Investments",
+        "Suvretta Capital",
+        "EcoR1 Capital",
+        "Sofinnova Investments"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Tang Capital": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Great Point": 1,
+        "Palo Alto Investors": 1,
+        "RTW Investments": 1,
+        "Suvretta Capital": 1,
+        "EcoR1 Capital": 1,
+        "Sofinnova Investments": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Deerfield Management": "INCREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Tang Capital": "INCREASE",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "DECREASE",
+        "Great Point": "HOLD",
+        "Palo Alto Investors": "HOLD",
+        "RTW Investments": "NEW",
+        "Suvretta Capital": "NEW",
+        "EcoR1 Capital": "NEW",
+        "Sofinnova Investments": "DECREASE"
+      }
+    },
+    "PTGX": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 4.1831,
+      "tier1_conviction_overlap": 3.2526,
+      "max_tier1_position_pct": 0.81,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Baker Bros",
+        "Millennium Management",
+        "RTW Investments",
+        "Ghost Tree"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "RTW Investments": 1,
+        "Ghost Tree": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "HOLD",
+        "Orbimed Advisors": "DECREASE",
+        "Baker Bros": "INCREASE",
+        "Millennium Management": "DECREASE",
+        "RTW Investments": "NEW",
+        "Ghost Tree": "DECREASE"
+      }
+    },
+    "QTRX": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.6504,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "HOLD"
+      }
+    },
+    "QURE": {
+      "tier1_count": 12,
+      "sponsor_tier1_count": 12,
+      "sponsor_overlap_count": 15,
+      "coinvest_overlap_count": 15,
+      "conviction_overlap": 15.6507,
+      "tier1_conviction_overlap": 14.6253,
+      "max_tier1_position_pct": 3.69,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Orbimed Advisors",
+        "Balyasny Asset",
+        "Baker Bros",
+        "Millennium Management",
+        "Sectoral Asset",
+        "RA Capital",
+        "Redmile Group",
+        "Boxer Capital",
+        "RTW Investments",
+        "Acuta Capital",
+        "Cormorant Asset",
+        "Rock Springs",
+        "Opaleye Management",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Orbimed Advisors": 1,
+        "Balyasny Asset": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "RA Capital": 1,
+        "Redmile Group": 1,
+        "Boxer Capital": 1,
+        "RTW Investments": 1,
+        "Acuta Capital": 1,
+        "Cormorant Asset": 1,
+        "Rock Springs": 1,
+        "Opaleye Management": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Balyasny Asset": "DECREASE",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "INCREASE",
+        "RA Capital": "NEW",
+        "Redmile Group": "DECREASE",
+        "Boxer Capital": "DECREASE",
+        "RTW Investments": "NEW",
+        "Acuta Capital": "INCREASE",
+        "Cormorant Asset": "DECREASE",
+        "Rock Springs": "DECREASE",
+        "Opaleye Management": "DECREASE"
+      }
+    },
+    "RARE": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 4.7964,
+      "tier1_conviction_overlap": 3.8651,
+      "max_tier1_position_pct": 1.72,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management",
+        "EcoR1 Capital",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2,
+        "EcoR1 Capital": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Millennium Management": "NEW",
+        "EcoR1 Capital": "INCREASE",
+        "Rock Springs": "INCREASE"
+      }
+    },
+    "RCKT": {
+      "tier1_count": 8,
+      "sponsor_tier1_count": 8,
+      "sponsor_overlap_count": 10,
+      "coinvest_overlap_count": 10,
+      "conviction_overlap": 12.2484,
+      "tier1_conviction_overlap": 11.3171,
+      "max_tier1_position_pct": 10.1,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Tang Capital",
+        "Boxer Capital",
+        "RTW Investments",
+        "Cormorant Asset",
+        "Ghost Tree",
+        "Samsara BioCapital",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Tang Capital": 1,
+        "Boxer Capital": 1,
+        "RTW Investments": 1,
+        "Cormorant Asset": 1,
+        "Ghost Tree": 1,
+        "Samsara BioCapital": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Deerfield Management": "DECREASE",
+        "Renaissance Technologies": "NEW",
+        "Tang Capital": "DECREASE",
+        "Boxer Capital": "DECREASE",
+        "RTW Investments": "NEW",
+        "Cormorant Asset": "DECREASE",
+        "Ghost Tree": "DECREASE",
+        "Samsara BioCapital": "NEW",
+        "Logos Global": "DECREASE"
+      }
+    },
+    "RCUS": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 6.7246,
+      "tier1_conviction_overlap": 5.3287,
+      "max_tier1_position_pct": 2.92,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Baker Bros",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Boxer Capital",
+        "EcoR1 Capital"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Boxer Capital": 1,
+        "EcoR1 Capital": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "INCREASE",
+        "Balyasny Asset": "NEW",
+        "Baker Bros": "INCREASE",
+        "Millennium Management": "INCREASE",
+        "Sectoral Asset": "NEW",
+        "Boxer Capital": "INCREASE",
+        "EcoR1 Capital": "DECREASE"
+      }
+    },
+    "REGN": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 11.2475,
+      "tier1_conviction_overlap": 10.0383,
+      "max_tier1_position_pct": 13.64,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Boxer Capital",
+        "Krensavage Asset",
+        "Avidity Partners"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Boxer Capital": 1,
+        "Krensavage Asset": 1,
+        "Avidity Partners": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Millennium Management": "INCREASE",
+        "Sectoral Asset": "NEW",
+        "Boxer Capital": "NEW",
+        "Krensavage Asset": "HOLD"
+      }
+    },
+    "REPL": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 3.2761,
+      "tier1_conviction_overlap": 2.7186,
+      "max_tier1_position_pct": 4.79,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Millennium Management",
+        "Redmile Group",
+        "Bain Capital Life"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "Redmile Group": 1,
+        "Bain Capital Life": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Redmile Group": "DECREASE",
+        "Bain Capital Life": "DECREASE"
+      }
+    },
+    "RGEN": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.2113,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Balyasny Asset": "NEW"
+      }
+    },
+    "RGNX": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 4.4105,
+      "tier1_conviction_overlap": 3.9439,
+      "max_tier1_position_pct": 2.12,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Orbimed Advisors",
+        "Redmile Group",
+        "RTW Investments",
+        "Suvretta Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Orbimed Advisors": 1,
+        "Redmile Group": 1,
+        "RTW Investments": 1,
+        "Suvretta Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Orbimed Advisors": "INCREASE",
+        "Redmile Group": "DECREASE",
+        "RTW Investments": "NEW",
+        "Suvretta Capital": "NEW"
+      }
+    },
+    "RVMD": {
+      "tier1_count": 7,
+      "sponsor_tier1_count": 7,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 13.2399,
+      "tier1_conviction_overlap": 12.7753,
+      "max_tier1_position_pct": 4.55,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Deerfield Management",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Redmile Group",
+        "Boxer Capital",
+        "Casdin Capital",
+        "Cormorant Asset",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "Deerfield Management": 1,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Redmile Group": 1,
+        "Boxer Capital": 1,
+        "Casdin Capital": 1,
+        "Cormorant Asset": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "Deerfield Management": "NEW",
+        "Orbimed Advisors": "NEW",
+        "Millennium Management": "NEW",
+        "Redmile Group": "NEW",
+        "Boxer Capital": "NEW",
+        "Casdin Capital": "NEW",
+        "Cormorant Asset": "NEW",
+        "Logos Global": "NEW"
+      }
+    },
+    "RYTM": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 6.6892,
+      "tier1_conviction_overlap": 6.2246,
+      "max_tier1_position_pct": 2.61,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Baker Bros",
+        "RA Capital",
+        "Rock Springs",
+        "Samsara BioCapital"
+      ],
+      "holder_tiers": {
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Baker Bros": 1,
+        "RA Capital": 1,
+        "Rock Springs": 1,
+        "Samsara BioCapital": 1
+      },
+      "position_changes": {
+        "Deerfield Management": "DECREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Baker Bros": "DECREASE",
+        "RA Capital": "DECREASE",
+        "Rock Springs": "HOLD",
+        "Samsara BioCapital": "NEW"
+      }
+    },
+    "SGMO": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 7.6391,
+      "tier1_conviction_overlap": 6.4279,
+      "max_tier1_position_pct": 1.82,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Balyasny Asset",
+        "Tang Capital",
+        "Baker Bros",
+        "Millennium Management",
+        "Great Point",
+        "Casdin Capital",
+        "EcoR1 Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Balyasny Asset": 2,
+        "Tang Capital": 1,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "Great Point": 1,
+        "Casdin Capital": 1,
+        "EcoR1 Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Balyasny Asset": "INCREASE",
+        "Tang Capital": "NEW",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "NEW",
+        "Great Point": "NEW",
+        "Casdin Capital": "DECREASE",
+        "EcoR1 Capital": "NEW"
+      }
+    },
+    "SIGA": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 1.6027,
+      "tier1_conviction_overlap": 0.6723,
+      "max_tier1_position_pct": 0.52,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Redmile Group"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Redmile Group": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "HOLD",
+        "Balyasny Asset": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Redmile Group": "DECREASE"
+      }
+    },
+    "SNDX": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 5.4241,
+      "tier1_conviction_overlap": 4.0283,
+      "max_tier1_position_pct": 0.73,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Palo Alto Investors",
+        "Boxer Capital",
+        "Ghost Tree"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Palo Alto Investors": 1,
+        "Boxer Capital": 1,
+        "Ghost Tree": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "INCREASE",
+        "Millennium Management": "INCREASE",
+        "Palo Alto Investors": "NEW",
+        "Boxer Capital": "INCREASE",
+        "Ghost Tree": "NEW"
+      }
+    },
+    "SNY": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.3251,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Balyasny Asset"
+      ],
+      "holder_tiers": {
+        "Balyasny Asset": 2
+      },
+      "position_changes": {
+        "Balyasny Asset": "DECREASE"
+      }
+    },
+    "SRPT": {
+      "tier1_count": 10,
+      "sponsor_tier1_count": 10,
+      "sponsor_overlap_count": 13,
+      "coinvest_overlap_count": 13,
+      "conviction_overlap": 15.6371,
+      "tier1_conviction_overlap": 14.6137,
+      "max_tier1_position_pct": 6.97,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Sectoral Asset",
+        "RTW Investments",
+        "Casdin Capital",
+        "Cormorant Asset",
+        "Rock Springs",
+        "Sofinnova Investments",
+        "Avidity Partners",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "RTW Investments": 1,
+        "Casdin Capital": 1,
+        "Cormorant Asset": 1,
+        "Rock Springs": 1,
+        "Sofinnova Investments": 1,
+        "Avidity Partners": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Deerfield Management": "DECREASE",
+        "Renaissance Technologies": "NEW",
+        "Orbimed Advisors": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "INCREASE",
+        "RTW Investments": "NEW",
+        "Casdin Capital": "DECREASE",
+        "Cormorant Asset": "DECREASE",
+        "Rock Springs": "DECREASE",
+        "Sofinnova Investments": "DECREASE",
+        "Logos Global": "DECREASE"
+      }
+    },
+    "SRRK": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.2327,
+      "tier1_conviction_overlap": 1.2327,
+      "max_tier1_position_pct": 0.98,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Redmile Group"
+      ],
+      "holder_tiers": {
+        "Redmile Group": 1
+      },
+      "position_changes": {
+        "Redmile Group": "HOLD"
+      }
+    },
+    "STOK": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 7.6237,
+      "tier1_conviction_overlap": 7.3449,
+      "max_tier1_position_pct": 3.49,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management",
+        "RA Capital",
+        "Redmile Group",
+        "RTW Investments",
+        "Casdin Capital",
+        "Cormorant Asset"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2,
+        "RA Capital": 1,
+        "Redmile Group": 1,
+        "RTW Investments": 1,
+        "Casdin Capital": 1,
+        "Cormorant Asset": 1
+      },
+      "position_changes": {
+        "Millennium Management": "DECREASE",
+        "RA Capital": "DECREASE",
+        "Redmile Group": "INCREASE",
+        "RTW Investments": "NEW",
+        "Casdin Capital": "DECREASE",
+        "Cormorant Asset": "DECREASE"
+      }
+    },
+    "STRO": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 4.1676,
+      "tier1_conviction_overlap": 3.8889,
+      "max_tier1_position_pct": 6.61,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Suvretta Capital",
+        "Samsara BioCapital"
+      ],
+      "holder_tiers": {
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Suvretta Capital": 1,
+        "Samsara BioCapital": 1
+      },
+      "position_changes": {
+        "Orbimed Advisors": "HOLD",
+        "Millennium Management": "DECREASE",
+        "Suvretta Capital": "NEW",
+        "Samsara BioCapital": "HOLD"
+      }
+    },
+    "SUPN": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 0.9321,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "HOLD",
+        "Renaissance Technologies": "DECREASE",
+        "Balyasny Asset": "DECREASE"
+      }
+    },
+    "SVRA": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 4.0665,
+      "tier1_conviction_overlap": 3.602,
+      "max_tier1_position_pct": 3.89,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management",
+        "EcoR1 Capital",
+        "Bain Capital Life",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2,
+        "EcoR1 Capital": 1,
+        "Bain Capital Life": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "Millennium Management": "INCREASE",
+        "EcoR1 Capital": "DECREASE",
+        "Bain Capital Life": "HOLD",
+        "Logos Global": "DECREASE"
+      }
+    },
+    "TARS": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.1961,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "INCREASE"
+      }
+    },
+    "TBPH": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 2.9824,
+      "tier1_conviction_overlap": 2.6091,
+      "max_tier1_position_pct": 0.72,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Orbimed Advisors",
+        "Cormorant Asset",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Orbimed Advisors": 1,
+        "Cormorant Asset": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "HOLD",
+        "Orbimed Advisors": "NEW",
+        "Cormorant Asset": "INCREASE",
+        "Rock Springs": "HOLD"
+      }
+    },
+    "TECH": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 0.8375,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "DECREASE"
+      }
+    },
+    "TGTX": {
+      "tier1_count": 6,
+      "sponsor_tier1_count": 6,
+      "sponsor_overlap_count": 10,
+      "coinvest_overlap_count": 10,
+      "conviction_overlap": 9.4741,
+      "tier1_conviction_overlap": 8.1699,
+      "max_tier1_position_pct": 3.66,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Millennium Management",
+        "Great Point",
+        "RA Capital",
+        "Ghost Tree",
+        "Opaleye Management",
+        "Sofinnova Investments",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "Great Point": 1,
+        "RA Capital": 1,
+        "Ghost Tree": 1,
+        "Opaleye Management": 1,
+        "Sofinnova Investments": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Balyasny Asset": "NEW",
+        "Millennium Management": "DECREASE",
+        "Great Point": "DECREASE",
+        "RA Capital": "HOLD",
+        "Ghost Tree": "INCREASE",
+        "Opaleye Management": "DECREASE",
+        "Sofinnova Investments": "DECREASE",
+        "Logos Global": "NEW"
+      }
+    },
+    "TSHA": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 0.6517,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Millennium Management": "HOLD"
+      }
+    },
+    "TWST": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 7.0624,
+      "tier1_conviction_overlap": 6.224,
+      "max_tier1_position_pct": 3.25,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Millennium Management",
+        "Redmile Group",
+        "RTW Investments",
+        "Casdin Capital",
+        "Cormorant Asset"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Millennium Management": 2,
+        "Redmile Group": 1,
+        "RTW Investments": 1,
+        "Casdin Capital": 1,
+        "Cormorant Asset": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "NEW",
+        "Millennium Management": "HOLD",
+        "Redmile Group": "NEW",
+        "RTW Investments": "NEW",
+        "Casdin Capital": "INCREASE",
+        "Cormorant Asset": "INCREASE"
+      }
+    },
+    "TXG": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 5.7951,
+      "tier1_conviction_overlap": 4.3993,
+      "max_tier1_position_pct": 1.73,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "RTW Investments",
+        "Rock Springs",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "RTW Investments": 1,
+        "Rock Springs": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "NEW",
+        "Orbimed Advisors": "NEW",
+        "Millennium Management": "INCREASE",
+        "RTW Investments": "NEW",
+        "Rock Springs": "DECREASE",
+        "Logos Global": "NEW"
+      }
+    },
+    "URGN": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 1.2444,
+      "tier1_conviction_overlap": 1.2444,
+      "max_tier1_position_pct": 0.07,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "Palo Alto Investors"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "Palo Alto Investors": 1
+      },
+      "position_changes": {
+        "Baker Bros": "DECREASE",
+        "Palo Alto Investors": "NEW"
+      }
+    },
+    "UTHR": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 9,
+      "coinvest_overlap_count": 9,
+      "conviction_overlap": 14.571,
+      "tier1_conviction_overlap": 12.9284,
+      "max_tier1_position_pct": 16.46,
+      "days_since_latest_filing": 43,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Tang Capital",
+        "Millennium Management",
+        "Great Point",
+        "Palo Alto Investors",
+        "Krensavage Asset",
+        "Sofinnova Investments"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Tang Capital": 1,
+        "Millennium Management": 2,
+        "Great Point": 1,
+        "Palo Alto Investors": 1,
+        "Krensavage Asset": 1,
+        "Sofinnova Investments": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Balyasny Asset": "DECREASE",
+        "Tang Capital": "NEW",
+        "Millennium Management": "DECREASE",
+        "Great Point": "INCREASE",
+        "Palo Alto Investors": "DECREASE",
+        "Krensavage Asset": "INCREASE",
+        "Sofinnova Investments": "INCREASE"
+      }
+    },
+    "VCEL": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 5.2995,
+      "tier1_conviction_overlap": 3.9037,
+      "max_tier1_position_pct": 1.76,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Deerfield Management",
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "Millennium Management",
+        "RA Capital",
+        "RTW Investments"
+      ],
+      "holder_tiers": {
+        "Deerfield Management": 1,
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "Millennium Management": 2,
+        "RA Capital": 1,
+        "RTW Investments": 1
+      },
+      "position_changes": {
+        "Deerfield Management": "DECREASE",
+        "Renaissance Technologies": "NEW",
+        "Balyasny Asset": "INCREASE",
+        "Millennium Management": "INCREASE",
+        "RA Capital": "NEW",
+        "RTW Investments": "NEW"
+      }
+    },
+    "VCYT": {
+      "tier1_count": 0,
+      "sponsor_tier1_count": 0,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.4646,
+      "tier1_conviction_overlap": 0.0,
+      "max_tier1_position_pct": 0.0,
+      "days_since_latest_filing": 47,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "Millennium Management": "NEW"
+      }
+    },
+    "VIR": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 2.4618,
+      "tier1_conviction_overlap": 1.5305,
+      "max_tier1_position_pct": 0.97,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Renaissance Technologies",
+        "Balyasny Asset",
+        "EcoR1 Capital"
+      ],
+      "holder_tiers": {
+        "Renaissance Technologies": 2,
+        "Balyasny Asset": 2,
+        "EcoR1 Capital": 1
+      },
+      "position_changes": {
+        "Renaissance Technologies": "NEW",
+        "Balyasny Asset": "NEW",
+        "EcoR1 Capital": "NEW"
+      }
+    },
+    "VKTX": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 1.3979,
+      "tier1_conviction_overlap": 0.4667,
+      "max_tier1_position_pct": 0.01,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Baker Bros",
+        "Millennium Management"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "NEW"
+      }
+    },
+    "VNDA": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 4.005,
+      "tier1_conviction_overlap": 2.795,
+      "max_tier1_position_pct": 3.59,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Tang Capital",
+        "Millennium Management",
+        "Palo Alto Investors"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Tang Capital": 1,
+        "Millennium Management": 2,
+        "Palo Alto Investors": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Tang Capital": "NEW",
+        "Millennium Management": "INCREASE",
+        "Palo Alto Investors": "DECREASE"
+      }
+    },
+    "VRTX": {
+      "tier1_count": 6,
+      "sponsor_tier1_count": 6,
+      "sponsor_overlap_count": 9,
+      "coinvest_overlap_count": 9,
+      "conviction_overlap": 11.2046,
+      "tier1_conviction_overlap": 9.7099,
+      "max_tier1_position_pct": 3.01,
+      "days_since_latest_filing": 13,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Sectoral Asset",
+        "Rock Springs",
+        "Sofinnova Investments",
+        "Avidity Partners",
+        "Logos Global"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Sectoral Asset": 1,
+        "Rock Springs": 1,
+        "Sofinnova Investments": 1,
+        "Avidity Partners": 1,
+        "Logos Global": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "HOLD",
+        "Orbimed Advisors": "HOLD",
+        "Millennium Management": "DECREASE",
+        "Sectoral Asset": "HOLD",
+        "Rock Springs": "DECREASE",
+        "Sofinnova Investments": "DECREASE",
+        "Logos Global": "NEW"
+      }
+    },
+    "VYGR": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 1.8001,
+      "tier1_conviction_overlap": 0.9626,
+      "max_tier1_position_pct": 1.06,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Millennium Management",
+        "Casdin Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Millennium Management": 2,
+        "Casdin Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "DECREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "Casdin Capital": "DECREASE"
+      }
+    },
+    "WVE": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 5.7367,
+      "tier1_conviction_overlap": 5.27,
+      "max_tier1_position_pct": 2.3,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "RA Capital",
+        "Redmile Group",
+        "RTW Investments"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "RA Capital": 1,
+        "Redmile Group": 1,
+        "RTW Investments": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "RA Capital": "INCREASE",
+        "Redmile Group": "HOLD",
+        "RTW Investments": "NEW"
+      }
+    },
+    "XENE": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 7.3813,
+      "tier1_conviction_overlap": 5.9855,
+      "max_tier1_position_pct": 3.45,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Boxer Capital",
+        "Acuta Capital",
+        "Rock Springs",
+        "Ghost Tree"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Boxer Capital": 1,
+        "Acuta Capital": 1,
+        "Rock Springs": 1,
+        "Ghost Tree": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "INCREASE",
+        "Orbimed Advisors": "INCREASE",
+        "Millennium Management": "INCREASE",
+        "Boxer Capital": "NEW",
+        "Acuta Capital": "DECREASE",
+        "Rock Springs": "NEW",
+        "Ghost Tree": "NEW"
+      }
+    },
+    "XNCR": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 3.0788,
+      "tier1_conviction_overlap": 2.3333,
+      "max_tier1_position_pct": 7.81,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Baker Bros",
+        "Millennium Management",
+        "EcoR1 Capital"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Baker Bros": 1,
+        "Millennium Management": 2,
+        "EcoR1 Capital": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "NEW",
+        "Baker Bros": "DECREASE",
+        "Millennium Management": "DECREASE",
+        "EcoR1 Capital": "DECREASE"
+      }
+    },
+    "ZLAB": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 6.5207,
+      "tier1_conviction_overlap": 5.3107,
+      "max_tier1_position_pct": 1.6,
+      "days_since_latest_filing": 46,
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "D.E. Shaw",
+        "Renaissance Technologies",
+        "Orbimed Advisors",
+        "Millennium Management",
+        "Casdin Capital",
+        "Cormorant Asset",
+        "Rock Springs"
+      ],
+      "holder_tiers": {
+        "D.E. Shaw": 2,
+        "Renaissance Technologies": 2,
+        "Orbimed Advisors": 1,
+        "Millennium Management": 2,
+        "Casdin Capital": 1,
+        "Cormorant Asset": 1,
+        "Rock Springs": 1
+      },
+      "position_changes": {
+        "D.E. Shaw": "INCREASE",
+        "Renaissance Technologies": "DECREASE",
+        "Orbimed Advisors": "DECREASE",
+        "Millennium Management": "INCREASE",
+        "Casdin Capital": "NEW",
+        "Cormorant Asset": "INCREASE",
+        "Rock Springs": "INCREASE"
+      }
+    }
+  },
+  "provenance": {
+    "builder": "build_coinvest_features_from_13f.py",
+    "builder_version": "1.0.0",
+    "cache_schema_version": "sec_13f_pit_index.v1",
+    "cusip_map_entries": 391,
+    "unresolved_holdings": 13406,
+    "prior_available": true,
+    "managers_used": [
+      {
+        "cik": "0001009207",
+        "name": "D.E. Shaw",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001009258",
+        "name": "Deerfield Management",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001037389",
+        "name": "Renaissance Technologies",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-14"
+      },
+      {
+        "cik": "0001055951",
+        "name": "Orbimed Advisors",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001103804",
+        "name": "Viking Global",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-13"
+      },
+      {
+        "cik": "0001218710",
+        "name": "Balyasny Asset",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001232621",
+        "name": "Tang Capital",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001263508",
+        "name": "Baker Bros",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001273087",
+        "name": "Millennium Management",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-14"
+      },
+      {
+        "cik": "0001274413",
+        "name": "Sectoral Asset",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-13"
+      },
+      {
+        "cik": "0001281446",
+        "name": "Great Point",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001306923",
+        "name": "Palo Alto Investors",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001346824",
+        "name": "RA Capital",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001425738",
+        "name": "Redmile Group",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001465837",
+        "name": "Boxer Capital",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001493215",
+        "name": "RTW Investments",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001534261",
+        "name": "Casdin Capital",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001569064",
+        "name": "Suvretta Capital",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001582844",
+        "name": "Acuta Capital",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001583977",
+        "name": "Cormorant Asset",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001587114",
+        "name": "EcoR1 Capital",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001595725",
+        "name": "Rock Springs",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001595851",
+        "name": "Ghost Tree",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001595855",
+        "name": "Opaleye Management",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001609251",
+        "name": "Krensavage Asset",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-18"
+      },
+      {
+        "cik": "0001631134",
+        "name": "Sofinnova Investments",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-13"
+      },
+      {
+        "cik": "0001703031",
+        "name": "Bain Capital Life",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001744967",
+        "name": "Samsara BioCapital",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001776382",
+        "name": "Venbio Partners",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      },
+      {
+        "cik": "0001791827",
+        "name": "Avidity Partners",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-06-17"
+      },
+      {
+        "cik": "0001792126",
+        "name": "Logos Global",
+        "period_of_report": "2020-03-31",
+        "filed_at": "2020-05-15"
+      }
+    ],
+    "change_summary": {
+      "NEW": 209,
+      "INCREASE": 160,
+      "HOLD": 86,
+      "DECREASE": 408,
+      "EXIT": 118
+    }
+  }
+}
