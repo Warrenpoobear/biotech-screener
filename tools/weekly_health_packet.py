@@ -187,8 +187,14 @@ def _action_items(
 
     # Rollback recommendation
     if ruleset_health and ruleset_health.get("recommend_rollback"):
-        items.append({"severity": "FAIL", "type": "rollback_recommended",
-                      "detail": "ruleset_health recommends rollback"})
+        items.append({
+            "severity": "FAIL",
+            "type": "rollback_recommended",
+            "detail": (
+                "ruleset_health recommends rollback — "
+                "run: python3 scripts/rollback_drill.py"
+            ),
+        })
 
     # Turnover spike vs 4-week avg (skip fresh-start runs where tc is None)
     t4 = turnover.get("trailing_4w_avg_pct")
