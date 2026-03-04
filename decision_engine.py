@@ -199,6 +199,17 @@ class DecisionRuleset:
     alpha_modifier_mode: str = "off"           # "off" | "within_tier" (tiebreak: dead)
     alpha_modifier_weight: float = 0.00        # deprecated; leave at 0.0
 
+    # Alpha cohort percentile tiebreak — uses alpha_cohort_pct (unique per ticker, no
+    # ceiling ties unlike alpha_raw).  Blended as a small secondary sort contribution:
+    #   delta = alpha_cohort_tiebreak_weight * alpha_cohort_pct
+    # 0 = disabled (default).  Ablation: w=0.02/0.05/0.10 on 2025 IS.
+    alpha_cohort_tiebreak_weight: float = 0.0  # 0.0 = off; range [0.0, 0.50]
+
+    # Portfolio mechanics — rebalance buffer for top-K evaluation.
+    # Existing holdings stay unless they fall below rank K + buffer.
+    # Reduces turnover from small rank oscillations.  0 = disabled.
+    rebalance_buffer_ranks: int = 0   # 0 = off; range [0, 50]
+
     # Actionable ordering — catalyst priority mode (supersedes enable_catalyst_priority)
     catalyst_priority_mode: str = "off"       # "off" | "tiebreaker" | "blended"
     catalyst_priority_rank_bonuses: tuple = (  # blended mode: priority → rank bonus
@@ -334,6 +345,18 @@ class DecisionRuleset:
             raise ValueError(
                 f"alpha_modifier_weight must be in [0.0, 0.25], "
                 f"got {self.alpha_modifier_weight}"
+            )
+        # Validate alpha_cohort_tiebreak_weight
+        if not (0.0 <= self.alpha_cohort_tiebreak_weight <= 0.50):
+            raise ValueError(
+                f"alpha_cohort_tiebreak_weight must be in [0.0, 0.50], "
+                f"got {self.alpha_cohort_tiebreak_weight}"
+            )
+        # Validate rebalance_buffer_ranks
+        if not (0 <= self.rebalance_buffer_ranks <= 50):
+            raise ValueError(
+                f"rebalance_buffer_ranks must be in [0, 50], "
+                f"got {self.rebalance_buffer_ranks}"
             )
         # Validate tiering_priority_mode
         if self.tiering_priority_mode not in ("dev_first", "tier_first"):
@@ -1271,6 +1294,15 @@ def _build_sort_contributions(
         delta = ruleset.alpha_modifier_weight * alpha_raw
         contribs.append(SortContribution("alpha_modifier", alpha_raw, ruleset.alpha_modifier_weight, delta))
 
+    # 5b. Alpha cohort percentile tiebreak — uses alpha_cohort_pct (unique per ticker;
+    #     no 0.1-ceiling ties that plague alpha_raw).  Higher pct → larger delta →
+    #     subtracted from effective_comp_rank → sorts earlier.  0 = disabled.
+    if ruleset.alpha_cohort_tiebreak_weight > 0.0:
+        ac_pct = _safe_float(decision_fields.get("alpha_cohort_pct"), default=0.0)
+        delta = ruleset.alpha_cohort_tiebreak_weight * ac_pct
+        contribs.append(SortContribution("alpha_cohort_tb", ac_pct,
+                                         ruleset.alpha_cohort_tiebreak_weight, delta))
+
     # 6. Catalyst bonus (non-zero only in blended mode)
     if catalyst_bonus != 0.0:
         contribs.append(SortContribution("catalyst_bonus", catalyst_bonus, 1.0, catalyst_bonus))
@@ -1287,6 +1319,7 @@ _EXTERNAL_SORT_FIELDS: frozenset = frozenset({
     "inst_delta_z",
     "stage_bucket",
     "clinical_score_v2_z",
+    "alpha_cohort_pct",   # used by alpha_cohort_tiebreak_weight contribution
 })
 
 

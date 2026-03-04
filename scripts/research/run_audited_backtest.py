@@ -108,6 +108,9 @@ def _run_eval(
     benchmark: str = "XBI",
     preflight: bool = True,
     preflight_strict: bool = False,
+    rebalance_buffer_ranks: int = 0,
+    turnover_cap: float = 0.0,
+    ruleset_path: Optional[Path] = None,
 ) -> int:
     """Run eval_forward_returns.py as a subprocess.  Returns exit code."""
     cmd = [
@@ -122,6 +125,8 @@ def _run_eval(
         "--benchmark", benchmark,
         "--out-dir", str(out_dir),
     ]
+    if ruleset_path:
+        cmd += ["--ruleset", str(ruleset_path)]
     if date_from:
         cmd += ["--date-from", date_from]
     if date_to:
@@ -130,6 +135,10 @@ def _run_eval(
         cmd.append("--preflight-strict")
     elif preflight:
         cmd.append("--preflight")
+    if rebalance_buffer_ranks > 0:
+        cmd += ["--rebalance-buffer-ranks", str(rebalance_buffer_ranks)]
+    if turnover_cap > 0:
+        cmd += ["--turnover-cap", str(turnover_cap)]
     print(f"  eval cmd: {' '.join(cmd)}")
     result = subprocess.run(cmd, cwd=str(PROJECT_ROOT))
     return result.returncode
@@ -315,6 +324,8 @@ def run_audited_backtest(
     check_pit: bool = False,
     pit_cache_base: Optional[Path] = None,
     run_id: Optional[str] = None,
+    rebalance_buffer_ranks: int = 0,
+    turnover_cap: float = 0.0,
 ) -> int:
     """Run an audited backtest.  Returns 0 on success, non-zero on failure."""
     run_id = run_id or _make_run_id()
@@ -329,6 +340,8 @@ def run_audited_backtest(
     print(f"  git SHA: {git_sha}")
     print(f"  snapshot_root: {snapshot_root}")
     print(f"  horizons: {horizons}, top_k: {top_k}, cost_bps: {cost_bps}")
+    if rebalance_buffer_ranks > 0 or turnover_cap > 0:
+        print(f"  buffer: {rebalance_buffer_ranks}, turnover_cap: {turnover_cap}")
     print(f"  strict: {preflight_strict}, rerank: {rerank}")
     print()
 
@@ -398,6 +411,9 @@ def run_audited_backtest(
         benchmark=benchmark,
         preflight=True,
         preflight_strict=preflight_strict,
+        rebalance_buffer_ranks=rebalance_buffer_ranks,
+        turnover_cap=turnover_cap,
+        ruleset_path=ruleset_path,
     )
     if rc != 0:
         print(f"ERROR: eval exited with code {rc}", file=sys.stderr)
@@ -486,6 +502,14 @@ def main() -> None:
         help="Output root directory (default: output/audited_backtests)",
     )
     parser.add_argument(
+        "--rebalance-buffer-ranks", type=int, default=0,
+        help="Buffer zone around top-K for rebalance (0=disabled)",
+    )
+    parser.add_argument(
+        "--turnover-cap", type=float, default=0.0,
+        help="Max turnover fraction per rebalance (0=unlimited)",
+    )
+    parser.add_argument(
         "--run-id", default=None,
         help="Run identifier (auto-generated if omitted)",
     )
@@ -510,6 +534,8 @@ def main() -> None:
         check_pit=args.check_pit,
         pit_cache_base=args.pit_cache_base,
         run_id=args.run_id,
+        rebalance_buffer_ranks=args.rebalance_buffer_ranks,
+        turnover_cap=args.turnover_cap,
     )
     sys.exit(rc)
 

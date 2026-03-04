@@ -2606,6 +2606,53 @@ class TestSignalFlagFiltering:
         # clinical has no flag → n_with_signal == n_signal
         assert clin_rows[0]["n_with_signal"] == clin_rows[0]["n_signal"]
 
+    def test_few_tickers_no_decile_curve_no_crash(self, tmp_dir):
+        """Regression: <10 signal tickers → no decile curve, no crash.
+
+        Before fix, decile_means was only defined inside `if n_sig >= 10`
+        block but referenced unconditionally → UnboundLocalError.
+        """
+        n = 5  # fewer than 10 → no decile curve computed
+        tickers = [f"T{i:02d}" for i in range(n)]
+        comp = {}
+        flags = {}
+        for i, t in enumerate(tickers):
+            comp[t] = {"inst_delta_z": str(0.5 - 0.1 * i)}
+            flags[t] = {"has_inst_delta": "True"}
+        snap_dir = tmp_dir / "snapshots" / "2025-01-06"
+        _write_rankings_with_signal_flags(snap_dir, tickers, comp, flags)
+        _write_metadata(snap_dir, "2025-01-06")
+
+        rows = []
+        for d in ["2025-01-06", "2025-01-07"]:
+            for i, t in enumerate(tickers):
+                if d == "2025-01-06":
+                    rows.append({"date": d, "ticker": t, "close": "100"})
+                else:
+                    ret = 0.10 - 0.02 * i
+                    rows.append({"date": d, "ticker": t,
+                                 "close": str(100 * (1 + ret))})
+        price_csv = tmp_dir / "prices.csv"
+        _write_price_csv(price_csv, rows)
+        out = tmp_dir / "output"
+        out.mkdir()
+
+        # Should not raise UnboundLocalError on decile_means
+        evaluate(
+            snapshot_root=tmp_dir / "snapshots",
+            price_csv=price_csv,
+            horizons=[1],
+            component_eval=True,
+            out_dir=out,
+        )
+        with open(out / "component_eval_by_date.csv") as f:
+            reader = list(csv.DictReader(f))
+        inst_rows = [r for r in reader if r["component"] == "inst_delta_z"]
+        assert len(inst_rows) >= 1
+        assert int(inst_rows[0]["n_signal"]) == n
+        # No decile columns when n < 10
+        assert inst_rows[0].get("d1", "") == ""
+
 
 # ---------------------------------------------------------------------------
 # Tests: Catalyst eval mode (Part 3)

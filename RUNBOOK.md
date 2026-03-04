@@ -222,3 +222,29 @@ Run manually:
 python3 collect_market_data.py --universe production_data/universe.json
 ```
 Then re-run the daily runner.
+
+---
+
+## Evaluation pitfalls
+
+### A/B comparisons must rerank both legs
+
+When comparing two rulesets using `eval_forward_returns.py`, **both candidate and
+baseline must be reranked through their respective rulesets** via
+`scripts/research/rerank_snapshots.py`. Never compare reranked candidate snapshots
+against raw `data/snapshots/` — those contain a mix of historical rulesets and will
+produce misleading IC deltas (discovered 2026-03-03, v1.8.2 promotion).
+
+Correct workflow:
+```bash
+# Rerank both legs
+python3 scripts/research/rerank_snapshots.py --ruleset <candidate.json> --out-root /tmp/reranked_candidate
+python3 scripts/research/rerank_snapshots.py --ruleset <baseline.json>  --out-root /tmp/reranked_baseline
+
+# Eval both against same price data
+python3 scripts/eval_forward_returns.py --snapshot-root /tmp/reranked_candidate --out-dir /tmp/eval_candidate ...
+python3 scripts/eval_forward_returns.py --snapshot-root /tmp/reranked_baseline  --out-dir /tmp/eval_baseline  ...
+```
+
+`eval_ruleset.py --rerank-only` handles this internally (reranks both legs on the fly)
+and is safe for gate verdicts, but does not compute forward returns.

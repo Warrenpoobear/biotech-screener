@@ -6,6 +6,42 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.8.3] 82982998 — 2026-03-03 — Portfolio mechanics: rebalance buffer=30
+
+**Active ruleset change**: `4f12a7f8` (v1.8.2_clinical_sort_off_candidate) → `82982998` (v1.8.3_buffer30_candidate)
+
+**Parameters changed** (vs 4f12a7f8):
+- `rebalance_buffer_ranks`: `0` (new field) → `30`
+
+**Rationale**: Existing holdings oscillating near the rank K boundary cause unnecessary turnover from small rank fluctuations. A rebalance buffer of 30 ranks means a position must drop below rank K+30 (=50) before being sold, preventing churn from noise-driven rank jitter.
+
+**Evidence**: 4×4 sweep (buffer ∈ {0,10,20,30} × cap ∈ {0.00,0.05,0.10,0.15}) on audited OOS 2020–2024 (295 dates, 126d primary + 84d guardrail):
+- 126d: Net **6.05%** vs baseline 5.06% (**+0.99pp**), turnover **2.03%** vs 6.17% (−67%)
+- 84d: Net **5.22%** vs baseline 4.72% (**+0.50pp**), turnover **2.03%** vs 6.17% (−67%)
+- IS 2025 validation confirmed improvement at both horizons
+- IC unchanged (expected — buffer affects portfolio construction, not signal quality)
+- `turnover_cap` tested at 0.05/0.10/0.15 — all inferior to buffer-only; cap=0 (off) retained
+
+**Schema change**: added `rebalance_buffer_ranks` field (int, default 0, range [0,50]) to `DecisionRuleset`. Eval inherits buffer from ruleset when CLI uses default value. No rerank needed — buffer is eval-time portfolio construction.
+
+**Rerank-only gate**: N/A — sort order unchanged (rankings.csv identical). Gate is vacuous for portfolio mechanics changes.
+
+---
+
+## [v1.8.2] 4f12a7f8 — 2026-03-03 — Clinical sort tilt OFF (simplification)
+
+**Active ruleset change**: `fb0af0ac` (v1.8.1_alpha_modifier_off) → `4f12a7f8` (v1.8.2_clinical_sort_off_candidate)
+
+**Parameters changed** (vs fb0af0ac):
+- `enable_clinical_sort_signal`: `true` → `false`
+- `clinical_sort_weight`: `1.0` → `0.0`
+
+**Rationale**: Governance ablation study confirmed clinical sort tilt is net harmful at portfolio level. The "displacement" diagnosis: clinical z-score tilt displaces names whose optionality composite already captures the clinical signal more efficiently. Clinical features (clinical_score_z, clinical_score_v2, calendar alpha v2 columns) remain computed and available in snapshots — only the sort contribution is removed.
+
+**Evidence**: ablation_clinical_off.json vs active baseline (fb0af0ac) showed improved IC materially across 63/84/126d horizons in both IS (2025) and OOS (2020–2024) periods. Coinvest (13F) and alpha-cohort tiebreak previously archived as zero-impact under PIT-correct data. This is the next logical simplification step.
+
+---
+
 ## [v1.8.1] fb0af0ac — 2026-03-02 — Disable alpha_modifier (simplification)
 
 **Active ruleset change**: `873e65e0` (v1.8.0_optionality_anchor_candidate) → `fb0af0ac` (v1.8.1_alpha_modifier_off)

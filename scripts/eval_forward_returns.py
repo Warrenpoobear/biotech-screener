@@ -2401,6 +2401,11 @@ def main() -> None:
               file=sys.stderr)
         sys.exit(1)
 
+    # Inherit portfolio mechanics from ruleset when CLI uses defaults
+    eff_buffer = args.rebalance_buffer_ranks
+    if eval_ruleset and args.rebalance_buffer_ranks == 0 and eval_ruleset.rebalance_buffer_ranks > 0:
+        eff_buffer = eval_ruleset.rebalance_buffer_ranks
+
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"Evaluating snapshots in {args.snapshot_root}")
@@ -2412,8 +2417,9 @@ def main() -> None:
         print(f"  Universe: {args.universe_mode}")
     if args.component_eval:
         print("  Component eval: enabled")
-    if args.rebalance_buffer_ranks > 0:
-        print(f"  Rebalance buffer: {args.rebalance_buffer_ranks} ranks")
+    if eff_buffer > 0:
+        print(f"  Rebalance buffer: {eff_buffer} ranks"
+              + (" (from ruleset)" if eff_buffer != args.rebalance_buffer_ranks else ""))
     if args.turnover_cap > 0:
         print(f"  Turnover cap: {args.turnover_cap:.0%}")
     if args.top_quantile > 0:
@@ -2447,7 +2453,7 @@ def main() -> None:
         out_dir=args.out_dir,
         universe_mode=args.universe_mode,
         component_eval=args.component_eval,
-        rebalance_buffer_ranks=args.rebalance_buffer_ranks,
+        rebalance_buffer_ranks=eff_buffer,
         turnover_cap=args.turnover_cap,
         top_quantile=args.top_quantile,
         coinvest_eval_mode=args.coinvest_eval_mode,

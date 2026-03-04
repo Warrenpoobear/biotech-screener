@@ -84,16 +84,16 @@
       "updated_at": "2026-02-14T00:00:00Z"
     },
     {
-      "id": "260a85ab",
+      "id": "dcc6a51a",
       "file": "v1.json",
-      "created_at": "2026-03-01",
+      "created_at": "2026-03-03",
       "engine_version": "v1.3.0",
-      "description": "Defaults + financials_missing_bypass_market_cap field (disabled by default)",
+      "description": "Defaults + rebalance_buffer_ranks field (0 = disabled by default)",
       "status": "retired",
       "requires_replay": false,
-      "notes": "Schema expansion: added financials_missing_bypass_market_cap=0.0. No behavioral change (disabled by default). Supersedes cdd0661d.",
+      "notes": "Schema expansion: added rebalance_buffer_ranks=0. No behavioral change (disabled by default). Supersedes 260a85ab.",
       "updated_by": "manual_bootstrap",
-      "updated_at": "2026-03-01T00:00:00Z"
+      "updated_at": "2026-03-03T00:00:00Z"
     },
     {
       "id": "96f655ee",
@@ -233,11 +233,45 @@
       "created_at": "2026-03-02",
       "engine_version": "v1.3.0",
       "description": "Simplification: alpha_modifier_mode=off (was within_tier w=0.05, proven zero-impact)",
-      "status": "active",
+      "status": "retired",
       "requires_replay": false,
       "notes": "5-way backtest 2020-2026 showed C_momentum_off==A_baseline exactly. Disabling within_tier at w=0.05 has no measurable effect on sort order. tiebreak mode is structurally dead. Ruleset-only change; no code behavior change.",
       "updated_by": "promote_ruleset.py",
-      "updated_at": "2026-03-02T18:51:49Z"
+      "updated_at": "2026-03-03T14:39:11Z"
+    },
+    {
+      "id": "78d96f87",
+      "file": "v1.9.0_coinvest_sort_candidate.json",
+      "created_at": "2026-03-02",
+      "engine_version": "v1.3.0",
+      "status": "rejected",
+      "requires_replay": true,
+      "description": "v1.9.0 coinvest sort signal at w=0.40 (optionality anchor). Empirically validated 2020-2025: +0.94pp/+0.55pp/+2.39pp spread at 63/84/126d vs fb0af0ac baseline, OOS t-stats 8-12, contra monotone. First weight to clear all governance bars.",
+      "notes": "REJECTED: look-ahead contaminated \u2014 all coinvest data from static Q3 2025 holdings_snapshots.json with no date field. PIT-correct re-evaluation showed signal harmful (IS 2025 paired t=-3.4 to -4.4 for level, t=-6.4 to -8.7 for delta). NOT PROMOTED."
+    },
+    {
+      "id": "4f12a7f8",
+      "file": "v1.8.2_clinical_sort_off_candidate.json",
+      "created_at": "2026-03-03",
+      "engine_version": "v1.3.0",
+      "description": "Clinical sort tilt OFF: disable enable_clinical_sort_signal + zero clinical_sort_weight",
+      "status": "retired",
+      "requires_replay": true,
+      "notes": "Derived from fb0af0ac (v1.8.1). Governance ablation showed clinical sort tilt net harmful at portfolio level (displacement effect): clinical OFF improved IC materially across 63/84/126d horizons. Clinical features remain computed/available; only sort contribution disabled.",
+      "updated_by": "promote_ruleset.py",
+      "updated_at": "2026-03-03T21:50:13Z"
+    },
+    {
+      "id": "82982998",
+      "file": "v1.8.3_buffer30_candidate.json",
+      "created_at": "2026-03-03",
+      "engine_version": "v1.3.0",
+      "description": "Portfolio mechanics: rebalance_buffer_ranks=30 (existing holdings stay unless rank > K+30)",
+      "status": "active",
+      "requires_replay": false,
+      "notes": "Derived from v1.8.2 (4f12a7f8). 4x4 turnover sweep (buffer x cap) OOS 2020-2024: buffer=30 dominates with +0.98pp 126d net, turnover 6.17%->2.03%. IS 2025 validation confirms improvement. No rerank needed \u2014 buffer is eval-time portfolio construction, not snapshot sort order.",
+      "updated_by": "promote_ruleset.py",
+      "updated_at": "2026-03-03T21:50:13Z"
     }
   ]
 }
