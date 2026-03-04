@@ -3279,7 +3279,9 @@ def save_validation_snapshot(
         _z_ep = z_score_dict({tk: v["endpoint_strength_score"] for tk, v in _ccav2_endpoint.items()})
         # competition z already computed inside compute_competitive_intensity
 
-        _ccav2_config = CalendarAlphaConfig()
+        _ccav2_config = CalendarAlphaConfig(
+            enable_sizing=ruleset.enable_clinical_sizing,
+        )
 
         # Compose v2 score and write columns into csv_rows
         _ccav2_count = 0

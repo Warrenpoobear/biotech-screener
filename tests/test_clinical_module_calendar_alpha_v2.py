@@ -446,6 +446,51 @@ class TestPITEnforcement:
         assert rd["readout_density_30"] == 1
 
 
+class TestRulesetSizingPlumbing:
+    """Gap-2 fix: enable_clinical_sizing from DecisionRuleset wires into CalendarAlphaConfig."""
+
+    def test_sizing_disabled_by_default(self):
+        """DecisionRuleset default (enable_clinical_sizing=False) → all multipliers = 1.0."""
+        from decision_engine import DecisionRuleset
+
+        rs = DecisionRuleset()
+        assert rs.enable_clinical_sizing is False
+
+        # Build CalendarAlphaConfig the same way run_screen.py now does
+        config = CalendarAlphaConfig(enable_sizing=rs.enable_clinical_sizing)
+        assert config.enable_sizing is False
+
+        features = {"design_quality_score": 0.5, "readout_curve_score": 0.8}
+        _, sizing, tags = compose_clinical_score_v2(
+            clinical_score=70.0,
+            features=features,
+            config=config,
+            z_competition=2.0,  # would trigger dampen if sizing were enabled
+        )
+        assert sizing == 1.0, f"Expected 1.0 sizing with disabled flag, got {sizing}"
+        assert not any("sizing" in t for t in tags)
+
+    def test_sizing_enabled_from_ruleset(self):
+        """DecisionRuleset with enable_clinical_sizing=True → at least one multiplier ≠ 1.0."""
+        from decision_engine import DecisionRuleset
+
+        rs = DecisionRuleset(enable_clinical_sizing=True)
+        assert rs.enable_clinical_sizing is True
+
+        config = CalendarAlphaConfig(enable_sizing=rs.enable_clinical_sizing)
+        assert config.enable_sizing is True
+
+        features = {"design_quality_score": 0.1, "readout_curve_score": 0.0}
+        _, sizing, tags = compose_clinical_score_v2(
+            clinical_score=50.0,
+            features=features,
+            config=config,
+            z_competition=2.0,  # high competition → dampen
+        )
+        assert sizing != 1.0, f"Expected sizing != 1.0 when enabled with high competition, got {sizing}"
+        assert any("sizing" in t for t in tags)
+
+
 class TestCalendarAlphaSortIntegration:
     """Regression: clinical_score_v2_z must be injected for sort tilt to work."""
 
