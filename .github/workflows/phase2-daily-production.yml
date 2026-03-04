@@ -607,6 +607,23 @@ jobs:
             cat "$HEALTH_MD" >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      # ── Generate weekly health packet ──────────────────────────
+      - name: Generate weekly health packet
+        if: always() && steps.runner.outputs.exit_code != '1'
+        continue-on-error: true
+        run: |
+          DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
+          python3 tools/weekly_health_packet.py \
+            --as-of-date "$DATE" \
+            --out-dir output/health_packets
+
+          HEALTH_MD="output/health_packets/health_${DATE}.md"
+          if [ -f "$HEALTH_MD" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "---" >> "$GITHUB_STEP_SUMMARY"
+            cat "$HEALTH_MD" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       # ── Upload snapshot artifacts ───────────────────────────────
       - name: Upload snapshot
         if: always()
@@ -636,6 +653,17 @@ jobs:
             output/run_manifest.json
             output/production_daily.log
           retention-days: 90
+          if-no-files-found: warn
+
+      - name: Upload health packet
+        if: always() && steps.runner.outputs.exit_code != '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-packet-${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}
+          path: |
+            output/health_packets/health_${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}.md
+            output/health_packets/health_${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}.json
+          retention-days: 180
           if-no-files-found: warn
 
       # ── Evaluate outcome (AFTER uploads) ────────────────────────

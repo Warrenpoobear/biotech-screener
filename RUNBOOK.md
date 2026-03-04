@@ -248,3 +248,39 @@ python3 scripts/eval_forward_returns.py --snapshot-root /tmp/reranked_baseline  
 
 `eval_ruleset.py --rerank-only` handles this internally (reranks both legs on the fly)
 and is safe for gate verdicts, but does not compute forward returns.
+
+---
+
+## 9. Weekly health packet
+
+### Generating
+
+```bash
+python3 tools/weekly_health_packet.py                          # latest snapshot
+python3 tools/weekly_health_packet.py --as-of-date 2026-03-07  # specific date
+```
+
+Output: `output/health_packets/health_YYYY-MM-DD.md` + `.json`
+
+In CI (`phase2-daily-production.yml`), the packet is generated automatically after every
+successful run and uploaded as a `health-packet-YYYY-MM-DD` artifact (180-day retention).
+The markdown is also appended to the GitHub Actions step summary.
+
+### Action threshold policy (what requires a response)
+
+| Signal | Condition | Action |
+|--------|-----------|--------|
+| Gate FAIL | Any gate in FAIL | Investigate immediately |
+| Drift WARN streak | ≥ 2 consecutive WARN days | Review drift report; consider rollback |
+| Ruleset rollback flag | `recommend_rollback: true` in `ruleset_health.json` | Run rollback check (`scripts/promote_ruleset.py --rollback`) |
+| Turnover spike | This-week > 2.5× trailing 4-week avg **and** > 5% | Check for composition change or data anomaly |
+| Cache health | Explicit `warn` or `fail` (not `unknown`) | Re-warm cache; check `cache_health.json` |
+
+**Not actionable**: `unknown` cache health (old snapshots), single-day drift WARN,
+fresh-start turnover (shown as `—`).
+
+### Relaxed mode
+
+Pass `--relaxed` to generate a packet for a non-production run (e.g., a backtest
+snapshot or a manual re-run). The output gets a prominent `⚠ RELAXED MODE` banner
+and is not suitable for governance review. Relaxed packets are never uploaded by CI.
