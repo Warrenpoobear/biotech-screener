@@ -27,7 +27,9 @@ from rollback_drill import (
     _build_reasons,
     _find_lkg,
     run_drill,
+    render_markdown,
     render_text,
+    write_drill_artifacts,
 )
 
 
@@ -350,3 +352,115 @@ class TestRenderText:
         drill["cross_compare"]["error"] = "No LKG ruleset available"
         text = render_text(drill)
         assert "No LKG ruleset available" in text
+
+
+# ---------------------------------------------------------------------------
+# render_markdown + write_drill_artifacts
+# ---------------------------------------------------------------------------
+
+class TestRenderMarkdown:
+    def _drill(self, recommended: bool) -> Dict:
+        return {
+            "schema": "rollback_drill.v1",
+            "as_of_date": "2026-03-05",
+            "generated_at": "2026-03-05T12:00:00+00:00",
+            "active": {"id": _ACTIVE_ID, "file": _ACTIVE_FILE, "description": ""},
+            "lkg": {"id": _LKG_ID, "file": _LKG_FILE, "description": ""},
+            "ruleset_health": {
+                "status": "WARN" if recommended else "OK",
+                "consecutive_warn_days": 3 if recommended else 0,
+                "recommend_rollback": recommended,
+                "detail": "test detail",
+                "warn_reasons": ["top60_overlap degraded"] if recommended else [],
+            },
+            "cross_compare": {
+                "window": ["2026-03-01", "2026-03-05"],
+                "n_snapshots_requested": 5,
+                "n_evaluated": 5,
+                "n_skipped": 0,
+                "mean_top20_overlap_pct": 98.0,
+                "mean_top60_overlap_pct": 95.0,
+                "worst_top60_overlap_pct": 90.0,
+                "mean_spearman": 0.999,
+                "mean_pct_rank_changed": 2.0,
+                "error": None,
+            },
+            "reasons": ["health: 3d WARN streak"] if recommended else [],
+            "recommended": recommended,
+        }
+
+    def test_md_h1_contains_date(self):
+        md = render_markdown(self._drill(recommended=False))
+        assert "# Rollback Drill — 2026-03-05" in md
+
+    def test_no_rollback_shows_checkmark(self):
+        md = render_markdown(self._drill(recommended=False))
+        assert "No rollback needed" in md
+        assert "ROLLBACK RECOMMENDED" not in md
+
+    def test_rollback_shows_warning(self):
+        md = render_markdown(self._drill(recommended=True))
+        assert "ROLLBACK RECOMMENDED" in md
+
+    def test_rollback_includes_execute_section(self):
+        md = render_markdown(self._drill(recommended=True))
+        assert "## Execute Rollback" in md
+        assert "promote_ruleset.py --rollback" in md
+
+    def test_no_rollback_no_execute_section(self):
+        md = render_markdown(self._drill(recommended=False))
+        assert "## Execute Rollback" not in md
+
+    def test_active_lkg_table_present(self):
+        md = render_markdown(self._drill(recommended=False))
+        assert _ACTIVE_ID in md
+        assert _LKG_ID in md
+
+    def test_cross_compare_error_shown(self):
+        drill = self._drill(recommended=False)
+        drill["cross_compare"]["error"] = "No LKG available"
+        md = render_markdown(drill)
+        assert "No LKG available" in md
+
+
+class TestWriteDrillArtifacts:
+    def _drill(self, recommended: bool = False) -> Dict:
+        return {
+            "schema": "rollback_drill.v1",
+            "as_of_date": "2026-03-05",
+            "generated_at": "2026-03-05T12:00:00+00:00",
+            "active": {"id": _ACTIVE_ID, "file": _ACTIVE_FILE, "description": ""},
+            "lkg": {"id": _LKG_ID, "file": _LKG_FILE, "description": ""},
+            "ruleset_health": {"status": "OK", "consecutive_warn_days": 0,
+                               "recommend_rollback": False, "detail": "", "warn_reasons": []},
+            "cross_compare": {"window": [], "n_snapshots_requested": 5, "n_evaluated": 0,
+                              "n_skipped": 0, "mean_top20_overlap_pct": None,
+                              "mean_top60_overlap_pct": None, "worst_top60_overlap_pct": None,
+                              "mean_spearman": None, "mean_pct_rank_changed": None, "error": None},
+            "reasons": [],
+            "recommended": recommended,
+        }
+
+    def test_creates_both_files(self, tmp_path):
+        md_path, json_path = write_drill_artifacts(self._drill(), tmp_path)
+        assert md_path.is_file()
+        assert json_path.is_file()
+
+    def test_filenames(self, tmp_path):
+        md_path, json_path = write_drill_artifacts(self._drill(), tmp_path)
+        assert md_path.name == "ROLLBACK.md"
+        assert json_path.name == "ROLLBACK.json"
+
+    def test_json_parseable(self, tmp_path):
+        _, json_path = write_drill_artifacts(self._drill(), tmp_path)
+        d = json.loads(json_path.read_text())
+        assert d["schema"] == "rollback_drill.v1"
+
+    def test_md_nonempty(self, tmp_path):
+        md_path, _ = write_drill_artifacts(self._drill(), tmp_path)
+        assert len(md_path.read_text()) > 100
+
+    def test_creates_dir_if_missing(self, tmp_path):
+        out = tmp_path / "nested" / "dir"
+        write_drill_artifacts(self._drill(), out)
+        assert out.is_dir()

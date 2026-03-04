@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 SNAPSHOTS_ROOT = PROJECT_ROOT / "data" / "snapshots"
 OUTPUT_ROOT = PROJECT_ROOT / "output" / "health_packets"
@@ -185,15 +186,12 @@ def _action_items(
                        f"{ruleset_health['consecutive_warn_days']} days"),
         })
 
-    # Rollback recommendation
+    # Rollback recommendation — detail updated post-drill if drill_path provided
     if ruleset_health and ruleset_health.get("recommend_rollback"):
         items.append({
             "severity": "FAIL",
             "type": "rollback_recommended",
-            "detail": (
-                "ruleset_health recommends rollback — "
-                "run: python3 scripts/rollback_drill.py"
-            ),
+            "detail": "ruleset_health recommends rollback",
         })
 
     # Turnover spike vs 4-week avg (skip fresh-start runs where tc is None)
@@ -577,6 +575,29 @@ def main() -> None:
     packet = build_health_packet(as_of_date, relaxed=args.relaxed)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
+
+    # ── Auto-run rollback drill if flag fires ──────────────────────
+    rollback_action = next(
+        (i for i in packet["action_items"] if i["type"] == "rollback_recommended"),
+        None,
+    )
+    if rollback_action:
+        try:
+            from rollback_drill import run_drill, write_drill_artifacts
+            drill_out_dir = args.out_dir / f"rollback_{as_of_date}"
+            drill = run_drill(as_of_date)
+            md_drill, json_drill = write_drill_artifacts(drill, drill_out_dir)
+            rollback_action["detail"] = (
+                f"ruleset_health recommends rollback — see {md_drill}"
+            )
+            packet["rollback_drill_path"] = str(md_drill)
+            print(f"  Rollback drill → {md_drill}")
+        except Exception as exc:
+            rollback_action["detail"] = (
+                f"ruleset_health recommends rollback — "
+                f"run: python3 scripts/rollback_drill.py  (drill error: {exc})"
+            )
+
     md_path = args.out_dir / f"health_{as_of_date}.md"
     json_path = args.out_dir / f"health_{as_of_date}.json"
 

@@ -231,7 +231,7 @@ def run_drill(
     }
 
 
-# ── Renderer ──────────────────────────────────────────────────────────────────
+# ── Renderers ─────────────────────────────────────────────────────────────────
 
 def _v(val: Any, fmt: str = "", suffix: str = "") -> str:
     if val is None:
@@ -239,6 +239,104 @@ def _v(val: Any, fmt: str = "", suffix: str = "") -> str:
     if isinstance(val, float) and fmt:
         return f"{val:{fmt}}{suffix}"
     return str(val) + suffix
+
+
+def render_markdown(drill: Dict) -> str:
+    """Render drill result as Markdown (for ROLLBACK.md)."""
+    lines: List[str] = []
+    rec = drill["recommended"]
+    rh = drill["ruleset_health"]
+    cc = drill["cross_compare"]
+
+    verdict_str = "⚠ ROLLBACK RECOMMENDED" if rec else "✅ No rollback needed"
+    lines += [
+        f"# Rollback Drill — {drill['as_of_date']}",
+        "",
+        f"**Generated**: {drill['generated_at'][:19].replace('T', ' ')} UTC  ",
+        f"**Recommendation**: {verdict_str}",
+        "",
+        "## Active / LKG",
+        "",
+        "| | ID | File |",
+        "|--|--|--|",
+        f"| Active | `{drill['active']['id']}` | `{drill['active']['file']}` |",
+    ]
+    if drill["lkg"]["id"]:
+        lines.append(
+            f"| LKG | `{drill['lkg']['id']}` | `{drill['lkg']['file']}` |"
+        )
+    else:
+        lines.append("| LKG | — | _(none found in manifest)_ |")
+    lines.append("")
+
+    lines += [
+        "## Ruleset Health",
+        "",
+        f"| Metric | Value |",
+        f"|--------|-------|",
+        f"| Status | `{rh['status']}` |",
+        f"| Consecutive WARNs | {rh['consecutive_warn_days']}d |",
+        f"| recommend_rollback | {'**YES**' if rh['recommend_rollback'] else 'no'} |",
+        f"| Detail | {rh['detail'] or '—'} |",
+    ]
+    if rh["warn_reasons"]:
+        lines.append("")
+        lines.append("**Warn reasons**:")
+        for wr in rh["warn_reasons"]:
+            lines.append(f"- {wr}")
+    lines.append("")
+
+    n_eval = cc["n_evaluated"]
+    window = cc["window"]
+    date_range = f"{window[0]} → {window[-1]}" if window else "—"
+    lines += [
+        "## Cross-Compare (active vs LKG)",
+        "",
+        f"_{n_eval}/{cc['n_snapshots_requested']} snapshots [{date_range}]_",
+        "",
+    ]
+    if cc["error"]:
+        lines += [f"> ⚠ Error: {cc['error']}", ""]
+    else:
+        lines += [
+            "| Metric | Value |",
+            "|--------|-------|",
+            f"| Mean top-20 overlap | {_v(cc['mean_top20_overlap_pct'], '.1f', '%')} |",
+            f"| Mean top-60 overlap | {_v(cc['mean_top60_overlap_pct'], '.1f', '%')} |",
+            f"| Worst top-60 overlap | {_v(cc['worst_top60_overlap_pct'], '.1f', '%')} |",
+            f"| Mean Spearman ρ | {_v(cc['mean_spearman'], '.4f')} |",
+            f"| Mean % ranks changed | {_v(cc['mean_pct_rank_changed'], '.1f', '%')} |",
+            "",
+        ]
+
+    if drill["reasons"]:
+        lines += ["## Triggered By", ""]
+        for i, r in enumerate(drill["reasons"], 1):
+            lines.append(f"{i}. {r}")
+        lines.append("")
+
+    if rec:
+        reason_str = drill["reasons"][0] if drill["reasons"] else "rollback drill triggered"
+        lines += [
+            "## Execute Rollback",
+            "",
+            "```bash",
+            f'python3 scripts/promote_ruleset.py --rollback --reason "drill: {reason_str}"',
+            "```",
+            "",
+        ]
+
+    return "\n".join(lines)
+
+
+def write_drill_artifacts(drill: Dict, out_dir: Path) -> tuple:
+    """Write ROLLBACK.md + ROLLBACK.json to out_dir. Returns (md_path, json_path)."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    md_path = out_dir / "ROLLBACK.md"
+    json_path = out_dir / "ROLLBACK.json"
+    md_path.write_text(render_markdown(drill), encoding="utf-8")
+    json_path.write_text(json.dumps(drill, indent=2, default=str), encoding="utf-8")
+    return md_path, json_path
 
 
 def render_text(drill: Dict) -> str:
@@ -338,6 +436,13 @@ def main() -> None:
         "--json", dest="emit_json", action="store_true",
         help="Emit JSON to stdout instead of human-readable text",
     )
+    parser.add_argument(
+        "--out-dir", type=Path, default=None,
+        help=(
+            "Write ROLLBACK.md + ROLLBACK.json to this directory "
+            "(always written regardless of --json flag)"
+        ),
+    )
     args = parser.parse_args()
 
     as_of_date = args.as_of_date
@@ -350,6 +455,11 @@ def main() -> None:
         print(f"Using latest snapshot: {as_of_date}", file=sys.stderr)
 
     drill = run_drill(as_of_date, n_snapshots=args.n_snapshots)
+
+    if args.out_dir:
+        md_path, json_path = write_drill_artifacts(drill, args.out_dir)
+        print(f"  → {md_path}", file=sys.stderr)
+        print(f"  → {json_path}", file=sys.stderr)
 
     if args.emit_json:
         print(json.dumps(drill, indent=2, default=str))
