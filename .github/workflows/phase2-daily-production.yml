@@ -447,7 +447,16 @@ jobs:
         if: always() && steps.runner.outputs.exit_code != '1'
         run: |
           DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
-          RULESET="production_data/decision_rulesets/v1.6.1_alpha_modifier_within_tier.json"
+          RULESET=$(python3 -c "
+import json, sys
+m = json.load(open('production_data/decision_rulesets/manifest.json'))
+active = next((r for r in m['rulesets'] if r.get('status') == 'active'), None)
+if not active:
+    print('ERROR: no active ruleset in manifest', file=sys.stderr)
+    sys.exit(1)
+print('production_data/decision_rulesets/' + active['file'])
+")
+          echo "Active ruleset: $RULESET"
           OUT_DIR="data/snapshots/${DATE}/ruleset_eval"
           COMMON_ARGS="--candidate $RULESET --k 60 --horizon 5 --cost-bps 30 \
             --snapshot-dir data/snapshots --price-csv production_data/price_history.csv \
