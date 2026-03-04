@@ -4,16 +4,29 @@
 Single entrypoint that produces a reproducible audit package:
   1. Runs snapshot preflight batch (writes artifacts)
   2. Optionally re-ranks snapshots through a ruleset (with --preflight)
-  3. Runs eval_forward_returns.py (with --preflight / --preflight-strict)
+  3. Runs eval_forward_returns.py (with --preflight-strict by default)
   4. Writes output/<run_id>/AUDIT.md summarizing everything
 
-Usage:
+Defaults to STRICT mode (preflight-strict=True).  For archive/OOS data where
+all snapshots are WARN-status, add --relaxed to include WARN dates.  Use
+--date-manifest to restrict evaluation to a curated date list.
+
+Standard OOS usage (archive snapshots, curated dates):
+    python scripts/research/run_audited_backtest.py \
+        --snapshot-root data/snapshots_reranked_baseline_oos \
+        --ruleset production_data/decision_rulesets/v1.8.3_buffer30_candidate.json \
+        --date-manifest output/audited_sets/audited_dates_2020_2024_strict.txt \
+        --horizons 84,126 --top-k 20 --cost-bps 30 \
+        --rerank --relaxed \
+        --out-root output/audited_backtests/my_run
+
+Standard production usage (live snapshots, strict preflight):
     python scripts/research/run_audited_backtest.py \
         --snapshot-root data/snapshots \
-        --ruleset production_data/decision_rulesets/v1.8.2_clinical_sort_off_candidate.json \
-        --horizons 63,84,126 --top-k 20 --cost-bps 30 \
-        --rerank --preflight-strict \
-        --out-root output/audited_backtests
+        --ruleset production_data/decision_rulesets/v1.8.3_buffer30_candidate.json \
+        --horizons 84,126 --top-k 20 --cost-bps 30 \
+        --rerank \
+        --out-root output/audited_backtests/my_run
 """
 from __future__ import annotations
 
@@ -104,10 +117,11 @@ def _run_eval(
     cost_bps: float = 30,
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
+    date_manifest: Optional[Path] = None,
     anchor_mode: str = "prev_trading_day",
     benchmark: str = "XBI",
     preflight: bool = True,
-    preflight_strict: bool = False,
+    preflight_strict: bool = True,
     rebalance_buffer_ranks: int = 0,
     turnover_cap: float = 0.0,
     ruleset_path: Optional[Path] = None,
@@ -127,9 +141,11 @@ def _run_eval(
     ]
     if ruleset_path:
         cmd += ["--ruleset", str(ruleset_path)]
-    if date_from:
+    if date_manifest:
+        cmd += ["--date-manifest", str(date_manifest)]
+    elif date_from:
         cmd += ["--date-from", date_from]
-    if date_to:
+    if not date_manifest and date_to:
         cmd += ["--date-to", date_to]
     if preflight_strict:
         cmd.append("--preflight-strict")
@@ -162,9 +178,11 @@ def _write_audit_md(
     ruleset_path: Optional[Path],
     date_from: Optional[str],
     date_to: Optional[str],
+    date_manifest: Optional[Path],
     anchor_mode: str,
     benchmark: str,
     strict: bool,
+    relaxed: bool,
     reranked: bool,
     preflight_dir: Path,
     eval_dir: Path,
@@ -189,8 +207,11 @@ def _write_audit_md(
     lines.append(f"- **Cost BPS**: {cost_bps}")
     lines.append(f"- **Anchor mode**: {anchor_mode}")
     lines.append(f"- **Benchmark**: {benchmark}")
+    if date_manifest:
+        lines.append(f"- **Date manifest**: `{date_manifest}`")
     lines.append(f"- **Date range**: {date_from or '(all)'} to {date_to or '(all)'}")
-    lines.append(f"- **Preflight strict**: {strict}")
+    mode_str = "relaxed (WARN included)" if relaxed else "strict (WARN excluded)"
+    lines.append(f"- **Preflight mode**: {mode_str}")
     lines.append(f"- **Reranked**: {reranked}")
     lines.append("")
 
@@ -315,19 +336,41 @@ def run_audited_backtest(
     ruleset_path: Optional[Path] = None,
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
+    date_manifest: Optional[Path] = None,
     top_k: int = 20,
     cost_bps: float = 30,
     anchor_mode: str = "prev_trading_day",
     benchmark: str = "XBI",
     rerank: bool = False,
-    preflight_strict: bool = False,
+    preflight_strict: bool = True,
+    relaxed: bool = False,
     check_pit: bool = False,
     pit_cache_base: Optional[Path] = None,
     run_id: Optional[str] = None,
     rebalance_buffer_ranks: int = 0,
     turnover_cap: float = 0.0,
 ) -> int:
-    """Run an audited backtest.  Returns 0 on success, non-zero on failure."""
+    """Run an audited backtest.  Returns 0 on success, non-zero on failure.
+
+    Defaults to strict preflight (WARN dates excluded).  For archive/OOS data
+    where all snapshots carry WARN status, pass relaxed=True to include them.
+    Use date_manifest to restrict evaluation to a curated allowed-date set.
+    """
+    # --relaxed overrides the strict default
+    effective_strict = preflight_strict and not relaxed
+
+    # Derive date_from/date_to from manifest bounds if not provided
+    eff_date_from = date_from
+    eff_date_to = date_to
+    if date_manifest and date_manifest.is_file():
+        raw = date_manifest.read_text().splitlines()
+        manifest_dates = sorted(d.strip() for d in raw if d.strip())
+        if manifest_dates:
+            if eff_date_from is None:
+                eff_date_from = manifest_dates[0]
+            if eff_date_to is None:
+                eff_date_to = manifest_dates[-1]
+
     run_id = run_id or _make_run_id()
     run_dir = out_root / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -342,15 +385,21 @@ def run_audited_backtest(
     print(f"  horizons: {horizons}, top_k: {top_k}, cost_bps: {cost_bps}")
     if rebalance_buffer_ranks > 0 or turnover_cap > 0:
         print(f"  buffer: {rebalance_buffer_ranks}, turnover_cap: {turnover_cap}")
-    print(f"  strict: {preflight_strict}, rerank: {rerank}")
+    if date_manifest:
+        print(f"  date_manifest: {date_manifest}")
+    mode_label = "RELAXED (WARN included)" if relaxed else "strict (WARN excluded)"
+    print(f"  preflight: {mode_label}, rerank: {rerank}")
+    if relaxed:
+        print("  [RELAXED MODE] WARN-status snapshots will be included in eval.")
+        print("  Intended for archive/OOS data. Ensure date_manifest provides quality control.")
     print()
 
     # ── Step 1: Preflight ───────────────────────────────────────────
     print("Step 1/4: Running preflight batch...")
     report = run_preflight_batch(
         snapshot_root,
-        date_from=date_from,
-        date_to=date_to,
+        date_from=eff_date_from,
+        date_to=eff_date_to,
         check_pit=check_pit,
         pit_cache_base=pit_cache_base,
         eval_horizons=horizons,
@@ -364,10 +413,10 @@ def run_audited_backtest(
         report, preflight_dir,
         run_id=run_id,
         snapshot_root=snapshot_root,
-        date_from=date_from,
-        date_to=date_to,
+        date_from=eff_date_from,
+        date_to=eff_date_to,
         horizons=horizons,
-        strict=preflight_strict,
+        strict=effective_strict,
         file_hashes=file_hashes,
     )
     print(f"  preflight: {report.n_total} snapshots — "
@@ -385,7 +434,7 @@ def run_audited_backtest(
         rerank_out = run_dir / "reranked"
         rc = _run_rerank(
             snapshot_root, rerank_out, ruleset_path,
-            date_from=date_from, date_to=date_to,
+            date_from=eff_date_from, date_to=eff_date_to,
             preflight=True,
         )
         if rc != 0:
@@ -405,12 +454,13 @@ def run_audited_backtest(
         horizons=horizons,
         top_k=top_k,
         cost_bps=cost_bps,
-        date_from=date_from,
-        date_to=date_to,
+        date_from=eff_date_from,
+        date_to=eff_date_to,
+        date_manifest=date_manifest,
         anchor_mode=anchor_mode,
         benchmark=benchmark,
         preflight=True,
-        preflight_strict=preflight_strict,
+        preflight_strict=effective_strict,
         rebalance_buffer_ranks=rebalance_buffer_ranks,
         turnover_cap=turnover_cap,
         ruleset_path=ruleset_path,
@@ -436,11 +486,13 @@ def run_audited_backtest(
         eval_snapshot_root=eval_snapshot_root,
         price_csv=price_csv,
         ruleset_path=ruleset_path,
-        date_from=date_from,
-        date_to=date_to,
+        date_from=eff_date_from,
+        date_to=eff_date_to,
+        date_manifest=date_manifest,
         anchor_mode=anchor_mode,
         benchmark=benchmark,
-        strict=preflight_strict,
+        strict=effective_strict,
+        relaxed=relaxed,
         reranked=rerank,
         preflight_dir=preflight_dir,
         eval_dir=eval_dir,
@@ -471,6 +523,15 @@ def main() -> None:
     parser.add_argument("--date-from", type=str, default=None)
     parser.add_argument("--date-to", type=str, default=None)
     parser.add_argument(
+        "--date-manifest", type=Path, default=None,
+        help=(
+            "Path to file with one YYYY-MM-DD date per line (strict curated set). "
+            "Restricts eval to exactly those dates; derives --date-from/--date-to "
+            "from manifest bounds if not set. "
+            "Example: output/audited_sets/audited_dates_2020_2024_strict.txt"
+        ),
+    )
+    parser.add_argument(
         "--horizons", type=str, default="63",
         help="Comma-separated forward-return horizons (default: 63)",
     )
@@ -486,8 +547,12 @@ def main() -> None:
         help="Re-rank snapshots through --ruleset before evaluating",
     )
     parser.add_argument(
-        "--preflight-strict", action="store_true", default=False,
-        help="Exclude WARN dates in addition to FAIL dates",
+        "--relaxed", action="store_true", default=False,
+        help=(
+            "Allow WARN-status snapshots (non-strict preflight). "
+            "Required for archive/OOS data where all snapshots are WARN. "
+            "A --date-manifest should be provided to maintain quality control."
+        ),
     )
     parser.add_argument(
         "--check-pit", action="store_true", default=False,
@@ -526,12 +591,13 @@ def main() -> None:
         ruleset_path=args.ruleset,
         date_from=args.date_from,
         date_to=args.date_to,
+        date_manifest=args.date_manifest,
         top_k=args.top_k,
         cost_bps=args.cost_bps,
         anchor_mode=args.anchor_mode,
         benchmark=args.benchmark,
         rerank=args.rerank,
-        preflight_strict=args.preflight_strict,
+        relaxed=args.relaxed,
         check_pit=args.check_pit,
         pit_cache_base=args.pit_cache_base,
         run_id=args.run_id,

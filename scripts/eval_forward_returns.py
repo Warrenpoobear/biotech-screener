@@ -616,8 +616,15 @@ def discover_snapshot_dates(
     snapshot_root: Path,
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
+    allowed_dates: Optional[set] = None,
 ) -> List[str]:
-    """Return sorted list of YYYY-MM-DD snapshot dates."""
+    """Return sorted list of YYYY-MM-DD snapshot dates.
+
+    Args:
+        allowed_dates: if provided, only dates in this set are returned
+            (in addition to date_from/date_to range filtering).  Used to
+            restrict evaluation to a curated manifest (e.g. strict OOS set).
+    """
     dates: List[str] = []
     if not snapshot_root.exists():
         return dates
@@ -635,6 +642,8 @@ def discover_snapshot_dates(
         if date_from and name < date_from:
             continue
         if date_to and name > date_to:
+            continue
+        if allowed_dates is not None and name not in allowed_dates:
             continue
         dates.append(name)
     return dates
@@ -922,6 +931,7 @@ def evaluate(
     cost_bps: float = DEFAULT_COST_BPS,
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
+    allowed_dates: Optional[set] = None,
     pit_mode: str = "strict",
     use_positions: bool = False,
     min_price_coverage: float = DEFAULT_MIN_PRICE_COVERAGE,
@@ -948,6 +958,9 @@ def evaluate(
     """Run the full walk-forward evaluation.
 
     Args:
+        allowed_dates: if provided, restrict evaluation to exactly these dates
+            (after date_from/date_to range filtering).  Typically loaded from a
+            curated date manifest file (e.g. audited_dates_2020_2024_strict.txt).
         anchor_mode: "exact" (require price on snap_date),
             "next_trading_day" (first date > snap_date, PIT-safe),
             "prev_trading_day" (last date <= snap_date).
@@ -969,7 +982,9 @@ def evaluate(
 
     Returns (summary, date_results, skips).
     """
-    snap_dates = discover_snapshot_dates(snapshot_root, date_from, date_to)
+    snap_dates = discover_snapshot_dates(
+        snapshot_root, date_from, date_to, allowed_dates=allowed_dates
+    )
 
     # Assign train/test splits
     split_map = assign_splits(
@@ -2382,6 +2397,16 @@ def main() -> None:
         help="Suppress staleness warning when price data is short",
     )
     parser.add_argument(
+        "--date-manifest", type=Path, default=None,
+        help=(
+            "Path to a file with one YYYY-MM-DD date per line. "
+            "Restricts evaluation to exactly those dates (strict curated set). "
+            "Also derives --date-from/--date-to from min/max of listed dates "
+            "if those are not explicitly set. "
+            "Example: output/audited_sets/audited_dates_2020_2024_strict.txt"
+        ),
+    )
+    parser.add_argument(
         "--preflight", action="store_true", default=False,
         help="Run snapshot preflight; skip dates that FAIL structural checks",
     )
@@ -2410,6 +2435,23 @@ def main() -> None:
     eff_buffer = args.rebalance_buffer_ranks
     if eval_ruleset and args.rebalance_buffer_ranks == 0 and eval_ruleset.rebalance_buffer_ranks > 0:
         eff_buffer = eval_ruleset.rebalance_buffer_ranks
+
+    # Load allowed-dates manifest if provided
+    allowed_dates: Optional[set] = None
+    if args.date_manifest:
+        raw = args.date_manifest.read_text().splitlines()
+        allowed_dates = {d.strip() for d in raw if d.strip()}
+        if not allowed_dates:
+            print(f"ERROR: --date-manifest {args.date_manifest} is empty", file=sys.stderr)
+            sys.exit(1)
+        manifest_sorted = sorted(allowed_dates)
+        # Derive date_from/date_to from manifest bounds if not explicitly set
+        if args.date_from is None:
+            args.date_from = manifest_sorted[0]
+        if args.date_to is None:
+            args.date_to = manifest_sorted[-1]
+        print(f"  Date manifest: {args.date_manifest} ({len(allowed_dates)} dates, "
+              f"{manifest_sorted[0]} – {manifest_sorted[-1]})")
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -2444,6 +2486,7 @@ def main() -> None:
         cost_bps=args.cost_bps,
         date_from=args.date_from,
         date_to=args.date_to,
+        allowed_dates=allowed_dates,
         pit_mode=args.pit_mode,
         use_positions=args.use_positions,
         min_price_coverage=args.min_price_coverage,
