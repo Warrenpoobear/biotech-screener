@@ -458,6 +458,18 @@
       "notes": "Promoted from PIT backtest. Selector: institutional block 65% (coinvest 65%, inst_delta 35%). Ranker: bounded \u00b115% adjustment. Construction: EW Top-30 unchanged.",
       "updated_by": "spec_050_promotion",
       "updated_at": "2026-04-03T15:26:58Z"
+    },
+    {
+      "id": "e739f452",
+      "file": "v1.14.0_a4_ev_tiebreaker.json",
+      "created_at": "2026-04-08",
+      "engine_version": "v1.4.0",
+      "description": "Spec 062: Stage 1 Event EV tiebreaker activation. Identical to v1.13.0 except event_ev_stage=tiebreaker.",
+      "status": "candidate",
+      "requires_replay": true,
+      "notes": "Only change vs v1.13.0: event_ev_stage='tiebreaker'. Zero effect when sort keys are distinct. Requires 30+ daily EV artifacts + governance review before promotion to active.",
+      "updated_by": "spec_062_stage1_activation",
+      "updated_at": "2026-04-08T00:00:00Z"
     }
   ]
 }

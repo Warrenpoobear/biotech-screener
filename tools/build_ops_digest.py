@@ -432,6 +432,39 @@ def _build_asymmetry_outliers(snap_dir: Path) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
+def _build_event_ev_readiness() -> Dict[str, Any]:
+    """Evaluate Event EV promotion ladder readiness (Spec 062).
+
+    Loads daily EV artifacts and reports per-stage readiness
+    for inclusion in the ops digest.
+    """
+    ev_dir = REPO_ROOT / "artifacts" / "event_ev"
+    try:
+        from event_ev.promotion_ladder import evaluate_ev_readiness
+
+        result = evaluate_ev_readiness(artifacts_dir=ev_dir)
+        summary = result.get("summary", "")
+        # Determine highest ready stage
+        highest_ready = "off"
+        for stage in ("composite", "sizing_overlay", "rank_overlay", "tiebreaker"):
+            stage_data = result.get(stage, {})
+            if stage_data.get("ready"):
+                highest_ready = stage
+                break
+
+        return {
+            "available": True,
+            "highest_ready_stage": highest_ready,
+            "tiebreaker_ready": result.get("tiebreaker", {}).get("ready", False),
+            "rank_overlay_ready": result.get("rank_overlay", {}).get("ready", False),
+            "sizing_overlay_ready": result.get("sizing_overlay", {}).get("ready", False),
+            "n_daily_artifacts": result.get("tiebreaker", {}).get("evidence", {}).get("n_daily_artifacts", 0),
+            "summary": summary,
+        }
+    except Exception as e:
+        return {"available": False, "error": str(e)}
+
+
 def _build_review_packet_summary() -> Dict[str, Any]:
     """Load latest review packet and extract summary for ops digest."""
     review_dir = REPO_ROOT / "artifacts" / "review"
@@ -641,6 +674,9 @@ def build_ops_digest(
     # Review packet summary (timing + event quality)
     review_packet_summary = _build_review_packet_summary()
 
+    # Event EV readiness (Spec 062)
+    event_ev_readiness = _build_event_ev_readiness()
+
     return {
         "schema": SCHEMA_VERSION,
         "as_of_date": as_of_date,
@@ -662,6 +698,7 @@ def build_ops_digest(
         "options_monitor_v11": om11_summary,
         "asymmetry_outliers": asymmetry_outliers,
         "review_packet": review_packet_summary,
+        "event_ev_readiness": event_ev_readiness,
     }
 
 
@@ -895,6 +932,21 @@ def format_digest_md(d: Dict[str, Any]) -> str:
         if not under and not over:
             lines.append("No outliers (all within 0.7x–2.0x implied/realized range).")
             lines.append("")
+
+    # Event EV Readiness (Spec 062)
+    evr = d.get("event_ev_readiness", {})
+    if evr.get("available"):
+        lines.append("## Event EV Readiness")
+        lines.append("")
+        n_art = evr.get("n_daily_artifacts", 0)
+        highest = evr.get("highest_ready_stage", "off")
+        tb_ready = evr.get("tiebreaker_ready", False)
+        lines.append(f"Daily artifacts: **{n_art}** | Highest ready stage: **{highest}**")
+        if tb_ready:
+            lines.append("Stage 1 (tiebreaker): READY for governance review")
+        else:
+            lines.append("Stage 1 (tiebreaker): accumulating evidence")
+        lines.append("")
 
     return "\n".join(lines) + "\n"
 

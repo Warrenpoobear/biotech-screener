@@ -5201,6 +5201,18 @@ def run_daily(
         except Exception as _ev_err:
             _logger.warning(f"Event EV scoring failed: {_ev_err}")
 
+        # --- Step 5k.22: Event EV feed verification + readiness (Spec 062) ---
+        try:
+            from tools.verify_event_ev_feed import verify_feed as _verify_ev_feed
+
+            _ev_health = _verify_ev_feed(as_of_date)
+            _ev_status = _ev_health.get("status", "missing")
+            _ev_cov = _ev_health.get("checks", {}).get("rankings", {}).get("coverage_pct", 0)
+            _ev_n_art = _ev_health.get("checks", {}).get("staleness", {}).get("n_daily_artifacts", 0)
+            _logger.info(f"Event EV feed → {_ev_status.upper()}, {_ev_cov}% coverage, {_ev_n_art} artifacts")
+        except Exception as _evh_err:
+            _logger.debug(f"Event EV feed verification skipped: {_evh_err}")
+
         # --- Step 5l: Ops digest (non-blocking) ---
         try:
             from tools.build_ops_digest import run_ops_digest

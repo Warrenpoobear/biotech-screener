@@ -365,6 +365,7 @@ class TestRulesetDriftGuardrails:
         "promote_ruleset.py --rollback",
         "manual_bootstrap",
         "spec_050_promotion",
+        "spec_062_stage1_activation",
         "run_signal_evidence.py",
         "acceptance_replay_ruleset.py",
     }
