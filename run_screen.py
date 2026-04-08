@@ -4902,6 +4902,49 @@ def save_validation_snapshot(
         if "ranker_v2_rank" not in _row:
             _row["ranker_v2_rank"] = ""
 
+    # --- Spec 061: Event EV field injection ---
+    # Load daily EV artifacts and inject into decision_fields before sort.
+    # Stages 1-3 of the promotion ladder read these fields from each row.
+    try:
+        from event_ev.promotion_ladder import (
+            classify_ev_bucket,
+            compute_cohort_ev_z_scores,
+            load_event_ev_for_cohort,
+        )
+        from datetime import date as _date_cls
+
+        _ev_as_of = _date_cls.fromisoformat(as_of_date)
+        _ev_tickers = [r.get("ticker", "") for r in csv_rows if r.get("ticker")]
+        _ev_artifacts_dir = Path("artifacts/event_ev")
+        _ev_lookup = load_event_ev_for_cohort(_ev_as_of, _ev_tickers, _ev_artifacts_dir)
+
+        if _ev_lookup:
+            _ev_z_scores = compute_cohort_ev_z_scores(_ev_lookup)
+            _ev_rs = ruleset or DEFAULT_RULESET
+            _ev_high = _ev_rs.event_ev_sizing_high_threshold
+            _ev_low = _ev_rs.event_ev_sizing_low_threshold
+
+            for _row in csv_rows:
+                _tk = _row.get("ticker", "")
+                _ev_data = _ev_lookup.get(_tk, {})
+                _row["event_ev_score"] = _ev_data.get("event_ev_score", "")
+                _row["event_ev_score_z"] = _ev_z_scores.get(_tk, "")
+                _ds_adj = _ev_data.get("downside_adjusted_ev")
+                _row["event_ev_bucket"] = classify_ev_bucket(_ds_adj, _ev_high, _ev_low)
+                _row["event_ev_analog_confidence"] = _ev_data.get("event_ev_analog_confidence", "")
+
+            logger.info(f"  Event EV: {len(_ev_lookup)}/{len(_ev_tickers)} tickers with EV data injected")
+        else:
+            logger.debug("  Event EV: no artifacts found for %s", as_of_date)
+    except Exception as _ev_err:
+        logger.debug("  Event EV injection skipped: %s", _ev_err)
+
+    # Ensure event_ev columns exist on all rows (including ineligible / no EV data)
+    for _row in csv_rows:
+        for _ev_col in ("event_ev_score", "event_ev_score_z", "event_ev_bucket", "event_ev_analog_confidence"):
+            if _ev_col not in _row:
+                _row[_ev_col] = ""
+
     # --- Actionable ordering: sort + assign rank + compute weights ---
     _rs = ruleset or DEFAULT_RULESET
     logger.info(

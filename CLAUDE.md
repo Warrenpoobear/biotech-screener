@@ -61,6 +61,7 @@ under the Spec 055 statistical bar (FM, bootstrap, FDR, LOSO).
 - K=30 validated by sweep (stable K=25-35 plateau)
 - Forward shadow tracker (7 arms, wired into daily cron)
 - event_type_score as overlay/diagnostic (5/5 Checklist v2 pass, but not selector weight)
+- Event EV promotion ladder infrastructure (Spec 061): 4-stage default-OFF ladder wired into decision engine + run_screen.py injection
 
 ### Deprecated (do not cite)
 - **All survivorship-only benchmark numbers** (+93.7pp, +110.5pp, etc.)
@@ -122,6 +123,7 @@ hours here unless genuinely new data or a structural model change creates a reas
 8. **K=30 is validated** by PIT sweep (stable K=25-35 plateau, net-of-cost peak).
 9. **Regime caveat**: this is a bear/neutral alpha engine. Expect bounded underperformance in strong bull.
 10. The governance hold (Spec 048) **succeeded**: it prevented the old optionality selector from being institutionalized on contaminated data, which led to finding the better B6 selector.
+11. **Event EV promotion ladder (Spec 061)**: infrastructure implemented (2026-04-08). 4 stages (tiebreaker → rank overlay → sizing overlay → composite), all default OFF. Wired into decision engine + run_screen.py. Requires forward evidence + governance review before activation.
 
 ---
 
@@ -164,6 +166,7 @@ python3 scripts/research/build_selection_benchmark.py --pit-mode survivorship --
 - **PIT financial regeneration is COMPLETE.** 76 monthly dates in `data/snapshots_pit_v2/`, 72/72 OK, 0 errors.
 - **Result: historical alpha collapsed.** All pre-correction claims are deprecated.
 - **Next heavy lift: forward monitor accumulation.** No compute needed — just time. Evaluate after 30+ trading days of true-PIT daily production.
+- **Event EV forward accumulation**: daily artifacts in `artifacts/event_ev/` via Step 5k.21. EV fields now injected into rankings.csv (Spec 061). Evaluate readiness via `event_ev.promotion_ladder.evaluate_ev_readiness()`.
 - **If forward evidence is positive:** re-establish selector thesis from clean data. Do not backfill from historical.
 - **If forward evidence is negative:** the selector needs structural re-examination.
 
@@ -180,16 +183,18 @@ python3 scripts/research/build_selection_benchmark.py --pit-mode survivorship --
 ## Decision Engine Architecture (v1.5.0)
 
 **Core files:**
-- `decision_engine.py` — L0 gates → L2 overlays → L4 tiers → L3 sizing → sort key
+- `decision_engine.py` — L0 gates → L2 overlays → L4 tiers → L3 sizing → sort key + Event EV ladder (Spec 061)
 - `selector_engine.py` — B6 selector (5 blocks, coinvest+inst dominant)
 - `ranker_v2_pairwise.py` — pairwise_minimal ranker (6 features, ordinal-only)
 - `ranker_engine.py` — clinical_50 ranker (legacy/fallback, bounded ±15%)
+- `event_ev/promotion_ladder.py` — EV stage enum, bucket classifier, cohort loader, z-scores, readiness evaluator
 
 **Pipeline flow:**
 ```
 Modules 1-5 → Decision Engine (gates, tiers, sizing)
            → Selector Engine (B6: coinvest 65% + inst_delta 35%)
            → Ranker Engine (pairwise_minimal: 6 features, top-60 cohort, ordinal-only)
+           → Event EV injection (Spec 061: load artifacts → z-score → bucket → inject)
            → Sort by final_score → EW Top-30 → rankings.csv
 ```
 
@@ -366,5 +371,6 @@ ticker:
 | Ruleset Manifest | `production_data/decision_rulesets/manifest.json` |
 | Cache Warmer | `warm_caches.py` |
 | Event Ledger | `event_ledger.py` |
+| Event EV Ladder | `event_ev/promotion_ladder.py` |
 | Cron Wrapper | `tools/cron_daily_production.sh` |
 | Ops Agent Workspace | `agents/ops/` |

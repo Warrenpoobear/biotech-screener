@@ -276,6 +276,11 @@ SNAPSHOT_COLUMNS = (
         "regime_label",
         "ranker_v2_score",
         "ranker_v2_rank",
+        # --- Spec 061: Event EV columns ---
+        "event_ev_score",
+        "event_ev_score_z",
+        "event_ev_bucket",
+        "event_ev_analog_confidence",
     ]
 )
 
