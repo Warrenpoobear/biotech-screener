@@ -32,7 +32,7 @@ class TestTradingCalendar:
     
     def test_add_trading_days(self):
         result = add_trading_days("2024-07-01", 5)
-        assert result == "2024-07-08"
+        assert result == "2024-07-09"  # July 4 is Independence Day
     
     def test_compute_forward_windows(self):
         windows = compute_forward_windows("2024-07-01")

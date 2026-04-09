@@ -104,7 +104,7 @@ class TestProductionConfig:
     def test_winning_config_values(self):
         from run_screen import PRODUCTION_RANKER_V2_CONFIG
 
-        assert PRODUCTION_RANKER_V2_CONFIG.feature_set == "minimal"
+        assert PRODUCTION_RANKER_V2_CONFIG.feature_set == "minimal_v2"
         assert PRODUCTION_RANKER_V2_CONFIG.cohort_top_n == 60
         assert PRODUCTION_RANKER_V2_CONFIG.require_catalyst_window is False
         assert PRODUCTION_RANKER_V2_CONFIG.n_epochs == 200
@@ -148,16 +148,15 @@ class TestProductionModelArtifact:
         artifact = json.loads(PRODUCTION_MODEL_PATH.read_text(encoding="utf-8"))
         model = model_from_dict(artifact["model"])
         assert model.trained is True
-        # Production model may still be trained with 6 features (pre-clinical-drop)
-        # or 5 features (post-clinical-drop). Both are valid until retrained.
-        assert model.n_features in (5, 6)
+        # Production model minimal_v2: 2 features (coinvest_score_z, financial_score)
+        assert model.n_features in (2, 5, 6)
         assert len(model.weights) == model.n_features
 
     @pytest.mark.skipif(not PRODUCTION_MODEL_PATH.exists(), reason="No production model artifact")
     def test_model_config_matches_production(self):
         artifact = json.loads(PRODUCTION_MODEL_PATH.read_text(encoding="utf-8"))
         cfg = artifact["config"]
-        assert cfg["feature_set"] == "minimal"
+        assert cfg["feature_set"] == "minimal_v2"
         assert cfg["cohort_top_n"] == 60
         assert cfg["require_catalyst_window"] is False
         assert cfg["n_epochs"] == 200

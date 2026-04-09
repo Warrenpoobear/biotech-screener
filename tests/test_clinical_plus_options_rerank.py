@@ -126,7 +126,7 @@ def _contrib_names(contribs):
 
 def _contrib_delta(contribs, name):
     matches = [c for c in contribs if c.name == name]
-    return matches[0].delta if matches else None
+    return float(matches[0].delta) if matches else None
 
 
 # ---------------------------------------------------------------------------

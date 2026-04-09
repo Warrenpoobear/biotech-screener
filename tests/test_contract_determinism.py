@@ -196,7 +196,7 @@ class TestSortKeyDeterminism:
             for _ in range(10)
         ]
         totals = [r[0] for r in results]
-        maps = [json.dumps(r[1], sort_keys=True) for r in results]
+        maps = [json.dumps(r[1], sort_keys=True, default=str) for r in results]
         assert len(set(totals)) == 1, "Sort contrib totals not deterministic"
         assert len(set(maps)) == 1, "Sort contrib maps not deterministic"
 

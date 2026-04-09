@@ -292,22 +292,22 @@ class TestTradingCalendar:
     def test_next_trading_day_friday(self):
         """Test next trading day from Friday (skips weekend)."""
         # Friday -> Monday
-        assert next_trading_day("2026-01-16") == "2026-01-19"
+        assert next_trading_day("2026-01-16") == "2026-01-20"
 
     def test_next_trading_day_saturday(self):
         """Test next trading day from Saturday."""
-        assert next_trading_day("2026-01-17") == "2026-01-19"
+        assert next_trading_day("2026-01-17") == "2026-01-20"
 
     def test_add_trading_days(self):
         """Test adding trading days."""
-        # Start on Monday, add 5 days = next Monday
-        assert add_trading_days("2026-01-12", 5) == "2026-01-19"
-        # Start on Wednesday, add 3 days = Monday (crosses weekend)
-        assert add_trading_days("2026-01-14", 3) == "2026-01-19"
+        # Start on Monday, add 5 days = next Tuesday (MLK Day on 2026-01-19)
+        assert add_trading_days("2026-01-12", 5) == "2026-01-20"
+        # Start on Wednesday, add 3 days = Tuesday (crosses weekend + MLK Day)
+        assert add_trading_days("2026-01-14", 3) == "2026-01-20"
 
     def test_subtract_trading_days(self):
         """Test subtracting trading days."""
-        # Start on Monday, subtract 5 days = previous Monday
+        # Start on MLK Day (Mon), subtract 5 days = previous Monday
         assert subtract_trading_days("2026-01-19", 5) == "2026-01-12"
 
     def test_compute_forward_windows(self):

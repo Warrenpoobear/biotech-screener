@@ -573,7 +573,7 @@ class TestSortKeyEdge:
         rs = _ruleset(alpha_cohort_tiebreak_weight=0.10)
         df = self._decision_fields(alpha_cohort_pct=0.8)
         total, cmap = compute_sort_contribs(df, "drug_developer", ruleset=rs)
-        assert cmap["alpha_cohort_tb"] == pytest.approx(0.10 * 0.8)
+        assert float(cmap["alpha_cohort_tb"]) == pytest.approx(0.10 * 0.8)
 
     def test_sort_key_tier_first(self):
         """Lines 1312, 1319: tiering_priority_mode='tier_first'."""

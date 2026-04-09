@@ -316,6 +316,14 @@ class TestSortContribKeysContract:
         "binary_quality",
         "binary_institutional",
         "clinical_quality_91_180",
+        "options_quality_91_180",
+        "binary_quality_now",
+        "binary_institutional_now",
+        "clinical_build_window",
+        "pcr_penalty_bw",
+        "oncology_crowding",
+        "options_verdict",
+        "event_ev",
     )
 
     def test_keys_match_expected(self):

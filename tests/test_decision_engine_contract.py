@@ -1008,6 +1008,7 @@ class TestSnapshotInputContract:
             "de_sort_contrib_pcr_penalty_bw",
             "de_sort_contrib_oncology_crowding",
             "de_sort_contrib_options_verdict",
+            "de_sort_contrib_event_ev",
         }
     )
 
@@ -1128,7 +1129,7 @@ class TestGoldenOutputFingerprint:
       4. Bump VERSION in decision_engine.py if the change is material
     """
 
-    EXPECTED_FINGERPRINT = "33f6a0c728bc"  # pragma: allowlist secret
+    EXPECTED_FINGERPRINT = "d9cd64b3a321"  # pragma: allowlist secret
 
     def test_golden_output_fingerprint_pinned(self):
         actual = _compute_golden_output_fingerprint()
