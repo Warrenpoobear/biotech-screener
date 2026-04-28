@@ -73,10 +73,25 @@ def test_network_connectivity() -> Tuple[bool, str]:
         return False, f"Connection error: {error_msg[:100]}"
 
 
+def _extract_market_records(data: object) -> Tuple[list, str]:
+    """Extract records list and as_of_date from v1 (list) or v2 (dict) market_data payload."""
+    if isinstance(data, list):
+        collection_date = data[0].get("collected_at", "unknown") if data else "unknown"
+        return data, collection_date
+    if isinstance(data, dict) and "records" in data:
+        records = data["records"]
+        collection_date = data.get("as_of_date") or (
+            records[0].get("collected_at", "unknown") if records else "unknown"
+        )
+        return records, collection_date
+    return [], "unknown"
+
+
 def load_cached_market_data(cache_file: Path) -> Tuple[list, str]:
     """
     Load cached market data if available.
     Returns (data_list, collection_date).
+    Handles both v1 (bare list) and v2 (dict with as_of_date + records) formats.
     """
     if not cache_file.exists():
         return [], ""
@@ -85,9 +100,8 @@ def load_cached_market_data(cache_file: Path) -> Tuple[list, str]:
             data = json.load(f)
         if not data:
             return [], ""
-        # Get collection date from first record
-        collection_date = data[0].get("collected_at", "unknown")
-        return data, collection_date
+        records, collection_date = _extract_market_records(data)
+        return records, collection_date
     except Exception:
         return [], ""
 
@@ -343,6 +357,13 @@ def collect_all_market_data(
     # Validate before writing — catch missing required fields early
     validate_market_records(all_data)
 
+    # Wrap in v2 envelope: single authoritative as_of_date at top level
+    payload = {
+        "as_of_date": as_of_date.isoformat(),
+        "schema_version": "market_data.v2",
+        "records": all_data,
+    }
+
     # Save (atomic: write to temp file, then rename)
     output_file.parent.mkdir(parents=True, exist_ok=True)
     import tempfile
@@ -350,7 +371,7 @@ def collect_all_market_data(
     fd, tmp_path = tempfile.mkstemp(dir=output_file.parent, prefix=".tmp_market_data_", suffix=".json")
     try:
         with os.fdopen(fd, "w") as f:
-            json.dump(all_data, f, indent=2)
+            json.dump(payload, f, indent=2)
         Path(tmp_path).replace(output_file)
     except Exception:
         try:

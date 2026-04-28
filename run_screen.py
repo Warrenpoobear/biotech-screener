@@ -988,6 +988,82 @@ def load_json_data(
     return data
 
 
+MAX_MARKET_DATA_STALE_DAYS = 5
+
+
+def _load_market_data_with_pit_check(
+    path: Path,
+    screener_as_of_date: str,
+) -> List[Dict[str, Any]]:
+    """Load market_data.json with PIT date validation.
+
+    Handles v1 (bare list) and v2 (dict with as_of_date + schema_version + records).
+
+    v1: WARN once that as_of_date is unverifiable; accept records.
+    v2: Validate as_of_date against screener_as_of_date.
+        - source > screener → raise ValueError (lookahead block).
+        - source > MAX_MARKET_DATA_STALE_DAYS behind screener → WARNING.
+        - else → INFO.
+    """
+    from datetime import date as _date
+
+    validate_file_size(path, MAX_JSON_FILE_SIZE_MB)
+    if path.is_symlink():
+        raise SymlinkError(f"Market data file is a symbolic link (security risk): {path}")
+
+    with open(path, "r", encoding="utf-8") as f:
+        raw = json.load(f)
+
+    if isinstance(raw, list):
+        logger.warning(
+            "market_data.json is v1 (bare list) — as_of_date unverifiable. "
+            "Re-run collect_market_data.py to upgrade to v2 schema."
+        )
+        return raw
+
+    if not isinstance(raw, dict) or "records" not in raw:
+        raise ValueError(
+            f"market_data.json has unrecognised shape (expected list or dict with 'records'): "
+            f"top-level type={type(raw).__name__}"
+        )
+
+    as_of_str = raw.get("as_of_date")
+    if not as_of_str:
+        raise ValueError("market_data.json v2 is missing required 'as_of_date' field")
+
+    try:
+        source_date = _date.fromisoformat(as_of_str)
+        screener_date = _date.fromisoformat(screener_as_of_date)
+    except ValueError as exc:
+        raise ValueError(f"market_data.json date parse error: {exc}") from exc
+
+    delta = (screener_date - source_date).days
+    if delta < 0:
+        raise ValueError(
+            f"market_data lookahead: source dated {as_of_str} > as_of_date {screener_as_of_date}"
+        )
+    elif delta > MAX_MARKET_DATA_STALE_DAYS:
+        logger.warning(
+            "market_data.json is %d calendar days stale (source=%s, as_of=%s, max=%d). "
+            "Re-run collect_market_data.py.",
+            delta,
+            as_of_str,
+            screener_as_of_date,
+            MAX_MARKET_DATA_STALE_DAYS,
+        )
+    else:
+        logger.info(
+            "market_data.json as_of_date=%s (age=%dd vs screener %s) — OK",
+            as_of_str,
+            delta,
+            screener_as_of_date,
+        )
+
+    records = raw["records"]
+    logger.debug("Loaded market_data.json v2: %d records", len(records))
+    return records
+
+
 # =============================================================================
 # HOLDINGS SCHEMA VALIDATION (fail-loud, forward compatible)
 # =============================================================================
@@ -9214,7 +9290,13 @@ def run_screening_pipeline(
                 f"(removed {_pre_count - _post_count} with posting date > {as_of_date})"
             )
 
-    market_records = load_json_data(data_dir / "market_data.json", "Market data")
+    try:
+        market_records = _load_market_data_with_pit_check(
+            data_dir / "market_data.json", as_of_date
+        )
+    except (FileNotFoundError, ValueError) as _mkt_exc:
+        logger.error("market_data.json load failed: %s", _mkt_exc)
+        raise
 
     # --- Ingestion schema validation (advisory, non-blocking) ---
     for _label, _validator, _data in [

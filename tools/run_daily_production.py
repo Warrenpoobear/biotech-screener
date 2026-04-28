@@ -3449,7 +3449,7 @@ def check_market_data_staleness(
 
     try:
         with open(mkt_path) as f:
-            records = json.load(f)
+            raw = json.load(f)
     except (json.JSONDecodeError, OSError) as e:
         return GateResult(
             name="market_data_staleness",
@@ -3457,8 +3457,16 @@ def check_market_data_staleness(
             detail=f"Cannot read market_data.json: {e}",
         )
 
-    # Find the most common collected_at date
-    collected_dates = [r.get("collected_at") for r in records if isinstance(r, dict) and r.get("collected_at")]
+    # Support both v1 (bare list) and v2 (dict with as_of_date + records)
+    if isinstance(raw, dict) and "as_of_date" in raw:
+        # v2: use top-level as_of_date directly
+        records = raw.get("records", [])
+        top_level_date = raw["as_of_date"]
+        collected_dates = [top_level_date] if top_level_date else []
+    else:
+        records = raw if isinstance(raw, list) else []
+        collected_dates = [r.get("collected_at") for r in records if isinstance(r, dict) and r.get("collected_at")]
+
     if not collected_dates:
         return GateResult(
             name="market_data_staleness",
@@ -3517,7 +3525,7 @@ def check_market_data_schema(data_dir: Path) -> GateResult:
 
     try:
         with open(mkt_path) as f:
-            records = json.load(f)
+            raw = json.load(f)
     except (json.JSONDecodeError, OSError) as e:
         return GateResult(
             name="market_data_schema",
@@ -3525,11 +3533,16 @@ def check_market_data_schema(data_dir: Path) -> GateResult:
             detail=f"Cannot parse market_data.json: {e}",
         )
 
-    if not isinstance(records, list):
+    # Support both v1 (bare list) and v2 (dict with records key)
+    if isinstance(raw, dict) and "records" in raw:
+        records = raw["records"]
+    elif isinstance(raw, list):
+        records = raw
+    else:
         return GateResult(
             name="market_data_schema",
             status="FAIL",
-            detail="market_data.json is not a JSON array",
+            detail="market_data.json is not a JSON array or valid v2 envelope",
         )
 
     if len(records) == 0:
