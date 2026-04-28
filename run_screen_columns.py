@@ -247,6 +247,7 @@ SNAPSHOT_COLUMNS = (
         "cheap_vol_score",
         "vol_classification",
         "straddle_price",
+        "straddle_unit_suspect",  # "1" if dollar-unit quarantine fired; priced_move_pct left empty
         # --- Pre-event put/call ratio (from Massive day aggs, shadow) ---
         "pre_event_put_call_ratio",
         # --- Term structure validation flags (Agent 0 staleness / blind spot) ---

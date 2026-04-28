@@ -3925,7 +3925,7 @@ def _enrich_applicability_flags(csv_rows: List[Dict[str, Any]]) -> None:
         _r["has_clinical_optionality_dev"] = 1 if _arch == "drug_developer" else 0
 
 
-def _finalize_priced_move(csv_rows: List[Dict[str, Any]]) -> None:
+def _finalize_priced_move(csv_rows: List[Dict[str, Any]]) -> int:
     """PHASE 2z: Final field injection — priced_move_pct from straddle_price.
 
     Must run AFTER all options scoring (straddle, PCR, etc) and BEFORE CSV write.
@@ -3934,10 +3934,19 @@ def _finalize_priced_move(csv_rows: List[Dict[str, Any]]) -> None:
     Unit conversion: straddle_price / implied_event_move are in decimal
     (0.39 = 39% move), but EES base-rate tables and conditional model
     use percentage points (39.0 = 39% move). Multiply by 100.
+
+    Rows flagged straddle_unit_suspect='1' are skipped: priced_move_pct is left
+    empty to prevent contaminating EES v3 saturation guards with dollar-unit values.
+
+    Returns the count of quarantined (skipped) rows.
     """
     _n_set = 0
     _n_suspicious = 0
+    _n_quarantined = 0
     for _r in csv_rows:
+        if _r.get("straddle_unit_suspect") == "1":
+            _n_quarantined += 1
+            continue
         if not _r.get("priced_move_pct") and _r.get("straddle_price"):
             try:
                 _sp = float(_r["straddle_price"])
@@ -3949,12 +3958,18 @@ def _finalize_priced_move(csv_rows: List[Dict[str, Any]]) -> None:
                     _n_suspicious += 1
             except (ValueError, TypeError):
                 pass
+    if _n_quarantined > 0:
+        logger.warning(
+            "[Phase2z] %d row(s) quarantined (straddle_unit_suspect): priced_move_pct left empty",
+            _n_quarantined,
+        )
     if _n_suspicious > 0:
         logger.warning(
             "[Phase2z] %d/%d priced_move_pct values outside [1, 500] — possible unit error",
             _n_suspicious,
             _n_set,
         )
+    return _n_quarantined
 
 
 def save_validation_snapshot(
@@ -5878,6 +5893,10 @@ def save_validation_snapshot(
                     # Store chain-derived fields for downstream use
                     # Prefer catalyst-aligned straddle when available
                     row["_chain_straddle_price"] = ca.get("catalyst_straddle_price") or ca.get("straddle_price")
+                    # Propagate unit-suspect flag: quarantine fires in compute_atm_straddle
+                    # when implied_move > 5.0 (dollar straddle > 5x underlying price).
+                    if ca.get("straddle_unit_suspect") == "1":
+                        row["straddle_unit_suspect"] = "1"
                     row["_chain_actual_implied_move"] = ca.get("catalyst_straddle_implied_move") or ca.get(
                         "actual_implied_move"
                     )
@@ -6345,7 +6364,18 @@ def save_validation_snapshot(
     # =========================================================================
     # PHASE 2z: Final field injection (must be last enrichment before write)
     # =========================================================================
-    _finalize_priced_move(csv_rows)
+    _straddle_quarantine_count = _finalize_priced_move(csv_rows)
+    try:
+        _dq_path = snap_path / "data_quality_overlay.json"
+        with open(_dq_path, "w", encoding="utf-8") as _dq_f:
+            json.dump(
+                {"straddle_unit_quarantined_count": _straddle_quarantine_count},
+                _dq_f,
+                indent=2,
+            )
+            _dq_f.write("\n")
+    except Exception as _dq_exc:
+        logger.debug("Could not write data_quality_overlay.json: %s", _dq_exc)
 
     # --- EES v2: score + gate enrichment (must run before CSV write) ---
     _ees_scores_for_sidecar = None

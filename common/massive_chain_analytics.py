@@ -165,6 +165,18 @@ def compute_atm_straddle(
     straddle = call_price + put_price
     implied_move = straddle / underlying_price if underlying_price > 0 else None
 
+    # Quarantine: straddle > 5x underlying is a unit error (dollar vs ratio confusion).
+    # Set straddle_price=None and flag the row so downstream skips priced_move_pct.
+    if implied_move is not None and implied_move > 5.0:
+        return {
+            "straddle_price": None,
+            "actual_implied_move": None,
+            "atm_strike": atm_call.get("strike_price"),
+            "atm_call_close": round(call_price, 4),
+            "atm_put_close": round(put_price, 4),
+            "straddle_unit_suspect": "1",
+        }
+
     return {
         "straddle_price": round(straddle, 4),
         "actual_implied_move": round(implied_move, 4) if implied_move else None,
