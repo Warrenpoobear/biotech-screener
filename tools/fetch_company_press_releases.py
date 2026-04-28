@@ -13,17 +13,19 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import hashlib
 import json
 import logging
 import re
 import sys
+import threading
 import time
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 import requests
 
@@ -39,6 +41,31 @@ STATE_PATH = OUTPUT_DIR / "fetch_state.json"
 USER_AGENT = "WakeRobinBiotechScreener/1.0 (research)"
 REQUEST_TIMEOUT = 20
 RATE_LIMIT_SECONDS = 2
+
+# Per-domain rate limiter — keyed on urllib.parse.urlparse(url).netloc
+_domain_locks: Dict[str, threading.Lock] = {}
+_domain_last_request: Dict[str, float] = {}
+_domain_registry_lock = threading.Lock()
+
+
+def _domain_key(url: str) -> str:
+    return urlparse(url).netloc or url
+
+
+def _rate_limit_domain(url: str) -> None:
+    """Block until RATE_LIMIT_SECONDS has elapsed since the last request to this domain."""
+    key = _domain_key(url)
+    with _domain_registry_lock:
+        if key not in _domain_locks:
+            _domain_locks[key] = threading.Lock()
+            _domain_last_request[key] = 0.0
+        lock = _domain_locks[key]
+    with lock:
+        elapsed = time.monotonic() - _domain_last_request[key]
+        wait = RATE_LIMIT_SECONDS - elapsed
+        if wait > 0:
+            time.sleep(wait)
+        _domain_last_request[key] = time.monotonic()
 
 
 @dataclass
@@ -98,6 +125,7 @@ def _save_state(state: Dict[str, Any]) -> None:
 
 def _fetch_url(url: str, max_retries: int = 3) -> Optional[str]:
     """Fetch URL content with retry, backoff, and error handling."""
+    _rate_limit_domain(url)
     for attempt in range(max_retries):
         try:
             resp = requests.get(
@@ -394,7 +422,6 @@ def fetch_ticker_releases(
                     fetched_at=datetime.now(timezone.utc).isoformat(),
                 )
             )
-        time.sleep(RATE_LIMIT_SECONDS)
 
     # Source 2: Backup sources (GlobeNewswire etc)
     for backup_url in source.get("backup_sources", []):
@@ -427,7 +454,6 @@ def fetch_ticker_releases(
                     fetched_at=datetime.now(timezone.utc).isoformat(),
                 )
             )
-        time.sleep(RATE_LIMIT_SECONDS)
 
     # Dedupe by content hash
     deduped = []
@@ -477,6 +503,13 @@ def main() -> int:
     parser.add_argument("--ticker", default="", help="Fetch single ticker only")
     parser.add_argument("--health-check", action="store_true", help="Source health report only")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=12,
+        metavar="N",
+        help="ThreadPoolExecutor workers for parallel ticker fetching (1-32, default 12)",
+    )
     args = parser.parse_args()
 
     sources = _load_sources()
@@ -496,27 +529,38 @@ def main() -> int:
 
     all_releases: List[PressRelease] = []
     all_results: List[FetchResult] = []
+    _results_lock = threading.Lock()
+    workers = max(1, min(32, args.workers))
 
-    for source in sources:
-        ticker = source["ticker"]
-        logger.info("Fetching %s...", ticker)
-        releases, results = fetch_ticker_releases(ticker, source, state)
-        all_releases.extend(releases)
-        all_results.extend(results)
+    def _fetch_one(src: Dict[str, Any]) -> tuple:
+        t = src["ticker"]
+        logger.info("Fetching %s...", t)
+        return t, *fetch_ticker_releases(t, src, state)
 
-        # Update state
-        ticker_state = state.get(ticker, {"seen_hashes": []})
-        ticker_state["last_fetch_utc"] = datetime.now(timezone.utc).isoformat()
-        if releases:
-            dated = [r.published_at_utc for r in releases if r.published_at_utc]
-            if dated:
-                ticker_state["last_release_date"] = max(dated)
-            elif "last_release_date" not in ticker_state:
-                ticker_state["last_release_date"] = ""
-        new_hashes = [r.content_hash for r in releases]
-        existing = set(ticker_state.get("seen_hashes", []))
-        ticker_state["seen_hashes"] = list(existing | set(new_hashes))[-200:]  # keep last 200
-        state[ticker] = ticker_state
+    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+        futs = {executor.submit(_fetch_one, src): src for src in sources}
+        for fut in concurrent.futures.as_completed(futs):
+            try:
+                ticker, releases, results = fut.result()
+            except Exception as exc:
+                logger.error("Unhandled error for %s: %s", futs[fut]["ticker"], exc)
+                continue
+            with _results_lock:
+                all_releases.extend(releases)
+                all_results.extend(results)
+                # Update state (serialised through lock so no concurrent mutations)
+                ticker_state = state.get(ticker, {"seen_hashes": []})
+                ticker_state["last_fetch_utc"] = datetime.now(timezone.utc).isoformat()
+                if releases:
+                    dated = [r.published_at_utc for r in releases if r.published_at_utc]
+                    if dated:
+                        ticker_state["last_release_date"] = max(dated)
+                    elif "last_release_date" not in ticker_state:
+                        ticker_state["last_release_date"] = ""
+                new_hashes = [r.content_hash for r in releases]
+                existing = set(ticker_state.get("seen_hashes", []))
+                ticker_state["seen_hashes"] = list(existing | set(new_hashes))[-200:]
+                state[ticker] = ticker_state
 
     # Write results
     if not args.dry_run:
