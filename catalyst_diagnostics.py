@@ -8,15 +8,13 @@ Provides:
 3. Explainability helpers for event rule tracing
 """
 
+import logging
+from collections import Counter
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 from typing import Any, Dict, List, Optional, Tuple
-from collections import Counter
-import json
-import logging
-from pathlib import Path
 
-from ctgov_adapter import CanonicalTrialRecord, CTGovStatus
+from ctgov_adapter import CTGovStatus
 from state_management import StateSnapshot
 
 logger = logging.getLogger(__name__)
@@ -26,9 +24,11 @@ logger = logging.getLogger(__name__)
 # DELTA DIAGNOSTICS
 # ============================================================================
 
+
 @dataclass
 class FieldDiff:
     """Single field difference between two records"""
+
     ticker: str
     nct_id: str
     field_name: str
@@ -37,17 +37,18 @@ class FieldDiff:
 
     def to_dict(self) -> dict:
         return {
-            'ticker': self.ticker,
-            'nct_id': self.nct_id,
-            'field': self.field_name,
-            'old': str(self.old_value) if self.old_value is not None else None,
-            'new': str(self.new_value) if self.new_value is not None else None,
+            "ticker": self.ticker,
+            "nct_id": self.nct_id,
+            "field": self.field_name,
+            "old": str(self.old_value) if self.old_value is not None else None,
+            "new": str(self.new_value) if self.new_value is not None else None,
         }
 
 
 @dataclass
 class DeltaDiagnostics:
     """Comprehensive delta analysis between snapshots"""
+
     records_changed_count: int = 0
     records_added_count: int = 0
     records_removed_count: int = 0
@@ -70,25 +71,19 @@ class DeltaDiagnostics:
 
     def to_dict(self) -> dict:
         return {
-            'records_changed_count': self.records_changed_count,
-            'records_added_count': self.records_added_count,
-            'records_removed_count': self.records_removed_count,
-            'total_current_records': self.total_current_records,
-            'total_prior_records': self.total_prior_records,
-            'fields_changed_histogram': dict(sorted(
-                self.fields_changed_histogram.items(),
-                key=lambda x: x[1],
-                reverse=True
-            )),
-            'sample_diffs': [d.to_dict() for d in self.sample_diffs[:5]],
-            'status_changes': dict(sorted(
-                self.status_changes.items(),
-                key=lambda x: x[1],
-                reverse=True
-            )),
-            'unknown_status_count': self.unknown_status_count,
-            'no_changes_detected': self.no_changes_detected,
-            'prior_snapshot_missing': self.prior_snapshot_missing,
+            "records_changed_count": self.records_changed_count,
+            "records_added_count": self.records_added_count,
+            "records_removed_count": self.records_removed_count,
+            "total_current_records": self.total_current_records,
+            "total_prior_records": self.total_prior_records,
+            "fields_changed_histogram": dict(
+                sorted(self.fields_changed_histogram.items(), key=lambda x: x[1], reverse=True)
+            ),
+            "sample_diffs": [d.to_dict() for d in self.sample_diffs[:5]],
+            "status_changes": dict(sorted(self.status_changes.items(), key=lambda x: x[1], reverse=True)),
+            "unknown_status_count": self.unknown_status_count,
+            "no_changes_detected": self.no_changes_detected,
+            "prior_snapshot_missing": self.prior_snapshot_missing,
         }
 
     def log_summary(self):
@@ -103,8 +98,7 @@ class DeltaDiagnostics:
                 "Either no CT.gov changes between snapshots OR input data is stale."
             )
             logger.warning(
-                f"  Current records: {self.total_current_records}, "
-                f"Prior records: {self.total_prior_records}"
+                f"  Current records: {self.total_current_records}, " f"Prior records: {self.total_prior_records}"
             )
             return
 
@@ -118,8 +112,9 @@ class DeltaDiagnostics:
         if self.sample_diffs:
             logger.info("  Sample diffs:")
             for diff in self.sample_diffs[:3]:
-                logger.info(f"    {diff.ticker}/{diff.nct_id}: {diff.field_name} "
-                           f"'{diff.old_value}' → '{diff.new_value}'")
+                logger.info(
+                    f"    {diff.ticker}/{diff.nct_id}: {diff.field_name} " f"'{diff.old_value}' → '{diff.new_value}'"
+                )
 
         if self.unknown_status_count > 0:
             logger.warning(f"  Unknown statuses mapped: {self.unknown_status_count}")
@@ -165,13 +160,13 @@ def compute_delta_diagnostics(
 
     # Analyze common records for changes
     fields_to_compare = [
-        'overall_status',
-        'primary_completion_date',
-        'primary_completion_type',
-        'completion_date',
-        'completion_type',
-        'last_update_posted',
-        'results_first_posted',
+        "overall_status",
+        "primary_completion_date",
+        "primary_completion_type",
+        "completion_date",
+        "completion_type",
+        "last_update_posted",
+        "results_first_posted",
     ]
 
     field_changes = Counter()
@@ -192,7 +187,7 @@ def compute_delta_diagnostics(
                 field_changes[field_name] += 1
 
                 # Track status transitions
-                if field_name == 'overall_status':
+                if field_name == "overall_status":
                     transition = f"{prior_val.name}→{current_val.name}"
                     status_transitions[transition] += 1
                     if current_val == CTGovStatus.UNKNOWN:
@@ -200,13 +195,15 @@ def compute_delta_diagnostics(
 
                 # Collect sample diff
                 if len(all_diffs) < 20:  # Collect more than we show
-                    all_diffs.append(FieldDiff(
-                        ticker=current.ticker,
-                        nct_id=current.nct_id,
-                        field_name=field_name,
-                        old_value=prior_val.name if isinstance(prior_val, CTGovStatus) else prior_val,
-                        new_value=current_val.name if isinstance(current_val, CTGovStatus) else current_val,
-                    ))
+                    all_diffs.append(
+                        FieldDiff(
+                            ticker=current.ticker,
+                            nct_id=current.nct_id,
+                            field_name=field_name,
+                            old_value=prior_val.name if isinstance(prior_val, CTGovStatus) else prior_val,
+                            new_value=current_val.name if isinstance(current_val, CTGovStatus) else current_val,
+                        )
+                    )
 
     diag.records_changed_count = len(changed_record_keys)
     diag.fields_changed_histogram = dict(field_changes)
@@ -215,9 +212,7 @@ def compute_delta_diagnostics(
 
     # Set no-changes flag
     diag.no_changes_detected = (
-        diag.records_changed_count == 0 and
-        diag.records_added_count == 0 and
-        diag.records_removed_count == 0
+        diag.records_changed_count == 0 and diag.records_added_count == 0 and diag.records_removed_count == 0
     )
 
     return diag
@@ -227,9 +222,11 @@ def compute_delta_diagnostics(
 # STALENESS GATING
 # ============================================================================
 
+
 @dataclass
 class StalenessResult:
     """Result of staleness check"""
+
     is_stale: bool
     age_days: int
     trial_records_date: Optional[date]
@@ -239,17 +236,18 @@ class StalenessResult:
 
     def to_dict(self) -> dict:
         return {
-            'is_stale': self.is_stale,
-            'age_days': self.age_days,
-            'trial_records_date': self.trial_records_date.isoformat() if self.trial_records_date else None,
-            'as_of_date': self.as_of_date.isoformat(),
-            'confidence_level': self.confidence_level,
-            'recommendation': self.recommendation,
+            "is_stale": self.is_stale,
+            "age_days": self.age_days,
+            "trial_records_date": self.trial_records_date.isoformat() if self.trial_records_date else None,
+            "as_of_date": self.as_of_date.isoformat(),
+            "confidence_level": self.confidence_level,
+            "recommendation": self.recommendation,
         }
 
 
 class PITViolationError(Exception):
     """Raised when trial_records contains data from after as_of_date (strict PIT mode)."""
+
     def __init__(self, source: str, source_date, as_of_date):
         self.source = source
         self.source_date = source_date
@@ -289,8 +287,8 @@ def check_trial_records_staleness(
     if trial_records and isinstance(trial_records[0], dict):
         # Some formats wrap records with metadata
         first = trial_records[0]
-        if '_metadata' in first:
-            meta_date = first['_metadata'].get('data_date') or first['_metadata'].get('as_of_date')
+        if "_metadata" in first:
+            meta_date = first["_metadata"].get("data_date") or first["_metadata"].get("as_of_date")
             if meta_date:
                 try:
                     data_date = date.fromisoformat(str(meta_date)[:10])
@@ -301,7 +299,7 @@ def check_trial_records_staleness(
     if data_date is None:
         max_update = None
         for record in trial_records:
-            lup = record.get('last_update_posted')
+            lup = record.get("last_update_posted")
             if lup:
                 try:
                     record_date = date.fromisoformat(str(lup)[:10])
@@ -319,8 +317,8 @@ def check_trial_records_staleness(
             age_days=0,
             trial_records_date=None,
             as_of_date=as_of_date,
-            confidence_level='MEDIUM',
-            recommendation='Cannot determine trial_records freshness. Add provenance metadata.',
+            confidence_level="MEDIUM",
+            recommendation="Cannot determine trial_records freshness. Add provenance metadata.",
         )
 
     age_days = (as_of_date - data_date).days
@@ -332,9 +330,9 @@ def check_trial_records_staleness(
             age_days=age_days,
             trial_records_date=data_date,
             as_of_date=as_of_date,
-            confidence_level='DEGRADED',
-            recommendation=f'CRITICAL: trial_records dated {data_date} is AFTER as_of_date {as_of_date}. '
-                          f'This indicates lookahead bias or incorrect as_of_date.',
+            confidence_level="DEGRADED",
+            recommendation=f"CRITICAL: trial_records dated {data_date} is AFTER as_of_date {as_of_date}. "
+            f"This indicates lookahead bias or incorrect as_of_date.",
         )
 
     # Assess staleness
@@ -344,9 +342,9 @@ def check_trial_records_staleness(
             age_days=age_days,
             trial_records_date=data_date,
             as_of_date=as_of_date,
-            confidence_level='LOW',
-            recommendation=f'Data is {age_days} days old (threshold: {stale_threshold_days}). '
-                          f'Catalyst detection may miss recent events. Refresh trial_records.json.',
+            confidence_level="LOW",
+            recommendation=f"Data is {age_days} days old (threshold: {stale_threshold_days}). "
+            f"Catalyst detection may miss recent events. Refresh trial_records.json.",
         )
     elif age_days > degraded_threshold_days:
         return StalenessResult(
@@ -354,8 +352,8 @@ def check_trial_records_staleness(
             age_days=age_days,
             trial_records_date=data_date,
             as_of_date=as_of_date,
-            confidence_level='MEDIUM',
-            recommendation=f'Data is {age_days} days old. Results are usable but may miss recent events.',
+            confidence_level="MEDIUM",
+            recommendation=f"Data is {age_days} days old. Results are usable but may miss recent events.",
         )
     else:
         return StalenessResult(
@@ -363,8 +361,8 @@ def check_trial_records_staleness(
             age_days=age_days,
             trial_records_date=data_date,
             as_of_date=as_of_date,
-            confidence_level='HIGH',
-            recommendation='Data is fresh.',
+            confidence_level="HIGH",
+            recommendation="Data is fresh.",
         )
 
 
@@ -372,8 +370,10 @@ def check_trial_records_staleness(
 # EVENT RULE REGISTRY
 # ============================================================================
 
+
 class EventRuleID:
     """Event rule identifiers for explainability"""
+
     # Diff-based events
     M3_DIFF_STATUS_SEVERE_NEG = "M3_DIFF_STATUS_SEVERE_NEG"
     M3_DIFF_STATUS_DOWNGRADE = "M3_DIFF_STATUS_DOWNGRADE"
@@ -402,6 +402,7 @@ class EventRuleID:
 @dataclass
 class EventEvidence:
     """Evidence supporting an event detection"""
+
     rule_id: str
     fields: Dict[str, Any]
     confidence: float
@@ -409,10 +410,10 @@ class EventEvidence:
 
     def to_dict(self) -> dict:
         return {
-            'rule_id': self.rule_id,
-            'fields': self.fields,
-            'confidence': self.confidence,
-            'confidence_reason': self.confidence_reason,
+            "rule_id": self.rule_id,
+            "fields": self.fields,
+            "confidence": self.confidence,
+            "confidence_reason": self.confidence_reason,
         }
 
 
@@ -420,9 +421,11 @@ class EventEvidence:
 # CALENDAR-BASED CATALYST DETECTION
 # ============================================================================
 
+
 @dataclass
 class CalendarCatalyst:
     """Forward-looking catalyst from trial calendar dates"""
+
     ticker: str
     nct_id: str
     event_type: str  # 'UPCOMING_PCD', 'UPCOMING_SCD', 'RESULTS_DUE'
@@ -435,15 +438,15 @@ class CalendarCatalyst:
 
     def to_dict(self) -> dict:
         return {
-            'ticker': self.ticker,
-            'nct_id': self.nct_id,
-            'event_type': self.event_type,
-            'target_date': self.target_date.isoformat(),
-            'days_until': self.days_until,
-            'window': self.window,
-            'confidence': self.confidence,
-            'rule_id': self.rule_id,
-            'evidence': self.evidence.to_dict(),
+            "ticker": self.ticker,
+            "nct_id": self.nct_id,
+            "event_type": self.event_type,
+            "target_date": self.target_date.isoformat(),
+            "days_until": self.days_until,
+            "window": self.window,
+            "confidence": self.confidence,
+            "rule_id": self.rule_id,
+            "evidence": self.evidence.to_dict(),
         }
 
 
@@ -469,8 +472,11 @@ def detect_calendar_catalysts(
     catalysts = []
 
     for record in current_snapshot.records:
-        # Skip terminal trials
-        if record.overall_status.is_terminal_negative:
+        # Skip trials whose status disqualifies them from catalyst credit.
+        # Spec 071 Lane 1: covers WITHDRAWN/TERMINATED/SUSPENDED (existing
+        # terminal-negative) plus APPROVED_FOR_MARKETING and NO_LONGER_AVAILABLE
+        # — neither can produce a binary readout.
+        if record.overall_status.is_catalyst_ineligible:
             continue
 
         # Primary Completion Date upcoming
@@ -480,55 +486,59 @@ def detect_calendar_catalysts(
             if 0 < days_until <= max(windows):
                 # Determine window
                 if days_until <= 30:
-                    window = '30D'
+                    window = "30D"
                     rule_id = EventRuleID.M3_CAL_PCD_30D
                     confidence = 0.85
                 elif days_until <= 60:
-                    window = '60D'
+                    window = "60D"
                     rule_id = EventRuleID.M3_CAL_PCD_60D
                     confidence = 0.75
                 elif days_until <= 90:
-                    window = '90D'
+                    window = "90D"
                     rule_id = EventRuleID.M3_CAL_PCD_90D
                     confidence = 0.65
                 elif days_until <= 180:
-                    window = '180D'
+                    window = "180D"
                     rule_id = EventRuleID.M3_CAL_PCD_180D
                     confidence = 0.50
                 else:
-                    window = '270D'
+                    window = "270D"
                     rule_id = EventRuleID.M3_CAL_PCD_270D
                     confidence = 0.40
 
                 # Boost confidence if date is ACTUAL
-                if record.primary_completion_type and record.primary_completion_type.value == 'ACTUAL':
+                if record.primary_completion_type and record.primary_completion_type.value == "ACTUAL":
                     confidence = min(0.95, confidence + 0.10)
                     confidence_reason = "Date confirmed as ACTUAL"
-                elif record.primary_completion_type and record.primary_completion_type.value == 'ESTIMATED':
+                elif record.primary_completion_type and record.primary_completion_type.value == "ESTIMATED":
                     confidence_reason = "Date is ESTIMATED, may shift"
                 else:
                     confidence_reason = "Date type unknown"
 
-                catalysts.append(CalendarCatalyst(
-                    ticker=record.ticker,
-                    nct_id=record.nct_id,
-                    event_type='UPCOMING_PCD',
-                    target_date=record.primary_completion_date,
-                    days_until=days_until,
-                    window=window,
-                    confidence=confidence,
-                    rule_id=rule_id,
-                    evidence=EventEvidence(
-                        rule_id=rule_id,
-                        fields={
-                            'primary_completion_date': record.primary_completion_date.isoformat(),
-                            'primary_completion_type': record.primary_completion_type.value if record.primary_completion_type else None,
-                            'days_until': days_until,
-                        },
+                catalysts.append(
+                    CalendarCatalyst(
+                        ticker=record.ticker,
+                        nct_id=record.nct_id,
+                        event_type="UPCOMING_PCD",
+                        target_date=record.primary_completion_date,
+                        days_until=days_until,
+                        window=window,
                         confidence=confidence,
-                        confidence_reason=confidence_reason,
-                    ),
-                ))
+                        rule_id=rule_id,
+                        evidence=EventEvidence(
+                            rule_id=rule_id,
+                            fields={
+                                "primary_completion_date": record.primary_completion_date.isoformat(),
+                                "primary_completion_type": (
+                                    record.primary_completion_type.value if record.primary_completion_type else None
+                                ),
+                                "days_until": days_until,
+                            },
+                            confidence=confidence,
+                            confidence_reason=confidence_reason,
+                        ),
+                    )
+                )
 
         # Study Completion Date upcoming
         if record.completion_date and record.completion_date != record.primary_completion_date:
@@ -536,52 +546,54 @@ def detect_calendar_catalysts(
 
             if 0 < days_until <= max(windows):
                 if days_until <= 30:
-                    window = '30D'
+                    window = "30D"
                     rule_id = EventRuleID.M3_CAL_SCD_30D
                     confidence = 0.75
                 elif days_until <= 60:
-                    window = '60D'
+                    window = "60D"
                     rule_id = EventRuleID.M3_CAL_SCD_60D
                     confidence = 0.65
                 elif days_until <= 90:
-                    window = '90D'
+                    window = "90D"
                     rule_id = EventRuleID.M3_CAL_SCD_90D
                     confidence = 0.55
                 elif days_until <= 180:
-                    window = '180D'
+                    window = "180D"
                     rule_id = EventRuleID.M3_CAL_SCD_180D
                     confidence = 0.50
                 else:
-                    window = '270D'
+                    window = "270D"
                     rule_id = EventRuleID.M3_CAL_SCD_270D
                     confidence = 0.40
 
-                if record.completion_type and record.completion_type.value == 'ACTUAL':
+                if record.completion_type and record.completion_type.value == "ACTUAL":
                     confidence = min(0.90, confidence + 0.10)
                     confidence_reason = "Date confirmed as ACTUAL"
                 else:
                     confidence_reason = "Date is estimated"
 
-                catalysts.append(CalendarCatalyst(
-                    ticker=record.ticker,
-                    nct_id=record.nct_id,
-                    event_type='UPCOMING_SCD',
-                    target_date=record.completion_date,
-                    days_until=days_until,
-                    window=window,
-                    confidence=confidence,
-                    rule_id=rule_id,
-                    evidence=EventEvidence(
-                        rule_id=rule_id,
-                        fields={
-                            'completion_date': record.completion_date.isoformat(),
-                            'completion_type': record.completion_type.value if record.completion_type else None,
-                            'days_until': days_until,
-                        },
+                catalysts.append(
+                    CalendarCatalyst(
+                        ticker=record.ticker,
+                        nct_id=record.nct_id,
+                        event_type="UPCOMING_SCD",
+                        target_date=record.completion_date,
+                        days_until=days_until,
+                        window=window,
                         confidence=confidence,
-                        confidence_reason=confidence_reason,
-                    ),
-                ))
+                        rule_id=rule_id,
+                        evidence=EventEvidence(
+                            rule_id=rule_id,
+                            fields={
+                                "completion_date": record.completion_date.isoformat(),
+                                "completion_type": record.completion_type.value if record.completion_type else None,
+                                "days_until": days_until,
+                            },
+                            confidence=confidence,
+                            confidence_reason=confidence_reason,
+                        ),
+                    )
+                )
 
         # Recent results detection: results_first_posted within past 60 days
         if record.results_first_posted:
@@ -593,25 +605,27 @@ def detect_calendar_catalysts(
                     confidence = 0.90
                     confidence_reason = "Results recently posted on CT.gov"
 
-                    catalysts.append(CalendarCatalyst(
-                        ticker=record.ticker,
-                        nct_id=record.nct_id,
-                        event_type='RESULTS_RECENT',
-                        target_date=record.results_first_posted,
-                        days_until=-days_since_results,  # Negative: event is in the past
-                        window='RECENT',
-                        confidence=confidence,
-                        rule_id=rule_id,
-                        evidence=EventEvidence(
-                            rule_id=rule_id,
-                            fields={
-                                'results_first_posted': record.results_first_posted.isoformat(),
-                                'days_since_results': days_since_results,
-                            },
+                    catalysts.append(
+                        CalendarCatalyst(
+                            ticker=record.ticker,
+                            nct_id=record.nct_id,
+                            event_type="RESULTS_RECENT",
+                            target_date=record.results_first_posted,
+                            days_until=-days_since_results,  # Negative: event is in the past
+                            window="RECENT",
                             confidence=confidence,
-                            confidence_reason=confidence_reason,
-                        ),
-                    ))
+                            rule_id=rule_id,
+                            evidence=EventEvidence(
+                                rule_id=rule_id,
+                                fields={
+                                    "results_first_posted": record.results_first_posted.isoformat(),
+                                    "days_since_results": days_since_results,
+                                },
+                                confidence=confidence,
+                                confidence_reason=confidence_reason,
+                            ),
+                        )
+                    )
 
     # Sort by days_until for deterministic output
     catalysts.sort(key=lambda c: (c.days_until, c.ticker, c.nct_id))
@@ -645,8 +659,9 @@ def detect_readout_window_catalysts(
     catalysts = []
 
     for record in current_snapshot.records:
-        # Skip terminal negative trials
-        if record.overall_status.is_terminal_negative:
+        # Skip trials whose status disqualifies them from catalyst credit
+        # (spec 071 Lane 1 — see detect_calendar_catalysts above).
+        if record.overall_status.is_catalyst_ineligible:
             continue
 
         # Skip if results already posted (no window to infer)
@@ -672,14 +687,11 @@ def detect_readout_window_catalysts(
             continue
 
         # Target date = midpoint of window
-        target_date = record.primary_completion_date + timedelta(
-            days=(min_days_after_pcd + max_days_after_pcd) // 2
-        )
+        target_date = record.primary_completion_date + timedelta(days=(min_days_after_pcd + max_days_after_pcd) // 2)
         days_until = (target_date - as_of_date).days
 
         # Base confidence 0.50, boosted to 0.65 if PCD type is ACTUAL
-        if (record.primary_completion_type
-                and record.primary_completion_type.value == 'ACTUAL'):
+        if record.primary_completion_type and record.primary_completion_type.value == "ACTUAL":
             confidence = 0.65
             confidence_reason = "PCD confirmed ACTUAL, readout window inferred"
         else:
@@ -688,31 +700,32 @@ def detect_readout_window_catalysts(
 
         rule_id = EventRuleID.M3_CAL_READOUT_WINDOW
 
-        catalysts.append(CalendarCatalyst(
-            ticker=record.ticker,
-            nct_id=record.nct_id,
-            event_type='READOUT_WINDOW',
-            target_date=target_date,
-            days_until=days_until,
-            window='READOUT',
-            confidence=confidence,
-            rule_id=rule_id,
-            evidence=EventEvidence(
-                rule_id=rule_id,
-                fields={
-                    'primary_completion_date': record.primary_completion_date.isoformat(),
-                    'primary_completion_type': (
-                        record.primary_completion_type.value
-                        if record.primary_completion_type else None
-                    ),
-                    'days_since_pcd': days_since_pcd,
-                    'window_start': window_start.isoformat(),
-                    'window_end': window_end.isoformat(),
-                },
+        catalysts.append(
+            CalendarCatalyst(
+                ticker=record.ticker,
+                nct_id=record.nct_id,
+                event_type="READOUT_WINDOW",
+                target_date=target_date,
+                days_until=days_until,
+                window="READOUT",
                 confidence=confidence,
-                confidence_reason=confidence_reason,
-            ),
-        ))
+                rule_id=rule_id,
+                evidence=EventEvidence(
+                    rule_id=rule_id,
+                    fields={
+                        "primary_completion_date": record.primary_completion_date.isoformat(),
+                        "primary_completion_type": (
+                            record.primary_completion_type.value if record.primary_completion_type else None
+                        ),
+                        "days_since_pcd": days_since_pcd,
+                        "window_start": window_start.isoformat(),
+                        "window_end": window_end.isoformat(),
+                    },
+                    confidence=confidence,
+                    confidence_reason=confidence_reason,
+                ),
+            )
+        )
 
     # Sort for deterministic output
     catalysts.sort(key=lambda c: (c.days_until, c.ticker, c.nct_id))
@@ -723,6 +736,7 @@ def detect_readout_window_catalysts(
 # ============================================================================
 # SUMMARY HELPERS
 # ============================================================================
+
 
 def summarize_calendar_catalysts(
     catalysts: List[CalendarCatalyst],
@@ -740,14 +754,11 @@ def summarize_calendar_catalysts(
         by_type[cat.event_type] += 1
 
     return {
-        'total_catalysts': len(catalysts),
-        'tickers_with_catalysts': len(by_ticker),
-        'by_window': dict(by_window),
-        'by_type': dict(by_type),
-        'catalysts_by_ticker': {
-            ticker: [c.to_dict() for c in cats]
-            for ticker, cats in sorted(by_ticker.items())
-        },
+        "total_catalysts": len(catalysts),
+        "tickers_with_catalysts": len(by_ticker),
+        "by_window": dict(by_window),
+        "by_type": dict(by_type),
+        "catalysts_by_ticker": {ticker: [c.to_dict() for c in cats] for ticker, cats in sorted(by_ticker.items())},
     }
 
 
