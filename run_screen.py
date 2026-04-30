@@ -547,6 +547,7 @@ def _write_cohort_churn_alert(
     csv_rows: List[Dict[str, Any]],
     snap_path: Path,
     threshold_pct: float = 10.0,
+    snapshots_root: Optional[Path] = None,
 ) -> Optional[Dict[str, Any]]:
     """
     Compute today vs prior-snapshot v2 cohort delta and write a JSON alert
@@ -554,10 +555,16 @@ def _write_cohort_churn_alert(
 
     Returns the alert dict (None if no prior snapshot found). Does not
     modify csv_rows or any scoring/decision-engine output.
+
+    `snapshots_root` is the directory that holds prior `YYYY-MM-DD` snapshot
+    dirs. When None, defaults to `snap_path.parent` — wrong when snap_path is
+    a staging tmp dir, so callers running in staging-then-promote mode must
+    pass the canonical production snapshots root.
     """
     if snap_path is None:
         return None
-    snapshots_root = snap_path.parent
+    if snapshots_root is None:
+        snapshots_root = snap_path.parent
     current_dir = snap_path.name
     _date_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
     try:
@@ -633,6 +640,7 @@ def _annotate_cohort_membership_streaks(
     csv_rows: List[Dict[str, Any]],
     snap_path: Path,
     max_walkback_days: int = 30,
+    snapshots_root: Optional[Path] = None,
 ) -> None:
     """
     Display-only annotation of `cohort_membership` ("in"/"out") and
@@ -643,6 +651,11 @@ def _annotate_cohort_membership_streaks(
     `__pre_…` and other suffixed dirs) and reads their rankings.csv files;
     membership = "in" iff ranker_v2_score is populated. Streak is capped by
     max_walkback_days. Pure-read on csv_rows except for the two new fields.
+
+    `snapshots_root` is the directory that holds prior `YYYY-MM-DD` snapshot
+    dirs. When None, defaults to `snap_path.parent` — wrong when snap_path is
+    a staging tmp dir, so callers running in staging-then-promote mode must
+    pass the canonical production snapshots root.
     """
     if snap_path is None:
         for _r in csv_rows:
@@ -650,7 +663,8 @@ def _annotate_cohort_membership_streaks(
             _r["cohort_membership_streak"] = 1
         return
 
-    snapshots_root = snap_path.parent
+    if snapshots_root is None:
+        snapshots_root = snap_path.parent
     current_dir = snap_path.name
 
     # Only consider plain YYYY-MM-DD sibling dirs strictly before today's.
@@ -2951,7 +2965,7 @@ def _hydrate_far_horizon_catalysts(
         if "INTERVENTIONAL" not in stype:
             continue
         status = (t.get("status") or "?").upper()
-        if status in _TERMINAL_NEGATIVE_STATUSES:
+        if status in _CATALYST_INELIGIBLE_STATUSES:
             continue
         pcd = t.get("primary_completion_date")
         if not pcd:
@@ -3063,6 +3077,13 @@ def _find_prior_rankings(snapshot_dir: Path, current_date: str) -> Optional[dict
 
 
 _TERMINAL_NEGATIVE_STATUSES = frozenset({"WITHDRAWN", "TERMINATED", "SUSPENDED"})
+# Spec 071 Lane 1: superset that disqualifies a trial from CT.gov-derived
+# catalyst credit. Mirrors CTGovStatus.is_catalyst_ineligible. Used at the
+# CTGOV_PCD_FAR producer (_apply_far_pcd_override) which iterates raw
+# trial_records and cannot use the canonical-record property.
+_CATALYST_INELIGIBLE_STATUSES = frozenset(
+    {"WITHDRAWN", "TERMINATED", "SUSPENDED", "APPROVED_FOR_MARKETING", "NO_LONGER_AVAILABLE"}
+)
 
 
 def _classify_coverage_buckets(
@@ -6395,14 +6416,16 @@ def save_validation_snapshot(
     # Walks back through sibling snapshot dirs to count consecutive prior days
     # with the same cohort membership state. Read-only against historical
     # rankings.csv files; never mutates scoring/selector/ranker logic.
-    _annotate_cohort_membership_streaks(csv_rows, snap_path)
+    # `_prior_dir` is the canonical snapshots root when --prior-snapshot-dir
+    # is set (staging-then-promote pipeline); otherwise equals snap_path.parent.
+    _annotate_cohort_membership_streaks(csv_rows, snap_path, snapshots_root=_prior_dir)
 
     # --- Cohort churn diagnostic alert (per audit 2026-04-26) ---
     # Writes snap_path/cohort_churn_alert.json comparing today's v2 cohort to
     # the prior snapshot. severity=warn when churn >= 10% (boundary noise
     # threshold from the audit).
     try:
-        _churn_alert = _write_cohort_churn_alert(csv_rows, snap_path)
+        _churn_alert = _write_cohort_churn_alert(csv_rows, snap_path, snapshots_root=_prior_dir)
         if _churn_alert and _churn_alert.get("severity") == "warn":
             logger.warning(
                 f"Cohort churn WARN: {_churn_alert['churn_n']} names "
@@ -6608,13 +6631,30 @@ def save_validation_snapshot(
                 _diag.get("quality_trap_correlation") or 0,
             )
 
-            # Gate performance tracker (compares to prior snapshot)
+            # Gate performance tracker (compares to prior snapshot).
+            # `_prior_dir` is the snapshots ROOT (canonical when --prior-snapshot-dir
+            # is set, else snap_path.parent). Walk back through dated subdirs to
+            # find the most recent rankings.csv strictly before today. The earlier
+            # form `(_prior_dir / "rankings.csv").exists()` treated `_prior_dir`
+            # as a single date dir and silently never matched.
             _prior_csv = None
-            if _prior_dir and (_prior_dir / "rankings.csv").exists():
+            if _prior_dir and _prior_dir.exists():
                 import csv as _csv_mod
 
-                with open(_prior_dir / "rankings.csv", newline="", encoding="utf-8") as _pf:
-                    _prior_csv = list(_csv_mod.DictReader(_pf))
+                _prior_dates = sorted(
+                    (
+                        d.name
+                        for d in _prior_dir.iterdir()
+                        if d.is_dir() and _DATE_DIR_RE.match(d.name) and d.name < as_of_date
+                    ),
+                    reverse=True,
+                )
+                for _cand in _prior_dates:
+                    _cand_csv = _prior_dir / _cand / "rankings.csv"
+                    if _cand_csv.exists():
+                        with open(_cand_csv, newline="", encoding="utf-8") as _pf:
+                            _prior_csv = list(_csv_mod.DictReader(_pf))
+                        break
             _perf = _build_gate_perf(csv_rows, _prior_csv, as_of_date)
             if _perf:
                 with open(snap_path / "ees_gate_performance.json", "w", encoding="utf-8") as f:

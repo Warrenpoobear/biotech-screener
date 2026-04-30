@@ -387,6 +387,16 @@ SUBPROCESS_TIMEOUT_SECONDS = 1200  # 20 minutes; prevents hung modules from burn
 
 import logging as _logging
 
+# Configure root logger so _logger.info(...) calls are visible in cron output.
+# Without this, idempotent-rerun short-circuits (line ~4109) emit no log lines
+# because no handler is attached — the run looks silent in
+# logs/daily_production_*.log even though it ran correctly.
+if not _logging.root.handlers:
+    _logging.basicConfig(
+        level=_logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+    )
+
 _logger = _logging.getLogger(__name__)
 
 
