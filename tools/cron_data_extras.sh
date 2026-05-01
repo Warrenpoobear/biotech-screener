@@ -37,15 +37,34 @@ log() {
 }
 
 stage_form4() {
-    log "Form 4 incremental fetch (timeout 1800s)..."
+    # 2026-05-01 operational repair (Spec 065 stable-snapshot gate):
+    # Switched from fetch_form4_bulk.py to fetch_form4_insider.py (incremental).
+    # Bulk re-downloaded all historical filings per ticker (~72s/ticker × 326 = ~6.5h),
+    # consistently timing out at 1800s after only ~25 tickers and skipping the
+    # state-save + panel-rebuild steps. Incremental fetches only new accessions
+    # per ticker, scaling with new-filing volume rather than total history.
+    # See FORM4_OPERATIONAL_REPAIR_2026_05_01.md.
+    log "Form 4 incremental fetch (timeout 2400s)..."
     local rc=0
-    timeout 1800 $PYTHON tools/fetch_form4_bulk.py --workers 4 2>&1 | tail -10 || rc=$?
+    timeout 2400 $PYTHON tools/fetch_form4_insider.py 2>&1 | tail -10 || rc=$?
     if [ $rc -eq 124 ]; then
-        log "Form 4 fetch TIMED OUT after 1800s — continuing with partial data"
+        log "Form 4 fetch TIMED OUT after 2400s — continuing with partial data"
     elif [ $rc -ne 0 ]; then
         log "Form 4 fetch failed (exit $rc) — continuing"
     else
         log "Form 4 fetch done"
+    fi
+
+    # Always rebuild panel from current raw files, even if the main fetch
+    # timed out or hit partial failure. Pass B enrichment (rankings-assembly)
+    # reads from the panel; a stale panel hides the partial-fetch state.
+    log "Form 4 panel rebuild (timeout 300s)..."
+    local prc=0
+    timeout 300 $PYTHON tools/fetch_form4_insider.py --panel-only 2>&1 | tail -3 || prc=$?
+    if [ $prc -ne 0 ]; then
+        log "Form 4 panel rebuild failed (exit $prc) — panel may be stale"
+    else
+        log "Form 4 panel rebuild done"
     fi
 }
 

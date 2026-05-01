@@ -60,6 +60,68 @@ STATE_FILE = PROJECT_ROOT / "data" / "form4" / "fetch_state.json"
 
 
 # ---------------------------------------------------------------------------
+# Producer state bookkeeping (Spec 065 stable-snapshot gate)
+# ---------------------------------------------------------------------------
+#
+# State file schema (post 2026-05-01 operational repair):
+#   last_attempt        ISO timestamp — producer run started (any mode)
+#   last_success        ISO timestamp — producer run completed without error
+#   last_fetch          alias of last_success (backward compat)
+#   last_new_filing     ISO timestamp — most recent successful run that found
+#                       at least one new accession (None until first observed)
+#   last_error          {"at": ISO, "msg": str} when most recent run errored;
+#                       cleared on next successful run
+#   last_panel_rebuild  ISO timestamp — panel CSV last rebuilt
+#   panel_rows          int — n_rows in last panel rebuild
+#   schema_fingerprint  12-char sha256 prefix of InsiderTransaction field list
+#                       (criterion #2 — detect producer-side schema drift)
+#   tickers_checked,
+#   tickers_updated,
+#   new_transactions,
+#   failed_tickers,
+#   since               from most recent fetch run
+#
+# Update policy:
+#   - last_attempt is written at the START of every run (resilient to timeout)
+#   - last_success is written ONLY at the end of an unwound, error-free run
+#   - last_panel_rebuild is written at the END of a successful panel rebuild
+#   - All writes preserve other state fields via _state_load() merge
+#
+
+
+def _state_load() -> Dict[str, Any]:
+    """Load existing fetch_state.json, returning {} if missing/corrupt."""
+    if STATE_FILE.exists():
+        try:
+            return json.loads(STATE_FILE.read_text())
+        except (json.JSONDecodeError, OSError):
+            return {}
+    return {}
+
+
+def _state_write(updates: Dict[str, Any]) -> None:
+    """Atomically merge updates into fetch_state.json (preserves other keys)."""
+    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    state = _state_load()
+    state.update(updates)
+    STATE_FILE.write_text(json.dumps(state, indent=2))
+
+
+def _schema_fingerprint() -> str:
+    """12-char hash of InsiderTransaction dataclass field list. Changes when
+    the producer-side schema changes (new key, removed key, renamed key).
+    Used to detect producer-side schema drift per Spec 065 §1 #2."""
+    import hashlib
+
+    keys = sorted(InsiderTransaction.__dataclass_fields__.keys())
+    return hashlib.sha256("|".join(keys).encode()).hexdigest()[:12]
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+# ---------------------------------------------------------------------------
 # Data model
 # ---------------------------------------------------------------------------
 
@@ -588,6 +650,15 @@ def main():
 
     RAW_DIR.mkdir(parents=True, exist_ok=True)
 
+    # Always record an attempt at start of run (resilient to timeout).
+    # Spec 065 §1 #1 distinguishes ran-but-failed-midway vs never-ran.
+    _state_write(
+        {
+            "last_attempt": _now_iso(),
+            "schema_fingerprint": _schema_fingerprint(),
+        }
+    )
+
     if not args.panel_only:
         # Load universe
         universe = json.loads((PROJECT_ROOT / "production_data" / "universe.json").read_text())
@@ -658,24 +729,27 @@ def main():
             f"new accessions, {total_txns} new transactions appended"
         )
 
-        # Save state
-        STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-        STATE_FILE.write_text(
-            json.dumps(
-                {
-                    "last_fetch": datetime.now(timezone.utc).isoformat(),
-                    "tickers_checked": fetched,
-                    "tickers_updated": updated_tickers,
-                    "new_transactions": total_txns,
-                    "failed_tickers": failed,
-                    "since": args.since,
-                },
-                indent=2,
-            )
-        )
+        # Save state — fetch run completed without unhandled exception.
+        # last_attempt was already written at start; now mark success.
+        now = _now_iso()
+        updates: Dict[str, Any] = {
+            "last_success": now,
+            "last_fetch": now,  # backward-compat alias
+            "tickers_checked": fetched,
+            "tickers_updated": updated_tickers,
+            "new_transactions": total_txns,
+            "failed_tickers": failed,
+            "since": args.since,
+            "last_error": None,  # clear any prior error record
+        }
+        if total_txns > 0:
+            updates["last_new_filing"] = now
+        _state_write(updates)
 
-    # Build panel
+    # Build panel — runs in BOTH modes (fetch and --panel-only).
+    # Always record panel rebuild result so a stale panel can be detected.
     n = build_panel(RAW_DIR, PANEL_CSV)
+    _state_write({"last_panel_rebuild": _now_iso(), "panel_rows": n})
     log.info(f"Done. Panel has {n} rows.")
 
 
