@@ -37,9 +37,16 @@ log() {
 }
 
 stage_ctgov() {
-    log "CTgov warm cache..."
-    $PYTHON warm_caches.py --sources ctgov --as-of-date "$TODAY" 2>&1 | tail -5
-    log "CTgov done"
+    log "CTgov warm cache (timeout 600s)..."
+    local rc=0
+    timeout 600 $PYTHON warm_caches.py --sources ctgov --as-of-date "$TODAY" 2>&1 | tail -5 || rc=$?
+    if [ $rc -eq 124 ]; then
+        log "CTgov warm TIMED OUT after 600s — continuing with partial data"
+    elif [ $rc -ne 0 ]; then
+        log "CTgov warm failed (exit $rc) — continuing"
+    else
+        log "CTgov done"
+    fi
 }
 
 stage_sec_8k() {
@@ -215,6 +222,41 @@ status = {
         "diff_md_path": str(pdufa_diff_md),
     },
 }
+
+# SEC 13F PIT cache freshness — feeds B6 selector via institutional_summary.
+# No deterministic daily file path; we look for a today-dated subdir under
+# data/caches/sec_13f/PIT/ and compute its age. Stale = no subdir within
+# the last 3 calendar days. Advisory only — does not gate overall_pass.
+sec_13f_pit_dir = repo_root / "data" / "caches" / "sec_13f" / "PIT"
+if sec_13f_pit_dir.exists():
+    subdirs = sorted(
+        (p for p in sec_13f_pit_dir.iterdir() if p.is_dir() and p.name >= "2020"),
+        key=lambda p: p.name,
+        reverse=True,
+    )
+    latest = subdirs[0].name if subdirs else None
+    latest_age_d = None
+    if latest:
+        try:
+            from datetime import date as _date
+            ly, lm, ld = (int(x) for x in latest.split("-"))
+            latest_age_d = (_date.fromisoformat(today) - _date(ly, lm, ld)).days
+        except Exception:
+            latest_age_d = -1
+    status["sec_13f_pit"] = {
+        "exists": latest is not None,
+        "latest_subdir": latest,
+        "latest_age_days": latest_age_d,
+        "stale": (latest_age_d is None) or (latest_age_d > 3),
+    }
+else:
+    status["sec_13f_pit"] = {
+        "exists": False,
+        "latest_subdir": None,
+        "latest_age_days": None,
+        "stale": True,
+    }
+status["sec_13f_pit_advisory"] = status["sec_13f_pit"]["stale"]
 
 # Diff bucket counts (best-effort: parse the dated extracted snapshot for
 # event_status breakdown; full bucket counts live in the diff MD).
