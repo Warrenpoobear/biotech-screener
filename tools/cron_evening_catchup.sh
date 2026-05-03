@@ -133,4 +133,22 @@ check_production_qa() { file_exists "$REPO/artifacts/production_qa/${TODAY}_repo
 run_tool production_qa_check 1855 "$REPO/logs/production_qa.log" check_production_qa \
     "$PYTHON $REPO/tools/production_qa_check.py --as-of-date $TODAY"
 
+# ---- Friday-only direct-tool agents (calibration cadence) ----
+# Crontab schedules: build_calibration_evidence.py at Fri 19:00,
+# build_event_feedback_metrics.py at Fri 19:30. WSL2 sleep-cliff at ~17:30
+# means these are sleep-roulette without an explicit catchup gate.
+if [ "$DOW" -eq 5 ]; then
+
+    # calibration_evidence (Fri 19:00) — log: logs/calibration_evidence.log
+    check_calibration_evidence() { tool_log_has_today "$REPO/logs/calibration_evidence.log"; }
+    run_tool calibration_evidence 1900 "$REPO/logs/calibration_evidence.log" check_calibration_evidence \
+        "$PYTHON $REPO/tools/build_calibration_evidence.py"
+
+    # event_feedback_metrics (Fri 19:30) — log: logs/event_feedback_metrics.log
+    check_event_feedback_metrics() { tool_log_has_today "$REPO/logs/event_feedback_metrics.log"; }
+    run_tool event_feedback_metrics 1930 "$REPO/logs/event_feedback_metrics.log" check_event_feedback_metrics \
+        "$PYTHON $REPO/tools/build_event_feedback_metrics.py --as-of-date $TODAY"
+
+fi
+
 log "=== Evening catch-up complete ==="
