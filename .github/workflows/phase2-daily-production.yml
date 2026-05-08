@@ -471,15 +471,7 @@ jobs:
           DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
 
           # Check if today is rebalance day (FRIDAY by default from portfolio_policy.json)
-          IS_REBALANCE=$(python3 -c "
-          from datetime import datetime
-          import json
-          policy = json.load(open('production_data/portfolio_policy.json'))
-          day_map = {'MONDAY':0,'TUESDAY':1,'WEDNESDAY':2,'THURSDAY':3,'FRIDAY':4,'SATURDAY':5,'SUNDAY':6}
-          target = day_map.get(policy.get('rebalance_day','FRIDAY').upper(), 4)
-          dt = datetime.strptime('$DATE', '%Y-%m-%d')
-          print('true' if dt.weekday() == target else 'false')
-          ")
+          IS_REBALANCE=$(python3 -c "from datetime import datetime; import json; policy=json.load(open('production_data/portfolio_policy.json')); day_map={'MONDAY':0,'TUESDAY':1,'WEDNESDAY':2,'THURSDAY':3,'FRIDAY':4,'SATURDAY':5,'SUNDAY':6}; target=day_map.get(policy.get('rebalance_day','FRIDAY').upper(), 4); dt=datetime.strptime('$DATE', '%Y-%m-%d'); print('true' if dt.weekday() == target else 'false')")
 
           if [ "$IS_REBALANCE" != "true" ]; then
             echo "Not rebalance day — skipping weekly execution"
@@ -574,15 +566,7 @@ jobs:
         if: always() && steps.runner.outputs.exit_code != '1'
         run: |
           DATE="${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}"
-          RULESET=$(python3 -c "
-import json, sys
-m = json.load(open('production_data/decision_rulesets/manifest.json'))
-active = next((r for r in m['rulesets'] if r.get('status') == 'active'), None)
-if not active:
-    print('ERROR: no active ruleset in manifest', file=sys.stderr)
-    sys.exit(1)
-print('production_data/decision_rulesets/' + active['file'])
-")
+          RULESET=$(python3 -c "import json, sys; m=json.load(open('production_data/decision_rulesets/manifest.json')); active=next((r for r in m['rulesets'] if r.get('status') == 'active'), None); print('production_data/decision_rulesets/' + active['file']) if active else (print('ERROR: no active ruleset in manifest', file=sys.stderr), sys.exit(1))")
           echo "Active ruleset: $RULESET"
           OUT_DIR="data/snapshots/${DATE}/ruleset_eval"
           COMMON_ARGS="--candidate $RULESET --k 60 --horizon 5 --cost-bps 30 \
@@ -590,11 +574,7 @@ print('production_data/decision_rulesets/' + active['file'])
             --out-dir $OUT_DIR --anchor-mode prev_trading_day --gate"
 
           # Trailing window (~15 trading days back)
-          START=$(python3 -c "
-          from datetime import datetime, timedelta
-          d = datetime.strptime('$DATE', '%Y-%m-%d')
-          print((d - timedelta(days=21)).strftime('%Y-%m-%d'))
-          ")
+          START=$(python3 -c "from datetime import datetime, timedelta; d=datetime.strptime('$DATE', '%Y-%m-%d'); print((d - timedelta(days=21)).strftime('%Y-%m-%d'))")
 
           echo "Evaluating ruleset over ${START} → ${DATE}..."
           set +e
@@ -764,11 +744,7 @@ print('production_data/decision_rulesets/' + active['file'])
           HEALTH_JSON="output/health_packets/health_${DATE}.json"
           ROLLBACK_REC="false"
           if [ -f "$HEALTH_JSON" ]; then
-            ROLLBACK_REC=$(python3 -c "
-import json, sys
-d = json.load(open('$HEALTH_JSON'))
-print('true' if d.get('ruleset_health',{}).get('recommend_rollback') else 'false')
-" 2>/dev/null || echo "false")
+            ROLLBACK_REC=$(python3 -c "import json, sys; d=json.load(open('$HEALTH_JSON')); print('true' if d.get('ruleset_health',{}).get('recommend_rollback') else 'false')" 2>/dev/null || echo "false")
           fi
           echo "rollback_recommended=${ROLLBACK_REC}" >> "$GITHUB_OUTPUT"
         id: health_packet
