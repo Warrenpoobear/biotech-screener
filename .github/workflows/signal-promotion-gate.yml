@@ -79,7 +79,7 @@ jobs:
 
       - name: Upload checklist artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: checklist-v2-${{ inputs.signal_name }}
           path: output/checklist_v2_rerun/

@@ -861,7 +861,7 @@ jobs:
       # ── Upload snapshot artifacts ───────────────────────────────
       - name: Upload snapshot
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: phase2-snapshot-${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}
           path: |
@@ -871,7 +871,7 @@ jobs:
 
       - name: Upload replay bundle
         if: always() && steps.runner.outputs.exit_code != '1'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: replay-bundle-${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}
           path: /tmp/replay_bundle_${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}.tgz
@@ -880,7 +880,7 @@ jobs:
 
       - name: Upload run manifest & logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: phase2-manifest-${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}
           path: |
@@ -893,7 +893,7 @@ jobs:
 
       - name: Upload health packet
         if: always() && steps.runner.outputs.exit_code != '1'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: health-packet-${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}
           path: |
@@ -904,7 +904,7 @@ jobs:
 
       - name: Upload execution packet
         if: always() && steps.weekly_exec.outputs.executed == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: execution-packet-${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}
           path: |
@@ -914,7 +914,7 @@ jobs:
 
       - name: Upload live performance timeseries
         if: always() && steps.runner.outputs.exit_code != '1' && env.DEGRADED != '1'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: live-performance-${{ steps.manifest.outputs.effective_date || steps.date.outputs.as_of_date }}
           path: |

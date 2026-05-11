@@ -114,7 +114,7 @@ jobs:
 
       - name: Upload provenance
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: inputs-provenance-${{ steps.date.outputs.as_of_date }}
           path: output/inputs_provenance.json

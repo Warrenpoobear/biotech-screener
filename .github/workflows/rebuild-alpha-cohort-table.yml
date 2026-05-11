@@ -104,7 +104,7 @@ jobs:
           echo "| Stats | $CELLS |" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload alpha table artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: alpha-cohort-table-${{ steps.date.outputs.as_of_date }}
           path: ${{ steps.build.outputs.table_path }}
