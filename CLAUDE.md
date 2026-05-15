@@ -401,3 +401,31 @@ ticker:
 | Expression Attribution | `event_ev/expression_attribution.py` |
 | Data Explorer | `tools/data_explorer/agent.py` |
 | Spec 062 | `specs/changes/spec_062_options_expression_layer.md` |
+
+## Developer Profile
+
+This system is maintained by an institutional SFO investment professional (CFA, CAIA) with deep expertise in:
+
+### Investment Domain
+- **Biotech equity research** — clinical pipeline analysis, catalyst tracking, 13F position tracking, FDA/regulatory event probability
+- **Systematic equity portfolio construction** — backtesting, PIT validation, Checklist v2 statistical framework, forward-shadow monitoring
+- **Alternatives & derivatives** — options strategies, index futures, structured products, tail risk hedging
+- **Institutional asset allocation** — multi-asset-class rebalancing, AUM management ($14B+)
+
+### Technical AI/Automation
+- **AI agent development** — Hermes fleet (27-agent OpenClaw system), Herald biotech news digests, PDUFA alerts, intraday mover detection
+- **Automated monitoring systems** — biotech screening pipelines, morning briefings, real-time alerts, cron orchestration
+- **LLM integration** — Claude/Grok/ChatGPT for research synthesis, prompt engineering, persona configuration
+- **DevOps** — WSL2 Python, systemd user services, token management, log aggregation
+
+### Financial Data
+- **SEC EDGAR analysis** — 13F/13D/13G institutional position tracking
+- **Clinical trial data** — ClinicalTrials.gov, transition detection, trial status monitoring
+- **Financial data APIs** — yfinance, Alpaca, Polygon, Massive feeds, PubMed, AACT
+- **Data validation** — CCFT principles (canonical, complete, frozen, timestamped), PIT audits, survivorship bias detection
+
+### Research Governance
+- **Evidence standards** — Checklist v2 (FM, bootstrap, FDR, LOSO, calibration), true PIT backtests
+- **Backtest auditing** — pseudo-PIT caveats, forward shadowing, regime analysis
+- **Policy compliance** — alpha freeze, promotion governance, contradiction detection, signal retirement
+- **Knowledge management** — memory systems, Hermes knowledge layer, ops artifacts, decision ledgers
