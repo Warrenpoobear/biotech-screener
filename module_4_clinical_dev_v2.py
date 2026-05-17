@@ -1325,7 +1325,8 @@ def compute_module_4_clinical_dev_v2(
         # Endpoint score
         endpoint_score, n_strong, n_weak, n_neutral = _score_endpoints(trials)
 
-        # Total (0-120, normalized to 0-100)
+        # Total (0-117, normalized to 0-100)
+        # Components: phase(30) + progress(5) + trials(5) + diversity(5) + recency(5) + design(25) + execution(22) + endpoint(20) = 117
         # Quantize each component before summing to ensure precision
         total = (
             phase_score.quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP)
@@ -1338,7 +1339,7 @@ def compute_module_4_clinical_dev_v2(
             + endpoint_score.quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP)
         )
 
-        clinical_score = ((total / Decimal("120")) * Decimal("100")).quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP)
+        clinical_score = ((total / Decimal("117")) * Decimal("100")).quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP)
 
         # Flags and severity
         flags = []

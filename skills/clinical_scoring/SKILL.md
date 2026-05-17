@@ -34,6 +34,8 @@ Map each company's most advanced trial to a canonical phase. Use the **highest**
 
 ## Step 2: Look Up Base Stage Score
 
+**Used by:** PoS (Probability of Success) Engine only. Not used by Module 4 composite score.
+
 | Stage | Score (0-100) |
 |-------|--------------|
 | preclinical | 10 |
@@ -48,6 +50,8 @@ Map each company's most advanced trial to a canonical phase. Use the **highest**
 ---
 
 ## Step 3: Compute Phase Score (Module 4, 0-30 pts raw)
+
+**Used by:** Module 4 clinical composite score (Step 14). Not used by PoS Engine. Step 3 Phase Score differs from Step 2 Base Stage Score and is the canonical phase input to the final clinical_score calculation.
 
 | Phase | Phase Score |
 |-------|-----------|
