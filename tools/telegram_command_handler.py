@@ -41,6 +41,7 @@ import argparse
 import json
 import logging
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -59,6 +60,17 @@ PID_FILE = REPO_ROOT / "artifacts" / "ops" / "telegram_handler.pid"
 POLL_TIMEOUT = 30  # seconds — long-polling timeout
 
 TELEGRAM_API_BASE = "https://api.telegram.org/bot{token}"
+
+SNAPSHOT_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _list_snapshot_dates(snap_dir: Path) -> list[str]:
+    """Return sorted YYYY-MM-DD subdirs of snap_dir; skips non-date entries like 'resolutions'."""
+    if not snap_dir.exists():
+        return []
+    return sorted(
+        d.name for d in snap_dir.iterdir() if d.is_dir() and SNAPSHOT_DATE_RE.match(d.name)
+    )
 
 # ---------------------------------------------------------------------------
 # Environment loading
@@ -247,11 +259,9 @@ class TelegramCommandHandler:
 
         # Latest snapshot date
         snap_dir = REPO_ROOT / "data" / "snapshots"
-        if snap_dir.exists():
-            dates = sorted([d.name for d in snap_dir.iterdir() if d.is_dir()])
-            if dates:
-                latest_date = dates[-1]
-                lines.append(f"<b>Latest snapshot:</b> {latest_date}")
+        dates = _list_snapshot_dates(snap_dir)
+        if dates:
+            lines.append(f"<b>Latest snapshot:</b> {dates[-1]}")
         else:
             lines.append("<b>Latest snapshot:</b> no snapshots")
 
@@ -332,7 +342,7 @@ class TelegramCommandHandler:
         if not snap_dir.exists():
             return "No snapshots directory found."
 
-        dates = sorted([d.name for d in snap_dir.iterdir() if d.is_dir()])
+        dates = _list_snapshot_dates(snap_dir)
         if not dates:
             return "No snapshots found."
 
