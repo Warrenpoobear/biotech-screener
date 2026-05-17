@@ -29,7 +29,6 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-import numpy as np
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -167,12 +166,8 @@ def _generate_report(
     # --- Per-snapshot table ---
     lines.append("## Per-Snapshot Coverage")
     lines.append("")
-    lines.append(
-        "| Date | Rows | Blank% | Zero% | Positive% | Negative% | Nonblank% | Activity% |"
-    )
-    lines.append(
-        "|------|------|--------|-------|-----------|-----------|-----------|-----------|"
-    )
+    lines.append("| Date | Rows | Blank% | Zero% | Positive% | Negative% | Nonblank% | Activity% |")
+    lines.append("|------|------|--------|-------|-----------|-----------|-----------|-----------|")
     for s in all_stats:
         lines.append(
             f"| {s['date']} "
@@ -197,9 +192,7 @@ def _generate_report(
     lines.append("")
     lines.append(f"- **Nonblank% range:** {nb_min:.1f}% to {nb_max:.1f}%")
     lines.append(f"- **Max-min spread:** {nb_spread:.1f} pp")
-    lines.append(
-        f"- **Spread threshold:** {STABILITY_THRESHOLD_PP:.1f} pp"
-    )
+    lines.append(f"- **Spread threshold:** {STABILITY_THRESHOLD_PP:.1f} pp")
     lines.append(
         f"- **Spread check:** {'PASS' if spread_pass else 'FAIL'} "
         f"({nb_spread:.1f} pp {'<=' if spread_pass else '>'} {STABILITY_THRESHOLD_PP:.1f} pp)"

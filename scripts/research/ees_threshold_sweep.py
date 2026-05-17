@@ -171,7 +171,8 @@ def main() -> None:
 
     lookup = {(r["quality_cut_pct"], r["trap_cut_pct"]): r for r in cells}
 
-    print(f"{'Q \\ T':>8s}", end="")
+    qt_header = "Q \\ T"
+    print(f"{qt_header:>8s}", end="")
     for t_cut in TRAP_CUTS:
         print(f"  {t_cut:>3d}%  ", end="")
     print()
@@ -195,7 +196,7 @@ def main() -> None:
     print(f"  MEAN RETURN (%) HEATMAP — {HORIZON}d horizon")
     print(f"{'=' * 90}")
 
-    print(f"{'Q \\ T':>8s}", end="")
+    print(f"{qt_header:>8s}", end="")
     for t_cut in TRAP_CUTS:
         print(f"  {t_cut:>3d}%  ", end="")
     print()
@@ -216,7 +217,7 @@ def main() -> None:
     print(f"  FREQUENCY (% of dates with enough names) — {HORIZON}d horizon")
     print(f"{'=' * 90}")
 
-    print(f"{'Q \\ T':>8s}", end="")
+    print(f"{qt_header:>8s}", end="")
     for t_cut in TRAP_CUTS:
         print(f"  {t_cut:>3d}%  ", end="")
     print()

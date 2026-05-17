@@ -38,18 +38,18 @@ class TestInsiderDiagnosticGuards:
         from common.feature_registry import FEATURE_REGISTRY
 
         feature_names = {f.name for f in FEATURE_REGISTRY}
-        assert "insider_net_buy_value_90d" not in feature_names, (
-            "insider_net_buy_value_90d must not be in FEATURE_REGISTRY (diagnostic only)"
-        )
+        assert (
+            "insider_net_buy_value_90d" not in feature_names
+        ), "insider_net_buy_value_90d must not be in FEATURE_REGISTRY (diagnostic only)"
 
     def test_insider_not_consumed_by_expectation_model(self):
         """ExpectationErrorModel must not read insider_net_buy_value_90d."""
         from event_ev.expectation_error_model import ExpectationErrorModel
 
         source = inspect.getsource(ExpectationErrorModel)
-        assert "insider_net_buy_value_90d" not in source, (
-            "ExpectationErrorModel must not reference insider_net_buy_value_90d"
-        )
+        assert (
+            "insider_net_buy_value_90d" not in source
+        ), "ExpectationErrorModel must not reference insider_net_buy_value_90d"
 
     def test_insider_not_in_market_features_keys(self):
         """If ExpectationErrorModel has MARKET_FEATURE_KEYS or similar, insider must not be listed."""
@@ -57,9 +57,9 @@ class TestInsiderDiagnosticGuards:
 
         source = inspect.getsource(ExpectationErrorModel)
         # Check that insider is not in any feature key list
-        assert "insider" not in source.lower() or "insider_net_buy" not in source, (
-            "ExpectationErrorModel must not reference insider features"
-        )
+        assert (
+            "insider" not in source.lower() or "insider_net_buy" not in source
+        ), "ExpectationErrorModel must not reference insider features"
 
     def test_blank_zero_not_collapsed_in_measurement(self):
         """Measurement logic must distinguish blank (NaN) from zero (0.0)."""
@@ -80,9 +80,7 @@ class TestInsiderDiagnosticGuards:
         from common.feature_registry import FEATURE_REGISTRY
 
         for f in FEATURE_REGISTRY:
-            assert "insider" not in f.name.lower(), (
-                f"Found insider-related feature in active registry: {f.name}"
-            )
+            assert "insider" not in f.name.lower(), f"Found insider-related feature in active registry: {f.name}"
 
     def test_coverage_requirements_insider_is_tracked_nonblocking(self):
         """FEATURE_COVERAGE_REQUIREMENTS should list insider as tracked/nonblocking if present."""
@@ -100,8 +98,7 @@ class TestInsiderDiagnosticGuards:
                     for field_name, threshold, is_blocking in mod.FEATURE_COVERAGE_REQUIREMENTS:
                         if "insider" in field_name:
                             assert not is_blocking, (
-                                f"insider field {field_name} must be nonblocking "
-                                f"in FEATURE_COVERAGE_REQUIREMENTS"
+                                f"insider field {field_name} must be nonblocking " f"in FEATURE_COVERAGE_REQUIREMENTS"
                             )
         except (ImportError, FileNotFoundError):
             pytest.skip("production_qa_check.py not importable in test environment")
