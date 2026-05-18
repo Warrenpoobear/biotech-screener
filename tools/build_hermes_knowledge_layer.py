@@ -334,7 +334,12 @@ FIRST_FIRE_SEED = [
 
 
 def check_first_fire_status(ff_item):
-    """Evaluate a first-fire item against current filesystem state."""
+    """Evaluate a first-fire item against current filesystem state.
+
+    Overwrites the seed's static ``status`` field with the live evaluation so
+    that consumers (including ``first_fire_ledger/latest.json``, which matches
+    the Spec 089 single-``status`` schema) always see the current value.
+    """
     result = dict(ff_item)
 
     # Check if expected date has passed
@@ -342,7 +347,7 @@ def check_first_fire_status(ff_item):
     now = datetime.now(tz=timezone(timedelta(hours=-4)))  # ET
 
     if now < expected_dt:
-        result["eval"] = "PENDING_NOT_YET_DUE"
+        result["status"] = "PENDING_NOT_YET_DUE"
         return result
 
     # Past expected time — check artifacts
@@ -355,21 +360,21 @@ def check_first_fire_status(ff_item):
     if missing:
         alert_dt = datetime.fromisoformat(ff_item["alert_deadline"])
         if now > alert_dt:
-            result["eval"] = "FAIL_ARTIFACT_MISSING_PAST_DEADLINE"
+            result["status"] = "FAIL_ARTIFACT_MISSING_PAST_DEADLINE"
         else:
-            result["eval"] = "WARN_ARTIFACT_NOT_YET_PRESENT"
+            result["status"] = "WARN_ARTIFACT_NOT_YET_PRESENT"
         result["missing_artifacts"] = missing
     else:
         # Artifacts exist — check as_of_date in BIOSHORT_VERDICT
         verdict = read_json(REPO / "output/hedge_report/BIOSHORT_VERDICT.json")
         expected_date = ff_item["expected_first_fire"][:10]  # YYYY-MM-DD
         if verdict and verdict.get("as_of_date") == expected_date:
-            result["eval"] = "PASS"
+            result["status"] = "PASS"
         elif verdict:
-            result["eval"] = "WARN_DATE_MISMATCH"
+            result["status"] = "WARN_DATE_MISMATCH"
             result["verdict_as_of_date"] = verdict.get("as_of_date")
         else:
-            result["eval"] = "WARN_VERDICT_UNREADABLE"
+            result["status"] = "WARN_VERDICT_UNREADABLE"
 
     return result
 
@@ -533,7 +538,7 @@ def write_state_json(git_info, crontab_info, agents, artifacts, held_items, ff_i
         "key_artifacts": artifacts,
         "held_items": [{"id": h["id"], "title": h["title"], "status": h["status"]} for h in held_items],
         "first_fire_items": [
-            {"job": f["job"], "expected_first_fire": f["expected_first_fire"], "status": f.get("eval", f["status"])}
+            {"job": f["job"], "expected_first_fire": f["expected_first_fire"], "status": f["status"]}
             for f in ff_items
         ],
         "warnings": [c for c in contradictions if c["severity"] != "OK"],
@@ -674,14 +679,13 @@ def write_first_fire_md(ff_items):
         "",
     ]
     for item in ff_items:
-        eval_status = item.get("eval", item["status"])
         lines += [
             f"## {item['job']}",
             "",
             f"- cron: `{item['cron']}`",
             f"- expected first fire: {item['expected_first_fire']}",
             f"- alert deadline: {item['alert_deadline']}",
-            f"- status: **{eval_status}**",
+            f"- status: **{item['status']}**",
             "",
             "### Pass criteria",
             "",
@@ -803,7 +807,7 @@ def main():
     agents = capture_agent_registry()
     artifacts = capture_key_artifacts()
 
-    # Layer 2 — normalize first-fire items with eval
+    # Layer 2 — normalize first-fire items (live status)
     print("Layer 2: normalize...")
     ff_items = [check_first_fire_status(item) for item in FIRST_FIRE_SEED]
 
@@ -824,7 +828,7 @@ def main():
     print()
     hard_count = sum(1 for c in contradictions if c["severity"] == "HARD_CONTRADICTION")
     warn_count = sum(1 for c in contradictions if c["severity"] == "POSSIBLE_DRIFT")
-    ff_status = ff_items[0].get("eval", ff_items[0]["status"]) if ff_items else "N/A"
+    ff_status = ff_items[0]["status"] if ff_items else "N/A"
 
     print("=== Summary ===")
     print(f"  git head:           {git_info['head']}")
