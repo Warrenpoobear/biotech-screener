@@ -52,3 +52,28 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 - memory-steward.md (patched)
 - openclaw-agent-scope-audit.md (patched)
 - references/ir_url_population.md (from ~/.hermes/skills/devops/openclaw-data-pipeline-debug/references/)
+
+---
+
+## 2026-05-18
+
+### Audit findings (no harvest run)
+
+Integration audit identified four production-job skills referenced by
+`docs/hermes_agents/agent_roster.md` that have no mirror under
+`docs/hermes_skills/`:
+
+- `biotech-screener-audit` — backs `biotech-screener weekly audit`
+- `openclaw-fleet-triage` — backs `openclaw-fleet-triage daily` (cron `4f360d005436`)
+- `aa-model-tracker` — backs `aa-model daily tracker`
+- `signal-shared-regime-check` — backs `weekly-signal-regime-sweep`
+
+These skills are assumed to live in `~/.hermes/skills/` outside the repo.
+If that directory is lost, the skills are not recoverable from git.
+
+**Action for next harvester run:** include the four production-job skills in
+the sync list alongside the debug skills.
+
+### Repo cleanup
+- Removed duplicate `docs/hermes_skills/references/references/ir_url_population.md`
+  (nested copy of the same file; identical bytes).

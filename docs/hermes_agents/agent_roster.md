@@ -1,6 +1,6 @@
 # Hermes Agent Roster
-Last updated: 2026-05-05
-Total jobs: 19 (17 recurring, 2 one-shot)
+Last updated: 2026-05-18
+Total jobs: 19 (17 recurring, 2 one-shot) + 1 planned (not yet created)
 
 All jobs deliver locally (Hermes job history). None push to external channels.
 To inspect output: ask Hermes "show last run of <job name>".
@@ -203,6 +203,23 @@ To manage: ask Hermes "pause/resume/remove <job name>".
   to pre-filing degradation baseline (-0.097). If mean_ic > -0.05: emits
   improvement alert and recommends reinstatement check. Hypothesis: inst_delta_z
   degraded on Q4 2025 13F filing date (2026-02-28); Q1 refresh may resolve it.
+
+---
+
+## Planned (not yet created)
+
+### hermes-held-spec-ledger
+- **ID:** —
+- **Schedule:** TBD (proposed: daily after `build_hermes_knowledge_layer.py` completes)
+- **Toolsets:** terminal, file
+- **Purpose:** Phase B trigger for Spec 090 (Town-Hermes Bridge). Emits a
+  `held_spec_ledger` event via `common.operator_delivery.send_operator_event`
+  pointing at `artifacts/ops/held_spec_ledger/latest.md`. Required for Phase B
+  activation; not yet created. Phase A (`OPERATOR_DELIVERY_DRY_RUN=1`) is the
+  current state — no live job exists.
+- **Blocker:** Spec 090 Phase B not started. TOWN_WEBHOOK_URL +
+  TOWN_WEBHOOK_SECRET must be set in `.env` and `OPERATOR_DELIVERY_DRY_RUN=0`
+  before this job can be wired.
 
 ---
 
