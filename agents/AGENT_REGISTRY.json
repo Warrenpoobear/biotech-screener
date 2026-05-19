@@ -493,6 +493,36 @@
       "notes": "Last interpretive layer. Sentinel (tools/agent_supervisor_sentinel.py) verifies its output. Per feedback_no_recursive_supervision, no further layer above this.",
       "llm_policy": "manual_only",
       "requires_preflight": true
+    },
+    "hermes-held-spec-ledger": {
+      "role": "LLM analysis of held-spec ledger — blocker staleness, deadline proximity, status proposals",
+      "category": "control_plane",
+      "cadence": "on_demand",
+      "status": "shadow",
+      "artifact_paths": [
+        "agents/hermes-held-spec-ledger/memory/"
+      ],
+      "authority_level": "observe_only",
+      "supervised_by_orchestrator": false,
+      "owner": "unassigned",
+      "notes": "PREP ONLY (Phase 2B prep 2026-05-19). No live cron. Intended cadence: Mon 08:45 ET + daily while specs open. Invoke via tools/run_agent_direct.py --agent hermes-held-spec-ledger. Not wired into alert delivery, Town, or escalation. Preflight check enabled but skip-preflight flag available for dry-run development.",
+      "llm_policy": "manual_only",
+      "requires_preflight": true
+    },
+    "hermes-first-fire-validator": {
+      "role": "LLM first-fire artifact validation — pass/fail criteria check, artifact integrity, log inspection",
+      "category": "control_plane",
+      "cadence": "on_demand",
+      "status": "shadow",
+      "artifact_paths": [
+        "agents/hermes-first-fire-validator/memory/"
+      ],
+      "authority_level": "observe_only",
+      "supervised_by_orchestrator": false,
+      "owner": "unassigned",
+      "notes": "PREP ONLY (Phase 2B prep 2026-05-19). No live cron. Intended as one-shot validation after new job first fire. Invoke via tools/run_agent_direct.py --agent hermes-first-fire-validator. Not wired into alert delivery, Town, or escalation. Preflight check enabled.",
+      "llm_policy": "manual_only",
+      "requires_preflight": true
     }
   }
 }
