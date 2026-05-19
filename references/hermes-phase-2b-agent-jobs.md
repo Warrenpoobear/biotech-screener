@@ -1,7 +1,8 @@
 # Hermes Phase 2B Agent Jobs — Runbook
 
 **Branch**: `spec-089-phase-2b-alerting-prep-2026-05-19`
-**Status**: PREP ONLY — no live cron entries, no autonomous alerts, no Town delivery
+**Status**: ACTIVE (held-spec-ledger only) — Mon 08:45 ET cron live via Claude
+**Scope**: hermes-held-spec-ledger activated; hermes-first-fire-validator remains manual-only
 **Spec**: `specs/changes/spec_089_hermes_knowledge_layer.md` (Phase 2B)
 
 ---
@@ -113,29 +114,62 @@ python3 tools/run_hermes_first_fire_validator.py --model claude-sonnet-4-2025051
 
 ---
 
-## Intended Cadence (not yet enabled)
+## Live Cron Configuration
 
-These are the planned cron entries (documented here for future implementation):
+### Activate: `hermes-held-spec-ledger` (active 2026-05-19)
 
+| Property | Value |
+|----------|-------|
+| Schedule | Mon 08:45 ET (`45 8 * * 1`) |
+| Command | `cd ... && /usr/bin/python3 tools/run_hermes_held_spec_ledger.py --model claude-sonnet-4-20250514 >> logs/hermes-held-spec-ledger.log 2>&1` |
+| Model | `claude-sonnet-4-20250514` (Anthropic Claude — Together AI is 402) |
+| Log path | `logs/hermes-held-spec-ledger.log` (append, in repo root) |
+| Authority | **observe-only** — reads ledgers, writes `memory/`, never mutates ledgers or sends alerts |
+
+**Cron entry**:
 ```cron
-# hermes-held-spec-ledger — Mon 08:45 ET (weekly kickoff)
 45 8 * * 1 cd /mnt/c/Projects/biotech_screener/biotech-screener && /usr/bin/python3 tools/run_hermes_held_spec_ledger.py --model claude-sonnet-4-20250514 >> logs/hermes-held-spec-ledger.log 2>&1
-
-# hermes-first-fire-validator — initially manual only, add cron after:
-#   - First fire occurs for a job
-#   - Agent has been dry-run verified successfully 3+ times
-#   - Expected cron line: 45 9 * * 1-5
 ```
 
-### Activation criteria (for enabling cron):
+### Not activated: `hermes-first-fire-validator`
 
-1. Both agents have been dry-run successfully 3+ times with no errors
-2. Analysis output in `memory/` has been reviewed by operator for quality
-3. `hermes-held-spec-ledger` triggers no unexpected or hallucinated status proposals
-4. `hermes-first-fire-validator` correctly validates the existing `biotech_hedge_report` WARN_DATE_MISMATCH state
-5. No API exhaustion issues during dry runs
+Remains **manual-only**. No cron entry. `status: shadow` + `llm_policy: manual_only` in registry. Activate only after:
+- A new cron job fires for the first time (first-fire ledger entry appears)
+- Agent has been dry-run verified 3+ times
+- Operator manually validates output quality
 
-**Dry-run status as of 2026-05-19**: Both agents pass. held-spec-ledger exit 0 (6 items, correct spec_087_b1b flag). first-fire-validator exit 0 (correct PARTIAL_PASS_WITH_DATE_ISSUE verdict). See dry-run verification below.
+### Activation history
+
+| Date | Action |
+|------|--------|
+| 2026-05-19 | Live memory-write test passed (exit 0, observe-only respected) → Cron activated |
+| 2026-05-19 | `hermes-first-fire-validator` deliberately excluded from cron |
+
+### Disable / Rollback
+
+**Disable held-spec-ledger cron** (quickest):
+```bash
+crontab -l | grep -v "run_hermes_held_spec_ledger" | crontab -
+```
+Backup saved at `~/crontab.bak.20260519` (pre-Phase2B) and `~/crontab.bak.20260519.post-phase2b` (with entry).
+
+**Full rollback of Phase 2B files**:
+```bash
+git rm -r agents/hermes-held-spec-ledger/
+git rm -r agents/hermes-first-fire-validator/
+git rm references/hermes-phase-2b-agent-jobs.md
+git rm tools/run_hermes_held_spec_ledger.py
+git rm tools/run_hermes_first_fire_validator.py
+git checkout main -- agents/AGENT_REGISTRY.json
+```
+
+### Acceptance criteria met (pre-activation)
+
+1. ✅ Live memory-write: `agents/hermes-held-spec-ledger/memory/2026-05-19.md` written (3346 bytes)
+2. ✅ Observe-only: zero proposals to mutate ledgers (verified in output)
+3. ✅ Correct analysis: 6 items analyzed, `spec_087_b1b` flagged overdue (matches known state)
+4. ✅ No mutations: `git status -s` empty after run — no files changed
+5. ✅ Cost explicit: ~5,136 in / 997 out tokens (~$0.05/run via Claude)
 
 ---
 
@@ -157,19 +191,9 @@ These are the planned cron entries (documented here for future implementation):
 
 ## Disable / Rollback Procedure
 
-Since there are **no live cron entries** yet, rollback is simply:
+**Disable held-spec-ledger cron** — see [Disable / Rollback](#disable--rollback-1) in Live Cron Configuration above.
 
-```bash
-# Revert the entire prep branch
-git checkout main
-git branch -D spec-089-phase-2b-alerting-prep-2026-05-19
-
-# Or, soft reset if merged
-git revert <commit-hash>
-```
-
-To remove agent definition files without reverting the branch:
-
+**Full rollback of all Phase 2B files**:
 ```bash
 git rm -r agents/hermes-held-spec-ledger/
 git rm -r agents/hermes-first-fire-validator/
@@ -186,32 +210,32 @@ git checkout main -- agents/AGENT_REGISTRY.json
 
 When this prep is validated and you're ready to move to full Phase 2:
 
-1. Add cron entries (see Intended Cadence above)
-2. Set `"status": "active"` and `"llm_policy": "direct_llama_on_anomaly"` in `AGENT_REGISTRY.json`
-3. Wire agent outputs into Town/alerts (see spec_089.md for deferred scope)
-4. Implement contradiction escalation logic (contradiction-detector agent)
-5. Implement daily operator brief (uses outputs from both agents)
+1. Activate `hermes-held-spec-ledger` cron (see Live Cron Configuration above — **DONE**)
+2. Activate `hermes-first-fire-validator` cron (after first fire occurs)
+3. Set `"status": "active"` and `"llm_policy": "direct_llama_on_anomaly"` in `AGENT_REGISTRY.json`
+4. Wire agent outputs into Town/alerts (see spec_089.md for deferred scope)
+5. Implement contradiction escalation logic (contradiction-detector agent)
+6. Implement daily operator brief (uses outputs from both agents)
 
 ---
 
-## Verification Checklist (for each dry run)
+## Verification Checklist
 
 ```
-[ ] hermes-held-spec-ledger: exit code 0
-[ ] hermes-held-spec-ledger: memory/YYYY-MM-DD.md written with analysis (dry-run skips memory)
-[ ] hermes-held-spec-ledger: log written to logs/agents_direct/
+[ ] hermes-held-spec-ledger: exit code 0 (auto-check in log)
+[ ] hermes-held-spec-ledger: memory/YYYY-MM-DD.md written with analysis
+[ ] hermes-held-spec-ledger: log written to logs/hermes-held-spec-ledger.log
 [ ] hermes-held-spec-ledger: analysis correctly identifies all N held items
 [ ] hermes-held-spec-ledger: no proposals to modify ledger files
 
-[ ] hermes-first-fire-validator: exit code 0
-[ ] hermes-first-fire-validator: memory/YYYY-MM-DD.md written with validation (dry-run skips memory)
-[ ] hermes-first-fire-validator: log written to logs/agents_direct/
-[ ] hermes-first-fire-validator: correctly validates WARN_DATE_MISMATCH or PASS
+[ ] hermes-first-fire-validator: manual-only — verify crontab -l | grep first-fire is empty
+[ ] hermes-first-fire-validator: dry-run only — exit 0, correct WARN_DATE_MISMATCH verdict
 [ ] hermes-first-fire-validator: no proposals to re-execute jobs
 
-[ ] No live cron entries added (verify: crontab -l | grep hermes)
+[ ] Live cron: only hermes-held-spec-ledger (verify: crontab -l | grep "run_hermes_held_spec_ledger")
 [ ] No autonomous alerts or Town delivery active
 [ ] AGENT_REGISTRY.json shows status: shadow for both agents
+[ ] Together AI avoided — cron uses --model claude-sonnet-4-20250514
 ```
 
 ---
