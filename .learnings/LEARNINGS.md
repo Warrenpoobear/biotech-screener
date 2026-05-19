@@ -112,3 +112,52 @@ Use plain strings for static markdown table headers, f-strings only when interpo
 - Tags: flake8, code_style
 - Pattern-Key: f_string_no_placeholder
 - Recurrence-Count: 5
+
+## [LRN-20260519-001] lex_sort_of_iterdir_misranks_non_date_subdirs
+
+**Logged**: 2026-05-19T03:50:00Z
+**Priority**: high
+**Status**: resolved
+**Area**: ops
+
+### Summary
+`sorted(d.name for d in parent.iterdir() if d.is_dir())[-1]` does NOT reliably return the latest dated subdirectory. Any non-date sibling (e.g., `data/snapshots/resolutions/`) lex-sorts after `YYYY-MM-DD` names because `'r'` (0x72) > `'2'` (0x32), poisoning the result.
+
+### Details
+Confirmed in `tools/telegram_command_handler.py` `/status` and `/snap` commands at `:251` and `:335`. On the live host `data/snapshots/` contains `resolutions/` alongside dated dirs; `/status` always reported `Latest snapshot: resolutions` instead of the actual most recent date. Fix: filter by regex `^\d{4}-\d{2}-\d{2}$` before sorting. Shared helper `_list_snapshot_dates()` introduced.
+
+### Suggested Action
+Whenever scanning a directory for "the latest dated subdir", filter explicitly to date-shaped names. Never trust lex sort of `iterdir()` results when non-date siblings can exist.
+
+### Metadata
+- Source: hermes_integration_audit
+- Related Files: tools/telegram_command_handler.py
+- Fix Commit: dde2ae9
+- Tags: filesystem, sort, dated_dirs, telegram
+- Pattern-Key: lex_sort_dated_dirs
+- Recurrence-Count: 1
+
+## [LRN-20260519-002] dual_field_anti_pattern_seed_status_plus_live_eval
+
+**Logged**: 2026-05-19T03:55:00Z
+**Priority**: high
+**Status**: resolved
+**Area**: data_pipeline
+
+### Summary
+When a runtime function overwrites a seed value, write to the SAME field name. Don't introduce a parallel field (e.g., seed has `status: "PENDING"`, runtime adds `eval: "PASS"`). The result dict carries both — internal readers must do `.get("eval", item["status"])` everywhere, and any human reading the JSON sees stale `status` alongside live `eval`.
+
+### Details
+Found in `tools/build_hermes_knowledge_layer.py:check_first_fire_status()`. Spec 089 documents a single `status` field. Three internal readers had to use the `.get("eval", ...)` fallback (`:541`, `:682`, `:831`). `first_fire_ledger/latest.json` was emitting both keys, violating spec. No external consumers, so impact was latent — but the wire format was wrong. Fix: have the runtime function overwrite `status` directly; drop all fallbacks.
+
+### Suggested Action
+When extending a producer with runtime evaluation, mutate the canonical field name documented in the spec. If a "before/after" trace is needed, copy the seed value to a clearly-named historical field (e.g., `status_at_seed`), don't bifurcate by inventing a new live name.
+
+### Metadata
+- Source: hermes_integration_audit
+- Related Files: tools/build_hermes_knowledge_layer.py, specs/changes/spec_089_hermes_knowledge_layer.md
+- Fix Commit: 37d9997
+- Tags: data_schema, spec_alignment, producer_design
+- Pattern-Key: dual_field_seed_vs_live
+- Recurrence-Count: 1
+

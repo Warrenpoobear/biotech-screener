@@ -77,3 +77,65 @@ the sync list alongside the debug skills.
 ### Repo cleanup
 - Removed duplicate `docs/hermes_skills/references/references/ir_url_population.md`
   (nested copy of the same file; identical bytes).
+
+---
+
+## 2026-05-19
+
+### Session: Hermes integration audit + dead-file sweep
+
+Branch: `claude/check-hermes-telegram-dHe8a`. Four commits landed.
+
+### Git activity (this session)
+- `dde2ae9` fix(telegram): filter non-date subdirs in /status and /snap
+- `86cedda` docs(hermes): clean duplicate skill file and document gaps from integration audit
+- `37d9997` fix(hermes-kl): write live status to first-fire ledger (Spec 089 schema)
+- `ec08489` chore: remove broken self-improvement hook and deprecated scripts
+
+### Bugs found and fixed
+- **Class A (lex-sort poisoning)** — `tools/telegram_command_handler.py` `/status` and
+  `/snap` picked `data/snapshots/resolutions/` instead of the latest dated subdir
+  because `'r'` > `'2'` lexically. Filter by `^\d{4}-\d{2}-\d{2}$` regex.
+- **Class B (dual-field anti-pattern)** — `check_first_fire_status()` emitted both
+  stale `status: "PENDING"` and live `eval` field, violating Spec 089's single-status
+  schema. Overwrite in place; drop the three `.get("eval", ...)` fallback sites.
+- **Class C (broken hook reference)** — `.claude/settings.json` `UserPromptSubmit`
+  hook pointed at `activator.sh` but the file was `activator.sh.deprecated`.
+  Hook failed silently every prompt. Removed both hook block and the two
+  `.deprecated` scripts; `skills/self-improvement/` tree now gone.
+- **Class F (duplicate skill file)** — `docs/hermes_skills/references/references/ir_url_population.md`
+  was a nested self-copy. Removed.
+
+### Skill patches
+- **NEW: hermes-integration-audit** (`docs/hermes_skills/hermes-integration-audit.md`)
+  — read-only six-pass sweep of the Hermes integration surface. Six bug classes
+  (A-F) with diagnostic recipes and fix patterns. Designed to surface the same
+  bugs again if they recur, and to be the standard tool when an operator asks
+  "check Hermes" or before activating any new phase (e.g., Spec 090 Phase B).
+
+### Roster + spec drift documented (no live changes)
+- Added "Planned (not yet created)" section to `docs/hermes_agents/agent_roster.md`
+  for `hermes-held-spec-ledger` — the Phase B trigger for Spec 090 (Town-Hermes Bridge)
+  is required but does not yet exist as a Hermes job.
+- Flagged 4 production-job skills (`biotech-screener-audit`, `openclaw-fleet-triage`,
+  `aa-model-tracker`, `signal-shared-regime-check`) with no mirror under
+  `docs/hermes_skills/`. Next harvester run should include them in the sync list.
+
+### Out of scope (documented, not actioned)
+- 166 top-level `.py` files at repo root — possible orphans, but requires
+  import-graph audit. Not safe to mass-delete.
+- Compression model context mismatch (`~/.hermes/config.yaml`, Qwen 65K vs 500K) — host-side.
+- WSL2 sleep-cliff for `openclaw auth sync` — host-side, recovery procedure
+  already documented in roster.
+
+### Files synced to docs/hermes_skills/
+- hermes-integration-audit.md (new)
+- harvest_log.md (this entry)
+
+### Learnings filed
+- `LRN-20260519-001` (lex-sort dated dirs)
+- `LRN-20260519-002` (dual-field anti-pattern)
+- `ERR-20260519-001` (telegram /status reported resolutions)
+- `ERR-20260519-002` (broken claude settings hook)
+- `ERR-20260519-003` (first_fire_ledger dual status/eval)
+- HOT memory updated with both patterns.
