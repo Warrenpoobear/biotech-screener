@@ -21,7 +21,7 @@ This skill is organized into two sections:
 Modules 1-5 (scoring)
   -> Decision Engine (L0 gates -> L2 overlays -> L4 tiers -> L3 sizing -> sort key)
   -> Selector Engine (B6: coinvest_score_z 100%)
-  -> Ranker Engine (pairwise_minimal: 6 features, top-60 cohort, ordinal-only)
+  -> Ranker Engine (pairwise_minimal: 2 deployed features, top-60 cohort, ordinal-only)
   -> Sort by final_score -> EW Top-30 -> rankings.csv
 ```
 
@@ -57,18 +57,20 @@ Coinvest selects WHICH 30 names enter the portfolio. It captures institutional c
 
 ### Pairwise Minimal Ranker \(Production\)
 
-- 6 features, ordinal-only \(no rank-weighting, no confidence sizing\)
+- 2 deployed features, ordinal-only \(no rank-weighting, no confidence sizing\)
+- Live artifact: `production_data/ranker_v2_model.json`
+- Deployed weights: `coinvest_score_z` +0.02 \(capped Family C live pilot\), `financial_score` -0.0533
 - ECE = 0.129 \(POOR calibration - confirms ordinal-only is correct\)
 - Top-60 cohort scope
-- inst\_delta\_z excluded from ranker since Spec 051
+- inst\_delta\_z excluded from production ranker and zeroed in selector since v1.14.0
 
 ### Within-Top-30 Feature Roles
 
-| Feature | Role | NW t-stat |
+| Feature | Role | Evidence / Weight |
 | --- | --- | --- |
-| inst\_delta\_z | Dominant positive discriminator | +3.32 |
-| financial\_score | True negative penalty \(stress-upside\) | -3.41 |
-| coinvest\_score\_z | Washes out within cohort | +0.49 |
+| coinvest\_score\_z | Bounded institutional support within top-60 | +0.02 deployed \(+0.0613 trained\) |
+| financial\_score | True negative penalty \(stress-upside\) | -0.0533 deployed; NW t-stat -3.41 |
+| inst\_delta\_z | Diagnostic/export only | 0% selector weight; absent from ranker |
 
 ### financial\_score Sign Direction \(RESOLVED, Spec 093\)
 

@@ -22,7 +22,7 @@ SEC EDGAR 13F-HR filings
   -> warm_13f_cache.py (per-CIK PIT cache dirs)
   -> build_institutional_summary.py (canonical summary)
   -> coinvest_score_z (selector signal, 100% weight v1.14.0)
-  -> inst_delta_z (governance-controlled; active in ranker only as of v1.14.0)
+  -> inst_delta_z (diagnostic/export only in v1.14.0)
 ```
 
 ## Manager Registry
@@ -63,7 +63,7 @@ The production selector signal. Measures institutional co-investment conviction 
 
 - Drives 100% of selector weight \(v1.14.0, coinvest-only after inst\_delta\_z demotion\)
 - Correlation with final\_score: rho = +0.882 \(double-count concern, documented in T1 ranker anatomy\)
-- Checklist v2: 3/5 standalone, but bundle \(with inst\_delta\) is 5/5
+- Checklist v2: 3/5 standalone; prior bundle with inst\_delta is historical evidence only
 - Collapse guard: SD floor = 0.10 \(below this, snapshot integrity check FAILs\)
 
 ### Data Flow
@@ -82,8 +82,9 @@ Quarter-over-quarter change in institutional holdings. Measures whether smart mo
 ### Governance Rules
 
 - Reinstatement requires IC recovery evidence documented in governance log
-- When active, contributes to ranker \(dominant positive discriminator, NW-t = +3.32\)
-- When zeroed, selector runs on coinvest\_score\_z alone
+- Current production status: selector weight 0%, absent from the production 2-feature ranker
+- Historical audit showed positive within-cohort discrimination \(NW-t = +3.32\), but this is not active production behavior
+- When zeroed, selector runs on coinvest\_score\_z alone and ranker uses only `coinvest_score_z` + `financial_score`
 
 ---
 
@@ -208,7 +209,8 @@ Also monitor BioPharm IQ Twitter \([https://twitter.com/BioPharmIQ](https://twit
 *Last reviewed: 2026-05-04*
 
 - **Zeroed in selector** \(2026-05-04\): ALERT confirmed, mean IC = -0.097 over 36 dates
-- **Active in ranker**: dominant positive discriminator within top-30 \(NW-t = +3.32\)
+- **Absent from production ranker**: the live pairwise artifact has only `coinvest_score_z` and `financial_score`
+- **Historical audit note**: prior within-top-30 analysis found positive discrimination \(NW-t = +3.32\), retained as context only
 - **Reinstatement conditions**: documented in governance log, requires IC recovery evidence
 
 ## 13F Filing Cycle Status

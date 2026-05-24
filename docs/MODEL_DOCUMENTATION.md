@@ -1,15 +1,15 @@
 # Wake Robin DEM — Model Documentation
 
-**Version:** 1.7.1 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
-**Last updated:** 2026-05-14 (Specs 101-105 production work + Spec 072/091/096/100 research roadmap documented in Section 14.6)
-**Status:** Production — A4 selector + pairwise `minimal_v2` ranker (2-feature, ordinal-only) + EW Top-30.
+**Version:** 1.7.2 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
+**Last updated:** 2026-05-24 (documentation sync to active v1.14.0: coinvest-only selector, capped Family C 2-feature ranker, freeze/quarantine active)
+**Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature, ordinal-only) + EW Top-30. **FROZEN** until governance gates clear.
 Deployed ranker artifact = **capped Family C live-pilot vector**, not identical to the trained `minimal_v2`
 weights. See `production_data/ranker_v2_model.json` → `provenance` block for the deployed vs trained delta.
 
-**Model identity unchanged in 1.7.1.** All 2026-04-26 additions are display,
-diagnostic, and data-ingest layers — see Section 14.5 for the full delta. The
-A4 selector, ranker_v2 weights, eligibility rules, decision rulesets, and EW
-Top-30 construction are all frozen per `policy_alpha_freeze_2026_04_04.md`.
+**Model identity unchanged in 1.7.2.** This documentation update reconciles
+stale selector/ranker prose with the already-active v1.14.0 configuration. The
+selector, ranker_v2 weights, eligibility rules, decision rulesets, and EW Top-30
+construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
@@ -151,7 +151,7 @@ market has correctly priced above base rates.
 ```
 Universe (M1) → Financial Health (M2) → Catalyst Events (M3) → Clinical Dev (M4)
 → Composite Scoring (M5) → Decision Engine (L0→L2→L4→L4b→L3)
-→ Selector Engine (B6: sponsorship 65% + momentum_delta 35%)
+→ Selector Engine (v1.14.0: coinvest_score_z 100%; inst_delta_z 0% diagnostic)
 → Ranker Engine (pairwise_minimal: 2 features, ordinal-only, top-60 cohort)
 → Sort by final_score → EW Top-30 → Portfolio Construction
 → Shadow Portfolio → Performance Attribution → Governance Gates
@@ -163,17 +163,18 @@ The model uses a **selector/ranker split**: one score to choose the shortlist, a
 score to rank within it. This was validated on true PIT data (67 monthly periods, Jun 2020 —
 Apr 2026) at +2.34pp/mo net-of-cost, t=2.57.
 
-> **Production mental model (2026-04-04):**
-> sponsorship selects, momentum_delta ranks, financial penalizes "safe but less catalytic"
-> names, and clinical is a weak/conditional feature under review.
+> **Production mental model (2026-05-24):**
+> coinvest selects the book; the capped 2-feature ranker orders within the
+> top-60 by bounded coinvest support and the intentional financial_score
+> stress-upside penalty. `inst_delta_z` is computed and exported as a
+> diagnostic but has zero selector/ranker weight in v1.14.0.
 
-**Stage 1 — Selector (B6 bundle):** Sponsorship quality determines which 30 names
-belong in the book. 65% sponsorship_score_z + 35% momentum_delta_z. Clinical quality was
-destructive as a selector (-0.53pp). The B6 bundle was revalidated under Checklist v2
-(2026-04-04): bootstrap mean +2.42pp/mo, 95% CI [1.25%, 3.70%], LOSO ROBUST across
-all dimensions. Neither component survives as a standalone incremental signal
-(sponsorship FM NW-t = −0.18, momentum_delta NW-t = +1.73), but the bundle's diversification
-benefit is real and statistically significant.
+**Stage 1 — Selector (v1.14.0 coinvest-only):** Institutional co-investment quality
+determines which names enter the actionable book. Active ruleset `8887576e`
+sets `coinvest_score_z` to 100% and `inst_delta_z` to 0% after the 2026-05-04
+two-frame ALERT (`inst_delta_z` mean IC = -0.097 over 36 dates). The prior
+65/35 B6 blend remains historical evidence, not the live selector. Clinical
+quality was destructive as a selector (-0.53pp).
 
 **Stage 2 — Ranker (pairwise_minimal, ordinal-only):** A 2-feature Bradley-Terry pairwise
 model ranks within the selected top-60 cohort. Promoted 2026-04-05 after feature audit
@@ -309,15 +310,15 @@ which uses `final_score` (selector + ranker adjustment) when the ranker is activ
 
 ## 3. Signal Inventory
 
-### Production Signals (Spec 050 + Checklist v2 revalidation 2026-04-04)
+### Production Signals (Spec 050 + v1.14.0 governance update 2026-05-04)
 
-**Selector (B6 bundle) — validated under full Checklist v2:**
+**Selector (v1.14.0 coinvest-only) — active production configuration:**
 
-| Signal | Role | Weight | Checklist v2 Evidence |
-|--------|------|--------|----------------------|
-| **sponsorship_score_z** | Selector (B6) | 65% | Standalone 3/5 gates (FM incr NW-t=−0.18 FAIL, FDR q=0.86 FAIL). Bundle is stronger than parts. |
-| **momentum_delta_z** | Selector (B6) | 35% | Standalone 2/5 gates (FM NW-t=+1.73 FAIL, LOSO unstable in core bucket). Essential as complement. |
-| **B6 bundle** | Selector | 65/35 blend | Bootstrap +2.42pp/mo, CI [1.25%, 3.70%], LOSO ROBUST. **Bundle validated.** |
+| Signal | Role | Active Weight | Governance Evidence |
+|--------|------|---------------|---------------------|
+| **coinvest_score_z** | Selector | 100% | Surviving institutional selector signal in ruleset `8887576e`; prior 65% weight redistributed here. |
+| **inst_delta_z** | Diagnostic/export only | 0% | Demoted 2026-05-04 after two-frame ALERT: mean IC = -0.097 over 36 dates, hit rate = 0.111. Reinstatement requires governance review. |
+| **Prior B6 bundle** | Historical selector evidence | retired 65/35 blend | Checklist v2 bootstrap +2.42pp/mo, CI [1.25%, 3.70%], LOSO ROBUST. Historical evidence only; not the live v1.14.0 selector. |
 
 **Ranker (pairwise `minimal_v2`) — 2 features, ordinal-only (ECE=0.129):**
 
@@ -945,13 +946,14 @@ cost aggregation, rebalance threshold gate (only trade if expected alpha >
 | Rank-Weighted Top-30 | Shadow overlay (regime-dependent, not always-on) | Shadow |
 | Current shadow (sleeve-budget) | Legacy comparator to beat | Legacy |
 
-#### Operating Conclusion (updated 2026-04-04)
+#### Operating Conclusion (updated 2026-05-24)
 
-> The DEM uses a two-stage scoring architecture: **sponsorship selects** (B6 bundle),
-> **momentum_delta ranks** (pairwise_minimal), **financial penalizes** safe-but-uncatalytic
-> names, and the portfolio is held equal-weight. The B6 selector was revalidated
-> under Checklist v2 (bootstrap +2.42pp/mo, CI [1.25%, 3.70%], LOSO ROBUST).
-> The pairwise ranker is ordinal-only (ECE = 0.129) — no rank-weighting or sizing.
+> The DEM uses a two-stage scoring architecture: **coinvest selects** (v1.14.0
+> coinvest-only selector), the capped **2-feature pairwise_minimal ranker** orders
+> within the top-60, **financial_score penalizes** safe-but-uncatalytic names, and
+> the portfolio is held equal-weight. The prior B6 selector remains historical
+> evidence; `inst_delta_z` is now diagnostic-only. The pairwise ranker is
+> ordinal-only (ECE = 0.129) — no rank-weighting or sizing.
 
 > The model is a **bear/neutral alpha engine**: strong in distress and consolidation
 > (+3.37pp bear, +6.23pp neutral), with bounded underperformance in sharp biotech
@@ -1473,7 +1475,11 @@ Any new signal or model change must pass all 6 modules before promotion:
 | Year Stability | Per-year IC sign consistency | Positive IC in ≥60% of calendar years |
 | Ablation | Add/remove signal from production stack | Marginal contribution > 0 after controlling for existing signals |
 
-Implementation: `common/stats/` (6 modules, 36 tests). Current stack: A4 selector + 2-feature pairwise ranker (sponsorship +0.061, financial -0.053). Active ruleset `8887576e` v1.14.0 (was `2a3e79eb` v1.13.0; v1.14.0 zeroed `inst_delta_z` selector weight as a demotion-class hygiene patch — see `RULESET_CHANGELOG.md`).
+Implementation: `common/stats/` (6 modules, 36 tests). Current stack: v1.14.0
+coinvest-only selector + 2-feature pairwise ranker (deployed weights:
+`coinvest_score_z` +0.02, `financial_score` -0.0533). Active ruleset `8887576e` v1.14.0 (was
+`2a3e79eb` v1.13.0; v1.14.0 zeroed `inst_delta_z` selector weight as a
+demotion-class hygiene patch — see `RULESET_CHANGELOG.md`).
 
 #### Event Feedback Loop
 
@@ -1702,18 +1708,20 @@ coverage and sparse momentum_delta_z. The ranker concept is not falsified; it is
 currently untestable on the available historical data. Readiness gate at
 `output/ranker/ranker_data_readiness.json` tracks when training becomes viable.
 
-### Operating Thesis (updated 2026-04-04)
+### Operating Thesis (updated 2026-05-24)
 
-> **sponsorship selects, momentum_delta ranks, financial penalizes "safe but less catalytic"
-> names, and clinical is a weak/conditional feature under review.**
+> **coinvest selects, capped coinvest + financial_score ranks, financial_score
+> penalizes "safe but less catalytic" names, and clinical is a weak/conditional
+> feature under review.**
 >
-> B6 selector (sponsorship 65% + momentum_delta 35%) is validated under full Checklist v2:
-> bootstrap +2.42pp/mo, 95% CI excludes zero, LOSO ROBUST. Neither component survives
-> standalone, but the bundle's diversification benefit is real.
+> v1.14.0 selector is coinvest-only: `coinvest_score_z` 100%, `inst_delta_z` 0%.
+> The prior B6 selector (65/35) is historical validation evidence; `inst_delta_z`
+> remains computed/exported but does not affect selector_score, actionable_rank,
+> final_score, or top-30 membership.
 >
-> Pairwise_minimal ranker is ordinal-only (ECE = 0.129). Within the top-30 cohort,
-> momentum_delta is the dominant positive signal, financial_score is a true negative penalty
-> (safe names underperform), and sponsorship washes out (its job is done at selection).
+> Pairwise_minimal ranker is 2-feature and ordinal-only (ECE = 0.129). Within the
+> top-60 cohort, deployed `coinvest_score_z` is capped at +0.02 and
+> `financial_score` is a true negative penalty (safe names underperform).
 >
 > EW Top-30 is the correct construction. Rank-weighting and confidence sizing are
 > not justified — pairwise scores are not calibrated.
@@ -1728,9 +1736,9 @@ currently untestable on the available historical data. Readiness gate at
 | File | Purpose |
 |------|---------|
 | `decision_engine.py` | DEM core — L0→L2→L4→L4b→L3 |
-| `selector_engine.py` | B6 selector (5 blocks, sponsorship-dominant) |
+| `selector_engine.py` | v1.14.0 coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) |
 | `ranker_engine.py` | clinical_50 ranker (legacy bounded ±15%) |
-| `ranker_v2_pairwise.py` | pairwise_minimal ranker (Bradley-Terry, 6 features) |
+| `ranker_v2_pairwise.py` | pairwise_minimal ranker (Bradley-Terry, 2 deployed features) |
 | `run_screen.py` | Production pipeline orchestrator |
 | `tools/run_daily_production.py` | Daily cron pipeline (Steps 1-6) |
 | `tools/live_shadow_portfolio.py` | Shadow portfolio construction + PnL |
@@ -1765,7 +1773,7 @@ currently untestable on the available historical data. Readiness gate at
 | `specs/SYSTEM_SPEC.md` | System invariants |
 | `production_data/portfolio_policy.json` | Portfolio construction policy (v3) |
 | `production_data/ranker_v2_model.json` | Pairwise minimal model weights |
-| `production_data/decision_rulesets/v1.13.0_a4_selector_ranker.json` | Active ruleset |
+| `production_data/decision_rulesets/v1.14.0_coinvest_only_selector.json` | Active ruleset |
 | `scripts/research/checklist_v2_rerun.py` | Promotion Checklist v2 battery runner |
 | `scripts/research/pairwise_feature_audit.py` | Within-cohort feature diagnostic |
 | `tools/build_pdufa_dates_extracted.py` | Phase 1 extracted PDUFA sidecar (review-only) |
@@ -1808,19 +1816,19 @@ Any signal promotion now requires passing all 5 gates:
 **Policy**: No rank-weighting, no confidence sizing. Pairwise scores determine ordering
 only. Equal-weight construction is the correct response to ordinal-only ranking.
 
-### Within-Cohort Feature Audit (2026-04-04)
+### Within-Cohort Feature Audit (2026-05-24 status)
 
-| Feature | Within-Top-30 NW-t | Mechanism | Action |
+| Feature | Evidence / Weight | Mechanism | Action |
 |---------|-------------------|-----------|--------|
-| financial_score | −3.41 | TRUE PENALTY — persists all cohorts, all regimes | Keep negative weight |
-| momentum_delta_z | +3.32 | Dominant positive discriminator | Keep, primary ranker signal |
-| clinical_score_v2_z | −2.38 | COLLIDER + weak penalty — vanishes in high-sponsorship stratum | Quarterly review |
-| sponsorship_score_z | +0.49 | Washes out (job done at selector) | Keep but low-impact |
+| financial_score | Deployed −0.0533; NW-t −3.41 in audit | TRUE PENALTY — persists all cohorts, all regimes | Keep negative weight; frozen |
+| coinvest_score_z | Deployed +0.02; trained +0.0613 | Bounded institutional support within top-60 | Keep capped Family C weight; frozen |
+| inst_delta_z | 0% selector weight; absent from production ranker | Diagnostic/export only after 2026-05-04 ALERT | Do not reinstate without governance review |
+| clinical_score_v2_z | Historical audit NW-t −2.38 as ranker | Collider + weak penalty — vanishes in high-sponsorship stratum | Closed/diagnostic unless new evidence |
 
-**Key insight**: The selector and ranker learn different structure. Sponsorship gets names
-into the room; within the room, momentum_delta discriminates and financial_score penalizes
-the "safe but less catalytic" names. This is not a bug — it reflects real within-cohort
-economics of biotech investing.
+**Key insight**: The selector and ranker learn different structure. Coinvest gets
+names into the room; within the room, the capped two-feature ranker uses bounded
+coinvest support plus the `financial_score` stress-upside penalty. `inst_delta_z`
+is no longer a production discriminator in v1.14.0.
 
 ### Infrastructure
 
