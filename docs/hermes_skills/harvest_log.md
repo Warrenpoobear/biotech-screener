@@ -5,6 +5,31 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-05-24
+
+### Git activity (manual update)
+- **biotech-screener**: Hermes MCP startup fix reviewed
+  - `7c04e6a9` Fix Hermes MCP startup
+  - `58954ad0` Normalize Hermes MCP config key
+
+### Sessions reviewed
+- Cursor Cloud session diagnosing Hermes MCP discovery failure.
+
+### Skill patches
+- **cursor-hermes-mcp-debug**: New skill documenting repo-native Hermes MCP startup,
+  expected read-only tools, direct JSON-RPC smoke tests, Cursor reload requirement,
+  and common failure classes.
+- **screener_ops**: Added Cursor Hermes MCP quick-reference section with config,
+  expected tools, reload guidance, and detailed runbook link.
+
+### New skills created
+- `cursor-hermes-mcp-debug.md`
+
+### Files synced to docs/hermes_skills/
+- cursor-hermes-mcp-debug.md
+
+---
+
 ## 2026-05-06
 
 ### Git activity (past 24h)

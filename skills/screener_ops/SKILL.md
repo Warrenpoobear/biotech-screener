@@ -80,6 +80,46 @@ Repo-native "ops brain" that continuously answers:
 
 ---
 
+## Cursor Hermes MCP
+
+**Config**: `.cursor/mcp.json`
+**Server**: `mcp_server/hermes_server.py`
+
+Cursor launches Hermes MCP directly from this repo:
+
+```json
+{
+  "mcpServers": {
+    "hermes": {
+      "command": "python3",
+      "args": ["-m", "mcp_server.hermes_server"]
+    }
+  }
+}
+```
+
+The committed config also sets `HERMES_REPO`, `HERMES_AGENTS_DIR`, and
+`PYTHONPATH` so the server works when Cursor starts it outside the repo cwd.
+
+Expected read-only tools:
+
+- `fleet_context_snapshot`
+- `agents_list`
+- `agents_get`
+- `skills_read`
+- `knowledge_read`
+
+If direct smoke tests pass but Cursor still shows a discovery error, reload the
+Cursor window before changing server code:
+
+```text
+Cmd/Ctrl+Shift+P -> Developer: Reload Window
+```
+
+Detailed runbook: `docs/hermes_skills/cursor-hermes-mcp-debug.md`.
+
+---
+
 ## Town-Hermes Bridge \(Spec 090\)
 
 **Module**: `common/operator_delivery.py`
