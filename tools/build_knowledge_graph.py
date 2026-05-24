@@ -9,7 +9,6 @@ Read-only operation. Does NOT modify production code, cron, or git state.
 """
 
 import json
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -22,6 +21,7 @@ ARTIFACTS_DIR = REPO_ROOT / "artifacts" / "ops" / "knowledge_graph"
 OUTPUT_NODES = ARTIFACTS_DIR / "nodes.jsonl"
 OUTPUT_EDGES = ARTIFACTS_DIR / "edges.jsonl"
 OUTPUT_SUMMARY = ARTIFACTS_DIR / "summary.md"
+BUILD_AS_OF_DATE = "2026-05-19"
 
 # Node type registry
 NODE_TYPES = {
@@ -118,6 +118,32 @@ def extract_specs() -> Dict[str, Dict[str, Any]]:
             "title": title or spec_id,
             "status": status,
             "related_artifacts": [str(spec_file)],
+        }
+
+    # Edges use stable short IDs for high-traffic specs. Keep those aliases
+    # explicit so graph validation and query output reference real nodes.
+    short_aliases = {
+        "spec_089": ["spec_089_hermes_knowledge_layer"],
+        "spec_100": [
+            "spec_100_ranker_ic_tooling_correction_2026_05_13",
+            "spec_100_investigation_memo_2026_05_16",
+        ],
+    }
+    for alias, source_ids in short_aliases.items():
+        if alias in specs:
+            continue
+        source_nodes = [specs[source_id] for source_id in source_ids if source_id in specs]
+        if not source_nodes:
+            continue
+        primary = source_nodes[0]
+        related_artifacts = []
+        for node in source_nodes:
+            related_artifacts.extend(node.get("related_artifacts", []))
+        specs[alias] = {
+            **primary,
+            "id": alias,
+            "alias_of": primary["id"],
+            "related_artifacts": sorted(set(related_artifacts)),
         }
 
     return specs
@@ -422,6 +448,44 @@ def normalize_graph(
 def detect_contradictions(nodes: Dict, edges: List) -> List[Dict[str, Any]]:
     """Detect all 5 contradiction types."""
     contradictions = []
+    seen = set()
+
+    def add_contradiction(rule: str, node_id: str, issue: str, severity: str) -> None:
+        key = (rule, node_id, issue)
+        if key in seen:
+            return
+        seen.add(key)
+        contradictions.append(
+            {
+                "rule": rule,
+                "node_id": node_id,
+                "issue": issue,
+                "severity": severity,
+            }
+        )
+
+    # Rule 0: Edge integrity. Query results are misleading if an edge endpoint
+    # does not resolve to a node.
+    for edge in edges:
+        missing_endpoints = [endpoint for endpoint in ("source", "target") if edge.get(endpoint) not in nodes]
+        if missing_endpoints:
+            add_contradiction(
+                "dangling_edge",
+                f"{edge.get('source')}->{edge.get('target')}",
+                f"Edge {edge.get('type')} has missing endpoint(s): {', '.join(missing_endpoints)}",
+                "HIGH",
+            )
+
+    # Explicit CONTRADICTS edges are contradictions even when the target status is
+    # not COMPLETE. Status-specific rules below add more detail when applicable.
+    for edge in edges:
+        if edge.get("type") == "CONTRADICTS":
+            add_contradiction(
+                "explicit_contradiction",
+                str(edge.get("target")),
+                f"{edge.get('source')} CONTRADICTS {edge.get('target')}",
+                "HIGH",
+            )
 
     # Rule 1: Status contradiction (COMPLETE with unresolved PENDING_ON or CONTRADICTS edges)
     for node_id, node in nodes.items():
@@ -429,25 +493,21 @@ def detect_contradictions(nodes: Dict, edges: List) -> List[Dict[str, Any]]:
             # Check for PENDING_ON edges
             pending_edges = [e for e in edges if e["source"] == node_id and e["type"] == "PENDING_ON"]
             if pending_edges:
-                contradictions.append(
-                    {
-                        "rule": "status_contradiction",
-                        "node_id": node_id,
-                        "issue": "Status COMPLETE but has unresolved PENDING_ON edges",
-                        "severity": "MEDIUM",
-                    }
+                add_contradiction(
+                    "status_contradiction",
+                    node_id,
+                    "Status COMPLETE but has unresolved PENDING_ON edges",
+                    "MEDIUM",
                 )
 
             # Check for CONTRADICTS edges
             contradicts_edges = [e for e in edges if e["target"] == node_id and e["type"] == "CONTRADICTS"]
             if contradicts_edges:
-                contradictions.append(
-                    {
-                        "rule": "stub_contradiction",
-                        "node_id": node_id,
-                        "issue": f"Status COMPLETE but has CONTRADICTS edges from {contradicts_edges[0]['source']}",
-                        "severity": "HIGH",
-                    }
+                add_contradiction(
+                    "stub_contradiction",
+                    node_id,
+                    f"Status COMPLETE but has CONTRADICTS edges from {contradicts_edges[0]['source']}",
+                    "HIGH",
                 )
 
     # Rule 2: Stub contradiction (COMPLETE file status with STUB_PLACEHOLDER)
@@ -462,13 +522,11 @@ def detect_contradictions(nodes: Dict, edges: List) -> List[Dict[str, Any]]:
                 and nodes.get(e["source"], {}).get("status") == "COMPLETE"
             ]
             if touching_specs:
-                contradictions.append(
-                    {
-                        "rule": "stub_contradiction",
-                        "node_id": node_id,
-                        "issue": f"Status STUB_PLACEHOLDER but touched by COMPLETE spec {touching_specs[0]}",
-                        "severity": "HIGH",
-                    }
+                add_contradiction(
+                    "stub_contradiction",
+                    node_id,
+                    f"Status STUB_PLACEHOLDER but touched by COMPLETE spec {touching_specs[0]}",
+                    "HIGH",
                 )
 
     # Rule 3: Scope contradiction (ranker freeze active with recent ranker commits)
@@ -478,13 +536,11 @@ def detect_contradictions(nodes: Dict, edges: List) -> List[Dict[str, Any]]:
         ranker_files = {"ranker_v2_pairwise", "selector_engine", "run_screen"}
         recent_ranker_touches = [e for e in edges if e["source"] in ranker_files and e["type"] == "TOUCHES"]
         if recent_ranker_touches:
-            contradictions.append(
-                {
-                    "rule": "scope_contradiction",
-                    "node_id": "ranker_freeze",
-                    "issue": f"Freeze ACTIVE but ranker files touched by {recent_ranker_touches[0]['source']}",
-                    "severity": "HIGH",
-                }
+            add_contradiction(
+                "scope_contradiction",
+                "ranker_freeze",
+                f"Freeze ACTIVE but ranker files touched by {recent_ranker_touches[0]['source']}",
+                "HIGH",
             )
 
     # Rule 4: Artifact contradiction (claimed but missing)
@@ -495,13 +551,11 @@ def detect_contradictions(nodes: Dict, edges: List) -> List[Dict[str, Any]]:
             spec = nodes[spec_id]
             artifacts = spec.get("related_artifacts", [])
             if not artifacts:
-                contradictions.append(
-                    {
-                        "rule": "artifact_contradiction",
-                        "node_id": spec_id,
-                        "issue": "Spec has no related_artifacts documented",
-                        "severity": "LOW",
-                    }
+                add_contradiction(
+                    "artifact_contradiction",
+                    spec_id,
+                    "Spec has no related_artifacts documented",
+                    "LOW",
                 )
 
     # Rule 5: Promotion contradiction (blocker active while action marked not-blocked)
@@ -509,13 +563,11 @@ def detect_contradictions(nodes: Dict, edges: List) -> List[Dict[str, Any]]:
         if node.get("type") == "Action" and node.get("status") != "BLOCKED":
             blocks = [e for e in edges if e["type"] == "BLOCKS" and e["target"] == node_id]
             if blocks:
-                contradictions.append(
-                    {
-                        "rule": "promotion_contradiction",
-                        "node_id": node_id,
-                        "issue": f"Action status {node.get('status')} but {len(blocks)} BLOCKS edges exist",
-                        "severity": "HIGH",
-                    }
+                add_contradiction(
+                    "promotion_contradiction",
+                    node_id,
+                    f"Action status {node.get('status')} but {len(blocks)} BLOCKS edges exist",
+                    "HIGH",
                 )
 
     return contradictions
@@ -544,7 +596,7 @@ def emit_jsonl(nodes: Dict, edges: List, contradictions: List) -> None:
     # Write summary.md
     with open(OUTPUT_SUMMARY, "w") as f:
         f.write("# Knowledge Graph Summary\n\n")
-        f.write(f"**Generated:** {datetime.now().isoformat()}\n\n")
+        f.write(f"**Generated:** {BUILD_AS_OF_DATE}\n\n")
         f.write("## Statistics\n\n")
         f.write(f"- Nodes: {len(nodes)}\n")
         f.write(f"- Edges: {len(edges)}\n")
@@ -578,7 +630,7 @@ def emit_jsonl(nodes: Dict, edges: List, contradictions: List) -> None:
 
 def main():
     """Build the knowledge graph."""
-    print("[build_knowledge_graph] 2026-05-19")
+    print(f"[build_knowledge_graph] {BUILD_AS_OF_DATE}")
     print(f"  repo: {REPO_ROOT}")
     print()
 

@@ -16,6 +16,8 @@ from typing import Any, Dict, List, Set
 
 import pytest
 
+from tools import build_knowledge_graph as kg
+
 # ============================================================================
 # FIXTURES: Minimal Test Graphs
 # ============================================================================
@@ -528,6 +530,44 @@ class TestRankerGovernanceAssertions:
 
 class TestIntegration:
     """End-to-end integration tests."""
+
+    def test_builder_edges_resolve_and_contradictions_match_query_layer(self):
+        """Builder output should not leave query-visible edges pointing at missing nodes."""
+        specs = kg.extract_specs()
+        policies = kg.extract_policies()
+        gates = kg.extract_validation_gates()
+        artifacts = kg.extract_artifacts()
+        code_files = kg.extract_code_files()
+        snapshots = kg.extract_snapshots()
+        reviews = kg.extract_reviews()
+        actions = kg.extract_actions()
+        edges = kg.extract_edges()
+
+        nodes, edges = kg.normalize_graph(
+            specs,
+            policies,
+            gates,
+            artifacts,
+            code_files,
+            snapshots,
+            reviews,
+            actions,
+            edges,
+        )
+
+        missing_edges = [
+            edge
+            for edge in edges
+            if edge["source"] not in nodes or edge["target"] not in nodes
+        ]
+        assert missing_edges == []
+        assert "spec_089" in nodes
+        assert "spec_100" in nodes
+
+        query_visible_contradictions = [edge for edge in edges if edge["type"] == "CONTRADICTS"]
+        detected = kg.detect_contradictions(nodes, edges)
+        assert len(detected) >= len(query_visible_contradictions)
+        assert any(item["rule"] == "explicit_contradiction" for item in detected)
 
     def test_graph_emits_closure_memo(self, ranker_governance_graph):
         """Graph can generate a closure memo showing blockers and contradictions."""
