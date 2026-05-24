@@ -1,63 +1,147 @@
 ---
-description: Codegraph repo-intelligence workflow — MCP/CLI usage, limits, and Hermes deferral
+description: CodeGraph repo intelligence - pre-read/pre-edit diagnostic layer
+globs: ["**/*.py", "**/*.ts", "**/*.js"]
 alwaysApply: true
 ---
 
-# Codegraph (biotech-screener)
+## CodeGraph Integration
 
-Codegraph is a **repo map**, not an oracle. Index lives in `.codegraph/` (gitignored). Cursor MCP is registered in repo config; Hermes is **not** registered.
+This project has a pre-indexed code knowledge graph (`.codegraph/`).
+Use it as the FIRST tool for symbol discovery, dependency tracing, and blast-radius analysis.
 
-## Stance
+### Operating Rule
 
-- **Cursor + Claude Code:** use codegraph interactively via MCP.
-- **Terminal CLI:** status, index, query, callers, callees, files.
-- **Hermes:** deferred until policy exists for dynamic-dispatch breaks and ambiguous symbols.
-- **Skill:** load `skills/codegraph/SKILL.md` for repo-specific workflow templates and setup checks.
+Codegraph first, grep/read second, edit third.
 
-## Workflow
+### Session Startup
 
-1. `codegraph_search` broad
-2. `codegraph_node` for exact symbol/signature
-3. `codegraph_callers` / `codegraph_callees` for dependency direction
-4. `codegraph_trace` only between Python symbols (MCP-only; no CLI)
-5. If trace breaks → inspect reported break point manually; do not infer missing edges
-6. Confirm file-path literals with grep/read
+1. Run `codegraph_status` to confirm index is current
+2. If stale: run `codegraph sync` (small changes) or `codegraph index` (after merge/branch switch)
 
-## Tool limits
+### Main Session Tools (use directly)
 
-| Tool | Caveat |
-|------|--------|
-| `codegraph_callees` | Shows calls, not parameter inputs |
-| `codegraph_trace` | No file paths; breaks on dynamic dispatch |
-| `codegraph_context` | Can overmatch generic terms |
-| `codegraph_search` | Best first step; disambiguate by file path |
+| Tool | Use For |
+|------|---------|
+| `codegraph_search` | Find symbols by name |
+| `codegraph_callers` | Find what calls a function (upstream tracing) |
+| `codegraph_callees` | Find what a function calls (downstream) |
+| `codegraph_impact` | Check what's affected before editing (use --depth 2) |
+| `codegraph_node` | Get a single symbol's details + source code |
+| `codegraph_trace` | Path between two Python symbols |
+| `codegraph_files` | Get indexed file structure (faster than ls/find) |
+| `codegraph_status` | Check index health |
 
-## Do not rely on codegraph alone for
+### Sub-Agent Only (NEVER in main session)
 
-- cron → shell → Python boundaries
-- file path literals (e.g. `rankings.csv`)
-- dynamic dispatch
-- common names (`main`, `_write_snapshot`)
-- final production-path proof before code changes
+| Tool | Why |
+|------|-----|
+| `codegraph_explore` | Returns large source blocks - fills context |
+| `codegraph_context` | Builds broad context - same risk |
 
-## Biotech-specific uses
+When the user asks "how does X work?" or "explain the Y system":
+- Spawn a sub-agent / background task for exploration
+- Pass instruction: "Use codegraph_explore as your PRIMARY tool"
+- Main session stays lightweight
 
-Module 4/5 score inputs, production vs test-only callers, snapshot pipeline deps, blast radius before refactors, orienting in `run_screen.py` / `run_screen_from_bundle.py`.
+### Standard Preflight (before ANY code edit)
 
-## CLI (Windows or WSL)
+Before reading files manually or editing anything:
+
+1. `codegraph_search` for the target symbol/concept
+2. `codegraph_node` (with source) for the exact candidate
+3. `codegraph_callers` and `codegraph_callees`
+4. `codegraph_impact --depth 2` if any edit is being considered
+5. `grep/read` only to confirm dynamic hops, file paths, or string literals
+
+Report before proceeding:
+- Production symbols vs test-only symbols
+- Ambiguous symbols (disambiguate by file path)
+- Dynamic-dispatch gaps
+- File-path literals requiring grep/read
+- Whether change is: safe / gated / blocked
+
+**Do not edit files until this map is complete.**
+
+### Impact Gating
+
+- If `codegraph_impact` returns > 10 direct consumers: mark GATED, require operator approval
+- If impact touches selector/ranker/sizing/final_score/decision_engine/KG: mark BLOCKED
+
+### Pre-Edit Source Check
+
+Before editing a function:
+- Use `codegraph_node` with source=true to get just that symbol's body
+- Only read the full file if you need surrounding context beyond the function
+- This saves tokens vs reading entire large files (run_screen.py is 4000+ lines)
+
+### Known Limitations (always apply)
+
+Codegraph proof is PARTIAL unless:
+1. Symbol is file-disambiguated (common names match 2-10+ symbols)
+2. Dynamic-dispatch breaks are manually inspected at the break point
+3. File-path literals are confirmed with grep/read (not in AST graph)
+4. Cron/shell/subprocess boundaries are separately verified
+5. Production and test symbols are explicitly separated
+
+If `codegraph_trace` reports dynamic dispatch:
+- STOP tracing
+- Report the break point
+- Inspect with `codegraph_node` + grep/read
+- Do NOT infer missing graph edges
+
+### Reindexing (WSL2 Manual Sync)
+
+Git hooks are intentionally declined (WSL /mnt/ path). Reindex explicitly:
+
+- After small changes (< 10 files): `codegraph sync`
+- After merges/branch switches/generated code: `codegraph index`
+- Before serious dependency tracing: always verify with `codegraph status`
+
+### Affected Tests (pre-commit)
+
+Before committing, identify affected test files:
 
 ```bash
-codegraph status          # health check
-codegraph sync            # incremental update after normal edits
-codegraph index           # re-index after meaningful changes
-codegraph query "symbol"
-codegraph callers "fn"
-codegraph callees "fn"
+git diff --name-only | codegraph affected --stdin --quiet
 ```
 
-## Canonical agent rules
+If output is non-empty, run those tests before committing.
 
-- Start with `codegraph_search`; use `codegraph_node` for exact context.
-- Disambiguate symbol collisions by file path.
-- Do not infer missing graph edges.
-- Do not edit files unless explicitly approved.
+### Biotech-Specific Workflows
+
+Production path tracing (rankings.csv, snapshots, 13F outputs):
+- codegraph for symbols and function paths
+- grep/read for file-path literals
+- Separate live production (run_screen.py) from bundle/backfill (run_screen_from_bundle.py)
+- Do not infer across dynamic-dispatch gaps
+
+Signal input tracing (clinical_score, final_score, financial_score):
+- codegraph_callers on the composer function
+- codegraph_node for parameter signature
+- Trace upstream callers that construct z_* inputs
+
+Governance boundary check (before any change):
+- Classify whether change touches: selector, ranker, sizing, final_score, decision_engine, production KG, snapshot writer/schema
+- If yes: GATED. Stop and report.
+- If no: explain why it is plumbing/test/docs only.
+
+Drift-risk detection (duplicate constants, schema lists):
+- codegraph_search for the contract/column name
+- Check for duplicate definitions across files
+- Report authoritative definition vs copies
+- Propose minimal guardrail test if drift risk exists
+
+Blast-radius review (before accepting any patch):
+- codegraph_impact + codegraph_callers + codegraph_callees on each changed function
+- Report: direct callers, direct callees, production consumers, test consumers, affected artifacts
+- Classify: safe / gated / blocked
+
+### Hermes Status
+
+Codegraph is NOT registered with Hermes. Do not assume Hermes agents have access to codegraph tools. Hermes registration is deferred pending a disambiguation wrapper policy.
+
+### Reference
+
+- Full skill: `skills/codegraph/SKILL.md`
+- Runbook: `docs/CODEGRAPH_RUNBOOK.md`
+- Official docs: Content Library (`ai-projects/`)
