@@ -220,7 +220,10 @@ Repo-level Cursor Cloud setup lives in:
 - `.cursor/environment.json` — installs `@colbymchenry/codegraph@latest`, then syncs or initializes the local index from the project root.
 - `.cursor/mcp.json` — registers the Cursor MCP server as `codegraph serve --mcp --path ${workspaceFolder}`.
 
-The install command must remain idempotent. Keep `.codegraph/` database files gitignored.
+The install command must remain idempotent. In Cursor Cloud it should also install
+the Python runtime/test dependencies needed for repo work (`requirements.txt`,
+plus `pytest-xdist` while main branch pytest addopts use `-n auto`). Keep
+`.codegraph/` database files gitignored.
 
 ---
 

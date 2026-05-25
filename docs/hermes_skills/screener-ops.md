@@ -283,10 +283,17 @@ Key rules:
 
 ## Infrastructure
 
-*Last reviewed: 2026-05-24*
+*Last reviewed: 2026-05-25*
 
 - **Platform**: WSL2 on Windows host
 - **Agent model**: `deepseek/deepseek-v4-flash:free` (OpenRouter) since 2026-05-20
 - Daily cron: 5:30 PM ET weekdays
 - Sleep-cliff risk: Windows host suspend kills crons silently
 - Stopgap: `powercfg /change standby-timeout-ac 0`
+
+### Cursor Cloud / CI / Hermes Notes
+
+- Cursor Cloud agents need Python deps from `requirements.txt` plus `pytest-xdist` before running `run_screen.py` or pytest on main.
+- GitHub Actions failures that say `The job was not started because an Actions budget is preventing further use.` are provider budget/quota blocks, not PR code failures.
+- PR #304 is Track B draft/spec-test-only. Expected red fail-closed tests must not be made green without explicit governance clearance.
+- Repo-native Hermes MCP can work in Cursor Cloud while production Hermes/Hermes Link runtime is absent; stale cloud knowledge artifacts require local/production refresh before triage.

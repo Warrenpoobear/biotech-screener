@@ -112,3 +112,68 @@ Use plain strings for static markdown table headers, f-strings only when interpo
 - Tags: flake8, code_style
 - Pattern-Key: f_string_no_placeholder
 - Recurrence-Count: 5
+
+## [LRN-20260525-001] cursor_cloud_runtime_deps
+
+**Logged**: 2026-05-25T22:30:00Z
+**Priority**: medium
+**Status**: resolved
+**Area**: cloud_environment
+
+### Summary
+Fresh Cursor Cloud agents may have CodeGraph but not the Python runtime/test dependencies needed by `run_screen.py` and pytest.
+
+### Details
+Manual Friday screen check initially failed on `ModuleNotFoundError: No module named 'dotenv'`. Installing `requirements.txt` fixed `run_screen.py`; installing `pytest-xdist` was also required while main still has pytest addopts `-n auto --dist worksteal`. Environment setup should install Python deps before CodeGraph checks so agents can run screens/tests without ad hoc pip installs.
+
+### Suggested Action
+Keep `.cursor/environment.json` idempotent and include `python3 -m pip install --user -r requirements.txt pytest-xdist` before CodeGraph initialization until pytest addopts no longer require xdist.
+
+### Metadata
+- Source: cursor_cloud_run_screen_check
+- Related Files: .cursor/environment.json, requirements.txt, pyproject.toml
+- Tags: cursor_cloud, environment, pytest, run_screen
+- Pattern-Key: cursor_cloud_missing_python_deps
+
+## [LRN-20260525-002] ci_actions_budget_not_code_failure
+
+**Logged**: 2026-05-25T18:40:00Z
+**Priority**: medium
+**Status**: resolved
+**Area**: ci
+
+### Summary
+GitHub Actions failures with annotation "The job was not started because an Actions budget is preventing further use" are provider budget/quota failures, not repository regressions.
+
+### Details
+PR #300 showed 15 failing checks across smoke, replay, lint, type-check, secret-scan, dep-audit, and pytest. Every check completed in seconds with the same provider annotation before any job steps started. No tests, linters, scans, or workflow commands executed.
+
+### Suggested Action
+Do not patch PR code for this signal. Restore/wait for Actions budget availability, then rerun CI.
+
+### Metadata
+- Source: ci_investigation_pr_300
+- Tags: ci, github_actions, budget, quota
+- Pattern-Key: actions_budget_pre_start_failure
+
+## [LRN-20260525-003] hermes_cloud_runtime_distinction
+
+**Logged**: 2026-05-25T18:31:00Z
+**Priority**: high
+**Status**: promoted
+**Area**: hermes_ops
+
+### Summary
+Repo-native Hermes MCP can be healthy in Cursor Cloud while production Hermes/Hermes Link runtime is not visible; cloud-generated knowledge artifacts may be stale relative to the active branch/runtime.
+
+### Details
+Hermes MCP exposed read-only tools and could read generated knowledge artifacts. However, `hermes`/`hermeslink` commands and expected ports were absent in Cursor Cloud. Knowledge artifacts recorded an older branch/head, so C2/C3/C5/first-fire warnings were quarantined pending fresh local/production runtime refresh.
+
+### Suggested Action
+Treat repo-native MCP as verified, Hermes Link/runtime absence as a cloud environment limitation, and artifact warnings as "needs local/production confirmation" until regenerated on the correct host/branch.
+
+### Metadata
+- Source: hermes_mcp_check
+- Related Files: .cursor/mcp.json, mcp_server/hermes_server.py, docs/hermes_skills/hermeslink-state-capture.md
+- Tags: hermes, mcp, hermeslink, cursor_cloud, knowledge_layer
+- Pattern-Key: hermes_mcp_vs_runtime_visibility

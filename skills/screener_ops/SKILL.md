@@ -433,7 +433,7 @@ Key findings \(pseudo-PIT\):
 
 ## Infrastructure
 
-*Last reviewed: 2026-05-13*
+*Last reviewed: 2026-05-25*
 
 - **Current**: WSL2 on Windows host
 - **Agent model**: Llama 3.3 70B via Together AI \(switched 2026-05-13, was OpenRouter\)
@@ -443,3 +443,28 @@ Key findings \(pseudo-PIT\):
 - Stopgap: `powercfg /change standby-timeout-ac 0`
 - Missed cron signature: 24-48h gap in `data/snapshots/`
 - **Planned**: $15/mo Linux VPS \(DigitalOcean / Hetzner\). No timeline set. WSL2 remains dev environment.
+
+### Cursor Cloud Agent Environment
+
+- Repo setup is in `.cursor/environment.json`.
+- Cloud agents need Python runtime/test dependencies from `requirements.txt` before running `run_screen.py` or pytest.
+- Include `pytest-xdist` while main branch pytest addopts still include `-n auto --dist worksteal`.
+- Symptom of drift: `run_screen.py --help` fails on missing `dotenv`, or pytest errors on unrecognized `-n/--dist`.
+
+### CI Budget Failures
+
+- GitHub Actions annotation `The job was not started because an Actions budget is preventing further use.` means provider budget/quota blocked job startup.
+- Treat this as CI infrastructure, unrelated to PR diffs unless logs show actual job steps ran.
+- Do not patch code for this signal; restore/wait for Actions budget and rerun.
+
+### Track B Governance Contracts
+
+- PR #304 is draft/spec-test-only for fail-closed production-governance contracts.
+- Expected red tests are evidence of current gaps, not CI failures to fix.
+- Do not implement ranker/final_score behavior, snapshot writer/promotion semantics, selector, sizing, or KG production changes from that PR without explicit governance clearance.
+
+### Hermes Runtime vs Repo MCP
+
+- Repo-native Hermes MCP can work in Cursor Cloud via `.cursor/mcp.json` and `mcp_server/hermes_server.py`.
+- Production Hermes/Hermes Link runtime is not expected to be visible in Cursor Cloud.
+- Knowledge-layer artifact warnings generated in cloud are stale unless regenerated on the intended branch/runtime; confirm locally before treating C2/C3/C5/first-fire warnings as production failures.

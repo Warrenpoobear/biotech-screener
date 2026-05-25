@@ -60,6 +60,25 @@ Provide real-time, deterministic snapshot of Hermes-managed infrastructure state
 
 ## Run Hermeslink
 
+### Runtime Reference
+
+Hermes Link runtime details confirmed 2026-05-25:
+
+| Component | Location / Value |
+| --- | --- |
+| Package | `@hermespilot/link` |
+| Version | Hermes Link v0.6.5 |
+| Mode | Paired, relay-connected |
+| Host | BCM-LPT-012 \(WSL2\) |
+| Local API port | `52379` |
+| Binary | `~/.npm-global/bin/hermeslink` |
+| Symlink target | `~/.npm-global/lib/node_modules/@hermespilot/link/dist/cli/index.js` |
+| Runtime data | `~/.hermeslink/` \(config, staging, conversations\) |
+
+Cursor Cloud limitation: the repo-native Hermes MCP server may work while the
+production Hermes/Hermes Link runtime and local port are absent. Treat this as an
+environment limitation, not a repo failure.
+
 ### Command
 
 ```bash
@@ -254,6 +273,18 @@ Status: READY / NOT_READY_ISSUES: __________
 - C5 WARN_DATE_MISMATCH → BIOSHORT_VERDICT timestamp mismatch (may be expected)
 
 **Resolution:** Address contradictions in order (C1/C3 are blockers, C2/C4/C5 are informational).
+
+### If Cloud Artifacts Are Stale
+
+If `latest_state.json` records a different branch/head than the current checkout,
+do not treat C2/C3/C5 or first-fire warnings as fresh production failures.
+
+Safe sequence:
+
+1. Refresh Hermes knowledge artifacts on the intended local/production runtime.
+2. Confirm whether the same warnings persist on the fresh branch/head.
+3. Triage only persistent warnings as operator items.
+4. Do not use stale cloud artifacts to justify production code or cron changes.
 
 ---
 

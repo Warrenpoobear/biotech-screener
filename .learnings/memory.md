@@ -19,3 +19,7 @@
 ## Ops
 - run_screen.py --snapshot-dir appends date as subdirectory. Pass parent dir to avoid double nesting.
 - Weekend/non-trading day: run_daily_production.py correctly blocks. Use run_screen.py directly for manual weekend runs.
+- Cursor Cloud agents need Python deps from requirements.txt plus pytest-xdist before running run_screen.py/pytest on main; missing dotenv or pytest -n errors indicate environment setup drift.
+- GitHub Actions "job was not started because an Actions budget is preventing further use" is provider budget/quota, not a code failure. Do not patch PR code for that signal.
+- Track B fail-closed governance contracts live in draft PR #304 as expected-red spec tests only. Do not make them pass or touch ranker/final_score, snapshot writer, promotion, selector, sizing, or KG behavior without explicit governance clearance.
+- Repo-native Hermes MCP can work in Cursor Cloud while production Hermes/Hermes Link runtime is absent. Treat cloud knowledge-layer warnings as stale until refreshed on the local/production runtime.
