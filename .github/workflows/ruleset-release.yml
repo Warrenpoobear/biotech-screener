@@ -213,7 +213,7 @@ jobs:
           mkdir -p artifacts
           python -m pytest \
             tests/test_decision_engine_contract.py \
-            tests/test_decision_replay_regression.py \
+            tests/test_decision_engine_replay_regression.py \
             tests/test_phase2_portfolio_regression.py \
             tests/test_decision_ruleset.py \
             tests/test_phase2_health_gate.py \
@@ -235,7 +235,7 @@ jobs:
           echo "" >> artifacts/qa_report.md
           echo "## Replay Regression Summary" >> artifacts/qa_report.md
           echo '```' >> artifacts/qa_report.md
-          python -m pytest tests/test_decision_replay_regression.py \
+          python -m pytest tests/test_decision_engine_replay_regression.py \
             -v --tb=line 2>&1 | tail -15 >> artifacts/qa_report.md || true
           echo '```' >> artifacts/qa_report.md
           echo "" >> artifacts/qa_report.md

@@ -5,12 +5,22 @@ Tests all data sources for a single ticker to diagnose collection issues.
 """
 
 import json
+import os
 import sys
 from datetime import datetime
 
 import pytest
 
 pytestmark = pytest.mark.network
+
+
+@pytest.fixture
+def ticker():
+    """Opt-in ticker for this live-network diagnostic module."""
+    value = os.environ.get("SINGLE_STOCK_TEST_TICKER")
+    if not value:
+        pytest.skip("Set SINGLE_STOCK_TEST_TICKER to run single-stock network diagnostics")
+    return value.upper()
 
 
 def test_yahoo_finance(ticker):

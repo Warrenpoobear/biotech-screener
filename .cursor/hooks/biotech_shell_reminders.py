@@ -17,12 +17,6 @@ def main() -> int:
     cmd = data.get("command", "") or ""
     messages: list[str] = []
 
-    if "pytest" in cmd and "-o addopts=" not in cmd:
-        messages.append(
-            "biotech-screener pytest: pyproject addopts uses -n auto (needs pytest-xdist). "
-            "If parallel fails, run: pytest -o addopts= (or pip install pytest-xdist)."
-        )
-
     if "run_screen" in cmd:
         if "--phase2" in cmd and "--decision-mode" not in cmd:
             messages.append("biotech-screener run_screen: use --decision-mode phase2, not --phase2.")
