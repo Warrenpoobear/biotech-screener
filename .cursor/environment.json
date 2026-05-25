@@ -1,3 +1,3 @@
 {
-  "install": "npm install -g @colbymchenry/codegraph@latest && (codegraph status >/dev/null 2>&1 && codegraph sync || (codegraph init --index && (git checkout -- .cursor/rules/codegraph.mdc 2>/dev/null || true))) && codegraph status"
+  "install": "python3 -m pip install --user -r requirements.txt pytest-xdist && npm install -g @colbymchenry/codegraph@latest && (codegraph status >/dev/null 2>&1 && codegraph sync || (codegraph init --index && (git checkout -- .cursor/rules/codegraph.mdc 2>/dev/null || true))) && codegraph status"
 }
