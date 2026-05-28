@@ -2,11 +2,11 @@
 
 **Status:** Claude/Cursor approved · Cursor Cloud repo config active · Hermes registration deferred
 
-**Last updated:** 2026-05-24
+**Last updated:** 2026-05-28
 
 **Index location:** `.codegraph/` (repo-contained; `.codegraph/.gitignore` excludes `*.db`, `*.db-wal`, `*.db-shm` — ships with codegraph, no manual gitignore entry needed)
 
-**Tool version:** codegraph v0.9.4 · Node 22 · npm global install
+**Tool version:** codegraph v0.9.6 · Node 22 · npm global install
 
 **Skill:** `skills/codegraph/SKILL.md`
 
@@ -204,26 +204,22 @@ Run `codegraph index` (full reindex) or `codegraph sync` (incremental) after:
 - Before serious dependency tracing
 
 ```bash
-cd /mnt/c/Projects/biotech_screener/biotech-screener
 codegraph status          # confirm index state
 codegraph sync            # incremental (fast, use after small changes)
 codegraph index           # full reindex (use after merges / branch switches)
 codegraph status          # verify node/edge counts unchanged or updated
 ```
 
-Current index: **1,668 files · 50,291 nodes · 114,066 edges · 108 MB**
+Current index: **1,677 files · 50,419 nodes · 113,867 edges · 108.5 MB**
 
 ### Cursor Cloud Persistence
 
 Repo-level Cursor Cloud setup lives in:
 
-- `.cursor/environment.json` — installs `@colbymchenry/codegraph@latest`, then syncs or initializes the local index from the project root.
+- `.cursor/environment.json` — installs `@colbymchenry/codegraph@0.9.6`, installs Python deps from `requirements.txt`, then syncs or initializes the local index from the project root.
 - `.cursor/mcp.json` — registers the Cursor MCP server as `codegraph serve --mcp --path ${workspaceFolder}`.
 
-The install command must remain idempotent. In Cursor Cloud it should also install
-the Python runtime/test dependencies needed for repo work (`requirements.txt`,
-plus `pytest-xdist` while main branch pytest addopts use `-n auto`). Keep
-`.codegraph/` database files gitignored.
+The install command must remain idempotent. Keep `.codegraph/` database files gitignored.
 
 ---
 
@@ -258,7 +254,7 @@ codegraph install --target hermes --location global
 
 ```bash
 # Remove index from repo
-codegraph uninit /mnt/c/Projects/biotech_screener/biotech-screener
+codegraph uninit .
 
 # Remove Claude Code MCP registration
 codegraph uninstall --target claude --location global

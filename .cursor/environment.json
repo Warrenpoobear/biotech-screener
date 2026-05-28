@@ -1,5 +1,5 @@
 {
-  "install": "npm install -g @colbymchenry/codegraph@latest && (codegraph status >/dev/null 2>&1 && codegraph sync || (codegraph init --index && (git checkout -- .cursor/rules/codegraph.mdc 2>/dev/null || true))) && codegraph status",
+  "install": "npm install -g @colbymchenry/codegraph@0.9.6 && pip install -r requirements.txt && (codegraph status >/dev/null 2>&1 && codegraph sync || (codegraph init --index && (git checkout -- .cursor/rules/codegraph.mdc 2>/dev/null || true))) && codegraph status",
   "town_integration": {
     "description": "Town-Hermes bridge (Spec 090) routes Hermes job outputs to Town operator inbox",
     "env_vars": {
