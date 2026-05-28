@@ -7,7 +7,7 @@
 - MCP tools (`codegraph_search`, `codegraph_callers`, `codegraph_callees`, `codegraph_impact`, `codegraph_context`) for IDE/agent. CLI (`codegraph query`, etc.) for bash.
 - Preflight (search → node → callers → callees → impact) is mandatory before any Tier 2+ edit per `skills/codegraph/SKILL.md`.
 - `codegraph_impact` on each changed symbol is the mechanical verification step for the AGENT_ROUTING_POLICY Tier 2 review trigger.
-- Hermes registration deferred until dynamic-dispatch wrapper policy is implemented (see CODEGRAPH_RUNBOOK.md).
+- Hermes agents use `common/codegraph_guard.py` (CodegraphGuard). All 5 gates implemented. Registration no longer deferred.
 - `@latest` caused non-deterministic installs — always pin version explicitly when upgrading.
 
 ## Enrichment

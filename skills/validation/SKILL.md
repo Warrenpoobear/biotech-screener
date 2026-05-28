@@ -4,6 +4,20 @@
 
 Define the go/no-go gates, data quality checks, staleness windows, IC thresholds, and governance requirements that every pipeline run must satisfy before producing output. This skill encodes Wake Robin's fail-closed philosophy: uncertain or stale data triggers exclusion, not graceful degradation.
 
+## Codegraph Preflight (mandatory before any code edit)
+
+Validation gates are Tier 2/3 boundary — any gate that controls pipeline execution or output acceptance is Tier 3. Before editing any symbol, run the standard preflight per `skills/codegraph/SKILL.md`:
+
+1. `codegraph_search("<symbol>")` — locate the target
+2. `codegraph_node("<symbol>", source=True)` — inspect signature and body
+3. `codegraph_callers("<symbol>")` — identify all production callers
+4. `codegraph_callees("<symbol>")` — map downstream dependencies
+5. `codegraph_impact("<symbol>", depth=2)` — confirm blast radius
+
+**Gate:** If impact reaches `run_screen.py`, `decision_engine`, `selector_engine`, `ranker_engine`, `final_score`, snapshot writers, or `rankings.csv` — change is **BLOCKED** until operator approval.
+
+---
+
 ## Preconditions
 
 - Pipeline runs MUST have an explicit `as_of_date` parameter (never `datetime.now()`).

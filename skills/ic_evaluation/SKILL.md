@@ -11,6 +11,20 @@ This skill is organized into two sections:
 
 ---
 
+## Codegraph Preflight (mandatory before any code edit)
+
+IC evaluation produces forward shadow evidence — Tier 2/3 boundary (artifacts feed promotion decisions). Before editing any symbol, run the standard preflight per `skills/codegraph/SKILL.md`:
+
+1. `codegraph_search("<symbol>")` — locate the target
+2. `codegraph_node("<symbol>", source=True)` — inspect signature and body
+3. `codegraph_callers("<symbol>")` — identify all production callers
+4. `codegraph_callees("<symbol>")` — map downstream dependencies
+5. `codegraph_impact("<symbol>", depth=2)` — confirm blast radius
+
+**Gate:** If impact reaches walk-forward harness, shadow-monitoring artifacts, or any governance evidence surface — Claude Code review is required before merge (Tier 2 trigger per `governance/AGENT_ROUTING_POLICY.md`).
+
+---
+
 # SECTION 1: FRAMEWORK REFERENCE
 
 ---

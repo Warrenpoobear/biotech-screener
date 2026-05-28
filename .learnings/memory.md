@@ -21,6 +21,7 @@
 - Weekend/non-trading day: run_daily_production.py correctly blocks. Use run_screen.py directly for manual weekend runs.
 - Cursor Cloud agents need Python deps from `pip install -r requirements.txt` before running run_screen.py/pytest. `pytest-xdist` is NOT required — `pyproject.toml` uses `-q -m 'not network'`. Missing dotenv indicates environment.json drift. (LRN-20260528-002)
 - codegraph installed: v0.9.6, pinned in environment.json. Use MCP tools (codegraph_search, etc.) from IDE; CLI equivalents (codegraph query, etc.) from bash. Preflight mandatory before any Tier 2+ edit. (LRN-20260528-001/003)
+- Hermes agents use `common/codegraph_guard.py` (CodegraphGuard) — all 5 acceptance gates enforced. Do NOT call codegraph CLI directly from agent code. (LRN-20260528-004)
 - GitHub Actions "job was not started because an Actions budget is preventing further use" is provider budget/quota, not a code failure. Do not patch PR code for that signal.
 - Track B fail-closed governance contracts live in draft PR #304 as expected-red spec tests only. Do not make them pass or touch ranker/final_score, snapshot writer, promotion, selector, sizing, or KG behavior without explicit governance clearance.
 - Repo-native Hermes MCP can work in Cursor Cloud while production Hermes/Hermes Link runtime is absent. Treat cloud knowledge-layer warnings as stale until refreshed on the local/production runtime.

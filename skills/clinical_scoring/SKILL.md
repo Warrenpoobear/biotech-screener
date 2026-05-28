@@ -4,6 +4,20 @@
 
 Score a biotech company's clinical development program to produce a normalized 0-100 clinical score. This skill encodes the exact rules, thresholds, and lookup tables from Wake Robin's pipeline (Module 4 + PoS Engine) so that any agent or analyst can reproduce the scoring deterministically.
 
+## Codegraph Preflight (mandatory before any code edit)
+
+Clinical scoring is Tier 3 (module scoring). Before editing any symbol, run the standard preflight per `skills/codegraph/SKILL.md`:
+
+1. `codegraph_search("<symbol>")` — locate the target
+2. `codegraph_node("<symbol>", source=True)` — inspect signature and body
+3. `codegraph_callers("<symbol>")` — identify all production callers
+4. `codegraph_callees("<symbol>")` — map downstream dependencies
+5. `codegraph_impact("<symbol>", depth=2)` — confirm blast radius
+
+**Gate:** If impact reaches `decision_engine`, `selector_engine`, `ranker_engine`, `final_score`, or `rankings.csv` — change is **BLOCKED** until operator approval.
+
+---
+
 ## Preconditions
 
 - All arithmetic MUST use `Decimal` (never `float`). Initialize from strings: `Decimal("0.40")`.

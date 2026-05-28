@@ -4,6 +4,20 @@
 
 Score a biotech company's financial survivability to produce a normalized 0-100 financial health score. This skill encodes the exact rules from Wake Robin's Module 2 pipeline (v1 + v2), the Dilution Risk Engine, Liquidity Scoring, and Short Interest Engine so that scoring is reproducible and auditable.
 
+## Codegraph Preflight (mandatory before any code edit)
+
+Financial health scoring is Tier 3 (module scoring). Before editing any symbol, run the standard preflight per `skills/codegraph/SKILL.md`:
+
+1. `codegraph_search("<symbol>")` — locate the target
+2. `codegraph_node("<symbol>", source=True)` — inspect signature and body
+3. `codegraph_callers("<symbol>")` — identify all production callers
+4. `codegraph_callees("<symbol>")` — map downstream dependencies
+5. `codegraph_impact("<symbol>", depth=2)` — confirm blast radius
+
+**Gate:** If impact reaches `decision_engine`, `selector_engine`, `ranker_engine`, `final_score`, or `rankings.csv` — change is **BLOCKED** until operator approval.
+
+---
+
 ## Preconditions
 
 - All arithmetic MUST use `Decimal` (never `float`). Initialize from strings: `Decimal("500000000")`.

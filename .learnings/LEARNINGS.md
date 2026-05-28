@@ -156,6 +156,54 @@ Do not patch PR code for this signal. Restore/wait for Actions budget availabili
 - Tags: ci, github_actions, budget, quota
 - Pattern-Key: actions_budget_pre_start_failure
 
+## [LRN-20260528-004] codegraph_hermes_guard_implemented
+
+**Logged**: 2026-05-28T03:48:00Z
+**Priority**: high
+**Status**: resolved
+**Area**: tooling
+
+### Summary
+All five Hermes acceptance gates for codegraph are now implemented in `common/codegraph_guard.py`. Hermes agents should use `CodegraphGuard` instead of calling the codegraph CLI directly. Runbook updated: Hermes registration is no longer deferred.
+
+### Details
+- Gate 1: Dynamic-dispatch break → warns, instructs fallback, never halts silently
+- Gate 2: Ambiguous symbol → warns, requires `file_hint` before proceeding
+- Gate 3: File-path literal → returns UNVERIFIED + grep fallback instruction
+- Gate 4: Cron/shell boundary → warns to inspect subprocess/crontab manually
+- Gate 5: Partial proof → emits `[PARTIAL PROOF]` on empty results or dynamic-dispatch gaps
+- `tier3_gate(symbol)` → convenience method for blast-radius governance check
+- 21 unit tests in `tests/test_codegraph_guard.py`, all passing
+- CODEGRAPH_RUNBOOK.md Hermes section updated from "deferred" to "registered"
+
+### Suggested Action
+Hermes agents that need structural code analysis should `from common.codegraph_guard import CodegraphGuard` and use `cg.callers()`, `cg.impact()`, `cg.tier3_gate()` etc.
+
+### Metadata
+- Source: codegraph_hermes_integration_2026-05-28
+- Related Files: common/codegraph_guard.py, tests/test_codegraph_guard.py, docs/CODEGRAPH_RUNBOOK.md
+- Tags: codegraph, hermes, governance, acceptance_gates
+- Pattern-Key: codegraph_hermes_guard
+
+## [LRN-20260528-005] codegraph_snapshot_columns_contract_already_exists
+
+**Logged**: 2026-05-28T03:48:00Z
+**Priority**: low
+**Status**: resolved
+**Area**: tooling
+
+### Summary
+CODEGRAPH_RUNBOOK.md called SNAPSHOT_COLUMNS drift "the next recommended codegraph application" but Contract 6 in `tests/test_contract_output_schemas.py` already covers it (added 2026-05-24). Runbook updated to note this.
+
+### Details
+Contract 6 enforces: (6a) bundle is strict subset of live, (6b) shared parity columns, (6c) live retains scoring/expectation columns. All 3 sub-tests pass. The runbook note was just stale.
+
+### Metadata
+- Source: codegraph_skill_audit_2026-05-28
+- Related Files: tests/test_contract_output_schemas.py, docs/CODEGRAPH_RUNBOOK.md
+- Tags: codegraph, snapshot_columns, contract_test
+- Pattern-Key: always_check_existing_tests_before_writing_new_ones
+
 ## [LRN-20260528-001] codegraph_mcp_vs_cli_naming
 
 **Logged**: 2026-05-28T03:38:00Z
