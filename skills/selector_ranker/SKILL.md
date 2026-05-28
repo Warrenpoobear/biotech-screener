@@ -11,6 +11,20 @@ This skill is organized into two sections:
 
 ---
 
+## Codegraph Preflight (mandatory before any code edit)
+
+Every code change to selector/ranker surfaces is Tier 3 (see `governance/AGENT_ROUTING_POLICY.md`). Before editing any symbol in this area, run the standard codegraph preflight per `skills/codegraph/SKILL.md`:
+
+1. `codegraph_search("<symbol>")` — locate the target symbol
+2. `codegraph_node("<symbol>", source=True)` — inspect its signature and body
+3. `codegraph_callers("<symbol>")` — identify all production callers
+4. `codegraph_callees("<symbol>")` — map downstream dependencies
+5. `codegraph_impact("<symbol>", depth=2)` — confirm blast radius
+
+**Gate:** If `codegraph_impact` reaches `selector_engine.py`, `ranker_engine.py`, `decision_engine.py`, `final_score`, or `rankings.csv` — the change is **BLOCKED** until operator approval.
+
+---
+
 # SECTION 1: FRAMEWORK REFERENCE
 
 ---

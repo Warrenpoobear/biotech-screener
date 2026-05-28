@@ -77,6 +77,8 @@ Claude Code review is required before merge if:
 - the diff changes an artifact consumed by selector, ranker, scoring, catalyst resolution, CRT, shadow monitoring, or walk-forward evidence
 - the diff changes behavior of production-adjacent outputs
 This trigger is mechanical, not discretionary.
+
+**Verification tool:** Run `codegraph_impact("<changed_symbol>", depth=2)` on each changed function before opening the PR. If the impact graph reaches any Tier 3 surface (selector_engine, ranker_engine, decision_engine, final_score, rankings.csv, snapshot writer/schema), the Claude Code review trigger fires unconditionally. Report the full impact list in the PR description.
 ---
 ## Tier 3 - High-Governance Production and Evidence Surface
 Allowed tools:

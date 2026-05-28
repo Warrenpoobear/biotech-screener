@@ -52,24 +52,24 @@ Hermes registration remains deferred; do not add codegraph to Hermes until the a
 
 ## Standard Workflow
 
+> **Tool names differ by context.**
+> From an IDE/agent session use the **MCP tools** (`codegraph_search`, `codegraph_callers`, `codegraph_callees`, `codegraph_impact`, `codegraph_context`).
+> From a bash shell use the **CLI equivalents** (`codegraph query`, `codegraph callers`, `codegraph callees`, `codegraph impact`, `codegraph context`).
+> The table below uses MCP names. CLI equivalents are shown inline.
+
 1. Search broadly for the target symbol or concept:
-   ```bash
-   codegraph query "save_validation_snapshot"
-   ```
+   - MCP: `codegraph_search("save_validation_snapshot")`
+   - CLI: `codegraph query "save_validation_snapshot"`
 2. Disambiguate common names by file/path context before drawing conclusions.
 3. Inspect dependency direction:
-   ```bash
-   codegraph callers "save_validation_snapshot"
-   codegraph callees "save_validation_snapshot"
-   ```
+   - MCP: `codegraph_callers("save_validation_snapshot")` / `codegraph_callees("save_validation_snapshot")`
+   - CLI: `codegraph callers "save_validation_snapshot"` / `codegraph callees "save_validation_snapshot"`
 4. Before edits, check blast radius:
-   ```bash
-   codegraph impact "SNAPSHOT_COLUMNS"
-   ```
+   - MCP: `codegraph_impact("SNAPSHOT_COLUMNS")`
+   - CLI: `codegraph impact "SNAPSHOT_COLUMNS"`
 5. For unknown subsystems, generate focused context:
-   ```bash
-   codegraph context "trace snapshot columns drift risk"
-   ```
+   - MCP: `codegraph_context("trace snapshot columns drift risk")`
+   - CLI: `codegraph context "trace snapshot columns drift risk"`
 6. Confirm anything outside static Python/JS call edges with targeted read/search.
 
 ---
