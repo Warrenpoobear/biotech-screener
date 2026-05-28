@@ -2,6 +2,14 @@
 
 <!-- WARM tier — per-project learnings (≤200 lines) -->
 
+## Tooling (codegraph)
+- Installed: v0.9.6 (pinned in `.cursor/environment.json`). Index: 1,677 files / 50,419 nodes / 113,867 edges / 108.5 MB.
+- MCP tools (`codegraph_search`, `codegraph_callers`, `codegraph_callees`, `codegraph_impact`, `codegraph_context`) for IDE/agent. CLI (`codegraph query`, etc.) for bash.
+- Preflight (search → node → callers → callees → impact) is mandatory before any Tier 2+ edit per `skills/codegraph/SKILL.md`.
+- `codegraph_impact` on each changed symbol is the mechanical verification step for the AGENT_ROUTING_POLICY Tier 2 review trigger.
+- Hermes registration deferred until dynamic-dispatch wrapper policy is implemented (see CODEGRAPH_RUNBOOK.md).
+- `@latest` caused non-deterministic installs — always pin version explicitly when upgrading.
+
 ## Enrichment
 - indication_master --min-tickers 3 is the right cutoff (1,568 conditions, covers all shared by 3+ companies)
 - Full enrichment build takes ~60min (API latency). Plan accordingly.
