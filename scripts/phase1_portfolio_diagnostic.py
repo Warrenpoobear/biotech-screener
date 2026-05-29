@@ -11,6 +11,7 @@ Policies tested:
   - STATIC_INCEPTION_HOLD: Static hold of inception-date top-30 through terminal
   - DELISTING_ONLY: Hold inception top-30 until delisting detected (10+ calendar days missing)
   - AVAILABLE_SNAPSHOT_REBUILD: Rebuild from current top-30 on each available snapshot date (~175 per period)
+  - WEEKLY_TRADE_PACKET_PROXY: Rebuild from current top-30 on weekly cadence (Friday), matches production trade-packet day
 """
 
 import csv
@@ -190,6 +191,99 @@ def test_static_inception_hold_policy(inception_date: str, terminal_date: str, p
         "alpha_pct": round((ret - xbi_ret) * 100, 2) if ret and xbi_ret else None,
         "n_priced": n_priced,
         "n_missing": n_missing,
+    }
+
+
+def test_weekly_trade_packet_proxy_policy(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
+    """Test WEEKLY_TRADE_PACKET_PROXY policy: rebuild from top-30 on Friday (weekly cadence)."""
+    # Get all snapshot dates in the period
+    snapshot_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+    snapshots_root = Path(__file__).resolve().parent.parent / "data" / "snapshots"
+    while current <= end:
+        snap_dir = snapshots_root / current.strftime("%Y-%m-%d")
+        if snap_dir.exists():
+            snapshot_dates.append(current.strftime("%Y-%m-%d"))
+        current += timedelta(days=1)
+
+    if not snapshot_dates:
+        return {"error": "No snapshots found in period"}
+
+    # Filter to weekly (Friday) snapshots or nearest Friday without lookahead
+    weekly_rebalance_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+
+    # Find all Fridays in the period
+    fridays = []
+    while current <= end:
+        if current.weekday() == 4:  # Friday = 4
+            fridays.append(current.strftime("%Y-%m-%d"))
+        current += timedelta(days=1)
+
+    # For each Friday, find the nearest available snapshot without lookahead
+    for friday in fridays:
+        friday_dt = datetime.strptime(friday, "%Y-%m-%d")
+        # Search backwards up to 3 days for an available snapshot
+        for days_back in range(4):
+            check_date = (friday_dt - timedelta(days=days_back)).strftime("%Y-%m-%d")
+            if check_date in snapshot_dates:
+                weekly_rebalance_dates.append(check_date)
+                break
+
+    if not weekly_rebalance_dates:
+        return {"error": "No weekly snapshot dates found"}
+
+    # Calculate calendar days
+    inception_dt = datetime.strptime(inception_date, "%Y-%m-%d")
+    terminal_dt = datetime.strptime(terminal_date, "%Y-%m-%d")
+    calendar_days = (terminal_dt - inception_dt).days
+
+    # Compound returns across weekly intervals
+    total_return = 1.0
+    xbi_total_return = 1.0
+    n_periods = 0
+
+    for i in range(len(weekly_rebalance_dates) - 1):
+        current_week = weekly_rebalance_dates[i]
+        next_week = weekly_rebalance_dates[i + 1]
+
+        # Get top-30 for current week
+        current_top_30 = get_top_30_tickers(current_week)
+        if not current_top_30:
+            continue
+
+        # Compute return for this interval
+        ret, _, _ = compute_return(current_week, next_week, current_top_30, prices)
+        xbi_ret = get_xbi_return(current_week, next_week, prices)
+
+        if ret is not None:
+            total_return *= 1.0 + ret
+            n_periods += 1
+        if xbi_ret is not None:
+            xbi_total_return *= 1.0 + xbi_ret
+
+    # Compute metrics
+    avg_holding_period_weeks = len(weekly_rebalance_dates) / max(n_periods, 1)
+    turnover = n_periods / max(len(weekly_rebalance_dates), 1)
+
+    total_return_pct = (total_return - 1.0) * 100
+    xbi_return_pct = (xbi_total_return - 1.0) * 100
+    alpha = total_return_pct - xbi_return_pct
+
+    return {
+        "policy": "WEEKLY_TRADE_PACKET_PROXY",
+        "inception_date": inception_date,
+        "terminal_date": terminal_date,
+        "calendar_days": calendar_days,
+        "n_rebalances": len(weekly_rebalance_dates),
+        "return_pct": round(total_return_pct, 2),
+        "xbi_return_pct": round(xbi_return_pct, 2),
+        "alpha_pct": round(alpha, 2),
+        "n_periods": n_periods,
+        "turnover": round(turnover, 3),
+        "avg_holding_period_weeks": round(avg_holding_period_weeks, 1),
     }
 
 
@@ -457,6 +551,13 @@ def main():
             results.append(snapshot_rebuild)
             log.info(
                 f"    AVAILABLE_SNAPSHOT_REBUILD: {snapshot_rebuild['return_pct']}% (turnover={snapshot_rebuild['turnover']}, snapshots={snapshot_rebuild['n_snapshots']})"
+            )
+
+        weekly_proxy = test_weekly_trade_packet_proxy_policy(cohort, TERMINAL_DATE, prices)
+        if "error" not in weekly_proxy:
+            results.append(weekly_proxy)
+            log.info(
+                f"    WEEKLY_TRADE_PACKET_PROXY: {weekly_proxy['return_pct']}% (turnover={weekly_proxy['turnover']}, rebalances={weekly_proxy['n_rebalances']})"
             )
 
     # Write results
