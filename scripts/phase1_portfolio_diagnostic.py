@@ -13,6 +13,7 @@ Policies tested:
   - AVAILABLE_SNAPSHOT_REBUILD: Rebuild from current top-30 on each available snapshot date (~175 per period)
   - WEEKLY_TRADE_PACKET_PROXY: Rebuild from current top-30 on weekly cadence (Friday)
   - MONTHLY_REBALANCE_PROXY: Rebuild from current top-30 on first snapshot of each calendar month
+  - HOLD_30: Start with top-30, replace only after 30 days if fallen from top-30 and delisted if missing
 """
 
 import csv
@@ -192,6 +193,138 @@ def test_static_inception_hold_policy(inception_date: str, terminal_date: str, p
         "alpha_pct": round((ret - xbi_ret) * 100, 2) if ret and xbi_ret else None,
         "n_priced": n_priced,
         "n_missing": n_missing,
+    }
+
+
+def test_hold_30_policy(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
+    """Test HOLD_30 policy: minimum 30-day hold before forced replacement."""
+    # Get all snapshot dates in the period
+    snapshot_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+    snapshots_root = Path(__file__).resolve().parent.parent / "data" / "snapshots"
+    while current <= end:
+        snap_dir = snapshots_root / current.strftime("%Y-%m-%d")
+        if snap_dir.exists():
+            snapshot_dates.append(current.strftime("%Y-%m-%d"))
+        current += timedelta(days=1)
+
+    if not snapshot_dates:
+        return {"error": "No snapshots found in period"}
+
+    # Calculate calendar days
+    inception_dt = datetime.strptime(inception_date, "%Y-%m-%d")
+    terminal_dt = datetime.strptime(terminal_date, "%Y-%m-%d")
+    calendar_days = (terminal_dt - inception_dt).days
+
+    # Initialize portfolio with inception top-30
+    top_30_inception = get_top_30_tickers(inception_date)
+    holdings = {ticker: inception_date for ticker in top_30_inception}  # ticker -> entry_date
+    consecutive_missing = {ticker: 0 for ticker in holdings}
+    min_hold_days = 30
+    n_replacements = 0
+    portfolio_history = [(inception_date, dict(holdings))]  # Track portfolio at each snapshot
+
+    # Process each snapshot to update holdings
+    for i, snap_date in enumerate(snapshot_dates[1:], start=1):
+        snap_dt = datetime.strptime(snap_date, "%Y-%m-%d")
+
+        # Check for delistings (10+ consecutive days missing)
+        for ticker in list(holdings.keys()):
+            price = get_price(prices, ticker, snap_date)
+            if price is None:
+                consecutive_missing[ticker] += 1
+                if consecutive_missing[ticker] >= 10:
+                    del holdings[ticker]
+                    del consecutive_missing[ticker]
+            else:
+                consecutive_missing[ticker] = 0
+
+        # Get current top-30 for replacement candidates
+        current_top_30 = get_top_30_tickers(snap_date)
+        if not current_top_30:
+            portfolio_history.append((snap_date, dict(holdings)))
+            continue
+
+        # Determine which held positions can be replaced (held >= 30 days)
+        holdings_to_replace = set()
+        for ticker in list(holdings.keys()):
+            entry_dt = datetime.strptime(holdings[ticker], "%Y-%m-%d")
+            days_held = (snap_dt - entry_dt).days
+            if days_held >= min_hold_days and ticker not in current_top_30:
+                holdings_to_replace.add(ticker)
+
+        # Remove positions that are being replaced
+        for ticker in holdings_to_replace:
+            del holdings[ticker]
+            n_replacements += 1
+
+        # Fill empty slots with highest-ranked available names
+        held_tickers = set(holdings.keys())
+        available_for_entry = [t for t in current_top_30 if t not in held_tickers]
+        for new_ticker in available_for_entry:
+            if len(holdings) >= 30:
+                break
+            holdings[new_ticker] = snap_date
+            consecutive_missing[new_ticker] = 0
+
+        # Record portfolio state at this snapshot
+        portfolio_history.append((snap_date, dict(holdings)))
+
+    # Compute return using portfolio history
+    total_return = 1.0
+    xbi_total_return = 1.0
+    n_periods = 0
+
+    for i in range(len(portfolio_history) - 1):
+        current_snap, current_holdings = portfolio_history[i]
+        next_snap, _ = portfolio_history[i + 1]
+
+        current_holdings_set = set(current_holdings.keys())
+        if not current_holdings_set:
+            continue
+
+        ret, _, _ = compute_return(current_snap, next_snap, current_holdings_set, prices)
+        xbi_ret = get_xbi_return(current_snap, next_snap, prices)
+
+        if ret is not None:
+            total_return *= 1.0 + ret
+            n_periods += 1
+        if xbi_ret is not None:
+            xbi_total_return *= 1.0 + xbi_ret
+
+    # Compute metrics
+    all_entry_dates = set()
+    for holdings_dict in [h[1] for h in portfolio_history]:
+        all_entry_dates.update(holdings_dict.values())
+
+    avg_holding_days = (
+        sum(
+            (datetime.strptime(terminal_date, "%Y-%m-%d") - datetime.strptime(entry_date, "%Y-%m-%d")).days
+            for entry_date in all_entry_dates
+        )
+        / len(all_entry_dates)
+        if all_entry_dates
+        else min_hold_days
+    )
+    turnover = n_replacements / max(len(snapshot_dates), 1)
+
+    total_return_pct = (total_return - 1.0) * 100
+    xbi_return_pct = (xbi_total_return - 1.0) * 100
+    alpha = total_return_pct - xbi_return_pct
+
+    return {
+        "policy": "HOLD_30",
+        "inception_date": inception_date,
+        "terminal_date": terminal_date,
+        "calendar_days": calendar_days,
+        "n_replacements": n_replacements,
+        "return_pct": round(total_return_pct, 2),
+        "xbi_return_pct": round(xbi_return_pct, 2),
+        "alpha_pct": round(alpha, 2),
+        "n_periods": n_periods,
+        "turnover": round(turnover, 3),
+        "avg_holding_period_days": round(avg_holding_days, 1),
     }
 
 
@@ -661,6 +794,13 @@ def main():
             results.append(monthly_proxy)
             log.info(
                 f"    MONTHLY_REBALANCE_PROXY: {monthly_proxy['return_pct']}% (turnover={monthly_proxy['turnover']}, rebalances={monthly_proxy['n_rebalances']})"
+            )
+
+        hold_30 = test_hold_30_policy(cohort, TERMINAL_DATE, prices)
+        if "error" not in hold_30:
+            results.append(hold_30)
+            log.info(
+                f"    HOLD_30: {hold_30['return_pct']}% (turnover={hold_30['turnover']}, replacements={hold_30['n_replacements']})"
             )
 
     # Write results
