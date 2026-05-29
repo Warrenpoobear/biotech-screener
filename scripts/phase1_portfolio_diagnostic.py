@@ -164,26 +164,26 @@ def get_xbi_return(start_date: str, end_date: str, prices: Dict[Tuple[str, str],
     return None
 
 
-def test_static_inception_hold_policy(inception_date: str, all_snapshots: List[str], prices: Dict) -> Dict[str, Any]:
+def test_static_inception_hold_policy(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
     """Test STATIC_INCEPTION_HOLD policy: static hold of inception-date top-30."""
     top_30_inception = get_top_30_tickers(inception_date)
     if not top_30_inception:
         return {"error": f"No top-30 found for {inception_date}"}
 
-    inception_idx = all_snapshots.index(inception_date) if inception_date in all_snapshots else 0
-    terminal_idx = len(all_snapshots) - 1
-    terminal_date = all_snapshots[terminal_idx]
+    # Calculate calendar days
+    inception_dt = datetime.strptime(inception_date, "%Y-%m-%d")
+    terminal_dt = datetime.strptime(terminal_date, "%Y-%m-%d")
+    calendar_days = (terminal_dt - inception_dt).days
 
     ret, n_priced, n_missing = compute_return(inception_date, terminal_date, top_30_inception, prices)
     xbi_ret = get_xbi_return(inception_date, terminal_date, prices)
-
-    days = terminal_idx - inception_idx
 
     return {
         "policy": "STATIC_INCEPTION_HOLD",
         "inception_date": inception_date,
         "terminal_date": terminal_date,
-        "days": days,
+        "calendar_days": calendar_days,
+        "n_price_obs": n_priced + n_missing,
         "return_pct": round(ret * 100, 2) if ret is not None else None,
         "xbi_return_pct": round(xbi_ret * 100, 2) if xbi_ret is not None else None,
         "alpha_pct": round((ret - xbi_ret) * 100, 2) if ret and xbi_ret else None,
@@ -192,24 +192,32 @@ def test_static_inception_hold_policy(inception_date: str, all_snapshots: List[s
     }
 
 
-def test_delisting_policy(inception_date: str, all_snapshots: List[str], prices: Dict) -> Dict[str, Any]:
+def test_delisting_policy(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
     """Test DELISTING_ONLY policy: hold until delisting (N+ consecutive missing prices)."""
     top_30_inception = get_top_30_tickers(inception_date)
     if not top_30_inception:
         return {"error": f"No top-30 found for {inception_date}"}
 
-    inception_idx = all_snapshots.index(inception_date) if inception_date in all_snapshots else 0
-    terminal_idx = len(all_snapshots) - 1
-    terminal_date = all_snapshots[terminal_idx]
+    # Calculate calendar days
+    inception_dt = datetime.strptime(inception_date, "%Y-%m-%d")
+    terminal_dt = datetime.strptime(terminal_date, "%Y-%m-%d")
+    calendar_days = (terminal_dt - inception_dt).days
+
+    # Build date list for the period
+    date_list = []
+    current_date = inception_dt
+    while current_date <= terminal_dt:
+        date_list.append(current_date.strftime("%Y-%m-%d"))
+        current_date += timedelta(days=1)
 
     holdings = top_30_inception.copy()
     n_delisted = 0
     consecutive_missing = {ticker: 0 for ticker in holdings}
-    delisting_threshold = 3  # ticker is delisted after 3+ consecutive snapshots with no prices
+    delisting_threshold = 10  # ticker is delisted after 10+ consecutive calendar days with no prices
 
-    for snap_date in all_snapshots[inception_idx + 1 : terminal_idx + 1]:
+    for date_str in date_list[1:]:  # Start from day after inception
         for ticker in list(holdings):
-            price = get_price(prices, ticker, snap_date)
+            price = get_price(prices, ticker, date_str)
             if price is None:
                 consecutive_missing[ticker] += 1
                 if consecutive_missing[ticker] >= delisting_threshold:
@@ -221,13 +229,12 @@ def test_delisting_policy(inception_date: str, all_snapshots: List[str], prices:
     ret, n_priced, n_missing = compute_return(inception_date, terminal_date, holdings, prices)
     xbi_ret = get_xbi_return(inception_date, terminal_date, prices)
 
-    days = terminal_idx - inception_idx
-
     return {
         "policy": "DELISTING_ONLY",
         "inception_date": inception_date,
         "terminal_date": terminal_date,
-        "days": days,
+        "calendar_days": calendar_days,
+        "n_price_obs": n_priced + n_missing,
         "return_pct": round(ret * 100, 2) if ret is not None else None,
         "xbi_return_pct": round(xbi_ret * 100, 2) if xbi_ret is not None else None,
         "alpha_pct": round((ret - xbi_ret) * 100, 2) if ret and xbi_ret else None,
@@ -362,29 +369,16 @@ def main():
         prices = load_prices_dict(cohort, TERMINAL_DATE, top_30)
         log.info(f"  Loaded {len(prices)} price points")
 
-        # Test policies
-        static_inception = test_static_inception_hold_policy(cohort, all_snapshots, prices)
+        # Test policies using calendar dates, not snapshots
+        static_inception = test_static_inception_hold_policy(cohort, TERMINAL_DATE, prices)
         if "error" not in static_inception:
             results.append(static_inception)
             log.info(f"    STATIC_INCEPTION_HOLD: {static_inception['return_pct']}%")
 
-        delisting = test_delisting_policy(cohort, all_snapshots, prices)
+        delisting = test_delisting_policy(cohort, TERMINAL_DATE, prices)
         if "error" not in delisting:
             results.append(delisting)
             log.info(f"    DELISTING: {delisting['return_pct']}%")
-
-        # Hold-period policies
-        for hold_days in [30, 60, 90]:
-            hold_policy = test_hold_period_policy(cohort, hold_days, all_snapshots, prices)
-            if "error" not in hold_policy:
-                results.append(hold_policy)
-                log.info(f"    HOLD_{hold_days}: {hold_policy['return_pct']}%")
-
-        # Monthly rebalance
-        monthly = test_monthly_rebalance_policy(cohort, all_snapshots, prices)
-        if "error" not in monthly:
-            results.append(monthly)
-            log.info(f"    MONTHLY: {monthly['return_pct']}%")
 
     # Write results
     output_file = DIAGNOSTIC_ROOT / "canonical_cohorts.json"
