@@ -9,7 +9,8 @@ Canonical cohorts (7 inception dates, common terminal 2026-05-27):
 
 Policies tested:
   - STATIC_INCEPTION_HOLD: Static hold of inception-date top-30 through terminal
-  - DELISTING_ONLY: Hold inception top-30 until delisting detected
+  - DELISTING_ONLY: Hold inception top-30 until delisting detected (10+ calendar days missing)
+  - AVAILABLE_SNAPSHOT_REBUILD: Rebuild from current top-30 on each available snapshot date (~175 per period)
 """
 
 import csv
@@ -192,8 +193,8 @@ def test_static_inception_hold_policy(inception_date: str, terminal_date: str, p
     }
 
 
-def test_fresh_daily_rebuild_policy(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
-    """Test FRESH_DAILY_REBUILD policy: rebuild from top-30 on each snapshot date."""
+def test_available_snapshot_rebuild_policy(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
+    """Test AVAILABLE_SNAPSHOT_REBUILD policy: rebuild from top-30 on each available snapshot date."""
     # Get all snapshot dates in the period
     snapshot_dates = []
     current = datetime.strptime(inception_date, "%Y-%m-%d")
@@ -249,11 +250,11 @@ def test_fresh_daily_rebuild_policy(inception_date: str, terminal_date: str, pri
     alpha = total_return_pct - xbi_return_pct
 
     return {
-        "policy": "FRESH_DAILY_REBUILD",
+        "policy": "AVAILABLE_SNAPSHOT_REBUILD",
         "inception_date": inception_date,
         "terminal_date": terminal_date,
         "calendar_days": calendar_days,
-        "n_price_obs": len(snapshot_dates),
+        "n_snapshots": len(snapshot_dates),
         "return_pct": round(total_return_pct, 2),
         "xbi_return_pct": round(xbi_return_pct, 2),
         "alpha_pct": round(alpha, 2),
@@ -451,10 +452,12 @@ def main():
             results.append(delisting)
             log.info(f"    DELISTING: {delisting['return_pct']}%")
 
-        fresh_daily = test_fresh_daily_rebuild_policy(cohort, TERMINAL_DATE, prices)
-        if "error" not in fresh_daily:
-            results.append(fresh_daily)
-            log.info(f"    FRESH_DAILY_REBUILD: {fresh_daily['return_pct']}% (turnover={fresh_daily['turnover']})")
+        snapshot_rebuild = test_available_snapshot_rebuild_policy(cohort, TERMINAL_DATE, prices)
+        if "error" not in snapshot_rebuild:
+            results.append(snapshot_rebuild)
+            log.info(
+                f"    AVAILABLE_SNAPSHOT_REBUILD: {snapshot_rebuild['return_pct']}% (turnover={snapshot_rebuild['turnover']}, snapshots={snapshot_rebuild['n_snapshots']})"
+            )
 
     # Write results
     output_file = DIAGNOSTIC_ROOT / "canonical_cohorts.json"
