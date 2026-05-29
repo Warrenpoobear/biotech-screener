@@ -8,8 +8,8 @@ Canonical cohorts (7 inception dates, common terminal 2026-05-27):
   2024-10-18, 2024-11-01, 2025-01-10, 2025-04-11, 2025-07-18, 2025-10-10, 2026-01-02
 
 Policies tested:
-  - BASELINE: Fresh daily top-30 (status quo)
-  - DELISTING_ONLY: Hold until delisting or severe ADV failure
+  - STATIC_INCEPTION_HOLD: Static hold of inception-date top-30 through terminal
+  - DELISTING_ONLY: Hold inception top-30 until delisting detected
 """
 
 import csv
@@ -164,8 +164,8 @@ def get_xbi_return(start_date: str, end_date: str, prices: Dict[Tuple[str, str],
     return None
 
 
-def test_baseline_policy(inception_date: str, all_snapshots: List[str], prices: Dict) -> Dict[str, Any]:
-    """Test BASELINE policy: fresh daily top-30."""
+def test_static_inception_hold_policy(inception_date: str, all_snapshots: List[str], prices: Dict) -> Dict[str, Any]:
+    """Test STATIC_INCEPTION_HOLD policy: static hold of inception-date top-30."""
     top_30_inception = get_top_30_tickers(inception_date)
     if not top_30_inception:
         return {"error": f"No top-30 found for {inception_date}"}
@@ -180,7 +180,7 @@ def test_baseline_policy(inception_date: str, all_snapshots: List[str], prices: 
     days = terminal_idx - inception_idx
 
     return {
-        "policy": "BASELINE",
+        "policy": "STATIC_INCEPTION_HOLD",
         "inception_date": inception_date,
         "terminal_date": terminal_date,
         "days": days,
@@ -193,7 +193,7 @@ def test_baseline_policy(inception_date: str, all_snapshots: List[str], prices: 
 
 
 def test_delisting_policy(inception_date: str, all_snapshots: List[str], prices: Dict) -> Dict[str, Any]:
-    """Test DELISTING_ONLY policy: hold until delisting."""
+    """Test DELISTING_ONLY policy: hold until delisting (N+ consecutive missing prices)."""
     top_30_inception = get_top_30_tickers(inception_date)
     if not top_30_inception:
         return {"error": f"No top-30 found for {inception_date}"}
@@ -204,14 +204,19 @@ def test_delisting_policy(inception_date: str, all_snapshots: List[str], prices:
 
     holdings = top_30_inception.copy()
     n_delisted = 0
+    consecutive_missing = {ticker: 0 for ticker in holdings}
+    delisting_threshold = 3  # ticker is delisted after 3+ consecutive snapshots with no prices
 
     for snap_date in all_snapshots[inception_idx + 1 : terminal_idx + 1]:
         for ticker in list(holdings):
             price = get_price(prices, ticker, snap_date)
             if price is None:
-                holdings.discard(ticker)
-                n_delisted += 1
-                break
+                consecutive_missing[ticker] += 1
+                if consecutive_missing[ticker] >= delisting_threshold:
+                    holdings.discard(ticker)
+                    n_delisted += 1
+            else:
+                consecutive_missing[ticker] = 0
 
     ret, n_priced, n_missing = compute_return(inception_date, terminal_date, holdings, prices)
     xbi_ret = get_xbi_return(inception_date, terminal_date, prices)
@@ -230,6 +235,104 @@ def test_delisting_policy(inception_date: str, all_snapshots: List[str], prices:
         "n_missing": n_missing,
         "n_holdings_at_end": len(holdings),
         "n_exited": len(top_30_inception) - len(holdings),
+    }
+
+
+def test_hold_period_policy(
+    inception_date: str,
+    hold_days: int,
+    all_snapshots: List[str],
+    prices: Dict,
+) -> Dict[str, Any]:
+    """Test HOLD_N policy: hold top-30 for minimum N days."""
+    top_30_inception = get_top_30_tickers(inception_date)
+    if not top_30_inception:
+        return {"error": f"No top-30 found for {inception_date}"}
+
+    inception_idx = all_snapshots.index(inception_date) if inception_date in all_snapshots else 0
+    terminal_idx = len(all_snapshots) - 1
+
+    # Find end date (inception + hold_days)
+    hold_end_idx = min(inception_idx + hold_days, terminal_idx)
+    hold_end_date = all_snapshots[hold_end_idx]
+
+    # Compute return for the hold period only
+    ret, n_priced, n_missing = compute_return(inception_date, hold_end_date, top_30_inception, prices)
+    xbi_ret = get_xbi_return(inception_date, hold_end_date, prices)
+
+    days = hold_end_idx - inception_idx
+
+    return {
+        "policy": f"HOLD_{hold_days}",
+        "inception_date": inception_date,
+        "terminal_date": hold_end_date,
+        "days": days,
+        "return_pct": round(ret * 100, 2) if ret is not None else None,
+        "xbi_return_pct": round(xbi_ret * 100, 2) if xbi_ret is not None else None,
+        "alpha_pct": round((ret - xbi_ret) * 100, 2) if ret and xbi_ret else None,
+        "n_priced": n_priced,
+        "n_missing": n_missing,
+    }
+
+
+def test_monthly_rebalance_policy(inception_date: str, all_snapshots: List[str], prices: Dict) -> Dict[str, Any]:
+    """Test MONTHLY policy: rebalance on 1st trading day of each month."""
+    top_30_inception = get_top_30_tickers(inception_date)
+    if not top_30_inception:
+        return {"error": f"No top-30 found for {inception_date}"}
+
+    inception_idx = all_snapshots.index(inception_date) if inception_date in all_snapshots else 0
+    terminal_idx = len(all_snapshots) - 1
+    terminal_date = all_snapshots[terminal_idx]
+
+    # Find 1st trading day of month after inception
+    current_date = datetime.strptime(inception_date, "%Y-%m-%d")
+    terminal = datetime.strptime(terminal_date, "%Y-%m-%d")
+
+    total_return = 1.0
+    n_periods = 0
+    xbi_total_return = 1.0
+
+    while current_date < terminal:
+        # Find 1st trading day of next month
+        if current_date.month == 12:
+            next_month = current_date.replace(year=current_date.year + 1, month=1, day=1)
+        else:
+            next_month = current_date.replace(month=current_date.month + 1, day=1)
+
+        # Find snapshots in this period
+        period_start = current_date.strftime("%Y-%m-%d")
+        period_end = min(next_month - timedelta(days=1), terminal).strftime("%Y-%m-%d")
+
+        # Get current top-30
+        current_top_30 = get_top_30_tickers(period_start)
+        if current_top_30:
+            ret, _, _ = compute_return(period_start, period_end, current_top_30, prices)
+            xbi_ret = get_xbi_return(period_start, period_end, prices)
+
+            if ret is not None:
+                total_return *= 1 + ret
+                n_periods += 1
+            if xbi_ret is not None:
+                xbi_total_return *= 1 + xbi_ret
+
+        current_date = next_month
+
+    total_return_pct = (total_return - 1.0) * 100
+    xbi_return_pct = (xbi_total_return - 1.0) * 100
+    alpha = total_return_pct - xbi_return_pct
+
+    days = terminal_idx - inception_idx
+
+    return {
+        "policy": "MONTHLY",
+        "inception_date": inception_date,
+        "terminal_date": terminal_date,
+        "days": days,
+        "return_pct": round(total_return_pct, 2),
+        "xbi_return_pct": round(xbi_return_pct, 2),
+        "alpha_pct": round(alpha, 2),
+        "n_periods": n_periods,
     }
 
 
@@ -260,15 +363,28 @@ def main():
         log.info(f"  Loaded {len(prices)} price points")
 
         # Test policies
-        baseline = test_baseline_policy(cohort, all_snapshots, prices)
-        if "error" not in baseline:
-            results.append(baseline)
-            log.info(f"    BASELINE: {baseline['return_pct']}%")
+        static_inception = test_static_inception_hold_policy(cohort, all_snapshots, prices)
+        if "error" not in static_inception:
+            results.append(static_inception)
+            log.info(f"    STATIC_INCEPTION_HOLD: {static_inception['return_pct']}%")
 
         delisting = test_delisting_policy(cohort, all_snapshots, prices)
         if "error" not in delisting:
             results.append(delisting)
             log.info(f"    DELISTING: {delisting['return_pct']}%")
+
+        # Hold-period policies
+        for hold_days in [30, 60, 90]:
+            hold_policy = test_hold_period_policy(cohort, hold_days, all_snapshots, prices)
+            if "error" not in hold_policy:
+                results.append(hold_policy)
+                log.info(f"    HOLD_{hold_days}: {hold_policy['return_pct']}%")
+
+        # Monthly rebalance
+        monthly = test_monthly_rebalance_policy(cohort, all_snapshots, prices)
+        if "error" not in monthly:
+            results.append(monthly)
+            log.info(f"    MONTHLY: {monthly['return_pct']}%")
 
     # Write results
     output_file = DIAGNOSTIC_ROOT / "canonical_cohorts.json"
