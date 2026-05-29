@@ -979,6 +979,145 @@ def compute_quarterly_vs_weekly_attribution(inception_date: str, terminal_date: 
     }
 
 
+def compute_exposure_weighted_attribution(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
+    """Compute exposure-weighted attribution: per-ticker contribution by policy."""
+    # Get all snapshot dates
+    snapshot_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+    snapshots_root = Path(__file__).resolve().parent.parent / "data" / "snapshots"
+    while current <= end:
+        snap_dir = snapshots_root / current.strftime("%Y-%m-%d")
+        if snap_dir.exists():
+            snapshot_dates.append(current.strftime("%Y-%m-%d"))
+        current += timedelta(days=1)
+
+    if not snapshot_dates or len(snapshot_dates) < 2:
+        return {"error": "Insufficient snapshots"}
+
+    # Get weekly rebalance dates (Friday-based)
+    weekly_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end_dt = datetime.strptime(terminal_date, "%Y-%m-%d")
+    while current <= end_dt:
+        days_ahead = 4 - current.weekday()
+        if days_ahead <= 0:
+            days_ahead += 7
+        friday = current + timedelta(days=days_ahead)
+        if friday > end_dt:
+            break
+        check = friday
+        while check <= end_dt:
+            date_str = check.strftime("%Y-%m-%d")
+            if date_str in snapshot_dates:
+                if not weekly_dates or date_str != weekly_dates[-1]:
+                    weekly_dates.append(date_str)
+                break
+            check += timedelta(days=1)
+        current = friday + timedelta(days=1)
+
+    # Get quarterly rebalance dates
+    quarterly_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    while current <= end_dt:
+        month = current.month
+        if month in [1, 2, 3]:
+            quarter_start = current.replace(month=1, day=1)
+        elif month in [4, 5, 6]:
+            quarter_start = current.replace(month=4, day=1)
+        elif month in [7, 8, 9]:
+            quarter_start = current.replace(month=7, day=1)
+        else:
+            quarter_start = current.replace(month=10, day=1)
+
+        check_date = quarter_start
+        while check_date <= end_dt:
+            date_str = check_date.strftime("%Y-%m-%d")
+            if date_str in snapshot_dates:
+                if not quarterly_dates or date_str != quarterly_dates[-1]:
+                    quarterly_dates.append(date_str)
+                break
+            check_date += timedelta(days=1)
+
+        if current.month <= 9:
+            current = current.replace(month=current.month + 3, day=1)
+        else:
+            current = current.replace(year=current.year + 1, month=current.month - 9, day=1)
+
+    if not weekly_dates or not quarterly_dates:
+        return {"error": "Insufficient rebalance dates"}
+
+    # Compute per-ticker contribution for each policy
+    ticker_contribution_weekly = {}
+    ticker_contribution_quarterly = {}
+
+    # Weekly contributions
+    for i in range(len(weekly_dates) - 1):
+        start_date = weekly_dates[i]
+        end_date = weekly_dates[i + 1]
+        holdings = get_top_30_tickers(start_date)
+        if not holdings:
+            continue
+        weight = 1.0 / len(holdings)
+        for ticker in holdings:
+            ret, _, _ = compute_return(start_date, end_date, {ticker}, prices)
+            if ret is not None:
+                contribution = weight * ret
+                ticker_contribution_weekly[ticker] = ticker_contribution_weekly.get(ticker, 0.0) + contribution
+
+    # Quarterly contributions
+    for i in range(len(quarterly_dates) - 1):
+        start_date = quarterly_dates[i]
+        end_date = quarterly_dates[i + 1]
+        holdings = get_top_30_tickers(start_date)
+        if not holdings:
+            continue
+        weight = 1.0 / len(holdings)
+        for ticker in holdings:
+            ret, _, _ = compute_return(start_date, end_date, {ticker}, prices)
+            if ret is not None:
+                contribution = weight * ret
+                ticker_contribution_quarterly[ticker] = ticker_contribution_quarterly.get(ticker, 0.0) + contribution
+
+    # Compute total contributions
+    total_weekly = sum(ticker_contribution_weekly.values())
+    total_quarterly = sum(ticker_contribution_quarterly.values())
+    gap = total_quarterly - total_weekly
+
+    # Find top contributors and detractors
+    all_tickers = set(ticker_contribution_weekly.keys()) | set(ticker_contribution_quarterly.keys())
+    gap_by_ticker = []
+    for ticker in all_tickers:
+        w_contrib = ticker_contribution_weekly.get(ticker, 0.0)
+        q_contrib = ticker_contribution_quarterly.get(ticker, 0.0)
+        diff = q_contrib - w_contrib
+        gap_by_ticker.append(
+            {
+                "ticker": ticker,
+                "weekly_contribution": round(w_contrib * 100, 2),
+                "quarterly_contribution": round(q_contrib * 100, 2),
+                "gap": round(diff * 100, 2),
+            }
+        )
+
+    gap_by_ticker.sort(key=lambda x: x["gap"], reverse=True)
+    top_helpers = gap_by_ticker[:10]
+    top_hurters = gap_by_ticker[-10:]
+
+    return {
+        "inception_date": inception_date,
+        "terminal_date": terminal_date,
+        "weekly_rebalances": len(weekly_dates),
+        "quarterly_rebalances": len(quarterly_dates),
+        "weekly_total_contribution_pct": round(total_weekly * 100, 2),
+        "quarterly_total_contribution_pct": round(total_quarterly * 100, 2),
+        "gap_pct": round(gap * 100, 2),
+        "n_tickers_analyzed": len(all_tickers),
+        "top_10_helping_quarterly": top_helpers,
+        "top_10_hurting_quarterly": top_hurters,
+    }
+
+
 def main():
     """Run Phase 1 diagnostic."""
     log = setup_logging()
@@ -1071,6 +1210,25 @@ def main():
                 f"quarterly_only={attr['quarterly_only_return_pct']}%)"
             )
 
+    # Compute exposure-weighted attribution: quarterly vs weekly
+    log.info("\n=== Exposure-Weighted Attribution Analysis ===")
+    exposure_attr_results = []
+    for cohort in CANONICAL_COHORTS:
+        top_30 = get_top_30_tickers(cohort)
+        if not top_30:
+            continue
+        prices = load_prices_dict(cohort, TERMINAL_DATE, top_30)
+        if not prices:
+            continue
+        exp_attr = compute_exposure_weighted_attribution(cohort, TERMINAL_DATE, prices)
+        if "error" not in exp_attr:
+            exposure_attr_results.append(exp_attr)
+            log.info(
+                f"  {cohort}: W={exp_attr['weekly_total_contribution_pct']:.2f}% "
+                f"Q={exp_attr['quarterly_total_contribution_pct']:.2f}% "
+                f"Gap={exp_attr['gap_pct']:.2f}%"
+            )
+
     # Write results
     output_file = DIAGNOSTIC_ROOT / "canonical_cohorts.json"
     with output_file.open("w") as f:
@@ -1081,7 +1239,13 @@ def main():
     attr_file = DIAGNOSTIC_ROOT / "quarterly_vs_weekly_attribution.json"
     with attr_file.open("w") as f:
         json.dump(attribution_results, f, indent=2)
-    log.info(f"✓ Attribution: {attr_file}")
+    log.info(f"✓ Attribution (set-based): {attr_file}")
+
+    # Write exposure-weighted attribution
+    exp_attr_file = DIAGNOSTIC_ROOT / "quarterly_vs_weekly_exposure_attribution.json"
+    with exp_attr_file.open("w") as f:
+        json.dump(exposure_attr_results, f, indent=2)
+    log.info(f"✓ Attribution (exposure-weighted): {exp_attr_file}")
 
     return 0
 
