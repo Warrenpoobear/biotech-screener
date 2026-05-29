@@ -979,6 +979,192 @@ def compute_quarterly_vs_weekly_attribution(inception_date: str, terminal_date: 
     }
 
 
+def compute_timeline_attribution(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
+    """Compute entry/exit timeline attribution: holding duration & rotation effects."""
+    # Get all snapshot dates
+    snapshot_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+    snapshots_root = Path(__file__).resolve().parent.parent / "data" / "snapshots"
+    while current <= end:
+        snap_dir = snapshots_root / current.strftime("%Y-%m-%d")
+        if snap_dir.exists():
+            snapshot_dates.append(current.strftime("%Y-%m-%d"))
+        current += timedelta(days=1)
+
+    if not snapshot_dates or len(snapshot_dates) < 2:
+        return {"error": "Insufficient snapshots"}
+
+    # Get rebalance dates for both policies
+    weekly_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end_dt = datetime.strptime(terminal_date, "%Y-%m-%d")
+    while current <= end_dt:
+        days_ahead = 4 - current.weekday()
+        if days_ahead <= 0:
+            days_ahead += 7
+        friday = current + timedelta(days=days_ahead)
+        if friday > end_dt:
+            break
+        check = friday
+        while check <= end_dt:
+            date_str = check.strftime("%Y-%m-%d")
+            if date_str in snapshot_dates:
+                if not weekly_dates or date_str != weekly_dates[-1]:
+                    weekly_dates.append(date_str)
+                break
+            check += timedelta(days=1)
+        current = friday + timedelta(days=1)
+
+    quarterly_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    while current <= end_dt:
+        month = current.month
+        if month in [1, 2, 3]:
+            quarter_start = current.replace(month=1, day=1)
+        elif month in [4, 5, 6]:
+            quarter_start = current.replace(month=4, day=1)
+        elif month in [7, 8, 9]:
+            quarter_start = current.replace(month=7, day=1)
+        else:
+            quarter_start = current.replace(month=10, day=1)
+
+        check_date = quarter_start
+        while check_date <= end_dt:
+            date_str = check_date.strftime("%Y-%m-%d")
+            if date_str in snapshot_dates:
+                if not quarterly_dates or date_str != quarterly_dates[-1]:
+                    quarterly_dates.append(date_str)
+                break
+            check_date += timedelta(days=1)
+
+        if current.month <= 9:
+            current = current.replace(month=current.month + 3, day=1)
+        else:
+            current = current.replace(year=current.year + 1, month=current.month - 9, day=1)
+
+    if not weekly_dates or not quarterly_dates:
+        return {"error": "Insufficient rebalance dates"}
+
+    # Track holding periods for each ticker by policy
+    ticker_timeline_weekly = {}
+    ticker_timeline_quarterly = {}
+
+    # Weekly timeline
+    for i, date in enumerate(weekly_dates):
+        holdings = get_top_30_tickers(date)
+        for ticker in holdings:
+            if ticker not in ticker_timeline_weekly:
+                ticker_timeline_weekly[ticker] = {
+                    "entry_idx": i,
+                    "exit_idx": i,
+                    "entry_date": date,
+                    "exit_date": date,
+                    "holding_days": 0,
+                    "contribution": 0.0,
+                }
+            else:
+                ticker_timeline_weekly[ticker]["exit_idx"] = i
+                ticker_timeline_weekly[ticker]["exit_date"] = date
+
+    # Quarterly timeline
+    for i, date in enumerate(quarterly_dates):
+        holdings = get_top_30_tickers(date)
+        for ticker in holdings:
+            if ticker not in ticker_timeline_quarterly:
+                ticker_timeline_quarterly[ticker] = {
+                    "entry_idx": i,
+                    "exit_idx": i,
+                    "entry_date": date,
+                    "exit_date": date,
+                    "holding_days": 0,
+                    "contribution": 0.0,
+                }
+            else:
+                ticker_timeline_quarterly[ticker]["exit_idx"] = i
+                ticker_timeline_quarterly[ticker]["exit_date"] = date
+
+    # Compute holding days and contributions
+    for ticker in ticker_timeline_weekly:
+        entry_dt = datetime.strptime(ticker_timeline_weekly[ticker]["entry_date"], "%Y-%m-%d")
+        exit_dt = datetime.strptime(ticker_timeline_weekly[ticker]["exit_date"], "%Y-%m-%d")
+        ticker_timeline_weekly[ticker]["holding_days"] = (exit_dt - entry_dt).days
+
+    for ticker in ticker_timeline_quarterly:
+        entry_dt = datetime.strptime(ticker_timeline_quarterly[ticker]["entry_date"], "%Y-%m-%d")
+        exit_dt = datetime.strptime(ticker_timeline_quarterly[ticker]["exit_date"], "%Y-%m-%d")
+        ticker_timeline_quarterly[ticker]["holding_days"] = (exit_dt - entry_dt).days
+
+    # Compare timeline and compute gap attribution
+    all_tickers = set(ticker_timeline_weekly.keys()) | set(ticker_timeline_quarterly.keys())
+    timeline_gaps = []
+
+    for ticker in all_tickers:
+        w_entry = ticker_timeline_weekly.get(ticker, {}).get("entry_date", terminal_date)
+        w_exit = ticker_timeline_weekly.get(ticker, {}).get("exit_date", terminal_date)
+        w_days = ticker_timeline_weekly.get(ticker, {}).get("holding_days", 0)
+
+        q_entry = ticker_timeline_quarterly.get(ticker, {}).get("entry_date", terminal_date)
+        q_exit = ticker_timeline_quarterly.get(ticker, {}).get("exit_date", terminal_date)
+        q_days = ticker_timeline_quarterly.get(ticker, {}).get("holding_days", 0)
+
+        # Determine holding period relationship
+        if q_days > w_days:
+            hold_relationship = "quarterly_longer"
+        elif w_days > q_days:
+            hold_relationship = "weekly_longer"
+        else:
+            hold_relationship = "equal"
+
+        # Determine entry timing
+        if q_entry < w_entry:
+            entry_timing = "quarterly_earlier"
+        elif w_entry < q_entry:
+            entry_timing = "weekly_earlier"
+        else:
+            entry_timing = "same"
+
+        timeline_gaps.append(
+            {
+                "ticker": ticker,
+                "quarterly_entry": q_entry,
+                "quarterly_exit": q_exit,
+                "quarterly_holding_days": q_days,
+                "weekly_entry": w_entry,
+                "weekly_exit": w_exit,
+                "weekly_holding_days": w_days,
+                "holding_difference_days": q_days - w_days,
+                "hold_relationship": hold_relationship,
+                "entry_timing": entry_timing,
+            }
+        )
+
+    timeline_gaps.sort(key=lambda x: x["holding_difference_days"], reverse=True)
+    longer_holds_quarterly = [t for t in timeline_gaps if t["hold_relationship"] == "quarterly_longer"][:10]
+    faster_rotation_weekly = [t for t in timeline_gaps if t["hold_relationship"] == "weekly_longer"][:10]
+
+    return {
+        "inception_date": inception_date,
+        "terminal_date": terminal_date,
+        "weekly_rebalances": len(weekly_dates),
+        "quarterly_rebalances": len(quarterly_dates),
+        "n_tickers_analyzed": len(all_tickers),
+        "longer_holds_quarterly": longer_holds_quarterly,
+        "faster_rotation_weekly": faster_rotation_weekly,
+        "holding_days_comparison": {
+            "quarterly_avg_holding_days": round(
+                sum(t["holding_days"] for t in ticker_timeline_quarterly.values())
+                / max(len(ticker_timeline_quarterly), 1),
+                1,
+            ),
+            "weekly_avg_holding_days": round(
+                sum(t["holding_days"] for t in ticker_timeline_weekly.values()) / max(len(ticker_timeline_weekly), 1),
+                1,
+            ),
+        },
+    }
+
+
 def compute_exposure_weighted_attribution(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
     """Compute exposure-weighted attribution: per-ticker contribution by policy."""
     # Get all snapshot dates
@@ -1229,6 +1415,26 @@ def main():
                 f"Gap={exp_attr['gap_pct']:.2f}%"
             )
 
+    # Compute timeline attribution: quarterly vs weekly
+    log.info("\n=== Timeline Attribution Analysis ===")
+    timeline_attr_results = []
+    for cohort in CANONICAL_COHORTS:
+        top_30 = get_top_30_tickers(cohort)
+        if not top_30:
+            continue
+        prices = load_prices_dict(cohort, TERMINAL_DATE, top_30)
+        if not prices:
+            continue
+        timeline_attr = compute_timeline_attribution(cohort, TERMINAL_DATE, prices)
+        if "error" not in timeline_attr:
+            timeline_attr_results.append(timeline_attr)
+            q_avg_days = timeline_attr["holding_days_comparison"]["quarterly_avg_holding_days"]
+            w_avg_days = timeline_attr["holding_days_comparison"]["weekly_avg_holding_days"]
+            log.info(
+                f"  {cohort}: Q_avg_hold={q_avg_days}d W_avg_hold={w_avg_days}d "
+                f"(longer_q={len(timeline_attr['longer_holds_quarterly'])} faster_w={len(timeline_attr['faster_rotation_weekly'])})"
+            )
+
     # Write results
     output_file = DIAGNOSTIC_ROOT / "canonical_cohorts.json"
     with output_file.open("w") as f:
@@ -1246,6 +1452,12 @@ def main():
     with exp_attr_file.open("w") as f:
         json.dump(exposure_attr_results, f, indent=2)
     log.info(f"✓ Attribution (exposure-weighted): {exp_attr_file}")
+
+    # Write timeline attribution
+    timeline_attr_file = DIAGNOSTIC_ROOT / "quarterly_vs_weekly_timeline_attribution.json"
+    with timeline_attr_file.open("w") as f:
+        json.dump(timeline_attr_results, f, indent=2)
+    log.info(f"✓ Attribution (timeline): {timeline_attr_file}")
 
     return 0
 
