@@ -192,6 +192,77 @@ def test_static_inception_hold_policy(inception_date: str, terminal_date: str, p
     }
 
 
+def test_fresh_daily_rebuild_policy(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
+    """Test FRESH_DAILY_REBUILD policy: rebuild from top-30 on each snapshot date."""
+    # Get all snapshot dates in the period
+    snapshot_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+    snapshots_root = Path(__file__).resolve().parent.parent / "data" / "snapshots"
+    while current <= end:
+        snap_dir = snapshots_root / current.strftime("%Y-%m-%d")
+        if snap_dir.exists():
+            snapshot_dates.append(current.strftime("%Y-%m-%d"))
+        current += timedelta(days=1)
+
+    if not snapshot_dates:
+        return {"error": "No snapshots found in period"}
+
+    # Calculate calendar days
+    inception_dt = datetime.strptime(inception_date, "%Y-%m-%d")
+    terminal_dt = datetime.strptime(terminal_date, "%Y-%m-%d")
+    calendar_days = (terminal_dt - inception_dt).days
+
+    # Compound returns across snapshot intervals
+    total_return = 1.0
+    xbi_total_return = 1.0
+    n_periods = 0
+    holdings_history = []
+
+    for i in range(len(snapshot_dates) - 1):
+        current_snap = snapshot_dates[i]
+        next_snap = snapshot_dates[i + 1]
+
+        # Get top-30 for current snapshot
+        current_top_30 = get_top_30_tickers(current_snap)
+        if not current_top_30:
+            continue
+
+        # Compute return for this interval
+        ret, _, _ = compute_return(current_snap, next_snap, current_top_30, prices)
+        xbi_ret = get_xbi_return(current_snap, next_snap, prices)
+
+        if ret is not None:
+            total_return *= 1.0 + ret
+            n_periods += 1
+        if xbi_ret is not None:
+            xbi_total_return *= 1.0 + xbi_ret
+
+        holdings_history.append(len(current_top_30))
+
+    # Compute turnover as average portfolio size change
+    avg_holding_period = len(snapshot_dates) / max(n_periods, 1)
+    turnover = n_periods / max(len(snapshot_dates), 1)  # rebalance frequency
+
+    total_return_pct = (total_return - 1.0) * 100
+    xbi_return_pct = (xbi_total_return - 1.0) * 100
+    alpha = total_return_pct - xbi_return_pct
+
+    return {
+        "policy": "FRESH_DAILY_REBUILD",
+        "inception_date": inception_date,
+        "terminal_date": terminal_date,
+        "calendar_days": calendar_days,
+        "n_price_obs": len(snapshot_dates),
+        "return_pct": round(total_return_pct, 2),
+        "xbi_return_pct": round(xbi_return_pct, 2),
+        "alpha_pct": round(alpha, 2),
+        "n_periods": n_periods,
+        "turnover": round(turnover, 3),
+        "avg_holding_period_snapshots": round(avg_holding_period, 1),
+    }
+
+
 def test_delisting_policy(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
     """Test DELISTING_ONLY policy: hold until delisting (N+ consecutive missing prices)."""
     top_30_inception = get_top_30_tickers(inception_date)
@@ -379,6 +450,11 @@ def main():
         if "error" not in delisting:
             results.append(delisting)
             log.info(f"    DELISTING: {delisting['return_pct']}%")
+
+        fresh_daily = test_fresh_daily_rebuild_policy(cohort, TERMINAL_DATE, prices)
+        if "error" not in fresh_daily:
+            results.append(fresh_daily)
+            log.info(f"    FRESH_DAILY_REBUILD: {fresh_daily['return_pct']}% (turnover={fresh_daily['turnover']})")
 
     # Write results
     output_file = DIAGNOSTIC_ROOT / "canonical_cohorts.json"
