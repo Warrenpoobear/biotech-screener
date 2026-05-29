@@ -848,6 +848,137 @@ def test_quarterly_rebalance_proxy_policy(inception_date: str, terminal_date: st
     }
 
 
+def compute_quarterly_vs_weekly_attribution(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
+    """Analyze attribution differences between quarterly and weekly policies."""
+    # Get all snapshot dates
+    snapshot_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+    snapshots_root = Path(__file__).resolve().parent.parent / "data" / "snapshots"
+    while current <= end:
+        snap_dir = snapshots_root / current.strftime("%Y-%m-%d")
+        if snap_dir.exists():
+            snapshot_dates.append(current.strftime("%Y-%m-%d"))
+        current += timedelta(days=1)
+
+    if not snapshot_dates or len(snapshot_dates) < 2:
+        return {"error": "Insufficient snapshots"}
+
+    # Get weekly rebalance dates
+    weekly_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+    while current <= end:
+        # Find nearest Friday
+        days_ahead = 4 - current.weekday()
+        if days_ahead <= 0:
+            days_ahead += 7
+        friday = current + timedelta(days=days_ahead)
+        if friday > end:
+            break
+        # Find nearest snapshot on or after Friday
+        check = friday
+        while check <= end:
+            date_str = check.strftime("%Y-%m-%d")
+            if date_str in snapshot_dates:
+                if not weekly_dates or date_str != weekly_dates[-1]:
+                    weekly_dates.append(date_str)
+                break
+            check += timedelta(days=1)
+        current = friday + timedelta(days=1)
+
+    # Get quarterly rebalance dates
+    quarterly_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    while current <= end:
+        month = current.month
+        if month in [1, 2, 3]:
+            quarter_start = current.replace(month=1, day=1)
+        elif month in [4, 5, 6]:
+            quarter_start = current.replace(month=4, day=1)
+        elif month in [7, 8, 9]:
+            quarter_start = current.replace(month=7, day=1)
+        else:
+            quarter_start = current.replace(month=10, day=1)
+
+        check_date = quarter_start
+        while check_date <= end:
+            date_str = check_date.strftime("%Y-%m-%d")
+            if date_str in snapshot_dates:
+                if not quarterly_dates or date_str != quarterly_dates[-1]:
+                    quarterly_dates.append(date_str)
+                break
+            check_date += timedelta(days=1)
+
+        if current.month <= 9:
+            current = current.replace(month=current.month + 3, day=1)
+        else:
+            current = current.replace(year=current.year + 1, month=current.month - 9, day=1)
+
+    if not weekly_dates or not quarterly_dates:
+        return {"error": "Insufficient rebalance dates"}
+
+    # Compute holdings at each rebalance date
+    weekly_holdings_history = [(d, get_top_30_tickers(d)) for d in weekly_dates]
+    quarterly_holdings_history = [(d, get_top_30_tickers(d)) for d in quarterly_dates]
+
+    # Find common rebalance dates for comparison
+    common_dates = sorted(set(weekly_dates) & set(quarterly_dates))
+    if not common_dates:
+        common_dates = [snapshot_dates[0]] + sorted(set(weekly_dates) | set(quarterly_dates))[:10]
+
+    # Compute attribution metrics
+    shared_holdings = []
+    weekly_only = []
+    quarterly_only = []
+
+    for date in common_dates:
+        w_tickers = next((h for d, h in weekly_holdings_history if d == date), set())
+        q_tickers = next((h for d, h in quarterly_holdings_history if d == date), set())
+
+        shared = w_tickers & q_tickers
+        w_only = w_tickers - q_tickers
+        q_only = q_tickers - w_tickers
+
+        if shared:
+            shared_holdings.extend(list(shared)[:5])
+        if w_only:
+            weekly_only.extend(list(w_only)[:3])
+        if q_only:
+            quarterly_only.extend(list(q_only)[:3])
+
+    # Compute returns for shared/unique holdings
+    shared_ret = None
+    weekly_only_ret = None
+    quarterly_only_ret = None
+
+    if shared_holdings and len(snapshot_dates) > 1:
+        shared_ret, _, _ = compute_return(snapshot_dates[0], snapshot_dates[-1], set(shared_holdings), prices)
+        shared_ret = round(shared_ret * 100, 2) if shared_ret else None
+
+    if weekly_only and len(snapshot_dates) > 1:
+        weekly_only_ret, _, _ = compute_return(snapshot_dates[0], snapshot_dates[-1], set(weekly_only), prices)
+        weekly_only_ret = round(weekly_only_ret * 100, 2) if weekly_only_ret else None
+
+    if quarterly_only and len(snapshot_dates) > 1:
+        quarterly_only_ret, _, _ = compute_return(snapshot_dates[0], snapshot_dates[-1], set(quarterly_only), prices)
+        quarterly_only_ret = round(quarterly_only_ret * 100, 2) if quarterly_only_ret else None
+
+    return {
+        "inception_date": inception_date,
+        "terminal_date": terminal_date,
+        "weekly_rebalances": len(weekly_dates),
+        "quarterly_rebalances": len(quarterly_dates),
+        "shared_holdings_sample": list(set(shared_holdings))[:10],
+        "weekly_only_sample": list(set(weekly_only))[:10],
+        "quarterly_only_sample": list(set(quarterly_only))[:10],
+        "shared_holdings_return_pct": shared_ret,
+        "weekly_only_return_pct": weekly_only_ret,
+        "quarterly_only_return_pct": quarterly_only_ret,
+        "n_snapshots": len(snapshot_dates),
+    }
+
+
 def main():
     """Run Phase 1 diagnostic."""
     log = setup_logging()
@@ -920,11 +1051,37 @@ def main():
                 f"    QUARTERLY_REBALANCE_PROXY: {quarterly_proxy['return_pct']}% (turnover={quarterly_proxy['turnover']}, rebalances={quarterly_proxy['n_rebalances']})"
             )
 
+    # Compute attribution: quarterly vs weekly
+    log.info("\n=== Attribution Analysis: Quarterly vs Weekly ===")
+    attribution_results = []
+    for cohort in CANONICAL_COHORTS:
+        top_30 = get_top_30_tickers(cohort)
+        if not top_30:
+            continue
+        prices = load_prices_dict(cohort, TERMINAL_DATE, top_30)
+        if not prices:
+            continue
+        attr = compute_quarterly_vs_weekly_attribution(cohort, TERMINAL_DATE, prices)
+        if "error" not in attr:
+            attribution_results.append(attr)
+            log.info(
+                f"  {cohort}: W={attr['weekly_rebalances']} Q={attr['quarterly_rebalances']} "
+                f"(shared_ret={attr['shared_holdings_return_pct']}% "
+                f"weekly_only={attr['weekly_only_return_pct']}% "
+                f"quarterly_only={attr['quarterly_only_return_pct']}%)"
+            )
+
     # Write results
     output_file = DIAGNOSTIC_ROOT / "canonical_cohorts.json"
     with output_file.open("w") as f:
         json.dump(results, f, indent=2)
     log.info(f"\n✓ Results: {output_file}")
+
+    # Write attribution analysis
+    attr_file = DIAGNOSTIC_ROOT / "quarterly_vs_weekly_attribution.json"
+    with attr_file.open("w") as f:
+        json.dump(attribution_results, f, indent=2)
+    log.info(f"✓ Attribution: {attr_file}")
 
     return 0
 
