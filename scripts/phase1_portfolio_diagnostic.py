@@ -13,6 +13,7 @@ Policies tested:
   - AVAILABLE_SNAPSHOT_REBUILD: Rebuild from current top-30 on each available snapshot date (~175 per period)
   - WEEKLY_TRADE_PACKET_PROXY: Rebuild from current top-30 on weekly cadence (Friday)
   - MONTHLY_REBALANCE_PROXY: Rebuild from current top-30 on first snapshot of each calendar month
+  - QUARTERLY_REBALANCE_PROXY: Rebuild from current top-30 on first snapshot of each calendar quarter
   - HOLD_30: Start with top-30, replace only after 30 days if fallen from top-30 and delisted if missing
 """
 
@@ -738,6 +739,115 @@ def test_monthly_rebalance_policy(inception_date: str, all_snapshots: List[str],
     }
 
 
+def test_quarterly_rebalance_proxy_policy(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
+    """Test QUARTERLY_REBALANCE_PROXY policy: rebuild from top-30 on first snapshot of each quarter."""
+    # Get all snapshot dates in the period
+    snapshot_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+    snapshots_root = Path(__file__).resolve().parent.parent / "data" / "snapshots"
+    while current <= end:
+        snap_dir = snapshots_root / current.strftime("%Y-%m-%d")
+        if snap_dir.exists():
+            snapshot_dates.append(current.strftime("%Y-%m-%d"))
+        current += timedelta(days=1)
+
+    if not snapshot_dates:
+        return {"error": "No snapshots found in period"}
+
+    # Find first snapshot of each quarter
+    quarterly_rebalance_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+
+    while current <= end:
+        # Determine quarter start based on current month
+        month = current.month
+        if month in [1, 2, 3]:
+            quarter_start = current.replace(month=1, day=1)
+        elif month in [4, 5, 6]:
+            quarter_start = current.replace(month=4, day=1)
+        elif month in [7, 8, 9]:
+            quarter_start = current.replace(month=7, day=1)
+        else:
+            quarter_start = current.replace(month=10, day=1)
+
+        # Find first snapshot on or after quarter-start
+        check_date = quarter_start
+        quarter_end = (
+            quarter_start.replace(month=quarter_start.month + 3, day=1) - timedelta(days=1)
+            if quarter_start.month <= 9
+            else quarter_start.replace(year=quarter_start.year + 1, month=quarter_start.month - 9, day=1)
+            - timedelta(days=1)
+        )
+        while check_date <= end and check_date <= quarter_end:
+            date_str = check_date.strftime("%Y-%m-%d")
+            if date_str in snapshot_dates:
+                quarterly_rebalance_dates.append(date_str)
+                break
+            check_date += timedelta(days=1)
+
+        # Move to next quarter
+        if current.month <= 9:
+            current = current.replace(month=current.month + 3, day=1)
+        else:
+            current = current.replace(year=current.year + 1, month=current.month - 9, day=1)
+
+    if not quarterly_rebalance_dates:
+        return {"error": "No quarterly snapshot dates found"}
+
+    # Calculate calendar days
+    inception_dt = datetime.strptime(inception_date, "%Y-%m-%d")
+    terminal_dt = datetime.strptime(terminal_date, "%Y-%m-%d")
+    calendar_days = (terminal_dt - inception_dt).days
+
+    # Compound returns across quarterly intervals
+    total_return = 1.0
+    xbi_total_return = 1.0
+    n_periods = 0
+
+    for i in range(len(quarterly_rebalance_dates) - 1):
+        current_quarter = quarterly_rebalance_dates[i]
+        next_quarter = quarterly_rebalance_dates[i + 1]
+
+        # Get top-30 for current quarter
+        current_top_30 = get_top_30_tickers(current_quarter)
+        if not current_top_30:
+            continue
+
+        # Compute return for this interval
+        ret, _, _ = compute_return(current_quarter, next_quarter, current_top_30, prices)
+        xbi_ret = get_xbi_return(current_quarter, next_quarter, prices)
+
+        if ret is not None:
+            total_return *= 1.0 + ret
+            n_periods += 1
+        if xbi_ret is not None:
+            xbi_total_return *= 1.0 + xbi_ret
+
+    # Compute metrics
+    avg_holding_period_quarters = len(quarterly_rebalance_dates) / max(n_periods, 1)
+    turnover = n_periods / max(len(quarterly_rebalance_dates), 1)
+
+    total_return_pct = (total_return - 1.0) * 100
+    xbi_return_pct = (xbi_total_return - 1.0) * 100
+    alpha = total_return_pct - xbi_return_pct
+
+    return {
+        "policy": "QUARTERLY_REBALANCE_PROXY",
+        "inception_date": inception_date,
+        "terminal_date": terminal_date,
+        "calendar_days": calendar_days,
+        "n_rebalances": len(quarterly_rebalance_dates),
+        "return_pct": round(total_return_pct, 2),
+        "xbi_return_pct": round(xbi_return_pct, 2),
+        "alpha_pct": round(alpha, 2),
+        "n_periods": n_periods,
+        "turnover": round(turnover, 3),
+        "avg_holding_period_quarters": round(avg_holding_period_quarters, 1),
+    }
+
+
 def main():
     """Run Phase 1 diagnostic."""
     log = setup_logging()
@@ -801,6 +911,13 @@ def main():
             results.append(hold_30)
             log.info(
                 f"    HOLD_30: {hold_30['return_pct']}% (turnover={hold_30['turnover']}, replacements={hold_30['n_replacements']})"
+            )
+
+        quarterly_proxy = test_quarterly_rebalance_proxy_policy(cohort, TERMINAL_DATE, prices)
+        if "error" not in quarterly_proxy:
+            results.append(quarterly_proxy)
+            log.info(
+                f"    QUARTERLY_REBALANCE_PROXY: {quarterly_proxy['return_pct']}% (turnover={quarterly_proxy['turnover']}, rebalances={quarterly_proxy['n_rebalances']})"
             )
 
     # Write results
