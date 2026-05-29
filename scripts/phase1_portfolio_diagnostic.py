@@ -11,7 +11,8 @@ Policies tested:
   - STATIC_INCEPTION_HOLD: Static hold of inception-date top-30 through terminal
   - DELISTING_ONLY: Hold inception top-30 until delisting detected (10+ calendar days missing)
   - AVAILABLE_SNAPSHOT_REBUILD: Rebuild from current top-30 on each available snapshot date (~175 per period)
-  - WEEKLY_TRADE_PACKET_PROXY: Rebuild from current top-30 on weekly cadence (Friday), matches production trade-packet day
+  - WEEKLY_TRADE_PACKET_PROXY: Rebuild from current top-30 on weekly cadence (Friday)
+  - MONTHLY_REBALANCE_PROXY: Rebuild from current top-30 on first snapshot of each calendar month
 """
 
 import csv
@@ -191,6 +192,101 @@ def test_static_inception_hold_policy(inception_date: str, terminal_date: str, p
         "alpha_pct": round((ret - xbi_ret) * 100, 2) if ret and xbi_ret else None,
         "n_priced": n_priced,
         "n_missing": n_missing,
+    }
+
+
+def test_monthly_rebalance_proxy_policy(inception_date: str, terminal_date: str, prices: Dict) -> Dict[str, Any]:
+    """Test MONTHLY_REBALANCE_PROXY policy: rebuild from top-30 on first snapshot of each month."""
+    # Get all snapshot dates in the period
+    snapshot_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+    snapshots_root = Path(__file__).resolve().parent.parent / "data" / "snapshots"
+    while current <= end:
+        snap_dir = snapshots_root / current.strftime("%Y-%m-%d")
+        if snap_dir.exists():
+            snapshot_dates.append(current.strftime("%Y-%m-%d"))
+        current += timedelta(days=1)
+
+    if not snapshot_dates:
+        return {"error": "No snapshots found in period"}
+
+    # Find first snapshot of each month
+    monthly_rebalance_dates = []
+    current = datetime.strptime(inception_date, "%Y-%m-%d")
+    end = datetime.strptime(terminal_date, "%Y-%m-%d")
+
+    while current <= end:
+        # Find first snapshot on or after month-start
+        month_start = current.replace(day=1)
+        check_date = month_start
+        while check_date <= end and (
+            check_date.month == month_start.month or check_date < month_start.replace(day=28) + timedelta(days=4)
+        ):
+            date_str = check_date.strftime("%Y-%m-%d")
+            if date_str in snapshot_dates:
+                monthly_rebalance_dates.append(date_str)
+                break
+            check_date += timedelta(days=1)
+
+        # Move to next month
+        if current.month == 12:
+            current = current.replace(year=current.year + 1, month=1, day=1)
+        else:
+            current = current.replace(month=current.month + 1, day=1)
+
+    if not monthly_rebalance_dates:
+        return {"error": "No monthly snapshot dates found"}
+
+    # Calculate calendar days
+    inception_dt = datetime.strptime(inception_date, "%Y-%m-%d")
+    terminal_dt = datetime.strptime(terminal_date, "%Y-%m-%d")
+    calendar_days = (terminal_dt - inception_dt).days
+
+    # Compound returns across monthly intervals
+    total_return = 1.0
+    xbi_total_return = 1.0
+    n_periods = 0
+
+    for i in range(len(monthly_rebalance_dates) - 1):
+        current_month = monthly_rebalance_dates[i]
+        next_month = monthly_rebalance_dates[i + 1]
+
+        # Get top-30 for current month
+        current_top_30 = get_top_30_tickers(current_month)
+        if not current_top_30:
+            continue
+
+        # Compute return for this interval
+        ret, _, _ = compute_return(current_month, next_month, current_top_30, prices)
+        xbi_ret = get_xbi_return(current_month, next_month, prices)
+
+        if ret is not None:
+            total_return *= 1.0 + ret
+            n_periods += 1
+        if xbi_ret is not None:
+            xbi_total_return *= 1.0 + xbi_ret
+
+    # Compute metrics
+    avg_holding_period_months = len(monthly_rebalance_dates) / max(n_periods, 1)
+    turnover = n_periods / max(len(monthly_rebalance_dates), 1)
+
+    total_return_pct = (total_return - 1.0) * 100
+    xbi_return_pct = (xbi_total_return - 1.0) * 100
+    alpha = total_return_pct - xbi_return_pct
+
+    return {
+        "policy": "MONTHLY_REBALANCE_PROXY",
+        "inception_date": inception_date,
+        "terminal_date": terminal_date,
+        "calendar_days": calendar_days,
+        "n_rebalances": len(monthly_rebalance_dates),
+        "return_pct": round(total_return_pct, 2),
+        "xbi_return_pct": round(xbi_return_pct, 2),
+        "alpha_pct": round(alpha, 2),
+        "n_periods": n_periods,
+        "turnover": round(turnover, 3),
+        "avg_holding_period_months": round(avg_holding_period_months, 1),
     }
 
 
@@ -558,6 +654,13 @@ def main():
             results.append(weekly_proxy)
             log.info(
                 f"    WEEKLY_TRADE_PACKET_PROXY: {weekly_proxy['return_pct']}% (turnover={weekly_proxy['turnover']}, rebalances={weekly_proxy['n_rebalances']})"
+            )
+
+        monthly_proxy = test_monthly_rebalance_proxy_policy(cohort, TERMINAL_DATE, prices)
+        if "error" not in monthly_proxy:
+            results.append(monthly_proxy)
+            log.info(
+                f"    MONTHLY_REBALANCE_PROXY: {monthly_proxy['return_pct']}% (turnover={monthly_proxy['turnover']}, rebalances={monthly_proxy['n_rebalances']})"
             )
 
     # Write results
