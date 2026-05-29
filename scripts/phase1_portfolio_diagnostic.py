@@ -1046,102 +1046,124 @@ def compute_timeline_attribution(inception_date: str, terminal_date: str, prices
     if not weekly_dates or not quarterly_dates:
         return {"error": "Insufficient rebalance dates"}
 
-    # Track holding periods for each ticker by policy
-    ticker_timeline_weekly = {}
-    ticker_timeline_quarterly = {}
+    terminal_dt = datetime.strptime(terminal_date, "%Y-%m-%d")
 
-    # Weekly timeline
-    for i, date in enumerate(weekly_dates):
-        holdings = get_top_30_tickers(date)
-        for ticker in holdings:
-            if ticker not in ticker_timeline_weekly:
-                ticker_timeline_weekly[ticker] = {
-                    "entry_idx": i,
-                    "exit_idx": i,
-                    "entry_date": date,
-                    "exit_date": date,
-                    "holding_days": 0,
-                    "contribution": 0.0,
-                }
-            else:
-                ticker_timeline_weekly[ticker]["exit_idx"] = i
-                ticker_timeline_weekly[ticker]["exit_date"] = date
+    def build_holding_spells(rebalance_dates, get_holdings_fn):
+        """Track holding spells with entry/exit boundaries."""
+        ticker_spells = {}
+        prev_holdings = set()
+        prev_holdings_date = None
 
-    # Quarterly timeline
-    for i, date in enumerate(quarterly_dates):
-        holdings = get_top_30_tickers(date)
-        for ticker in holdings:
-            if ticker not in ticker_timeline_quarterly:
-                ticker_timeline_quarterly[ticker] = {
-                    "entry_idx": i,
-                    "exit_idx": i,
-                    "entry_date": date,
-                    "exit_date": date,
-                    "holding_days": 0,
-                    "contribution": 0.0,
-                }
-            else:
-                ticker_timeline_quarterly[ticker]["exit_idx"] = i
-                ticker_timeline_quarterly[ticker]["exit_date"] = date
+        for date in rebalance_dates:
+            current_holdings = get_holdings_fn(date)
 
-    # Compute holding days and contributions
-    for ticker in ticker_timeline_weekly:
-        entry_dt = datetime.strptime(ticker_timeline_weekly[ticker]["entry_date"], "%Y-%m-%d")
-        exit_dt = datetime.strptime(ticker_timeline_weekly[ticker]["exit_date"], "%Y-%m-%d")
-        ticker_timeline_weekly[ticker]["holding_days"] = (exit_dt - entry_dt).days
+            # Detect exits (ticker in prev but not current)
+            if prev_holdings_date is not None:
+                exits = prev_holdings - current_holdings
+                for ticker in exits:
+                    if ticker in ticker_spells:
+                        ticker_spells[ticker]["spells"][-1]["exit_date"] = prev_holdings_date
 
-    for ticker in ticker_timeline_quarterly:
-        entry_dt = datetime.strptime(ticker_timeline_quarterly[ticker]["entry_date"], "%Y-%m-%d")
-        exit_dt = datetime.strptime(ticker_timeline_quarterly[ticker]["exit_date"], "%Y-%m-%d")
-        ticker_timeline_quarterly[ticker]["holding_days"] = (exit_dt - entry_dt).days
+            # Detect entries (ticker in current but not prev)
+            entries = current_holdings - prev_holdings
+            for ticker in entries:
+                if ticker not in ticker_spells:
+                    ticker_spells[ticker] = {
+                        "first_entry": date,
+                        "spells": [],
+                        "last_appearance": date,
+                    }
+                ticker_spells[ticker]["spells"].append({"entry_date": date, "exit_date": terminal_date})
+                ticker_spells[ticker]["last_appearance"] = date
 
-    # Compare timeline and compute gap attribution
+            # Ticker remained held: update last_appearance
+            for ticker in current_holdings & prev_holdings:
+                if ticker in ticker_spells:
+                    ticker_spells[ticker]["last_appearance"] = date
+
+            prev_holdings = current_holdings
+            prev_holdings_date = date
+
+        # Finalize spells: set exit to terminal if still held at end
+        for ticker_data in ticker_spells.values():
+            if ticker_data["spells"] and ticker_data["spells"][-1]["exit_date"] == terminal_date:
+                pass  # Already terminal
+            for spell in ticker_data["spells"]:
+                if spell["exit_date"] == terminal_date:
+                    spell["days"] = (terminal_dt - datetime.strptime(spell["entry_date"], "%Y-%m-%d")).days
+                else:
+                    spell["days"] = (
+                        datetime.strptime(spell["exit_date"], "%Y-%m-%d")
+                        - datetime.strptime(spell["entry_date"], "%Y-%m-%d")
+                    ).days
+
+        # Compute aggregates per ticker
+        for ticker in ticker_spells:
+            spells = ticker_spells[ticker]["spells"]
+            ticker_spells[ticker]["total_exposure_days"] = sum(s["days"] for s in spells)
+            ticker_spells[ticker]["num_spells"] = len(spells)
+            ticker_spells[ticker]["final_spell_days"] = spells[-1]["days"] if spells else 0
+
+        return ticker_spells
+
+    # Build spell-based timelines
+    ticker_timeline_weekly = build_holding_spells(weekly_dates, get_top_30_tickers)
+    ticker_timeline_quarterly = build_holding_spells(quarterly_dates, get_top_30_tickers)
+
+    # Compare timelines at spell level
     all_tickers = set(ticker_timeline_weekly.keys()) | set(ticker_timeline_quarterly.keys())
-    timeline_gaps = []
+    timeline_spells = []
 
     for ticker in all_tickers:
-        w_entry = ticker_timeline_weekly.get(ticker, {}).get("entry_date", terminal_date)
-        w_exit = ticker_timeline_weekly.get(ticker, {}).get("exit_date", terminal_date)
-        w_days = ticker_timeline_weekly.get(ticker, {}).get("holding_days", 0)
+        w_data = ticker_timeline_weekly.get(ticker, {})
+        q_data = ticker_timeline_quarterly.get(ticker, {})
 
-        q_entry = ticker_timeline_quarterly.get(ticker, {}).get("entry_date", terminal_date)
-        q_exit = ticker_timeline_quarterly.get(ticker, {}).get("exit_date", terminal_date)
-        q_days = ticker_timeline_quarterly.get(ticker, {}).get("holding_days", 0)
+        w_first_entry = w_data.get("first_entry", terminal_date)
+        w_total_days = w_data.get("total_exposure_days", 0)
+        w_num_spells = w_data.get("num_spells", 0)
+        w_spells = w_data.get("spells", [])
 
-        # Determine holding period relationship
-        if q_days > w_days:
-            hold_relationship = "quarterly_longer"
-        elif w_days > q_days:
-            hold_relationship = "weekly_longer"
+        q_first_entry = q_data.get("first_entry", terminal_date)
+        q_total_days = q_data.get("total_exposure_days", 0)
+        q_num_spells = q_data.get("num_spells", 0)
+        q_spells = q_data.get("spells", [])
+
+        # Determine exposure relationship
+        if q_total_days > w_total_days:
+            exposure_relationship = "quarterly_more_days"
+        elif w_total_days > q_total_days:
+            exposure_relationship = "weekly_more_days"
         else:
-            hold_relationship = "equal"
+            exposure_relationship = "equal_days"
 
         # Determine entry timing
-        if q_entry < w_entry:
+        if q_first_entry < w_first_entry and q_first_entry != terminal_date:
             entry_timing = "quarterly_earlier"
-        elif w_entry < q_entry:
+        elif w_first_entry < q_first_entry and w_first_entry != terminal_date:
             entry_timing = "weekly_earlier"
         else:
-            entry_timing = "same"
+            entry_timing = "same_or_absent"
 
-        timeline_gaps.append(
+        timeline_spells.append(
             {
                 "ticker": ticker,
-                "quarterly_entry": q_entry,
-                "quarterly_exit": q_exit,
-                "quarterly_holding_days": q_days,
-                "weekly_entry": w_entry,
-                "weekly_exit": w_exit,
-                "weekly_holding_days": w_days,
-                "holding_difference_days": q_days - w_days,
-                "hold_relationship": hold_relationship,
+                "quarterly_first_entry": q_first_entry,
+                "quarterly_total_exposure_days": q_total_days,
+                "quarterly_num_spells": q_num_spells,
+                "quarterly_spells": q_spells,
+                "weekly_first_entry": w_first_entry,
+                "weekly_total_exposure_days": w_total_days,
+                "weekly_num_spells": w_num_spells,
+                "weekly_spells": w_spells,
+                "exposure_difference_days": q_total_days - w_total_days,
+                "exposure_relationship": exposure_relationship,
                 "entry_timing": entry_timing,
             }
         )
 
-    timeline_gaps.sort(key=lambda x: x["holding_difference_days"], reverse=True)
-    longer_holds_quarterly = [t for t in timeline_gaps if t["hold_relationship"] == "quarterly_longer"][:10]
-    faster_rotation_weekly = [t for t in timeline_gaps if t["hold_relationship"] == "weekly_longer"][:10]
+    timeline_spells.sort(key=lambda x: x["exposure_difference_days"], reverse=True)
+    more_days_quarterly = [t for t in timeline_spells if t["exposure_relationship"] == "quarterly_more_days"][:10]
+    more_days_weekly = [t for t in timeline_spells if t["exposure_relationship"] == "weekly_more_days"][:10]
 
     return {
         "inception_date": inception_date,
@@ -1149,16 +1171,17 @@ def compute_timeline_attribution(inception_date: str, terminal_date: str, prices
         "weekly_rebalances": len(weekly_dates),
         "quarterly_rebalances": len(quarterly_dates),
         "n_tickers_analyzed": len(all_tickers),
-        "longer_holds_quarterly": longer_holds_quarterly,
-        "faster_rotation_weekly": faster_rotation_weekly,
-        "holding_days_comparison": {
-            "quarterly_avg_holding_days": round(
-                sum(t["holding_days"] for t in ticker_timeline_quarterly.values())
+        "more_exposure_days_quarterly": more_days_quarterly,
+        "more_exposure_days_weekly": more_days_weekly,
+        "exposure_days_comparison": {
+            "quarterly_avg_total_exposure_days": round(
+                sum(t["total_exposure_days"] for t in ticker_timeline_quarterly.values())
                 / max(len(ticker_timeline_quarterly), 1),
                 1,
             ),
-            "weekly_avg_holding_days": round(
-                sum(t["holding_days"] for t in ticker_timeline_weekly.values()) / max(len(ticker_timeline_weekly), 1),
+            "weekly_avg_total_exposure_days": round(
+                sum(t["total_exposure_days"] for t in ticker_timeline_weekly.values())
+                / max(len(ticker_timeline_weekly), 1),
                 1,
             ),
         },
@@ -1428,11 +1451,11 @@ def main():
         timeline_attr = compute_timeline_attribution(cohort, TERMINAL_DATE, prices)
         if "error" not in timeline_attr:
             timeline_attr_results.append(timeline_attr)
-            q_avg_days = timeline_attr["holding_days_comparison"]["quarterly_avg_holding_days"]
-            w_avg_days = timeline_attr["holding_days_comparison"]["weekly_avg_holding_days"]
+            q_avg_days = timeline_attr["exposure_days_comparison"]["quarterly_avg_total_exposure_days"]
+            w_avg_days = timeline_attr["exposure_days_comparison"]["weekly_avg_total_exposure_days"]
             log.info(
-                f"  {cohort}: Q_avg_hold={q_avg_days}d W_avg_hold={w_avg_days}d "
-                f"(longer_q={len(timeline_attr['longer_holds_quarterly'])} faster_w={len(timeline_attr['faster_rotation_weekly'])})"
+                f"  {cohort}: Q_avg_exposure={q_avg_days}d W_avg_exposure={w_avg_days}d "
+                f"(more_q={len(timeline_attr['more_exposure_days_quarterly'])} more_w={len(timeline_attr['more_exposure_days_weekly'])})"
             )
 
     # Write results
