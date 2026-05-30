@@ -67,12 +67,16 @@ Parameters Hash:  sha256:<hash>
 
 ### Section 3: Signal Coverage Dashboard
 
+Report coverage for each signal component. Flag any component below its minimum threshold.
+
 | Signal | Coverage | Threshold | Status |
 |--------|---------|-----------|--------|
 | Financial scores | X/N (Y%) | 80% | OK/DEGRADED |
 | Clinical scores | X/N (Y%) | 80% | OK/DEGRADED |
 | Catalyst events | X/N (Y%) | 10% | OK/DEGRADED |
 | Market data | X/N (Y%) | 0% | OPTIONAL |
+| Momentum signal | X/N (Y%) | 0% | OPTIONAL |
+| Valuation signal | X/N (Y%) | 0% | OPTIONAL |
 | Smart money (13F) | X/N (Y%) | 0% | OPTIONAL |
 | Short interest | X/N (Y%) | 0% | OPTIONAL |
 | PoS scores | X/N (Y%) | 0% | OPTIONAL |
@@ -86,6 +90,17 @@ Parameters Hash:  sha256:<hash>
 | Yield curve (10Y-2Y) | X bps | Normal/Inverted |
 | HY credit spread | X bps | Normal/Elevated/Crisis |
 | Classified regime | X | BULL/BEAR/VOLATILITY/etc. |
+
+### Regime Signal Adjustments Applied
+
+| Signal | Multiplier | Rationale |
+|--------|-----------|-----------|
+| Momentum | X.Xx | Regime-adjusted |
+| Fundamental | X.Xx | Regime-adjusted |
+| Quality | X.Xx | Regime-adjusted |
+| Catalyst | X.Xx | Regime-adjusted |
+| Clinical | X.Xx | Regime-adjusted |
+| Financial | X.Xx | Regime-adjusted |
 
 ### Section 5: Top Holdings (Ranked Portfolio)
 
@@ -102,6 +117,8 @@ Score Breakdown:
   Financial:  XX.XX (weight: XX%)  [Runway: Xmo, Severity: X]
   Catalyst:   XX.XX (weight: XX%)  [Events: X, Proximity: X days]
   PoS:        XX.XX (weight: XX%)  [LOA: X.XXX, Confidence: X.XX]
+  Momentum:   XX.XX (weight: XX%)  [Direction: X]
+  Valuation:  XX.XX (weight: XX%)  [Peer rank: X]
   Short Int:  XX.XX (weight: XX%)  [SI: X%, DTC: X, Signal: X]
 
 Enhancement Flags:
@@ -126,27 +143,37 @@ Smart Money:
 
 ### Section 6: Exclusions Report
 
+List all excluded tickers with reasons:
+
 | Ticker | Exclusion Reason | Gate |
 |--------|-----------------|------|
 | XXXX | Runway < 6 months | SEV3 (financial) |
 | XXXX | ADV < $500K | Liquidity hard gate |
+| XXXX | Shell company | Universe filter |
+| XXXX | Market cap < $50M | Size filter |
 
 ### Section 7: Score Distribution
 
-| Component | Mean | Median | Std Dev | Min | Max |
-|----------|------|--------|---------|-----|-----|
-| Composite | X.X | X.X | X.X | X.X | X.X |
-| Clinical | X.X | X.X | X.X | X.X | X.X |
-| Financial | X.X | X.X | X.X | X.X | X.X |
-| Catalyst | X.X | X.X | X.X | X.X | X.X |
+Report distribution statistics for each score component across the rankable universe:
+
+| Component | Mean | Median | Std Dev | Min | Max | Skew |
+|----------|------|--------|---------|-----|-----|------|
+| Composite | X.X | X.X | X.X | X.X | X.X | X.X |
+| Clinical | X.X | X.X | X.X | X.X | X.X | X.X |
+| Financial | X.X | X.X | X.X | X.X | X.X | X.X |
+| Catalyst | X.X | X.X | X.X | X.X | X.X | X.X |
 
 ### Section 8: Week-over-Week Changes
+
+Compare current run to previous week's run:
 
 | Change Type | Count | Details |
 |------------|-------|---------|
 | New to top 20 | N | [tickers] |
 | Dropped from top 20 | N | [tickers] |
 | Rank change > 10 | N | [tickers with direction] |
+| New exclusions | N | [tickers with reasons] |
+| Re-included | N | [tickers] |
 | New catalyst events | N | [tickers with event types] |
 
 ### Section 9: Position Sizing Summary
@@ -154,6 +181,7 @@ Smart Money:
 | Metric | Value |
 |--------|-------|
 | Total positions | N (max: 60) |
+| Target weight sum | 100% |
 | Max single position | X.X% (limit: 10%) |
 | Min single position | X.X% (limit: 0.5%) |
 | HHI (concentration) | X.XXXX |
@@ -161,6 +189,8 @@ Smart Money:
 ---
 
 ## Composite Weight Sets
+
+Document which weight set was used and why:
 
 ### V3 Enhanced (all signals available)
 
@@ -211,19 +241,20 @@ Smart Money:
 
 ### E1: Hard Regime Gating
 
-| Regime | Momentum Cap | Financial Penalty |
-|--------|-------------|-------------------|
-| BEAR | 30% of deviation | 1.25x |
-| BULL | 100% (full) | 0.85x |
-| NEUTRAL | No gating | - |
+| Regime | Momentum Cap | Catalyst Adj | Financial Penalty |
+|--------|-------------|-------------|-------------------|
+| BEAR | 30% of deviation | - | 1.25x |
+| BULL | 100% (full) | 1.15x boost | 0.85x |
+| NEUTRAL | No gating | - | - |
 
 ### E2: Existential Flaw Escalation
 
 - Runway < 9 months AND early-stage (phase_1, phase_2): cap score at 65
+- Alternative: apply 20% penalty
 
 ### E3: Confidence-Weighted Aggregation
 
-Per-component confidence multipliers. Components below 0.40 confidence are soft-gated.
+Per-component confidence multipliers. Components below 0.40 confidence are soft-gated (weight reduced, not zeroed).
 
 ### E4: Dynamic Score Ceilings
 
@@ -235,7 +266,9 @@ Per-component confidence multipliers. Components below 0.40 confidence are soft-
 
 ### E5: Convex Downside, Concave Upside
 
-Reflects loss aversion appropriate for biotech risk.
+- Negative deviations from neutral are amplified (convex loss function)
+- Positive deviations are dampened (concave gain function)
+- Reflects loss aversion appropriate for biotech risk
 
 ### E6: Contradiction Detector
 
@@ -246,7 +279,38 @@ Reflects loss aversion appropriate for biotech risk.
 
 ---
 
+## Smart Money Section Detail
+
+### Manager Tier Weights
+
+| Tier | Weight | Description |
+|------|--------|-------------|
+| Elite Core | 1.5x | Top-tier biotech specialists |
+| Conditional | 1.0x | Other tracked managers |
+
+### Position Change Scoring
+
+| Action | Share Change | Score |
+|--------|-------------|-------|
+| NEW | 0 -> positive | +10 |
+| ADD | > +10% | +5 |
+| HOLD | +/- 10% | +2 |
+| TRIM | > -10% | -3 |
+| EXIT | positive -> 0 | -8 |
+
+### Coordinated Activity
+
+| Signal | Threshold | Meaning |
+|--------|-----------|---------|
+| Coordinated buying | >= 3 managers adding | Bullish conviction |
+| Fresh conviction | >= 2 managers new positions | Strong bullish |
+| Crowding | >= 6 managers holding | Potential crowding risk |
+
+---
+
 ## Expected Return Model
+
+For translating composite scores into expected returns:
 
 ```
 Score -> Rank -> Percentile (Blom plotting position)
@@ -255,7 +319,8 @@ Z-score -> Expected excess return = z * lambda * (12 / holding_period_months)
 ```
 
 - **DEFAULT_LAMBDA_ANNUAL**: 0.08 (8% per 1-sigma per year)
-- **Model ID**: zscore_linear_lambda v1.0.0
+- **Model ID**: zscore_linear_lambda
+- **Model Version**: 1.0.0
 
 ---
 
@@ -276,6 +341,8 @@ Z-score -> Expected excess return = z * lambda * (12 / holding_period_months)
 |----------|------|
 | Pipeline Orchestrator | `run_screen.py` |
 | Composite Scoring | `module_5_composite_v3.py` |
+| Scoring Types | `module_5_scoring_v3.py` |
+| Diagnostics | `module_5_diagnostics_v3.py` |
 | Regime Engine | `regime_engine.py` |
 | Smart Money | `manager_momentum_v1.py` |
 | Expected Returns | `common/score_to_er.py` |

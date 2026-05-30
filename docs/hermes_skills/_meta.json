@@ -108,6 +108,120 @@
         "Revert to HOLD (conservative)",
         "Continue (if IC >= 0.0200)"
       ]
+    },
+    "codegraph": {
+      "name": "Codegraph Repo Intelligence",
+      "file": "codegraph.md",
+      "status": "Active",
+      "source": "cursor_skill"
+    },
+    "ic-evaluation": {
+      "name": "IC Evaluation",
+      "file": "ic-evaluation.md",
+      "status": "Active",
+      "source": "cursor_skill"
+    },
+    "memory-steward": {
+      "name": "Memory Steward",
+      "file": "memory-steward.md",
+      "status": "Active",
+      "source": "cursor_skill"
+    },
+    "validation": {
+      "name": "Validation & Export Contracts",
+      "file": "validation.md",
+      "status": "Active",
+      "source": "cursor_skill"
+    },
+    "spending-liquidity": {
+      "name": "Spending Liquidity",
+      "file": "spending-liquidity.md",
+      "status": "Active",
+      "source": "cursor_skill"
+    },
+    "sfo-liquidity-architecture": {
+      "name": "SFO Liquidity Architecture",
+      "file": "sfo-liquidity-architecture.md",
+      "status": "Active",
+      "source": "cursor_skill"
+    },
+    "self-improving": {
+      "name": "Self-Improving Agent Loop",
+      "file": "self-improving.md",
+      "status": "Active",
+      "source": "cursor_skill"
+    },
+    "pe-pacing": {
+      "name": "PE Pacing",
+      "file": "pe-pacing.md",
+      "status": "Active",
+      "source": "cursor_skill"
+    },
+    "openclaw-agent-optimize": {
+      "name": "OpenClaw Agent Optimize",
+      "file": "openclaw-agent-optimize.md",
+      "status": "Active",
+      "source": "cursor_skill"
+    },
+    "dossier-generation": {
+      "name": "Dossier Generation",
+      "file": "dossier-generation.md",
+      "status": "Active",
+      "source": "cursor_reference"
+    },
+    "excel-xlsx": {
+      "name": "Excel / XLSX",
+      "file": "excel-xlsx.md",
+      "status": "Active",
+      "source": "cursor_reference"
+    },
+    "word-docx": {
+      "name": "Word / DOCX",
+      "file": "word-docx.md",
+      "status": "Active",
+      "source": "cursor_reference"
+    },
+    "browser-automation": {
+      "name": "Browser Automation (OpenClaw)",
+      "file": "browser-automation.md",
+      "status": "Active",
+      "source": "hermes_native"
+    },
+    "hermeslink-state-capture": {
+      "name": "Hermes Knowledge Layer State Capture",
+      "file": "hermeslink-state-capture.md",
+      "status": "Active",
+      "source": "hermes_native"
+    },
+    "openclaw-agent-scope-audit": {
+      "name": "OpenClaw Agent Scope Audit",
+      "file": "openclaw-agent-scope-audit.md",
+      "status": "Active",
+      "source": "hermes_native"
+    },
+    "openclaw-cron-scheduler-debug": {
+      "name": "OpenClaw Cron Scheduler Debug",
+      "file": "openclaw-cron-scheduler-debug.md",
+      "status": "Active",
+      "source": "hermes_native"
+    },
+    "openclaw-data-pipeline-debug": {
+      "name": "OpenClaw Data Pipeline Debug",
+      "file": "openclaw-data-pipeline-debug.md",
+      "status": "Active",
+      "source": "hermes_native"
+    },
+    "openclaw-session-routing-debug": {
+      "name": "OpenClaw Session Routing Debug",
+      "file": "openclaw-session-routing-debug.md",
+      "status": "Active",
+      "source": "hermes_native"
+    },
+    "phase-2-step-4-readiness": {
+      "name": "Phase 2 Step 4 Readiness",
+      "file": "phase-2-step-4-readiness.md",
+      "status": "Active",
+      "source": "hermes_native"
     }
   },
   "path_c_governance_window_status": {
