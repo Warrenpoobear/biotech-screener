@@ -210,12 +210,49 @@
       ctx.stroke();
     }
 
+    // Audio context for click sounds
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playClick(speed) {
+      const gain = audioCtx.createGain();
+      gain.connect(audioCtx.destination);
+      // Volume scales with speed — quiet when slow, crisp when fast
+      gain.gain.setValueAtTime(Math.min(0.35, 0.08 + speed * 0.8), audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+
+      const osc = audioCtx.createOscillator();
+      osc.connect(gain);
+      // Pitch slightly higher at speed for a snappier feel
+      osc.frequency.setValueAtTime(1200 + speed * 400, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.04);
+      osc.type = 'square';
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.04);
+    }
+
+    function playWinSound() {
+      const notes = [523, 659, 784, 1047]; // C5 E5 G5 C6
+      notes.forEach((freq, i) => {
+        const t = audioCtx.currentTime + i * 0.12;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.25, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+        osc.start(t); osc.stop(t + 0.3);
+      });
+    }
+
     function easeOut(t) {
       return 1 - Math.pow(1 - t, 4);
     }
 
     function spin() {
       if (spinning) return;
+      // Resume audio context on first user gesture
+      if (audioCtx.state === 'suspended') audioCtx.resume();
       spinning = true;
       document.getElementById('spinBtn').disabled = true;
       document.getElementById('resultBanner').innerHTML = '';
@@ -229,6 +266,11 @@
       const startAngle = currentAngle;
       const startTime  = performance.now();
 
+      // Track slice crossings for click timing
+      let lastSliceIndex = Math.floor(
+        ((2 * Math.PI - ((currentAngle % (2*Math.PI) + 2*Math.PI) % (2*Math.PI))) % (2*Math.PI)) / arc
+      );
+
       function frame(now) {
         const elapsed = now - startTime;
         const t = Math.min(elapsed / duration, 1);
@@ -236,6 +278,16 @@
 
         currentAngle = startAngle + totalDelta * easedT;
         drawWheel(currentAngle);
+
+        // Fire click whenever the pointer crosses into a new slice
+        const pointerAngle = (2 * Math.PI - ((currentAngle % (2*Math.PI) + 2*Math.PI) % (2*Math.PI))) % (2*Math.PI);
+        const sliceIndex = Math.floor(pointerAngle / arc) % slices;
+        if (sliceIndex !== lastSliceIndex) {
+          // Approximate current angular speed (radians per ms)
+          const speed = (totalDelta * (easeOut(Math.min((elapsed+16)/duration,1)) - easedT)) / 16;
+          playClick(Math.abs(speed) * 60);
+          lastSliceIndex = sliceIndex;
+        }
 
         if (t < 1) {
           requestAnimationFrame(frame);
@@ -245,6 +297,7 @@
           spinning = false;
           document.getElementById('spinBtn').disabled = false;
           showResult();
+          playWinSound();
         }
       }
 
