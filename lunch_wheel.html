@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WR Hangry Wheel</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -13,52 +15,99 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0a14;
+      font-family: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
       color: #fff;
       padding: 20px;
+      overflow: hidden;
+    }
+
+    /* Animated star field background */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-      letter-spacing: 0.03em;
+      font-size: 2.2rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
       text-align: center;
+      background: linear-gradient(90deg, #f59e0b, #ef4444, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(245,158,11,0.4));
     }
 
     .subtitle {
-      font-size: 0.95rem;
-      color: #94a3b8;
-      margin-bottom: 36px;
-      text-align: center;
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 32px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    /* Outer glow ring that pulses */
+    .wheel-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .glow-ring {
+      position: absolute;
+      width: 430px;
+      height: 430px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(239,68,68,0.35),
+        rgba(245,158,11,0.35),
+        rgba(16,185,129,0.35),
+        rgba(124,58,237,0.35),
+        rgba(239,68,68,0.35)
+      );
+      filter: blur(18px);
+      animation: rotatGlow 6s linear infinite;
+    }
+
+    @keyframes rotatGlow {
+      to { transform: rotate(360deg); }
     }
 
     .wheel-container {
       position: relative;
-      width: 380px;
-      height: 380px;
+      width: 400px;
+      height: 400px;
     }
 
-    /* Pointer triangle at the right edge */
-    .pointer {
+    /* Pointer — sleek arrow on the right */
+    .pointer-wrap {
       position: absolute;
-      right: -18px;
+      right: -28px;
       top: 50%;
       transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-top: 18px solid transparent;
-      border-bottom: 18px solid transparent;
-      border-right: 34px solid #f59e0b;
-      filter: drop-shadow(0 0 6px rgba(245,158,11,0.7));
       z-index: 10;
+      filter: drop-shadow(0 0 8px rgba(245,158,11,0.9));
     }
+    .pointer-wrap svg { display: block; }
 
     canvas {
       display: block;
       border-radius: 50%;
-      box-shadow: 0 0 0 6px rgba(255,255,255,0.08), 0 20px 60px rgba(0,0,0,0.5);
     }
 
     /* Center cap */
@@ -67,278 +116,456 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 54px;
-      height: 54px;
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
-      background: radial-gradient(circle, #f8fafc, #cbd5e1);
-      border: 4px solid #fff;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+      background: radial-gradient(circle at 35% 35%, #fff, #94a3b8);
+      border: 5px solid #fff;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.15), 0 4px 20px rgba(0,0,0,0.6);
       z-index: 5;
-      cursor: pointer;
+    }
+
+    /* Confetti canvas */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 20;
     }
 
     button {
       margin-top: 36px;
-      padding: 14px 48px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
+      padding: 16px 56px;
+      font-family: inherit;
+      font-size: 1.15rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
       color: #fff;
       border: none;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(245,158,11,0.4);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 30px rgba(245,158,11,0.45), 0 0 0 1px rgba(255,255,255,0.1) inset;
       transition: transform 0.15s, box-shadow 0.15s;
     }
 
-    button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(245,158,11,0.5);
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      transition: left 0.5s;
     }
 
-    button:active:not(:disabled) { transform: translateY(0); }
+    button:hover:not(:disabled)::before { left: 160%; }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(245,158,11,0.55);
+    }
+
+    button:active:not(:disabled) { transform: translateY(-1px); }
 
     button:disabled {
-      opacity: 0.5;
+      opacity: 0.45;
       cursor: not-allowed;
     }
 
     .result-banner {
       margin-top: 28px;
-      min-height: 64px;
+      min-height: 72px;
       text-align: center;
     }
 
     .result-banner .label {
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #94a3b8;
+      letter-spacing: 0.18em;
+      color: #64748b;
     }
 
     .result-banner .name {
-      font-size: 1.9rem;
-      font-weight: 800;
+      font-size: 2.1rem;
+      font-weight: 900;
       background: linear-gradient(90deg, #f59e0b, #ef4444);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 0 12px rgba(245,158,11,0.5));
+      animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     @keyframes pop {
-      0%   { transform: scale(0.5); opacity: 0; }
-      100% { transform: scale(1);   opacity: 1; }
+      0%   { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+      100% { transform: scale(1)   rotate(0deg);  opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-  <h1>🍜 WR Hangry Wheel</h1>
+<canvas id="bg-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
+
+<div class="content">
+  <h1>WR Hangry Wheel</h1>
   <p class="subtitle">Downtown Holland, MI</p>
 
-  <div class="wheel-container">
-    <div class="pointer"></div>
-    <canvas id="wheel" width="380" height="380"></canvas>
-    <div class="center-cap"></div>
+  <div class="wheel-wrapper">
+    <div class="glow-ring"></div>
+    <div class="wheel-container">
+      <div class="pointer-wrap">
+        <svg width="36" height="36" viewBox="0 0 36 36">
+          <polygon points="36,18 4,6 10,18 4,30" fill="#f59e0b"/>
+          <polygon points="36,18 4,6 10,18 4,30" fill="url(#pg)" opacity="0.6"/>
+          <defs>
+            <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fff" stop-opacity="0.7"/>
+              <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <canvas id="wheel" width="400" height="400"></canvas>
+      <div class="center-cap"></div>
+    </div>
   </div>
 
-  <button id="spinBtn" onclick="spin()">SPIN</button>
-
+  <button id="spinBtn" onclick="spin()">🎰 SPIN</button>
   <div class="result-banner" id="resultBanner"></div>
+</div>
 
-  <script>
-    const restaurants = [
-      { name: "OI Asian",      color: "#e11d48" },
-      { name: "Jimmy John's",  color: "#d97706" },
-      { name: "The Windmill",  color: "#059669" },
-      { name: "XYZ",           color: "#7c3aed" },
-    ];
+<script>
+// ─── Data ──────────────────────────────────────────────────────────────────
+const restaurants = [
+  { name: "OI Asian",     baseColor: "#e11d48", darkColor: "#9f1239", icon: "🍜" },
+  { name: "Jimmy John's", baseColor: "#d97706", darkColor: "#92400e", icon: "🥖" },
+  { name: "The Windmill", baseColor: "#059669", darkColor: "#065f46", icon: "🌷" },
+  { name: "XYZ",          baseColor: "#7c3aed", darkColor: "#4c1d95", icon: "✨" },
+];
 
-    const canvas  = document.getElementById('wheel');
-    const ctx     = canvas.getContext('2d');
-    const cx      = canvas.width  / 2;
-    const cy      = canvas.height / 2;
-    const radius  = cx - 4;
-    const slices  = restaurants.length;
-    const arc     = (2 * Math.PI) / slices;
+// ─── Starfield background ──────────────────────────────────────────────────
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx    = bgCanvas.getContext('2d');
+let stars = [];
 
-    let currentAngle = 0;   // radians, cumulative rotation
-    let spinning = false;
+function initStars() {
+  bgCanvas.width  = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+  stars = Array.from({length: 120}, () => ({
+    x: Math.random() * bgCanvas.width,
+    y: Math.random() * bgCanvas.height,
+    r: Math.random() * 1.5 + 0.3,
+    a: Math.random(),
+    speed: Math.random() * 0.008 + 0.003,
+    phase: Math.random() * Math.PI * 2,
+  }));
+}
 
-    function drawWheel(angle) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawBg(t) {
+  bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+  // Deep space gradient
+  const grad = bgCtx.createRadialGradient(
+    bgCanvas.width/2, bgCanvas.height/2, 0,
+    bgCanvas.width/2, bgCanvas.height/2, bgCanvas.width * 0.7
+  );
+  grad.addColorStop(0, '#0f172a');
+  grad.addColorStop(1, '#020617');
+  bgCtx.fillStyle = grad;
+  bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
 
-      for (let i = 0; i < slices; i++) {
-        const start = angle + i * arc;
-        const end   = start + arc;
-        const mid   = start + arc / 2;
+  stars.forEach(s => {
+    const alpha = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * s.speed * 60 + s.phase));
+    bgCtx.beginPath();
+    bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    bgCtx.fillStyle = `rgba(255,255,255,${alpha * 0.8})`;
+    bgCtx.fill();
+  });
+}
 
-        // Slice fill
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.arc(cx, cy, radius, start, end);
-        ctx.closePath();
-        ctx.fillStyle = restaurants[i].color;
-        ctx.fill();
+window.addEventListener('resize', initStars);
+initStars();
 
-        // Subtle border
-        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+// ─── Wheel canvas ─────────────────────────────────────────────────────────
+const canvas = document.getElementById('wheel');
+const ctx    = canvas.getContext('2d');
+const cx     = canvas.width  / 2;
+const cy     = canvas.height / 2;
+const radius = cx - 6;
+const slices = restaurants.length;
+const arc    = (2 * Math.PI) / slices;
 
-        // Label
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(mid);
-        ctx.textAlign = 'right';
-        ctx.fillStyle = '#fff';
-        ctx.font = `bold ${slices <= 4 ? 17 : 14}px 'Segoe UI', sans-serif`;
-        ctx.shadowColor = 'rgba(0,0,0,0.6)';
-        ctx.shadowBlur = 4;
-        ctx.fillText(restaurants[i].name, radius - 18, 6);
-        ctx.restore();
-      }
+let currentAngle = 0;
+let spinning = false;
 
-      // Outer ring
+function drawWheel(angle) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Outer chrome bezel
+  const bezel = ctx.createRadialGradient(cx-30, cy-30, radius*0.7, cx, cy, radius+6);
+  bezel.addColorStop(0, 'rgba(255,255,255,0.25)');
+  bezel.addColorStop(0.5, 'rgba(200,200,220,0.1)');
+  bezel.addColorStop(1, 'rgba(0,0,0,0.5)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius + 6, 0, Math.PI * 2);
+  ctx.fillStyle = bezel;
+  ctx.fill();
+
+  for (let i = 0; i < slices; i++) {
+    const start = angle + i * arc;
+    const end   = start + arc;
+    const mid   = start + arc / 2;
+    const r     = restaurants[i];
+
+    // Radial gradient per slice: bright center edge, dark outer
+    const sliceGrad = ctx.createRadialGradient(cx, cy, radius * 0.15, cx, cy, radius);
+    sliceGrad.addColorStop(0,   lighten(r.baseColor, 40));
+    sliceGrad.addColorStop(0.5, r.baseColor);
+    sliceGrad.addColorStop(1,   r.darkColor);
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, radius, start, end);
+    ctx.closePath();
+    ctx.fillStyle = sliceGrad;
+    ctx.fill();
+
+    // Separator lines with glow
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, radius, start, start + 0.002);
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Decorative dot row along the outer rim
+    for (let d = 0; d < 4; d++) {
+      const dotAngle = start + arc * (d + 1) / 5;
+      const dotR     = radius * 0.84;
+      const dx = cx + dotR * Math.cos(dotAngle);
+      const dy = cy + dotR * Math.sin(dotAngle);
       ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
-      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-      ctx.lineWidth = 5;
-      ctx.stroke();
+      ctx.arc(dx, dy, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.fill();
     }
 
-    // Audio context for click sounds
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Icon
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(mid);
+    ctx.font = '22px serif';
+    ctx.textAlign  = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(r.icon, radius * 0.72, 0);
+    ctx.restore();
 
-    function playClick(speed) {
-      const gain = audioCtx.createGain();
-      gain.connect(audioCtx.destination);
-      // Volume scales with speed — quiet when slow, crisp when fast
-      gain.gain.setValueAtTime(Math.min(0.35, 0.08 + speed * 0.8), audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+    // Label
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(mid);
+    ctx.textAlign    = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle    = '#fff';
+    ctx.font         = `bold 15px 'Montserrat','Segoe UI',sans-serif`;
+    ctx.shadowColor  = 'rgba(0,0,0,0.8)';
+    ctx.shadowBlur   = 6;
+    ctx.fillText(r.name, radius - 38, 0);
+    ctx.restore();
+  }
 
-      const osc = audioCtx.createOscillator();
-      osc.connect(gain);
-      // Pitch slightly higher at speed for a snappier feel
-      osc.frequency.setValueAtTime(1200 + speed * 400, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.04);
-      osc.type = 'square';
-      osc.start(audioCtx.currentTime);
-      osc.stop(audioCtx.currentTime + 0.04);
+  // Inner shadow vignette
+  const vig = ctx.createRadialGradient(cx, cy, radius * 0.55, cx, cy, radius);
+  vig.addColorStop(0,   'rgba(0,0,0,0)');
+  vig.addColorStop(1,   'rgba(0,0,0,0.22)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fillStyle = vig;
+  ctx.fill();
+
+  // Outer chrome ring
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  const ringGrad = ctx.createLinearGradient(cx - radius, cy, cx + radius, cy);
+  ringGrad.addColorStop(0,   'rgba(255,255,255,0.55)');
+  ringGrad.addColorStop(0.5, 'rgba(180,180,200,0.2)');
+  ringGrad.addColorStop(1,   'rgba(255,255,255,0.55)');
+  ctx.strokeStyle = ringGrad;
+  ctx.lineWidth   = 8;
+  ctx.stroke();
+}
+
+function lighten(hex, amount) {
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.min(255, (n >> 16) + amount);
+  const g = Math.min(255, ((n >> 8) & 0xff) + amount);
+  const b = Math.min(255, (n & 0xff) + amount);
+  return `rgb(${r},${g},${b})`;
+}
+
+// ─── Confetti ──────────────────────────────────────────────────────────────
+const cfCanvas = document.getElementById('confetti-canvas');
+const cfCtx    = cfCanvas.getContext('2d');
+let particles  = [];
+
+function launchConfetti() {
+  cfCanvas.width  = window.innerWidth;
+  cfCanvas.height = window.innerHeight;
+  const colors = ['#f59e0b','#ef4444','#10b981','#7c3aed','#3b82f6','#fff','#fbbf24'];
+  for (let i = 0; i < 160; i++) {
+    particles.push({
+      x:  cfCanvas.width  / 2 + (Math.random() - 0.5) * 200,
+      y:  cfCanvas.height / 2,
+      vx: (Math.random() - 0.5) * 14,
+      vy: -(Math.random() * 12 + 4),
+      w:  Math.random() * 10 + 5,
+      h:  Math.random() * 5  + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot:   Math.random() * Math.PI * 2,
+      rotV:  (Math.random() - 0.5) * 0.3,
+      alpha: 1,
+    });
+  }
+  requestAnimationFrame(animateConfetti);
+}
+
+function animateConfetti() {
+  cfCtx.clearRect(0, 0, cfCanvas.width, cfCanvas.height);
+  particles = particles.filter(p => p.alpha > 0.02);
+  particles.forEach(p => {
+    p.x   += p.vx;
+    p.y   += p.vy;
+    p.vy  += 0.35;
+    p.vx  *= 0.99;
+    p.rot += p.rotV;
+    p.alpha -= 0.013;
+    cfCtx.save();
+    cfCtx.globalAlpha = p.alpha;
+    cfCtx.translate(p.x, p.y);
+    cfCtx.rotate(p.rot);
+    cfCtx.fillStyle = p.color;
+    cfCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+    cfCtx.restore();
+  });
+  if (particles.length) requestAnimationFrame(animateConfetti);
+}
+
+// ─── Audio ─────────────────────────────────────────────────────────────────
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playClick(speed) {
+  const gain = audioCtx.createGain();
+  gain.connect(audioCtx.destination);
+  gain.gain.setValueAtTime(Math.min(0.3, 0.07 + speed * 0.7), audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+  const osc = audioCtx.createOscillator();
+  osc.connect(gain);
+  osc.frequency.setValueAtTime(1100 + speed * 350, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(280, audioCtx.currentTime + 0.04);
+  osc.type = 'square';
+  osc.start(audioCtx.currentTime);
+  osc.stop(audioCtx.currentTime + 0.04);
+}
+
+function playWinSound() {
+  [523, 659, 784, 1047].forEach((freq, i) => {
+    const t = audioCtx.currentTime + i * 0.13;
+    const osc  = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.frequency.value = freq;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.22, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+    osc.start(t); osc.stop(t + 0.35);
+  });
+}
+
+// ─── Spin logic ────────────────────────────────────────────────────────────
+function easeOut(t) { return 1 - Math.pow(1 - t, 4); }
+
+function spin() {
+  if (spinning) return;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('resultBanner').innerHTML = '';
+
+  const extraRotations = (6 + Math.random() * 5) * 2 * Math.PI;
+  const landingOffset  = Math.random() * 2 * Math.PI;
+  const totalDelta     = extraRotations + landingOffset;
+  const duration       = 4200 + Math.random() * 1500;
+  const startAngle     = currentAngle;
+  const startTime      = performance.now();
+
+  let lastSliceIndex = Math.floor(
+    ((2*Math.PI - ((currentAngle % (2*Math.PI) + 2*Math.PI) % (2*Math.PI))) % (2*Math.PI)) / arc
+  );
+
+  function frame(now) {
+    const elapsed = now - startTime;
+    const t       = Math.min(elapsed / duration, 1);
+    const easedT  = easeOut(t);
+
+    currentAngle = startAngle + totalDelta * easedT;
+    drawWheel(currentAngle);
+
+    const pointerAngle = (2*Math.PI - ((currentAngle % (2*Math.PI) + 2*Math.PI) % (2*Math.PI))) % (2*Math.PI);
+    const sliceIndex   = Math.floor(pointerAngle / arc) % slices;
+    if (sliceIndex !== lastSliceIndex) {
+      const speed = (totalDelta * (easeOut(Math.min((elapsed+16)/duration,1)) - easedT)) / 16;
+      playClick(Math.abs(speed) * 60);
+      lastSliceIndex = sliceIndex;
     }
 
-    function playWinSound() {
-      const notes = [523, 659, 784, 1047]; // C5 E5 G5 C6
-      notes.forEach((freq, i) => {
-        const t = audioCtx.currentTime + i * 0.12;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.frequency.value = freq;
-        osc.type = 'sine';
-        gain.gain.setValueAtTime(0.25, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-        osc.start(t); osc.stop(t + 0.3);
-      });
-    }
-
-    function easeOut(t) {
-      return 1 - Math.pow(1 - t, 4);
-    }
-
-    function spin() {
-      if (spinning) return;
-      // Resume audio context on first user gesture
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      spinning = true;
-      document.getElementById('spinBtn').disabled = true;
-      document.getElementById('resultBanner').innerHTML = '';
-
-      // Random full rotations (5-10) plus a random extra angle
-      const extraRotations = (5 + Math.random() * 5) * 2 * Math.PI;
-      const landingOffset  = Math.random() * 2 * Math.PI;
-      const totalDelta     = extraRotations + landingOffset;
-
-      const duration = 4000 + Math.random() * 1500; // 4–5.5s
-      const startAngle = currentAngle;
-      const startTime  = performance.now();
-
-      // Track slice crossings for click timing
-      let lastSliceIndex = Math.floor(
-        ((2 * Math.PI - ((currentAngle % (2*Math.PI) + 2*Math.PI) % (2*Math.PI))) % (2*Math.PI)) / arc
-      );
-
-      function frame(now) {
-        const elapsed = now - startTime;
-        const t = Math.min(elapsed / duration, 1);
-        const easedT = easeOut(t);
-
-        currentAngle = startAngle + totalDelta * easedT;
-        drawWheel(currentAngle);
-
-        // Fire click whenever the pointer crosses into a new slice
-        const pointerAngle = (2 * Math.PI - ((currentAngle % (2*Math.PI) + 2*Math.PI) % (2*Math.PI))) % (2*Math.PI);
-        const sliceIndex = Math.floor(pointerAngle / arc) % slices;
-        if (sliceIndex !== lastSliceIndex) {
-          // Approximate current angular speed (radians per ms)
-          const speed = (totalDelta * (easeOut(Math.min((elapsed+16)/duration,1)) - easedT)) / 16;
-          playClick(Math.abs(speed) * 60);
-          lastSliceIndex = sliceIndex;
-        }
-
-        if (t < 1) {
-          requestAnimationFrame(frame);
-        } else {
-          currentAngle = startAngle + totalDelta;
-          drawWheel(currentAngle);
-          spinning = false;
-          document.getElementById('spinBtn').disabled = false;
-          showResult();
-          playWinSound();
-        }
-      }
-
+    if (t < 1) {
       requestAnimationFrame(frame);
-    }
-
-    function showResult() {
-      // Pointer is at the 3 o'clock position (angle 0 in canvas terms = right).
-      // Normalize the wheel angle so we know which slice is under the pointer.
-      const normalized = ((currentAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-      // Pointer is at 0 rad. Slice i starts at normalized + i*arc.
-      // We want the slice where 0 falls:  0 >= start && 0 < end (mod 2π)
-      // Equivalently: find i where (-normalized mod 2π) / arc gives the index.
-      const pointerAngle = (2 * Math.PI - normalized) % (2 * Math.PI);
-      const index = Math.floor(pointerAngle / arc) % slices;
-
-      const winner = restaurants[index].name;
-      document.getElementById('resultBanner').innerHTML =
-        `<div class="label">Today's lunch:</div>
-         <div class="name">${winner} 🎉</div>`;
-    }
-
-    // Idle spin — slow continuous rotation until user hits SPIN
-    const IDLE_SPEED = 0.003; // radians per frame
-    let idleRunning = true;
-
-    function idleLoop() {
-      if (!idleRunning) return;
-      currentAngle += IDLE_SPEED;
+    } else {
+      currentAngle = startAngle + totalDelta;
       drawWheel(currentAngle);
-      requestAnimationFrame(idleLoop);
+      spinning = false;
+      document.getElementById('spinBtn').disabled = false;
+      showResult();
+      playWinSound();
+      launchConfetti();
     }
+  }
 
-    // Patch spin() to stop idle first
-    const _spin = spin;
-    spin = function () {
-      idleRunning = false;
-      _spin();
-    };
+  requestAnimationFrame(frame);
+}
 
-    idleLoop();
-  </script>
+function showResult() {
+  const normalized   = ((currentAngle % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI);
+  const pointerAngle = (2*Math.PI - normalized) % (2*Math.PI);
+  const index        = Math.floor(pointerAngle / arc) % slices;
+  const r            = restaurants[index];
+  document.getElementById('resultBanner').innerHTML =
+    `<div class="label">Today's lunch</div>
+     <div class="name">${r.icon} ${r.name}</div>`;
+}
+
+// ─── Idle spin ─────────────────────────────────────────────────────────────
+const IDLE_SPEED = 0.0025;
+let idleRunning  = true;
+
+function masterLoop(t) {
+  drawBg(t / 1000);
+  if (idleRunning) {
+    currentAngle += IDLE_SPEED;
+    drawWheel(currentAngle);
+  }
+  requestAnimationFrame(masterLoop);
+}
+
+const _spin = spin;
+spin = function() { idleRunning = false; _spin(); };
+
+requestAnimationFrame(masterLoop);
+</script>
 </body>
 </html>
