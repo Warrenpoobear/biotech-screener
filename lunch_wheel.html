@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Holland Lunch Wheel</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #fff;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: 0.03em;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: #94a3b8;
+      margin-bottom: 36px;
+      text-align: center;
+    }
+
+    .wheel-container {
+      position: relative;
+      width: 380px;
+      height: 380px;
+    }
+
+    /* Pointer triangle at the right edge */
+    .pointer {
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 18px solid transparent;
+      border-bottom: 18px solid transparent;
+      border-right: 34px solid #f59e0b;
+      filter: drop-shadow(0 0 6px rgba(245,158,11,0.7));
+      z-index: 10;
+    }
+
+    canvas {
+      display: block;
+      border-radius: 50%;
+      box-shadow: 0 0 0 6px rgba(255,255,255,0.08), 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    /* Center cap */
+    .center-cap {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #f8fafc, #cbd5e1);
+      border: 4px solid #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+      z-index: 5;
+      cursor: pointer;
+    }
+
+    button {
+      margin-top: 36px;
+      padding: 14px 48px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(245,158,11,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(245,158,11,0.5);
+    }
+
+    button:active:not(:disabled) { transform: translateY(0); }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .result-banner {
+      margin-top: 28px;
+      min-height: 64px;
+      text-align: center;
+    }
+
+    .result-banner .label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #94a3b8;
+    }
+
+    .result-banner .name {
+      font-size: 1.9rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes pop {
+      0%   { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🍜 Holland Lunch Wheel</h1>
+  <p class="subtitle">Downtown Holland, MI</p>
+
+  <div class="wheel-container">
+    <div class="pointer"></div>
+    <canvas id="wheel" width="380" height="380"></canvas>
+    <div class="center-cap"></div>
+  </div>
+
+  <button id="spinBtn" onclick="spin()">SPIN</button>
+
+  <div class="result-banner" id="resultBanner"></div>
+
+  <script>
+    const restaurants = [
+      { name: "OI Asian",      color: "#e11d48" },
+      { name: "Jimmy John's",  color: "#d97706" },
+      { name: "The Windmill",  color: "#059669" },
+      { name: "XYZ",           color: "#7c3aed" },
+    ];
+
+    const canvas  = document.getElementById('wheel');
+    const ctx     = canvas.getContext('2d');
+    const cx      = canvas.width  / 2;
+    const cy      = canvas.height / 2;
+    const radius  = cx - 4;
+    const slices  = restaurants.length;
+    const arc     = (2 * Math.PI) / slices;
+
+    let currentAngle = 0;   // radians, cumulative rotation
+    let spinning = false;
+
+    function drawWheel(angle) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < slices; i++) {
+        const start = angle + i * arc;
+        const end   = start + arc;
+        const mid   = start + arc / 2;
+
+        // Slice fill
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, radius, start, end);
+        ctx.closePath();
+        ctx.fillStyle = restaurants[i].color;
+        ctx.fill();
+
+        // Subtle border
+        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Label
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(mid);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#fff';
+        ctx.font = `bold ${slices <= 4 ? 17 : 14}px 'Segoe UI', sans-serif`;
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur = 4;
+        ctx.fillText(restaurants[i].name, radius - 18, 6);
+        ctx.restore();
+      }
+
+      // Outer ring
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+      ctx.lineWidth = 5;
+      ctx.stroke();
+    }
+
+    function easeOut(t) {
+      return 1 - Math.pow(1 - t, 4);
+    }
+
+    function spin() {
+      if (spinning) return;
+      spinning = true;
+      document.getElementById('spinBtn').disabled = true;
+      document.getElementById('resultBanner').innerHTML = '';
+
+      // Random full rotations (5-10) plus a random extra angle
+      const extraRotations = (5 + Math.random() * 5) * 2 * Math.PI;
+      const landingOffset  = Math.random() * 2 * Math.PI;
+      const totalDelta     = extraRotations + landingOffset;
+
+      const duration = 4000 + Math.random() * 1500; // 4–5.5s
+      const startAngle = currentAngle;
+      const startTime  = performance.now();
+
+      function frame(now) {
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed / duration, 1);
+        const easedT = easeOut(t);
+
+        currentAngle = startAngle + totalDelta * easedT;
+        drawWheel(currentAngle);
+
+        if (t < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          currentAngle = startAngle + totalDelta;
+          drawWheel(currentAngle);
+          spinning = false;
+          document.getElementById('spinBtn').disabled = false;
+          showResult();
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    function showResult() {
+      // Pointer is at the 3 o'clock position (angle 0 in canvas terms = right).
+      // Normalize the wheel angle so we know which slice is under the pointer.
+      const normalized = ((currentAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      // Pointer is at 0 rad. Slice i starts at normalized + i*arc.
+      // We want the slice where 0 falls:  0 >= start && 0 < end (mod 2π)
+      // Equivalently: find i where (-normalized mod 2π) / arc gives the index.
+      const pointerAngle = (2 * Math.PI - normalized) % (2 * Math.PI);
+      const index = Math.floor(pointerAngle / arc) % slices;
+
+      const winner = restaurants[index].name;
+      document.getElementById('resultBanner').innerHTML =
+        `<div class="label">Today's lunch:</div>
+         <div class="name">${winner} 🎉</div>`;
+    }
+
+    // Initial draw
+    drawWheel(0);
+  </script>
+</body>
+</html>
