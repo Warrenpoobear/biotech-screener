@@ -267,8 +267,25 @@
          <div class="name">${winner} 🎉</div>`;
     }
 
-    // Initial draw
-    drawWheel(0);
+    // Idle spin — slow continuous rotation until user hits SPIN
+    const IDLE_SPEED = 0.003; // radians per frame
+    let idleRunning = true;
+
+    function idleLoop() {
+      if (!idleRunning) return;
+      currentAngle += IDLE_SPEED;
+      drawWheel(currentAngle);
+      requestAnimationFrame(idleLoop);
+    }
+
+    // Patch spin() to stop idle first
+    const _spin = spin;
+    spin = function () {
+      idleRunning = false;
+      _spin();
+    };
+
+    idleLoop();
   </script>
 </body>
 </html>
