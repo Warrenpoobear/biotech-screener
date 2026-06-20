@@ -10,13 +10,12 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
-import math
+import math  # noqa: E402
 
-import pytest
-from backtest_signal_robustness import (
+import pytest  # noqa: E402
+from backtest_signal_robustness import (  # noqa: E402
     ALPHA_CLIP_MAX,
     ALPHA_CLIP_MIN,
-    DEFAULT_SHRINK_K,
     _avg_ranks,
     _build_summary,
     _extract_catalyst,
@@ -1374,6 +1373,8 @@ def _write_test_csv(path, rows):
 
 
 class TestExtendPriceCsv:
+    pytestmark = pytest.mark.slow
+
     def test_noop_when_current(self, tmp_path):
         """No fetch when all tickers already have data through target date."""
         csv_path = tmp_path / "prices.csv"
@@ -1858,6 +1859,8 @@ class TestExtendPriceCsv:
 
 
 class TestExtendPriceCsvSafe:
+    pytestmark = pytest.mark.slow
+
     def test_safe_wrapper_uses_backoff_handler(self, tmp_path, monkeypatch):
         """Safe wrapper integrates safe_download_per_ticker with backoff parameters."""
         import pandas as pd

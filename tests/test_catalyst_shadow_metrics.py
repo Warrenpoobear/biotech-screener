@@ -445,6 +445,8 @@ class TestComputeShadowMetrics:
 class TestIntegration:
     """Integration tests for shadow metrics in save_validation_snapshot."""
 
+    pytestmark = pytest.mark.slow
+
     def test_shadow_metrics_json_written(self, tmp_path):
         """Minimal save_validation_snapshot produces catalyst_shadow_metrics.json."""
         from run_screen import save_validation_snapshot

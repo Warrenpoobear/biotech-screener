@@ -445,6 +445,8 @@ class TestSpearman:
 
 
 class TestTrainAndEvaluate:
+    pytestmark = pytest.mark.slow
+
     def test_pairwise_e2e(self):
         snapshots = _make_snapshots(n_dates=18, n_per_date=20)
         config = RankerV2Config(

@@ -20,8 +20,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 
-from sec_13f.edgar_13f import Filing13F, Holding, SEC13FFetcher
-from tools.warm_13f_cache import (
+from sec_13f.edgar_13f import Filing13F, Holding, SEC13FFetcher  # noqa: E402
+from tools.warm_13f_cache import (  # noqa: E402
     CACHE_TYPE,
     FILINGS_LOOKBACK_N,
     SCHEMA_VERSION,
@@ -479,6 +479,7 @@ class TestValidateSchema:
 
 
 class TestRateLimiter:
+    pytestmark = pytest.mark.slow
 
     def test_sequential_spacing(self):
         rl = RateLimiter(rate=20.0)  # 20/s = 50ms interval (well above Windows timer precision)
@@ -711,7 +712,7 @@ class TestCheck13FCacheHealth:
 # Tests: Monthly cadence date generation (Part 2A)
 # ---------------------------------------------------------------------------
 
-from tools.warm_13f_cache import generate_cadence_dates, generate_month_end_dates, generate_quarter_end_dates
+from tools.warm_13f_cache import generate_cadence_dates, generate_month_end_dates, generate_quarter_end_dates  # noqa: E402
 
 
 class TestCadenceDateGeneration:

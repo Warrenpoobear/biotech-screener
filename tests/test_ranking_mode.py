@@ -24,9 +24,11 @@ from typing import Any, Dict, List
 import pandas as pd
 import pytest
 
+pytestmark = pytest.mark.slow
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from run_screen import (
+from run_screen import (  # noqa: E402
     PHASE2_PORTFOLIO_COLUMNS,
     PORTFOLIO_POSITIONS_COLUMNS,
     POSITIONS_TOP_K,

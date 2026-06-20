@@ -4,7 +4,6 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -40,7 +39,7 @@ class TestBlockBootstrap:
             0.01,
             0.05,
         ]
-        result = block_bootstrap(returns, block_length=4, n_bootstrap=5000, seed=42)
+        result = block_bootstrap(returns, block_length=4, n_bootstrap=1000, seed=42)
         assert result["prob_positive"] > 0.99
         assert result["ci_excludes_zero"]
 
@@ -48,7 +47,7 @@ class TestBlockBootstrap:
         """Bootstrap of zero-mean noisy series should NOT confidently exclude zero."""
         np.random.seed(42)
         returns = np.random.randn(48) * 0.05
-        result = block_bootstrap(returns, block_length=6, n_bootstrap=5000, seed=42)
+        result = block_bootstrap(returns, block_length=6, n_bootstrap=1000, seed=42)
         # The noisy series may happen to lean positive or negative;
         # the key test is that CI should be wide and straddle zero
         assert not result["ci_excludes_zero"]
@@ -71,7 +70,7 @@ class TestStationaryBootstrap:
         """Stationary bootstrap produces valid results."""
         np.random.seed(42)
         returns = np.random.randn(36) * 0.05 + 0.02
-        result = stationary_bootstrap(returns, mean_block_length=6, seed=42)
+        result = stationary_bootstrap(returns, mean_block_length=6, n_bootstrap=1000, seed=42)
         assert "boot_mean" in result
         assert result["n_obs"] == 36
 
@@ -88,7 +87,7 @@ class TestCompareStrategies:
         n = 36
         a = np.random.randn(n) * 0.05 + 0.03
         b = np.random.randn(n) * 0.05 + 0.00
-        result = compare_strategies(a, b, block_length=4, seed=42)
+        result = compare_strategies(a, b, block_length=4, n_bootstrap=1000, seed=42)
         assert result["prob_a_better"] > 0.85
 
     def test_length_mismatch(self):

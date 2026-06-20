@@ -161,6 +161,8 @@ class TestPathTraversalProtection:
 class TestOperationTimeout:
     """Tests for operation timeout utilities."""
 
+    pytestmark = pytest.mark.slow
+
     @pytest.mark.skipif(os.name != "posix", reason="SIGALRM not available on Windows")
     def test_operation_timeout_completes_in_time(self):
         """Operations completing in time should succeed."""
