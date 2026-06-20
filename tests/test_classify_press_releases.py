@@ -234,10 +234,11 @@ class TestClassificationPriority:
         r = _classify_locally("FDA Accepts Phase 3 Topline Data Submission")
         assert r["event_category"] == "clinical"
 
-    def test_informational_beats_clinical(self):
-        """Informational filter runs before clinical keywords."""
+    def test_clinical_beats_informational_for_phase3_conference(self):
+        """Phase 3 data conference headlines are clinical catalysts, not informational."""
         r = _classify_locally("Company to Present Phase 3 Data at Investor Conference")
-        assert r["informational_only"] is True
+        assert r["informational_only"] is False
+        assert r["event_category"] == "clinical"
 
 
 # ---------------------------------------------------------------------------

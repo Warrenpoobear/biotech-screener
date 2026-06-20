@@ -16,8 +16,6 @@ import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from run_phase2_daily import assert_outputs_exist, build_command, format_summary, main, read_health_json
@@ -39,10 +37,20 @@ def _write_health_json(snap_dir: Path, date: str, status: str, reasons: list[str
     }
     p = d / "phase2_health.json"
     p.write_text(json.dumps(health))
-    # Sibling files expected by assert_outputs_exist (rankings.csv must be >= 100 bytes)
+    # Sibling files expected by assert_outputs_exist with current size floors.
     csv_header = "ticker,composite_score,rank,tier\n"
     csv_rows = "".join(f"TICK{i:02d},0.{i:02d},{i},B\n" for i in range(10))
     (d / "rankings.csv").write_text(csv_header + csv_rows)
+    (d / "decision_portfolio.csv").write_text(csv_header + csv_rows)
+    screen_output = {
+        "as_of_date": date,
+        "decision_mode": "phase2",
+        "rows": [
+            {"ticker": f"TICK{i:02d}", "composite_score": f"0.{i:02d}", "rank": i, "tier": "B"}
+            for i in range(120)
+        ],
+    }
+    (d / "screen_output.json").write_text(json.dumps(screen_output))
     (d / "metadata.json").write_text(json.dumps({"as_of_date": date}))
     return p
 

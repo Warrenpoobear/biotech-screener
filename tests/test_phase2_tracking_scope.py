@@ -6,13 +6,12 @@ not a brevity-truncated 10-holding subset.
 """
 
 import json
-import tempfile
 from pathlib import Path
 
 
 def test_phase2_day1_tracks_all_30_holdings():
     """Verify that Phase 2 Day 1 artifacts contain all 30 holdings from canonical snapshot."""
-    artifacts_dir = Path("artifacts/portfolio_policy_forward_test/2026-06-01")
+    artifacts_dir = Path(__file__).parent / "fixtures" / "portfolio_policy_forward_test" / "2026-06-01"
 
     assert artifacts_dir.exists(), f"Day 1 artifacts not found: {artifacts_dir}"
 
@@ -77,9 +76,9 @@ def test_phase2_day1_tracks_all_30_holdings():
         )
 
     # Verify all tickers are unique
-    assert len(set(actual_tickers)) == 30, f"Duplicate tickers found. Expected 30 unique holdings."
+    assert len(set(actual_tickers)) == 30, "Duplicate tickers found. Expected 30 unique holdings."
 
-    print(f"✓ Phase 2 Day 1 tracks all 30 canonical holdings")
+    print("✓ Phase 2 Day 1 tracks all 30 canonical holdings")
     print(f"  Tickers: {', '.join(actual_tickers[:5])}...{', '.join(actual_tickers[-5:])}")
 
 

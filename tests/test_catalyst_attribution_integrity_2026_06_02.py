@@ -13,6 +13,13 @@ Governance: Tests-first remediation for systemic classifier issues identified 20
 import json
 from pathlib import Path
 
+import pytest
+
+CLASSIFIED_ARTIFACT = Path("data/press_releases/classified/classified_2026-06-01.jsonl")
+SNAPSHOT_ARTIFACT = Path("data/snapshots/2026-06-01/rankings.csv")
+CLASSIFIED_MISSING_REASON = "Herald classified artifact is gitignored runtime data"
+SNAPSHOT_MISSING_REASON = "2026-06-01 snapshot is gitignored runtime data"
+
 
 def test_clinical_event_classification_phase3_rvmd():
     """RVMD Phase 3 RASolute 302-style event must classify as clinical."""
@@ -142,6 +149,7 @@ def test_collision_scoring_exclusion_alks():
     assert is_rejected, "Competitor company collision must be rejected from CRT intake"
 
 
+@pytest.mark.skipif(not CLASSIFIED_ARTIFACT.exists(), reason=CLASSIFIED_MISSING_REASON)
 def test_cogt_trace_no_impact_assumption():
     """COGT: Trace whether needs_review=True events affected catalyst scoring.
 
@@ -178,10 +186,11 @@ def test_cogt_trace_no_impact_assumption():
     return cogt_trace
 
 
+@pytest.mark.skipif(not SNAPSHOT_ARTIFACT.exists(), reason=SNAPSHOT_MISSING_REASON)
 def test_snapshot_smoke_rvmd_catalyst_days():
     """RVMD: Before/after catalyst_days after remediation."""
     # Load 2026-06-01 snapshot
-    snapshot_path = Path("data/snapshots/2026-06-01/rankings.csv")
+    snapshot_path = SNAPSHOT_ARTIFACT
     assert snapshot_path.exists(), "Snapshot must exist for smoke test"
 
     # Find RVMD catalyst fields
@@ -195,9 +204,10 @@ def test_snapshot_smoke_rvmd_catalyst_days():
     ), "RVMD catalyst_days should reflect Phase 3 event (may need upstream review)"
 
 
+@pytest.mark.skipif(not SNAPSHOT_ARTIFACT.exists(), reason=SNAPSHOT_MISSING_REASON)
 def test_snapshot_smoke_celc_catalyst_days():
     """CELC: Before/after catalyst_days after remediation."""
-    snapshot_path = Path("data/snapshots/2026-06-01/rankings.csv")
+    snapshot_path = SNAPSHOT_ARTIFACT
     celc_data = _load_snapshot_ticker_row(snapshot_path, "CELC")
 
     # CELC catalyst_days=29 (near-term, in-window, binary_now)
@@ -205,9 +215,10 @@ def test_snapshot_smoke_celc_catalyst_days():
     assert celc_data["catalyst_days"] == 29, "CELC catalyst_days should reflect Phase 3 cohort event"
 
 
+@pytest.mark.skipif(not SNAPSHOT_ARTIFACT.exists(), reason=SNAPSHOT_MISSING_REASON)
 def test_snapshot_smoke_eras_collision_exclusion():
     """ERAS: Collision-flagged events must not contribute to catalyst_days."""
-    snapshot_path = Path("data/snapshots/2026-06-01/rankings.csv")
+    snapshot_path = SNAPSHOT_ARTIFACT
     eras_data = _load_snapshot_ticker_row(snapshot_path, "ERAS")
 
     # Before: catalyst_days=183 (collision-contaminated)
@@ -219,9 +230,10 @@ def test_snapshot_smoke_eras_collision_exclusion():
     return {"ticker": "ERAS", "catalyst_days": eras_data["catalyst_days"], "before": 183}
 
 
+@pytest.mark.skipif(not SNAPSHOT_ARTIFACT.exists(), reason=SNAPSHOT_MISSING_REASON)
 def test_snapshot_smoke_drug_collision_exclusion():
     """DRUG: Collision-flagged events should not inflate catalyst_days."""
-    snapshot_path = Path("data/snapshots/2026-06-01/rankings.csv")
+    snapshot_path = SNAPSHOT_ARTIFACT
     drug_data = _load_snapshot_ticker_row(snapshot_path, "DRUG")
 
     # Before: catalyst_days=153 (67% collision-contaminated)
@@ -231,9 +243,10 @@ def test_snapshot_smoke_drug_collision_exclusion():
     return {"ticker": "DRUG", "catalyst_days": drug_data["catalyst_days"], "before": 153}
 
 
+@pytest.mark.skipif(not SNAPSHOT_ARTIFACT.exists(), reason=SNAPSHOT_MISSING_REASON)
 def test_snapshot_smoke_mbx_clean_control():
     """MBX: Clean negative control (should remain unchanged)."""
-    snapshot_path = Path("data/snapshots/2026-06-01/rankings.csv")
+    snapshot_path = SNAPSHOT_ARTIFACT
     mbx_data = _load_snapshot_ticker_row(snapshot_path, "MBX")
 
     # MBX should remain unchanged (legitimate events, no collisions)
@@ -301,7 +314,7 @@ def _load_classified_events(ticker: str) -> list:
     """Load classified events for a specific ticker."""
     events = []
     try:
-        with open("data/press_releases/classified/classified_2026-06-01.jsonl") as f:
+        with open(CLASSIFIED_ARTIFACT) as f:
             for line in f:
                 evt = json.loads(line)
                 if evt.get("ticker", "").upper() == ticker.upper():

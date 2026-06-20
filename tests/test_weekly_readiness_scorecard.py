@@ -59,6 +59,7 @@ def _perf_row(date, excess, turnover=0.05, ruleset_id="7177a4ea"):
         "date": date,
         "excess_vs_xbi_pct": str(excess) if excess is not None else "",
         "turnover": str(turnover),
+        "n_missing_price": "0",
         "ruleset_id": ruleset_id,
     }
 
