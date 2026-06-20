@@ -43,11 +43,11 @@ testpaths = ["tests"]
 pythonpath = [".", "tests"]
 python_files = "test_*.py"
 python_functions = "test_*"
-addopts = "-q -m 'not network'"
+addopts = "-q -m 'not network and not slow'"
 timeout = 120
 timeout_method = "thread"
 markers = [
-    "slow: marks tests that run the full pipeline or take >5s (deselect with '-m \"not slow\"')",
+    "slow: marks opt-in tests that run the full pipeline, integration smoke suites, or other long checks",
     "network: marks tests that make live HTTP calls to external APIs (deselect with '-m \"not network\"')",
     "timeout: override the default per-test timeout (seconds)",
 ]
