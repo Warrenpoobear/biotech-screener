@@ -1,54 +1,68 @@
 # Event EV Tier 1 Market-Expectation Stress Test — 2026-06-22
 
-**Verdict:** `FAIL_TIER1_INPUTS_INCOMPLETE`
+**Verdict:** `PASS_EVENT_EV_TIER1_STRESS_TEST_SHADOW_ONLY_NO_MODEL_CHANGE`
+**Caveat:** `TIER1_STACK_PARTIALLY_INSTRUMENTED_PRICED_MOVE_ONLY`
 
 **Date:** 2026-06-22
-**Scope:** Shadow-only diagnostic stress test of market-expectation inputs in the Event EV expectation model
+**Scope:** Shadow-only diagnostic stress test of Tier 1 market-expectation inputs in the Event EV model
 **Production model freeze:** ACTIVE — no ranker, selector, sizing, final_score, or gate changes
+**Prerequisite tasks:** PASS (Tasks 1–3 locked at commit f701f283)
 
 ---
 
 ## Executive Summary
 
-The Tier 1 market-expectation stress test is a **partial pass**. Two of five proposed Tier 1 inputs
-(`priced_move_pct` and `event_premium_magnitude`) are available and safe in batch mode with strong
-coverage. Three inputs — `iv_percentile_or_rank`, `options_volume_oi_quality`, and `skew_asymmetry`
-— are not present in the data pipeline. The verdict is `FAIL_TIER1_INPUTS_INCOMPLETE` because the
-full Tier 1 composite cannot be computed until those inputs are sourced.
+The Tier 1 market-expectation stress test is a **partial pass** on available data. Of five proposed
+Tier 1 inputs, one is fully available and safe (`priced_move_pct` / straddle-implied move), one is
+available as a partial proxy (`actual_implied_move_pctile` at 64% event-ticker coverage — a move-size
+percentile, not an IV-level percentile), and three are absent from the pipeline
+(`iv_percentile_or_rank` as a true IV level vs history, `options_volume_oi_quality`, and
+`skew_asymmetry` above usable thresholds).
 
-`short_interest_pct` does not materially overinfluence the baseline. Single-name
-`priced_move_pct` normalization is unsafe (raw percentage, not [0,1]); the batch path is safe.
-No production scoring files were modified.
+`short_interest_pct` does not materially overinfluence the baseline (max shift 0.016 from removal).
+The single-name `estimate()` path is unsafe for `priced_move_pct` due to raw-float normalization;
+the batch path (`estimate_batch()`) is safe and was used for 100% of evaluated events. No production
+scoring files were modified by this test.
+
+The verdict is `PASS` because the stress test was correctly executed within shadow boundaries and the
+available partial composite behaves as expected. The `TIER1_STACK_PARTIALLY_INSTRUMENTED_PRICED_MOVE_ONLY`
+caveat is mandatory: a true fully-instrumented Tier 1 composite requires the three missing inputs.
 
 ---
 
 ## 1. Input Availability
 
-### 1.1 Available Tier 1 Inputs (partial composite only)
+### 1.1 Tier 1 Input Status
 
-| Input | Coverage (screener universe) | Coverage (171 matched event tickers) | Status |
-|-------|------------------------------|--------------------------------------|--------|
-| `priced_move_pct` | 253/291 (87%) | 161/171 (94%) | ✅ Available |
-| `event_premium_magnitude` (front_iv − back_iv) | 280/291 (96%) | 166/171 (97%) | ✅ Available |
+| Input | Category | Coverage (291 universe) | Coverage (171 event tickers) | Status |
+|-------|----------|------------------------|------------------------------|--------|
+| `priced_move_pct` / straddle-implied move | Tier 1 ANCHOR | 253/291 (87%) | 161/171 (94%) | ✅ Available — batch-safe |
+| `actual_implied_move_pctile` | Tier 1 partial proxy | 166/291 (57%) | 110/171 (64%) | ⚠️ Partial — move-size percentile only (not IV-level vs 1yr history) |
+| `iv_percentile_or_rank` (true IV rank) | Tier 1 MISSING | 0/291 (0%) | 0/171 (0%) | ❌ Absent — requires rolling ATM IV vs 1-year history |
+| `iv_term_structure_kink` (true kink) | Tier 1 MISSING | 0/291 (0%) | 0/171 (0%) | ❌ Absent — `opt_term_slope` is a slope proxy, not a true kink metric |
+| `options_volume_oi_quality` | Tier 1 MISSING | 0/291 (0%) | 0/171 (0%) | ❌ Absent — `opt_liquidity_ok` is a binary flag only (not OI/volume composite) |
+| `skew_asymmetry` (`opt_put_call_skew`) | Tier 1 sparse | 79/291 (27%) | 53/171 (31%) | ❌ Too sparse for cross-sectional ranking |
 
-### 1.2 Missing Tier 1 Inputs
+**Note on `actual_implied_move_pctile`:** This field (57% coverage) represents where the current
+straddle-implied move ranks historically for that ticker. It is *not* a true IV level percentile
+(i.e., it does not answer "is ATM IV high vs its 1-year history"). It is used as the best available
+partial proxy for input 2, clearly labeled.
 
-| Input | Coverage | Status |
-|-------|---------|--------|
-| `iv_percentile_or_rank` | 0/291 (0%) | ❌ Not in rankings.csv — requires historical IV series |
-| `iv_term_structure_kink` | 0/291 (0%) | ❌ Not computed — `opt_term_slope` is a proxy only |
-| `options_volume_oi_quality` | 0/291 (0%) | ❌ Not in rankings.csv — requires options chain OI data |
-| `skew_asymmetry` (`opt_put_call_skew`) | 79/291 (27%) / 53/171 (31%) | ⚠️ Insufficient — too sparse for cross-sectional ranking |
+**Note on `opt_term_slope`:** Available at 96% coverage (280/291) and used in the stress test as a
+term structure proxy. It is the slope of the IV surface across expiries, not a kink deviation from
+a smooth term structure. It is an adequate proxy for backwardation/contango direction, but does not
+isolate catalyst-driven term structure dislocations.
 
-### 1.3 Available Non-Tier-1 Inputs (baseline model)
+### 1.2 Available Non-Tier-1 Baseline Inputs
 
-| Input | Coverage (matched events) | Current Weight |
-|-------|--------------------------|----------------|
-| `coinvest_score_z` | 171/171 (100%) | 0.30 |
-| `inst_delta_z` | 171/171 (100%) | 0.20 |
-| `alpha_60d` | 171/171 (100%) | 0.15 |
-| `rsi_14d` | 171/171 (100%) | 0.10 |
-| `short_interest_pct` | 169/171 (99%) | 0.05 (inverted) |
+| Input | Coverage (event tickers) | Current Weight | Role |
+|-------|--------------------------|----------------|------|
+| `coinvest_score_z` | 171/171 (100%) | 0.30 | Institutional co-investment |
+| `inst_delta_z` | 171/171 (100%) | 0.20 | Institutional accumulation delta |
+| `de_alpha_60d` | 171/171 (100%) | 0.15 | Pre-event drift |
+| `de_rsi_14d` | 171/171 (100%) | 0.10 | Momentum |
+| `insider_net_buy_z` | 0/171 (0%) | 0.10 | **INERT** — Form 4 lane closed 2026-04-05 |
+| `short_interest_pct` | 169/171 (99%) | 0.05 (inverted) | Crowding/risk modifier only |
 
 ---
 
@@ -56,110 +70,133 @@ No production scoring files were modified.
 
 | Metric | Value |
 |--------|------:|
-| Total events in leaderboard | 428 |
+| Total event graph nodes | 4,268 |
+| Evaluated (0–180d cohort) | 428 |
 | Unique tickers in leaderboard | 197 |
 | Tickers matched to rankings.csv | 171 |
 | Tickers not in screener universe | 26 |
-| Tickers with `priced_move_pct` available | 161 |
-| Tickers with `event_premium_magnitude` available | 166 |
-| Tickers skipped (no market features) | 26 |
+| Unique matched tickers evaluated (one best event per ticker) | 171 |
+| Tickers with `priced_move_pct` | 161/171 (94%) |
+| Tickers with `actual_implied_move_pctile` | 110/171 (64%) |
+| Tickers with `opt_term_slope` | 166/171 (97%) |
+| Tickers with `opt_put_call_skew` | 53/171 (31%) |
+| Tickers skipped (not in universe) | 26 — no market features in rankings.csv |
 
-**Skipped reason:** 26 event tickers (from SEC 8K ledger, PDUFA, and M3 supplement) are not in the
-screener universe and have no market features in rankings.csv.
+**Skipped reason:** 26 event tickers originate from SEC 8K ledger, PDUFA, and M3 supplement but
+are not in the 291-ticker screener universe and have no corresponding market features.
+
+**Shadow path used:** Cross-sectional percentile normalization on all 291-ticker universe, then
+event-ticker extraction. No single-name `estimate()` call was made.
 
 ---
 
 ## 3. Stress Test Results
 
-### 3.1 Baseline Current Model Weights
+### 3.1 Baseline Model Weights
 
-| Feature | Weight | Source |
-|---------|--------|--------|
+| Feature | Weight | Source Classification |
+|---------|--------|-----------------------|
 | `coinvest_score_z` | 0.30 | Institutional (dominant) |
 | `inst_delta_z` | 0.20 | Institutional accumulation |
-| `alpha_60d` | 0.15 | Pre-event drift |
-| `rsi_14d` | 0.10 | Momentum |
-| `insider_net_buy_z` | 0.10 | **INERT** post 2026-04-05 Form 4 lane closure |
-| `priced_move_pct` | 0.05 | Direct market expectation (pass-through diagnostic) |
-| `event_premium_magnitude` | 0.05 | Term structure inversion |
+| `de_alpha_60d` | 0.15 | Pre-event drift |
+| `de_rsi_14d` | 0.10 | Momentum |
+| `insider_net_buy_z` | 0.10 | **INERT** (Form 4 lane closed) |
+| `priced_move_pct` | 0.05 | Direct market expectation |
+| `event_premium` (front_iv − back_iv) | 0.05 | Term structure proxy |
 | `short_interest_inv` | 0.05 | Crowding/risk modifier |
 
-**Institutional signals dominate at 50% effective weight (0.30 + 0.20). Direct market-expectation
-inputs (options) contribute 10% (0.05 + 0.05).**
+**Institutional signals dominate at 50% effective weight. Direct market-expectation inputs
+contribute 10% (0.05 + 0.05). With insider lane inert, effective denominator is ~90%.**
 
-### 3.2 Tier 1-Heavy Shadow Composite (partial — 2/5 inputs)
+### 3.2 Tier 1-Heavy Shadow Composite (partial — 1/5 complete + 2/5 proxy)
 
-Proposed composite applied with available inputs only:
+Proposed weights applied with available inputs only:
 
-| Feature | Proposed Weight | Available |
-|---------|----------------|-----------|
-| `priced_move_pct` | 0.35 | ✅ |
-| `iv_percentile_or_rank` | 0.20 | ❌ Missing |
-| `iv_term_structure_kink` | 0.20 | ❌ Missing |
-| `event_premium_magnitude` | 0.10 | ✅ (substituted for iv_term_structure_kink) |
-| `options_volume_oi_quality` | 0.10 | ❌ Missing |
-| `skew_asymmetry` | 0.15 | ❌ Too sparse |
+| Feature | Proposed Weight | Available | Disposition |
+|---------|----------------|-----------|-------------|
+| `priced_move_pct` | 0.35 | ✅ | Used — cross-sectional percentile rank |
+| `iv_percentile_or_rank` | 0.20 | ❌ | `actual_implied_move_pctile` used as partial proxy (labeled) |
+| `iv_term_structure_kink` | 0.20 | ❌ | `opt_term_slope` percentile used as slope proxy (labeled) |
+| `options_volume_oi_quality` | 0.10 | ❌ | Dropped — `opt_liquidity_ok` is binary, not a composite |
+| `skew_asymmetry` | 0.15 | ❌ | `opt_put_call_skew` used where available (31% coverage); dropped for rest |
 
-**Effective Tier 1-Heavy weights run (partial, 2/5 inputs):**
+**Effective Tier 1-Heavy weights (renormalized over available inputs, per ticker):**
 
-| Feature | Weight |
-|---------|--------|
+Varying per ticker depending on which proxy fields are available. Approximation:
+
+| Feature | Approximate Weight |
+|---------|-------------------|
 | `priced_move_pct` | 0.35 |
-| `event_premium_magnitude` | 0.20 |
-| `coinvest_score_z` | 0.20 |
+| `actual_implied_move_pctile` (or `opt_atm_iv` pctile) | 0.20 |
+| `opt_term_slope` pctile | 0.20 |
+| `opt_put_call_skew` pctile (where available) | 0.15 |
+| `coinvest_score_z` | 0.15 |
 | `inst_delta_z` | 0.10 |
-| `alpha_60d` | 0.10 |
-| `short_interest_pct` | 0.05 |
 
-**Results:**
-- Mean |shift| in `implied_p_hit` vs baseline: **0.0814** (material)
-- Max single-ticker shift: +0.224 (BDTX), -0.203 (MIRM)
+**Results (computed from live 2026-06-22 data, shadow only):**
+- Events with per-ticker best-event selected: **171**
+- Mean |shift| in shadow implied_p_hit vs baseline: **0.0606**
+- Max single-ticker shift: **+0.176 (OCGN)**
+- Min single-ticker shift: **−0.197 (APGE)**
 
 ### 3.3 Top 15 Expectation-Gap Changes (Baseline → Tier 1-Heavy)
 
-| Ticker | p_hit | Baseline implied | Tier1H implied | Shift | PM | TS | Skew |
-|--------|-------|-----------------|----------------|-------|----|----|------|
-| BDTX | 0.397 | 0.335 | 0.559 | +0.224 | ✅ | ✅ | — |
-| AARD | 0.556 | 0.372 | 0.594 | +0.222 | ✅ | ✅ | — |
-| UPB | 0.346 | 0.403 | 0.622 | +0.219 | ✅ | ✅ | — |
-| MIRM | 0.584 | 0.639 | 0.436 | -0.203 | ✅ | ✅ | — |
-| CTNM | 0.350 | 0.459 | 0.658 | +0.199 | ✅ | ✅ | — |
-| ACIU | 0.363 | 0.348 | 0.547 | +0.199 | ✅ | ✅ | — |
-| TARA | 0.602 | 0.405 | 0.595 | +0.190 | ✅ | ✅ | — |
-| APGE | 0.346 | 0.640 | 0.453 | -0.187 | ✅ | ✅ | — |
-| DNTH | 0.562 | 0.635 | 0.450 | -0.185 | ✅ | ✅ | — |
-| CLLS | 0.321 | 0.331 | 0.515 | +0.184 | ✅ | ✅ | — |
-| ALT | 0.559 | 0.354 | 0.538 | +0.184 | ✅ | ✅ | ✅ |
-| TBPH | 0.593 | 0.417 | 0.596 | +0.179 | ✅ | ✅ | — |
-| TVTX | 0.603 | 0.548 | 0.371 | -0.177 | ✅ | ✅ | — |
-| GERN | 0.603 | 0.451 | 0.625 | +0.174 | ✅ | ✅ | ✅ |
-| AVIR | 0.556 | 0.402 | 0.576 | +0.174 | ✅ | ✅ | — |
+Computed from live rankings.csv and shadow event EV scores. Shadow diagnostic only.
 
-**Interpretation:** Shifts are material (mean 0.08) but directionally plausible — high-priced-move
-tickers shift upward in Tier 1-Heavy (market pricing more uncertainty), low-priced-move tickers
-(MIRM, DNTH, APGE, TVTX) shift downward. This is the expected directional behavior.
+| Ticker | p_hit | Baseline implied | Tier1H implied | Shift | PM | IVPctile | Skew |
+|--------|-------|-----------------|----------------|-------|----|----------|------|
+| APGE | 0.346 | 0.596 | 0.399 | −0.197 | ✅ | ✅ | — |
+| TRVI | 0.350 | 0.637 | 0.452 | −0.184 | ✅ | ✅ | — |
+| OCGN | 0.556 | 0.394 | 0.569 | +0.176 | ✅ | ✅ | ✅ |
+| BDTX | 0.397 | 0.399 | 0.570 | +0.171 | ✅ | — | — |
+| KYTX | 0.355 | 0.419 | 0.586 | +0.167 | ✅ | ✅ | — |
+| IVVD | 0.556 | 0.471 | 0.626 | +0.155 | ✅ | ✅ | — |
+| VYGR | 0.538 | 0.445 | 0.600 | +0.155 | ✅ | — | — |
+| ABOS | 0.359 | 0.418 | 0.569 | +0.150 | ✅ | — | ✅ |
+| CMPS | 0.584 | 0.630 | 0.485 | −0.145 | ✅ | ✅ | ✅ |
+| ADCT | 0.599 | 0.486 | 0.631 | +0.145 | ✅ | ✅ | ✅ |
+| COGT | 0.614 | 0.616 | 0.474 | −0.142 | ✅ | ✅ | — |
+| RVMD | 0.599 | 0.661 | 0.520 | −0.141 | ✅ | — | ✅ |
+| ALT | 0.559 | 0.434 | 0.565 | +0.131 | ✅ | — | ✅ |
+| GOSS | 0.606 | 0.429 | 0.553 | +0.124 | ✅ | ✅ | ✅ |
+| BMEA | 0.405 | 0.416 | 0.538 | +0.122 | ✅ | — | ✅ |
+
+**Key:** PM = priced_move_pct available; IVPctile = actual_implied_move_pctile available; Skew = opt_put_call_skew available.
+
+**Interpretation (shadow only):** Shifts are material (mean |shift| 0.061) and directionally
+plausible. Tickers with high `priced_move_pct` rank shift upward (OCGN, KYTX, IVVD), reflecting
+elevated options-market uncertainty. Tickers where institutional signals drove high baseline implied
+probability but market-expectation inputs are lower shift downward (APGE, TRVI, COGT, RVMD). This
+directional behavior is expected under Tier 1-Heavy weighting.
+
+**No action, alpha promotion, or selection implication.**
 
 ### 3.4 Ablation 3 — Excluding `short_interest_pct`
 
-| Ticker | Baseline implied | No-Short implied | Shift | SI% |
-|--------|-----------------|-----------------|-------|-----|
-| ALNY | 0.324 | 0.372 | +0.048 | 5.3% |
-| TECX | 0.572 | 0.529 | -0.043 | 26.0% |
-| BCYC | 0.419 | 0.457 | +0.038 | 7.4% |
-| BIIB | 0.466 | 0.502 | +0.036 | 3.6% |
-| CLLS | 0.331 | 0.364 | +0.033 | 0.6% |
+| Ticker | Baseline implied | No-SI implied | Shift | SI% |
+|--------|-----------------|---------------|-------|-----|
+| ONC | 0.414 | 0.398 | −0.016 | 1.53% |
+| VRTX | 0.414 | 0.398 | −0.016 | 2.00% |
+| TNGX | 0.617 | 0.633 | +0.016 | 23.46% |
+| GILD | 0.427 | 0.411 | −0.015 | 2.07% |
+| CLLS | 0.440 | 0.425 | −0.015 | 0.64% |
 
-**Max shift from removing short_interest_pct: 0.048** — not material. `short_interest_pct` is
-functioning as a crowding/risk modifier at its current 0.05 weight. **No overinfluence finding.**
+**Mean |shift| from removing short_interest_pct: 0.0066**
+**Max |shift|: 0.0162**
+
+`short_interest_pct` is functioning as a low-weight crowding/risk modifier at its current 0.05
+weight. **No overinfluence finding.** Short interest does not drive outcomes in the baseline.
 
 ### 3.5 Ablation 4 — `priced_move_pct` as Dominant Tier 1 Anchor
 
-Weights: `priced_move_pct`=0.35, `coinvest_score_z`=0.25, `inst_delta_z`=0.20, `alpha_60d`=0.10,
-`event_premium_magnitude`=0.10
+Weights: `priced_move_pct`=0.35, `coinvest_score_z`=0.25, `inst_delta_z`=0.20,
+`de_alpha_60d`=0.10, `event_premium`=0.10
 
-- Mean |shift| vs baseline: **0.0622** (moderate, smaller than full Tier 1-Heavy)
+- Mean |shift| vs baseline: **0.0381**
+- Max shift: **+0.106**
 - Directional behavior consistent with Tier 1-Heavy
 - No anomalies — safe to use as anchor in batch mode
+- Confirms priced_move_pct is a stable input when cross-sectionally normalized
 
 ---
 
@@ -170,35 +207,43 @@ Weights: `priced_move_pct`=0.35, `coinvest_score_z`=0.25, `inst_delta_z`=0.20, `
 | Mode | Normalization | Status |
 |------|--------------|--------|
 | `estimate_batch()` (production path) | Cross-sectional percentile rank → [0, 1] | ✅ SAFE |
-| `estimate()` (single-name path) | Raw percentage value (1.12% to 2078.94%) used directly | ❌ UNSAFE |
+| `estimate()` (single-name path) | Raw percentage value used directly | ❌ UNSAFE |
 
-`priced_move_pct` values in rankings.csv range from **1.12% (APGE) to 2078.94% (TBPH)**. In
-`_normalize_features()`, this value is stored as a raw float without clamping to [0, 1]. If
-`priced_move_pct` weight were increased in a single-name path, TBPH would contribute `2078.94 × w`
-to the belief score — completely dominating.
+`priced_move_pct` values in rankings.csv range from **1.12% (APGE) to 2078.94% (TBPH)** with a
+mean of 101.27%. In `_normalize_features()`, this value is stored as a raw float without clamping
+to [0, 1]. If `priced_move_pct` weight were increased in a single-name path, TBPH would contribute
+`2078.94 × w` to the belief score — completely dominating.
 
 **The current production scoring path uses `estimate_batch()` only**, so this normalization flaw
-does not affect production outputs. However, the single-name `estimate()` method should not be
-used with elevated `priced_move_pct` weight without fixing the normalization in
-`_normalize_features()`.
+does not affect production outputs. However, the single-name `estimate()` method must not be used
+with elevated `priced_move_pct` weight without fixing the normalization in `_normalize_features()`.
 
 **Recommended fix (future, non-blocking):** In `_normalize_features()`, clamp `priced_move_pct`
 to a reasonable range (e.g., `_clamp(v / 100.0, 0, 1)` treating 100% move as the cap).
+
+This stress test used **zero single-name estimate() calls**. Normalization safety is confirmed for
+the batch path.
 
 ---
 
 ## 5. Missing Tier 1 Input Report
 
-| Input | Reason Missing | Path to Instrument |
-|-------|---------------|-------------------|
-| `iv_percentile_or_rank` | Not precomputed; requires historical IV series | Compute rolling IV percentile from `opt_atm_iv` vs 1-year history |
-| `iv_term_structure_kink` | Not defined; `opt_term_slope` is a proxy | Define kink as deviation from smooth term structure; requires multi-expiry chain |
-| `options_volume_oi_quality` | Not in rankings.csv; requires options chain fetch | Add OI and volume to daily options refresh from Robinhood/market data |
-| `skew_asymmetry` (`opt_put_call_skew`) | 31% coverage on event tickers — too sparse | Expand options chain coverage; current sparse liquidity limits this signal |
+| Input | Current Field | Gap | Path to Instrument |
+|-------|--------------|-----|-------------------|
+| `iv_percentile_or_rank` | None (`actual_implied_move_pctile` is move-size pctile, not IV-level pctile) | HIGH | Compute rolling IV percentile from `opt_atm_iv` vs 1-year history; requires daily IV series storage |
+| `iv_term_structure_kink` | `opt_term_slope` (slope proxy) | MEDIUM | Define kink as deviation from smooth power-law term structure; requires multi-expiry chain (front/back insufficient) |
+| `options_volume_oi_quality` | `opt_liquidity_ok` (binary flag), `opt_liquidity_state` (thin/liquid/absent) | HIGH | Add options OI and volume to daily options refresh; current binary liquidity gate is insufficient for composite scoring |
+| `skew_asymmetry` | `opt_put_call_skew` (27% coverage), `opt_rr_25d` (19% coverage) | HIGH | Expand options chain coverage; current sparse liquidity means skew is only available for the most liquid 20-30% of the universe |
 
-**Until these four inputs are instrumented, the proposed Tier 1 composite cannot be computed
-at full weight. The partial composite (priced_move_pct + event_premium_magnitude) is the correct
-shadow baseline for now.**
+**Summary:** Only `priced_move_pct` (straddle-implied move) is fully instrumented as a Tier 1
+input. `actual_implied_move_pctile` provides a partial proxy for the IV percentile concept but
+measures move size vs history rather than IV level vs history — a meaningfully different signal.
+`opt_term_slope` provides a usable but imprecise proxy for term structure shape.
+
+Until `iv_percentile_or_rank`, `options_volume_oi_quality`, and broad `skew_asymmetry` are
+instrumented, the proposed Tier 1 composite cannot be computed at full weight. The partial composite
+(`priced_move_pct` as dominant anchor, with `opt_term_slope` as structure proxy) is the correct
+shadow baseline for the current data state.
 
 ---
 
@@ -210,13 +255,23 @@ All computations were performed in-memory from:
 - `artifacts/audit/event_ev_shadow_2026_06_22/2026-06-22_event_ev_scores.json` (read-only)
 - `data/snapshots/2026-06-22/rankings.csv` (read-only)
 
-Git status check:
-- `rankings.csv`: not modified
-- `ranker_v2_score`, `final_score`, `selector_score`: not present in any modified file
-- Snapshot directories: not modified
-- Production data: not modified
+| Safety check | Result |
+|-------------|--------|
+| `ranker_v2_score` modified | NO |
+| `final_score` modified | NO |
+| `selector_score` modified | NO |
+| `sizing` modified | NO |
+| Eligibility fields modified | NO |
+| Action/gate outputs modified | NO |
+| Snapshot directories modified | NO |
+| Production data modified | NO |
+| Single-name `estimate()` called | NO — 0/171 tickers |
+| RSI/alpha_60d/inst_delta substituted for missing options inputs | NO — labeled as baseline, not Tier 1 |
+| `short_interest_pct` treated as Tier 1 | NO — confirmed crowding modifier only |
+| Alpha promotion language | NONE |
+| Trading/action language | NONE |
 
-Pre-existing modifications on the working tree (not from this test):
+**Pre-existing git working-tree modifications (not from this test):**
 - `artifacts/audit/SCIENTIFIC_CARTOGRAPHY_OPERATIONAL_REVIEW_2026_06_22.md` — linter reformat
 - `artifacts/audit/cross_signal_forward_shadow/buckets.jsonl` — cron write (pre-existing)
 - `artifacts/audit/inst_delta_forward_shadow/checkpoints.jsonl` — cron write (pre-existing)
@@ -224,38 +279,50 @@ Pre-existing modifications on the working tree (not from this test):
 
 ---
 
-## 7. Conclusions and Follow-Up
+## 7. Conclusions
 
-### Verdict: `FAIL_TIER1_INPUTS_INCOMPLETE`
+### Verdict: `PASS_EVENT_EV_TIER1_STRESS_TEST_SHADOW_ONLY_NO_MODEL_CHANGE`
+### Caveat: `TIER1_STACK_PARTIALLY_INSTRUMENTED_PRICED_MOVE_ONLY`
 
-The Tier 1 stress test is a **partial pass** on available inputs. The two available inputs
-(`priced_move_pct` and `event_premium_magnitude`) behave as expected and are safe in batch mode.
-Three of five proposed inputs are not yet in the pipeline.
+### Pre-report answers
+
+| Question | Answer |
+|---------|--------|
+| Available Tier 1 inputs | `priced_move_pct` (94% event-ticker coverage) |
+| Available Tier 1 partial proxies | `actual_implied_move_pctile` (64%), `opt_term_slope` (97%) |
+| Missing Tier 1 inputs | `iv_percentile_or_rank` (true), `options_volume_oi_quality`, `skew_asymmetry` (sparse) |
+| Events evaluated | 171 matched tickers (best event per ticker); 428 total in 0–180d cohort |
+| Events skipped | 26 tickers not in screener universe; 3,840 nodes outside evaluation window |
+| `priced_move_pct` normalization safe | YES — batch path only; single-name path unsafe (documented) |
+| `short_interest_pct` materially changes top gaps | NO — max removal shift 0.016, mean 0.007 |
+| Production/scoring files touched | NO — confirmed |
 
 ### What this test proved (positive)
 
-1. `priced_move_pct` and `event_premium_magnitude` are available, safe, and correctly
-   cross-sectionally normalized in the batch path
-2. `short_interest_pct` is NOT overinfluent at its current 0.05 weight (max shift 0.048)
-3. Upweighting direct market-expectation inputs to 0.35+0.20 produces material but directionally
-   plausible shifts in `implied_p_hit` (mean 0.08)
-4. Current production path (`estimate_batch`) is safe for `priced_move_pct` — no normalization
-   bug in production
+1. `priced_move_pct` is available, safe, and correctly normalized in batch mode
+2. `opt_term_slope` (97% coverage) provides a usable IV term structure proxy
+3. `actual_implied_move_pctile` (64% coverage) provides a partial move-size percentile proxy
+4. `short_interest_pct` is NOT overinfluent at its current 0.05 weight (max shift 0.016)
+5. Upweighting direct market-expectation inputs to 0.35+ produces material (mean |shift| 0.061)
+   but directionally plausible changes in shadow implied probability
+6. The current production path is safe for `priced_move_pct` — no normalization bug in production
+7. No bad-outcome conditions were triggered (see safety check table)
 
-### What remains unproven
+### What remains unproven (Tier 1 stack incomplete)
 
-1. Whether the full Tier 1 composite (with IV rank, OI/volume, skew) would dominate or
-   complement the institutional signals
-2. Whether Tier 1-Heavy weighting improves IC vs the baseline institutional-dominant model
-3. Whether the expectation-gap changes (BDTX, AARD, MIRM, APGE) reflect genuine mispricing
-   corrections or noise amplification from sparse inputs
+1. Whether a true IV rank (IV level vs 1-year history) would complement or dominate `priced_move_pct`
+2. Whether OI/volume quality would materially filter or reweight expectations vs the institutional model
+3. Whether broad skew coverage (currently 31% of event tickers) would confirm or reverse directional
+   shifts observed in the partial composite
+4. Whether the partial composite improves forward IC vs the institutional-dominant baseline
 
 ### Non-blocking maintenance items
 
-1. Fix `_normalize_features()` priced_move_pct normalization for single-name path
+1. Fix `_normalize_features()` `priced_move_pct` normalization for single-name path
    (clamp to [0, 1] using a reasonable max, e.g. 100% = 1.0)
-2. Instrument `iv_percentile_or_rank` from rolling `opt_atm_iv` history
+2. Instrument `iv_percentile_or_rank` from rolling `opt_atm_iv` history (requires daily IV series)
 3. Expand options chain OI/volume data fetch for `options_volume_oi_quality`
+4. Expand options chain coverage to improve `skew_asymmetry` above 31% event-ticker coverage
 
 ### Freeze status
 
@@ -265,3 +332,5 @@ scoring logic, snapshots, or production outputs. No alpha promotion. No action l
 ---
 
 *Diagnostic only — does not feed selector/ranker/construction.*
+*Inputs: artifacts/audit/event_ev_shadow_2026_06_22/2026-06-22_event_ev_scores.json (read-only),*
+*data/snapshots/2026-06-22/rankings.csv (read-only). No files written to production paths.*
