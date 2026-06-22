@@ -1,9 +1,4 @@
-name: Semgrep Governance Audit (Phase 0, non-blocking)
-
-# Phase 0: signal collection / baseline discovery only. This workflow MUST NOT
-# fail a PR. Every job is continue-on-error and every step swallows non-zero.
-# Promote to blocking only after a baseline-triage cycle. Not wired into local
-# pre-commit; Semgrep is a CI-only tool, never a runtime dependency.
+name: Semgrep Governance Audit
 
 on:
   pull_request:
@@ -13,25 +8,32 @@ permissions:
   contents: read
 
 jobs:
-  semgrep-audit:
-    name: semgrep (audit / non-blocking)
+  semgrep-governance:
+    name: semgrep (ERROR gate)
     runs-on: ubuntu-latest
-    continue-on-error: true
+    timeout-minutes: 10
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - name: Install semgrep (CI-only)
-        run: pip install semgrep
-      - name: Run governance rules (audit mode, never fails the PR)
+          fetch-depth: 0
+
+      - name: Install Semgrep
+        run: python -m pip install semgrep
+
+      - name: Validate Semgrep rules
+        run: semgrep scan --validate --config .semgrep/
+
+      - name: Governance ERROR scan
+        env:
+          SEMGREP_BASELINE_REF: origin/main
         run: |
           semgrep scan \
             --config .semgrep/ \
-            --severity WARNING --severity ERROR \
+            --severity ERROR \
+            --error \
             --metrics off \
-            --no-error \
-            --text || true
+            --disable-version-check
 
   protected-paths-watch:
     name: protected model/ranker paths (warn-only)
@@ -54,7 +56,7 @@ jobs:
           protected='ranker_v2_pairwise\.py|ranker_engine\.py|decision_engine\.py|production_data/ranker_v2_model.*\.json'
           hits="$(printf '%s\n' "$changed" | grep -E "$protected" || true)"
           if [ -n "$hits" ]; then
-            echo "::warning::PR touches protected model/ranker paths (Phase 0 non-blocking — review recommended):"
+            echo "::warning::PR touches protected model/ranker paths (review recommended):"
             printf '%s\n' "$hits"
           else
             echo "No protected model/ranker paths changed."
