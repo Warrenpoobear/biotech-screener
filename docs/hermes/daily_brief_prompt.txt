@@ -43,9 +43,22 @@ Check open PRs: gh pr list --repo Warrenpoobear/biotech-screener --state open --
 Report: gateway status, harvester state, any open draft PRs needing action.
 
 --- SECTION 6: GOVERNANCE BLOCKERS ---
-Call read_semgrep_findings to confirm Semgrep rule inventory.
-List known blockers (Semgrep MCP B1-B4, OpenClaw hard-retire, any open PRs from Section 5).
-Flag any new items not in the standing blocker list.
+Call read_semgrep_findings and report the rule inventory (file names + rule count only).
+
+Then report the standing blocker list using EXACTLY these descriptions. Do NOT derive
+blocker descriptions from the Semgrep rule names — they are separate things:
+
+  B1 (Semgrep MCP admission): Hermes MCP client does not handle roots/list server-initiated
+      requests — causes anyio.ClosedResourceError mid-session. STATUS: UNRESOLVED.
+  B2 (Semgrep MCP admission): LGPL-2.1-or-later operator sign-off not yet given.
+      STATUS: UNRESOLVED.
+  B3 (Semgrep MCP admission): inject_secure_defaults fetches raw.githubusercontent.com at
+      startup (cacheable, 24h TTL; mitigated by cache pre-seeding). STATUS: UNRESOLVED.
+  B4 (Semgrep MCP admission): semgrep_scan tool fails with SEMGREP_SEND_METRICS=off —
+      McpError: Cannot run scan with auto config when metrics are off. STATUS: UNRESOLVED.
+  OpenClaw hard-retire: gateway process (~19001) still live; operator decision pending.
+
+Flag any items discovered this run that are not in the standing list above.
 
 --- OUTPUT ---
 Write the brief to:
