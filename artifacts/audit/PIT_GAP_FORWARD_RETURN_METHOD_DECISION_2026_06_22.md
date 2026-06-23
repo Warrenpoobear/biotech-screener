@@ -1,8 +1,42 @@
 # PIT Gap Forward Return Method Decision — 2026-06-22
 
-**Status:** DESIGN_MEMO — PENDING OPERATOR DECISION  
-**Governance:** Production model freeze ACTIVE; no code authorized until method is approved  
+**Status:** OPERATOR_DECISION_RECORDED — 2026-06-22  
+**Governance:** Production model freeze ACTIVE; implementation requires separate explicit authorization  
 **Context:** Follows accepted feasibility memo (PR #381) and archive-ceiling finding (PR #383, merged)
+
+---
+
+## Operator Decision (2026-06-22)
+
+**1. Method A — PRIMARY**
+Same-archive basis. Use for 5d and 20d where coverage exists. No 60d conclusion from Method A.
+Lowest adjustment-basis risk. Accepted as the official primary methodology.
+
+**2. Method B — SENSITIVITY ONLY**
+Single May 7 archive basis. Authorized only to estimate 60d coverage and compare directional
+consistency with Method A. All Method B outputs must be labeled `SENSITIVITY_ONLY_NOT_PRIMARY_EVIDENCE`.
+Must not override Method A results.
+
+**3. Method C — DEFERRED**
+No external provider fetch. No IEX, Tiingo, Alpaca, or yfinance calls.
+
+**4. PR #382 — REMAINS QUARANTINED**
+Do not reuse its code directly. Do not merge. Do not treat its outputs as accepted evidence.
+May be consulted as a cautionary reference only.
+
+**5. Implementation constraints**
+- Fresh script; do not copy from PR #382.
+- Separate new branch, explicitly authorized before writing.
+- Research-only: `scripts/research/` only.
+- No production files: no ranker, selector, sizing, final_score, gates, snapshots, portfolio.
+- Output panels remain quarantined/research-only until separately reviewed.
+- No model decision or freeze-lift conclusion from output alone.
+
+**Next step:** Write `PIT_GAP_FORWARD_RETURN_ASSEMBLY_SPEC_2026_06_22.md` — a short spec
+defining exact inputs, outputs, validation checks, and acceptance thresholds for Method A
+primary + Method B sensitivity. No implementation code until spec is approved.
+
+---
 
 ---
 
