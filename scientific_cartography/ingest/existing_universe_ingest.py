@@ -91,7 +91,11 @@ class ExistingUniverseIngest:
 
                 for row in reader:
                     ticker = row.get("ticker", "").strip() if row.get("ticker") else None
-                    company = row.get("company", "").strip() if row.get("company") else None
+                    company = (
+                        row.get("company", "").strip()
+                        if row.get("company")
+                        else row.get("name", "").strip() if row.get("name") else None
+                    )
                     cik = row.get("cik", "").strip() if row.get("cik") else None
 
                     # Skip if no identifying information

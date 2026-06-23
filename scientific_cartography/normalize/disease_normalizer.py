@@ -214,12 +214,6 @@ class DiseaseNormalizer:
             )
             index[normalized_name.lower()] = record
 
-            # Index synonyms for variant matching
-            for synonym in attrs.get("synonyms", []):
-                syn_key = synonym.lower()
-                if syn_key not in index:
-                    index[syn_key] = record
-
         return index
 
     def normalize(self, raw_disease: str) -> DiseaseRecord:
@@ -280,15 +274,38 @@ class DiseaseNormalizer:
                 self._disease_cache[cache_key] = record
                 return record
 
-        # Priority 4: MONDO built-in index exact or synonym match (ontology-backed)
+        # Priority 4: MONDO built-in index exact match (ontology-backed)
         if cache_key in self._mondo_index:
             record = self._mondo_index[cache_key]
             self._disease_cache[cache_key] = record
             return record
 
-        # Priority 5: Substring matching against MONDO index synonyms
-        # (e.g., "moderate-to-severe atopic dermatitis" → MONDO:0004980)
+        # Priority 5: MONDO built-in exact synonym match. Exact matches are safe
+        # for short aliases such as "AD"; substring matches below are not.
+        for record in self._mondo_index.values():
+            if cache_key in {synonym.lower().strip() for synonym in record.synonyms}:
+                matched_record = DiseaseRecord(
+                    disease_id=record.disease_id,
+                    raw_name=raw_disease,
+                    normalized_name=record.normalized_name,
+                    mondo_id=record.mondo_id,
+                    therapeutic_area=record.therapeutic_area,
+                    synonyms=record.synonyms,
+                    source="mondo_synonym",
+                    confidence=0.90,
+                    as_of_date=self.as_of_date,
+                )
+                self._disease_cache[cache_key] = matched_record
+                return matched_record
+
+        # Priority 6: Conservative phrase matching against MONDO index terms
+        # (e.g., "moderate-to-severe atopic dermatitis" → MONDO:0004980).
+        # Do not substring-match short aliases such as "AD"; that incorrectly
+        # maps unrelated diseases like "Prader-Willi Syndrome" because "ad" is
+        # embedded inside another word.
         for normalized_name, record in self._mondo_index.items():
+            if len(normalized_name) < 4:
+                continue
             if normalized_name in cache_key or cache_key in normalized_name:
                 # Confidence slightly lower for substring match
                 matched_record = DiseaseRecord(

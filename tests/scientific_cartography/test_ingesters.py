@@ -46,6 +46,17 @@ class TestExistingUniverseIngest:
 
         assert len(records) == 0
 
+    def test_ingest_from_csv_accepts_name_column(self, ingest, tmp_path):
+        """Canonical universe CSVs use name rather than company for issuer name."""
+        csv_path = tmp_path / "universe.csv"
+        csv_path.write_text("ticker,name,sector\nMRNA,Moderna Inc,Biotechnology\n")
+
+        records = ingest.ingest_from_csv(csv_path)
+
+        assert len(records) == 1
+        assert records[0].ticker == "MRNA"
+        assert records[0].company_name == "Moderna Inc"
+
     def test_ingest_from_rankings(self, ingest, tmp_path):
         """Should ingest from rankings CSV format."""
         csv_path = tmp_path / "rankings.csv"
@@ -60,8 +71,7 @@ class TestExistingUniverseIngest:
     def test_ingest_from_production_universe_json_schema(self, ingest, tmp_path):
         """Should use production universe company-name fields for sponsor matching."""
         json_path = tmp_path / "universe.json"
-        json_path.write_text(
-            """[
+        json_path.write_text("""[
                 {
                     "ticker": "AARD",
                     "name": "AARD",
@@ -72,8 +82,7 @@ class TestExistingUniverseIngest:
                     },
                     "cik": "0001774857"
                 }
-            ]"""
-        )
+            ]""")
 
         records = ingest.ingest_from_json(json_path)
 
@@ -87,8 +96,7 @@ class TestExistingUniverseIngest:
     def test_ingest_from_json_skips_generic_market_company_name(self, ingest, tmp_path):
         """Generic sector labels should not be used as company names."""
         json_path = tmp_path / "universe.json"
-        json_path.write_text(
-            """[
+        json_path.write_text("""[
                 {
                     "ticker": "ABEO",
                     "market_data": {
@@ -96,8 +104,7 @@ class TestExistingUniverseIngest:
                         "industry": "Biotechnology"
                     }
                 }
-            ]"""
-        )
+            ]""")
 
         records = ingest.ingest_from_json(json_path)
 

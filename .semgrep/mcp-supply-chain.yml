@@ -28,6 +28,11 @@ rules:
       shutil.copy, etc.). MCP tools admitted to this repo must be read-only.
       Disable this tool via tools.exclude or use a tools.include allowlist that
       omits it.
+    paths:
+      include:
+        - "mcp_server/**"
+      exclude:
+        - "tests/**"
     pattern-either:
       - patterns:
           - pattern: open($PATH, $MODE, ...)
@@ -57,6 +62,11 @@ rules:
       MCP tool handler spawns a subprocess. Subprocess execution is a shell
       escalation vector — an admitted tool that can spawn processes can do
       anything the hosting process can do. Triage before admitting.
+    paths:
+      include:
+        - "mcp_server/**"
+      exclude:
+        - "tests/**"
     pattern-either:
       - pattern: subprocess.run(...)
       - pattern: subprocess.Popen(...)
@@ -76,6 +86,11 @@ rules:
       MCP tool handler calls git (commit, push, checkout, reset, etc.).
       Git mutations by an MCP tool can push to remote without a human in
       the loop — the exact vector in INC-2026-06-20-AUTOPUSH.
+    paths:
+      include:
+        - "mcp_server/**"
+      exclude:
+        - "tests/**"
     patterns:
       - pattern-either:
           - pattern: subprocess.$F(["git", ...], ...)

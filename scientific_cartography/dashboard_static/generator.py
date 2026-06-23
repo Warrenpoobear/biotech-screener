@@ -146,14 +146,10 @@ class DashboardGenerator:
 
     def _extract_date_from_path(self) -> str:
         """Extract as_of_date from artifact directory name."""
-        # Try to extract YYYY-MM-DD from path
-        parts = str(self.artifact_dir).split("/")
-        for part in parts:
+        for part in self.artifact_dir.parts:
             if len(part) == 10 and part.count("-") == 2:
                 try:
                     # Validate it looks like a date
-                    from datetime import datetime
-
                     datetime.strptime(part, "%Y-%m-%d")
                     return part
                 except ValueError:

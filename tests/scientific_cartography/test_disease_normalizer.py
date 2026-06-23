@@ -26,6 +26,18 @@ class TestDiseaseNormalizerBasic:
         assert result.confidence == 0.0
         assert result.source == "unmapped"
 
+    def test_short_synonyms_do_not_substring_match_unrelated_diseases(self):
+        """Short synonyms like AD should not map Prader-Willi to atopic dermatitis."""
+        normalizer = DiseaseNormalizer(as_of_date="2026-06-16")
+
+        result = normalizer.normalize("Prader-Willi Syndrome")
+
+        assert result.raw_name == "Prader-Willi Syndrome"
+        assert result.normalized_name == "Prader-Willi Syndrome"
+        assert result.mondo_id is None
+        assert result.confidence == 0.0
+        assert result.source == "unmapped"
+
     def test_case_insensitive_lookup(self):
         """Lookup should be case-insensitive."""
         normalizer = DiseaseNormalizer(as_of_date="2026-06-16")
