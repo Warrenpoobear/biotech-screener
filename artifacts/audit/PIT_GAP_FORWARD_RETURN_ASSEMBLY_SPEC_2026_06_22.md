@@ -407,7 +407,7 @@ All items must be confirmed before implementation proceeds.
 
 Operator selects one before implementation begins:
 
-- [ ] **`SPEC_APPROVED_PENDING_IMPLEMENTATION`** — All checklist items confirmed.
+- [x] **`SPEC_APPROVED_PENDING_IMPLEMENTATION`** — All checklist items confirmed.
   Authorize a fresh implementation branch. Script name: TBD (not `assemble_gap_forward_returns.py`
   — that name is associated with the quarantined PR #382).
 
@@ -420,14 +420,26 @@ Operator selects one before implementation begins:
 - [ ] **`SPEC_BLOCKED_DATA_INTEGRITY_RISK`** — A validation check is missing or
   insufficient to catch a real data integrity failure. Describe below.
 
-*Operator notes:*
+*Operator notes (recorded 2026-06-22):*
 
 ```
-[operator fills in verdict and any notes here]
+SPEC_APPROVED_PENDING_IMPLEMENTATION
+
+Approved implementation path:
+- Method A primary (same-archive basis, 5d/20d only, no 60d conclusion)
+- Method B sensitivity only (single May 7 archive, SENSITIVITY_ONLY_NOT_PRIMARY_EVIDENCE label required)
+- Method C deferred (no external provider fetch)
+- Fresh implementation only — PR #382 code quarantined and must not be copied
+- No production files
+- No live/API/yfinance fetch
+- No model, freeze-lift, or trading conclusion from output
+
+Implementation begins only after this PR is merged.
+Fresh branch required. New script name (not assemble_gap_forward_returns.py).
 ```
 
 ---
 
 **Prepared:** 2026-06-22  
-**Next action:** Operator reviews checklist and records verdict above.  
-**Implementation:** Only after `SPEC_APPROVED_PENDING_IMPLEMENTATION` is recorded here.
+**Verdict recorded:** 2026-06-22 — `SPEC_APPROVED_PENDING_IMPLEMENTATION`  
+**Implementation:** Authorized on a fresh branch after this PR is merged.
