@@ -26,8 +26,8 @@ Current: `8887576e` (v1.14.0). Pinned in `run_screen.py` and `run_phase2_snapsho
 
 ## Architecture Freeze Status
 
-**v1.14.0 freeze in effect until post-h20d checkpoint (~2026-05-26).** No new enforcement logic or scoring changes until then.
-See `.claude/rules/operational-state.md` for freeze lift conditions and post-freeze priorities.
+**Scoped production model freeze in effect (as of 2026-06-20).** Ranker, selector, sizing, final_score, portfolio, and snapshot files are frozen. Safe lanes: expectation verification, Event EV shadow, Sci-Cart diagnostics, observability, Hermes read-only. Lift requires explicit operator clearance.
+See `.claude/rules/operational-state.md` for freeze scope and post-freeze priorities.
 
 ---
 

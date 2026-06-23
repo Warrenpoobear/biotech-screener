@@ -8,7 +8,7 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-05-22  
+**Last updated:** 2026-06-22  
 **Update cadence:** weekly or upon governance-state change  
 **Authority:** operational status snapshot only; not architectural specification  
 **Staleness risk:** MEDIUM (reference `governance.md` for timeless process)
@@ -28,11 +28,14 @@ metadata:
 
 ## Architecture Freeze Status
 
-- **v1.14.0 freeze in effect** until post-h20d checkpoint (~2026-05-26)
-- No new enforcement logic or scoring changes until then
-- `ranker_active_contract.py` exists on unmerged branch (`hygiene/ranker-active-contract-2026-04-30`), deferred to post-freeze
-- Manual spot-checks via snapshot_integrity verifier in the interim
-- Spec 100 (ranker IC tooling correction) is highest-priority code change post-freeze
+**SCOPED PRODUCTION MODEL FREEZE — effective 2026-06-20 (INC-2026-06-20-AUTOPUSH)**
+
+- **Frozen:** ranker, selector, sizing logic, `final_score`, portfolio/snapshot files, gate configs
+- **Safe lanes:** expectation field verification, Event EV shadow, Sci-Cart artifacts, observability/diagnostics, Hermes read-only queries
+- h20d checkpoint has passed; original v1.14.0 structural freeze superseded by the scoped freeze above
+- `ranker_active_contract.py` (branch `hygiene/ranker-active-contract-2026-04-30`) remains deferred
+- Spec 100 (ranker IC tooling correction) remains highest-priority post-freeze code change
+- **Lift condition:** explicit operator clearance
 
 ---
 
@@ -65,24 +68,25 @@ metadata:
 
 **Post-filing action sequence**: (1) Warm 13F cache, (2) Run cohort quarantine, (3) Check collapse guards (coinvest_score_z SD), (4) Refresh IC decomposition, (5) 5-day observation window.
 
-**Next cycle**: Q2 2026 (period ending June 30, 2026). Filing deadline ~August 14, 2026. Monitor EDGAR starting ~August 11.
+**Next cycle (Q2 2026):** Period ending June 30, 2026. Filing deadline ~August 14, 2026. Monitor EDGAR starting ~August 11.
 
 ---
 
 ## Forward Shadow & IC Status
 
-*Updated: 2026-05-16*
+*Updated: 2026-06-22*
 
-- **Forward shadow**: accumulating since 2026-04-03. ~30+ trading days as of mid-May. Approaching or at evaluation threshold.
-- **coinvest_score_z IC** (last measured 2026-05-13): Pooled mean IC = -0.031 (14 dates, 28.6% hit rate). Pre-cohort (clean): -0.051 (11.1% hit). Post-cohort (contaminated): -0.008 (60.0% hit). Verdict: OBSERVE.
-- **Ranker IC**: UNMEASURED. Existing tools conflate composite_score with final_score (Spec 095). All prior ranker IC claims are misattributed. Blocked until Spec 100.
+- **Forward shadow**: accumulating since 2026-04-03. As of 2026-06-22, enough calendar/trading time has elapsed for a future IC refresh, but refresh is gated on explicit operator freeze lift.
+- **coinvest_score_z IC** (last measured 2026-05-13): Pooled mean IC = -0.031 (14 dates, 28.6% hit rate). Pre-cohort (clean): -0.051 (11.1% hit). Post-cohort (contaminated): -0.008 (60.0% hit). Verdict: OBSERVE. Refresh pending freeze lift.
+- **Ranker IC**: UNMEASURED. Existing tools conflate composite_score with final_score (Spec 095). All prior ranker IC claims remain non-authoritative until corrected tooling is reviewed (Spec 100).
 - **inst_delta_z**: zeroed in selector since 2026-05-04. Active in ranker (NW-t = +3.32). Reinstatement requires IC recovery evidence.
+- **PIT/backtest research (2026-06-22)**: Autonomous PIT/backtest research was quarantined on 2026-06-22 (PR #379) and is **not accepted evidence**. Do not cite performance numbers or use outputs for model decisions until manually reviewed and explicitly accepted by operator.
 
-**Sequential gate (CRITICAL):**
-1. Wait for Q1 2026 13F filing (completed 2026-05-15)
-2. Warm 13F cache via `tools/warm_13f_cache.py`
+**Sequential gate (post-freeze):**
+1. Explicit operator freeze lift
+2. Warm Q2 13F cache via `tools/warm_13f_cache.py` (period ends Jun 30; filing deadline ~Aug 14)
 3. Run cohort quarantine check
-4. Then refresh IC decomposition
+4. Refresh IC decomposition
 
 ---
 
@@ -127,11 +131,23 @@ metadata:
 - **Registry:** 31 skills in `docs/hermes_skills/_meta.json` (16 Cursor `SKILL.md` mirrors + 3 `REFERENCE.md` + 12 Hermes-native)
 - **Sync map:** `tools/sync_hermes_skills.py` · audit: `tools/audit_hermes_skills.py`
 - **Authoritative (no overwrite from `skills/`):** `memory-steward` — canonical copy at `~/.hermes/skills/devops/memory-steward/`; repo backup `.hermes/skills/devops/memory-steward.SKILL.md`
-- **Recent additions:** `firecrawl-research-discovery` (SDK v2, PR #319), `codegraph` (guard + MCP, PR #307)
+- **Recent additions (since 2026-05-30):** `biotech-mcp` registered as read-only diagnostic MCP server (PR #27233ec6); daily state brief operational (PR #374)
+- **weekly-skill-harvester:** MANUALIZED (Option C, PR #373) — no auto-push to main; operator reviews candidates before promotion. See `docs/governance/HARVESTER_MANUALIZATION_2026_06_22.md`.
 - **Hermes-only sections preserved on sync:** Path C block in `screener-ops.md`
-- **Hermeslink:** `docs/hermes_skills/hermeslink-state-capture.md` updated 2026-05-31 (builder + Phase B + host authority)
 - **Town-Hermes bridge:** Phase B event wiring complete (2026-05-30, all event types); live email delivery awaits `OPERATOR_DELIVERY_DRY_RUN=0`
 - Governance label: Tooling/knowledge-layer expansion only. No model, ranker, selector, sizing, or alpha-promotion change.
+
+---
+
+## Governance Events (2026-06-20 to 2026-06-22)
+
+- **INC-2026-06-20-AUTOPUSH:** `weekly-skill-harvester` auto-committed to main in an unattended run. Harvester manualized (Option C, PR #373); pre-push hook added; Semgrep supply-chain rules deployed (PR #370); scoped production model freeze in effect. Closeout: `docs/incident/INC-2026-06-20-AUTOPUSH/`.
+- **OpenClaw fenced (PR #372):** `**` wildcards and shell write permissions removed from exec-approvals. Exec allowlist now read-only. Hermes is primary orchestrator. Hard-retire deferred (natural on reboot). See `docs/governance/OPENCLAW_FENCE_DECISION_2026_06_22.md`.
+- **Semgrep Phase 1 ERROR gate active (PR #376):** CI now blocks on Semgrep governance rule violations. Rules cover ranker/selector/final_score mutation guard, PIT annotation enforcement, model-output-as-signal guard, supply-chain checks.
+- **Autonomous research quarantined (PR #379):** An autonomous PIT/backtest research run was quarantined. Outputs are not accepted evidence and must not be used for model decisions. See `docs/governance/AUTONOMOUS_RESEARCH_QUARANTINE_2026_06_22.md`.
+
+---
+
 ## What to Update After Every Session
 
 - [ ] Current benchmark winner (Top-20 vs Top-30, any new candidate)

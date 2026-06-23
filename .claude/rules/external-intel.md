@@ -10,13 +10,13 @@ metadata:
 
 ---
 
-## OpenClaw Status: Maintenance-Only (confirmed May 18, 2026)
+## OpenClaw Status: FENCED — LEGACY_READ_ONLY_DORMANT (2026-06-22)
 
-- OpenClaw has transitioned to maintenance-only status as of mid-May 2026. Multiple independent sources confirm the project is no longer under active feature development.
-- Hermes Agent v0.14.0 (May 16) includes native `hermes claw migrate` tool for seamless migration of configs, API keys, skills, and memory from OpenClaw to Hermes.
-- The DEM's 27-agent fleet runs on OpenClaw. Maintenance-only status does not affect current operations — the runtime is stable and functional. But it creates a planning horizon: OpenClaw will not receive new features, and the security patch cadence may slow.
-- **Immediate action: none.** The fleet runs on deterministic scripts (Lane A) and `run_agent_direct.py` (Lane B), not on OpenClaw gateway features. A runtime migration is a Tier 4 governance decision, not an urgent operational change.
-- **Planning horizon:** Evaluate Hermes as a potential successor runtime in Q4 2026 if OpenClaw patch cadence degrades. Any migration must preserve the AGENT_ROUTING_POLICY.md tier structure and CCFT controls. Self-evolving Hermes skills remain governance-incompatible unless fully versioned and reviewed.
+- **Fenced 2026-06-22 (PR #372):** `**` wildcards and shell write permissions removed from `~/.openclaw/exec-approvals.json`. Exec allowlist is now read-only: `python3, ls, cat, head, tail, grep, find, wc, date, stat, diff, sort, jq`. No bash, no git, no `/mnt/c/**` write access.
+- **Hard retire:** deferred — natural fence on next reboot (no `@reboot`/systemd entry). Gateway is loopback-only; no active OpenClaw cron.
+- **Hermes is now primary orchestrator.** OpenClaw = legacy dormant. Lane A (deterministic scripts) and Lane B (`run_agent_direct.py`) are unaffected.
+- Hermes Agent v0.14.0+ includes native `hermes claw migrate` tool. Any formal migration remains a Tier 4 governance decision.
+- See `docs/governance/OPENCLAW_FENCE_DECISION_2026_06_22.md` for audit and decision record.
 
 ---
 
