@@ -2,9 +2,22 @@
 
 LABEL: EVENT_EV_SHADOW_DIAGNOSTIC_ONLY_NO_ALPHA_PROMOTION
 
-Reads today's rankings.csv and computes a cross-sectional view of how the
-options-implied move (priced_move_pct) compares to historical base rates per
-catalyst family/phase cohort.
+EES_STATUS: CALIBRATION_DIAGNOSTIC_BUILT
+PREDICTIVE_STATUS: UNPROVEN
+PROMOTION_STATUS: DO_NOT_PROMOTE
+
+This tool is calibration analysis, not predictive validation. It tests
+whether the options-implied move (priced_move_pct) is consistent with
+historical base rates by cohort. It does NOT test EES scores against
+future returns, realized catalyst outcomes, or IC. EES has not been
+shown to predict future returns.
+
+What would prove EES predictive (not done here):
+  1. Cross-sectional IC: EES vs future 5d/20d/60d excess return
+  2. Event outcome test: EES vs realized catalyst move / hit-miss
+  3. Calibration test: underpriced bucket outperforms in-range/overpriced
+  4. Stability: works across clinical, regulatory, phase2, phase3 cohorts
+  5. Walk-forward test: no same-period tuning or look-ahead
 
 Outputs
 -------
@@ -301,12 +314,13 @@ def run(snapshot_dir: Path) -> None:
         "",
         "## Notes",
         "",
-        "- **Overpriced**: options market implies a larger move than historical base rate → elevated trap risk",
-        "- **Underpriced**: options market implies a smaller move than base rate → potential underpricing (but may reflect good timing precision or catalyst de-risking)",
+        "- **Overpriced**: implied move exceeds historical base rate — flags cohort as a calibration review candidate for trap risk, NOT a trade signal",
+        "- **Underpriced**: implied move is below historical base rate — highest-priority calibration review candidate, NOT an alpha signal",
+        "- EES scores (`ees_v2_score`, `ees_v3_score`) appear in per-name output for reference; they have NOT been validated against future returns or catalyst outcomes",
         "- `priced_move_pct` is the straddle-implied move from the options surface (already in rankings.csv)",
         "- Base rates are static historical medians from `event_ev/expectation_error_model.py:_BASE_RATE_TABLE`",
         "- Conditional EV is the probability-weighted expected abs move from `_CONDITIONAL_MOVE_TABLE`",
-        "- No alpha promotion: this file is diagnostic only",
+        "- EES_STATUS: CALIBRATION_DIAGNOSTIC_BUILT | PREDICTIVE_STATUS: UNPROVEN | PROMOTION_STATUS: DO_NOT_PROMOTE",
     ]
 
     md_path = snapshot_dir / "event_ev_shadow_diagnostic.md"
