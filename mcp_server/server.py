@@ -13,6 +13,7 @@ logging.basicConfig(
     format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
 )
 
+import mcp_server.tools.cartography_tools  # noqa: F401, E402
 import mcp_server.tools.fundamentals_tools  # noqa: F401, E402
 import mcp_server.tools.morningstar_tools  # noqa: F401, E402
 import mcp_server.tools.price_tools  # noqa: F401, E402
