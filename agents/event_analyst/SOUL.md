@@ -65,3 +65,4 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 | `catalyst-resolution` | Analyzing catalyst events and timeline resolutions |
 | `performance-attribution` | Attributing returns to signal factors |
 | `backtest-framework` | Constructing valid, PIT-safe backtests |
+| `self-improving` | Slice degradation pattern → LRN with `Promotion-lane: spec` |

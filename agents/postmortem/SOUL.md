@@ -39,6 +39,7 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 |-------|----------|
 | `performance-attribution` | Attributing returns to signal factors |
 | `catalyst-resolution` | Analyzing catalyst events and timeline resolutions |
+| `self-improving` | Resolution/outcome pattern → LRN (`Promotion-lane: spec`) |
 
 ## Active ruleset
 

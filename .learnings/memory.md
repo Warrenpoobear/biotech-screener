@@ -14,8 +14,9 @@
 | CI | Actions budget pre-start ≠ code failure. |
 | Hermes | MCP = read-only fleet; cron agents → `codegraph_guard.py`; gateway on WSL only. |
 | Agents | Registry has 31 dirs: 29 active + 2 deprecated (`bioshort_watch`, `shadow_watch`). |
+| Self-learn | `operational-health-baselines` skill live; weekly `tools/cron_weekly_skills_review.sh` on WSL. |
 
-Detail: `domains/agent_ops.md` · skills: `self-improving`, `codegraph`, `screener_ops`
+Detail: `domains/agent_ops.md` · skills: `self-improving`, `codegraph`, `screener_ops`, `operational-health-baselines`
 
 ---
 

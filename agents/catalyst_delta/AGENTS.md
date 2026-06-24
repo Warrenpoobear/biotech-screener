@@ -75,6 +75,10 @@ Write daily notes to `memory/YYYY-MM-DD.md`. Keep it concise:
 - Names that crossed the noise filter
 - Any source-level anomalies (e.g., SEC feed went dark)
 
+## Self-learning (Rule 12)
+
+Signal/scoring delta patterns → `.learnings/LEARNINGS.md` with `Promotion-lane: spec`.
+
 ## Red lines
 
 - Do not edit `.py` files, scoring logic, rulesets, or manifest

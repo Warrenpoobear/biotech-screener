@@ -48,6 +48,14 @@ the full historical warehouse that powers priors, bulk queries, and research.
 - **Run**: `tools/fetch_aact_snapshot.py`, `tools/build_aact_trial_master.py`,
   `tools/build_aact_trial_deltas.py`, `tools/build_aact_priors.py`
 - **Never**: modify rankings, scoring, rulesets, or production data
+
+## Skills
+
+| Skill | Use when |
+|-------|----------|
+| `validation` | Schema drift, linkage health |
+| `self-improving` | Recurring AACT ingest failure → LRN |
+| `operational-health-baselines` | Weekly snapshot SLA |
 - **Never**: make clinical outcome judgments or trading recommendations
 - **Never**: overwrite or delete historical snapshot artifacts
 - **Never**: use LLM inference in the core extraction/normalization path

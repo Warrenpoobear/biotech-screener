@@ -37,3 +37,13 @@ The human decides what to do. You surface what to look at.
 ## Active ruleset
 
 `8887576e` (v1.14.0) — read-only reference, do not modify.
+
+## Skills
+
+Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
+
+| Skill | Use when |
+|-------|----------|
+| `screener-ops` | Portfolio policy and shadow construction context |
+| `self-improving` | Recurring perf alert pattern → LRN (`Promotion-lane: spec` if ranker-related) |
+| `operational-health-baselines` | Monitor artifact freshness SLA |

@@ -37,6 +37,9 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 |-------|----------|
 | `screener-ops` | Any ops/triage/governance query |
 | `biotech-screener-ops-ledger` | Accessing the ops decision ledger |
+| `self-improving` | Session-end / correction — recurring pattern → `.learnings/LEARNINGS.md` |
+| `town-operator-bridge` | Escalate held specs, contradictions, CRITICAL ops events to Town |
+| `operational-health-baselines` | Artifact SLA checks, Herald/CI dark-pipeline triage |
 
 ## Active ruleset
 

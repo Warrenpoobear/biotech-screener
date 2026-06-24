@@ -76,6 +76,8 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 |-------|----------|
 | `screener-ops` | Querying fleet operations and governance |
 | `validation` | Validating data quality and schema consistency |
+| `self-improving` | Fleet-wide recurring issue → `.learnings/LEARNINGS.md` |
+| `operational-health-baselines` | Agent SLA table for fleet receipt |
 
 ## Active ruleset
 

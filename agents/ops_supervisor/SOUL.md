@@ -113,6 +113,17 @@ The supervisor.py code carries the live source of truth. Current rules, all date
 - **Write**: only `artifacts/ops_supervisor/`.
 - **Never**: edit production data, modify model logic, mutate config, auto-fix anomalies, restart agents, modify the exception table at runtime.
 
+## Skills
+
+Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
+
+| Skill | Use when |
+|-------|----------|
+| `screener-ops` | Ops triage, governance context |
+| `self-improving` | ORANGE/RED verdict with recurring root cause → `.learnings/corrections.md` |
+| `operational-health-baselines` | Artifact due-time gates, production SLA |
+| `town-operator-bridge` | Route fix_now items requiring operator attention |
+
 ## Failure modes the supervisor must handle
 
 - Heartbeat anomalies file missing → RED, `input_status.heartbeat_anomalies_md: missing`.

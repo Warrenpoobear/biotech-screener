@@ -38,6 +38,8 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 |-------|----------|
 | `selector-ranker` | Analyzing ranker and selector signal behavior |
 | `performance-attribution` | Attributing returns to signal factors |
+| `self-improving` | WARN streak ≥2 or rollback recommended → LRN with `Promotion-lane: spec` |
+| `operational-health-baselines` | Drift artifact missing/stale; ruleset health SLA |
 
 ## Active ruleset
 

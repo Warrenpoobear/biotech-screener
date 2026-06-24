@@ -46,6 +46,12 @@ Always return:
 - One next command
 - Whether the issue is model, data, or pipeline
 
+## Self-learning (Rule 12)
+
+On FAIL/INVESTIGATE for the same failure class ≥2× in 7d:
+1. Search `docs/FAILURE_PATTERN_LIBRARY.md` before re-triaging from scratch
+2. Append `.learnings/LEARNINGS.md` — `Promotion-lane: skill` for plumbing, `spec` for model logic
+
 ## Red lines
 
 - Do not edit production code

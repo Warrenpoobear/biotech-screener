@@ -46,6 +46,7 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 | Skill | Use when |
 |-------|----------|
 | `catalyst-resolution` | Analyzing catalyst events and timeline resolutions |
+| `self-improving` | Recurring delta/noise pattern → LRN (`Promotion-lane: spec` if scoring-related) |
 
 ## Active ruleset
 

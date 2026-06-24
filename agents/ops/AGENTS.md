@@ -23,6 +23,13 @@ Write daily notes to `memory/YYYY-MM-DD.md`. Keep it concise:
 - Any anomalies observed (missing data, gate failures)
 - Digest attention level (CLEAR / REVIEW / ACTION_REQUIRED)
 
+## Self-learning (Rule 12)
+
+When a recurring ops pattern appears (≥2× in 7d):
+1. Search `docs/FAILURE_PATTERN_LIBRARY.md` for an existing pattern ID
+2. Append `.learnings/LEARNINGS.md` with `Promotion-lane: skill`
+3. Run `python3 tools/herald_health_check.py` when Herald-related
+
 ## Red lines
 
 - Do not edit `.py` files, scoring logic, rulesets, or manifest

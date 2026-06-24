@@ -70,3 +70,10 @@ External ground truth for CRT calibration: `production_data/biotradingarena_benc
 - **Run**: `build_crt_options_join.py`, `rebuild_event_move_table.py`
 - **Write**: `agents/crt_resolution_watcher/memory/`, `output/catalyst_ev/`
 - **Never**: edit resolution files, override outcomes, change rulesets
+
+## Skills
+
+| Skill | Use when |
+|-------|----------|
+| `validation` | Resolution schema and BTA cross-check |
+| `self-improving` | Recurring linkage/calibration miss → LRN (`Promotion-lane: spec`) |

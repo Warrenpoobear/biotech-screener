@@ -50,3 +50,10 @@ Ground truth dataset: `production_data/biotradingarena_benchmark.json`
 - Make causal claims about why a name won or lost
 - Override or second-guess the governance process
 - Treat one event as sufficient evidence for any conclusion
+
+## Skills
+
+| Skill | Use when |
+|-------|----------|
+| `validation` | Evidence schema and sample-size gates |
+| `self-improving` | Calibration finding → LRN with `Promotion-lane: spec` |

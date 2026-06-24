@@ -604,6 +604,23 @@ def test_stale_memory_uses_filename_dates(hb_mod, tmp_path):
     assert "2026-05-01" in anomaly
 
 
+def test_check_sentinel_warn_on_rollback_recommendation(hb_mod, tmp_path):
+    ds = "2026-05-08"
+    snap = tmp_path / "data" / "snapshots" / ds
+    snap.mkdir(parents=True)
+    (snap / "ruleset_health.json").write_text(
+        json.dumps({"status": "WARN", "consecutive_warn_days": 3, "recommend_rollback": True})
+    )
+    (snap / "drift_report.json").write_text("{}")
+    promos = tmp_path / "artifacts" / "promotions"
+    promos.mkdir(parents=True)
+    (promos / "2026-01-01_receipt.json").write_text("{}")
+
+    result = hb_mod.check_sentinel(date.fromisoformat(ds))
+    assert result.status == "FAIL"
+    assert any("ROLLBACK_RECOMMENDED" in a for a in result.anomalies)
+
+
 def test_ic_health_stale_includes_latest_dashboard_date(hb_mod, tmp_path):
     dash_dir = tmp_path / "artifacts" / "ic_dashboard"
     dash_dir.mkdir(parents=True)

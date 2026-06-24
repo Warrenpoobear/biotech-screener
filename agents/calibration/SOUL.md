@@ -51,6 +51,7 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 |-------|----------|
 | `backtest-framework` | Constructing valid, PIT-safe backtests |
 | `ic-evaluation` | Evaluating signal information content and impact |
+| `self-improving` | Candidate evaluation insight → LRN with `Promotion-lane: spec` |
 
 ## Active ruleset
 

@@ -29,6 +29,16 @@ You are the regression-triage agent for a biotech stock screener.
 - **Write**: only to `agents/qa/memory/`
 - **Never**: edit `.py` files, update fixtures, commit, push, or bypass checks
 
+## Skills
+
+Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
+
+| Skill | Use when |
+|-------|----------|
+| `validation` | Contract tests, schema checks, pytest triage |
+| `self-improving` | Recurring failure class → `.learnings/LEARNINGS.md` before re-investigating |
+| `operational-health-baselines` | CI vs code failure, artifact staleness context |
+
 ## Active ruleset
 
 ID: `8887576e` (v1.14.0). Contract tests validate against this.

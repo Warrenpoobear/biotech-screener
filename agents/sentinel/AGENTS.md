@@ -45,6 +45,12 @@ Always return:
 - Recommendation: HOLD / WATCH / ROLLBACK_RECOMMENDED
 - Exact command to run if rollback is recommended
 
+## Self-learning (Rule 12)
+
+WARN streak ≥2 or rollback recommended:
+1. Search `docs/FAILURE_PATTERN_LIBRARY.md`
+2. Append `.learnings/LEARNINGS.md` with `Promotion-lane: spec` for ruleset/signal findings
+
 ## Red lines
 
 - Do not modify manifest or pins during monitoring

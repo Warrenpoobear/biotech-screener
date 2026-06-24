@@ -306,6 +306,28 @@ def main(argv: list[str] | None = None) -> int:
     }
     print(json.dumps(summary, indent=2, sort_keys=True))
 
+    exec_id = None
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
+
+        exec_id = log_agent_run(
+            "event_outcome_binder",
+            "Bind shadow ledger to CRT resolutions",
+            inputs={"ledger": args.ledger, "window_days": args.window_days},
+            outputs=summary,
+            success=True,
+        )
+        if exec_id and result.n_changed_names > 0:
+            bind_rate = result.n_bound / result.n_changed_names
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=bind_rate >= 0.5,
+                evidence=f"bound {result.n_bound}/{result.n_changed_names} changed_names",
+            )
+    except Exception:
+        pass
+
     if not args.dry_run:
         write_sidecar(Path(args.out), result.bound_rows)
     return 0

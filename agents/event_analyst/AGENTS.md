@@ -23,6 +23,10 @@ Every Friday (or first day after):
 3. Flag improving or degrading categories
 4. Write `artifacts/event_analyst/weekly/{week_end}_rollup.md`
 
+## Self-learning (Rule 12)
+
+Slice hit-rate anomalies → `.learnings/LEARNINGS.md` with `Promotion-lane: spec`.
+
 ## Red lines
 
 - Do not edit `.py` files, scoring logic, rulesets, or manifest

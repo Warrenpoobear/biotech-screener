@@ -15,3 +15,10 @@
 **LLM:** none (Lane A)
 
 **Dry-run:** `OPERATOR_DELIVERY_DRY_RUN=1` (default) logs without sending email.
+
+## Skills
+
+| Skill | Use when |
+|-------|----------|
+| `town-operator-bridge` | Route HARD_CONTRADICTION to Town |
+| `self-improving` | Recurring contradiction class → LRN |

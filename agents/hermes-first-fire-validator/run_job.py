@@ -164,4 +164,14 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    import time
+
+    _started = time.perf_counter()
+    _rc = main()
+    try:
+        from tools.agent_skill_telemetry import log_hermes_job_exit
+
+        log_hermes_job_exit("hermes-first-fire-validator", _rc, _started)
+    except Exception:
+        pass
+    sys.exit(_rc)

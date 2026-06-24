@@ -65,4 +65,14 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import time
+
+    _started = time.perf_counter()
+    _rc = main()
+    try:
+        from tools.agent_skill_telemetry import log_hermes_job_exit
+
+        log_hermes_job_exit("hermes-contradiction-detector", _rc, _started)
+    except Exception:
+        pass
+    raise SystemExit(_rc)

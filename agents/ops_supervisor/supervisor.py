@@ -28,6 +28,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO))
 HEARTBEAT_DIR = REPO / "artifacts" / "heartbeat"
 OPS_DIGEST_DIR = REPO / "artifacts" / "ops_digest"
 SUPERVISOR_DIR = REPO / "artifacts" / "ops_supervisor"
@@ -778,6 +779,42 @@ def main() -> int:
     out_md = SUPERVISOR_DIR / f"{as_of}_supervisor.md"
     with open(out_md, "w") as fh:
         fh.write("\n".join(lines))
+
+    # Telemetry + self-learning capture (non-blocking)
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "ops_supervisor",
+            f"Daily supervisor verdict for {as_of}",
+            inputs={"as_of_date": as_of},
+            outputs={
+                "final_severity": final_severity,
+                "final_action": final_action,
+                "anomaly_count": len(classified),
+            },
+            success=final_severity in ("GREEN", "YELLOW"),
+            error=None if final_severity in ("GREEN", "YELLOW") else summary[:500],
+        )
+    except Exception:
+        pass
+
+    if final_severity in ("ORANGE", "RED"):
+        try:
+            corrections = REPO / ".learnings" / "corrections.md"
+            stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+            entry = (
+                f"\n## [{stamp}] ops_supervisor {final_severity}\n"
+                f"- action: {final_action}\n"
+                f"- summary: {summary}\n"
+                f"- artifact: artifacts/ops_supervisor/{as_of}_supervisor.json\n"
+                f"- Promotion-lane: skill\n"
+            )
+            corrections.parent.mkdir(parents=True, exist_ok=True)
+            with open(corrections, "a", encoding="utf-8") as fh:
+                fh.write(entry)
+        except OSError:
+            pass
 
     # Console
     print(f"[ops_supervisor] {as_of} → {final_severity} ({final_action})")

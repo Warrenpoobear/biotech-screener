@@ -826,6 +826,67 @@ def check_ctgov_poller(dt: date) -> CheckResult:
     return CheckResult("ctgov_poller", "OK", f"Cache and diff present for {ds}")
 
 
+# ── Sentinel ──────────────────────────────────────────────────
+
+
+def check_sentinel(dt: date) -> CheckResult:
+    """Monitor ruleset drift health and promotion receipt presence."""
+    ds = as_of_date(dt)
+    anomalies: list[str] = []
+
+    health_path = SNAPSHOT_DIR / ds / "ruleset_health.json"
+    drift_path = SNAPSHOT_DIR / ds / "drift_report.json"
+    history_path = ARTIFACTS_DIR / "ruleset_health_history.jsonl"
+    promotions_dir = ARTIFACTS_DIR / "promotions"
+
+    if health_path.exists():
+        try:
+            health = json.loads(health_path.read_text())
+            status = str(health.get("status", "UNKNOWN")).upper()
+            consec = int(health.get("consecutive_warn_days", 0) or 0)
+            if health.get("recommend_rollback"):
+                anomalies.append("ROLLBACK_RECOMMENDED: ruleset_health recommends rollback")
+            elif status in ("WARN", "FAIL"):
+                anomalies.append(f"RULESET_{status}: consecutive_warn_days={consec}")
+            elif status == "PASS":
+                pass
+            else:
+                anomalies.append(f"RULESET_STATUS: {status}")
+        except (json.JSONDecodeError, TypeError, ValueError):
+            anomalies.append("RULESET_HEALTH_CORRUPT")
+    else:
+        latest, _, _ = newest_artifact_freshness(REPO_ROOT, ["artifacts/ruleset_health_history.jsonl"])
+        detail = f"No ruleset_health.json for {ds}"
+        if latest is not None:
+            detail += f"; history latest={latest} ({age_days(dt, latest)}d ago)"
+        if not drift_path.exists():
+            anomalies.append(f"MISSING_DRIFT_REPORT: {detail}")
+        else:
+            anomalies.append(f"MISSING_RULESET_HEALTH: {detail}")
+
+    if promotions_dir.is_dir():
+        receipts = sorted(promotions_dir.glob("*_receipt.json"))
+        if not receipts:
+            anomalies.append("NO_PROMOTION_RECEIPTS: artifacts/promotions empty")
+    else:
+        anomalies.append("NO_PROMOTIONS_DIR")
+
+    if history_path.exists() and health_path.exists():
+        try:
+            lines = history_path.read_text().strip().split("\n")
+            recent = [json.loads(ln) for ln in lines[-5:] if ln.strip()]
+            warn_streak = sum(1 for r in recent if str(r.get("status", "")).upper() == "WARN")
+            if warn_streak >= 2:
+                anomalies.append(f"WARN_STREAK: {warn_streak} of last 5 history entries WARN")
+        except (json.JSONDecodeError, ValueError):
+            pass
+
+    if anomalies:
+        status = "FAIL" if any("ROLLBACK" in a or "RULESET_FAIL" in a for a in anomalies) else "WARN"
+        return CheckResult("sentinel", status, f"{len(anomalies)} issue(s)", anomalies)
+    return CheckResult("sentinel", "OK", f"Ruleset health OK for {ds}")
+
+
 # ── Orchestrator ──────────────────────────────────────────────
 
 # Specialized check functions, keyed by registry name (agents/AGENT_REGISTRY.json).
@@ -845,6 +906,7 @@ SPECIALIZED_CHECKS = {
     "review_queue_steward": check_review_queue_steward,
     "ops": check_ops,
     "ctgov_poller": check_ctgov_poller,
+    "sentinel": check_sentinel,
 }
 
 # CLI --agent map: registry names only.

@@ -45,6 +45,10 @@ Always return:
 - Risks / caveats
 - Exact file paths to outputs reviewed
 
+## Self-learning (Rule 12)
+
+Promotion findings use `Promotion-lane: spec` in `.learnings/LEARNINGS.md`. Never promote rulesets autonomously.
+
 ## Red lines
 
 - Do not modify active rulesets

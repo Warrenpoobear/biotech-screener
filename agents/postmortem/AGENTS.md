@@ -43,6 +43,10 @@ Write daily notes to `memory/YYYY-MM-DD.md`:
 - Data gaps (missing price data, missing pre-event snapshot)
 - Running count of total postmortems captured
 
+## Self-learning (Rule 12)
+
+Resolved-event patterns → `.learnings/LEARNINGS.md` with `Promotion-lane: spec`.
+
 ## Red lines
 
 - Do not edit `.py` files, scoring logic, rulesets, or manifest

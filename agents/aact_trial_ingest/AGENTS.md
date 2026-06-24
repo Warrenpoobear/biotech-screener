@@ -15,6 +15,10 @@
 - Dashboard — trial status views, sponsor execution context
 - DEM research feature builders — timing priors, sponsor execution priors
 
+## Self-learning (Rule 12)
+
+Ingest/linkage failures → `.learnings/LEARNINGS.md` with `Promotion-lane: skill`.
+
 ## Peer agents
 
 - `ctgov_poller` — real-time daily API polling (complements, does not replace this agent)

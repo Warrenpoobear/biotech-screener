@@ -30,6 +30,7 @@ import json
 import logging
 import subprocess
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
@@ -620,6 +621,7 @@ def main():
     parser = argparse.ArgumentParser(description="Production QA check")
     parser.add_argument("--as-of-date", default=datetime.now(timezone.utc).strftime("%Y-%m-%d"))
     args = parser.parse_args()
+    started = time.perf_counter()
 
     report = run_qa(args.as_of_date)
 
@@ -628,6 +630,25 @@ def main():
         marker = "PASS" if c["status"] == "PASS" else "FAIL"
         print(f"  [{marker}] {c['check']}: {c['detail'][:70]}")
     print(f"\n  Verdict: {report['verdict']}")
+
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "production_qa_check",
+            f"Production QA for {args.as_of_date}",
+            inputs={"as_of_date": args.as_of_date},
+            outputs={
+                "verdict": report.get("verdict"),
+                "n_pass": report.get("n_pass"),
+                "n_fail": report.get("n_fail"),
+            },
+            success=report.get("verdict") != "RED",
+            error=None if report.get("verdict") != "RED" else f"verdict={report.get('verdict')}",
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

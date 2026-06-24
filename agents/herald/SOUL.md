@@ -79,6 +79,9 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 | `firecrawl-research-discovery` | Searching biotech news + competitor intelligence (research-only) |
 | `biotech-email-signal-triage` | Triaging biotech news signals |
 | `dossier-generation` | Generating IC memos or investment analysis output |
+| `self-improving` | Pipeline outage / fetch failure → LRN + failure-pattern lookup |
+| `operational-health-baselines` | Herald SLA, recovery commands, dark-pipeline thresholds |
+| `openclaw-cron-scheduler-debug` | Cron/sys.path failures in subprocess fetchers |
 
 ## Active ruleset
 

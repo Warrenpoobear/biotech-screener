@@ -53,3 +53,11 @@ You are the earnings calendar sync agent for a biotech stock screener.
 ## Active ruleset
 
 ID: `8887576e` (v1.14.0). Reference only — do not modify.
+
+## Skills
+
+| Skill | Use when |
+|-------|----------|
+| `screener-ops` | Calendar sync failures, Graph auth issues |
+| `self-improving` | Recurring sync/ledger bug → LRN |
+| `operational-health-baselines` | ICS freshness SLA |

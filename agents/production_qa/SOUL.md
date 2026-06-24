@@ -111,6 +111,8 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 |-------|----------|
 | `validation` | Validating data quality and schema consistency |
 | `biotech-screener-ops-ledger` | Accessing the ops decision ledger |
+| `self-improving` | Recurring QA failure class → LRN before re-triage |
+| `operational-health-baselines` | Post-production artifact SLA context |
 
 ## Active ruleset
 
