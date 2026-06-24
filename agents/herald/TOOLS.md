@@ -1,69 +1,93 @@
-# TOOLS.md — Ops Agent Commands
+# TOOLS.md — Herald Agent Commands
 
-## Daily production run
-
-```bash
-cd /mnt/c/Projects/biotech_screener/biotech-screener
-source .env 2>/dev/null
-python3 tools/run_daily_production.py --as-of-date YYYY-MM-DD
-```
-
-## Ops digest (standalone, if pipeline already ran)
-
-```bash
-python3 tools/build_ops_digest.py --as-of-date YYYY-MM-DD --stdout
-```
-
-## Portfolio metrics refresh
-
-```bash
-python3 tools/build_portfolio_report.py
-```
-
-## Readiness scorecard (standalone)
-
-```bash
-python3 tools/weekly_readiness_scorecard.py --as-of-date YYYY-MM-DD
-```
-
-## Daily working set
-
-Read this first:
-- `artifacts/ops_digest/YYYY-MM-DD_digest.md`
-  - One-screen summary of NEW issues, RESOLVED issues, and items needing review
-
-If the digest flags something, drill into only these inputs:
-
-1. `data/snapshots/YYYY-MM-DD/phase2_health.json`
-   - Core pipeline health, gate outcomes, turnover, catalyst coverage
-
-2. `data/snapshots/YYYY-MM-DD/data_collection_health.json`
-   - Source freshness, ingestion status, collection PASS/WARN/FAIL
-
-3. `data/snapshots/YYYY-MM-DD/coverage_quality.json`
-   - Coverage percentages for catalyst / sponsor / optionality / regulatory inputs
-
-4. `data/snapshots/YYYY-MM-DD/eligibility_summary.json`
-   - Eligible vs ineligible counts and tier distribution
-
-5. `data/snapshots/YYYY-MM-DD/phase2_run_delta_details.json`
-   - What changed vs prior run: entrants, exits, turnover, tier drift
-
-6. `artifacts/live_shadow/portfolio_metrics.json`
-   - Shadow portfolio return, excess vs XBI, Sharpe, drawdown
-
-7. `artifacts/readiness/scorecard_YYYY-MM-DD.json`
-   - Final readiness verdict: READY / REVIEW / HOLD
-
-## Rule of use
-
-Do not fan out into the full artifact set by default.
-Start with the digest.
-Open only the specific input file that explains the flagged issue.
+Canonical news pipeline: fetch → dedupe → classify → digest. Deterministic (no LLM for collection/classification by default).
 
 ## Environment
 
-- WSL2 Ubuntu, Python 3.12
-- Node 22 via nvm (for OpenClaw)
-- Cron: 5:30 PM ET weekdays + @reboot catch-up
-- Windows Task Scheduler: belt-and-suspenders backup
+```bash
+cd /mnt/c/Projects/biotech_screener/biotech-screener
+source .env 2>/dev/null   # SMTP_USER, SMTP_PASSWORD, XAI_API_KEY (optional)
+export PYTHONPATH=.
+```
+
+## Daily pipeline (manual recovery)
+
+Replace `YYYY-MM-DD` with the as-of date (usually today on weekdays).
+
+```bash
+AS_OF=YYYY-MM-DD
+
+# 1. Fetch all universe tickers
+python3 tools/fetch_company_press_releases.py --as-of-date "$AS_OF"
+
+# 2. Dedupe (required for supervisor done predicate)
+python3 tools/dedupe_press_releases.py \
+  --input "data/press_releases/releases_${AS_OF}.jsonl"
+
+# 3. Classify (input: deduped file — writes classified/classified_${AS_OF}.jsonl)
+python3 tools/classify_press_releases.py \
+  --input "data/press_releases/deduped/deduped_${AS_OF}.jsonl"
+
+# 4. Digest (morning / midday / evening windows)
+python3 scripts/build_news_digest.py --window morning --as-of-date "$AS_OF"
+python3 scripts/build_news_digest.py --window midday --as-of-date "$AS_OF"
+python3 scripts/build_news_digest.py --window evening --as-of-date "$AS_OF"
+```
+
+## Health check (host cron / operator triage)
+
+```bash
+python3 tools/herald_health_check.py
+python3 tools/herald_health_check.py --as-of-date YYYY-MM-DD
+python3 tools/herald_health_check.py --json
+```
+
+Writes `artifacts/herald/health_check_YYYY-MM-DD.json`. Exit 0 = HEALTHY, 1 = WARN, 2 = FAIL (dark).
+
+## Source health only (no fetch)
+
+```bash
+python3 tools/fetch_company_press_releases.py --health-check
+```
+
+## Single-ticker debug
+
+```bash
+python3 tools/fetch_company_press_releases.py --as-of-date YYYY-MM-DD --ticker MRNA
+```
+
+## Done predicate (supervisor + heartbeat)
+
+Both must exist for `YYYY-MM-DD`:
+
+- `data/press_releases/deduped/deduped_YYYY-MM-DD.jsonl`
+- `data/press_releases/classified/classified_YYYY-MM-DD.jsonl`
+
+If dedupe exists but classify failed, re-run classify only (step 3).
+
+## Cron (authoritative on WSL host)
+
+| Time (ET) | Job |
+| --- | --- |
+| 07:30 | Herald-only fetch (pre-morning) |
+| 08:00 | Morning digest |
+| 14:00 | `cron_data_refresh.sh herald` (fetch + classify) |
+| 14:35 | Herald agent heartbeat |
+| 15:00 | Midday digest |
+| 17:30 | Production pipeline (includes Herald step 5l.5) |
+| 18:00 | Evening digest |
+
+## Daily working set
+
+1. `python3 tools/herald_health_check.py` — pipeline status
+2. `data/press_releases/fetch_state.json` — per-ticker fetch state
+3. `data/press_releases/health_YYYY-MM-DD.json` — fetch health artifact
+4. `artifacts/news_digest/biotech_news_digest_YYYY-MM-DD_*.json` — digest outputs
+5. `artifacts/news_digest/delivery_log.jsonl` — send failures
+
+## Red lines
+
+- Do not modify rankings, scoring, rulesets, or production snapshots
+- Do not `git push` or change tracked production data without operator approval
+- Do not feed unverified social media into digests
+- When fetch fails for >10% of tickers: report `FETCH_DEGRADED`, do not silence

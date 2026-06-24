@@ -897,8 +897,14 @@ def main() -> int:
 
     # Write output
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    stem = args.input.stem.replace("releases_", "classified_")
-    out_path = OUTPUT_DIR / f"{stem}.jsonl"
+    stem = args.input.stem
+    if stem.startswith("releases_"):
+        out_stem = stem.replace("releases_", "classified_", 1)
+    elif stem.startswith("deduped_"):
+        out_stem = stem.replace("deduped_", "classified_", 1)
+    else:
+        out_stem = f"classified_{stem}"
+    out_path = OUTPUT_DIR / f"{out_stem}.jsonl"
     with open(out_path, "w") as f:
         for r in classified:
             f.write(json.dumps(r, default=str) + "\n")

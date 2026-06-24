@@ -76,6 +76,10 @@ Deterministic scripts in `tools/`. These **can** write repo artifacts and docs; 
 | [`tools/sync_hermes_skills.py`](../../tools/sync_hermes_skills.py) | `skills/` → `docs/hermes_skills/`; maintains `_meta.json` (`source_authority`) |
 | [`tools/audit_hermes_skills.py`](../../tools/audit_hermes_skills.py) | Registry coverage, authority completeness, mirror drift vs `skills/` |
 | [`tools/audit_learnings.py`](../../tools/audit_learnings.py) | `.learnings/` tier hygiene: HOT/WARM limits, Pattern-Key promotion candidates (read-only) |
+| [`tools/herald_health_check.py`](../../tools/herald_health_check.py) | Herald pipeline health (fetch/dedupe/classify/digest); host cron triage |
+| [`tools/fetch_company_press_releases.py`](../../tools/fetch_company_press_releases.py) | Herald fetch (Spec 044) |
+| [`tools/dedupe_press_releases.py`](../../tools/dedupe_press_releases.py) | Herald dedupe stage |
+| [`tools/classify_press_releases.py`](../../tools/classify_press_releases.py) | Herald classify stage |
 | [`tools/skills_execution_logger.py`](../../tools/skills_execution_logger.py) | Skill invocation telemetry → `artifacts/skills_learning/` JSONL (env-tagged) |
 | [`tools/weekly_skills_digest.py`](../../tools/weekly_skills_digest.py) | Unified loop review digest (trim + efficacy + audit + telemetry) |
 | [`tools/skills_loop_review.py`](../../tools/skills_loop_review.py) | Trim candidates, efficacy overdue, contradiction helpers |

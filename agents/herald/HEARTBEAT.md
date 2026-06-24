@@ -19,7 +19,8 @@
 
 ## Health checks
 
-1. **Herald data exists**: `data/press_releases/` has recent .jsonl files
+1. **Run health check**: `python3 tools/herald_health_check.py` (writes `artifacts/herald/health_check_YYYY-MM-DD.json`)
+2. **Herald data exists**: `data/press_releases/` has recent .jsonl files
    - If latest release file is >2 days old: STALE_SOURCE
 2. **Fetch state**: `data/press_releases/fetch_state.json` (NOT `agents/herald/memory/`)
 3. **Today's digests sent**: check `artifacts/news_digest/` for today's files
