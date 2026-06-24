@@ -16,7 +16,8 @@ Long-form templates and checklists. Entry point: `skills/self-improving/SKILL.md
 **Logged**: ISO-8601 timestamp
 **Priority**: low | medium | high | critical
 **Status**: pending | promoted | resolved | superseded
-**Area**: tooling | ops | research | ci | hermes_ops | cloud_environment
+**Area**: tooling | ops | research | portfolio | ci | hermes_ops | cloud_environment | data_pipeline
+**Promotion-lane**: skill | spec | none  # skill=patch skills/; spec=governance Spec only; none=log only
 
 ### Summary
 One sentence.
@@ -33,6 +34,7 @@ Concrete next step (skill patch, test, operator check).
 - Tags: comma-separated
 - Pattern-Key: snake_case (for recurrence counting)
 - Recurrence-Count: N
+- Promotion-lane: skill | spec | none
 - Skill-Path: optional target skill dir (e.g. screener_ops, codegraph)
 ```
 
@@ -52,6 +54,29 @@ Concrete next step (skill patch, test, operator check).
 
 ### Governance
 - Skills/docs only. No ranker, selector, sizing, or scoring changes.
+```
+
+---
+
+## Patch verification template (2 weeks post-merge)
+
+```markdown
+### Patch verification (YYYY-MM-DD)
+- **skill:** openclaw-cron-scheduler-debug Class J
+- **metric:** cron_missed Town emails citing import errors / skill telemetry success rate
+- **result:** 0 recurrence since fix / ≥80% success over N execs
+- **action:** close LRN or bump Recurrence-Count if pattern recurred
+```
+
+---
+
+## Weekly operator workflow
+
+```bash
+python3 tools/audit_learnings.py
+python3 tools/weekly_skills_digest.py
+SELFIMPROVE_GATES_MET=1 python3 tools/pattern_to_skillpatch.py
+# Review artifacts/skill_patch_drafts/ and artifacts/skills_learning/weekly_digest_*.md
 ```
 
 ---

@@ -1,7 +1,7 @@
 # Learnings Log
 
 <!-- Self-improving agent learning entries. Format: [LRN-YYYYMMDD-XXX] -->
-<!-- Entries logged during conversations; promoted to CLAUDE.md / memory when verified. -->
+<!-- Promotion-lane: skill (ops/tooling → skills/) | spec (research/signal → Spec only) | none -->
 
 ## [LRN-20260329-001] size_confound_in_raw_event_counts
 
@@ -24,6 +24,7 @@ Residualize all count-based research features against pipeline size (n_total_tri
 - Related Files: scripts/research/backtest_graveyard_signal.py, scripts/research/backtest_catalyst_history_signal.py
 - Tags: size_confound, research, signal_quality
 - Pattern-Key: raw_count_size_confound
+- Promotion-lane: spec
 - Recurrence-Count: 3
 
 ## [LRN-20260329-002] portfolio_drag_is_construction_not_ranking
@@ -46,6 +47,7 @@ Run tier-weighted policy as formal shadow candidate (Spec 035). Already implemen
 - Source: shadow_attribution_audit
 - Related Files: tools/build_policy_shadow_compare.py, tools/eval_policy_candidate.py, specs/changes/035_tier_weighted_policy.md
 - Tags: portfolio_construction, policy, shadow_candidate
+- Promotion-lane: spec
 - Skill-Path: Spec 035
 
 ## [LRN-20260329-003] open_targets_api_search_type_mismatch
@@ -368,6 +370,7 @@ Audit all cron entry scripts for repo-relative imports. Cross-ref `openclaw-data
 - Related Files: agents/*/run_job.py, tools/run_daily_production.py
 - Tags: cron, sys_path, hermes_ops, town_bridge
 - Pattern-Key: cron_sys_path_isolation
+- Promotion-lane: skill
 - Recurrence-Count: 1
 - Skill-Path: town-operator-bridge, openclaw-data-pipeline-debug
 

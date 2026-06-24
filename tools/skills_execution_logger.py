@@ -134,7 +134,11 @@ def log_skill(
 
 
 def record_feedback(execution_id: str, verdict: str, notes: str = "") -> None:
-    """Record feedback on a skill execution."""
+    """Record feedback on a skill execution. Gated when called from automation."""
+    import os
+
+    if os.getenv("SELFIMPROVE_IMMEDIATE_VERDICT") != "1":
+        return
     get_logger().record_feedback(execution_id, verdict, notes)
 
 

@@ -37,6 +37,12 @@ Observe → Log → Distill → Promote → Skill-patch → Sync → Verify
 # Read-only audit: tiers, promotion candidates, stale hints
 python3 tools/audit_learnings.py
 
+# Weekly operator digest (promotion candidates + telemetry + drafts)
+python3 tools/weekly_skills_digest.py
+
+# Skill-patch drafts (gated — operator review required)
+SELFIMPROVE_GATES_MET=1 python3 tools/pattern_to_skillpatch.py
+
 # Hermes ops ledgers (operator WSL for authoritative cron)
 python3 tools/build_hermes_knowledge_layer.py
 
@@ -48,10 +54,13 @@ python3 tools/audit_hermes_skills.py
 ## Promotion rules
 
 - **Log immediately**: explicit user correction or preference
-- **LEARNINGS entry**: non-trivial lesson with `Pattern-Key`
+- **LEARNINGS entry**: non-trivial lesson with `Pattern-Key`, `Area`, `Promotion-lane`
+- **Promotion-lane `skill`**: ops/tooling → may become `skills/` patch after review
+- **Promotion-lane `spec`**: research/portfolio/signal → governance Spec only, never auto skill-patch
+- **Promotion-lane `none`**: historical log, no promotion expected
 - **HOT (`memory.md`)**: same Pattern-Key ≥3× in 7 days or critical ops/governance
 - **Skill patch**: operator workflow, tooling, conventions — never scoring weights without Spec
-- **Never**: infer from silence; delete without operator OK
+- **Verify**: patch verification block in `harvest_log.md` 2 weeks post-merge
 
 ## Memory optimization (HOT tier)
 

@@ -75,7 +75,9 @@ Deterministic scripts in `tools/`. These **can** write repo artifacts and docs; 
 | [`tools/build_hermes_knowledge_layer.py`](../../tools/build_hermes_knowledge_layer.py) | Spec 089 **Hermeslink** ops brain: git, crontab, registry, held specs, contradiction checks C1–C5 → `artifacts/ops/*` |
 | [`tools/sync_hermes_skills.py`](../../tools/sync_hermes_skills.py) | `skills/` → `docs/hermes_skills/`; maintains `_meta.json` (`source_authority`) |
 | [`tools/audit_hermes_skills.py`](../../tools/audit_hermes_skills.py) | Registry coverage, authority completeness, mirror drift vs `skills/` |
-| [`tools/audit_learnings.py`](../../tools/audit_learnings.py) | `.learnings/` tier hygiene: HOT/WARM limits, Pattern-Key promotion candidates (read-only) |
+| [`tools/audit_learnings.py`](../../tools/audit_learnings.py) | `.learnings/` tier hygiene: HOT/WARM limits, Pattern-Key promotion, spec-lane blocks (read-only) |
+| [`tools/weekly_skills_digest.py`](../../tools/weekly_skills_digest.py) | Weekly operator digest: audit + telemetry + skill-patch drafts |
+| [`tools/pattern_to_skillpatch.py`](../../tools/pattern_to_skillpatch.py) | Draft skill patches from LRNs (`SELFIMPROVE_GATES_MET=1`; never auto-edits skills) |
 | [`tools/skills_execution_logger.py`](../../tools/skills_execution_logger.py) | Skill invocation telemetry → `artifacts/skills_learning/` JSONL |
 | [`tools/hermes_skills_learning_loop_v2.py`](../../tools/hermes_skills_learning_loop_v2.py) | Monthly skills performance report; advisory-only (no auto-routing) |
 | [`tools/agent_preflight.py`](../../tools/agent_preflight.py) | Pre-dispatch governance report (used by `run_agent_direct.py`) |

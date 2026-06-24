@@ -165,6 +165,19 @@ Automated skill promotion is **staged**, not live by default (2026-06-24):
 
 Without these gates, tools exit cleanly. Operator reviews drafts before any skill merge. Memo: `artifacts/governance/selfimprove_audit_2026-06-24.md`.
 
+### Rule 12 - Promotion checklist (mechanical gates)
+
+| Gate | Threshold | Action |
+| --- | --- | --- |
+| **Recurrence** | Pattern-Key ≥3 in 7 days | Promote to HOT `memory.md` or WARM `domains/` / `projects/` |
+| **Skill-path** | `Promotion-lane: skill`, Skill-Path set, rec ≥2 | Draft via `pattern_to_skillpatch.py`; operator merges manually |
+| **Spec lane** | `Promotion-lane: spec` or Area research/portfolio | Open governance Spec — **never** auto skill-patch |
+| **Operator verdict** | ≥3 `helpful` feedback on same skill (telemetry) | Eligible for skill merge |
+| **Observation** | 7+ days prod telemetry | Eligible for routing changes (advisory only) |
+| **Verification** | 2 weeks post-merge | Patch verification block in `harvest_log.md` |
+
+Set `Promotion-lane` on every new LRN: `skill` | `spec` | `none`. See `REFERENCE.md` template.
+
 ---
 
 ## Repo commands (skill + knowledge recursion)
@@ -172,6 +185,16 @@ Without these gates, tools exit cleanly. Operator reviews drafts before any skil
 ```bash
 # Knowledge hygiene (read-only)
 python3 tools/audit_learnings.py
+python3 tools/weekly_skills_digest.py
+
+# Skill-patch drafts (operator review required)
+SELFIMPROVE_GATES_MET=1 python3 tools/pattern_to_skillpatch.py
+
+# Execution telemetry (returns execution_id for feedback)
+python3 -c "from tools.skills_execution_logger import log_skill; print(log_skill('screener-ops', 'session', {}, {}, 0))"
+
+# Monthly advisory report
+python3 tools/hermes_skills_learning_loop_v2.py
 
 # After editing skills/<dir>/SKILL.md
 python3 tools/sync_hermes_skills.py
@@ -181,7 +204,24 @@ python3 tools/audit_hermes_skills.py
 python3 tools/build_hermes_knowledge_layer.py
 ```
 
+### Execution telemetry
+
+Log significant skill loads/completions via `tools/skills_execution_logger.log_skill()` or `skills_logger_v2.log_skill()` (redacted). Feedback via `record_feedback()` is gated behind `SELFIMPROVE_IMMEDIATE_VERDICT=1`. Telemetry feeds `weekly_skills_digest.py` and `hermes_skills_learning_loop_v2.py` — advisory only, no auto-routing.
+
 Knowledge stack map: `.learnings/README.md` · Runbook: `docs/hermes_agents/operator_host_skills.md` · History: `docs/hermes_skills/harvest_log.md`
+
+---
+
+## Town → Hermes learning bridge
+
+Town is the primary memory surface; Hermes/Cursor uses `.learnings/` files. **Dual-write** significant corrections:
+
+1. **Town:** `add_memory()` or `add_memory(routine_slug=...)` for operator-facing preferences
+2. **Hermes:** append `[LRN-...]` to `LEARNINGS.md` with `Pattern-Key`, `Area`, `Promotion-lane`
+3. Run `audit_learnings.py` + `weekly_skills_digest.py`
+4. If skill-worthy and `Promotion-lane: skill` → patch `skills/`, sync, `harvest_log.md`, commit
+
+Use `memory-steward` to flag stale Town memories that contradict repo skills (`town_ls skills://`).
 
 ---
 

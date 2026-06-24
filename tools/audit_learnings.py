@@ -32,8 +32,23 @@ BOOTSTRAP_MARKER = "## Bootstrap (read first)"
 PATTERN_IN_MEMORY = re.compile(r"\*\*([a-z][a-z0-9_]+)\*\*:|Pattern-Key:\s*(\S+)", re.IGNORECASE)
 
 LRN_HEADING = re.compile(r"^## \[(LRN-\d{8}-\d{3})\]", re.MULTILINE)
-META_LINE = re.compile(r"^- (Pattern-Key|Recurrence-Count|Skill-Path|Status):\s*(.+)$", re.MULTILINE)
+META_LINE = re.compile(
+    r"^- (Pattern-Key|Recurrence-Count|Skill-Path|Status|Promotion-lane|Area):\s*(.+)$",
+    re.MULTILINE,
+)
 STATUS_LINE = re.compile(r"^\*\*Status\*\*:\s*(\w+)", re.MULTILINE)
+AREA_LINE = re.compile(r"^\*\*Area\*\*:\s*(\w+)", re.MULTILINE)
+PROMOTION_LANE_LINE = re.compile(r"^- Promotion-lane:\s*(\w+)", re.MULTILINE)
+
+SPEC_LANE_AREAS = {"research", "portfolio"}
+
+
+def infer_promotion_lane(area: str | None, explicit: str | None) -> str:
+    if explicit:
+        return explicit.strip().lower()
+    if area and area.lower() in SPEC_LANE_AREAS:
+        return "spec"
+    return "skill"
 
 
 @dataclass
@@ -43,6 +58,8 @@ class LrnEntry:
     pattern_key: str | None = None
     recurrence_count: int = 0
     skill_path: str | None = None
+    area: str | None = None
+    promotion_lane: str | None = None
 
 
 @dataclass
@@ -58,6 +75,7 @@ class AuditReport:
     memory_patterns_hot: list[str] = field(default_factory=list)
     lrn_pending_but_in_hot: list[dict] = field(default_factory=list)
     compaction_hints: list[str] = field(default_factory=list)
+    spec_lane_blocked: list[dict] = field(default_factory=list)
 
 
 def _line_count(path: Path) -> int:
@@ -78,6 +96,10 @@ def parse_learnings(text: str) -> list[LrnEntry]:
         status_m = STATUS_LINE.search(body)
         if status_m:
             entry.status = status_m.group(1).lower()
+        area_m = AREA_LINE.search(body)
+        if area_m:
+            entry.area = area_m.group(1)
+        lane_m = PROMOTION_LANE_LINE.search(body)
         for key, val in META_LINE.findall(body):
             val = val.strip()
             if key == "Pattern-Key":
@@ -88,9 +110,16 @@ def parse_learnings(text: str) -> list[LrnEntry]:
                 except ValueError:
                     pass
             elif key == "Skill-Path":
-                entry.skill_path = val
+                entry.skill_path = val.split(",")[0].strip()
             elif key == "Status":
                 entry.status = val.lower()
+            elif key == "Area":
+                entry.area = val
+            elif key == "Promotion-lane":
+                entry.promotion_lane = val.lower()
+        if lane_m:
+            entry.promotion_lane = lane_m.group(1).lower()
+        entry.promotion_lane = infer_promotion_lane(entry.area, entry.promotion_lane)
         entries.append(entry)
         i += 2
     return entries
@@ -193,13 +222,28 @@ def build_report() -> AuditReport:
                 }
             )
         for e in group:
-            if e.skill_path and e.status in ("pending", "resolved") and e.recurrence_count >= 2:
+            if e.promotion_lane == "spec" and e.recurrence_count >= 2:
+                report.spec_lane_blocked.append(
+                    {
+                        "lrn_id": e.lrn_id,
+                        "pattern_key": pattern,
+                        "area": e.area,
+                        "action": "governance Spec — not skill patch",
+                    }
+                )
+            if (
+                e.skill_path
+                and e.promotion_lane == "skill"
+                and e.status in ("pending", "resolved")
+                and e.recurrence_count >= 2
+            ):
                 report.skill_candidates.append(
                     {
                         "lrn_id": e.lrn_id,
                         "pattern_key": pattern,
                         "skill_path": e.skill_path,
                         "status": e.status,
+                        "promotion_lane": e.promotion_lane,
                     }
                 )
 
@@ -254,14 +298,33 @@ def print_report(report: AuditReport) -> None:
         for c in report.promotion_candidates:
             print(f"- `{c['pattern_key']}` (rec={c['total_recurrence']}): {', '.join(c['pending_lrns'])}")
 
-    print("\n## Skill-patch candidates (Skill-Path + recurrence ≥2)\n")
+    print("\n## Skill-patch candidates (Skill-Path + recurrence ≥2, skill lane)\n")
     if not report.skill_candidates:
         print("None.")
     else:
         for c in report.skill_candidates[:15]:
-            print(f"- {c['lrn_id']} → skills/{c['skill_path']}/ ({c['status']})")
+            print(
+                f"- {c['lrn_id']} → skills/{c['skill_path']}/ "
+                f"(lane={c.get('promotion_lane', 'skill')}, {c['status']})"
+            )
         if len(report.skill_candidates) > 15:
             print(f"  ... and {len(report.skill_candidates) - 15} more")
+
+    print("\n## Spec-lane blocked (research/portfolio — require Spec, not skill)\n")
+    if not report.spec_lane_blocked:
+        print("None.")
+    else:
+        for c in report.spec_lane_blocked[:15]:
+            print(f"- {c['lrn_id']} (`{c['pattern_key']}`): {c['action']}")
+
+    print("\n## Promotion checklist (Rule 12)\n")
+    print("| Gate | Threshold | Action |")
+    print("| --- | --- | --- |")
+    print("| Recurrence | Pattern-Key ≥3 in 7 days | → HOT `memory.md` or WARM tier |")
+    print("| Skill-path | lane=skill, rec ≥2 | → draft via `pattern_to_skillpatch.py` |")
+    print("| Operator verdict | ≥3 helpful on same skill | → eligible for skill merge |")
+    print("| Observation | 7+ days telemetry | → eligible for routing changes |")
+    print("| Spec lane | research/portfolio | → Spec only, never auto skill patch |")
 
     print("\n## LRN pending but already in HOT memory\n")
     if not report.lrn_pending_but_in_hot:
@@ -285,6 +348,8 @@ def print_report(report: AuditReport) -> None:
             print(f"- {h}")
 
     print("\n## Commands")
+    print("  python3 tools/weekly_skills_digest.py")
+    print("  SELFIMPROVE_GATES_MET=1 python3 tools/pattern_to_skillpatch.py")
     print("  python3 tools/build_hermes_knowledge_layer.py  # ops ledgers")
     print("  See .learnings/README.md for full knowledge stack")
 

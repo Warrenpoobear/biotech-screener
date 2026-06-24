@@ -11,6 +11,32 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+---
+
+## 2026-06-24 — Self-improvement loop upgrade
+
+### Tools added / extended
+- **`weekly_skills_digest.py`**: operator weekly digest (audit + telemetry + drafts checklist)
+- **`pattern_to_skillpatch.py`**: Promotion-lane (`skill`/`spec`/`none`), Skill-Path parsing, spec-lane blocks
+- **`audit_learnings.py`**: spec-lane blocked list, Rule 12 promotion checklist in output
+- **`skills_execution_logger.py`**: `record_feedback()` gated behind `SELFIMPROVE_IMMEDIATE_VERDICT`
+
+### Skills / learnings
+- **self-improving**: Rule 12 promotion checklist; telemetry commands; Town→Hermes dual-write bridge
+- **REFERENCE.md**: Promotion-lane in LRN template; patch verification template; weekly workflow
+- **README.md**: weekly digest + pattern_to_skillpatch in maintenance commands
+- **LEARNINGS.md**: Promotion-lane on research/portfolio/skill entries
+
+### Governance
+- Tools/docs/learnings only. No production scoring changes.
+
+### Patch verification (2026-06-24 baseline)
+- **skill:** self-improving Rule 12 + weekly digest tooling
+- **metric:** operator can run digest + draft queue without auto-merge
+- **result:** pending 2-week observation
+
+---
+
 ## 2026-06-24 (refresh) — Hermes Town skills refresh
 
 ### Refreshed
