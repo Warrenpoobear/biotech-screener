@@ -20,6 +20,15 @@
 ## Agent registry / Hermes
 - Repo agent fleet: 31 directories = 29 active + 2 deprecated (`bioshort_watch`, `shadow_watch`). Do not re-add absent overlap dirs (`policy_shadow_watch`, `biotech_news_digest`, `company_news_ingest`) to `AGENT_REGISTRY.json` unless their directories are restored.
 
+## Pipeline recovery (2026-06-24)
+
+Classes M–P in `openclaw-data-pipeline-debug` (detail) · Town triage in `town-operator-bridge`:
+
+- **M** — yfinance date: use `strftime("%Y-%m-%d")`, not `datetime.isoformat()`
+- **N** — universe leak: delisted filter must cover refresh_prices, run_screen, run_screen_from_bundle, coverage denominators
+- **O** — cache warm timeout: argparse CLI default for `--warm-sources` masked essential-only function default
+- **P** — cron `sys.path`: `from tools.*` fails without `PROJECT_ROOT` insert (42× agents.log before fix)
+
 ## Enrichment
 - indication_master --min-tickers 3 is the right cutoff (1,568 conditions, covers all shared by 3+ companies)
 - Full enrichment build takes ~60min (API latency). Plan accordingly.

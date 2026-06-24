@@ -171,6 +171,17 @@ Hermes: Load `memory.md` first. Load namespaces on demand.
 ### Rule 10 - Skill recursion governance
 Architecture freeze: skill updates are **Tier 0 docs/plumbing** unless they encode scoring or selector behavior. When in doubt, log to LEARNINGS as `pending` and stop.
 
+### Rule 11 - Selfimprove containment (FENCE)
+
+Automated skill promotion is **staged**, not live by default (2026-06-24):
+
+| Gate | Env var | Effect |
+| --- | --- | --- |
+| Immediate verdict | `SELFIMPROVE_IMMEDIATE_VERDICT=1` | Enables `record_feedback()` in `run_agent_direct.py` |
+| Skill-patch drafts | `SELFIMPROVE_GATES_MET=1` | Enables `pattern_to_skillpatch.py` (writes drafts only; never edits skills directly) |
+
+Without these gates, tools exit cleanly. Operator reviews drafts before any skill merge. Memo: `artifacts/governance/selfimprove_audit_2026-06-24.md`.
+
 ---
 
 ## Repo commands (skill + knowledge recursion)

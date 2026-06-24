@@ -7,6 +7,33 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+---
+
+## 2026-06-24 (full apply) — All skills and learning synced to Hermes
+
+### Learning tier updates
+- **memory.md**: `cron_sys_path_isolation` promoted to HOT Ops compact
+- **projects/biotech_screener.md**: Pipeline recovery Classes M–P summary table
+- **agent_ops.md**: M–P pattern-key cross-ref table
+- **LEARNINGS.md**: `[LRN-20260624-002]` yfinance date, `[LRN-20260624-003]` universe leak, `[LRN-20260624-004]` argparse default mask (all promoted)
+
+### Skill patches
+- **self-improving**: Rule 11 selfimprove FENCE gates (`SELFIMPROVE_IMMEDIATE_VERDICT`, `SELFIMPROVE_GATES_MET`)
+- **screener-ops**: Pipeline recovery M–P table under Infrastructure
+- **openclaw-cron-scheduler-debug**: Class J (cron sys.path isolation) + quick-ref triage line
+- **hermeslink-state-capture**: Town operator triage cross-ref
+- **operator_host_skills.md**: Full sync workflow (`audit_learnings` + `sync --register-meta`)
+
+### Sync
+- Ran `python3 tools/sync_hermes_skills.py --register-meta` (all cursor mirrors)
+- Ran `python3 tools/audit_hermes_skills.py` — 32/32 registered, no drift
+- Ran `python3 tools/audit_learnings.py` — tiers within limits
+
+### Governance
+- Skills/docs/learnings only. No ranker, selector, sizing, or scoring changes.
+
+---
+
 ## 2026-06-24 (evening) — Town skills + learning applied to Hermes
 
 ### Town skills applied

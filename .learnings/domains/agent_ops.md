@@ -53,3 +53,12 @@ entry script. Town `cron_missed` alerts may be the first signal — triage via
 `town-operator-bridge` operator table.
 
 Confirmed 2026-06-24 (735ac3f7): `agents_direct` cron fired 42× before fix.
+
+## Pipeline recovery patterns (2026-06-24)
+
+| Class | Pattern-Key | Skill |
+| --- | --- | --- |
+| M | `yfinance_isoformat_date_parse` | `openclaw-data-pipeline-debug` |
+| N | `multi_path_universe_leak` | `openclaw-data-pipeline-debug`, `screener-ops` |
+| O | `argparse_cli_default_masks_function_default` | `openclaw-data-pipeline-debug`, `screener-ops` |
+| P | `cron_sys_path_isolation` | `openclaw-cron-scheduler-debug` Class J, `town-operator-bridge` |

@@ -276,6 +276,7 @@ Status: READY / NOT_READY_ISSUES: __________
 - Transform: `build_hermes_knowledge_layer.py`
 - Sink: `artifacts/ops/` (knowledge_layer/, first_fire_ledger/, contradiction_ledger/, held_spec_ledger/)
 - Egress (Phase B): `common/town_bridge_events` → `common/operator_delivery` → Town email
+- **Operator triage:** `town-operator-bridge.md` maps `event_type` → root cause (Classes M–P, 2026-06-24)
 
 **Related (not Hermeslink):**
 - `tools/build_knowledge_graph.py` — governance spec graph (Spec 089 KG pilot / Spec 110)

@@ -42,3 +42,4 @@ Detail: `domains/agent_ops.md` · skills: `self-improving`, `codegraph`, `screen
 - `--snapshot-dir`: pass **parent** dir — run_screen appends date (no double nesting).
 - Weekend: `run_daily_production.py` blocks; use `run_screen.py` for manual runs.
 - Cloud: `pip install -r requirements.txt` before screen/pytest; **pytest-xdist not required** (LRN-20260528-002).
+- **cron_sys_path_isolation**: cron entry scripts need `PROJECT_ROOT` on `sys.path` before `from tools.*` — interactive shell masks the bug. LRN-20260624-001.

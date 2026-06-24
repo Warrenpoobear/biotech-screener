@@ -1,6 +1,6 @@
 # Operator Host Hermes Skills Layout
 
-Last updated: 2026-06-16 · Hermes Agent v0.16.0 update check documented
+Last updated: 2026-06-24 · Full skills + learnings sync workflow documented
 
 This runbook separates **repo authority** from **operator runtime copies** so Hermes and Cursor do not drift silently.
 
@@ -19,10 +19,11 @@ This runbook separates **repo authority** from **operator runtime copies** so He
 
 Each `_meta.json` entry includes `source_authority` (see audit) describing which path owns the body.
 
-## Repo sync (always run after editing `skills/`)
+## Repo sync (always run after editing `skills/` or `.learnings/`)
 
 ```bash
-python3 tools/sync_hermes_skills.py
+python3 tools/audit_learnings.py
+python3 tools/sync_hermes_skills.py --register-meta
 python3 tools/audit_hermes_skills.py
 git status -sb
 ```

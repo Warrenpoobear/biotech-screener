@@ -359,6 +359,32 @@ checker only inspects OpenClaw agents and repo artifacts, not Hermes cron jobs.
 
 ---
 
+### Class J — Cron sys.path isolation (ModuleNotFoundError for repo imports)
+
+**Signature:** Hermes/Linux cron entry script logs `ModuleNotFoundError: No module named 'tools'`
+(or `common`) on every scheduled run. Interactive shell works because virtualenv activation
+or `PYTHONPATH` masks the gap.
+
+**Confirmed instance (2026-06-24):** `agents_direct` cron fired 42× before fix (735ac3f7).
+Town may surface this as `cron_missed` before agents.log is checked.
+
+**Fix pattern:**
+
+```python
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent  # adjust depth per script
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from tools.skills_logger_v2 import ...  # now resolves
+```
+
+**Cross-ref:** `openclaw-data-pipeline-debug` Class P · `town-operator-bridge` triage table ·
+`domains/agent_ops.md` · LRN-20260624-001.
+
+---
+
 ## Quick-reference triage
 
 ```
@@ -375,6 +401,10 @@ Fleet receipt itself is >24h old?
 
 Hermes cron job failing silently for weeks (NameError, RuntimeError)?
   → Class I. Check mcp_cronjob list for stale error states. No alert is generated.
+
+agents.log shows ModuleNotFoundError: No module named 'tools' on cron runs?
+  → Class J. Cron sys.path isolation. Insert PROJECT_ROOT before repo imports.
+  → Town cron_missed may be first signal — see town-operator-bridge triage table.
 
 data_auditor FAIL on a weekend date?
   → Class E. Known false-positive. Disregard.

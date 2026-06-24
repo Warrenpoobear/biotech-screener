@@ -623,6 +623,17 @@ Key findings (pseudo-PIT):
 - Missed cron signature: 24-48h gap in `data/snapshots/`
 - **Planned**: Linux VPS migration; WSL2 remains dev environment
 
+### Pipeline recovery patterns (2026-06-24)
+
+Cross-ref `openclaw-data-pipeline-debug` Classes M–P and `town-operator-bridge` triage table:
+
+| Class | Signature | Fix |
+| --- | --- | --- |
+| M | yfinance `T00:00:00` parse error | `strftime("%Y-%m-%d")` not `isoformat()` |
+| N | Delisted ticker still in screen | Patch **all** universe loaders, not one |
+| O | Cache warm 1800s timeout | Align `--warm-sources` CLI default to function default |
+| P | `ModuleNotFoundError: No module named 'tools'` in cron | Insert `PROJECT_ROOT` on `sys.path` before imports |
+
 ### Repo plumbing baseline (Cloud + Cursor)
 
 *Last reviewed: 2026-06-16 · `cursor/update-openclaw-ed92`*
