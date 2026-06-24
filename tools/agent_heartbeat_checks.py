@@ -24,6 +24,11 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
+from tools.artifact_freshness import (  # noqa: E402
+    age_days,
+    format_stale_source,
+    newest_artifact_freshness,
+)
 from tools.ic_health_memory_hygiene import MemoryHygieneChecker  # noqa: E402
 from tools.skills_logger_v2 import log_skill  # noqa: E402
 
@@ -169,7 +174,13 @@ def check_ic_health(dt: date) -> CheckResult:
     anomalies = []
 
     if not dash_path.exists():
-        return CheckResult("ic_health_monitor", "STALE", f"No dashboard for {ds}")
+        latest, _, _ = newest_artifact_freshness(REPO_ROOT, ["artifacts/ic_dashboard/"])
+        detail = f"No dashboard for {ds}"
+        if latest is not None:
+            detail += f"; latest={latest} ({age_days(dt, latest)}d ago)"
+            if age_days(dt, latest) > STALENESS_DAYS_BY_CADENCE["daily_after_production"]:
+                anomalies.append(format_stale_source(latest, dt, STALENESS_DAYS_BY_CADENCE["daily_after_production"]))
+        return CheckResult("ic_health_monitor", "STALE", detail, anomalies)
 
     try:
         dash = json.loads(dash_path.read_text())
@@ -353,9 +364,18 @@ def check_shadow_monitor(dt: date) -> CheckResult:
 
     monitor_path = ARTIFACTS_DIR / "shadow_monitor" / f"{ds}_monitor.json"
     if not monitor_path.exists():
+        latest, _, _ = newest_artifact_freshness(
+            REPO_ROOT,
+            ["artifacts/shadow_monitor/", "artifacts/policy_shadow/tier_weighted/"],
+        )
+        detail = f"No monitor for {ds}"
+        if latest is not None:
+            detail += f"; latest={latest} ({age_days(dt, latest)}d ago)"
+            if age_days(dt, latest) > STALENESS_DAYS_BY_CADENCE["daily_after_production"]:
+                anomalies.append(format_stale_source(latest, dt, STALENESS_DAYS_BY_CADENCE["daily_after_production"]))
         if anomalies:
-            return CheckResult("shadow_monitor", "STALE", f"No monitor for {ds}", anomalies)
-        return CheckResult("shadow_monitor", "STALE", f"No monitor for {ds}")
+            return CheckResult("shadow_monitor", "STALE", detail, anomalies)
+        return CheckResult("shadow_monitor", "STALE", detail)
 
     try:
         monitor = json.loads(monitor_path.read_text())
@@ -714,7 +734,11 @@ def check_production_qa(dt: date) -> CheckResult:
                 "SKIP",
                 f"No production_qa report for {ds} yet — pending (expected ~20:30-21:00 ET, now ~{now_et_hour:02d}:xx ET)",
             )
-        return CheckResult("production_qa", "STALE", f"No production_qa report for {ds}")
+        latest, _, _ = newest_artifact_freshness(REPO_ROOT, ["artifacts/production_qa/"])
+        detail = f"No production_qa report for {ds}"
+        if latest is not None:
+            detail += f"; latest={latest} ({age_days(dt, latest)}d ago)"
+        return CheckResult("production_qa", "STALE", detail)
 
     try:
         data = json.loads(report.read_text())
@@ -734,6 +758,74 @@ def check_production_qa(dt: date) -> CheckResult:
     return CheckResult("production_qa", "OK", f"Report {ds}: {verdict}")
 
 
+# ── Ops Agent ─────────────────────────────────────────────────
+
+
+def check_ops(dt: date) -> CheckResult:
+    """Verify ops digest exists for today; report latest content date when missing."""
+    ds = as_of_date(dt)
+    digest_path = ARTIFACTS_DIR / "ops_digest" / f"{ds}_digest.json"
+    threshold = STALENESS_DAYS_BY_CADENCE["daily_after_production"]
+
+    if digest_path.exists():
+        try:
+            digest = json.loads(digest_path.read_text())
+            attention = digest.get("attention", "UNKNOWN")
+            return CheckResult("ops", "OK", f"Digest {ds}: attention={attention}")
+        except json.JSONDecodeError:
+            return CheckResult("ops", "FAIL", f"Digest corrupt for {ds}", ["CORRUPT_DIGEST"])
+
+    latest, _, _ = newest_artifact_freshness(REPO_ROOT, ["artifacts/ops_digest/"])
+    detail = f"No ops_digest for {ds}"
+    anomalies: list[str] = []
+    if latest is not None:
+        detail += f"; latest={latest} ({age_days(dt, latest)}d ago)"
+        if age_days(dt, latest) > threshold:
+            anomalies.append(format_stale_source(latest, dt, threshold))
+    else:
+        anomalies.append("NO_ARTIFACTS: artifacts/ops_digest/")
+    return CheckResult("ops", "STALE", detail, anomalies)
+
+
+# ── CTgov Poller ──────────────────────────────────────────────
+
+
+def check_ctgov_poller(dt: date) -> CheckResult:
+    """Verify CTgov cache and daily diff artifacts (cache + artifacts/ctgov_daily/)."""
+    ds = as_of_date(dt)
+    threshold = STALENESS_DAYS_BY_CADENCE["daily_premarket"]
+    anomalies: list[str] = []
+
+    cache_today = REPO_ROOT / "cache" / "ctgov" / f"trial_records_{ds}.json"
+    diff_today = ARTIFACTS_DIR / "ctgov_daily" / f"{ds}_diff.json"
+
+    latest_cache, _, _ = newest_artifact_freshness(REPO_ROOT, ["cache/ctgov/"])
+    latest_diff, _, _ = newest_artifact_freshness(REPO_ROOT, ["artifacts/ctgov_daily/"])
+
+    if not cache_today.exists():
+        if latest_cache is None:
+            anomalies.append("NO_CACHE: no cache/ctgov/trial_records_*.json found")
+        else:
+            cache_age = age_days(dt, latest_cache)
+            anomalies.append(f"MISSING_CACHE_TODAY: latest cache {latest_cache} ({cache_age}d ago)")
+            if cache_age > threshold:
+                anomalies.append(format_stale_source(latest_cache, dt, threshold))
+
+    if not diff_today.exists():
+        if latest_diff is None:
+            anomalies.append("NO_DIFF: no artifacts/ctgov_daily/*_diff.json found")
+        else:
+            diff_age = age_days(dt, latest_diff)
+            anomalies.append(f"MISSING_DIFF_TODAY: latest diff {latest_diff} ({diff_age}d ago)")
+            if diff_age > threshold:
+                anomalies.append(format_stale_source(latest_diff, dt, threshold))
+
+    if anomalies:
+        status = "STALE" if any("STALE_SOURCE" in a or "NO_" in a for a in anomalies) else "WARN"
+        return CheckResult("ctgov_poller", status, f"{len(anomalies)} issue(s) for {ds}", anomalies)
+    return CheckResult("ctgov_poller", "OK", f"Cache and diff present for {ds}")
+
+
 # ── Orchestrator ──────────────────────────────────────────────
 
 # Specialized check functions, keyed by registry name (agents/AGENT_REGISTRY.json).
@@ -751,6 +843,8 @@ SPECIALIZED_CHECKS = {
     "data_auditor": check_data_auditor,
     "production_qa": check_production_qa,
     "review_queue_steward": check_review_queue_steward,
+    "ops": check_ops,
+    "ctgov_poller": check_ctgov_poller,
 }
 
 # CLI --agent map: registry names only.
@@ -786,35 +880,25 @@ def check_generic_freshness(name: str, entry: dict, dt: date) -> CheckResult:
     if not paths:
         return CheckResult(name, "SKIP", "no artifact_paths declared")
 
-    newest_mtime = None
-    for rel in paths:
-        p = REPO_ROOT / rel
-        mtime = None
-        if p.is_file():
-            mtime = p.stat().st_mtime
-        elif p.is_dir():
-            files = [f for f in p.rglob("*") if f.is_file()]
-            if files:
-                mtime = max(f.stat().st_mtime for f in files)
-        if mtime is not None and (newest_mtime is None or mtime > newest_mtime):
-            newest_mtime = mtime
+    newest_date, sample_path, method = newest_artifact_freshness(REPO_ROOT, paths)
 
-    if newest_mtime is None:
+    if newest_date is None:
         return CheckResult(name, "STALE", "no artifacts at any declared path", [f"NO_ARTIFACTS: {paths}"])
 
-    age_days = (datetime.now().timestamp() - newest_mtime) / 86400
-    newest_date = datetime.fromtimestamp(newest_mtime).date()
+    age = age_days(dt, newest_date)
+    sample = sample_path.relative_to(REPO_ROOT) if sample_path else "?"
+    method_note = f"via {method}"
 
     if threshold is None:
-        return CheckResult(name, "OK", f"newest={newest_date} ({age_days:.1f}d, cadence={cadence})")
-    if age_days > threshold:
+        return CheckResult(name, "OK", f"newest={newest_date} ({age}d, cadence={cadence}, {method_note}, {sample})")
+    if age > threshold:
         return CheckResult(
             name,
             "STALE",
-            f"newest={newest_date} ({age_days:.1f}d > {threshold}d for cadence={cadence})",
-            [f"STALE_ARTIFACT: {age_days:.1f}d since last write (threshold {threshold}d)"],
+            f"newest={newest_date} ({age}d > {threshold}d for cadence={cadence}, {method_note}, {sample})",
+            [format_stale_source(newest_date, dt, threshold)],
         )
-    return CheckResult(name, "OK", f"newest={newest_date} ({age_days:.1f}d, cadence={cadence})")
+    return CheckResult(name, "OK", f"newest={newest_date} ({age}d, cadence={cadence}, {method_note}, {sample})")
 
 
 def _is_artifact_gap(result: CheckResult) -> bool:
@@ -835,58 +919,35 @@ def _cloud_unknown_result(result: CheckResult) -> CheckResult:
 
 
 def check_stale_memory(name: str, entry: dict, dt: date) -> str | None:
-    """Check if agent's memory/ directory is stale (>7d behind artifact mtime).
+    """Check if agent memory content dates lag artifact content dates.
 
-    Returns anomaly string if stale, None otherwise.
-    Applies to agents with memory/ artifact paths.
+    Uses YYYY-MM-DD in filenames (not mtime) so git checkout does not
+    mask stale LLM memory notes.
     """
     memory_paths = [p for p in entry.get("artifact_paths", []) if "memory/" in p]
     if not memory_paths:
-        return None  # No memory directory declared
+        return None
 
-    # Get memory mtime
-    memory_dir = REPO_ROOT / memory_paths[0]  # Use first memory path
+    memory_dir = REPO_ROOT / memory_paths[0]
     if not memory_dir.is_dir():
-        return None  # Memory dir doesn't exist yet (OK for new agents)
+        return None
 
-    try:
-        memory_mtime = datetime.fromtimestamp(memory_dir.stat().st_mtime).date()
-    except OSError:
-        return None  # Can't read mtime, skip
+    latest_memory, _, _ = newest_artifact_freshness(REPO_ROOT, memory_paths)
 
-    # Get artifact mtimes (non-memory paths)
     artifact_paths = [p for p in entry.get("artifact_paths", []) if "memory/" not in p]
     if not artifact_paths:
-        return None  # No artifacts to compare against
+        return None
 
-    newest_artifact_mtime = None
-    for rel_path in artifact_paths:
-        p = REPO_ROOT / rel_path
-        if p.is_file():
-            try:
-                mtime = datetime.fromtimestamp(p.stat().st_mtime).date()
-                if newest_artifact_mtime is None or mtime > newest_artifact_mtime:
-                    newest_artifact_mtime = mtime
-            except OSError:
-                pass
-        elif p.is_dir():
-            files = [f for f in p.rglob("*") if f.is_file()]
-            if files:
-                for f in files:
-                    try:
-                        mtime = datetime.fromtimestamp(f.stat().st_mtime).date()
-                        if newest_artifact_mtime is None or mtime > newest_artifact_mtime:
-                            newest_artifact_mtime = mtime
-                    except OSError:
-                        pass
+    latest_artifact, _, _ = newest_artifact_freshness(REPO_ROOT, artifact_paths)
+    if latest_memory is None or latest_artifact is None:
+        return None
 
-    if newest_artifact_mtime is None:
-        return None  # No artifacts found
-
-    # Check staleness
-    gap_days = (newest_artifact_mtime - memory_mtime).days
+    gap_days = (latest_artifact - latest_memory).days
     if gap_days > STALE_MEMORY_THRESHOLD_DAYS:
-        return f"STALE_MEMORY: memory {gap_days}d behind artifacts (threshold {STALE_MEMORY_THRESHOLD_DAYS}d)"
+        return (
+            f"STALE_MEMORY: memory latest {latest_memory} is {gap_days}d behind "
+            f"artifacts ({latest_artifact}); threshold {STALE_MEMORY_THRESHOLD_DAYS}d"
+        )
 
     return None
 

@@ -523,3 +523,112 @@ class TestNeedsLLMCarriedSuppression:
         """Back-compat: pre-P1 behavior preserved for unmuffled WARN."""
         result = hb_mod.CheckResult("qa", "WARN", "1 issue", ["snapshot row count drift +5%"])
         assert result.needs_llm is True
+
+
+def test_generic_freshness_uses_content_date_not_mtime(hb_mod, tmp_path):
+    """Generic freshness must not treat fresh mtime as fresh content."""
+    art = tmp_path / "agents" / "sentinel" / "memory"
+    art.mkdir(parents=True)
+    (art / "2026-03-01.md").write_text("old note")
+
+    entry = {
+        "cadence": "daily_after_production",
+        "artifact_paths": ["agents/sentinel/memory/"],
+    }
+    result = hb_mod.check_generic_freshness("sentinel", entry, date.fromisoformat("2026-05-08"))
+    assert result.status == "STALE"
+    assert "2026-03-01" in result.detail
+    assert any("STALE_SOURCE" in a for a in result.anomalies)
+
+
+def test_check_ops_missing_digest_reports_latest_content_date(hb_mod, tmp_path):
+    digest_dir = tmp_path / "artifacts" / "ops_digest"
+    digest_dir.mkdir(parents=True)
+    (digest_dir / "2026-03-20_digest.json").write_text('{"attention":"LOW"}')
+
+    result = hb_mod.check_ops(date.fromisoformat("2026-05-08"))
+    assert result.status == "STALE"
+    assert "2026-03-20" in result.detail
+    assert any("STALE_SOURCE" in a for a in result.anomalies)
+
+
+def test_check_ops_ok_when_today_digest_present(hb_mod, tmp_path):
+    ds = "2026-05-08"
+    digest_dir = tmp_path / "artifacts" / "ops_digest"
+    digest_dir.mkdir(parents=True)
+    (digest_dir / f"{ds}_digest.json").write_text('{"attention":"LOW"}')
+
+    result = hb_mod.check_ops(date.fromisoformat(ds))
+    assert result.status == "OK"
+
+
+def test_check_ctgov_poller_flags_missing_today_and_stale_cache(hb_mod, tmp_path):
+    cache_dir = tmp_path / "cache" / "ctgov"
+    cache_dir.mkdir(parents=True)
+    (cache_dir / "trial_records_2026-03-01.json").write_text("{}")
+
+    result = hb_mod.check_ctgov_poller(date.fromisoformat("2026-05-08"))
+    assert result.status == "STALE"
+    assert any("MISSING_CACHE_TODAY" in a for a in result.anomalies)
+    assert any("STALE_SOURCE" in a for a in result.anomalies)
+
+
+def test_check_ctgov_poller_ok_when_today_present(hb_mod, tmp_path):
+    ds = "2026-05-08"
+    cache_dir = tmp_path / "cache" / "ctgov"
+    cache_dir.mkdir(parents=True)
+    (cache_dir / f"trial_records_{ds}.json").write_text("{}")
+    diff_dir = tmp_path / "artifacts" / "ctgov_daily"
+    diff_dir.mkdir(parents=True)
+    (diff_dir / f"{ds}_diff.json").write_text("{}")
+
+    result = hb_mod.check_ctgov_poller(date.fromisoformat(ds))
+    assert result.status == "OK"
+
+
+def test_stale_memory_uses_filename_dates(hb_mod, tmp_path):
+    mem = tmp_path / "agents" / "ops" / "memory"
+    mem.mkdir(parents=True)
+    (mem / "2026-03-01.md").write_text("old")
+    digest = tmp_path / "artifacts" / "ops_digest"
+    digest.mkdir(parents=True)
+    (digest / "2026-05-01_digest.json").write_text("{}")
+
+    entry = {
+        "artifact_paths": ["agents/ops/memory/", "artifacts/ops_digest/"],
+    }
+    anomaly = hb_mod.check_stale_memory("ops", entry, date.fromisoformat("2026-05-08"))
+    assert anomaly is not None
+    assert "STALE_MEMORY" in anomaly
+    assert "2026-03-01" in anomaly
+    assert "2026-05-01" in anomaly
+
+
+def test_ic_health_stale_includes_latest_dashboard_date(hb_mod, tmp_path):
+    dash_dir = tmp_path / "artifacts" / "ic_dashboard"
+    dash_dir.mkdir(parents=True)
+    (dash_dir / "2026-03-15_dashboard.json").write_text("{}")
+
+    result = hb_mod.check_ic_health(date.fromisoformat("2026-05-08"))
+    assert result.status == "STALE"
+    assert "2026-03-15" in result.detail
+
+
+def test_production_qa_stale_includes_latest_report_date(hb_mod, tmp_path, monkeypatch):
+    from datetime import datetime
+
+    qa_dir = tmp_path / "artifacts" / "production_qa"
+    qa_dir.mkdir(parents=True, exist_ok=True)
+    (qa_dir / "2026-03-10_report.json").write_text('{"verdict":"GREEN","checks":[]}')
+
+    class _FixedDatetime(datetime):
+        @classmethod
+        def utcnow(cls):
+            return datetime(2026, 5, 8, 22, 0, 0)
+
+    monkeypatch.setattr(hb_mod, "datetime", _FixedDatetime)
+
+    result = hb_mod.check_production_qa(date.fromisoformat("2026-05-07"))
+    assert result.status == "STALE"
+    assert "2026-03-10" in result.detail
+
