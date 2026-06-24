@@ -32,7 +32,7 @@ import requests
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from tools.herald_circuit_breaker import CircuitBreaker
+from tools.herald_circuit_breaker import CircuitBreaker  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
