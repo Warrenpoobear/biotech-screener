@@ -934,8 +934,9 @@ def main():
 
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        exec_id = log_agent_run(
             "build_hermes_knowledge_layer",
             f"Hermes knowledge layer for {TODAY}",
             outputs={
@@ -947,6 +948,12 @@ def main():
             error=f"{hard_count} hard contradictions" if hard_count else None,
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=hard_count == 0,
+                evidence=f"hard_contradictions={hard_count} warn={warn_count}",
+            )
     except Exception:
         pass
 

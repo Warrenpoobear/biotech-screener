@@ -1052,15 +1052,23 @@ def main() -> None:
 
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        attention = digest.get("attention", "UNKNOWN")
+        exec_id = log_agent_run(
             "build_ops_digest",
             f"Ops digest for {as_of}",
             inputs={"as_of_date": as_of},
-            outputs={"attention": digest.get("attention")},
+            outputs={"attention": attention},
             success=True,
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=attention == "CLEAR",
+                evidence=f"attention={attention}",
+            )
     except Exception:
         pass
 

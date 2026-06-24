@@ -111,6 +111,36 @@ def test_main_writes_json_artifact(tmp_path, monkeypatch):
     assert data["schema"] == "herald_health_check.v1"
 
 
+def test_herald_health_check_recover_dry_run(tmp_path, monkeypatch):
+    monkeypatch.setattr(hc, "PR_DIR", tmp_path)
+    monkeypatch.setattr(hc, "DEDUPED_DIR", tmp_path / "deduped")
+    monkeypatch.setattr(hc, "CLASSIFIED_DIR", tmp_path / "classified")
+    monkeypatch.setattr(hc, "DIGEST_DIR", tmp_path / "digests")
+    monkeypatch.setattr(hc, "OUT_DIR", tmp_path / "out")
+    monkeypatch.setattr(hc, "STATE_PATH", tmp_path / "fetch_state.json")
+    hc.CLASSIFIED_DIR.mkdir(parents=True)
+    (hc.CLASSIFIED_DIR / "classified_2026-04-09.jsonl").write_text("{}\n", encoding="utf-8")
+
+    calls = []
+
+    def _fake_recovery(as_of, *, dry_run=False, full=False, include_digest=False, pre_report=None):
+        calls.append({"as_of": as_of, "dry_run": dry_run, "pre_report": pre_report})
+        return 0
+
+    monkeypatch.setattr("tools.herald_recovery.run_recovery", _fake_recovery)
+
+    with patch.object(
+        sys,
+        "argv",
+        ["herald_health_check.py", "--as-of-date", "2026-06-24", "--recover", "--dry-run-recover", "--no-write"],
+    ):
+        assert hc.main() == 0
+
+    assert len(calls) == 1
+    assert calls[0]["dry_run"] is True
+    assert calls[0]["pre_report"]["verdict"] == "FAIL"
+
+
 def test_herald_health_check_attaches_outcome_verdict(tmp_path, monkeypatch):
     monkeypatch.setattr(hc, "PR_DIR", tmp_path)
     monkeypatch.setattr(hc, "DEDUPED_DIR", tmp_path / "deduped")

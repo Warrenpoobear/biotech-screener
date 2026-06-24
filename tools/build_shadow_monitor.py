@@ -520,15 +520,23 @@ def main():
     )
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        attention = result.get("attention", "UNKNOWN")
+        exec_id = log_agent_run(
             "build_shadow_monitor",
             f"Shadow monitor for {args.as_of_date}",
             inputs={"as_of_date": args.as_of_date},
-            outputs={"attention": result.get("attention"), "n_alerts": len(result.get("alerts", []))},
+            outputs={"attention": attention, "n_alerts": len(result.get("alerts", []))},
             success=True,
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=attention in ("LOW", "MEDIUM"),
+                evidence=f"attention={attention}",
+            )
     except Exception:
         pass
 

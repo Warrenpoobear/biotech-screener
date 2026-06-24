@@ -483,15 +483,24 @@ def main():
         )
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        status = result.get("status")
+        n_pm = result.get("n_postmortems", 0)
+        exec_id = log_agent_run(
             "build_calibration_evidence",
             f"Calibration evidence for {args.as_of_date}",
             inputs={"as_of_date": args.as_of_date},
-            outputs={"status": result.get("status"), "n_postmortems": result.get("n_postmortems")},
-            success=result.get("status") != "NO_DATA",
+            outputs={"status": status, "n_postmortems": n_pm},
+            success=status != "NO_DATA",
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id and status == "OK":
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=n_pm > 0,
+                evidence=f"status={status} n_postmortems={n_pm}",
+            )
     except Exception:
         pass
 

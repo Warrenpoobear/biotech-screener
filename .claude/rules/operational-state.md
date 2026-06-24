@@ -150,11 +150,12 @@ metadata:
 
 ## Agent Fleet Self-Learning (2026-06-24)
 
-*Updated post-PR #397/#398*
+*Updated post-PR #397/#398, phase-2 branch*
 
 - **Heartbeat:** 27 specialized checks in `tools/agent_heartbeat_checks.py`; Hermes on-demand jobs SKIP by design.
 - **Telemetry:** `log_agent_run` on daily builders + `data_auditor` + `ops_supervisor` + Hermes `run_job.py` exits.
-- **Outcome feedback:** `attach_outcome_verdict` on production_qa, ops_supervisor, herald_health_check, data_auditor, postmortem, CRT join, event_outcome_binder, Hermes `run_job.py` exits, build_event_feedback (herald match), build_ic_dashboard (attention).
+- **Outcome feedback:** production_qa, ops_supervisor, herald_health_check, herald_recovery, data_auditor, postmortem, CRT join, event_outcome_binder, Hermes exits, build_event_feedback, build_ic_dashboard, build_shadow_monitor, build_ops_digest, build_calibration_evidence, build_event_analyst, build_hermes_knowledge_layer.
+- **Herald recovery:** `tools/herald_recovery.py` / `herald_recovery.sh`; `herald_health_check.py --recover` for F-2026-005.
 - **Cron integration:** `stage_herald()` runs health check; evening catchup covers herald_health + ops_supervisor; `install_agent_fleet_crontab.sh` for WSL install.
 - **Stalled loops:** F-2026-005 (Herald host recovery), F-2026-006 (Actions budget) — `SELFIMPROVE_GATES_MET=1` blocked until closed.
 
