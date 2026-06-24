@@ -47,6 +47,20 @@ python3 tools/audit_learnings.py
 ## Herald recovery (operator host)
 
 ```bash
+# Automated minimal recovery (recommended)
+python3 tools/herald_recovery.py --as-of-date $(date +%Y-%m-%d)
+
+# Or via health check
+python3 tools/herald_health_check.py --recover
+
+# Dry-run / full pipeline
+python3 tools/herald_recovery.py --dry-run --full --digest
+bash tools/herald_recovery.sh --full --digest
+```
+
+Manual step-by-step (if needed):
+
+```bash
 TODAY=$(date +%Y-%m-%d)
 python3 tools/fetch_company_press_releases.py --as-of-date $TODAY
 python3 tools/dedupe_press_releases.py --input data/press_releases/releases_${TODAY}.jsonl

@@ -223,6 +223,8 @@ def main() -> int:
     ap.add_argument("--json", action="store_true", help="Print JSON to stdout only")
     ap.add_argument("--stdout", action="store_true", help="Print human summary to stdout (no file write)")
     ap.add_argument("--no-write", action="store_true", help="Do not write artifact file")
+    ap.add_argument("--recover", action="store_true", help="Run herald_recovery when verdict is not HEALTHY")
+    ap.add_argument("--dry-run-recover", action="store_true", help="With --recover, print recovery plan only")
     args = ap.parse_args()
 
     as_of = date.fromisoformat(args.as_of_date) if args.as_of_date else None
@@ -271,6 +273,16 @@ def main() -> int:
             )
     except Exception:
         pass
+
+    if args.recover and report["verdict"] != "HEALTHY":
+        from tools.herald_recovery import run_recovery
+
+        print(f"[herald_health_check] launching recovery for {report['as_of_date']}...")
+        return run_recovery(
+            report["as_of_date"],
+            dry_run=args.dry_run_recover,
+            pre_report=report,
+        )
 
     return _exit_code(report["verdict"])
 

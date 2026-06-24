@@ -116,6 +116,19 @@ def test_artifact_paths_is_list(registry):
     assert not violations, f"artifact_paths must be a list: {violations}"
 
 
+def test_deprecated_agents_declare_merged_into(registry):
+    """Deprecated/suppressed agents must point at their canonical successor."""
+    need_merge = {
+        "bioshort_watch",
+        "shadow_watch",
+        "biotech_news_digest",
+        "company_news_ingest",
+        "policy_shadow_watch",
+    }
+    missing = [name for name in need_merge if not registry["agents"][name].get("merged_into")]
+    assert not missing, f"Deprecated agents missing merged_into: {missing}"
+
+
 def test_active_agents_declare_supervision(registry):
     """Active agents must declare supervised_by_orchestrator=true or explain why not.
 

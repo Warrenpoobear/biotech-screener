@@ -12,6 +12,8 @@ export PYTHONPATH=.
 
 ## Daily pipeline (manual recovery)
 
+**Preferred:** `python3 tools/herald_recovery.py --as-of-date YYYY-MM-DD` or `python3 tools/herald_health_check.py --recover`
+
 Replace `YYYY-MM-DD` with the as-of date (usually today on weekdays).
 
 ```bash

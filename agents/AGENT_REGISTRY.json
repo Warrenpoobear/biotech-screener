@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "as_of": "2026-06-19",
-  "notes": "Canonical roster of agent directories under agents/. Every subdirectory must appear here exactly once; every entry must correspond to an existing subdirectory. See tests/test_agent_registry.py. Retired overlapping agent directories may be retained for history and must be registered with status=deprecated.",
+  "as_of": "2026-06-24",
+  "notes": "Canonical roster of agent directories under agents/. Every subdirectory must appear here exactly once; every entry must correspond to an existing subdirectory. See tests/test_agent_registry.py. Retired overlapping agent directories may be retained for history and must be registered with status=deprecated and merged_into pointing at the canonical agent.",
   "enums": {
     "category": [
       "control_plane",
@@ -68,6 +68,7 @@
       "supervised_by_orchestrator": false,
       "owner": "ops",
       "notes": "LLM agent suppressed 2026-05-06 (bioshort upstream P2). B2 dashboard freshness badge (3d/7d thresholds) provides equivalent visibility. Reactivation requires operator decision and separate spec. Deterministic producer/status tooling remains outside OpenClaw workspace. Sunset review scheduled 2026-09-30.",
+      "merged_into": "build_bioshort_watch",
       "llm_policy": "none",
       "requires_preflight": true,
       "sunset_review_date": "2026-09-30"
@@ -481,6 +482,7 @@
       "supervised_by_orchestrator": false,
       "owner": "risk_lead",
       "notes": "Retired by Spec 085 Path B consolidation. Validation checkpoint 2026-06-27 (post-Spec 087 closure). Formal sunset 2026-07-31. Directory retained for historical context; archive 2026-07-31; removal 2026-08-15.",
+      "merged_into": "shadow_monitor",
       "llm_policy": "none",
       "requires_preflight": true,
       "validation_checkpoint": "2026-06-27",
@@ -529,6 +531,7 @@
       "supervised_by_orchestrator": false,
       "owner": "ops",
       "notes": "Consolidated into herald 2026-05-30. Formal sunset 2026-06-19. Directory retained for historical context; archive scheduled 2026-07-31; removal 2026-08-15.",
+      "merged_into": "herald",
       "llm_policy": "none",
       "requires_preflight": false,
       "sunset_date": "2026-06-19",
@@ -545,6 +548,7 @@
       "supervised_by_orchestrator": false,
       "owner": "ops",
       "notes": "Consolidated into herald 2026-05-30. Formal sunset 2026-06-19. Directory retained for historical context; archive scheduled 2026-07-31; removal 2026-08-15.",
+      "merged_into": "herald",
       "llm_policy": "none",
       "requires_preflight": false,
       "sunset_date": "2026-06-19",
@@ -561,6 +565,7 @@
       "supervised_by_orchestrator": false,
       "owner": "risk_lead",
       "notes": "Merged into shadow_monitor 2026-05-30. Formal sunset 2026-06-19. Directory retained for historical context; archive scheduled 2026-07-31; removal 2026-08-15.",
+      "merged_into": "shadow_monitor",
       "llm_policy": "none",
       "requires_preflight": false,
       "sunset_date": "2026-06-19",

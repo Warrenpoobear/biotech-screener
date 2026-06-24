@@ -37,5 +37,8 @@ cat <<EOF
 
 # Close F-2026-005/006 on host before enabling:
 #   export SELFIMPROVE_GATES_MET=1
+# Herald dark pipeline recovery:
+#   bash tools/herald_recovery.sh
+#   python3 tools/herald_health_check.py --recover
 # in cron_weekly_skills_review.sh environment (pattern_to_skillpatch drafts).
 EOF
