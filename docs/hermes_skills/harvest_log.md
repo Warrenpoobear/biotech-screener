@@ -36,6 +36,9 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 ### Tooling
 - **herald_health_check.py**: read-only pipeline health; writes `artifacts/herald/health_check_YYYY-MM-DD.json`; exit 0/1/2
 - **classify_press_releases.py**: fix output naming when input is `deduped_*.jsonl` → `classified_*.jsonl` (supervisor done predicate)
+- **fetch_company_press_releases.py**: fix import order (`sys.path` before `tools.*`) — cron/supervisor no longer require `PYTHONPATH`
+- **cron_data_refresh.sh**: `stage_herald` now runs dedupe before classify (matches supervisor done predicate)
+- **agent_heartbeat_checks.py**: stale-source check uses `classified/classified_*.jsonl` not top-level dir sort
 
 ### Tests
 - `tests/test_herald_health_check.py` — 4 tests

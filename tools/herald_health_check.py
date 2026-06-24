@@ -27,6 +27,11 @@ from pathlib import Path
 from typing import Any
 
 REPO = Path(__file__).resolve().parent.parent
+import sys
+
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
+
 PR_DIR = REPO / "data" / "press_releases"
 DEDUPED_DIR = PR_DIR / "deduped"
 CLASSIFIED_DIR = PR_DIR / "classified"

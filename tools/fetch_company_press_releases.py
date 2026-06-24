@@ -29,10 +29,10 @@ from urllib.parse import urljoin, urlparse
 
 import requests
 
-from tools.herald_circuit_breaker import CircuitBreaker
-
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+
+from tools.herald_circuit_breaker import CircuitBreaker
 
 logger = logging.getLogger(__name__)
 

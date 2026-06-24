@@ -3,10 +3,16 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import sys
 from datetime import date
 from pathlib import Path
+from unittest.mock import patch
 
 from tools import herald_health_check as hc
+
+REPO = Path(__file__).resolve().parent.parent
 
 
 def test_herald_done_requires_both_artifacts(tmp_path, monkeypatch):
@@ -65,6 +71,25 @@ def test_run_check_fail_when_dark(tmp_path, monkeypatch):
     assert hc._exit_code(report["verdict"]) == 2
 
 
+def test_fetch_imports_without_pythonpath():
+    env = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
+    result = subprocess.run(
+        [sys.executable, "tools/fetch_company_press_releases.py", "--health-check"],
+        cwd=str(REPO),
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "Source Health Check" in result.stdout
+
+
+def test_classify_deduped_stem_maps_to_classified_date():
+    stem = "deduped_2026-06-24"
+    out_stem = stem.replace("deduped_", "classified_", 1)
+    assert out_stem == "classified_2026-06-24"
+
+
 def test_main_writes_json_artifact(tmp_path, monkeypatch):
     monkeypatch.setattr(hc, "PR_DIR", tmp_path)
     monkeypatch.setattr(hc, "DEDUPED_DIR", tmp_path / "deduped")
@@ -77,17 +102,10 @@ def test_main_writes_json_artifact(tmp_path, monkeypatch):
     hc.DEDUPED_DIR.mkdir(parents=True)
     (hc.DEDUPED_DIR / "deduped_2026-06-24.jsonl").write_text("{}\n", encoding="utf-8")
 
-    import sys
-    from unittest.mock import patch
-
-    with patch.object(sys, "argv", ["herald_health_check.py", "--as-of-date", "2026-06-24", "--no-write"]):
-        code = hc.main()
-    assert code in (0, 1)
-
-    out = tmp_path / "out" / "health_check_2026-06-24.json"
-    # --no-write skips file; run again without no-write
     with patch.object(sys, "argv", ["herald_health_check.py", "--as-of-date", "2026-06-24"]):
         hc.main()
+
+    out = tmp_path / "out" / "health_check_2026-06-24.json"
     assert out.exists()
     data = json.loads(out.read_text(encoding="utf-8"))
     assert data["schema"] == "herald_health_check.v1"

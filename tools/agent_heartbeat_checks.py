@@ -503,20 +503,24 @@ def check_herald_news_pipeline(dt: date) -> CheckResult:
             if yesterday.weekday() < 5:
                 anomalies.append(f"MISSED_YESTERDAY: no digest for {yesterday_ds}")
 
-    # Check press release freshness
-    pr_dir = REPO_ROOT / "data" / "press_releases"
-    if pr_dir.is_dir():
-        pr_files = sorted(pr_dir.iterdir(), reverse=True)
-        if pr_files:
-            latest_name = pr_files[0].name
-            match = re.search(r"(\d{4}-\d{2}-\d{2})", latest_name)
+    # Check press release freshness (classified artifacts — authoritative)
+    classified_dir = REPO_ROOT / "data" / "press_releases" / "classified"
+    latest_classified: date | None = None
+    if classified_dir.is_dir():
+        for path in classified_dir.glob("classified_*.jsonl"):
+            m = re.search(r"classified_(\d{4}-\d{2}-\d{2})\.jsonl$", path.name)
+            if not m:
+                continue
             try:
-                latest_date = date.fromisoformat(match.group(1) if match else latest_name[:10])
-                age = (dt - latest_date).days
-                if age > 2:
-                    anomalies.append(f"STALE_SOURCE: press_releases last updated {age}d ago")
+                d = date.fromisoformat(m.group(1))
             except ValueError:
-                pass
+                continue
+            if latest_classified is None or d > latest_classified:
+                latest_classified = d
+    if latest_classified is not None:
+        age = (dt - latest_classified).days
+        if age > 2:
+            anomalies.append(f"STALE_SOURCE: press_releases last updated {age}d ago")
 
     # Check delivery log for failures
     delivery_log = digest_dir / "delivery_log.jsonl"

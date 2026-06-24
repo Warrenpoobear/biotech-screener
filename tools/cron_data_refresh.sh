@@ -14,7 +14,7 @@
 #   isrctn           Warm ISRCTN trial cache (~17 min; NOT in production pipeline)
 #   merged_trials    Rebuild merged trial cache from ctgov+euctr+ctis+isrctn
 #   pdufa_extracted  Build extracted PDUFA sidecar (Phase 1, review-only)
-#   herald           Fetch + classify company press releases
+#   herald           Fetch + dedupe + classify company press releases
 #   firecrawl        Research-only: search biotech news via Firecrawl (research-only, no alpha)
 #   iv               Rebuild historical IV features from surface data
 #   universe         Run universe maintenance health check
@@ -178,19 +178,35 @@ stage_herald() {
         log "Herald fetch done"
     fi
 
-    # Classify new releases (timeout 300s)
     RELEASES_FILE="data/press_releases/releases_${TODAY}.jsonl"
+    DEDUPED_FILE="data/press_releases/deduped/deduped_${TODAY}.jsonl"
     if [ -f "$RELEASES_FILE" ]; then
+        log "Herald dedupe (timeout 120s)..."
+        local rc_dedupe=0
+        timeout 120 $PYTHON tools/dedupe_press_releases.py --input "$RELEASES_FILE" 2>&1 | tail -5 || rc_dedupe=$?
+        if [ $rc_dedupe -eq 124 ]; then
+            log "Herald dedupe TIMED OUT after 120s"
+        elif [ $rc_dedupe -ne 0 ]; then
+            log "Herald dedupe failed (exit $rc_dedupe)"
+        else
+            log "Herald dedupe done"
+        fi
+    else
+        log "No new releases file for $TODAY — skip dedupe/classify"
+        return 0
+    fi
+
+    if [ -f "$DEDUPED_FILE" ]; then
         log "Herald classify (timeout 300s)..."
         local rc2=0
-        timeout 300 $PYTHON tools/classify_press_releases.py --input "$RELEASES_FILE" 2>&1 | tail -5 || rc2=$?
+        timeout 300 $PYTHON tools/classify_press_releases.py --input "$DEDUPED_FILE" 2>&1 | tail -5 || rc2=$?
         if [ $rc2 -eq 124 ]; then
             log "Herald classify TIMED OUT after 300s"
         else
             log "Herald classify done"
         fi
     else
-        log "No new releases file for $TODAY"
+        log "No deduped file for $TODAY — classify skipped"
     fi
 }
 
