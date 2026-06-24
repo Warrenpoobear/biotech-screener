@@ -41,6 +41,7 @@ SKILL_MAP: dict[str, str] = {
     "spending_liquidity": "spending-liquidity.md",
     "sfo_liquidity_architecture": "sfo-liquidity-architecture.md",
     "self-improving": "self-improving.md",
+    "operational_health_baselines": "operational-health-baselines.md",
     "pe_pacing": "pe-pacing.md",
     "openclaw-agent-optimize": "openclaw-agent-optimize.md",
 }
@@ -97,6 +98,7 @@ DISPLAY_NAMES: dict[str, str] = {
     "spending_liquidity": "Spending Liquidity",
     "sfo_liquidity_architecture": "SFO Liquidity Architecture",
     "self-improving": "Self-Improving Agent Loop",
+    "operational_health_baselines": "Operational Health Baselines",
     "pe_pacing": "PE Pacing",
     "openclaw-agent-optimize": "OpenClaw Agent Optimize",
     "dossier_generation": "Dossier Generation",

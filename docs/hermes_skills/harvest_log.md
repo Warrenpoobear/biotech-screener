@@ -9,6 +9,38 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet) — PR #399 fleet self-learning completion (phases 2–2g)
+
+### Scope
+Tier 0 observability/plumbing only. No ranker, selector, sizing, or `final_score` changes.
+
+### Fleet wiring (merged on branch `cursor/agent-fleet-phase2-dfb7`)
+- **Telemetry:** `log_agent_run` on all daily builders, qa/supervisor/herald/auditor, Hermes job exits
+- **Outcome feedback:** `attach_outcome_verdict` on all builders + governance checks (policy_shadow overlap ≥80%, universe zero stale-alert, grok zero high alerts, etc.)
+- **Herald recovery:** `tools/herald_recovery.py` / `.sh`; `herald_health_check.py --recover` (F-2026-005)
+- **Evening catchup:** fully deterministic — retired all `run_agent_direct` LLM HEARTBEAT paths (Class F); ops_digest, ruleset sentinel, CRT, postmortem, supervisor_sentinel, Hermes knowledge/contradiction, catalyst_delta, price_action_watch
+- **Registry:** `merged_into` for deprecated agents; `install_agent_fleet_crontab.sh` WSL reference
+- **Rule 12:** `docs/governance/RULE_12_PROMOTION_CHECKLIST.md` — weekly workflow + stalled-loop gates (F-2026-005/006 block `SELFIMPROVE_GATES_MET`)
+
+### Skill patches
+- **self-improving** (`skills/self-improving/SKILL.md`): link to Rule 12 governance checklist
+- **operational_health_baselines** (`skills/operational_health_baselines/SKILL.md`): Herald recovery commands + SLA table (new Hermes mirror)
+
+### Sync
+- Ran `python3 tools/sync_hermes_skills.py` (self-improving, operational_health_baselines)
+- Ran `python3 tools/sync_hermes_skills.py --register-meta`
+- Ran `python3 tools/audit_hermes_skills.py`
+
+### Operator close (host — not cloud-verifiable)
+- F-2026-005: run `bash tools/herald_recovery.sh` on WSL
+- F-2026-006: restore GitHub Actions budget
+- Crontab: `bash tools/install_agent_fleet_crontab.sh`
+
+### Governance
+- Tier 0. Efficacy back-check for this batch blocked until F-2026-005/006 RESOLVED (Rule 12).
+
+---
+
 ## 2026-06-24 (loop review) — Trim list, contradiction gate, unified digest
 
 ### Tooling

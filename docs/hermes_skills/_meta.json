@@ -277,6 +277,13 @@
       "status": "Active",
       "source": "cursor_reference",
       "source_authority": "skills/self-improving/REFERENCE.md"
+    },
+    "operational-health-baselines": {
+      "name": "Operational Health Baselines",
+      "file": "operational-health-baselines.md",
+      "status": "Active",
+      "source": "cursor_skill",
+      "source_authority": "skills/operational_health_baselines/SKILL.md"
     }
   },
   "path_c_governance_window_status": {
