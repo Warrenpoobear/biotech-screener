@@ -353,7 +353,13 @@ def write_postmortem(ticker, event_date_str, pre_snap_date, pre_row, outcome, re
 
 
 def main():
-    today = date.today().isoformat()
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Postmortem capture for resolved catalysts")
+    parser.add_argument("--as-of-date", default=None, help="Run date (YYYY-MM-DD); default today")
+    args = parser.parse_args()
+
+    today = args.as_of_date or date.today().isoformat()
     snaps = dated_snapshots()
     latest = snaps[-1] if snaps else None
     print(f"[postmortem] {today}  latest_snap={latest}")

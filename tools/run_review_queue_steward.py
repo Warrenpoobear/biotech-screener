@@ -8,18 +8,16 @@ immediate/monitor/watch buckets, and writes a memory file.
 No LLM call — deterministic, fast, always produces an artifact.
 """
 
+import argparse
 import csv
 import sys
+import time
 from datetime import date, datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-SNAPSHOT_DATE = date.today().isoformat()
-SNAPSHOT_DIR = REPO / "data" / "snapshots" / SNAPSHOT_DATE
-QUEUE_CSV = SNAPSHOT_DIR / "review_queue.csv"
 MEMORY_DIR = REPO / "agents" / "review_queue_steward" / "memory"
 MEMORY_DIR.mkdir(exist_ok=True)
-MEMORY_FILE = MEMORY_DIR / f"{SNAPSHOT_DATE}.md"
 
 
 def triage_action(row: dict) -> str:
@@ -32,12 +30,22 @@ def triage_action(row: dict) -> str:
 
 
 def main():
-    if not QUEUE_CSV.exists():
-        print(f"[review_queue_steward] No queue for {SNAPSHOT_DATE} — skip", file=sys.stderr)
+    parser = argparse.ArgumentParser(description="Review queue steward (deterministic)")
+    parser.add_argument("--as-of-date", default=None, help="Snapshot date (YYYY-MM-DD); default today")
+    args = parser.parse_args()
+    started = time.perf_counter()
+
+    snapshot_date = args.as_of_date or date.today().isoformat()
+    snapshot_dir = REPO / "data" / "snapshots" / snapshot_date
+    queue_csv = snapshot_dir / "review_queue.csv"
+    memory_file = MEMORY_DIR / f"{snapshot_date}.md"
+
+    if not queue_csv.exists():
+        print(f"[review_queue_steward] No queue for {snapshot_date} — skip", file=sys.stderr)
         sys.exit(0)
 
     rows = []
-    with open(QUEUE_CSV, newline="") as f:
+    with open(queue_csv, newline="") as f:
         for row in csv.DictReader(f):
             rows.append(row)
 
@@ -45,8 +53,8 @@ def main():
     monitor = [r for r in rows if triage_action(r) == "MONITOR"]
     watch = [r for r in rows if triage_action(r) == "WATCH"]
 
-    # Compare to yesterday if memory file exists
-    yesterday = date.fromordinal(date.today().toordinal() - 1).isoformat()
+    as_of_d = date.fromisoformat(snapshot_date)
+    yesterday = date.fromordinal(as_of_d.toordinal() - 1).isoformat()
     yesterday_file = MEMORY_DIR / f"{yesterday}.md"
     prev_immediate = set()
     if yesterday_file.exists():
@@ -58,7 +66,7 @@ def main():
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
     lines = [
-        f"# Review Queue Steward Memory — {SNAPSHOT_DATE}",
+        f"# Review Queue Steward Memory — {snapshot_date}",
         "",
         f"Generated: {now}  |  Total queue: {len(rows)} names",
         "",
@@ -112,11 +120,32 @@ def main():
     else:
         lines.append("NONE — queue clean")
 
-    MEMORY_FILE.write_text("\n".join(lines) + "\n")
+    memory_file.write_text("\n".join(lines) + "\n")
     print(
-        f"[review_queue_steward] {SNAPSHOT_DATE}: {len(immediate)} immediate, "
-        f"{len(monitor)} monitor, {len(watch)} watch → {MEMORY_FILE}"
+        f"[review_queue_steward] {snapshot_date}: {len(immediate)} immediate, "
+        f"{len(monitor)} monitor, {len(watch)} watch → {memory_file}"
     )
+
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
+
+        exec_id = log_agent_run(
+            "review_queue_steward",
+            f"Review queue steward for {snapshot_date}",
+            inputs={"as_of_date": snapshot_date},
+            outputs={"n_immediate": len(immediate), "n_monitor": len(monitor), "n_watch": len(watch)},
+            success=True,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=len(immediate) < 5,
+                evidence=f"immediate={len(immediate)} monitor={len(monitor)}",
+            )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

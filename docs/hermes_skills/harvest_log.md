@@ -9,6 +9,21 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet phase 3) — Watchdog deterministic recovery (#400)
+
+### Tooling
+- **cron_watchdog.sh**: phase-2 recovery uses artifact checks + deterministic builders (retires `run_agent_direct` for price_action/options/postmortem/review_queue_steward); evening block delegates to `cron_evening_catchup.sh`
+- **run_review_queue_steward.py**: `--as-of-date`, telemetry + outcome verdict
+- **run_postmortem.py**: `--as-of-date` for watchdog backfill
+
+### Tests
+- `tests/test_cron_watchdog_recovery.py`
+
+### Governance
+- Tier 0 (cron/plumbing). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet) — PR #399 fleet self-learning completion (phases 2–2g)
 
 ### Scope

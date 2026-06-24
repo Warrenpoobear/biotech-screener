@@ -99,60 +99,67 @@ if [ -f "$REPO/data/snapshots/$TODAY/rankings.csv" ] && [ ! -f "$SUPERVISOR_MARK
 fi
 
 # Phase-2 agent recovery runs UNCONDITIONALLY.
-# WSL sleep between 17:30 and 19:00 ET can miss the 18:00–18:55 slots even
-# when morning production succeeded; 2026-04-23 lost 7 evening agents while
-# ops+sentinel ran on time. Previously this block was gated behind
-# PROD_RAN=false and never fired in that scenario.
+# WSL sleep between 17:30 and 19:00 ET can miss evening builder slots even
+# when morning production succeeded. Detection uses artifact presence for
+# $YESTERDAY (not agents_direct JSONL — Class F LLM path retired in #399).
 #
-# Detection uses logs/agents_direct/{agent}_YYYYMMDD_*.json. The prior grep
-# on agents.log checked YYYY-MM-DD against the compact YYYYMMDD filename and
-# silently never matched — detection was broken even before the gate issue.
-#
-# Idempotency: artifacts/phase2_recovery_done/$YESTERDAY.complete prevents
-# repeated recovery on the same date. Without this marker, each watchdog tick
-# sees the same MISSED state and re-fires recovery indefinitely.
+# Idempotency: artifacts/phase2_recovery_done/$YESTERDAY.complete
 YESTERDAY=$(TZ=America/Detroit date -d "yesterday" +%Y-%m-%d)
-YESTERDAY_COMPACT=$(echo "$YESTERDAY" | tr -d '-')
-AGENTS_LOG="$REPO/logs/agents.log"
-AGENTS_DIRECT_DIR="$REPO/logs/agents_direct"
-# NOTE: event_analyst removed from PHASE2_AGENTS on 2026-05-06 (P1 #4): cadence
-# reduced from daily to weekly Friday. Watchdog must not auto-recover it on
-# Mon-Thu, or it would re-fire daily and undo the cadence reduction.
-PHASE2_AGENTS="price_action_watch postmortem options_watch review_queue_steward"
 PHASE2_MARKER_DIR="$REPO/artifacts/phase2_recovery_done"
 PHASE2_MARKER="$PHASE2_MARKER_DIR/$YESTERDAY.complete"
 
 mkdir -p "$PHASE2_MARKER_DIR"
 
-# Skip recovery if already completed for this date
+phase2_artifact_present() {
+    [ -f "$REPO/$1" ]
+}
+
+recover_phase2_tool() {
+    local name=$1 artifact=$2 cmd=$3
+    if phase2_artifact_present "$artifact"; then
+        return 0
+    fi
+    log "Recovering phase-2 tool: $name (missing $artifact)"
+    # shellcheck disable=SC2086
+    eval "$cmd" >> "$REPO/logs/phase2_recovery.log" 2>&1 || log "Phase-2 $name recovery failed (exit $?)"
+}
+
 if [ -f "$PHASE2_MARKER" ]; then
     log "Phase-2 recovery already completed for $YESTERDAY — skipping"
 else
-    missed_agents=""
-    for agent in $PHASE2_AGENTS; do
-        if ! ls "$AGENTS_DIRECT_DIR/${agent}_${YESTERDAY_COMPACT}_"*.json 1>/dev/null 2>&1; then
-            missed_agents="$missed_agents $agent"
-        fi
-    done
+    missed=""
+    phase2_artifact_present "artifacts/price_action_watch/${YESTERDAY}_watch.json" || missed="$missed price_action_watch"
+    phase2_artifact_present "artifacts/options_watch/${YESTERDAY}_watch.json" || missed="$missed options_watch"
+    phase2_artifact_present "agents/postmortem/memory/${YESTERDAY}.md" || missed="$missed postmortem"
+    phase2_artifact_present "agents/review_queue_steward/memory/${YESTERDAY}.md" || missed="$missed review_queue_steward"
 
-    if [ -n "$missed_agents" ]; then
-        log "MISSED phase-2 agents from $YESTERDAY:$missed_agents — triggering recovery"
-        for agent in $missed_agents; do
-            log "Recovering agent: $agent"
-            $PYTHON "$REPO/tools/run_agent_direct.py" --agent "$agent" >> "$AGENTS_LOG" 2>&1 || log "Agent $agent recovery failed (exit $?)"
-        done
-        log "Phase-2 agent recovery complete"
-
-        # Write completion marker to prevent re-firing
-        echo "phase2_recovery_complete: $YESTERDAY" > "$PHASE2_MARKER"
-        echo "recovered_agents:$missed_agents" >> "$PHASE2_MARKER"
-        echo "recovery_timestamp: $(date '+%Y-%m-%dT%H:%M:%S%z')" >> "$PHASE2_MARKER"
+    if [ -n "$missed" ]; then
+        log "MISSED phase-2 artifacts for $YESTERDAY:$missed — triggering deterministic recovery"
+        recover_phase2_tool price_action_watch \
+            "artifacts/price_action_watch/${YESTERDAY}_watch.json" \
+            "$PYTHON $REPO/tools/build_price_action_watch.py --as-of-date $YESTERDAY"
+        recover_phase2_tool options_watch \
+            "artifacts/options_watch/${YESTERDAY}_watch.json" \
+            "$PYTHON $REPO/tools/build_options_watch.py --as-of-date $YESTERDAY"
+        recover_phase2_tool postmortem \
+            "agents/postmortem/memory/${YESTERDAY}.md" \
+            "$PYTHON $REPO/agents/postmortem/scripts/run_postmortem.py --as-of-date $YESTERDAY"
+        recover_phase2_tool review_queue_steward \
+            "agents/review_queue_steward/memory/${YESTERDAY}.md" \
+            "$PYTHON $REPO/tools/run_review_queue_steward.py --as-of-date $YESTERDAY"
+        log "Phase-2 deterministic recovery complete"
+        {
+            echo "phase2_recovery_complete: $YESTERDAY"
+            echo "recovered_tools:$missed"
+            echo "recovery_timestamp: $(date '+%Y-%m-%dT%H:%M:%S%z')"
+        } > "$PHASE2_MARKER"
     else
-        log "All phase-2 agents ran on $YESTERDAY — no agent recovery needed"
-        # Write marker even when no recovery needed (all agents present)
-        echo "phase2_recovery_complete: $YESTERDAY" > "$PHASE2_MARKER"
-        echo "recovered_agents: none" >> "$PHASE2_MARKER"
-        echo "recovery_timestamp: $(date '+%Y-%m-%dT%H:%M:%S%z')" >> "$PHASE2_MARKER"
+        log "All phase-2 artifacts present for $YESTERDAY — no recovery needed"
+        {
+            echo "phase2_recovery_complete: $YESTERDAY"
+            echo "recovered_tools: none"
+            echo "recovery_timestamp: $(date '+%Y-%m-%dT%H:%M:%S%z')"
+        } > "$PHASE2_MARKER"
     fi
 fi
 
@@ -190,49 +197,25 @@ else
     log "Trapops artifact present for $TODAY — skipping recovery"
 fi
 
-# Evening cron recovery — jobs that run 17:45–20:40 ET and stalled 05-09→05-13.
-# Check for artifacts; if missing, re-run the scripts.
-# These jobs fire every weekday in evening windows and do not self-heal on reboot.
-EVENING_JOBS=(
-    "inst_delta_forward_shadow:19:30:/mnt/c/Projects/biotech_screener/biotech-screener/tools/cron_inst_delta_forward_compare.sh:logs/inst_delta_forward_shadow.log"
-    "cross_signal_forward_shadow:19:40:/mnt/c/Projects/biotech_screener/biotech-screener/tools/cron_cross_signal_forward_logger.sh:logs/cross_signal_forward_shadow.log"
-    "blast_radius_daily:19:15:/mnt/c/Projects/biotech_screener/biotech-screener/tools/cron_blast_radius_daily.sh:logs/blast_radius.log"
-    "build_event_feedback:17:45:/mnt/c/Projects/biotech_screener/biotech-screener/tools/build_event_feedback.py:logs/event_feedback.log"
-    "build_policy_shadow_compare:18:05:/mnt/c/Projects/biotech_screener/biotech-screener/tools/build_policy_shadow_compare.py:logs/agents_direct_cron.log"
-)
-
+# Evening cron recovery — prefer cron_evening_catchup.sh (deterministic, #399).
+# Legacy per-job list kept as fallback when catchup log shows no activity today.
+EVENING_CATCHUP_LOG="$REPO/logs/evening_catchup.log"
 EVENING_MARKER_DIR="$REPO/artifacts/evening_recovery_done"
 EVENING_MARKER="$EVENING_MARKER_DIR/$TODAY.complete"
 mkdir -p "$EVENING_MARKER_DIR"
 
-# Only attempt evening recovery if production ran successfully today
-# Evening jobs are sentinel jobs — they depend on today's snapshot existing
 if [ "$PROD_RAN" = true ] && [ ! -f "$EVENING_MARKER" ]; then
-    log "Checking evening cron jobs for $TODAY..."
-
-    for job_spec in "${EVENING_JOBS[@]}"; do
-        IFS=':' read -r job_name job_time job_script job_log <<< "$job_spec"
-        job_log="$REPO/$job_log"
-
-        # Simple check: if the log file has recent output (today), assume job ran
-        # More robust: check for specific artifact files, but evening jobs vary in their outputs
-        if [ -f "$job_log" ] && grep -q "$TODAY" "$job_log" 2>/dev/null; then
-            log "Evening job $job_name OK (log shows $TODAY)"
-        else
-            log "MISSED evening job $job_name for $TODAY — recovering"
-            if [ "$job_script" = *.sh ]; then
-                bash "$job_script" >> "$job_log" 2>&1 || log "Evening job $job_name recovery failed (exit $?)"
-            else
-                # Python script
-                (cd "$REPO" && source .env 2>/dev/null && $PYTHON "$job_script" --as-of-date "$TODAY" >> "$job_log" 2>&1) \
-                    || log "Evening job $job_name recovery failed (exit $?)"
-            fi
-        fi
-    done
-
-    # Write marker to prevent repeated recovery on same date
-    echo "evening_recovery_complete: $TODAY" > "$EVENING_MARKER"
-    echo "recovery_timestamp: $(date '+%Y-%m-%dT%H:%M:%S%z')" >> "$EVENING_MARKER"
+    if [ -f "$EVENING_CATCHUP_LOG" ] && grep -q "$TODAY" "$EVENING_CATCHUP_LOG" 2>/dev/null; then
+        log "Evening catchup already ran for $TODAY — skipping watchdog evening block"
+    else
+        log "Evening catchup missing for $TODAY — running cron_evening_catchup.sh"
+        bash "$REPO/tools/cron_evening_catchup.sh" >> "$EVENING_CATCHUP_LOG" 2>&1 \
+            || log "Evening catchup recovery failed (exit $?)"
+    fi
+    {
+        echo "evening_recovery_complete: $TODAY"
+        echo "recovery_timestamp: $(date '+%Y-%m-%dT%H:%M:%S%z')"
+    } > "$EVENING_MARKER"
     log "Evening cron recovery complete for $TODAY"
 fi
 
