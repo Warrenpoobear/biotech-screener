@@ -7,6 +7,14 @@ from pathlib import Path
 CATCHUP = Path(__file__).resolve().parent.parent / "tools" / "cron_evening_catchup.sh"
 
 
+def test_evening_catchup_has_no_llm_heartbeat_agents():
+    text = CATCHUP.read_text(encoding="utf-8")
+    assert "run_agent_direct.py" not in text
+    assert "run_agent " not in "\n".join(
+        line for line in text.splitlines() if line.strip() and not line.strip().startswith("#")
+    )
+
+
 def test_evening_catchup_includes_hermes_knowledge_layer():
     text = CATCHUP.read_text(encoding="utf-8")
     assert "hermes_knowledge" in text
@@ -24,11 +32,19 @@ def test_evening_catchup_includes_herald_and_ops_supervisor():
     text = CATCHUP.read_text(encoding="utf-8")
     assert "herald_health" in text
     assert "ops_supervisor" in text
+    assert "supervisor_sentinel" in text
 
 
 def test_evening_catchup_uses_builder_for_catalyst_delta_and_price_action():
     text = CATCHUP.read_text(encoding="utf-8")
     assert "build_catalyst_delta.py" in text
     assert "build_price_action_watch.py" in text
-    assert "run_agent catalyst_delta" not in text
-    assert "run_agent price_action_watch" not in text
+
+
+def test_evening_catchup_uses_deterministic_ops_and_sentinel():
+    text = CATCHUP.read_text(encoding="utf-8")
+    assert "build_ops_digest.py" in text
+    assert "ruleset_health_monitor.py" in text
+    assert "catalyst_resolution_tracker.py" in text
+    assert "build_crt_options_join.py" in text
+    assert "run_postmortem.py" in text

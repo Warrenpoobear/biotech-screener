@@ -392,8 +392,18 @@ def run_health_check(
 
 
 def main(argv: Optional[list] = None) -> int:
+    import time
+
+    repo_root = Path(__file__).resolve().parent.parent
+    started = time.perf_counter()
+
     parser = argparse.ArgumentParser(
         description="Post-promotion ruleset health monitor.",
+    )
+    parser.add_argument(
+        "--as-of-date",
+        default=None,
+        help="Snapshot date (YYYY-MM-DD). Sets drift-report and output-dir under data/snapshots/.",
     )
     parser.add_argument(
         "--drift-report",
@@ -436,6 +446,13 @@ def main(argv: Optional[list] = None) -> int:
     )
     args = parser.parse_args(argv)
 
+    if args.as_of_date:
+        snap_dir = repo_root / "data" / "snapshots" / args.as_of_date
+        if args.drift_report is None:
+            args.drift_report = snap_dir / "drift_report.json"
+        if args.output_dir is None:
+            args.output_dir = snap_dir
+
     result = run_health_check(
         drift_report_path=args.drift_report,
         receipts_dir=args.receipts_dir,
@@ -447,7 +464,29 @@ def main(argv: Optional[list] = None) -> int:
 
     print(json.dumps(result, indent=2))
     status = result.get("status", "OK")
-    if result.get("recommend_rollback"):
+    recommend_rollback = bool(result.get("recommend_rollback"))
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
+
+        exec_id = log_agent_run(
+            "ruleset_health_monitor",
+            f"Ruleset health for {result.get('today', {}).get('date', args.as_of_date or 'unknown')}",
+            inputs={"as_of_date": args.as_of_date, "drift_report": str(args.drift_report or "")},
+            outputs={"status": status, "recommend_rollback": recommend_rollback},
+            success=status in ("OK", "PASS"),
+            error=None if status in ("OK", "PASS") else status,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=status in ("OK", "PASS") and not recommend_rollback,
+                evidence=f"status={status} rollback={recommend_rollback}",
+            )
+    except Exception:
+        pass
+    if recommend_rollback:
         print(f"\nWARNING: Rollback recommended ({result['consecutive_warn_days']} consecutive WARN days)")
         return 2
     if status == "WARN":

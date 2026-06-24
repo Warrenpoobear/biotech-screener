@@ -1018,7 +1018,10 @@ def run_crt(
 
 
 def main() -> int:
+    import time
+
     logging.basicConfig(level=logging.INFO, format="%(message)s")
+    started = time.perf_counter()
 
     parser = argparse.ArgumentParser(description="Catalyst Resolution Tracker (Spec 042)")
     parser.add_argument("--as-of-date", required=True, help="Snapshot date (YYYY-MM-DD)")
@@ -1029,7 +1032,6 @@ def main() -> int:
         default=PROJECT_ROOT / "data" / "snapshots" / "resolutions",
     )
     args = parser.parse_args()
-
     as_of = date.fromisoformat(args.as_of_date)
 
     price_series: Dict[str, Dict[str, float]] = {}
@@ -1060,6 +1062,29 @@ def main() -> int:
     print(f"CRT: {result['n_watchlist']} in watchlist, {result['n_new_records']} new resolutions")
     for rec in result["records"]:
         print(f"  {rec['ticker']} {rec['catalyst_type']} -> {rec['outcome']} ({rec['source_type']})")
+
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
+
+        n_wl = result.get("n_watchlist", 0)
+        n_new = result.get("n_new_records", 0)
+        exec_id = log_agent_run(
+            "catalyst_resolution_tracker",
+            f"CRT run for {args.as_of_date}",
+            inputs={"as_of_date": args.as_of_date, "dry_run": args.dry_run},
+            outputs={"n_watchlist": n_wl, "n_new_records": n_new},
+            success=True,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=n_wl > 0,
+                evidence=f"watchlist={n_wl} new_records={n_new}",
+            )
+    except Exception:
+        pass
 
     return 0
 

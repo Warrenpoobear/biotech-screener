@@ -188,6 +188,27 @@ def main() -> int:
         except Exception as e:
             print(f"[sentinel] WARNING: Failed to route snapshot_missing event to Town: {e}")
 
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
+
+        exec_id = log_agent_run(
+            "supervisor_sentinel",
+            f"Supervisor sentinel for {as_of}",
+            inputs={"as_of_date": as_of},
+            outputs={"sentinel_state": sentinel_state, "failure_count": len(failures)},
+            success=sentinel_state in ("GREEN", "YELLOW"),
+            error=None if sentinel_state in ("GREEN", "YELLOW") else sentinel_state,
+        )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=sentinel_state == "GREEN",
+                evidence=f"state={sentinel_state} failures={len(failures)}",
+            )
+    except Exception:
+        pass
+
     return {"GREEN": 0, "YELLOW": 1, "RED": 2}[sentinel_state]
 
 
