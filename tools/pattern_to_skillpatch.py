@@ -26,17 +26,10 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# FENCE: staged tool — not active until containment gates clear.
-# Set SELFIMPROVE_GATES_MET=1 to enable (selfimprove_audit_2026-06-24).
-if os.getenv("SELFIMPROVE_GATES_MET") != "1":
-    print(
-        "pattern_to_skillpatch: SELFIMPROVE_GATES_MET not set — tool is staged, not active. "
-        "Set SELFIMPROVE_GATES_MET=1 to run.",
-        file=sys.stderr,
-    )
-    sys.exit(0)
+# FENCE: set SELFIMPROVE_GATES_MET=1 to enable (selfimprove_audit_2026-06-24).
+# Rule 12: MUST refuse Promotion-lane: spec (see skills/self-improving/SKILL.md).
 
-# Skills that MUST NOT be auto-patched — they encode production behavior and
+# Skills that MUST NOT be auto-patched
 # require a governance Spec, not a learnings-driven edit (self-improving Rule 10).
 FROZEN_SKILL_TARGETS = {
     "selector-ranker",
@@ -65,6 +58,18 @@ def parse_learnings(text: str):
         action = re.search(r"### Suggested Action\s*(.+?)(?=\n###|\Z)", body, re.DOTALL)
         summary = re.search(r"### Summary\s*(.+?)(?=\n###|\Z)", body, re.DOTALL)
         skillc = re.search(r"SKILL-CANDIDATE:\s*([\w./|-]+)", body)
+        skillp = re.search(r"Skill-Path:\s*([\w./,-]+)", body)
+        lane_m = re.search(r"Promotion-lane:\s*(\w+)", body)
+        area_m = re.search(r"\*\*Area\*\*:\s*(\w+)", body)
+        area = area_m.group(1) if area_m else None
+        lane = (lane_m.group(1).lower() if lane_m else None) or (
+            "spec" if area in ("research", "portfolio") else "skill"
+        )
+        skill_path = None
+        if skillp:
+            skill_path = skillp.group(1).split(",")[0].strip()
+        elif skillc:
+            skill_path = skillc.group(1).split("|")[0].strip()
         yield {
             "id": m.group(1),
             "title": m.group(2),
@@ -72,13 +77,30 @@ def parse_learnings(text: str):
             "pattern_key": pkey.group(1) if pkey else None,
             "summary": (summary.group(1).strip() if summary else "")[:500],
             "action": (action.group(1).strip() if action else "")[:500],
-            "skill_candidate": skillc.group(1) if skillc else None,
+            "skill_candidate": skill_path or (skillc.group(1) if skillc else None),
+            "promotion_lane": lane,
+            "area": area,
         }
 
 
-def draft_patch(entry: Path, learning: dict) -> str:
+def draft_patch(learning: dict) -> str:
     """Produce a human-readable proposed skill-doc addition (NOT a git diff)."""
-    target = learning.get("skill_candidate") or "screener-ops"
+    if learning.get("promotion_lane") == "spec":
+        return (
+            f"## BLOCKED (spec lane) — {learning['id']}\n\n"
+            f"- **Pattern-Key:** `{learning['pattern_key']}`  \n"
+            f"- **Area:** {learning.get('area') or 'unknown'}  \n"
+            f"- **Promotion-lane:** spec — Rule 12: route to governance Spec / "
+            f"`projects/biotech_screener.md`, not a skill patch.\n\n"
+            f"**Summary:** {learning['summary'] or '(none)'}\n"
+        )
+    if learning.get("promotion_lane") == "none":
+        return (
+            f"## SKIP (none lane) — {learning['id']}\n\n"
+            f"- **Pattern-Key:** `{learning['pattern_key']}` — log only, no promotion.\n"
+        )
+
+    target = learning.get("skill_candidate") or "screener_ops"
     note = ""
     if target in FROZEN_SKILL_TARGETS:
         note = (
@@ -103,11 +125,20 @@ def draft_patch(entry: Path, learning: dict) -> str:
         f"```\n\n"
         f"**Apply path:** edit `skills/{target}/SKILL.md` -> "
         f"`python3 tools/sync_hermes_skills.py` -> `python3 tools/audit_hermes_skills.py` "
-        f"-> log to `docs/hermes_skills/harvest_log.md` -> commit on a branch.\n"
+        f"-> log to `docs/hermes_skills/harvest_log.md` -> commit on a branch.\n\n"
+        f"**Efficacy back-check:** harvest_log verification block 2 weeks post-merge (Rule 12).\n"
     )
 
 
 def main() -> int:
+    if os.getenv("SELFIMPROVE_GATES_MET") != "1":
+        print(
+            "pattern_to_skillpatch: SELFIMPROVE_GATES_MET not set — tool is staged, not active. "
+            "Set SELFIMPROVE_GATES_MET=1 to run.",
+            file=sys.stderr,
+        )
+        return 0
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--learnings", default=".learnings/LEARNINGS.md")
     ap.add_argument("--min-recurrence", type=int, default=3)
@@ -141,8 +172,8 @@ def main() -> int:
     ]
     blocked = 0
     for e in eligible:
-        patch = draft_patch(src, e)
-        if "BLOCKED" in patch:
+        patch = draft_patch(e)
+        if "BLOCKED" in patch or "SKIP" in patch:
             blocked += 1
         report.append(patch)
         report.append("---\n")

@@ -144,9 +144,9 @@ Log explicit corrections and self-identified improvements. Never infer from sile
 - **COLD**: Archived, decayed (Town: deleted with note; Hermes: archive/)
 
 ### Rule 3 - Promotion / Demotion
-- 3x in 7 days -> promote to HOT (memory.md or Town global)
-- Unused 30 days -> demote to WARM
-- Unused 90 days -> archive or delete (ask first)
+- **Pattern-Key ≥3** (canonical bar — shared with Town; do not fork): behavioral patterns within a **rolling 7-day window**; **failure modes** count **all-time**. See Rule 12.
+- Unused 30 days → demote to WARM
+- Unused 90 days → archive or delete (ask first)
 
 ### Rule 4 - Namespace Isolation
 - Town: Use `routine_slug` parameter for routine-specific memories; omit for global
@@ -182,6 +182,40 @@ Automated skill promotion is **staged**, not live by default (2026-06-24):
 
 Without these gates, tools exit cleanly. Operator reviews drafts before any skill merge. Memo: `artifacts/governance/selfimprove_audit_2026-06-24.md`.
 
+### Rule 12 — Promotion checklist (mechanical bar before a lesson becomes a skill patch)
+
+A lesson is *captured* the moment it's logged; it is *promoted* only when it clears this checklist. The bar is shared with Town — do **not** define a parallel threshold here. The canonical definition lives in this skill's `>= 3` rule (Rule 3): failure modes count all-time; behavioral patterns count within a rolling 7-day window. Forking the threshold is itself a definition-drift failure mode (F-2026-001 class).
+
+**Candidate feed (where promotion candidates come from):**
+- **Hermes side:** `.learnings/LEARNINGS.md` entries with a `Pattern-Key`, and `failure-patterns` entries with `recurrence_count >= 3` and `promotion_status: PENDING`.
+- **Town side:** the Town Correction Ledger (`content://collections/self-improvement/correction-ledger`), `recurrence_count >= 3` rows. These are already-counted and deterministic — use them as the feed rather than re-deciding promotability from ad-hoc chat corrections.
+
+**Promotion gates (a candidate must clear the matching row before its Action):**
+
+| Gate | Threshold | Action |
+| --- | --- | --- |
+| Recurrence | Pattern-Key `>= 3` (7-day window for behavioral; all-time for failure modes) | Promote to `memory.md` HOT or `domains/` |
+| Skill-path + recurrence | LRN has a `Skill-Path` AND recurrence `>= 2` | Draft a patch (do NOT auto-merge) |
+| Operator verdict | `>= 3` "helpful" verdicts on the same skill (requires telemetry) | Eligible for skill merge |
+| Observation period | `7+` days of true-PIT production telemetry | Eligible for routing/behavior changes |
+
+**Lane gate (refuse the wrong lane):**
+- Every promotable entry carries `Area:` (`hermes_ops` | `data_pipeline` | `research` | `portfolio`) and `Promotion-lane:` (`skill` | `spec` | `none`).
+- `pattern_to_skillpatch.py` MUST refuse any entry with `Promotion-lane: spec`. Signal/scoring/research findings (size confound, portfolio drag, ranker weights) go to `projects/biotech_screener.md` and a governance Spec — never silently into a production skill. This preserves Rule 10.
+
+**Promote = propose, never auto-apply (Rule 11 FENCE still binds):**
+1. `SELFIMPROVE_GATES_MET=1 python3 tools/pattern_to_skillpatch.py --min-recurrence 3 --out artifacts/skill_patch_drafts`
+2. Operator reviews drafts in `artifacts/skill_patch_drafts/`, hand-edits `skills/<dir>/SKILL.md`.
+3. `python3 tools/sync_hermes_skills.py` → `python3 tools/audit_hermes_skills.py` (expect 32/32 registered — 40 Town skills minus 8 framework skills with no Hermes mirror; not drift).
+4. Append a `harvest_log.md` entry recording the merge.
+
+**Efficacy back-check (closes the loop — a patch isn't "done" when merged, it's done when it sticks):**
+- Two weeks post-merge, add a `harvest_log.md` verification block: skill, the metric watched, and recurrence result (e.g. "0 recurrence of cron_missed import errors since 2026-06-24").
+- If the pattern recurs: bump `Recurrence-Count`, set `promotion_status` back to PENDING, and escalate — the patch was incomplete.
+- Efficacy tracking on an *outage* fix cannot begin until that outage's recovery is confirmed (you cannot measure "0 recurrence since fix" on an unconfirmed fix). Stalled-loop entries (e.g. F-2026-005 Herald, F-2026-006 CI) block their own efficacy check until RESOLVED.
+
+Set `Promotion-lane` on every new LRN: `skill` | `spec` | `none`. See `REFERENCE.md` template.
+
 ---
 
 ## Repo commands (skill + knowledge recursion)
@@ -189,6 +223,9 @@ Without these gates, tools exit cleanly. Operator reviews drafts before any skil
 ```bash
 # Knowledge hygiene (read-only)
 python3 tools/audit_learnings.py
+
+# Skill-patch drafts (operator review required — Rule 12)
+SELFIMPROVE_GATES_MET=1 python3 tools/pattern_to_skillpatch.py --min-recurrence 3 --out artifacts/skill_patch_drafts
 
 # After editing skills/<dir>/SKILL.md
 python3 tools/sync_hermes_skills.py
@@ -199,6 +236,19 @@ python3 tools/build_hermes_knowledge_layer.py
 ```
 
 Knowledge stack map: `.learnings/README.md` · Runbook: `docs/hermes_agents/operator_host_skills.md` · History: `docs/hermes_skills/harvest_log.md`
+
+---
+
+## Town → Hermes learning bridge
+
+Town is the primary memory surface; Hermes/Cursor uses `.learnings/` files. **Dual-write** significant corrections:
+
+1. **Town:** `add_memory()` or Town Correction Ledger (`content://collections/self-improvement/correction-ledger`)
+2. **Hermes:** append `[LRN-...]` to `LEARNINGS.md` with `Pattern-Key`, `Area`, `Promotion-lane`
+3. Run `audit_learnings.py` — promotion candidates must match Rule 12 feeds (do not re-count from chat)
+4. If skill-worthy and `Promotion-lane: skill` → Rule 12 propose path → sync → `harvest_log.md` → commit
+
+Use `memory-steward` to flag stale Town memories that contradict repo skills (`town_ls skills://`).
 
 ---
 

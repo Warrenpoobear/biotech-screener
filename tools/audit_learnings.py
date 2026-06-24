@@ -284,9 +284,21 @@ def print_report(report: AuditReport) -> None:
         for h in report.stale_hints:
             print(f"- {h}")
 
+    print("\n## Promotion checklist (Rule 12 — shared with Town)\n")
+    print("| Gate | Threshold | Action |")
+    print("| --- | --- | --- |")
+    print("| Recurrence | Pattern-Key >=3 (7d behavioral; all-time failure modes) | HOT memory.md or domains/ |")
+    print("| Skill-path + recurrence | Skill-Path + rec >=2 | Draft patch (no auto-merge) |")
+    print("| Operator verdict | >=3 helpful on same skill | Eligible for skill merge |")
+    print("| Observation | 7+ days true-PIT telemetry | Eligible for routing changes |")
+    print("")
+    print("Feeds: LEARNINGS.md + failure-patterns (Hermes); Town Correction Ledger (rec>=3).")
+    print("Lane: Promotion-lane spec -> governance Spec only (F-2026-001: do not fork thresholds).")
+
     print("\n## Commands")
+    print("  SELFIMPROVE_GATES_MET=1 python3 tools/pattern_to_skillpatch.py --min-recurrence 3")
     print("  python3 tools/build_hermes_knowledge_layer.py  # ops ledgers")
-    print("  See .learnings/README.md for full knowledge stack")
+    print("  See skills/self-improving/SKILL.md Rule 12 and .learnings/README.md")
 
 
 def main() -> int:

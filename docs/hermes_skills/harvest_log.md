@@ -9,6 +9,26 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (Rule 12) — Promotion checklist canonicalized (shared Town bar)
+
+### Skill patches
+- **self-improving** (`skills/self-improving/SKILL.md`): Rule 12 promotion checklist — shared `>=3` threshold with Town (7-day behavioral / all-time failure modes); candidate feeds (Hermes LEARNINGS + failure-patterns + Town Correction Ledger); lane gate (`Promotion-lane: spec` refused); propose-only path; efficacy back-check (2-week harvest_log verification; stalled-loop F-2026-005/F-2026-006 block until RESOLVED)
+- **self-improving REFERENCE**: `Promotion-lane`, `promotion_status`, Rule 12 summary, efficacy template
+
+### Tooling
+- **pattern_to_skillpatch.py**: `Promotion-lane` / `Skill-Path` parsing; spec-lane BLOCKED drafts; gate in `main()` only; efficacy note in draft output
+- **audit_learnings.py**: Rule 12 promotion checklist section in output
+
+### Sync
+- Ran `python3 tools/sync_hermes_skills.py --only self_improving`
+- Ran `python3 tools/audit_hermes_skills.py` — 32/32 registered, no drift
+- Ran `pytest tests/test_audit_learnings.py -p no:warnings`
+
+### Governance
+- Tier 0 (skills/docs/tools). No ranker, selector, sizing, or scoring changes. F-2026-001: threshold not forked.
+
+---
+
 ## 2026-06-24 (full apply) — All skills and learning synced to Hermes
 
 ### Learning tier updates

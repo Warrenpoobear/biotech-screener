@@ -12,7 +12,8 @@ Long-form templates and checklists. Entry point: `skills/self-improving/SKILL.md
 **Logged**: ISO-8601 timestamp
 **Priority**: low | medium | high | critical
 **Status**: pending | promoted | resolved | superseded
-**Area**: tooling | ops | research | ci | hermes_ops | cloud_environment
+**Area**: hermes_ops | data_pipeline | research | portfolio | tooling | ops | ci | cloud_environment
+**Promotion-lane**: skill | spec | none  # skill=patch skills/; spec=governance Spec only; none=log only
 
 ### Summary
 One sentence.
@@ -29,6 +30,8 @@ Concrete next step (skill patch, test, operator check).
 - Tags: comma-separated
 - Pattern-Key: snake_case (for recurrence counting)
 - Recurrence-Count: N
+- Promotion-lane: skill | spec | none
+- promotion_status: PENDING | PROMOTED | RESOLVED  # failure-patterns feed
 - Skill-Path: optional target skill dir (e.g. screener_ops, codegraph)
 ```
 
@@ -49,6 +52,37 @@ Concrete next step (skill patch, test, operator check).
 ### Governance
 - Skills/docs only. No ranker, selector, sizing, or scoring changes.
 ```
+
+---
+
+## Rule 12 — promotion checklist (canonical)
+
+See `skills/self-improving/SKILL.md` Rule 12. Summary:
+
+| Gate | Threshold | Action |
+| --- | --- | --- |
+| Recurrence | Pattern-Key ≥3 (7d behavioral / all-time failure modes) | HOT `memory.md` or `domains/` |
+| Skill-path + recurrence | Skill-Path + rec ≥2 | Draft patch only |
+| Operator verdict | ≥3 helpful on same skill | Eligible for merge |
+| Observation | 7+ days true-PIT telemetry | Eligible for routing changes |
+
+**Feeds:** Hermes `LEARNINGS.md` + `failure-patterns`; Town Correction Ledger (`recurrence_count >= 3`). Do not fork thresholds (F-2026-001).
+
+**Lane:** `Promotion-lane: spec` → governance Spec only, never `pattern_to_skillpatch` merge.
+
+---
+
+## Patch verification / efficacy back-check (2 weeks post-merge)
+
+```markdown
+### Patch verification (YYYY-MM-DD)
+- **skill:** <skill-name>
+- **metric:** <what was watched>
+- **result:** <e.g. 0 recurrence since 2026-06-24 / ≥80% success over N execs>
+- **action:** close LRN | bump Recurrence-Count + promotion_status PENDING if recurred
+```
+
+**Stalled-loop block:** efficacy on outage fixes waits until recovery confirmed. F-2026-005 Herald, F-2026-006 CI block their own check until RESOLVED.
 
 ---
 
