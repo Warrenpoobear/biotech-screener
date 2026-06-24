@@ -43,3 +43,14 @@ Detail: `domains/agent_ops.md` · skills: `self-improving`, `codegraph`, `screen
 - Weekend: `run_daily_production.py` blocks; use `run_screen.py` for manual runs.
 - Cloud: `pip install -r requirements.txt` before screen/pytest; **pytest-xdist not required** (LRN-20260528-002).
 - **cron_sys_path_isolation**: cron entry scripts need `PROJECT_ROOT` on `sys.path` before `from tools.*` — interactive shell masks the bug. LRN-20260624-001.
+
+## Stalled-loop verdicts (Rule 12 efficacy gate — operator fill-in)
+
+Patch-efficacy tracking is **blocked** until both rows close. Cloud cannot confirm host recovery — operator verifies on WSL.
+
+| ID | System | Status | Evidence (2026-06-24) | Operator close criterion | Target |
+| --- | --- | --- | --- | --- | --- |
+| F-2026-005 | Herald Digest | **OPEN** | Last repo classified JSONL: `2026-02-26`; no `artifacts/herald/` in cloud clone | Host: Herald cron produces `deduped` + `classified` JSONL for ≥1 trading day; zero recurrence 14d post-fix | **2026-07-01** (operator confirm) |
+| F-2026-006 | GitHub CI | **OPEN** | `main` workflow failures complete in ~3–4s (budget pre-start pattern); merge gates unverified | Host: Actions budget restored; `tests` workflow green on `main` push | **2026-07-01** (operator confirm) |
+
+When either closes: set `promotion_status: RESOLVED` in failure-patterns feed, append harvest_log efficacy block, unblock Rule 12 back-check for that outage's patches.

@@ -151,7 +151,7 @@ severity: CRITICAL
 summary: Herald Digest extended outage — zero output for 6+ consecutive weeks. No deduped or classified JSONL files generated.
 root_cause: UNRESOLVED
 affected_systems: [Herald pipeline, press release monitoring, downstream news-driven signals]
-resolution: PARTIALLY RESOLVED — code fixes merged (CI budget exhaustion blocking terminal verification). Recovery target ~June 1 (post CI recovery).
+resolution: OPEN (2026-06-24). Code fixes merged; host recovery unconfirmed. Last repo classified JSONL 2026-02-26. Efficacy tracking blocked until operator confirms Herald cron output on WSL. Target 2026-07-01.
 prevention_rule: Herald should have a max-dark-days SLA (proposed 3 days) with automatic escalation. See operational-health-baselines skill.
 related_specs: []
 related_findings: [G6]
@@ -168,7 +168,7 @@ severity: HIGH
 summary: CI pipeline extended red state — CI red ~17 days as of May 25. PR #285 open/unmerged. phase2-daily-production cron dark.
 root_cause: Budget exhaustion (GitHub Actions). CI Diagnostic Report and CI Fix Checklist produced May 14-16; remediation not confirmed complete.
 affected_systems: [All merge gates, production deployment confidence, Herald Digest restore]
-resolution: UNRESOLVED. PR #285 open. Recovery ~June 1. Architecture freeze lifts 2026-05-26 — CI recovery is top post-freeze priority.
+resolution: OPEN (2026-06-24). GitHub Actions failing in ~3–4s on main (budget exhaustion pattern). Host must restore budget and confirm green CI. Blocks Herald restore verification. Target 2026-07-01.
 prevention_rule: CI red > 5 days should trigger merge block and operator escalation. See operational-health-baselines skill.
 related_specs: []
 related_findings: [C4]
@@ -232,4 +232,5 @@ related_findings: [N1]
 | Date | Change |
 |------|--------|
 | 2026-05-18 | Initial catalog created (F-2026-001 through F-2026-008) |
+| 2026-06-24 | F-2026-005/F-2026-006 stalled-loop verdicts filled OPEN (cloud evidence); targets 2026-07-01 pending host confirm. Checklist v2 vs final_score blocked in cloud — see `docs/research/CHECKLIST_V2_FINAL_SCORE_BLOCKER_2026_06_24.md`. |
 | 2026-05-25 | F-2026-009 added. F-2026-005 recurrence updated to 6+ weeks. F-2026-006 CI red updated to ~17 days. Normalized to strict YAML schema. |

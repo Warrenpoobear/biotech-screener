@@ -3,21 +3,44 @@
 
 Logs all skill invocations with metrics, outcomes, and feedback hooks.
 Enables recursive self-improvement through performance tracking and feedback learning.
+
+Log files are environment-tagged for prod/test separation:
+  artifacts/skills_learning/execution_log_{env}_{YYYY-MM}.jsonl
+  artifacts/skills_learning/feedback_log_{env}_{YYYY-MM}.jsonl
+
+Set SKILLS_TELEMETRY_ENV=prod|test (default: prod).
+Feedback via record_feedback() is gated behind SELFIMPROVE_IMMEDIATE_VERDICT=1.
 """
 
+from __future__ import annotations
+
 import json
+import os
 import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 
+def telemetry_environment() -> str:
+    """Return prod or test from SKILLS_TELEMETRY_ENV."""
+    env = os.getenv("SKILLS_TELEMETRY_ENV", "prod").strip().lower()
+    return env if env in ("prod", "test") else "prod"
+
+
 class SkillExecutionLogger:
     """Log skill executions to JSONL for learning and optimization."""
 
-    def __init__(self, logs_dir: Path = Path("artifacts/skills_learning")):
+    def __init__(self, logs_dir: Path = Path("artifacts/skills_learning"), environment: str | None = None):
         self.logs_dir = Path(logs_dir)
         self.logs_dir.mkdir(parents=True, exist_ok=True)
+        self.environment = environment or telemetry_environment()
+
+    def _execution_log_path(self, month_str: str) -> Path:
+        return self.logs_dir / f"execution_log_{self.environment}_{month_str}.jsonl"
+
+    def _feedback_log_path(self, month_str: str) -> Path:
+        return self.logs_dir / f"feedback_log_{self.environment}_{month_str}.jsonl"
 
     def log_execution(
         self,
@@ -34,10 +57,12 @@ class SkillExecutionLogger:
     ) -> str:
         """Log a skill execution. Returns execution_id for later feedback."""
         exec_id = str(uuid.uuid4())[:8]
+        month_str = datetime.utcnow().strftime("%Y-%m")
 
         record = {
             "execution_id": exec_id,
             "skill_name": skill_name,
+            "environment": self.environment,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "task_context": task_context,
             "inputs": inputs,
@@ -55,12 +80,9 @@ class SkillExecutionLogger:
             },
         }
 
-        # Append to current month's log
-        month_str = datetime.utcnow().strftime("%Y-%m")
-        log_file = self.logs_dir / f"execution_log_{month_str}.jsonl"
-
+        log_file = self._execution_log_path(month_str)
         try:
-            with open(log_file, "a") as f:
+            with open(log_file, "a", encoding="utf-8") as f:
                 f.write(json.dumps(record) + "\n")
         except OSError as e:
             print(f"Warning: Could not log skill execution: {e}")
@@ -74,25 +96,24 @@ class SkillExecutionLogger:
         notes: str = "",
     ) -> None:
         """Record feedback on a previous execution."""
+        month_str = datetime.utcnow().strftime("%Y-%m")
         feedback = {
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "execution_id": execution_id,
+            "environment": self.environment,
             "verdict": verdict,
             "notes": notes,
         }
 
-        month_str = datetime.utcnow().strftime("%Y-%m")
-        log_file = self.logs_dir / f"feedback_log_{month_str}.jsonl"
-
+        log_file = self._feedback_log_path(month_str)
         try:
-            with open(log_file, "a") as f:
+            with open(log_file, "a", encoding="utf-8") as f:
                 f.write(json.dumps(feedback) + "\n")
         except OSError as e:
             print(f"Warning: Could not record feedback: {e}")
 
 
-# Global instance
-_skill_logger = None
+_skill_logger: SkillExecutionLogger | None = None
 
 
 def get_logger() -> SkillExecutionLogger:
@@ -115,10 +136,7 @@ def log_skill(
     success: bool = True,
     error: Optional[str] = None,
 ) -> str:
-    """Convenience function to log a skill execution.
-
-    Returns execution_id for later feedback recording.
-    """
+    """Convenience function to log a skill execution."""
     return get_logger().log_execution(
         skill_name=skill_name,
         task_context=task_context,
@@ -134,12 +152,13 @@ def log_skill(
 
 
 def record_feedback(execution_id: str, verdict: str, notes: str = "") -> None:
-    """Record feedback on a skill execution."""
+    """Record feedback on a skill execution. Gated when called from automation."""
+    if os.getenv("SELFIMPROVE_IMMEDIATE_VERDICT") != "1":
+        return
     get_logger().record_feedback(execution_id, verdict, notes)
 
 
 if __name__ == "__main__":
-    # Quick test
     logger = SkillExecutionLogger()
     exec_id = logger.log_execution(
         skill_name="test-skill",
@@ -152,7 +171,7 @@ if __name__ == "__main__":
         cost_usd=0.001,
         success=True,
     )
-    print(f"Logged execution: {exec_id}")
+    print(f"Logged execution: {exec_id} -> {logger._execution_log_path(datetime.utcnow().strftime('%Y-%m'))}")
 
     logger.record_feedback(exec_id, "helpful", notes="Works as expected")
     print("Recorded feedback")

@@ -1,23 +1,14 @@
 #!/usr/bin/env python3
 """Scan .learnings/LEARNINGS.md for promotion-ready patterns and DRAFT skill patches.
 
-STAGED — destined for tools/pattern_to_skillpatch.py once containment gates clear.
+STAGED — writes drafts only; never edits skill files directly.
 
-This automates the one manual step in the self-improving loop:
-    Observe -> Log -> Distill -> Promote -> [Skill-patch] -> Sync -> Verify
-                                             ^^^^^^^^^^^^^
-The skill doc says "3x same Pattern-Key in 7 days -> promote" and then a human
-hand-edits skills/<dir>/SKILL.md. This finds the entries that qualify and writes
-a *proposed diff* to a review folder. It NEVER edits a skill file directly.
-
-READ-ONLY against the repo. Output is a draft for operator review. Honors the
-architecture freeze: it explicitly refuses to draft against scoring/selector/
-sizing skills (Tier-0 docs/plumbing only, per self-improving Rule 10).
-
-Usage (safe to run any time — only reads LEARNINGS.md, writes to a draft dir):
-    python3 tools/pattern_to_skillpatch.py
-    python3 tools/pattern_to_skillpatch.py --min-recurrence 3 --out artifacts/skill_patch_drafts
+Usage:
+    SELFIMPROVE_GATES_MET=1 python3 tools/pattern_to_skillpatch.py
+    SELFIMPROVE_GATES_MET=1 python3 tools/pattern_to_skillpatch.py --min-recurrence 3 --out artifacts/skill_patch_drafts
 """
+
+from __future__ import annotations
 
 import argparse
 import os
@@ -29,8 +20,6 @@ from pathlib import Path
 # FENCE: set SELFIMPROVE_GATES_MET=1 to enable (selfimprove_audit_2026-06-24).
 # Rule 12: MUST refuse Promotion-lane: spec (see skills/self-improving/SKILL.md).
 
-# Skills that MUST NOT be auto-patched
-# require a governance Spec, not a learnings-driven edit (self-improving Rule 10).
 FROZEN_SKILL_TARGETS = {
     "selector-ranker",
     "selector_ranker",
@@ -40,14 +29,22 @@ FROZEN_SKILL_TARGETS = {
     "institutional-signal",
     "catalyst-resolution",
 }
-# Default eligible targets for docs/plumbing learnings.
-DEFAULT_TARGETS = {"screener-ops", "codegraph", "openclaw-agent-optimize", "self-improving"}
 
+SPEC_LANE_AREAS = {"research", "portfolio"}
 ENTRY_RE = re.compile(r"^## \[(LRN-\d{8}-\d+)\]\s+(.+?)\s*$", re.MULTILINE)
 
 
+def infer_promotion_lane(area: str | None, explicit: str | None) -> str:
+    """Return promotion lane: skill | spec | none."""
+    if explicit:
+        return explicit.strip().lower()
+    if area and area.lower() in SPEC_LANE_AREAS:
+        return "spec"
+    return "skill"
+
+
 def parse_learnings(text: str):
-    """Yield dicts for each LRN entry with its metadata fields."""
+    """Yield dicts for each LRN entry with metadata fields."""
     matches = list(ENTRY_RE.finditer(text))
     for i, m in enumerate(matches):
         start = m.end()
@@ -59,12 +56,11 @@ def parse_learnings(text: str):
         summary = re.search(r"### Summary\s*(.+?)(?=\n###|\Z)", body, re.DOTALL)
         skillc = re.search(r"SKILL-CANDIDATE:\s*([\w./|-]+)", body)
         skillp = re.search(r"Skill-Path:\s*([\w./,-]+)", body)
-        lane_m = re.search(r"Promotion-lane:\s*(\w+)", body)
         area_m = re.search(r"\*\*Area\*\*:\s*(\w+)", body)
+        lane_m = re.search(r"Promotion-lane:\s*(\w+)", body)
+        status_m = re.search(r"\*\*Status\*\*:\s*(\w+)", body)
         area = area_m.group(1) if area_m else None
-        lane = (lane_m.group(1).lower() if lane_m else None) or (
-            "spec" if area in ("research", "portfolio") else "skill"
-        )
+        lane = infer_promotion_lane(area, lane_m.group(1) if lane_m else None)
         skill_path = None
         if skillp:
             skill_path = skillp.group(1).split(",")[0].strip()
@@ -77,10 +73,17 @@ def parse_learnings(text: str):
             "pattern_key": pkey.group(1) if pkey else None,
             "summary": (summary.group(1).strip() if summary else "")[:500],
             "action": (action.group(1).strip() if action else "")[:500],
+            "skill_path": skill_path,
             "skill_candidate": skill_path or (skillc.group(1) if skillc else None),
-            "promotion_lane": lane,
             "area": area,
+            "promotion_lane": lane,
+            "status": (status_m.group(1).lower() if status_m else "unknown"),
         }
+
+
+def refuse_spec_lane_entries(entries: list[dict]) -> list[dict]:
+    """Rule 12 lane gate: return spec-lane entries that must not become skill patches."""
+    return [e for e in entries if e.get("promotion_lane") == "spec"]
 
 
 def draft_patch(learning: dict) -> str:
@@ -92,7 +95,9 @@ def draft_patch(learning: dict) -> str:
             f"- **Area:** {learning.get('area') or 'unknown'}  \n"
             f"- **Promotion-lane:** spec — Rule 12: route to governance Spec / "
             f"`projects/biotech_screener.md`, not a skill patch.\n\n"
-            f"**Summary:** {learning['summary'] or '(none)'}\n"
+            f"**Summary:** {learning['summary'] or '(none)'}\n\n"
+            f"**Operator action:** open or update a Spec under `specs/changes/`; "
+            f"do not patch `skills/` from this LRN.\n"
         )
     if learning.get("promotion_lane") == "none":
         return (
@@ -100,11 +105,11 @@ def draft_patch(learning: dict) -> str:
             f"- **Pattern-Key:** `{learning['pattern_key']}` — log only, no promotion.\n"
         )
 
-    target = learning.get("skill_candidate") or "screener_ops"
+    target = learning.get("skill_path") or learning.get("skill_candidate") or "screener_ops"
     note = ""
     if target in FROZEN_SKILL_TARGETS:
         note = (
-            f"\n>  ⚠ BLOCKED: target `{target}` encodes production behavior. "
+            f"\n> ⚠ BLOCKED: target `{target}` encodes production behavior. "
             f"Requires a governance Spec, not a learnings patch. Re-route to a "
             f"docs/plumbing skill or open a Spec.\n"
         )
@@ -113,6 +118,7 @@ def draft_patch(learning: dict) -> str:
         f"## Proposed skill patch — {learning['id']}\n\n"
         f"- **Pattern-Key:** `{learning['pattern_key']}`  \n"
         f"- **Recurrence-Count:** {learning['recurrence']}  \n"
+        f"- **Promotion-lane:** skill  \n"
         f"- **Suggested target skill:** `{target}`\n"
         f"{note}\n"
         f"**Why now:** recurred {learning['recurrence']}× — meets promotion threshold.\n\n"
@@ -150,8 +156,19 @@ def main() -> int:
         print(f"LEARNINGS file not found: {src}")
         return 1
 
-    entries = list(parse_learnings(src.read_text()))
-    eligible = [e for e in entries if e["recurrence"] >= args.min_recurrence and e["pattern_key"]]
+    entries = list(parse_learnings(src.read_text(encoding="utf-8")))
+    eligible = [
+        e
+        for e in entries
+        if e["recurrence"] >= args.min_recurrence
+        and e["pattern_key"]
+        and e["status"] in ("pending", "unknown", "promoted", "resolved")
+    ]
+
+    refused = refuse_spec_lane_entries(eligible)
+    if refused:
+        ids = ", ".join(e["id"] for e in refused)
+        print(f"Rule 12 lane gate: {len(refused)} spec-lane entry refused ({ids})")
 
     print(
         f"Scanned {len(entries)} LRN entries; "
@@ -167,7 +184,7 @@ def main() -> int:
     report = [
         f"# Skill-patch drafts — {stamp}",
         "",
-        f"{len(eligible)} pattern(s) ready for promotion. " f"DRAFTS ONLY — review before editing any skill doc.",
+        f"{len(eligible)} pattern(s) reviewed. DRAFTS ONLY — operator approves before editing skills.",
         "",
     ]
     blocked = 0
@@ -179,10 +196,12 @@ def main() -> int:
         report.append("---\n")
 
     out_file = out_dir / f"skill_patch_drafts_{stamp}.md"
-    out_file.write_text("\n".join(report))
+    out_file.write_text("\n".join(report), encoding="utf-8")
     print(f"Wrote {len(eligible)} draft(s) -> {out_file}")
     if blocked:
-        print(f"  ({blocked} blocked: target encodes production behavior — needs a Spec)")
+        print(f"  ({blocked} blocked/skipped: spec lane or frozen production skill)")
+    if refused:
+        print(f"  ({len(refused)} spec-lane entry refused — governance Spec only)")
     print("Operator action required: review drafts, then manually apply eligible ones.")
     return 0
 

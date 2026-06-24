@@ -76,7 +76,8 @@ Deterministic scripts in `tools/`. These **can** write repo artifacts and docs; 
 | [`tools/sync_hermes_skills.py`](../../tools/sync_hermes_skills.py) | `skills/` → `docs/hermes_skills/`; maintains `_meta.json` (`source_authority`) |
 | [`tools/audit_hermes_skills.py`](../../tools/audit_hermes_skills.py) | Registry coverage, authority completeness, mirror drift vs `skills/` |
 | [`tools/audit_learnings.py`](../../tools/audit_learnings.py) | `.learnings/` tier hygiene: HOT/WARM limits, Pattern-Key promotion candidates (read-only) |
-| [`tools/skills_execution_logger.py`](../../tools/skills_execution_logger.py) | Skill invocation telemetry → `artifacts/skills_learning/` JSONL |
+| [`tools/skills_execution_logger.py`](../../tools/skills_execution_logger.py) | Skill invocation telemetry → `artifacts/skills_learning/` JSONL (env-tagged) |
+| [`tools/skills_telemetry_monthly_report.py`](../../tools/skills_telemetry_monthly_report.py) | Monthly skills telemetry report CLI (wraps learning loop v2) |
 | [`tools/hermes_skills_learning_loop_v2.py`](../../tools/hermes_skills_learning_loop_v2.py) | Monthly skills performance report; advisory-only (no auto-routing) |
 | [`tools/agent_preflight.py`](../../tools/agent_preflight.py) | Pre-dispatch governance report (used by `run_agent_direct.py`) |
 | [`tools/notify_cron_missed.py`](../../tools/notify_cron_missed.py) | Town bridge: `cron_missed` events |

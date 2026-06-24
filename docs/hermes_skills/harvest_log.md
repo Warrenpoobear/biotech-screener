@@ -9,6 +9,27 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (stalled-loop + telemetry) — Operator verdicts filled; Cursor implementations
+
+### Stalled-loop verdicts (Rule 12 efficacy gate)
+- **F-2026-005 Herald**: OPEN — last repo classified JSONL 2026-02-26; host recovery unconfirmed; target 2026-07-01
+- **F-2026-006 CI**: OPEN — GitHub Actions failing ~3–4s (budget pattern); target 2026-07-01
+- Filled in `.learnings/memory.md` + `docs/FAILURE_PATTERN_LIBRARY.md`
+
+### Tooling
+- **skills_execution_logger.py**: environment-tagged JSONL (`execution_log_{env}_{month}.jsonl`); `record_feedback` gated
+- **skills_telemetry_monthly_report.py**: CLI wrapper over `hermes_skills_learning_loop_v2`
+- **pattern_to_skillpatch.py**: `infer_promotion_lane`, `refuse_spec_lane_entries`, Rule 12 lane gate logging
+- **tests**: `test_pattern_to_skillpatch_lane.py`, `test_skills_execution_logger.py`
+
+### Research
+- Checklist v2 vs `final_score`: **blocked in cloud** (no snapshots/price_history) — runbook `docs/research/CHECKLIST_V2_FINAL_SCORE_BLOCKER_2026_06_24.md`
+
+### Governance
+- Tier 0 (learnings/docs/tools/tests). No ranker/selector/sizing changes.
+
+---
+
 ## 2026-06-24 (Rule 12) — Promotion checklist canonicalized (shared Town bar)
 
 ### Skill patches
