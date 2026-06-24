@@ -15,7 +15,7 @@ Phase 1 scaffolding state
   both:
     1. MASSIVE_API_KEY or POLYGON_API_KEY is set, and
     2. BIOTECH_INTRADAY_REALTIME_TIER=1 is confirmed.
-- No cron jobs are registered yet.
+- Cron wrapper: `tools/cron_intraday_mover.sh` (see header for crontab lines).
 
 Usage
 -----

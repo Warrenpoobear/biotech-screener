@@ -29,6 +29,7 @@ import json
 import logging
 import math
 import sys
+import time
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -469,6 +470,7 @@ def main():
     parser = argparse.ArgumentParser(description="Calibration evidence accumulator")
     parser.add_argument("--as-of-date", default=datetime.now(timezone.utc).strftime("%Y-%m-%d"))
     args = parser.parse_args()
+    started = time.perf_counter()
 
     result = build_calibration_evidence(args.as_of_date)
     if result.get("status") == "NO_DATA":
@@ -479,6 +481,19 @@ def main():
             result["n_postmortems"],
             len(result.get("signal_tracker", {}).get("signal_summary", {})),
         )
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "build_calibration_evidence",
+            f"Calibration evidence for {args.as_of_date}",
+            inputs={"as_of_date": args.as_of_date},
+            outputs={"status": result.get("status"), "n_postmortems": result.get("n_postmortems")},
+            success=result.get("status") != "NO_DATA",
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

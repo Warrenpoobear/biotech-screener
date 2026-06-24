@@ -633,20 +633,28 @@ def main():
 
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        verdict = report.get("verdict", "UNKNOWN")
+        exec_id = log_agent_run(
             "production_qa_check",
             f"Production QA for {args.as_of_date}",
             inputs={"as_of_date": args.as_of_date},
             outputs={
-                "verdict": report.get("verdict"),
+                "verdict": verdict,
                 "n_pass": report.get("n_pass"),
                 "n_fail": report.get("n_fail"),
             },
-            success=report.get("verdict") != "RED",
-            error=None if report.get("verdict") != "RED" else f"verdict={report.get('verdict')}",
+            success=verdict != "RED",
+            error=None if verdict != "RED" else f"verdict={verdict}",
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=verdict == "GREEN",
+                evidence=f"verdict={verdict} n_fail={report.get('n_fail', 0)}",
+            )
     except Exception:
         pass
 

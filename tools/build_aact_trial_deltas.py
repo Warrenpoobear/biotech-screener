@@ -24,6 +24,7 @@ import argparse
 import json
 import logging
 import sys
+import time
 from collections import defaultdict
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -318,11 +319,26 @@ def main():
     parser.add_argument("--as-of-date", default=date.today().isoformat())
     parser.add_argument("--prior", default=None, help="Prior snapshot date (auto-detected if omitted)")
     args = parser.parse_args()
+    started = time.perf_counter()
 
     result = build_deltas(args.as_of_date, args.prior)
 
     if "error" in result:
         print(f"ERROR: {result['error']}")
+        try:
+            from tools.agent_skill_telemetry import log_agent_run
+
+            log_agent_run(
+                "build_aact_trial_deltas",
+                f"AACT deltas for {args.as_of_date}",
+                inputs={"as_of_date": args.as_of_date},
+                outputs={"error": result["error"]},
+                success=False,
+                error=result["error"],
+                latency_ms=(time.perf_counter() - started) * 1000,
+            )
+        except Exception:
+            pass
         sys.exit(1)
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -348,6 +364,23 @@ def main():
             )
 
     print(f"\n  Saved: {out_path}")
+
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "build_aact_trial_deltas",
+            f"AACT deltas for {args.as_of_date}",
+            inputs={"as_of_date": args.as_of_date, "prior_date": result.get("prior_date")},
+            outputs={
+                "n_tickers": result.get("n_tickers"),
+                "n_with_activity": result.get("n_with_activity"),
+            },
+            success=True,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

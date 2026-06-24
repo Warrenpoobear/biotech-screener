@@ -109,3 +109,34 @@ def test_main_writes_json_artifact(tmp_path, monkeypatch):
     assert out.exists()
     data = json.loads(out.read_text(encoding="utf-8"))
     assert data["schema"] == "herald_health_check.v1"
+
+
+def test_herald_health_check_attaches_outcome_verdict(tmp_path, monkeypatch):
+    monkeypatch.setattr(hc, "PR_DIR", tmp_path)
+    monkeypatch.setattr(hc, "DEDUPED_DIR", tmp_path / "deduped")
+    monkeypatch.setattr(hc, "CLASSIFIED_DIR", tmp_path / "classified")
+    monkeypatch.setattr(hc, "DIGEST_DIR", tmp_path / "digests")
+    monkeypatch.setattr(hc, "OUT_DIR", tmp_path / "out")
+    monkeypatch.setattr(hc, "STATE_PATH", tmp_path / "fetch_state.json")
+    hc.CLASSIFIED_DIR.mkdir(parents=True)
+    (hc.CLASSIFIED_DIR / "classified_2026-06-24.jsonl").write_text("{}\n", encoding="utf-8")
+    hc.DEDUPED_DIR.mkdir(parents=True)
+    (hc.DEDUPED_DIR / "deduped_2026-06-24.jsonl").write_text("{}\n", encoding="utf-8")
+
+    calls = []
+
+    def _fake_attach(exec_id, was_correct, evidence, environment="prod"):
+        calls.append((exec_id, was_correct, evidence))
+
+    def _fake_log(*_a, **_k):
+        return "exec-test-herald"
+
+    monkeypatch.setattr("tools.record_skill_feedback.attach_outcome_verdict", _fake_attach)
+    monkeypatch.setattr("tools.agent_skill_telemetry.log_agent_run", _fake_log)
+
+    with patch.object(sys, "argv", ["herald_health_check.py", "--as-of-date", "2026-06-24", "--no-write"]):
+        assert hc.main() == 1  # WARN exit code
+
+    assert calls
+    assert calls[0][0] == "exec-test-herald"
+    assert calls[0][1] is False  # WARN verdict despite herald_done

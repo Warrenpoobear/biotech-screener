@@ -13,6 +13,7 @@ Does not modify code, cron, scoring, or agent registry.
 import json
 import shutil
 import subprocess
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -853,6 +854,7 @@ def write_held_spec_json(held_items):
 
 
 def main():
+    started = time.perf_counter()
     print(f"[build_hermes_knowledge_layer] {TODAY}")
     print(f"  repo: {REPO}")
     print()
@@ -929,6 +931,24 @@ def main():
     print(f"    {OUT_FF}/latest.md")
     print(f"    {OUT_CONTRA}/latest.md")
     print(f"    {OUT_HELD}/latest.json")
+
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "build_hermes_knowledge_layer",
+            f"Hermes knowledge layer for {TODAY}",
+            outputs={
+                "hard_contradictions": hard_count,
+                "held_items": len(HELD_ITEMS_SEED),
+                "first_fire_status": ff_status,
+            },
+            success=hard_count == 0,
+            error=f"{hard_count} hard contradictions" if hard_count else None,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

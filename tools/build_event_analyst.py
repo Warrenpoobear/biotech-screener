@@ -23,6 +23,7 @@ import json
 import logging
 import math
 import sys
+import time
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -290,6 +291,7 @@ def main():
     parser.add_argument("--lookback", type=int, default=DEFAULT_LOOKBACK)
     parser.add_argument("--artifacts-dir", type=Path, default=REPO_ROOT / "artifacts")
     args = parser.parse_args()
+    started = time.perf_counter()
 
     result = build_event_analyst(
         args.as_of_date,
@@ -301,6 +303,20 @@ def main():
         logger.info("No postmortem data yet")
     else:
         logger.info("Analyst: %d postmortems analyzed", result["n_postmortems"])
+
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "build_event_analyst",
+            f"Event analyst for {args.as_of_date}",
+            inputs={"as_of_date": args.as_of_date, "lookback": args.lookback},
+            outputs={"status": result.get("status"), "n_postmortems": result.get("n_postmortems")},
+            success=result.get("status") != "NO_DATA",
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

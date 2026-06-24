@@ -762,8 +762,9 @@ def main():
     verdict = report["verdict"]
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        exec_id = log_agent_run(
             "data_auditor",
             f"Integrity audit for {args.as_of_date}",
             inputs={"as_of_date": args.as_of_date},
@@ -772,6 +773,12 @@ def main():
             error=verdict if verdict in ("FAIL", "ERROR") else None,
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=verdict == "PASS",
+                evidence=f"verdict={verdict}",
+            )
     except Exception:
         pass
 

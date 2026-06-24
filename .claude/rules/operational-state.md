@@ -8,7 +8,7 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-06-22  
+**Last updated:** 2026-06-24  
 **Update cadence:** weekly or upon governance-state change  
 **Authority:** operational status snapshot only; not architectural specification  
 **Staleness risk:** MEDIUM (reference `governance.md` for timeless process)
@@ -145,6 +145,18 @@ metadata:
 - **OpenClaw fenced (PR #372):** `**` wildcards and shell write permissions removed from exec-approvals. Exec allowlist now read-only. Hermes is primary orchestrator. Hard-retire deferred (natural on reboot). See `docs/governance/OPENCLAW_FENCE_DECISION_2026_06_22.md`.
 - **Semgrep Phase 1 ERROR gate active (PR #376):** CI now blocks on Semgrep governance rule violations. Rules cover ranker/selector/final_score mutation guard, PIT annotation enforcement, model-output-as-signal guard, supply-chain checks.
 - **Autonomous research quarantined (PR #379):** An autonomous PIT/backtest research run was quarantined. Outputs are not accepted evidence and must not be used for model decisions. See `docs/governance/AUTONOMOUS_RESEARCH_QUARANTINE_2026_06_22.md`.
+
+---
+
+## Agent Fleet Self-Learning (2026-06-24)
+
+*Updated post-PR #397/#398*
+
+- **Heartbeat:** 27 specialized checks in `tools/agent_heartbeat_checks.py`; Hermes on-demand jobs SKIP by design.
+- **Telemetry:** `log_agent_run` on daily builders + `data_auditor` + `ops_supervisor` + Hermes `run_job.py` exits.
+- **Outcome feedback:** `attach_outcome_verdict` on production_qa, ops_supervisor, herald_health_check, data_auditor, postmortem, CRT join, event_outcome_binder.
+- **Weekly loop:** `tools/cron_weekly_skills_review.sh` — operator must install via `tools/install_agent_fleet_crontab.sh` on WSL.
+- **Stalled loops:** F-2026-005 (Herald host recovery), F-2026-006 (Actions budget) — `SELFIMPROVE_GATES_MET=1` blocked until closed.
 
 ---
 

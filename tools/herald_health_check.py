@@ -22,6 +22,7 @@ import argparse
 import json
 import re
 import sys
+import time
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -225,6 +226,7 @@ def main() -> int:
     args = ap.parse_args()
 
     as_of = date.fromisoformat(args.as_of_date) if args.as_of_date else None
+    started = time.perf_counter()
     report = run_check(as_of)
 
     if not args.no_write and not args.stdout:
@@ -242,6 +244,33 @@ def main() -> int:
             print(f"  - {issue}")
         if report["latest_classified_date"]:
             print(f"  latest classified: {report['latest_classified_date']} ({report['source_age_days']}d ago)")
+
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
+
+        verdict = report["verdict"]
+        exec_id = log_agent_run(
+            "herald_health_check",
+            f"Herald health for {report['as_of_date']}",
+            inputs={"as_of_date": report["as_of_date"]},
+            outputs={
+                "verdict": verdict,
+                "herald_done": report.get("herald_done"),
+                "issue_count": len(report.get("issues", [])),
+            },
+            success=verdict in ("HEALTHY", "WARN"),
+            error=None if verdict in ("HEALTHY", "WARN") else verdict,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=verdict == "HEALTHY" and bool(report.get("herald_done")),
+                evidence=f"verdict={verdict} done={report.get('herald_done')}",
+            )
+    except Exception:
+        pass
 
     return _exit_code(report["verdict"])
 

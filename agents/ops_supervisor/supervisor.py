@@ -783,8 +783,9 @@ def main() -> int:
     # Telemetry + self-learning capture (non-blocking)
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        exec_id = log_agent_run(
             "ops_supervisor",
             f"Daily supervisor verdict for {as_of}",
             inputs={"as_of_date": as_of},
@@ -796,6 +797,12 @@ def main() -> int:
             success=final_severity in ("GREEN", "YELLOW"),
             error=None if final_severity in ("GREEN", "YELLOW") else summary[:500],
         )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=final_severity in ("GREEN", "YELLOW"),
+                evidence=f"severity={final_severity} anomalies={len(classified)}",
+            )
     except Exception:
         pass
 
