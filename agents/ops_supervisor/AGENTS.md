@@ -75,6 +75,10 @@ Current rules (consult supervisor.py for live state):
 - Prior supervisor JSON missing → treat all anomalies as new (no delta classification)
 - Unknown anomaly type → ORANGE by default (do not silently YELLOW)
 
+## Self-learning (Rule 12)
+
+ORANGE/RED verdict with recurring root cause → `.learnings/corrections.md`.
+
 ## Red lines
 
 - Do not edit `.py` files, rulesets, or production data

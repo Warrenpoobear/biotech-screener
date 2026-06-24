@@ -887,6 +887,218 @@ def check_sentinel(dt: date) -> CheckResult:
     return CheckResult("sentinel", "OK", f"Ruleset health OK for {ds}")
 
 
+# ── Shared dated-artifact helper ──────────────────────────────
+
+
+def _check_dated_artifact_file(
+    agent: str,
+    dt: date,
+    *,
+    today_path: Path,
+    freshness_globs: list[str],
+    cadence_key: str,
+    ok_message: str | None = None,
+) -> CheckResult:
+    """Today's dated artifact exists, else report latest content date vs cadence threshold."""
+    ds = as_of_date(dt)
+    threshold = STALENESS_DAYS_BY_CADENCE.get(cadence_key)
+
+    if today_path.exists():
+        return CheckResult(agent, "OK", ok_message or f"Artifact present for {ds}")
+
+    latest, sample_path, _ = newest_artifact_freshness(REPO_ROOT, freshness_globs)
+    detail = f"No artifact for {ds}"
+    anomalies: list[str] = []
+    if latest is not None:
+        detail += f"; latest={latest} ({age_days(dt, latest)}d ago)"
+        if threshold is not None and age_days(dt, latest) > threshold:
+            anomalies.append(format_stale_source(latest, dt, threshold))
+    else:
+        anomalies.append(f"NO_ARTIFACTS: {freshness_globs}")
+    status = "STALE" if anomalies else "WARN"
+    return CheckResult(agent, status, detail, anomalies)
+
+
+# ── Catalyst Delta ────────────────────────────────────────────
+
+
+def check_catalyst_delta(dt: date) -> CheckResult:
+    ds = as_of_date(dt)
+    return _check_dated_artifact_file(
+        "catalyst_delta",
+        dt,
+        today_path=ARTIFACTS_DIR / "catalyst_delta" / f"{ds}_delta.json",
+        freshness_globs=["artifacts/catalyst_delta/"],
+        cadence_key="daily_after_production",
+    )
+
+
+# ── Postmortem ────────────────────────────────────────────────
+
+
+def check_postmortem(dt: date) -> CheckResult:
+    threshold = STALENESS_DAYS_BY_CADENCE["daily_after_production"]
+    latest, sample_path, _ = newest_artifact_freshness(REPO_ROOT, ["artifacts/postmortem/"])
+    if latest is None:
+        return CheckResult("postmortem", "STALE", "No postmortem artifacts", ["NO_ARTIFACTS: artifacts/postmortem/"])
+    age = age_days(dt, latest)
+    sample = sample_path.relative_to(REPO_ROOT) if sample_path else "?"
+    if age > threshold:
+        return CheckResult(
+            "postmortem",
+            "STALE",
+            f"newest event capture {latest} ({age}d > {threshold}d, {sample})",
+            [format_stale_source(latest, dt, threshold)],
+        )
+    return CheckResult("postmortem", "OK", f"newest={latest} ({age}d, {sample})")
+
+
+# ── CRT Resolution Watcher ────────────────────────────────────
+
+
+def check_crt_resolution_watcher(dt: date) -> CheckResult:
+    ds = as_of_date(dt)
+    threshold = STALENESS_DAYS_BY_CADENCE["daily_after_production"]
+    anomalies: list[str] = []
+
+    join_path = REPO_ROOT / "output" / "catalyst_ev" / "crt_options_join.json"
+    res_dir = SNAPSHOT_DIR / "resolutions"
+    latest_join, _, _ = newest_artifact_freshness(REPO_ROOT, ["output/catalyst_ev/"])
+    latest_res, _, _ = newest_artifact_freshness(REPO_ROOT, ["data/snapshots/resolutions/"])
+
+    if not join_path.exists():
+        if latest_join is None:
+            anomalies.append("NO_CRT_JOIN: output/catalyst_ev/ empty")
+        else:
+            join_age = age_days(dt, latest_join)
+            anomalies.append(f"MISSING_CRT_JOIN: latest {latest_join} ({join_age}d ago)")
+            if join_age > threshold:
+                anomalies.append(format_stale_source(latest_join, dt, threshold))
+    elif latest_join is not None and age_days(dt, latest_join) > threshold:
+        anomalies.append(format_stale_source(latest_join, dt, threshold))
+
+    if not res_dir.is_dir() or not any(res_dir.iterdir()):
+        anomalies.append("NO_RESOLUTIONS: data/snapshots/resolutions/ empty")
+    elif latest_res is not None and age_days(dt, latest_res) > threshold + 3:
+        anomalies.append(f"STALE_RESOLUTIONS: latest {latest_res} ({age_days(dt, latest_res)}d ago)")
+
+    if anomalies:
+        status = "STALE" if any("STALE" in a or "NO_" in a or "MISSING" in a for a in anomalies) else "WARN"
+        return CheckResult("crt_resolution_watcher", status, f"{len(anomalies)} issue(s) for {ds}", anomalies)
+    return CheckResult("crt_resolution_watcher", "OK", f"CRT join and resolutions fresh for {ds}")
+
+
+# ── Ops Supervisor ────────────────────────────────────────────
+
+
+def check_ops_supervisor(dt: date) -> CheckResult:
+    ds = as_of_date(dt)
+    return _check_dated_artifact_file(
+        "ops_supervisor",
+        dt,
+        today_path=ARTIFACTS_DIR / "ops_supervisor" / f"{ds}_supervisor.json",
+        freshness_globs=["artifacts/ops_supervisor/"],
+        cadence_key="daily_after_production",
+        ok_message=f"Supervisor report for {ds}",
+    )
+
+
+# ── Options / Price Action / Grok / Intraday watches ─────────
+
+
+def check_options_watch(dt: date) -> CheckResult:
+    ds = as_of_date(dt)
+    return _check_dated_artifact_file(
+        "options_watch",
+        dt,
+        today_path=ARTIFACTS_DIR / "options_watch" / f"{ds}_watch.json",
+        freshness_globs=["artifacts/options_watch/"],
+        cadence_key="daily_after_production",
+    )
+
+
+def check_price_action_watch(dt: date) -> CheckResult:
+    ds = as_of_date(dt)
+    return _check_dated_artifact_file(
+        "price_action_watch",
+        dt,
+        today_path=ARTIFACTS_DIR / "price_action_watch" / f"{ds}_watch.json",
+        freshness_globs=["artifacts/price_action_watch/"],
+        cadence_key="daily_after_production",
+    )
+
+
+def check_grok_biotech_watch(dt: date) -> CheckResult:
+    ds = as_of_date(dt)
+    return _check_dated_artifact_file(
+        "grok_biotech_watch",
+        dt,
+        today_path=ARTIFACTS_DIR / "grok_watch" / f"{ds}_alerts.json",
+        freshness_globs=["artifacts/grok_watch/"],
+        cadence_key="intraday",
+    )
+
+
+def check_intraday_mover_watch(dt: date) -> CheckResult:
+    ds = as_of_date(dt)
+    return _check_dated_artifact_file(
+        "intraday_mover_watch",
+        dt,
+        today_path=ARTIFACTS_DIR / "intraday_mover_watch" / f"{ds}_digest.json",
+        freshness_globs=["artifacts/intraday_mover_watch/"],
+        cadence_key="intraday",
+    )
+
+
+# ── Earnings / Event Analyst / Universe ─────────────────────────
+
+
+def check_earnings_calendar_sync(dt: date) -> CheckResult:
+    ds = as_of_date(dt)
+    threshold = STALENESS_DAYS_BY_CADENCE["daily_premarket"]
+    sync_report = ARTIFACTS_DIR / "earnings_sync" / f"{ds}_sync_report.json"
+    ics_path = ARTIFACTS_DIR / "earnings_sync" / "biotech_earnings.ics"
+
+    if sync_report.exists():
+        return CheckResult("earnings_calendar_sync", "OK", f"Sync report for {ds}")
+
+    latest, _, _ = newest_artifact_freshness(REPO_ROOT, ["artifacts/earnings_sync/"])
+    if ics_path.exists() and latest is not None and age_days(dt, latest) <= threshold:
+        return CheckResult("earnings_calendar_sync", "OK", f"ICS present, latest content={latest}")
+
+    detail = f"No sync report for {ds}"
+    anomalies: list[str] = []
+    if latest is not None:
+        detail += f"; latest={latest} ({age_days(dt, latest)}d ago)"
+        if age_days(dt, latest) > threshold:
+            anomalies.append(format_stale_source(latest, dt, threshold))
+    else:
+        anomalies.append("NO_ARTIFACTS: artifacts/earnings_sync/")
+    return CheckResult("earnings_calendar_sync", "STALE", detail, anomalies)
+
+
+def check_event_analyst(dt: date) -> CheckResult:
+    ds = as_of_date(dt)
+    return _check_dated_artifact_file(
+        "event_analyst",
+        dt,
+        today_path=ARTIFACTS_DIR / "event_analyst" / f"{ds}_summary.json",
+        freshness_globs=["artifacts/event_analyst/"],
+        cadence_key="weekly",
+    )
+
+
+def check_universe_maintenance(dt: date) -> CheckResult:
+    ds = as_of_date(dt)
+    return _check_dated_artifact_file(
+        "universe_maintenance",
+        dt,
+        today_path=ARTIFACTS_DIR / "universe_maintenance" / f"{ds}_report.json",
+        freshness_globs=["artifacts/universe_maintenance/"],
+        cadence_key="weekly",
+    )
+
+
 # ── Orchestrator ──────────────────────────────────────────────
 
 # Specialized check functions, keyed by registry name (agents/AGENT_REGISTRY.json).
@@ -907,6 +1119,17 @@ SPECIALIZED_CHECKS = {
     "ops": check_ops,
     "ctgov_poller": check_ctgov_poller,
     "sentinel": check_sentinel,
+    "catalyst_delta": check_catalyst_delta,
+    "postmortem": check_postmortem,
+    "crt_resolution_watcher": check_crt_resolution_watcher,
+    "ops_supervisor": check_ops_supervisor,
+    "options_watch": check_options_watch,
+    "price_action_watch": check_price_action_watch,
+    "earnings_calendar_sync": check_earnings_calendar_sync,
+    "grok_biotech_watch": check_grok_biotech_watch,
+    "intraday_mover_watch": check_intraday_mover_watch,
+    "event_analyst": check_event_analyst,
+    "universe_maintenance": check_universe_maintenance,
 }
 
 # CLI --agent map: registry names only.

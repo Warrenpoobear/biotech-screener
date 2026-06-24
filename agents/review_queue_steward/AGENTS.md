@@ -54,6 +54,10 @@ Format as one screen:
 2. Report queue size and must-look count
 3. If queue is empty or missing → `HEARTBEAT_OK` or `NO_QUEUE`
 
+## Self-learning (Rule 12)
+
+Recurring queue disagreement pattern → `.learnings/LEARNINGS.md`.
+
 ## Red lines
 
 - Do not edit `.py` files, scoring logic, rulesets, or manifest

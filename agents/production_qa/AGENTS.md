@@ -32,6 +32,10 @@ VERDICT: OK | WARN | ACTION REQUIRED | FAIL
 - See: artifacts/production_qa/report_YYYY-MM-DD.json
 ```
 
+## Self-learning (Rule 12)
+
+Recurring QA failure class → `.learnings/LEARNINGS.md` before re-triage.
+
 ## Red lines
 
 - Do not edit scoring logic, rulesets, or model parameters

@@ -64,6 +64,10 @@ Daily health check and coordination for the 30-agent OpenClaw fleet. Emit a stru
 **Markdown Summary** (one paragraph to memory):
 Format: `[HH:MM UTC] Fleet: N agents healthy, M degraded. Cron sync: OK|ISSUES. High-severity items: [list if any] Recommendation: [action]`
 
+## Self-learning (Rule 12)
+
+Fleet-wide recurring issue → `.learnings/LEARNINGS.md` before re-dispatching agents.
+
 ## Red Lines (NEVER)
 
 - Do not change crontab without explicit operator instruction

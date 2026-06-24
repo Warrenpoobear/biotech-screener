@@ -8,10 +8,12 @@ import csv
 import json
 import os
 import re
+import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+sys.path.insert(0, REPO)
 SNAPS_DIR = os.path.join(REPO, "data/snapshots")
 RESOL_DIR = os.path.join(SNAPS_DIR, "resolutions")
 PRICE_CSV = os.path.join(REPO, "production_data/price_history.csv")
@@ -449,6 +451,28 @@ def main():
         print(f"[postmortem] PRICE_DATA_GAP (T+3 pending): {skipped}")
     if not written and not skipped:
         print("[postmortem] HEARTBEAT_OK")
+
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
+
+        n_candidates = len(candidates)
+        exec_id = log_agent_run(
+            "postmortem",
+            f"Postmortem capture for {today}",
+            inputs={"as_of_date": today},
+            outputs={"written": len(written), "skipped": len(skipped), "gaps": len(gaps)},
+            success=True,
+        )
+        if exec_id and n_candidates:
+            capture_rate = len(written) / n_candidates
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=capture_rate >= 0.5,
+                evidence=f"captured {len(written)}/{n_candidates} resolution candidates",
+            )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

@@ -23,6 +23,10 @@
 - Single-name wins/losses near hard catalysts are expected variance, not model failure
 - Scorecard FAIL from catalyst concentration is temporal, not model-quality
 
+## Self-learning (Rule 12)
+
+Recurring perf alert pattern → LRN (`Promotion-lane: spec` if ranker-related).
+
 ## Red lines
 
 - Do not edit `.py` files, scoring logic, rulesets, or manifest

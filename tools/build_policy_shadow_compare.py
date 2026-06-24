@@ -25,6 +25,7 @@ import json
 import logging
 import os
 import sys
+import time
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -449,6 +450,7 @@ def main():
         "Default: refuse, to prevent the contamination pattern observed on 2026-05-06 (P0 #1).",
     )
     args = parser.parse_args()
+    started = time.perf_counter()
 
     # Default to latest position date
     pos_dir = REPO_ROOT / "artifacts" / "live_shadow" / "positions"
@@ -474,7 +476,33 @@ def main():
     result = build_policy_shadow_compare(as_of_date=date)
     if "error" in result:
         logger.error(result["error"])
+        try:
+            from tools.agent_skill_telemetry import log_agent_run
+
+            log_agent_run(
+                "build_policy_shadow_compare",
+                f"Policy shadow compare for {date}",
+                inputs={"as_of_date": date},
+                outputs={"error": result["error"]},
+                success=False,
+                error=result["error"],
+                latency_ms=(time.perf_counter() - started) * 1000,
+            )
+        except Exception:
+            pass
         sys.exit(1)
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "build_policy_shadow_compare",
+            f"Policy shadow compare for {date}",
+            inputs={"as_of_date": date},
+            success=True,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

@@ -55,3 +55,4 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 | Skill | Use when |
 |-------|----------|
 | `firecrawl-research-discovery` | Searching for biotech news context on intraday movers (research-only enrichment) |
+| `self-improving` | Recurring quote/news linkage miss → LRN |

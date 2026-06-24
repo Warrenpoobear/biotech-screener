@@ -29,6 +29,10 @@ Write daily notes to `memory/YYYY-MM-DD.md`. Keep concise:
 - **Trend context**: Is this a repeat from yesterday? First time?
 - **Escalation notes**: Any findings that warrant ops attention
 
+## Self-learning (Rule 12)
+
+Recurring integrity failure class → `.learnings/LEARNINGS.md`.
+
 ## Red lines
 
 - Do not edit `.py` files, rulesets, or production data

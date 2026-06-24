@@ -79,6 +79,10 @@ Daily information coefficient (IC) health check. Monitor signal performance, det
 | < -0.04 | any | ALERT | Yes | Escalate to sentinel |
 | any | < 0.20 | ALERT | Yes | Escalate to sentinel |
 
+## Self-learning (Rule 12)
+
+Recurring signal degradation → LRN with `Promotion-lane: spec`.
+
 ## Red Lines (NEVER)
 
 - Do not recommend ranker weight changes

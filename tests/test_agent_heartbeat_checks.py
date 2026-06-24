@@ -649,3 +649,57 @@ def test_production_qa_stale_includes_latest_report_date(hb_mod, tmp_path, monke
     assert result.status == "STALE"
     assert "2026-03-10" in result.detail
 
+
+# ── Specialized dated-artifact checks (fleet completion) ─────
+
+
+def test_check_catalyst_delta_ok_when_today_present(hb_mod, tmp_path):
+    ds = "2026-05-08"
+    d = tmp_path / "artifacts" / "catalyst_delta"
+    d.mkdir(parents=True)
+    (d / f"{ds}_delta.json").write_text("{}")
+
+    result = hb_mod.check_catalyst_delta(date.fromisoformat(ds))
+    assert result.status == "OK"
+
+
+def test_check_catalyst_delta_stale_when_missing(hb_mod, tmp_path):
+    d = tmp_path / "artifacts" / "catalyst_delta"
+    d.mkdir(parents=True)
+    (d / "2026-03-01_delta.json").write_text("{}")
+
+    result = hb_mod.check_catalyst_delta(date.fromisoformat("2026-05-08"))
+    assert result.status == "STALE"
+    assert "2026-03-01" in result.detail
+
+
+def test_check_postmortem_ok_on_recent_capture(hb_mod, tmp_path):
+    pm = tmp_path / "artifacts" / "postmortem" / "2026-05-07"
+    pm.mkdir(parents=True)
+    (pm / "MRNA_postmortem.json").write_text("{}")
+
+    result = hb_mod.check_postmortem(date.fromisoformat("2026-05-08"))
+    assert result.status == "OK"
+
+
+def test_check_crt_resolution_watcher_ok(hb_mod, tmp_path):
+    ds = "2026-05-08"
+    out = tmp_path / "output" / "catalyst_ev"
+    out.mkdir(parents=True)
+    (out / "crt_options_join.json").write_text('{"n_resolutions": 1}')
+    res = tmp_path / "data" / "snapshots" / "resolutions"
+    res.mkdir(parents=True)
+    (res / f"{ds}_MRNA.json").write_text("{}")
+
+    result = hb_mod.check_crt_resolution_watcher(date.fromisoformat(ds))
+    assert result.status == "OK"
+
+
+def test_check_options_watch_stale(hb_mod, tmp_path):
+    d = tmp_path / "artifacts" / "options_watch"
+    d.mkdir(parents=True)
+    (d / "2026-03-01_watch.json").write_text("{}")
+
+    result = hb_mod.check_options_watch(date.fromisoformat("2026-05-08"))
+    assert result.status == "STALE"
+

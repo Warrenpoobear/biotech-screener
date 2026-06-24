@@ -40,6 +40,7 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 |-------|----------|
 | `institutional-signal` | Analyzing institutional positioning and signals |
 | `dossier-generation` | Generating IC memos or investment analysis output |
+| `self-improving` | Recurring search/dedupe issue → LRN |
 
 ## Active ruleset
 

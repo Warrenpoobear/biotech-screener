@@ -20,6 +20,10 @@
 Write session summaries to `agents/calibration_evidence/memory/`.
 Track: events processed, evidence counts, notable findings.
 
+## Self-learning (Rule 12)
+
+Calibration finding → LRN with `Promotion-lane: spec`.
+
 ## Red lines
 
 - Do not recommend weight changes or signal promotion

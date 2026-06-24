@@ -115,6 +115,7 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 |-------|----------|
 | `validation` | Validating data quality and schema consistency |
 | `biotech-validation` | Biotech-specific data validation rules |
+| `self-improving` | Recurring integrity failure class → LRN |
 
 ## Escalation policy
 

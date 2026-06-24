@@ -13,6 +13,7 @@ import argparse
 import csv
 import json
 import sys
+import time
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
@@ -750,6 +751,7 @@ def main():
     parser.add_argument("--daily-only", action="store_true", help="Run daily checks only")
     parser.add_argument("--weekly-only", action="store_true", help="Run weekly checks only")
     args = parser.parse_args()
+    started = time.perf_counter()
 
     if args.daily_only and args.weekly_only:
         print("ERROR: --daily-only and --weekly-only are mutually exclusive", file=sys.stderr)
@@ -758,6 +760,21 @@ def main():
     report = run_audit(args.as_of_date, daily_only=args.daily_only, weekly_only=args.weekly_only)
 
     verdict = report["verdict"]
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "data_auditor",
+            f"Integrity audit for {args.as_of_date}",
+            inputs={"as_of_date": args.as_of_date},
+            outputs={"verdict": verdict, "summary": report.get("summary")},
+            success=verdict not in ("FAIL", "ERROR"),
+            error=verdict if verdict in ("FAIL", "ERROR") else None,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
+
     if verdict == "FAIL":
         sys.exit(1)
     elif verdict in ("WARN", "ERROR"):

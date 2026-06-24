@@ -21,6 +21,10 @@ Write daily notes to `memory/YYYY-MM-DD.md`. Keep it concise:
 - Digest delivery status
 - Any STALE_SOURCE or MISSED_DIGEST anomalies
 
+## Self-learning (Rule 12)
+
+Pipeline outage / fetch failure → `.learnings/LEARNINGS.md` + `docs/FAILURE_PATTERN_LIBRARY.md` lookup.
+
 ## Red lines
 
 - Do not edit scoring logic, rulesets, rankings, or production snapshots

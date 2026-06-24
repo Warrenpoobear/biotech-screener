@@ -38,6 +38,7 @@ import logging
 import math
 import os
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
@@ -905,10 +906,23 @@ def main():
         help="Advisory poll cadence; informs artifact metadata only (no cron scheduling)",
     )
     args = parser.parse_args()
+    started = time.perf_counter()
 
     if args.digest_only:
         as_of_date = args.as_of_date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
         build_daily_digest(as_of_date, args.artifacts_dir, send_email_flag=args.send_email)
+        try:
+            from tools.agent_skill_telemetry import log_agent_run
+
+            log_agent_run(
+                "build_intraday_mover_watch",
+                f"Intraday digest for {as_of_date}",
+                inputs={"as_of_date": as_of_date, "digest_only": True},
+                success=True,
+                latency_ms=(time.perf_counter() - started) * 1000,
+            )
+        except Exception:
+            pass
         return
 
     as_of_ts = args.as_of_ts or _iso_z(datetime.now(timezone.utc))
@@ -924,6 +938,19 @@ def main():
         result.get("provider"),
         result.get("n_triggered", 0),
     )
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "build_intraday_mover_watch",
+            f"Intraday watch at {as_of_ts}",
+            inputs={"as_of_ts": as_of_ts},
+            outputs={"n_triggered": result.get("n_triggered"), "status": result.get("status")},
+            success=result.get("status") != "error",
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

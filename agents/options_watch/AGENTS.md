@@ -84,6 +84,10 @@ Write daily notes to `memory/YYYY-MM-DD.md`:
 - Suppressed names and reasons
 - Data gaps (missing opt_* fields, stale chains)
 
+## Self-learning (Rule 12)
+
+Recurring surface false-positive pattern → LRN.
+
 ## Red lines
 
 - Do not edit `.py` files, scoring logic, rulesets, or manifest

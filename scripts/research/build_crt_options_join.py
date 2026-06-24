@@ -21,6 +21,7 @@ import json
 import logging
 import math
 import sys
+import time
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -384,6 +385,7 @@ def build_join_table() -> dict:
 
 def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    started = time.perf_counter()
     result = build_join_table()
 
     output_path = OUTPUT_DIR / "crt_options_join.json"
@@ -427,6 +429,29 @@ def main():
                 f"{r['outcome']:<6} {r['opt_event_premium']:<5} {liq:<8} "
                 f"{imp:<9} {r1d:<9} {r5d:<9} {rh20:<9} {ivr:<6} {over:<6}"
             )
+
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
+
+        n_res = result.get("n_resolutions", 0)
+        n_opts = result.get("n_with_options", 0)
+        exec_id = log_agent_run(
+            "crt_resolution_watcher",
+            "CRT options join table refresh",
+            outputs={"n_resolutions": n_res, "n_with_options": n_opts},
+            success=True,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+        if exec_id and n_res > 0:
+            join_rate = n_opts / n_res
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=join_rate >= 0.3,
+                evidence=f"options joined {n_opts}/{n_res} resolutions",
+            )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

@@ -31,6 +31,7 @@ import math
 import os
 import smtplib
 import sys
+import time
 from datetime import datetime, timezone
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -763,6 +764,7 @@ def main():
         help="Skip search, build digest from existing alerts",
     )
     args = parser.parse_args()
+    started = time.perf_counter()
 
     result = build_grok_biotech_watch(
         args.as_of_date,
@@ -774,6 +776,20 @@ def main():
 
     if "error" in result:
         logger.error(result["error"])
+        try:
+            from tools.agent_skill_telemetry import log_agent_run
+
+            log_agent_run(
+                "build_grok_biotech_watch",
+                f"Grok watch for {args.as_of_date}",
+                inputs={"as_of_date": args.as_of_date},
+                outputs={"error": result["error"]},
+                success=False,
+                error=result["error"],
+                latency_ms=(time.perf_counter() - started) * 1000,
+            )
+        except Exception:
+            pass
         sys.exit(1)
 
     logger.info(
@@ -785,6 +801,19 @@ def main():
         result["n_low"],
         result["emails_sent"],
     )
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "build_grok_biotech_watch",
+            f"Grok watch for {args.as_of_date}",
+            inputs={"as_of_date": args.as_of_date},
+            outputs={"n_alerts": result.get("n_alerts"), "n_high": result.get("n_high")},
+            success=True,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

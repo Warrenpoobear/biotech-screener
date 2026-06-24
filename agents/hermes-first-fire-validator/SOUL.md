@@ -37,6 +37,10 @@
 
 ## Skills
 
+| Skill | Use when |
+|-------|----------|
+| `self-improving` | Recurring first-fire false positive/negative → LRN |
+
 ### skill: town-operator-bridge
 
 Routes first-fire validation results to Town operator inbox for gating decisions.

@@ -23,6 +23,7 @@ import argparse
 import json
 import logging
 import sys
+import time
 from collections import defaultdict
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -496,6 +497,7 @@ def main():
         help="Rebuild all events (ignore existing)",
     )
     args = parser.parse_args()
+    started = time.perf_counter()
 
     result = build_event_feedback(args.as_of_date, backfill=args.backfill)
     if result.get("status") == "NO_DATA":
@@ -506,6 +508,19 @@ def main():
             result["n_resolved"],
             result.get("herald_match_rate", 0) * 100,
         )
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "build_event_feedback",
+            f"Event feedback for {args.as_of_date}",
+            inputs={"as_of_date": args.as_of_date},
+            outputs={"n_resolved": result.get("n_resolved"), "status": result.get("status")},
+            success=True,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

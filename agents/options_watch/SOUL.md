@@ -45,6 +45,7 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 | Skill | Use when |
 |-------|----------|
 | `financial-health` | Analyzing financial metrics and health indicators |
+| `self-improving` | Recurring surface false-positive pattern → LRN |
 
 ## Active ruleset
 

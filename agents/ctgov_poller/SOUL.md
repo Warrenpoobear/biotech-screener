@@ -42,3 +42,4 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 | Skill | Use when |
 |-------|----------|
 | `clinical-scoring` | Analyzing clinical trial data and outcomes |
+| `self-improving` | Recurring CTgov poll/diff failure → LRN |

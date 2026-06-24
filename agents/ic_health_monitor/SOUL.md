@@ -72,3 +72,4 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 |-------|----------|
 | `ic-evaluation` | Evaluating signal information content and impact |
 | `institutional-signal` | Analyzing institutional positioning and signals |
+| `self-improving` | Recurring signal degradation pattern → LRN (`Promotion-lane: spec`) |

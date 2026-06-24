@@ -45,6 +45,10 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - When you make a mistake → document it so future-you doesn't repeat it
 - **Text > Brain** 📝
 
+## Self-learning (Rule 12)
+
+Recurring CTgov poll/diff failure → `.learnings/LEARNINGS.md`.
+
 ## Red Lines
 
 - Don't exfiltrate private data. Ever.

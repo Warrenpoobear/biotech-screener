@@ -40,3 +40,4 @@ Invoke via `/skill <name>` (in-session) or `hermes -s <name>` (session preload).
 | Skill | Use when |
 |-------|----------|
 | `performance-attribution` | Attributing returns to signal factors |
+| `self-improving` | Recurring move-alert noise pattern → LRN |

@@ -37,6 +37,10 @@
 
 ## Skills
 
+| Skill | Use when |
+|-------|----------|
+| `self-improving` | Recurring ruleset integrity miss → LRN |
+
 ### skill: town-operator-bridge
 
 Routes ruleset integrity validation results to Town operator inbox for governance review.

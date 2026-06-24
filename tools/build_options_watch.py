@@ -39,6 +39,7 @@ import csv
 import json
 import logging
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
@@ -574,6 +575,7 @@ def main():
     parser.add_argument("--snapshots-dir", type=Path, default=REPO_ROOT / "data" / "snapshots")
     parser.add_argument("--artifacts-dir", type=Path, default=REPO_ROOT / "artifacts")
     args = parser.parse_args()
+    started = time.perf_counter()
 
     result = build_options_watch(
         args.as_of_date,
@@ -584,6 +586,20 @@ def main():
 
     if "error" in result:
         logger.error(result["error"])
+        try:
+            from tools.agent_skill_telemetry import log_agent_run
+
+            log_agent_run(
+                "build_options_watch",
+                f"Options watch for {args.as_of_date}",
+                inputs={"as_of_date": args.as_of_date, "mode": args.mode},
+                outputs={"error": result["error"]},
+                success=False,
+                error=result["error"],
+                latency_ms=(time.perf_counter() - started) * 1000,
+            )
+        except Exception:
+            pass
         sys.exit(1)
 
     logger.info(
@@ -593,6 +609,22 @@ def main():
         result["n_suppressed"],
         result["mode"],
     )
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "build_options_watch",
+            f"Options watch for {args.as_of_date}",
+            inputs={"as_of_date": args.as_of_date, "mode": args.mode},
+            outputs={
+                "n_flagged": result.get("n_flagged"),
+                "watchlist_size": result.get("watchlist_size"),
+            },
+            success=True,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

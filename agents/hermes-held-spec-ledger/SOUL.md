@@ -36,6 +36,10 @@
 
 ## Skills
 
+| Skill | Use when |
+|-------|----------|
+| `self-improving` | Recurring held-spec routing miss → LRN |
+
 ### skill: town-operator-bridge
 
 Routes Hermes knowledge layer outputs to Town operator inbox without giving Town production control.

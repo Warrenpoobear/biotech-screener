@@ -32,6 +32,10 @@ Write session summaries to `agents/grok_biotech_watch/memory/`.
 Track: query volume, rate limit hits, alert counts by severity,
 false positive rates (manually noted by operator).
 
+## Self-learning (Rule 12)
+
+Recurring search/dedupe issue → `.learnings/LEARNINGS.md`.
+
 ## Red lines
 
 - Do not treat search results as confirmed events

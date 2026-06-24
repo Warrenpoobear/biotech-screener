@@ -27,6 +27,7 @@ import argparse
 import json
 import logging
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -1008,19 +1009,60 @@ def main() -> None:
     )
     parser.add_argument("--stdout", action="store_true", help="Print markdown to stdout")
     args = parser.parse_args()
+    started = time.perf_counter()
 
     as_of = args.as_of_date or _find_latest_snapshot(args.snapshot_dir)
     if not as_of:
         print("No snapshots found.", file=sys.stderr)
+        try:
+            from tools.agent_skill_telemetry import log_agent_run
+
+            log_agent_run(
+                "build_ops_digest",
+                "Ops digest build",
+                success=False,
+                error="no snapshots",
+                latency_ms=(time.perf_counter() - started) * 1000,
+            )
+        except Exception:
+            pass
         sys.exit(1)
 
     digest = build_ops_digest(as_of, snapshots_dir=args.snapshot_dir)
     if "error" in digest:
         print(f"Error: {digest['error']}", file=sys.stderr)
+        try:
+            from tools.agent_skill_telemetry import log_agent_run
+
+            log_agent_run(
+                "build_ops_digest",
+                f"Ops digest for {as_of}",
+                inputs={"as_of_date": as_of},
+                outputs={"error": digest["error"]},
+                success=False,
+                error=digest["error"],
+                latency_ms=(time.perf_counter() - started) * 1000,
+            )
+        except Exception:
+            pass
         sys.exit(1)
 
     paths = write_ops_digest(digest)
     print(f"Digest: {paths['md_path']}")
+
+    try:
+        from tools.agent_skill_telemetry import log_agent_run
+
+        log_agent_run(
+            "build_ops_digest",
+            f"Ops digest for {as_of}",
+            inputs={"as_of_date": as_of},
+            outputs={"attention": digest.get("attention")},
+            success=True,
+            latency_ms=(time.perf_counter() - started) * 1000,
+        )
+    except Exception:
+        pass
 
     if args.stdout:
         print()

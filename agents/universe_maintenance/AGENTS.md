@@ -19,6 +19,10 @@
 Write session summaries to `agents/universe_maintenance/memory/`.
 Track: universe size, tickers flagged, coverage gaps.
 
+## Self-learning (Rule 12)
+
+Recurring delist/coverage gap → `.learnings/LEARNINGS.md`.
+
 ## Red lines
 
 - Do not modify universe.json or any production data

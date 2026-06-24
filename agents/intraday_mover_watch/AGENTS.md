@@ -30,3 +30,7 @@
 4. No yfinance / `market_data_provider.py` path is the primary live source.
 5. Every email has a corresponding artifact on disk.
 6. Email send is no-op unless API key present AND real-time tier confirmed.
+
+## Self-learning (Rule 12)
+
+Recurring quote/news linkage miss → `.learnings/LEARNINGS.md`.
