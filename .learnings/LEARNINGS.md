@@ -347,6 +347,30 @@ Keep preflight in skills/codegraph; log tooling gaps to LEARNINGS with Skill-Pat
 - Recurrence-Count: 2
 - Skill-Path: codegraph
 
+## [LRN-20260624-001] cron_sys_path_isolation
+
+**Logged**: 2026-06-24T21:00:00Z
+**Priority**: high
+**Status**: promoted
+**Area**: hermes_ops
+
+### Summary
+Hermes cron entry scripts fail with `ModuleNotFoundError: No module named 'tools'` when using repo-relative imports without inserting `PROJECT_ROOT` onto `sys.path`. Interactive shells mask the bug via virtualenv or `PYTHONPATH`.
+
+### Details
+Confirmed 2026-06-24 (735ac3f7): `agents_direct` cron fired 42× before fix. Town `cron_missed` events are often the operator's first signal. Pattern: `PROJECT_ROOT = Path(__file__).resolve().parent.parent` then `sys.path.insert(0, str(PROJECT_ROOT))` before any `from tools.*` or `from common.*` imports.
+
+### Suggested Action
+Audit all cron entry scripts for repo-relative imports. Cross-ref `openclaw-data-pipeline-debug` Class P and `town-operator-bridge` triage table.
+
+### Metadata
+- Source: pipeline_recovery_2026-06-24
+- Related Files: agents/*/run_job.py, tools/run_daily_production.py
+- Tags: cron, sys_path, hermes_ops, town_bridge
+- Pattern-Key: cron_sys_path_isolation
+- Recurrence-Count: 1
+- Skill-Path: town-operator-bridge, openclaw-data-pipeline-debug
+
 ## [LRN-20260601-003] sync_reference_mirror_source
 
 **Logged**: 2026-06-01T12:00:00Z

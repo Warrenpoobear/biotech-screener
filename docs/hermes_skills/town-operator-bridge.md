@@ -262,6 +262,30 @@ Listed in order of implementation:
 
 ---
 
+## Operator triage (Town inbox)
+
+When Town receives a `[Hermes]` email, map `event_type` → likely root cause before acting:
+
+| event_type | First check | Cross-ref skill |
+|---|---|---|
+| `cron_missed` | `agents.log` for `ModuleNotFoundError: No module named 'tools'` | `openclaw-data-pipeline-debug` Class P; `openclaw-cron-scheduler-debug` |
+| `snapshot_missing` | Recent production run logs; cache-warm step timeout | `openclaw-data-pipeline-debug` Class O |
+| `first_fire_fail` | Hedge artifact path + validator JSON | `hermeslink-state-capture` |
+| `ruleset_mismatch` | `CLAUDE.md` ruleset ID vs `run_screen.py` pin | `screener-ops` Active Ruleset |
+| `contradiction_detected` | `artifacts/ops/contradiction_ledger/latest.md` | `hermeslink-state-capture` |
+| `held_spec_ledger` | `artifacts/ops/held_spec_ledger/latest.md` | `governance-spec-enforcement` |
+
+**2026-06-24 pipeline recovery patterns** (Classes M–P in `openclaw-data-pipeline-debug`):
+
+- **Class M** — yfinance date parse (`datetime.isoformat()` → use `strftime("%Y-%m-%d")`)
+- **Class N** — delisted ticker still in screen after one-loader fix (audit all universe consumers)
+- **Class O** — production cache-warm timeout (`--warm-sources` CLI default masked function default)
+- **Class P** — cron `sys.path` isolation (`from tools.*` fails without `PROJECT_ROOT` on path)
+
+Town creates tasks and context only — operator executes fixes on WSL; Town does not mutate repo or cron.
+
+---
+
 ## Verification Checklist
 
 - [ ] **Phase A smoke test:** `python3 tools/smoke_operator_delivery.py` — dry_run=True, verify log output

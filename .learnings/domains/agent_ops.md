@@ -43,3 +43,13 @@ Cloud knowledge-layer builds emit `UNKNOWN_CLOUD_ENV` for C1/C3 — not a pass/f
 2. Promote → `memory.md` or this file
 3. Executable → `skills/*` + `harvest_log.md`
 4. Audit → `audit_learnings.py` + `audit_hermes_skills.py`
+
+## Cron sys.path isolation (Class P)
+
+Hermes cron shells lack virtualenv activation and `PYTHONPATH`. Repo-relative imports
+(`from tools.*`, `from common.*`) fail with `ModuleNotFoundError` even when interactive
+shell works. Fix: insert `PROJECT_ROOT` onto `sys.path` before imports in every cron
+entry script. Town `cron_missed` alerts may be the first signal — triage via
+`town-operator-bridge` operator table.
+
+Confirmed 2026-06-24 (735ac3f7): `agents_direct` cron fired 42× before fix.

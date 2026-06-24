@@ -5,6 +5,28 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+---
+
+## 2026-06-24 (evening) — Town skills + learning applied to Hermes
+
+### Town skills applied
+- **memory-steward** (`docs/hermes_skills/memory-steward.md`): Town audit steps (memories, `town_ls skills://`, content library, people docs); Town forbidden/cleanup lists; `CLEAN_STALE_MEMORIES` decision option; Town execution rules for `delete_memory`
+- **town-operator-bridge**: Operator triage table mapping `event_type` → root cause; Classes M–P cross-ref from pipeline recovery session
+- **screener-ops**: Town-Hermes bridge status refreshed (2026-06-24); `cron_missed` ↔ Class P note
+
+### Learning promoted
+- **agent_ops.md**: Class P cron `sys.path` isolation pattern
+- **LEARNINGS.md**: `[LRN-20260624-001] cron_sys_path_isolation` (promoted)
+
+### Sync
+- Ran `python3 tools/sync_hermes_skills.py --only screener_ops`
+- Ran `python3 tools/audit_hermes_skills.py` — 32/32 registered, no drift
+
+### Governance
+- Skills/docs/learnings only. No ranker, selector, sizing, or scoring changes.
+
+---
+
 ## 2026-06-24 (afternoon) — Pipeline recovery: XBI re-fetch, delisted universe, cache warm, cron import, selfimprove FENCE
 
 ### Patterns added to openclaw-data-pipeline-debug (Classes M–P)

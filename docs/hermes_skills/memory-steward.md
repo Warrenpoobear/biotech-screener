@@ -9,18 +9,21 @@ triggers:
   - hermes memory pressure
   - openclaw session triage
 description: >
-  Audit-first, approval-gated memory steward for the OpenClaw/Hermes environment.
-  Identifies resource pressure from stale sessions, task/issue backlog, caches,
-  logs, and scratch artifacts. Read-only by default. Never deletes anything without
-  explicit per-item approval. Delivers a 9-section audit report and stops.
+  Audit-first, approval-gated memory steward for Town and OpenClaw/Hermes.
+  Identifies resource pressure from stale memories, skills, content library items,
+  sessions, task/issue backlog, caches, logs, and scratch artifacts. Read-only
+  by default. Never deletes anything without explicit per-item approval.
+  Delivers a 9-section audit report and stops.
 ---
 
-# Memory Steward — OpenClaw/Hermes
+# Memory Steward — Town + OpenClaw/Hermes
 
 ## Purpose
 
-Reduce resource pressure from stale sessions, task history, temporary caches,
-and noncanonical memory — while preserving all project-critical knowledge.
+Reduce resource pressure from stale memories, outdated preferences, sessions,
+task history, temporary caches, and noncanonical artifacts — while preserving
+all project-critical knowledge. Works across **Town** (memories, skills,
+content library) and **Hermes/OpenClaw** (sessions, caches, logs).
 
 Default mode: READ-ONLY AUDIT.
 
@@ -44,6 +47,15 @@ After operator-host edits, copy the runtime skill back into
 Regardless of what the user asks, NEVER delete, move, modify, pause, resume, or
 clear any of the following:
 
+### Town Environment
+
+- User profile (`user.md`)
+- Active routine configurations
+- Content Library items without explicit user confirmation
+- Memories tagged to active routines (unless user confirms they are stale)
+
+### Hermes Environment
+
 - SYSTEM_STATE.md
 - MEMORY.md
 - specs/changes/
@@ -60,6 +72,15 @@ clear any of the following:
 ---
 
 ## Safe cleanup candidates (after explicit approval only)
+
+### Town Environment
+
+- Global memories that duplicate routine-specific memories
+- Memories for routines that no longer exist
+- Stale content library items in `uncategorized/`
+- Outdated people research documents in `Memories/people/`
+
+### Hermes Environment
 
 - OpenClaw/Hermes sessions older than a user-specified threshold
 - `session_api-*` sessions (API gateway sessions with no date in name — check age by mtime)
@@ -129,13 +150,23 @@ cusip_static_map_SAMPLE.json (these may be active reference data).
 
 ## Audit steps (run all, read-only)
 
-### 1. Hermes job roster and recent run health
+### Town audit (steps 1–5)
+
+1. **Global memories**: List all via `get_memories()`. Flag duplicates, contradictions, or stale entries.
+2. **Routine-specific memories**: For each active routine, call `get_memories(routine_slug=...)`. Flag memories that reference deprecated behavior or routines.
+3. **Skills inventory**: List via `town_ls skills://`. Flag skills that may be unused or outdated (oversized bodies → see `openclaw-agent-optimize`).
+4. **Content Library**: Browse via `town_ls content://collections`. Flag large uncategorized collections or stale items.
+5. **People documents**: Check `Memories/people/` for outdated or duplicate profiles.
+
+### Hermes audit (steps 6–14)
+
+### 6. Hermes job roster and recent run health
 
 ```bash
 hermes cron list 2>/dev/null || echo "hermes CLI not available"
 ```
 
-### 2. OpenClaw agent/session status
+### 7. OpenClaw agent/session status
 
 ```bash
 openclaw status 2>/dev/null || echo "openclaw not available"
@@ -146,7 +177,7 @@ openclaw tasks list --status=failed 2>/dev/null | head -40
 openclaw tasks list --status=lost 2>/dev/null | head -20
 ```
 
-### 3. Disk usage on likely bloat locations
+### 8. Disk usage on likely bloat locations
 
 ```bash
 # Top-level breakdown
@@ -167,7 +198,7 @@ du -sh ~/.openclaw/ 2>/dev/null
 du -sh ~/.openclaw/*/ 2>/dev/null | sort -rh | head -10
 ```
 
-### 4. Large log files
+### 9. Large log files
 
 ```bash
 find ~/.hermes/ -name "*.log" -size +1M 2>/dev/null | xargs ls -lh 2>/dev/null | sort -k5 -rh | head -20
@@ -175,14 +206,14 @@ find ~/.openclaw/ -name "*.log" -size +1M 2>/dev/null | xargs ls -lh 2>/dev/null
 find /mnt/c/Projects/biotech_screener/biotech-screener -name "*.log" -size +1M 2>/dev/null | xargs ls -lh 2>/dev/null | sort -k5 -rh | head -20
 ```
 
-### 5. Old log files (>7 days)
+### 10. Old log files (>7 days)
 
 ```bash
 find ~/.hermes/ -name "*.log" -mtime +7 2>/dev/null | head -30
 find ~/.openclaw/ -name "*.log" -mtime +7 2>/dev/null | head -30
 ```
 
-### 6. Stale sessions by age
+### 11. Stale sessions by age
 
 ```bash
 ls -lt ~/.hermes/sessions/ 2>/dev/null | head -30
@@ -192,7 +223,7 @@ ls -ltr ~/.hermes/sessions/ 2>/dev/null | head -20
 ls -ltr ~/.openclaw/sessions/ 2>/dev/null | head -20
 ```
 
-### 7. Temporary and scratch files in project
+### 12. Temporary and scratch files in project
 
 ```bash
 # Use maxdepth to avoid timeouts on deep node_modules trees
@@ -211,7 +242,7 @@ ls -la /mnt/c/Projects/biotech_screener/biotech-screener/.claude/worktrees/ 2>/d
 # Flag any directory present here but NOT in `git worktree list` as orphaned
 ```
 
-### 8. Cache directories
+### 13. Cache directories
 
 ```bash
 find /mnt/c/Projects/biotech_screener/biotech-screener -name ".cache" -type d 2>/dev/null
@@ -220,7 +251,7 @@ du -sh /mnt/c/Projects/biotech_screener/biotech-screener/artifacts/ 2>/dev/null
 ls -lt /mnt/c/Projects/biotech_screener/biotech-screener/artifacts/ 2>/dev/null | head -20
 ```
 
-### 9. Hermes job history files
+### 14. Hermes job history files
 
 ```bash
 find ~/.hermes/ -name "*.jsonl" -o -name "*.json" 2>/dev/null | xargs ls -lh 2>/dev/null | sort -k5 -rh | head -20
@@ -238,6 +269,7 @@ Generated: <timestamp>
 ---
 
 ### 1. Current Memory/Session/Task Status
+- Town: global + per-routine memory counts, skills catalog size, content library state
 - Hermes: job count, last run dates, any failed jobs
 - OpenClaw: agent count, active sessions, memory-core status
 - Token pressure indicators where visible
@@ -272,6 +304,7 @@ NONE / LOW / MEDIUM / HIGH with brief rationale
 ### 9. Rollback / Backup Plan
 - What to back up before each action
 - How to recover if something goes wrong
+- For Town memories: note full content before `delete_memory` so it can be re-added
 - Prefer: mv to archive location over rm
 
 ---
@@ -297,6 +330,7 @@ REPO BACKUP NOTE
 ---
 DECISION OPTIONS
   AUDIT_ONLY              — no action taken, report only (default)
+  CLEAN_STALE_MEMORIES    — remove confirmed-stale Town memories only
   CLEAN_LEGACY_CHECKPOINT — archive only the legacy checkpoint dir(s) identified
                             above (highest value, lowest risk — verify store/ first)
   CLEAN_SAFE_SNAPSHOTS    — archive only superseded pre-update state-snapshots
@@ -345,11 +379,12 @@ STOP HERE. Do not execute any cleanup until user explicitly says proceed.
 
 ---
 
+## Execution rules (when approved)
 
-
-- Back up before deleting: cp -r <target> <target>.bak_<date> or tar archive
-- Prefer mv to an ~/archive/ location over rm
-- Never rm -rf without first listing exact targets
+- For Town memories: note the full content before calling `delete_memory`
+- For Hermes files: back up before deleting (`cp -r` or tar archive)
+- Prefer `mv` to `~/archive/` over `rm` for Hermes artifacts
+- Never `rm -rf` without first listing exact targets
 - Print the exact target list before executing
 - Execute one category at a time, confirm after each
 - If anything is ambiguous, skip it and flag for manual review
