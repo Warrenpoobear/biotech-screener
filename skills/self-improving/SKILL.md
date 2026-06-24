@@ -167,6 +167,8 @@ Without these gates, tools exit cleanly. Operator reviews drafts before any skil
 
 ### Rule 12 — Promotion checklist (mechanical bar before a lesson becomes a skill patch)
 
+Operator quick reference: `docs/governance/RULE_12_PROMOTION_CHECKLIST.md`
+
 A lesson is *captured* the moment it's logged; it is *promoted* only when it clears this checklist. The bar is shared with Town — do **not** define a parallel threshold here. The canonical definition lives in this skill's `>= 3` rule (Rule 3): failure modes count all-time; behavioral patterns count within a rolling 7-day window. Forking the threshold is itself a definition-drift failure mode (F-2026-001 class).
 
 **Candidate feed (where promotion candidates come from):**

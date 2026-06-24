@@ -17,6 +17,7 @@ DATE="${1:-$(date +%Y-%m-%d)}"
 log() { echo "[$(date -Iseconds)] $*"; }
 
 log "Weekly skills review for $DATE"
+log "Rule 12 checklist: docs/governance/RULE_12_PROMOTION_CHECKLIST.md"
 
 $PYTHON tools/weekly_skills_digest.py --date "$DATE"
 $PYTHON tools/audit_learnings.py

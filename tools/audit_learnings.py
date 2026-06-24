@@ -336,6 +336,7 @@ def print_report(report: AuditReport) -> None:
     print("")
     print("Feeds: LEARNINGS.md + failure-patterns (Hermes); Town Correction Ledger (rec>=3).")
     print("Lane: Promotion-lane spec -> governance Spec only (F-2026-001: do not fork thresholds).")
+    print("Doc: docs/governance/RULE_12_PROMOTION_CHECKLIST.md")
 
     print("\n## Commands")
     print("  SELFIMPROVE_GATES_MET=1 python3 tools/pattern_to_skillpatch.py --min-recurrence 3")

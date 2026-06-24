@@ -131,12 +131,26 @@ check_event_feedback() { tool_log_has_today "$REPO/logs/event_feedback.log"; }
 run_tool event_feedback 1802 "$REPO/logs/event_feedback.log" check_event_feedback \
     "$PYTHON $REPO/tools/build_event_feedback.py --as-of-date $TODAY"
 
+# hermes_knowledge_layer (18:00) — artifact: artifacts/ops/knowledge_layer/latest_state.json
+check_hermes_knowledge() {
+    local f="$REPO/artifacts/ops/knowledge_layer/latest_state.json"
+    [ -f "$f" ] && grep -q "\"as_of_date\": \"$TODAY\"" "$f" 2>/dev/null
+}
+run_tool hermes_knowledge 1800 "$REPO/logs/hermes_knowledge.log" check_hermes_knowledge \
+    "$PYTHON $REPO/tools/build_hermes_knowledge_layer.py"
+
 # policy_shadow (18:05) — artifact: artifacts/policy_shadow/tier_weighted/<TODAY>_comparison.json
 # Mirrors the daily cron 5 18 * * 1-5 build_policy_shadow_compare.py --as-of-date $(date +%Y-%m-%d).
 # Replaces the previous `run_agent policy_shadow_watch 1805` LLM HEARTBEAT call.
 check_policy_shadow() { file_exists "$REPO/artifacts/policy_shadow/tier_weighted/${TODAY}_comparison.json"; }
 run_tool policy_shadow 1805 "$REPO/logs/agents_direct_cron.log" check_policy_shadow \
     "$PYTHON $REPO/tools/build_policy_shadow_compare.py --as-of-date $TODAY"
+
+# hermes_contradiction_detector (18:05) — log: logs/hermes_contradiction.log
+# Runs after knowledge_layer; reads latest_state.json from that build.
+check_hermes_contradiction() { tool_log_has_today "$REPO/logs/hermes_contradiction.log"; }
+run_tool hermes_contradiction 1805 "$REPO/logs/hermes_contradiction.log" check_hermes_contradiction \
+    "$PYTHON $REPO/agents/hermes-contradiction-detector/run_job.py --from-build"
 
 # production_qa_check (18:55) — artifact: artifacts/production_qa/<TODAY>_report.json
 check_production_qa() { file_exists "$REPO/artifacts/production_qa/${TODAY}_report.json"; }
