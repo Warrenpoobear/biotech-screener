@@ -510,15 +510,24 @@ def main():
         )
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        n_resolved = result.get("n_resolved", 0)
+        match_rate = result.get("herald_match_rate", 0) or 0
+        exec_id = log_agent_run(
             "build_event_feedback",
             f"Event feedback for {args.as_of_date}",
             inputs={"as_of_date": args.as_of_date},
-            outputs={"n_resolved": result.get("n_resolved"), "status": result.get("status")},
-            success=True,
+            outputs={"n_resolved": n_resolved, "status": result.get("status"), "herald_match_rate": match_rate},
+            success=result.get("status") != "NO_DATA",
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id and n_resolved > 0:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=match_rate >= 0.5,
+                evidence=f"herald_match_rate={match_rate:.2f} n_resolved={n_resolved}",
+            )
     except Exception:
         pass
 

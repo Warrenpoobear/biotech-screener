@@ -154,8 +154,8 @@ metadata:
 
 - **Heartbeat:** 27 specialized checks in `tools/agent_heartbeat_checks.py`; Hermes on-demand jobs SKIP by design.
 - **Telemetry:** `log_agent_run` on daily builders + `data_auditor` + `ops_supervisor` + Hermes `run_job.py` exits.
-- **Outcome feedback:** `attach_outcome_verdict` on production_qa, ops_supervisor, herald_health_check, data_auditor, postmortem, CRT join, event_outcome_binder.
-- **Weekly loop:** `tools/cron_weekly_skills_review.sh` — operator must install via `tools/install_agent_fleet_crontab.sh` on WSL.
+- **Outcome feedback:** `attach_outcome_verdict` on production_qa, ops_supervisor, herald_health_check, data_auditor, postmortem, CRT join, event_outcome_binder, Hermes `run_job.py` exits, build_event_feedback (herald match), build_ic_dashboard (attention).
+- **Cron integration:** `stage_herald()` runs health check; evening catchup covers herald_health + ops_supervisor; `install_agent_fleet_crontab.sh` for WSL install.
 - **Stalled loops:** F-2026-005 (Herald host recovery), F-2026-006 (Actions budget) — `SELFIMPROVE_GATES_MET=1` blocked until closed.
 
 ---

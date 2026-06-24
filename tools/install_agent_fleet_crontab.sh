@@ -28,8 +28,8 @@ cat <<EOF
 # Weekly self-learning digest (Friday 19:30 ET)
 30 19 * * 5 cd ${REPO_ROOT} && bash tools/cron_weekly_skills_review.sh >> logs/weekly_skills_review.log 2>&1
 
-# Data auditor (daily 18:15 ET — after production)
-15 18 * * 1-5 cd ${REPO_ROOT} && bash tools/cron_data_auditor.sh >> logs/data_auditor.log 2>&1
+# Data auditor (weekdays 17:30 ET — after production; matches cron_data_auditor.sh)
+30 17 * * 1-5 cd ${REPO_ROOT} && bash tools/cron_data_auditor.sh --daily-only >> logs/data_auditor.log 2>&1
 
 # Hermes knowledge layer + contradiction detector (evening, post-screen)
 0 18 * * 1-5 cd ${REPO_ROOT} && python3 tools/build_hermes_knowledge_layer.py >> logs/hermes_knowledge.log 2>&1

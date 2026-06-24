@@ -208,6 +208,17 @@ stage_herald() {
     else
         log "No deduped file for $TODAY — classify skipped"
     fi
+
+    log "Herald health check..."
+    local rc_health=0
+    $PYTHON tools/herald_health_check.py --as-of-date "$TODAY" 2>&1 | tail -5 || rc_health=$?
+    if [ $rc_health -eq 0 ]; then
+        log "Herald health: OK"
+    elif [ $rc_health -eq 1 ]; then
+        log "Herald health: WARN (exit 1)"
+    else
+        log "Herald health: FAIL (exit $rc_health)"
+    fi
 }
 
 stage_firecrawl() {

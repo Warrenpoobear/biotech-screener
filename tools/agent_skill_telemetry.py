@@ -66,11 +66,23 @@ class AgentRunTimer:
 
 
 def log_hermes_job_exit(job_name: str, exit_code: int, started_perf: float) -> None:
-    """Log Hermes Lane A job completion (non-blocking)."""
-    log_agent_run(
+    """Log Hermes Lane A job completion and attach outcome verdict (non-blocking)."""
+    exec_id = log_agent_run(
         job_name,
         f"Hermes job {job_name}",
         outputs={"exit_code": exit_code},
         success=exit_code == 0,
         latency_ms=(time.perf_counter() - started_perf) * 1000,
     )
+    if not exec_id:
+        return
+    try:
+        from tools.record_skill_feedback import attach_outcome_verdict
+
+        attach_outcome_verdict(
+            exec_id,
+            was_correct=exit_code == 0,
+            evidence=f"exit_code={exit_code}",
+        )
+    except Exception:
+        pass

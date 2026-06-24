@@ -30,16 +30,22 @@ def test_log_agent_run_swallows_errors(monkeypatch):
     assert log_agent_run("x", "y") is None
 
 
-def test_log_hermes_job_exit(monkeypatch):
+def test_log_hermes_job_exit_attaches_outcome(monkeypatch):
     calls: list[dict] = []
+    verdicts: list[tuple] = []
 
     def _fake_log_skill(**kwargs):
         calls.append(kwargs)
         return "hermes-1"
 
+    def _fake_attach(exec_id, was_correct, evidence, environment="prod"):
+        verdicts.append((exec_id, was_correct, evidence))
+
     import tools.agent_skill_telemetry as mod
 
     monkeypatch.setattr(mod, "log_skill", _fake_log_skill)
+    monkeypatch.setattr("tools.record_skill_feedback.attach_outcome_verdict", _fake_attach)
     log_hermes_job_exit("hermes-held-spec-ledger", 0, 0.0)
     assert calls[0]["skill_name"] == "hermes-held-spec-ledger"
     assert calls[0]["success"] is True
+    assert verdicts == [("hermes-1", True, "exit_code=0")]

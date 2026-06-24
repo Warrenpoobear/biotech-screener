@@ -143,4 +143,14 @@ check_production_qa() { file_exists "$REPO/artifacts/production_qa/${TODAY}_repo
 run_tool production_qa_check 1855 "$REPO/logs/production_qa.log" check_production_qa \
     "$PYTHON $REPO/tools/production_qa_check.py --as-of-date $TODAY"
 
+# herald_health (14:35) — artifact: artifacts/herald/health_check_<TODAY>.json
+check_herald_health() { file_exists "$REPO/artifacts/herald/health_check_${TODAY}.json"; }
+run_tool herald_health 1435 "$REPO/logs/herald_health.log" check_herald_health \
+    "$PYTHON $REPO/tools/herald_health_check.py --as-of-date $TODAY"
+
+# ops_supervisor (19:00) — artifact: artifacts/ops_supervisor/<TODAY>_supervisor.json
+check_ops_supervisor() { file_exists "$REPO/artifacts/ops_supervisor/${TODAY}_supervisor.json"; }
+run_tool ops_supervisor 1900 "$REPO/logs/ops_supervisor.log" check_ops_supervisor \
+    "$PYTHON $REPO/agents/ops_supervisor/supervisor.py --as-of $TODAY"
+
 log "=== Evening catch-up complete ==="

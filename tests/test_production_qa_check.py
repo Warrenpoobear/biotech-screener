@@ -326,3 +326,27 @@ def test_feature_coverage_empty_value_markers_are_not_counted(qa_mod, tmp_path):
     # short_interest_pct is 20% — below 90% floor → FAIL
     assert result["status"] == "FAIL"
     assert "short_interest_pct=20.0%" in result["detail"]
+
+
+def test_main_attaches_outcome_verdict_on_green(qa_mod, monkeypatch):
+    import sys
+    from unittest.mock import patch
+
+    verdicts: list[tuple] = []
+
+    def _fake_run_qa(_ds):
+        return {"verdict": "GREEN", "n_pass": 9, "n_fail": 0, "checks": []}
+
+    def _fake_log(*_a, **_k):
+        return "exec-qa-1"
+
+    def _fake_attach(exec_id, was_correct, evidence, environment="prod"):
+        verdicts.append((exec_id, was_correct, evidence))
+
+    monkeypatch.setattr(qa_mod, "run_qa", _fake_run_qa)
+    monkeypatch.setattr("tools.agent_skill_telemetry.log_agent_run", _fake_log)
+    monkeypatch.setattr("tools.record_skill_feedback.attach_outcome_verdict", _fake_attach)
+
+    with patch.object(sys, "argv", ["production_qa_check.py", "--as-of-date", "2026-06-24"]):
+        qa_mod.main()
+    assert verdicts == [("exec-qa-1", True, "verdict=GREEN n_fail=0")]
