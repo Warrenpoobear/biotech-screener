@@ -241,6 +241,16 @@ def generate_monthly_report(month_str: str = None, environment: str = "prod") ->
         ]
     )
 
+    # Loop review: trim list, efficacy overdue, stalled PENDINGs
+    try:
+        from tools.skills_loop_review import format_loop_review_sections
+
+        report_lines.extend(
+            format_loop_review_sections(environment=environment, logs_dir=logs_dir)
+        )
+    except ImportError:
+        pass
+
     # Write report
     report_text = "\n".join(report_lines)
     report_path = logs_dir / f"monthly_report_{environment}_{month_str}.md"

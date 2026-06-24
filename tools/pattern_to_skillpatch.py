@@ -17,6 +17,12 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+REPO = Path(__file__).resolve().parent.parent
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
+
+from tools.skills_loop_review import check_learning_contradiction
+
 # FENCE: set SELFIMPROVE_GATES_MET=1 to enable (selfimprove_audit_2026-06-24).
 # Rule 12: MUST refuse Promotion-lane: spec (see skills/self-improving/SKILL.md).
 
@@ -86,8 +92,21 @@ def refuse_spec_lane_entries(entries: list[dict]) -> list[dict]:
     return [e for e in entries if e.get("promotion_lane") == "spec"]
 
 
-def draft_patch(learning: dict) -> str:
+def draft_patch(learning: dict, contradictions: list[str] | None = None) -> str:
     """Produce a human-readable proposed skill-doc addition (NOT a git diff)."""
+    if contradictions:
+        conflict_lines = "\n".join(f"- {c}" for c in contradictions)
+        target = learning.get("skill_path") or learning.get("skill_candidate") or "unknown"
+        return (
+            f"## CONTRADICTION_REVIEW — {learning['id']}\n\n"
+            f"- **Pattern-Key:** `{learning['pattern_key']}`  \n"
+            f"- **Target skill:** `{target}`  \n"
+            f"- **Promotion-lane:** skill — blocked pending operator review (F-2026-001 class)\n\n"
+            f"**Conflicts detected:**\n{conflict_lines}\n\n"
+            f"**Summary:** {learning['summary'] or '(none)'}\n\n"
+            f"**Operator action:** reconcile lesson vs `skills/{target}/SKILL.md` before merging. "
+            f"Do not auto-draft a patch.\n"
+        )
     if learning.get("promotion_lane") == "spec":
         return (
             f"## BLOCKED (spec lane) — {learning['id']}\n\n"
@@ -188,9 +207,15 @@ def main() -> int:
         "",
     ]
     blocked = 0
+    contradictions_found = 0
     for e in eligible:
-        patch = draft_patch(e)
-        if "BLOCKED" in patch or "SKIP" in patch:
+        conflicts = []
+        if e.get("promotion_lane") == "skill":
+            conflicts = check_learning_contradiction(e, REPO)
+            if conflicts:
+                contradictions_found += 1
+        patch = draft_patch(e, contradictions=conflicts or None)
+        if "BLOCKED" in patch or "SKIP" in patch or "CONTRADICTION_REVIEW" in patch:
             blocked += 1
         report.append(patch)
         report.append("---\n")
@@ -199,9 +224,11 @@ def main() -> int:
     out_file.write_text("\n".join(report), encoding="utf-8")
     print(f"Wrote {len(eligible)} draft(s) -> {out_file}")
     if blocked:
-        print(f"  ({blocked} blocked/skipped: spec lane or frozen production skill)")
+        print(f"  ({blocked} blocked/skipped: spec lane, frozen skill, or contradiction)")
     if refused:
         print(f"  ({len(refused)} spec-lane entry refused — governance Spec only)")
+    if contradictions_found:
+        print(f"  ({contradictions_found} contradiction review — operator reconcile before merge)")
     print("Operator action required: review drafts, then manually apply eligible ones.")
     return 0
 

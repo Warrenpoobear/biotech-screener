@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Generate monthly skills telemetry report (advisory-only).
 
-Thin CLI over hermes_skills_learning_loop_v2. Reads environment-tagged JSONL
-from artifacts/skills_learning/ and writes a monthly markdown report.
+Wraps hermes_skills_learning_loop_v2 and appends loop-review sections:
+trim candidates (30d), efficacy overdue, stalled-loop PENDINGs.
 
 Usage:
     python3 tools/skills_telemetry_monthly_report.py
     python3 tools/skills_telemetry_monthly_report.py --month 2026-06 --env prod
+    python3 tools/weekly_skills_digest.py   # unified digest for Town monthly routine
 """
 
 from __future__ import annotations

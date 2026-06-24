@@ -9,6 +9,23 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (loop review) — Trim list, contradiction gate, unified digest
+
+### Tooling
+- **skills_loop_review.py**: trim candidates (0 loads / 30d), efficacy overdue parser, contradiction check, stalled-loop parser
+- **pattern_to_skillpatch.py**: pre-draft `CONTRADICTION_REVIEW` gate (F-2026-001 class)
+- **hermes_skills_learning_loop_v2.py**: monthly report append trim + efficacy + stalled sections
+- **weekly_skills_digest.py**: unified operator digest for Town monthly routine
+- **audit_learnings.py**: `spec_lane_blocked` + `Promotion-lane` parsing
+
+### Tests
+- `tests/test_skills_loop_review.py` — 7 tests
+
+### Governance
+- Tier 0. Advisory-only — no auto-delete, no auto-merge.
+
+---
+
 ## 2026-06-24 (stalled-loop + telemetry) — Operator verdicts filled; Cursor implementations
 
 ### Stalled-loop verdicts (Rule 12 efficacy gate)

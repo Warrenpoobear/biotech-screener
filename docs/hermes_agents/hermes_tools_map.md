@@ -77,6 +77,8 @@ Deterministic scripts in `tools/`. These **can** write repo artifacts and docs; 
 | [`tools/audit_hermes_skills.py`](../../tools/audit_hermes_skills.py) | Registry coverage, authority completeness, mirror drift vs `skills/` |
 | [`tools/audit_learnings.py`](../../tools/audit_learnings.py) | `.learnings/` tier hygiene: HOT/WARM limits, Pattern-Key promotion candidates (read-only) |
 | [`tools/skills_execution_logger.py`](../../tools/skills_execution_logger.py) | Skill invocation telemetry → `artifacts/skills_learning/` JSONL (env-tagged) |
+| [`tools/weekly_skills_digest.py`](../../tools/weekly_skills_digest.py) | Unified loop review digest (trim + efficacy + audit + telemetry) |
+| [`tools/skills_loop_review.py`](../../tools/skills_loop_review.py) | Trim candidates, efficacy overdue, contradiction helpers |
 | [`tools/skills_telemetry_monthly_report.py`](../../tools/skills_telemetry_monthly_report.py) | Monthly skills telemetry report CLI (wraps learning loop v2) |
 | [`tools/hermes_skills_learning_loop_v2.py`](../../tools/hermes_skills_learning_loop_v2.py) | Monthly skills performance report; advisory-only (no auto-routing) |
 | [`tools/agent_preflight.py`](../../tools/agent_preflight.py) | Pre-dispatch governance report (used by `run_agent_direct.py`) |
