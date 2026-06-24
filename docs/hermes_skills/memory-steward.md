@@ -2,6 +2,8 @@
 name: memory-steward
 triggers:
   - memory audit
+  - town memory audit
+  - town skills inventory
   - session bloat
   - cache cleanup
   - stale sessions

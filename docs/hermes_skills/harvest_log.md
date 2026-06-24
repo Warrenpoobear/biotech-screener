@@ -9,6 +9,24 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+---
+
+## 2026-06-24 (refresh) — Hermes Town skills refresh
+
+### Refreshed
+- **town-operator-bridge**: last-reviewed stamp; Phase A/B status clarified; triage table updated (Class J for `cron_missed`, Class N for `snapshot_missing`); related Town/Hermes skills index + discovery commands
+- **memory-steward**: Town triggers added (`town memory audit`, `town skills inventory`)
+- **screener-ops**: canonical bridge pointer + Class J cross-ref in bridge status
+
+### Sync
+- `python3 tools/sync_hermes_skills.py --only screener_ops --register-meta`
+- `python3 tools/audit_hermes_skills.py` — 32/32, no drift
+
+### Governance
+- Skills/docs only.
+
+---
+
 ## 2026-06-24 (full apply) — All skills and learning synced to Hermes
 
 ### Learning tier updates

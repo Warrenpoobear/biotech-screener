@@ -1,7 +1,8 @@
 # Town-Hermes Bridge (Spec 090)
 
 **Status:** Phase B wired (live delivery pending operator sign-off)  
-**Architecture:** Email-based delivery (Phase A), webhook-ready structure  
+**Last reviewed:** 2026-06-24  
+**Architecture:** Email-based delivery (Phase A complete), webhook-ready structure  
 **Governance:** Read-only ops layer; Town has no production mutation authority
 
 ---
@@ -185,9 +186,9 @@ python3 path/to/job.py
 
 ---
 
-## Phase A (Current): Email Delivery
+## Phase A: Email Delivery
 
-**Status:** Complete and tested
+**Status:** Complete and tested (default remains dry-run until operator sign-off)
 
 **Env vars:**
 - `TOWN_EMAIL` (default: `djschulz@gmail.com`) — recipient email
@@ -215,9 +216,10 @@ Example:
 
 **Scope:** Wire `first_fire_fail`, `snapshot_missing`, `ruleset_mismatch`, `cron_missed`, `contradiction_detected` events
 
-**Code status (2026-05-30):** All Phase B event types wired in repo:
+**Code status (2026-06-24):** All Phase B event types wired in repo:
 - `build_hermes_knowledge_layer.py` + `hermes-contradiction-detector` → `contradiction_detected`
 - `ops_supervisor` runtime health + `cron_watchdog.sh` → `cron_missed`
+- Operator triage table below maps inbox events → diagnostic skills (Classes M–P)
 - Operator action remaining: set `OPERATOR_DELIVERY_DRY_RUN=0` in `.env` after smoke tests
 
 **Call sites:**
@@ -268,8 +270,8 @@ When Town receives a `[Hermes]` email, map `event_type` → likely root cause be
 
 | event_type | First check | Cross-ref skill |
 |---|---|---|
-| `cron_missed` | `agents.log` for `ModuleNotFoundError: No module named 'tools'` | `openclaw-data-pipeline-debug` Class P; `openclaw-cron-scheduler-debug` |
-| `snapshot_missing` | Recent production run logs; cache-warm step timeout | `openclaw-data-pipeline-debug` Class O |
+| `cron_missed` | `agents.log` for `ModuleNotFoundError: No module named 'tools'` | `openclaw-cron-scheduler-debug` Class J; `openclaw-data-pipeline-debug` Class P |
+| `snapshot_missing` | Recent production run logs; delisted ticker in universe; cache-warm timeout | `openclaw-data-pipeline-debug` Class N, Class O |
 | `first_fire_fail` | Hedge artifact path + validator JSON | `hermeslink-state-capture` |
 | `ruleset_mismatch` | `CLAUDE.md` ruleset ID vs `run_screen.py` pin | `screener-ops` Active Ruleset |
 | `contradiction_detected` | `artifacts/ops/contradiction_ledger/latest.md` | `hermeslink-state-capture` |
@@ -283,6 +285,30 @@ When Town receives a `[Hermes]` email, map `event_type` → likely root cause be
 - **Class P** — cron `sys.path` isolation (`from tools.*` fails without `PROJECT_ROOT` on path)
 
 Town creates tasks and context only — operator executes fixes on WSL; Town does not mutate repo or cron.
+
+---
+
+## Related Town / Hermes skills
+
+| Skill | Role for Town operator |
+|---|---|
+| `town-operator-bridge` (this doc) | Inbox triage, event types, live-email checklist |
+| `memory-steward` | Town memories, `town_ls skills://`, content library hygiene |
+| `self-improving` | `add_memory` / `get_memories`; Town vs Hermes learning tiers |
+| `screener-ops` | Bridge status, production ops context, pipeline recovery M–P |
+| `openclaw-agent-optimize` | `town_ls skills://` audit; routine token/skill bloat |
+| `hermeslink-state-capture` | Knowledge layer build; Town egress via `town_bridge_events` |
+| `openclaw-cron-scheduler-debug` | Class J when `cron_missed` traces to import failures |
+
+**Town routines (examples):** `town-morning-briefing` — see `self-improving` Town-Specific Actions.
+
+**Hermes discovery:**
+
+```bash
+hermes -s town-operator-bridge    # load this skill
+hermes -s memory-steward          # Town + Hermes audit
+python3 tools/smoke_operator_delivery.py   # dry-run all event types
+```
 
 ---
 

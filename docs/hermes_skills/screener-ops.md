@@ -248,6 +248,8 @@ Only if the gateway reads stale copies from `~/.hermes/skills/` (see `docs/herme
 
 Routes Hermes Knowledge Layer events to Town via email trigger. Town does NOT control Hermes.
 
+**Canonical skill:** `docs/hermes_skills/town-operator-bridge.md` (operator triage table, live-email checklist, related skills index).
+
 ### Architecture
 
 ```
@@ -598,7 +600,7 @@ Key findings (pseudo-PIT):
 
 - Phase A complete (dry-run mode, `OPERATOR_DELIVERY_DRY_RUN=1`)
 - Phase B wiring complete (2026-05-30): all event types in repo — held-spec, first-fire, ruleset-integrity, snapshot-missing, contradiction_detected, cron_missed
-- **2026-06-24:** `cron_missed` Town alerts may trace to Class P (cron `sys.path` isolation) — see `openclaw-data-pipeline-debug` Class P and `town-operator-bridge` triage table
+- **2026-06-24:** `cron_missed` Town alerts may trace to Class J/P (cron `sys.path` isolation) — see `openclaw-cron-scheduler-debug` Class J, `town-operator-bridge` triage table
 - Phase B live delivery: pending operator sign-off to set `OPERATOR_DELIVERY_DRY_RUN=0` in `.env` (see `docs/hermes_skills/town-operator-bridge.md`)
 - Skill doc: `docs/hermes_skills/town-operator-bridge.md` · Spec 090
 
