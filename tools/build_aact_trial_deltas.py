@@ -367,18 +367,26 @@ def main():
 
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        n_tickers = result.get("n_tickers", 0)
+        exec_id = log_agent_run(
             "build_aact_trial_deltas",
             f"AACT deltas for {args.as_of_date}",
             inputs={"as_of_date": args.as_of_date, "prior_date": result.get("prior_date")},
             outputs={
-                "n_tickers": result.get("n_tickers"),
+                "n_tickers": n_tickers,
                 "n_with_activity": result.get("n_with_activity"),
             },
             success=True,
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=n_tickers > 0,
+                evidence=f"n_tickers={n_tickers} n_with_activity={result.get('n_with_activity', 0)}",
+            )
     except Exception:
         pass
 

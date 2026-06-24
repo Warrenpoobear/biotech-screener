@@ -493,14 +493,23 @@ def main():
         sys.exit(1)
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        overlap = (result.get("overlap") or {}).get("current_vs_tiered", 0) or 0
+        exec_id = log_agent_run(
             "build_policy_shadow_compare",
             f"Policy shadow compare for {date}",
             inputs={"as_of_date": date},
+            outputs={"overlap_tiered": overlap},
             success=True,
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=overlap >= 0.8,
+                evidence=f"overlap_tiered={overlap:.3f}",
+            )
     except Exception:
         pass
 

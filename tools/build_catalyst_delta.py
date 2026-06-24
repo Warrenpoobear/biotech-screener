@@ -588,8 +588,9 @@ def main():
     )
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        exec_id = log_agent_run(
             "build_catalyst_delta",
             f"Catalyst delta for {args.as_of_date}",
             inputs={"as_of_date": args.as_of_date, "prior_date": result.get("prior_date")},
@@ -600,6 +601,12 @@ def main():
             success=True,
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=True,
+                evidence=f"n_filtered={result.get('n_filtered', 0)} prior={result.get('prior_date')}",
+            )
     except Exception:
         pass
 

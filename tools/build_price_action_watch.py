@@ -574,8 +574,9 @@ def main():
     logger.info("Watch: %d names, %d alerted", result["watchlist_size"], result["n_alerted"])
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        exec_id = log_agent_run(
             "build_price_action_watch",
             f"Price action watch for {args.as_of_date}",
             inputs={"as_of_date": args.as_of_date},
@@ -583,6 +584,12 @@ def main():
             success=True,
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=True,
+                evidence=f"n_alerted={result.get('n_alerted', 0)} watchlist={result.get('watchlist_size', 0)}",
+            )
     except Exception:
         pass
 

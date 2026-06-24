@@ -913,14 +913,17 @@ def main():
         build_daily_digest(as_of_date, args.artifacts_dir, send_email_flag=args.send_email)
         try:
             from tools.agent_skill_telemetry import log_agent_run
+            from tools.record_skill_feedback import attach_outcome_verdict
 
-            log_agent_run(
+            exec_id = log_agent_run(
                 "build_intraday_mover_watch",
                 f"Intraday digest for {as_of_date}",
                 inputs={"as_of_date": as_of_date, "digest_only": True},
                 success=True,
                 latency_ms=(time.perf_counter() - started) * 1000,
             )
+            if exec_id:
+                attach_outcome_verdict(exec_id, was_correct=True, evidence=f"digest_only as_of={as_of_date}")
         except Exception:
             pass
         return
@@ -940,15 +943,23 @@ def main():
     )
     try:
         from tools.agent_skill_telemetry import log_agent_run
+        from tools.record_skill_feedback import attach_outcome_verdict
 
-        log_agent_run(
+        status = result.get("status")
+        exec_id = log_agent_run(
             "build_intraday_mover_watch",
             f"Intraday watch at {as_of_ts}",
             inputs={"as_of_ts": as_of_ts},
-            outputs={"n_triggered": result.get("n_triggered"), "status": result.get("status")},
-            success=result.get("status") != "error",
+            outputs={"n_triggered": result.get("n_triggered"), "status": status},
+            success=status != "error",
             latency_ms=(time.perf_counter() - started) * 1000,
         )
+        if exec_id:
+            attach_outcome_verdict(
+                exec_id,
+                was_correct=status == "OK",
+                evidence=f"status={status} n_triggered={result.get('n_triggered', 0)}",
+            )
     except Exception:
         pass
 

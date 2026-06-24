@@ -154,9 +154,9 @@ metadata:
 
 - **Heartbeat:** 27 specialized checks in `tools/agent_heartbeat_checks.py`; Hermes on-demand jobs SKIP by design.
 - **Telemetry:** `log_agent_run` on daily builders + `data_auditor` + `ops_supervisor` + Hermes `run_job.py` exits.
-- **Outcome feedback:** production_qa, ops_supervisor, herald_health_check, herald_recovery, data_auditor, postmortem, CRT join, event_outcome_binder, Hermes exits, build_event_feedback, build_ic_dashboard, build_shadow_monitor, build_ops_digest, build_calibration_evidence, build_event_analyst, build_hermes_knowledge_layer.
+- **Outcome feedback:** all daily builders + qa/supervisor/herald/auditor/postmortem/CRT/event_binder/Hermes exits (policy_shadow overlap ≥80%, universe zero stale-alert, grok zero high alerts, etc.).
 - **Herald recovery:** `tools/herald_recovery.py` / `herald_recovery.sh`; `herald_health_check.py --recover` for F-2026-005.
-- **Cron integration:** `stage_herald()` runs health check; evening catchup covers herald_health, ops_supervisor, hermes_knowledge_layer, hermes_contradiction; `install_agent_fleet_crontab.sh` for WSL install.
+- **Cron integration:** `stage_herald()` runs health check; evening catchup uses deterministic builders (catalyst_delta, price_action_watch, policy_shadow) — Class F LLM HEARTBEAT retired; herald, ops_supervisor, hermes knowledge/contradiction; `install_agent_fleet_crontab.sh` for WSL install.
 - **Rule 12:** `docs/governance/RULE_12_PROMOTION_CHECKLIST.md` — weekly workflow + stalled-loop gates.
 - **Stalled loops:** F-2026-005 (Herald host recovery), F-2026-006 (Actions budget) — `SELFIMPROVE_GATES_MET=1` blocked until closed.
 

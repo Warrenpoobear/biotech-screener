@@ -110,8 +110,7 @@ run_agent crt_resolution_watcher  1800
 # Was previously `run_agent policy_shadow_watch 1805` (LLM HEARTBEAT path),
 # which the agent's 2026-05-05 memory documented as a Class F broken pattern.
 # See artifacts/audit/p0_date_stamp_root_cause_2026_05_06.md (Fix B).
-run_agent catalyst_delta          1820
-run_agent price_action_watch      1830
+# catalyst_delta + price_action_watch: deterministic builders (not LLM HEARTBEAT).
 run_agent postmortem              1835
 
 # ---- Direct-tool agents ----
@@ -151,6 +150,16 @@ run_tool policy_shadow 1805 "$REPO/logs/agents_direct_cron.log" check_policy_sha
 check_hermes_contradiction() { tool_log_has_today "$REPO/logs/hermes_contradiction.log"; }
 run_tool hermes_contradiction 1805 "$REPO/logs/hermes_contradiction.log" check_hermes_contradiction \
     "$PYTHON $REPO/agents/hermes-contradiction-detector/run_job.py --from-build"
+
+# catalyst_delta (18:20) — artifact: artifacts/catalyst_delta/<TODAY>_delta.json
+check_catalyst_delta() { file_exists "$REPO/artifacts/catalyst_delta/${TODAY}_delta.json"; }
+run_tool catalyst_delta 1820 "$REPO/logs/agents_direct_cron.log" check_catalyst_delta \
+    "$PYTHON $REPO/tools/build_catalyst_delta.py --as-of-date $TODAY"
+
+# price_action_watch (18:30) — artifact: artifacts/price_action_watch/<TODAY>_watch.json
+check_price_action_watch() { file_exists "$REPO/artifacts/price_action_watch/${TODAY}_watch.json"; }
+run_tool price_action_watch 1830 "$REPO/logs/price_action_watch.log" check_price_action_watch \
+    "$PYTHON $REPO/tools/build_price_action_watch.py --as-of-date $TODAY"
 
 # production_qa_check (18:55) — artifact: artifacts/production_qa/<TODAY>_report.json
 check_production_qa() { file_exists "$REPO/artifacts/production_qa/${TODAY}_report.json"; }
