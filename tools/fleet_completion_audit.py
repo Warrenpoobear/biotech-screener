@@ -64,6 +64,7 @@ KEY_TOOL_FILES = [
     "tools/agent_heartbeat_checks.py",
     "tools/fleet_ops_status.py",
     "tools/fleet_completion_audit.py",
+    "tools/fleet_crontab_verify.py",
     "tools/run_fleet_operator_checklist.sh",
     "tools/herald_health_check.py",
     "tools/herald_recovery.py",
@@ -288,6 +289,25 @@ def check_deprecated_merged_into() -> list[dict[str, Any]]:
     return findings
 
 
+def check_live_crontab() -> dict[str, Any]:
+    from tools.fleet_crontab_verify import verify_crontab
+
+    report = verify_crontab()
+    overall = report.get("overall", "SKIP")
+    if overall == "SKIP":
+        return {
+            "check": "live_crontab",
+            "status": "SKIP",
+            "detail": report.get("availability", "unavailable"),
+        }
+    return {
+        "check": "live_crontab",
+        "status": overall,
+        "pass_count": report.get("pass_count"),
+        "fail_count": report.get("fail_count"),
+    }
+
+
 def build_audit() -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
     checks.extend(check_cron_llm_free())
@@ -299,6 +319,7 @@ def build_audit() -> dict[str, Any]:
     registry_checks, registry_summary = check_registry_heartbeat_coverage()
     checks.extend(registry_checks)
     checks.extend(check_deprecated_merged_into())
+    checks.append(check_live_crontab())
 
     fail = sum(1 for c in checks if c.get("status") == "FAIL")
     pass_n = sum(1 for c in checks if c.get("status") == "PASS")
@@ -316,6 +337,7 @@ def build_audit() -> dict[str, Any]:
             "fleet_ops": "python3 tools/fleet_ops_status.py --write",
             "install_crontab": "bash tools/install_agent_fleet_crontab.sh",
             "host_checklist": "bash tools/run_fleet_operator_checklist.sh",
+            "crontab_verify": "python3 tools/fleet_crontab_verify.py",
             "rule_12": "docs/governance/RULE_12_PROMOTION_CHECKLIST.md",
         },
     }

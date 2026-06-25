@@ -138,6 +138,20 @@ def _fleet_jobs_status(ds: str) -> dict[str, bool]:
     }
 
 
+def _crontab_verify_status() -> dict[str, Any]:
+    from tools.fleet_crontab_verify import verify_crontab
+
+    report = verify_crontab()
+    return {
+        "availability": report.get("availability"),
+        "overall": report.get("overall"),
+        "pass_count": report.get("pass_count"),
+        "fail_count": report.get("fail_count"),
+        "active_job_count": report.get("active_job_count"),
+        "install_reference": report.get("install_reference"),
+    }
+
+
 def _completion_audit_status(ds: str) -> dict[str, Any]:
     path = REPO / "artifacts" / "fleet_ops" / f"{ds}_completion_audit.json"
     if not path.is_file():
@@ -193,6 +207,7 @@ def build_status(as_of: date | None = None) -> dict[str, Any]:
         "heartbeat": heartbeat,
         "snapshot": snapshot,
         "fleet_jobs": jobs,
+        "crontab_verify": _crontab_verify_status(),
         "completion_audit": _completion_audit_status(ds),
         "stalled_loops": stalled,
         "selfimprove_gates": gates,
@@ -252,6 +267,13 @@ def _print_human(report: dict[str, Any]) -> None:
         print(f"  {loop['id']} [{loop['status']}] {loop['area']}: {loop['action']}")
 
     print("\nCrontab")
+    cron = report.get("crontab_verify") or {}
+    if cron.get("overall"):
+        print(
+            f"  live verify: {cron.get('overall')} "
+            f"(availability={cron.get('availability')} "
+            f"pass={cron.get('pass_count')} fail={cron.get('fail_count')})"
+        )
     print(f"  install reference: {report['crontab_install']}")
     for hint in report["crontab_hints"]:
         print(f"  {hint['job']}: {hint['schedule']} -> {hint['log']}")

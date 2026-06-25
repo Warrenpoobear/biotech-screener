@@ -15,6 +15,7 @@ def test_install_script_includes_heartbeat_and_watchdog():
     assert "logs/watchdog.log" in text
     assert "fleet_ops_status.py" in text
     assert "fleet_completion_audit.py" in text
+    assert "fleet_crontab_verify.py" in text
 
 
 def test_install_script_has_evening_catchup_and_herald_health():

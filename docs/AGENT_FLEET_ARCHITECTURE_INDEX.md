@@ -192,12 +192,14 @@ Phases 2–9 retired scheduled `run_agent_direct` from production cron and added
 | 8 | Host onboarding checklist + Telegram fleet surface | Code-complete |
 | 9 | Registry coverage audit + daily completion artifact | Code-complete |
 | 10 | Audit→fleet_ops ordering + digest registry coverage + wiring contract | Code-complete |
+| 11 | Live crontab verify vs install reference (`fleet_crontab_verify.py`) | Code-complete |
 
 Operator reference:
 
 | Concern | Tool / script |
 |---------|----------------|
 | Install WSL crontab | `bash tools/install_agent_fleet_crontab.sh` |
+| Verify live crontab | `python3 tools/fleet_crontab_verify.py --write` |
 | Evening safety net | `tools/cron_evening_catchup.sh` |
 | Missed production / monitoring | `tools/cron_watchdog.sh` |
 | Wiring verification (run first) | `python3 tools/fleet_completion_audit.py --write` |

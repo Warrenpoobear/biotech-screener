@@ -15,3 +15,5 @@ def test_fleet_completion_audit_passes_on_repo():
     report = build_audit()
     assert report["overall"] == "PASS", report.get("checks", [])
     assert report["fail_count"] == 0
+    live = next(c for c in report["checks"] if c.get("check") == "live_crontab")
+    assert live["status"] in ("PASS", "SKIP")

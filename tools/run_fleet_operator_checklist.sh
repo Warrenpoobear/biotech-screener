@@ -32,6 +32,9 @@ fi
 log "Fleet ops status write"
 $PYTHON tools/fleet_ops_status.py --write --no-telemetry || true
 
+log "Crontab verify (SKIP on cloud; FAIL if WSL host missing fleet jobs)"
+$PYTHON tools/fleet_crontab_verify.py --write || true
+
 log "Self-improve gates"
 $PYTHON -c "from tools.skills_loop_review import selfimprove_gates_status; print(selfimprove_gates_status()['message'])"
 

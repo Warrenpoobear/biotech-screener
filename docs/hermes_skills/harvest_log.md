@@ -9,6 +9,22 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet phase 11) — Live crontab verification
+
+### Tooling
+- **fleet_crontab_verify.py**: compare live `crontab -l` against install reference; SKIP on cloud VMs
+- **fleet_ops_status.py**: embeds `crontab_verify` block
+- **fleet_completion_audit.py**: `live_crontab` check (SKIP when unavailable)
+- **run_fleet_operator_checklist.sh**: runs crontab verify after fleet_ops write
+
+### Tests
+- `test_fleet_crontab_verify.py`; extended wiring contract + checklist tests
+
+### Governance
+- Tier 0 (observability/plumbing). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet phase 10) — Audit→fleet_ops ordering capstone
 
 ### Tooling
