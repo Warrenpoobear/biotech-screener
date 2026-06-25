@@ -9,6 +9,23 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-25 (non-fleet research sweep) — Host battery + Sci-Cart R4/R6
+
+### Tooling
+- **run_research_host_battery.sh**: Checklist v2 + Spec 100 IC + Spec 105 + optional Sci-Cart sample review
+- **verify_expectation_coverage_spec105.py**: standalone Spec 105 artifact writer
+- **sciart_normalization_sample_review.py**: Phase 13.2 R4 worksheet generator
+- **run_scientific_cartography_diagnostics.py**: `--trials-file`, default `--ctgov-cache production_data/`
+
+### Docs
+- SCIART R1 baseline adoption record, R6 mechanism design memo
+- Updated CHECKLIST_V2_FINAL_SCORE_BLOCKER host commands
+
+### Governance
+- Research/diagnostic only (Tier 0–1). No production scoring changes.
+
+---
+
 ## 2026-06-25 (agent fleet phase 15) — Unified host onboarding + docs/skills sweep
 
 ### Tooling

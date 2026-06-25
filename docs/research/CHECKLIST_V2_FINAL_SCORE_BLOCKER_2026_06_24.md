@@ -15,6 +15,10 @@ Ranker IC on `final_score` stays **UNMEASURED** until this battery runs on a hos
 ## Commands (run on WSL after prerequisites present)
 
 ```bash
+# One-shot host battery (recommended)
+bash tools/run_research_host_battery.sh
+
+# Or step-by-step:
 # 1. Build research panel (if stale)
 python3 scripts/research/build_signal_research_panel.py --no-parquet
 
@@ -26,8 +30,8 @@ python3 tools/measure_final_score_ic_spec100.py \
   --start-date 2024-01-01 --end-date 2026-06-18 \
   --snapshot-dir data/snapshots_pit_v2
 
-# 4. Optional: rank IC backtest default (final_score)
-python3 run_rank_ic_backtest.py --signal final_score
+# 4. Spec 105 live QA artifact
+python3 tools/verify_expectation_coverage_spec105.py --as-of-date $(date +%Y-%m-%d) --write
 ```
 
 ## Cloud verification (2026-06-24)
@@ -41,6 +45,7 @@ python3 run_rank_ic_backtest.py --signal final_score
 
 - Checklist v2: `output/checklist_v2_rerun/`
 - Spec 100 IC: `output/dem_ranker_phase_2b_final_score_ic_summary.json` (default field)
+- Spec 105: `artifacts/spec105/{date}_coverage.json`
 
 ## Governance
 

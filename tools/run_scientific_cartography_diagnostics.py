@@ -109,23 +109,39 @@ def run_diagnostics(args: argparse.Namespace) -> int:
 
         # Try loading from standard locations in ctgov_cache directory.
         # Priority order: trials.jsonl → trials.json → trial_records.json
-        _trial_candidates = [
-            (ctgov_cache / "trials.jsonl", "jsonl"),
-            (ctgov_cache / "trials.json", "json"),
-            (ctgov_cache / "trial_records.json", "json"),
-        ]
+        # Optional --trials-file bypasses directory lookup entirely.
+        trials_file = getattr(args, "trials_file", None)
         _trial_source = None
-        for _candidate_path, _fmt in _trial_candidates:
-            if _candidate_path.exists():
+        if trials_file:
+            trial_path = Path(trials_file)
+            if trial_path.is_file():
                 try:
-                    if _fmt == "jsonl":
-                        trials = ctgov_ingest.ingest_from_jsonl_file(_candidate_path)
+                    if trial_path.suffix == ".jsonl":
+                        trials = ctgov_ingest.ingest_from_jsonl_file(trial_path)
                     else:
-                        trials = ctgov_ingest.ingest_from_json_file(_candidate_path)
-                    _trial_source = _candidate_path.name
+                        trials = ctgov_ingest.ingest_from_json_file(trial_path)
+                    _trial_source = trial_path.name
                 except Exception as e:
-                    status["warnings"].append(f"Failed to load from {_candidate_path.name}: {e}")
-                break
+                    status["warnings"].append(f"Failed to load --trials-file {trial_path}: {e}")
+            else:
+                status["warnings"].append(f"--trials-file not found: {trial_path}")
+        else:
+            _trial_candidates = [
+                (ctgov_cache / "trials.jsonl", "jsonl"),
+                (ctgov_cache / "trials.json", "json"),
+                (ctgov_cache / "trial_records.json", "json"),
+            ]
+            for _candidate_path, _fmt in _trial_candidates:
+                if _candidate_path.exists():
+                    try:
+                        if _fmt == "jsonl":
+                            trials = ctgov_ingest.ingest_from_jsonl_file(_candidate_path)
+                        else:
+                            trials = ctgov_ingest.ingest_from_json_file(_candidate_path)
+                        _trial_source = _candidate_path.name
+                    except Exception as e:
+                        status["warnings"].append(f"Failed to load from {_candidate_path.name}: {e}")
+                    break
 
         if _trial_source is None and not trials:
             status["warnings"].append(
@@ -362,8 +378,14 @@ def main() -> int:
     parser.add_argument(
         "--ctgov-cache",
         type=str,
-        required=True,
-        help="Path to CTGov cache directory",
+        default=str(repo_root / "production_data"),
+        help="Path to CTGov cache directory (default: production_data/)",
+    )
+    parser.add_argument(
+        "--trials-file",
+        type=str,
+        default=None,
+        help="Optional direct path to trials JSON/JSONL (bypasses ctgov-cache lookup)",
     )
     parser.add_argument(
         "--output-dir",

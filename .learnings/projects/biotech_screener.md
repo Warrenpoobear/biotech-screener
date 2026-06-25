@@ -19,7 +19,8 @@
 
 ## Agent registry / Hermes
 - Repo agent fleet: 31 directories = 29 active + 2 deprecated (`bioshort_watch`, `shadow_watch`). Do not re-add absent overlap dirs (`policy_shadow_watch`, `biotech_news_digest`, `company_news_ingest`) to `AGENT_REGISTRY.json` unless their directories are restored.
-- **Fleet migration (2026-06-25):** phases 2–14 code-complete on `main`. One-shot host onboarding: `bash tools/run_fleet_host_onboarding.sh`. Host gates: crontab install, close F-2026-005/006 before `SELFIMPROVE_GATES_MET=1`. Index: `docs/AGENT_FLEET_ARCHITECTURE_INDEX.md`.
+- **Fleet migration (2026-06-25):** phases 2–15 code-complete on `main`. Host: `bash tools/run_fleet_host_onboarding.sh`.
+- **Research battery (2026-06-25):** `bash tools/run_research_host_battery.sh` — Checklist v2 + Spec 100 IC + Spec 105 (WSL; needs `snapshots_pit_v2`, `price_history.csv`).
 
 ## Pipeline recovery (2026-06-24)
 
