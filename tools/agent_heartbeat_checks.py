@@ -2,7 +2,8 @@
 """Lightweight heartbeat checks for Tier 2 agents.
 
 Replaces 6 LLM-based OpenClaw agents with cheap file/JSON checks.
-Only invokes an LLM (via OpenClaw) when anomalies are detected.
+Anomalies are written to artifacts/heartbeat/ by default (deterministic).
+Optional LLM escalation: set HEARTBEAT_LLM_ESCALATE=1 to invoke run_agent_direct.
 
 Usage:
     python tools/agent_heartbeat_checks.py                    # run all checks
@@ -1445,7 +1446,12 @@ def write_fleet_receipt(results: list[CheckResult], counts: dict, dt: date) -> P
     return out_path
 
 
-def _write_anomaly_file(results: list[CheckResult], dt: date):
+def _heartbeat_llm_escalate_enabled() -> bool:
+    """Return true when operator opts into optional LLM escalation."""
+    return os.environ.get("HEARTBEAT_LLM_ESCALATE", "").strip().lower() in ("1", "true", "yes")
+
+
+def _write_anomaly_file(results: list[CheckResult], dt: date) -> Path:
     """Write anomaly summary to local file as durable record."""
     ds = as_of_date(dt)
     heartbeat_dir = ARTIFACTS_DIR / "heartbeat"
@@ -1455,38 +1461,68 @@ def _write_anomaly_file(results: list[CheckResult], dt: date):
     lines = [f"# Heartbeat Anomalies — {ds}\n"]
     lines.append(f"Generated: {datetime.now().isoformat()}\n")
     for r in results:
-        if r.needs_llm:
-            lines.append(f"\n## [{r.agent}] {r.status} — {r.detail}\n")
-            for a in r.anomalies:
-                lines.append(f"- {a}\n")
+        lines.append(f"\n## [{r.agent}] {r.status} — {r.detail}\n")
+        for a in r.anomalies:
+            lines.append(f"- {a}\n")
     out_path.write_text("".join(lines))
     print(f"  Anomaly summary written to {out_path}")
+    return out_path
 
 
-def escalate_to_llm(results: list[CheckResult], dry_run: bool = False, dt: date | None = None):
-    """Send anomalies to OpenClaw LLM for interpretation."""
-    anomaly_results = [r for r in results if r.needs_llm]
-    if not anomaly_results:
-        return
+def _write_escalation_json(
+    anomaly_results: list[CheckResult],
+    dt: date,
+    *,
+    mode: str,
+    llm_requested: bool,
+    llm_status: str | None = None,
+) -> Path:
+    """Write structured escalation receipt for ops_supervisor / fleet_ops_status."""
+    ds = as_of_date(dt)
+    heartbeat_dir = ARTIFACTS_DIR / "heartbeat"
+    heartbeat_dir.mkdir(parents=True, exist_ok=True)
+    out_path = heartbeat_dir / f"{ds}_escalation.json"
 
-    # Always write anomalies to local file as durable fallback
-    if dt is not None:
-        _write_anomaly_file(anomaly_results, dt)
+    payload = {
+        "schema": "heartbeat_escalation.v1",
+        "as_of_date": ds,
+        "generated_at": datetime.now().isoformat(),
+        "mode": mode,
+        "llm_requested": llm_requested,
+        "llm_status": llm_status,
+        "agent_count": len(anomaly_results),
+        "agents": [
+            {
+                "agent": r.agent,
+                "status": r.status,
+                "detail": r.detail,
+                "anomalies": r.anomalies,
+            }
+            for r in anomaly_results
+        ],
+        "artifacts": {
+            "anomalies_md": f"artifacts/heartbeat/{ds}_anomalies.md",
+            "escalation_json": f"artifacts/heartbeat/{ds}_escalation.json",
+        },
+    }
+    out_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    print(f"  Escalation receipt written to {out_path}")
+    return out_path
 
+
+def _build_llm_summary(anomaly_results: list[CheckResult]) -> str:
     summary = "ANOMALIES DETECTED — interpret and recommend action:\n\n"
     for r in anomaly_results:
         summary += f"[{r.agent}] {r.status}: {r.detail}\n"
         for a in r.anomalies:
             summary += f"  - {a}\n"
         summary += "\n"
-
     summary += "For each anomaly: (1) is it actionable? (2) what's the fix? (3) severity 1-5?"
+    return summary
 
-    if dry_run:
-        print(f"\n  Would escalate to LLM:\n  {summary}")
-        return
 
-    print(f"\n  Escalating {len(anomaly_results)} agent(s) to LLM...")
+def _invoke_llm_escalation(summary: str) -> str:
+    """Run optional ops LLM escalation; return status token for escalation receipt."""
     try:
         result = subprocess.run(
             [sys.executable, str(REPO_ROOT / "tools" / "run_agent_direct.py"), "--agent", "ops", "--message", summary],
@@ -1495,14 +1531,78 @@ def escalate_to_llm(results: list[CheckResult], dry_run: bool = False, dt: date 
             timeout=150,
             cwd=str(REPO_ROOT),
         )
-        if result.stdout.strip():
-            response_text = result.stdout.strip()
+        response_text = (result.stdout or "").strip()
+        if response_text:
             if "rejected" in response_text.lower() or "credit" in response_text.lower():
                 print("\n  LLM escalation rejected (API billing). Anomalies saved to artifacts/heartbeat/.")
-            else:
-                print(f"\n  LLM response:\n{response_text}")
+                return "rejected"
+            print(f"\n  LLM response:\n{response_text}")
+            return "ok"
+        if result.returncode != 0:
+            err = (result.stderr or "").strip()
+            print(f"\n  LLM escalation failed (exit {result.returncode}): {err}")
+            return "failed"
+        return "empty"
     except (subprocess.TimeoutExpired, FileNotFoundError) as e:
         print(f"\n  LLM escalation failed: {e}. Anomalies saved to artifacts/heartbeat/.")
+        return "failed"
+
+
+def escalate_anomalies(results: list[CheckResult], dry_run: bool = False, dt: date | None = None):
+    """Write anomaly artifacts; optionally invoke LLM when HEARTBEAT_LLM_ESCALATE=1."""
+    anomaly_results = [r for r in results if r.needs_llm]
+    if not anomaly_results:
+        return
+
+    if dt is None:
+        return
+
+    _write_anomaly_file(anomaly_results, dt)
+    llm_enabled = _heartbeat_llm_escalate_enabled()
+    summary = _build_llm_summary(anomaly_results)
+
+    if dry_run:
+        mode = "dry_run"
+        if llm_enabled:
+            print(f"\n  Would escalate to LLM (HEARTBEAT_LLM_ESCALATE=1):\n  {summary}")
+        else:
+            print(
+                f"\n  Artifact-only escalation for {len(anomaly_results)} agent(s) "
+                "(set HEARTBEAT_LLM_ESCALATE=1 for optional LLM)."
+            )
+        _write_escalation_json(
+            anomaly_results,
+            dt,
+            mode=mode,
+            llm_requested=llm_enabled,
+            llm_status="skipped_dry_run" if llm_enabled else None,
+        )
+        return
+
+    llm_status: str | None = None
+    mode = "artifact_only"
+    if llm_enabled:
+        print(f"\n  Escalating {len(anomaly_results)} agent(s) to LLM (HEARTBEAT_LLM_ESCALATE=1)...")
+        llm_status = _invoke_llm_escalation(summary)
+        mode = "llm"
+    else:
+        print(
+            f"\n  Artifact-only escalation for {len(anomaly_results)} agent(s) "
+            "(set HEARTBEAT_LLM_ESCALATE=1 for optional LLM)."
+        )
+
+    _write_escalation_json(
+        anomaly_results,
+        dt,
+        mode=mode,
+        llm_requested=llm_enabled,
+        llm_status=llm_status,
+    )
+
+
+def escalate_to_llm(results: list[CheckResult], dry_run: bool = False, dt: date | None = None):
+    """Backward-compatible alias for escalate_anomalies."""
+    escalate_anomalies(results, dry_run=dry_run, dt=dt)
 
 
 def main():
@@ -1570,11 +1670,14 @@ def main():
             out["counts"] = counts
         print(json.dumps(out, indent=2))
 
-    # Escalate anomalies to LLM (specialized checks only; generic SKIP/STALE is artifact-level and non-urgent)
-    if total_anomalies > 0:
-        escalate_to_llm(results, dry_run=args.dry_run, dt=dt)
+    # Escalate actionable anomalies (specialized checks only; generic SKIP/STALE is artifact-level)
+    escalatable = [r for r in results if r.needs_llm]
+    if escalatable:
+        escalate_anomalies(results, dry_run=args.dry_run, dt=dt)
+    elif total_anomalies > 0:
+        print("  Anomalies present but none require escalation (carried-only or non-actionable).")
     else:
-        print("  No anomalies — LLM not needed.")
+        print("  No anomalies — escalation not needed.")
 
     sys.exit(1 if fail > 0 or coverage_gap else 0)
 

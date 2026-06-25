@@ -9,6 +9,23 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet phase 4) — Heartbeat artifact escalation + fleet ops status
+
+### Tooling
+- **agent_heartbeat_checks.py**: default escalation is artifact-only (`artifacts/heartbeat/{date}_anomalies.md` + `{date}_escalation.json`); optional LLM via `HEARTBEAT_LLM_ESCALATE=1` (last scheduled `run_agent_direct` path retired from default cron)
+- **fleet_ops_status.py**: operator one-shot — herald health, heartbeat receipt, stalled loops (F-2026-005/006), crontab hints
+- **install_agent_fleet_crontab.sh**: heartbeat (17:30 ET), watchdog (@reboot + weekday noon safety net)
+
+### Tests
+- `tests/test_heartbeat_escalation.py`
+- `tests/test_fleet_ops_status.py`
+- `tests/test_install_agent_fleet_crontab.py`
+
+### Governance
+- Tier 0 (observability/plumbing). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet phase 3) — Watchdog deterministic recovery (#400)
 
 ### Tooling

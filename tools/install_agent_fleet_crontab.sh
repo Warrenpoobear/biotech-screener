@@ -31,12 +31,21 @@ cat <<EOF
 # Data auditor (weekdays 17:30 ET — after production; matches cron_data_auditor.sh)
 30 17 * * 1-5 cd ${REPO_ROOT} && bash tools/cron_data_auditor.sh --daily-only >> logs/data_auditor.log 2>&1
 
+# Agent heartbeat (weekdays 17:30 ET — fleet receipt + artifact escalation)
+30 17 * * 1-5 cd ${REPO_ROOT} && python3 tools/agent_heartbeat_checks.py >> logs/heartbeat_checks.log 2>&1
+
 # Hermes knowledge layer + contradiction detector (evening, post-screen)
 0 18 * * 1-5 cd ${REPO_ROOT} && python3 tools/build_hermes_knowledge_layer.py >> logs/hermes_knowledge.log 2>&1
 5 18 * * 1-5 cd ${REPO_ROOT} && python3 agents/hermes-contradiction-detector/run_job.py --from-build >> logs/hermes_contradiction.log 2>&1
 
 # Evening catch-up safety net (weekdays 22:00 ET — WSL sleep/wake gaps)
 0 22 * * 1-5 ${REPO_ROOT}/tools/cron_evening_catchup.sh >> ${REPO_ROOT}/logs/evening_catchup.log 2>&1
+
+# Production watchdog (reboot + weekday safety net for missed cron)
+@reboot ${REPO_ROOT}/tools/cron_watchdog.sh >> ${REPO_ROOT}/logs/watchdog.log 2>&1
+30 12 * * 1-5 ${REPO_ROOT}/tools/cron_watchdog.sh >> ${REPO_ROOT}/logs/watchdog.log 2>&1
+
+# Operator one-shot triage: python3 tools/fleet_ops_status.py
 
 # Close F-2026-005/006 on host before enabling:
 #   export SELFIMPROVE_GATES_MET=1
