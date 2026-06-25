@@ -55,11 +55,12 @@ FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write
 
 | Script | Role |
 | --- | --- |
-| `run_operator_host_setup.sh` | Fleet onboarding + optional research battery |
+| `run_operator_host_setup.sh` | Fleet onboarding + optional research battery + Path A shadow (A1) |
 | `run_research_host_battery.sh` | Checklist v2 + Spec 100 IC + Spec 105 |
+| `run_path_a_shadow.sh` | Spec 106 timing gates shadow (`portfolio_policy_path_a_shadow.json`) |
 | `run_forward_evidence_package.sh` | Path C close + forward IC (does not lift freeze) |
 
-Close F-2026-005 / F-2026-006 before `SELFIMPROVE_GATES_MET=1`. Index: `docs/AGENT_FLEET_ARCHITECTURE_INDEX.md`. Freeze-lift memo: `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md`.
+Close F-2026-005 / F-2026-006 before `SELFIMPROVE_GATES_MET=1`. Path A design: `docs/governance/PATH_A_PORTFOLIO_TIMING_GATES_SPEC_106_2026_06_25.md` (A0+A1 shadow on main; A2 blocked by freeze).
 
 ## Cron sys.path isolation (Class P)
 

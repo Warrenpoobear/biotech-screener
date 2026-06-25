@@ -335,7 +335,8 @@ Agent AGENTS.md docs updated with Llama-specific procedures:
 | Fleet audit | `tools/fleet_completion_audit.py` | Verify deterministic cron wiring |
 | Crontab verify | `tools/fleet_crontab_verify.py` | Live crontab vs install reference |
 | Host onboarding | `tools/run_fleet_host_onboarding.sh` | One-shot post-pull WSL setup |
-| Unified host setup | `tools/run_operator_host_setup.sh` | Fleet + optional research battery |
+| Unified host setup | `tools/run_operator_host_setup.sh` | Fleet + research battery + Path A shadow (A1) |
+| Path A shadow | `tools/run_path_a_shadow.sh` | Spec 106 timing gates (shadow policy only) |
 | Research battery | `tools/run_research_host_battery.sh` | Checklist v2 + Spec 100 IC + Spec 105 (WSL) |
 | Supervisor | `agents/ops_supervisor/supervisor.py` | Fleet-wide anomaly classification |
 | Post-snapshot | `tools/run_post_snapshot_supervisor.py` | Post-pipeline task orchestration |
@@ -550,6 +551,7 @@ Research-enablement tooling for backfilling expectation fields into historical s
 | Fleet Completion Audit | `tools/fleet_completion_audit.py` |
 | Fleet Host Onboarding | `tools/run_fleet_host_onboarding.sh` |
 | Unified Host Setup | `tools/run_operator_host_setup.sh` |
+| Path A Shadow (Spec 106) | `tools/run_path_a_shadow.sh` |
 | Research Host Battery | `tools/run_research_host_battery.sh` |
 | Forward Evidence Package | `tools/forward_evidence_package.py` |
 | Path C Window Close | `tools/path_c_window_close_decision.py` |

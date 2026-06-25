@@ -204,7 +204,8 @@ Operator reference:
 
 | Concern | Tool / script |
 |---------|----------------|
-| Unified host setup (fleet + research) | `bash tools/run_operator_host_setup.sh` |
+| Unified host setup (fleet + research + Path A shadow) | `bash tools/run_operator_host_setup.sh` |
+| Path A shadow only (post-production) | `bash tools/run_path_a_shadow.sh YYYY-MM-DD` |
 | Fleet onboarding only | `bash tools/run_fleet_host_onboarding.sh` |
 | Research battery only | `bash tools/run_research_host_battery.sh` |
 | Forward evidence package | `FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write` |
@@ -218,6 +219,7 @@ Operator reference:
 | Registry coverage | `artifacts/fleet_ops/{date}_completion_audit.json` |
 | Rule 12 self-improve gate | `docs/governance/RULE_12_PROMOTION_CHECKLIST.md` |
 | Freeze-lift evidence memo | `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md` |
+| Path A timing gates (Spec 106) | `docs/governance/PATH_A_PORTFOLIO_TIMING_GATES_SPEC_106_2026_06_25.md` |
 
 Host blockers **F-2026-005** (Herald) and **F-2026-006** (CI) must close before `SELFIMPROVE_GATES_MET=1`. Path C window close (2026-06-03) retrospective artifact via `path_c_window_close_decision.py --write`.
 

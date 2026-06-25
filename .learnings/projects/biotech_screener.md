@@ -28,7 +28,9 @@ FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write
 | --- | --- |
 | Forward evidence | `artifacts/forward_evidence/{date}_package.json` |
 | Path C close | `artifacts/governance/path_c_window_close_{date}.json` |
+| Path A shadow manifest | `artifacts/portfolio_construction/{date}_path_a_manifest.json` |
 | Freeze-lift memo | `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md` |
+| Path A spec | `docs/governance/PATH_A_PORTFOLIO_TIMING_GATES_SPEC_106_2026_06_25.md` |
 
 **Pending host:** ranker IC UNMEASURED until battery runs; Sci-Cart R4 0/50 verdicts; Q2 13F period ends 2026-06-30.
 

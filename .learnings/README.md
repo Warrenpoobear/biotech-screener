@@ -85,7 +85,7 @@ When starting a code session on this repo, load in order:
 | 4 | `CLAUDE.md` / `.cursorrules` |
 | 5 | Skill for task area (`skills/screener_ops/`, `skills/codegraph/`, etc.) |
 
-WSL operator sequence: `run_operator_host_setup.sh` → `FREEZE_LIFT_ACK=1 run_forward_evidence_package.sh --write`
+WSL operator sequence: `run_operator_host_setup.sh` (incl. Path A shadow) → `FREEZE_LIFT_ACK=1 run_forward_evidence_package.sh --write`
 
 ## Related
 

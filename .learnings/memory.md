@@ -10,7 +10,7 @@
 | Audit | `python3 tools/audit_learnings.py` · map: `.learnings/README.md` |
 | CodeGraph | **First → grep/read → edit.** v0.9.9 pinned. Bounded — not cron/literals/dispatch proof. |
 | Host | **WSL** = cron, hedge, gateway, evidence package. **Cloud** = repo/CI/skills; `UNKNOWN_CLOUD_ENV` expected. |
-| Operator | `run_operator_host_setup.sh` → `FREEZE_LIFT_ACK=1 run_forward_evidence_package.sh --write` |
+| Operator | `run_operator_host_setup.sh` (fleet + research + Path A shadow) → `FREEZE_LIFT_ACK=1 run_forward_evidence_package.sh --write` |
 | Governance | No ranker/selector/sizing/`final_score` without Spec + freeze lift. Track B skips = expected. |
 | CI | Actions budget pre-start ≠ code failure. |
 | Hermes | MCP = read-only fleet; cron agents → `codegraph_guard.py`; gateway on WSL only. |
