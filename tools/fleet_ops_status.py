@@ -151,6 +151,7 @@ def _completion_audit_status(ds: str) -> dict[str, Any]:
         "overall": payload.get("overall"),
         "pass_count": payload.get("pass_count"),
         "fail_count": payload.get("fail_count"),
+        "registry_coverage": payload.get("registry_coverage"),
     }
 
 
@@ -237,6 +238,12 @@ def _print_human(report: dict[str, Any]) -> None:
     print("\nCompletion audit")
     if audit.get("exists"):
         print(f"  overall={audit.get('overall')}  fail_count={audit.get('fail_count')}")
+        reg = audit.get("registry_coverage") or {}
+        if reg:
+            print(
+                f"  registry: supervised={reg.get('active_supervised')} "
+                f"specialized={reg.get('specialized')} generic={reg.get('generic_fallback')}"
+            )
     else:
         print("  no artifact — run: python3 tools/fleet_completion_audit.py --write")
 

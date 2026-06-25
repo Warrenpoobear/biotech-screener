@@ -57,11 +57,14 @@ EVENING_CATCHUP_BUILDERS = [
     "agents/ops_supervisor/supervisor.py",
     "agent_supervisor_sentinel.py",
     "fleet_ops_status.py",
+    "fleet_completion_audit.py",
 ]
 
 KEY_TOOL_FILES = [
     "tools/agent_heartbeat_checks.py",
     "tools/fleet_ops_status.py",
+    "tools/fleet_completion_audit.py",
+    "tools/run_fleet_operator_checklist.sh",
     "tools/herald_health_check.py",
     "tools/herald_recovery.py",
     "tools/pattern_to_skillpatch.py",
@@ -69,6 +72,9 @@ KEY_TOOL_FILES = [
     "agents/ops_supervisor/supervisor.py",
     "docs/governance/RULE_12_PROMOTION_CHECKLIST.md",
 ]
+
+# Specialized heartbeat checks that are not separate registry agents.
+ORPHAN_SPECIALIZED_CHECKS = {"ic_memory_hygiene"}
 
 
 def _active_lines(text: str) -> str:
@@ -169,6 +175,119 @@ def check_supervisor_escalation_json() -> dict[str, Any]:
     return {"check": "supervisor_escalation_json", "status": "PASS"}
 
 
+def check_registry_heartbeat_coverage() -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Every active supervised agent must have specialized check, generic paths, or skip reason."""
+    from tools.agent_heartbeat_checks import (
+        SPECIALIZED_CHECKS,
+        TERMINAL_UNSUPERVISED_AGENTS,
+        heartbeat_skip_reason,
+    )
+
+    registry_path = REPO / "agents" / "AGENT_REGISTRY.json"
+    if not registry_path.is_file():
+        return [{"check": "registry_coverage", "status": "FAIL", "detail": "AGENT_REGISTRY.json missing"}], {}
+
+    try:
+        registry = json.loads(registry_path.read_text(encoding="utf-8")).get("agents", {})
+    except json.JSONDecodeError:
+        return [{"check": "registry_coverage", "status": "FAIL", "detail": "registry malformed"}], {}
+
+    findings: list[dict[str, Any]] = []
+    summary = {
+        "active_supervised": 0,
+        "specialized": 0,
+        "generic_fallback": 0,
+        "on_demand_skip": 0,
+        "terminal_unsupervised": 0,
+        "opted_out_unsupervised": 0,
+    }
+
+    for name, entry in sorted(registry.items()):
+        if entry.get("status") != "active":
+            continue
+        if not entry.get("supervised_by_orchestrator", True):
+            if name in TERMINAL_UNSUPERVISED_AGENTS:
+                summary["terminal_unsupervised"] += 1
+                findings.append(
+                    {"check": "registry_coverage", "agent": name, "status": "PASS", "mode": "terminal_unsupervised"}
+                )
+            else:
+                summary["opted_out_unsupervised"] += 1
+                findings.append(
+                    {"check": "registry_coverage", "agent": name, "status": "PASS", "mode": "opted_out_unsupervised"}
+                )
+            continue
+
+        summary["active_supervised"] += 1
+        skip_reason = heartbeat_skip_reason(name, entry)
+        if skip_reason:
+            summary["on_demand_skip"] += 1
+            findings.append(
+                {"check": "registry_coverage", "agent": name, "status": "PASS", "mode": "on_demand_skip"}
+            )
+            continue
+        if name in SPECIALIZED_CHECKS:
+            summary["specialized"] += 1
+            findings.append(
+                {"check": "registry_coverage", "agent": name, "status": "PASS", "mode": "specialized"}
+            )
+        elif entry.get("artifact_paths"):
+            summary["generic_fallback"] += 1
+            findings.append(
+                {"check": "registry_coverage", "agent": name, "status": "PASS", "mode": "generic_fallback"}
+            )
+        else:
+            findings.append(
+                {
+                    "check": "registry_coverage",
+                    "agent": name,
+                    "status": "FAIL",
+                    "detail": "no specialized check or artifact_paths",
+                }
+            )
+
+    for key in sorted(SPECIALIZED_CHECKS):
+        if key in registry or key in ORPHAN_SPECIALIZED_CHECKS:
+            continue
+        findings.append(
+            {
+                "check": "registry_orphan_check",
+                "agent": key,
+                "status": "WARN",
+                "detail": "SPECIALIZED_CHECKS key not in registry",
+            }
+        )
+
+    return findings, summary
+
+
+def check_deprecated_merged_into() -> list[dict[str, Any]]:
+    registry_path = REPO / "agents" / "AGENT_REGISTRY.json"
+    if not registry_path.is_file():
+        return [{"check": "deprecated_merged_into", "status": "FAIL", "detail": "registry missing"}]
+    try:
+        registry = json.loads(registry_path.read_text(encoding="utf-8")).get("agents", {})
+    except json.JSONDecodeError:
+        return [{"check": "deprecated_merged_into", "status": "FAIL", "detail": "registry malformed"}]
+
+    findings: list[dict[str, Any]] = []
+    for name, entry in sorted(registry.items()):
+        if entry.get("status") != "deprecated":
+            continue
+        if entry.get("merged_into"):
+            findings.append({"check": "deprecated_merged_into", "agent": name, "status": "PASS"})
+        else:
+            findings.append(
+                {
+                    "check": "deprecated_merged_into",
+                    "agent": name,
+                    "status": "FAIL",
+                    "detail": "deprecated without merged_into",
+                }
+            )
+    return findings
+
+
 def build_audit() -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
     checks.extend(check_cron_llm_free())
@@ -177,6 +296,9 @@ def build_audit() -> dict[str, Any]:
     checks.extend(check_key_tools())
     checks.append(check_heartbeat_llm_gated())
     checks.append(check_supervisor_escalation_json())
+    registry_checks, registry_summary = check_registry_heartbeat_coverage()
+    checks.extend(registry_checks)
+    checks.extend(check_deprecated_merged_into())
 
     fail = sum(1 for c in checks if c.get("status") == "FAIL")
     pass_n = sum(1 for c in checks if c.get("status") == "PASS")
@@ -188,10 +310,12 @@ def build_audit() -> dict[str, Any]:
         "overall": overall,
         "pass_count": pass_n,
         "fail_count": fail,
+        "registry_coverage": registry_summary,
         "checks": checks,
         "operator_commands": {
             "fleet_ops": "python3 tools/fleet_ops_status.py --write",
             "install_crontab": "bash tools/install_agent_fleet_crontab.sh",
+            "host_checklist": "bash tools/run_fleet_operator_checklist.sh",
             "rule_12": "docs/governance/RULE_12_PROMOTION_CHECKLIST.md",
         },
     }

@@ -55,3 +55,4 @@ def test_evening_catchup_writes_fleet_ops_status():
     assert "fleet_ops_status.py" in text
     assert "artifacts/fleet_ops/" in text
     assert "--write" in text
+    assert "fleet_completion_audit.py" in text

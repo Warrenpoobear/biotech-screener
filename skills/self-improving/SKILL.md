@@ -169,6 +169,13 @@ Without these gates, tools exit cleanly. Operator reviews drafts before any skil
 
 Operator quick reference: `docs/governance/RULE_12_PROMOTION_CHECKLIST.md`
 
+**Host fleet gates (before `SELFIMPROVE_GATES_MET=1`):**
+```bash
+bash tools/run_fleet_operator_checklist.sh   # herald + fleet_ops + wiring audit must PASS
+python3 tools/fleet_completion_audit.py --write
+```
+Close stalled-loop rows **F-2026-005** / **F-2026-006** in `.learnings/memory.md` on the operator host.
+
 A lesson is *captured* the moment it's logged; it is *promoted* only when it clears this checklist. The bar is shared with Town — do **not** define a parallel threshold here. The canonical definition lives in this skill's `>= 3` rule (Rule 3): failure modes count all-time; behavioral patterns count within a rolling 7-day window. Forking the threshold is itself a definition-drift failure mode (F-2026-001 class).
 
 **Candidate feed (where promotion candidates come from):**

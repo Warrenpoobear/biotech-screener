@@ -27,6 +27,30 @@ def test_build_audit_passes_on_repo(audit_mod):
         [c for c in report["checks"] if c.get("status") == "FAIL"], indent=2
     )
     assert report["overall"] == "PASS"
+    reg = report.get("registry_coverage") or {}
+    assert reg.get("active_supervised", 0) > 0
+    assert reg.get("specialized", 0) > 0
+
+
+def test_registry_coverage_flags_missing_paths(audit_mod, tmp_path, monkeypatch):
+    registry = {
+        "agents": {
+            "broken_agent": {
+                "status": "active",
+                "cadence": "daily_after_production",
+                "supervised_by_orchestrator": True,
+                "artifact_paths": [],
+            }
+        }
+    }
+    reg_path = tmp_path / "agents" / "AGENT_REGISTRY.json"
+    reg_path.parent.mkdir(parents=True)
+    reg_path.write_text(json.dumps(registry), encoding="utf-8")
+    monkeypatch.setattr(audit_mod, "REPO", tmp_path)
+
+    findings, summary = audit_mod.check_registry_heartbeat_coverage()
+    assert summary["active_supervised"] == 1
+    assert any(f.get("status") == "FAIL" and f.get("agent") == "broken_agent" for f in findings)
 
 
 def test_check_cron_llm_free_flags_run_agent_direct(audit_mod, tmp_path, monkeypatch):

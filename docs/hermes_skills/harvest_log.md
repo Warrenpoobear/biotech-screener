@@ -9,6 +9,22 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet phase 9) — Registry coverage audit + evening audit artifact
+
+### Tooling
+- **fleet_completion_audit.py**: registry heartbeat coverage (specialized/generic/skip), deprecated `merged_into` checks, evening catchup builder includes audit
+- **cron_evening_catchup.sh**: writes `completion_audit.json` after fleet_ops status
+- **fleet_ops_status.py**: surfaces `registry_coverage` from completion audit artifact
+- **self-improving** skill: host fleet gates before `SELFIMPROVE_GATES_MET=1`
+
+### Tests
+- Extended `test_fleet_completion_audit.py`, `test_cron_evening_catchup.py`
+
+### Governance
+- Tier 0 (observability/registry/docs). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet phase 8) — Operator onboarding + Telegram fleet surface
 
 ### Tooling

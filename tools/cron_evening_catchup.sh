@@ -173,4 +173,9 @@ check_fleet_ops() { file_exists "$REPO/artifacts/fleet_ops/${TODAY}_status.json"
 run_tool fleet_ops_status 2200 "$REPO/logs/fleet_ops.log" check_fleet_ops \
     "$PYTHON $REPO/tools/fleet_ops_status.py --write --no-telemetry"
 
+# fleet_completion_audit — wiring + registry coverage artifact
+check_fleet_audit() { file_exists "$REPO/artifacts/fleet_ops/${TODAY}_completion_audit.json"; }
+run_tool fleet_audit 2205 "$REPO/logs/fleet_ops.log" check_fleet_audit \
+    "$PYTHON $REPO/tools/fleet_completion_audit.py --write"
+
 log "=== Evening catch-up complete ==="
