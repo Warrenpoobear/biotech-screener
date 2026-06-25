@@ -9,6 +9,22 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet phase 10) — Audit→fleet_ops ordering capstone
+
+### Tooling
+- **run_fleet_operator_checklist.sh**, **cron_evening_catchup.sh**, **cron_weekly_skills_review.sh**: completion audit before fleet_ops so `status.json` embeds `registry_coverage`
+- **weekly_skills_digest.py**: registry coverage lines from `completion_audit.json`
+- **AGENT_FLEET_ARCHITECTURE_INDEX.md**: phases 2–10 migration table (code-complete; host gates remain)
+
+### Tests
+- `test_fleet_wiring_contract.py` — `build_audit()` PASS on repo
+- Ordering assertions in checklist/catchup/weekly tests; extended digest fleet_ops tests
+
+### Governance
+- Tier 0 (observability/plumbing/docs). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet phase 9) — Registry coverage audit + evening audit artifact
 
 ### Tooling

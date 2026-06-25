@@ -181,20 +181,32 @@ This documentation does **not** authorize or enable:
 
 ## Deterministic Cron Consolidation (2026-06)
 
-Phases 2–6 retired scheduled `run_agent_direct` from production cron. Operator reference:
+Phases 2–9 retired scheduled `run_agent_direct` from production cron and added operator triage artifacts. **Phase 10 (code-complete):** completion audit runs before `fleet_ops_status --write` so `status.json` embeds `registry_coverage`; weekly digest surfaces registry coverage from `completion_audit.json`.
+
+| Phase | Focus | Status |
+|-------|-------|--------|
+| 2–3 | Outcome feedback, herald recovery, evening catchup builders | Code-complete |
+| 4–5 | Artifact escalation, fleet_ops, ops_supervisor, Rule 12 gates | Code-complete |
+| 6 | Watchdog recovery, digest integration, skillpatch defense | Code-complete |
+| 7 | `fleet_completion_audit.py` + operator runbook | Code-complete |
+| 8 | Host onboarding checklist + Telegram fleet surface | Code-complete |
+| 9 | Registry coverage audit + daily completion artifact | Code-complete |
+| 10 | Audit→fleet_ops ordering + digest registry coverage + wiring contract | Code-complete |
+
+Operator reference:
 
 | Concern | Tool / script |
 |---------|----------------|
 | Install WSL crontab | `bash tools/install_agent_fleet_crontab.sh` |
 | Evening safety net | `tools/cron_evening_catchup.sh` |
 | Missed production / monitoring | `tools/cron_watchdog.sh` |
-| Fleet triage | `python3 tools/fleet_ops_status.py --write` |
-| Wiring verification | `python3 tools/fleet_completion_audit.py --write` |
+| Wiring verification (run first) | `python3 tools/fleet_completion_audit.py --write` |
+| Fleet triage (run after audit) | `python3 tools/fleet_ops_status.py --write` |
 | Host onboarding | `bash tools/run_fleet_operator_checklist.sh` |
-| Registry coverage | `python3 tools/fleet_completion_audit.py` (in audit JSON) |
+| Registry coverage | `artifacts/fleet_ops/{date}_completion_audit.json` |
 | Rule 12 self-improve gate | `docs/governance/RULE_12_PROMOTION_CHECKLIST.md` |
 
-Host blockers **F-2026-005** (Herald) and **F-2026-006** (CI) must close before `SELFIMPROVE_GATES_MET=1`.
+Host blockers **F-2026-005** (Herald) and **F-2026-006** (CI) must close before `SELFIMPROVE_GATES_MET=1`. Crontab install on WSL host remains operator action.
 
 ---
 

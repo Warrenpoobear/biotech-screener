@@ -77,13 +77,38 @@ def _list_draft_files() -> list[Path]:
     return sorted(DRAFTS_DIR.glob("skill_patch_drafts_*.md"), reverse=True)
 
 
+def _registry_coverage_lines(as_of: date) -> list[str]:
+    """Registry heartbeat coverage from completion audit artifact."""
+    audit_path = REPO / "artifacts" / "fleet_ops" / f"{as_of.isoformat()}_completion_audit.json"
+    if not audit_path.is_file():
+        return []
+    try:
+        audit = json.loads(audit_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return [f"- Registry coverage: artifact corrupt (`{audit_path.relative_to(REPO)}`)"]
+    reg = audit.get("registry_coverage") or {}
+    if not reg:
+        return []
+    parts = [
+        f"active_supervised={reg.get('active_supervised', '?')}",
+        f"specialized={reg.get('specialized', '?')}",
+        f"generic_fallback={reg.get('generic_fallback', '?')}",
+        f"on_demand_skip={reg.get('on_demand_skip', '?')}",
+    ]
+    overall = audit.get("overall", "?")
+    return [f"- Completion audit: **{overall}** — registry ({', '.join(parts)})"]
+
+
 def _fleet_ops_section(as_of: date) -> list[str]:
     """Include fleet_ops artifact when present (written by evening/weekly cron)."""
     path = REPO / "artifacts" / "fleet_ops" / f"{as_of.isoformat()}_status.json"
     lines = ["## Fleet ops status", ""]
     if not path.is_file():
-        lines.append("No artifact. Run: `python3 tools/fleet_ops_status.py --write`")
+        lines.append("No artifact. Run: `python3 tools/fleet_completion_audit.py --write` then `fleet_ops_status.py --write`")
         lines.append("")
+        lines.extend(_registry_coverage_lines(as_of))
+        if lines[-1] != "":
+            lines.append("")
         return lines
     try:
         report = json.loads(path.read_text(encoding="utf-8"))
@@ -102,6 +127,13 @@ def _fleet_ops_section(as_of: date) -> list[str]:
     gates = report.get("selfimprove_gates") or {}
     if gates.get("message"):
         lines.append(f"- Rule 12: {gates['message']}")
+    audit = report.get("completion_audit") or {}
+    if audit.get("exists") and audit.get("overall"):
+        lines.append(
+            f"- Completion audit (embedded): **{audit.get('overall')}** "
+            f"pass={audit.get('pass_count')} fail={audit.get('fail_count')}"
+        )
+    lines.extend(_registry_coverage_lines(as_of))
     lines.append("")
     return lines
 

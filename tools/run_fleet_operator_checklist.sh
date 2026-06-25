@@ -23,14 +23,14 @@ log "Crontab reference (paste manually): bash tools/install_agent_fleet_crontab.
 log "Herald health"
 $PYTHON tools/herald_health_check.py --stdout || true
 
-log "Fleet ops status write"
-$PYTHON tools/fleet_ops_status.py --write --no-telemetry || true
-
-log "Completion audit"
+log "Completion audit (before fleet_ops so status.json embeds registry_coverage)"
 if ! $PYTHON tools/fleet_completion_audit.py --write; then
     log "FAIL — completion audit reported wiring gaps (see output above)"
     exit 1
 fi
+
+log "Fleet ops status write"
+$PYTHON tools/fleet_ops_status.py --write --no-telemetry || true
 
 log "Self-improve gates"
 $PYTHON -c "from tools.skills_loop_review import selfimprove_gates_status; print(selfimprove_gates_status()['message'])"

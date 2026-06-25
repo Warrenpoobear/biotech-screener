@@ -49,4 +49,48 @@ def test_fleet_ops_section_reads_artifact(digest_mod, tmp_path, monkeypatch):
 def test_fleet_ops_section_missing_artifact(digest_mod, tmp_path, monkeypatch):
     monkeypatch.setattr(digest_mod, "REPO", tmp_path)
     lines = digest_mod._fleet_ops_section(date.fromisoformat("2026-06-24"))
-    assert "fleet_ops_status.py --write" in "\n".join(lines)
+    assert "fleet_completion_audit.py --write" in "\n".join(lines)
+
+
+def test_fleet_ops_section_includes_registry_coverage(digest_mod, tmp_path, monkeypatch):
+    fleet_dir = tmp_path / "artifacts" / "fleet_ops"
+    fleet_dir.mkdir(parents=True)
+    ds = "2026-06-24"
+    (fleet_dir / f"{ds}_completion_audit.json").write_text(
+        json.dumps(
+            {
+                "overall": "PASS",
+                "registry_coverage": {
+                    "active_supervised": 12,
+                    "specialized": 8,
+                    "generic_fallback": 3,
+                    "on_demand_skip": 1,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    (fleet_dir / f"{ds}_status.json").write_text(
+        json.dumps(
+            {
+                "overall": "WARN",
+                "herald": {"verdict": "WARN", "herald_done": False},
+                "heartbeat": {"receipt_exists": True, "verdict": "YELLOW"},
+                "completion_audit": {
+                    "exists": True,
+                    "overall": "PASS",
+                    "pass_count": 40,
+                    "fail_count": 0,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(digest_mod, "REPO", tmp_path)
+
+    lines = digest_mod._fleet_ops_section(date.fromisoformat(ds))
+    text = "\n".join(lines)
+
+    assert "Completion audit (embedded): **PASS**" in text
+    assert "active_supervised=12" in text
+    assert "specialized=8" in text

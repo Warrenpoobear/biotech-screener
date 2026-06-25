@@ -56,3 +56,11 @@ def test_evening_catchup_writes_fleet_ops_status():
     assert "artifacts/fleet_ops/" in text
     assert "--write" in text
     assert "fleet_completion_audit.py" in text
+
+
+def test_evening_catchup_runs_audit_before_fleet_ops():
+    text = CATCHUP.read_text(encoding="utf-8")
+    audit_pos = text.find("fleet_completion_audit.py")
+    fleet_pos = text.find("fleet_ops_status.py")
+    assert audit_pos != -1 and fleet_pos != -1
+    assert audit_pos < fleet_pos
