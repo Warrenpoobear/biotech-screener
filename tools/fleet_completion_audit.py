@@ -58,6 +58,7 @@ EVENING_CATCHUP_BUILDERS = [
     "agent_supervisor_sentinel.py",
     "fleet_ops_status.py",
     "fleet_completion_audit.py",
+    "fleet_crontab_verify.py",
 ]
 
 KEY_TOOL_FILES = [

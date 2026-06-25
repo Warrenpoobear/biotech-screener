@@ -295,6 +295,12 @@ class TelegramCommandHandler:
                 try:
                     fleet = json.loads(status_files[0].read_text())
                     lines.append(f"<b>Fleet overall:</b> {fleet.get('overall', '?')}")
+                    cron = fleet.get("crontab_verify") or {}
+                    if cron.get("overall"):
+                        lines.append(
+                            f"<b>Crontab:</b> {cron.get('overall')} "
+                            f"(fail={cron.get('fail_count', 0)})"
+                        )
                 except (json.JSONDecodeError, OSError):
                     pass
 
@@ -319,6 +325,12 @@ class TelegramCommandHandler:
                     audit = data.get("completion_audit") or {}
                     if audit.get("exists"):
                         lines.append(f"Wiring audit: {audit.get('overall', '?')}")
+                    cron = data.get("crontab_verify") or {}
+                    if cron.get("overall"):
+                        lines.append(
+                            f"Crontab: {cron.get('overall')} "
+                            f"(fail={cron.get('fail_count', 0)})"
+                        )
                     gates = data.get("selfimprove_gates") or {}
                     if gates.get("message"):
                         lines.append(gates["message"][:240])

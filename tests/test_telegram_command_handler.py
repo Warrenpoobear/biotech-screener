@@ -189,6 +189,7 @@ def test_agents_prefers_fleet_ops_json(tmp_path, monkeypatch):
                 "herald": {"verdict": "WARN", "herald_done": False},
                 "heartbeat": {"verdict": "YELLOW"},
                 "completion_audit": {"exists": True, "overall": "PASS"},
+                "crontab_verify": {"overall": "FAIL", "fail_count": 2},
                 "selfimprove_gates": {"message": "blocked"},
             }
         ),
@@ -200,6 +201,28 @@ def test_agents_prefers_fleet_ops_json(tmp_path, monkeypatch):
     assert "Fleet ops" in result
     assert "WARN" in result
     assert "blocked" in result
+    assert "Crontab: FAIL" in result
+
+
+def test_status_includes_crontab_verify(tmp_path, monkeypatch):
+    from tools.telegram_command_handler import TelegramCommandHandler
+
+    monkeypatch.setattr("tools.telegram_command_handler.REPO_ROOT", tmp_path)
+    fleet_dir = tmp_path / "artifacts" / "fleet_ops"
+    fleet_dir.mkdir(parents=True)
+    (fleet_dir / "2026-06-24_status.json").write_text(
+        json.dumps(
+            {
+                "overall": "WARN",
+                "crontab_verify": {"overall": "PASS", "fail_count": 0},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    handler = TelegramCommandHandler("token", "chat_id")
+    result = handler._cmd_status()
+    assert "Crontab:" in result and "PASS" in result
 
 
 def test_status_uses_final_severity(tmp_path, monkeypatch):

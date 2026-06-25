@@ -193,6 +193,7 @@ Phases 2–9 retired scheduled `run_agent_direct` from production cron and added
 | 9 | Registry coverage audit + daily completion artifact | Code-complete |
 | 10 | Audit→fleet_ops ordering + digest registry coverage + wiring contract | Code-complete |
 | 11 | Live crontab verify vs install reference (`fleet_crontab_verify.py`) | Code-complete |
+| 12 | Crontab verify in evening catchup, digest, Telegram | Code-complete |
 
 Operator reference:
 

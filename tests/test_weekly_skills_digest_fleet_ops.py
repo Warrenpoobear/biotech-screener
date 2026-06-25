@@ -94,3 +94,26 @@ def test_fleet_ops_section_includes_registry_coverage(digest_mod, tmp_path, monk
     assert "Completion audit (embedded): **PASS**" in text
     assert "active_supervised=12" in text
     assert "specialized=8" in text
+
+
+def test_fleet_ops_section_includes_crontab_verify_from_artifact(digest_mod, tmp_path, monkeypatch):
+    fleet_dir = tmp_path / "artifacts" / "fleet_ops"
+    fleet_dir.mkdir(parents=True)
+    ds = "2026-06-24"
+    (fleet_dir / f"{ds}_crontab_verify.json").write_text(
+        json.dumps(
+            {
+                "overall": "FAIL",
+                "availability": "OPERATOR_HOST",
+                "pass_count": 8,
+                "fail_count": 2,
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(digest_mod, "REPO", tmp_path)
+
+    lines = digest_mod._fleet_ops_section(date.fromisoformat(ds))
+    text = "\n".join(lines)
+    assert "Crontab verify: **FAIL**" in text
+    assert "fail=2" in text

@@ -9,6 +9,22 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet phase 12) — Crontab verify integration capstone
+
+### Tooling
+- **cron_evening_catchup.sh**: writes `crontab_verify.json` after fleet_ops (22:10 ET)
+- **cron_weekly_skills_review.sh**: crontab verify in weekly artifact chain
+- **weekly_skills_digest.py**: crontab verify lines in fleet ops section
+- **telegram_command_handler.py**: `/agents` and `/status` surface crontab verify
+
+### Tests
+- Extended evening catchup, weekly review, digest, telegram tests
+
+### Governance
+- Tier 0 (observability/plumbing). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet phase 11) — Live crontab verification
 
 ### Tooling

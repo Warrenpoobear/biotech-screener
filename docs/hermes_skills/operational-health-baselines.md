@@ -35,6 +35,7 @@ SLA baselines for agent artifact freshness and CI health. Used by fleet heartbea
 python3 tools/fleet_ops_status.py
 python3 tools/fleet_ops_status.py --write
 python3 tools/fleet_completion_audit.py --write
+python3 tools/fleet_crontab_verify.py --write
 bash tools/run_fleet_operator_checklist.sh
 python3 tools/agent_heartbeat_checks.py --json
 python3 tools/herald_health_check.py --stdout
@@ -53,6 +54,7 @@ Default cron path is **artifact-only** — no LLM unless operator sets `HEARTBEA
 | `artifacts/heartbeat/{date}_anomalies.md` | Human-readable fallback |
 | `artifacts/fleet_ops/{date}_status.json` | Weekly/daily operator triage (`fleet_ops_status --write`) |
 | `artifacts/fleet_ops/{date}_completion_audit.json` | Wiring audit (`fleet_completion_audit --write`) |
+| `artifacts/fleet_ops/{date}_crontab_verify.json` | Live crontab vs install reference (`fleet_crontab_verify --write`) |
 
 ## Escalation ladder
 

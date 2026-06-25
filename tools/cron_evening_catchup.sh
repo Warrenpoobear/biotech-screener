@@ -178,4 +178,9 @@ check_fleet_ops() { file_exists "$REPO/artifacts/fleet_ops/${TODAY}_status.json"
 run_tool fleet_ops_status 2205 "$REPO/logs/fleet_ops.log" check_fleet_ops \
     "$PYTHON $REPO/tools/fleet_ops_status.py --write --no-telemetry"
 
+# fleet_crontab_verify — live crontab vs install reference (after fleet_ops)
+check_fleet_crontab() { file_exists "$REPO/artifacts/fleet_ops/${TODAY}_crontab_verify.json"; }
+run_tool fleet_crontab 2210 "$REPO/logs/fleet_ops.log" check_fleet_crontab \
+    "$PYTHON $REPO/tools/fleet_crontab_verify.py --write"
+
 log "=== Evening catch-up complete ==="

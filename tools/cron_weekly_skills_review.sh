@@ -21,6 +21,7 @@ log "Rule 12 checklist: docs/governance/RULE_12_PROMOTION_CHECKLIST.md"
 
 $PYTHON tools/fleet_completion_audit.py --write --json >> logs/weekly_skills_review.log 2>&1 || log "fleet_completion_audit reported FAIL (see log)"
 $PYTHON tools/fleet_ops_status.py --write --no-telemetry || true
+$PYTHON tools/fleet_crontab_verify.py --write || true
 GATES_MSG=$($PYTHON -c "from tools.skills_loop_review import selfimprove_gates_status; print(selfimprove_gates_status()['message'])")
 log "$GATES_MSG"
 

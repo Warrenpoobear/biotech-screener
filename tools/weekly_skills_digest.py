@@ -99,6 +99,37 @@ def _registry_coverage_lines(as_of: date) -> list[str]:
     return [f"- Completion audit: **{overall}** — registry ({', '.join(parts)})"]
 
 
+def _crontab_verify_lines(as_of: date) -> list[str]:
+    """Crontab verify from status JSON or dedicated artifact."""
+    ds = as_of.isoformat()
+    status_path = REPO / "artifacts" / "fleet_ops" / f"{ds}_status.json"
+    if status_path.is_file():
+        try:
+            report = json.loads(status_path.read_text(encoding="utf-8"))
+            cron = report.get("crontab_verify") or {}
+            if cron.get("overall"):
+                return [
+                    f"- Crontab verify: **{cron.get('overall')}** "
+                    f"(availability={cron.get('availability')} "
+                    f"pass={cron.get('pass_count')} fail={cron.get('fail_count')})"
+                ]
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    verify_path = REPO / "artifacts" / "fleet_ops" / f"{ds}_crontab_verify.json"
+    if not verify_path.is_file():
+        return []
+    try:
+        payload = json.loads(verify_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return [f"- Crontab verify: artifact corrupt (`{verify_path.relative_to(REPO)}`)"]
+    return [
+        f"- Crontab verify: **{payload.get('overall', '?')}** "
+        f"(availability={payload.get('availability')} "
+        f"pass={payload.get('pass_count')} fail={payload.get('fail_count')})"
+    ]
+
+
 def _fleet_ops_section(as_of: date) -> list[str]:
     """Include fleet_ops artifact when present (written by evening/weekly cron)."""
     path = REPO / "artifacts" / "fleet_ops" / f"{as_of.isoformat()}_status.json"
@@ -107,6 +138,9 @@ def _fleet_ops_section(as_of: date) -> list[str]:
         lines.append("No artifact. Run: `python3 tools/fleet_completion_audit.py --write` then `fleet_ops_status.py --write`")
         lines.append("")
         lines.extend(_registry_coverage_lines(as_of))
+        if lines[-1] != "":
+            lines.append("")
+        lines.extend(_crontab_verify_lines(as_of))
         if lines[-1] != "":
             lines.append("")
         return lines
@@ -134,6 +168,7 @@ def _fleet_ops_section(as_of: date) -> list[str]:
             f"pass={audit.get('pass_count')} fail={audit.get('fail_count')}"
         )
     lines.extend(_registry_coverage_lines(as_of))
+    lines.extend(_crontab_verify_lines(as_of))
     lines.append("")
     return lines
 

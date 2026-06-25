@@ -20,5 +20,6 @@ def test_weekly_skills_review_runs_audit_before_fleet_ops():
     text = SCRIPT.read_text(encoding="utf-8")
     audit_pos = text.find("fleet_completion_audit.py")
     fleet_pos = text.find("fleet_ops_status.py")
-    assert audit_pos != -1 and fleet_pos != -1
-    assert audit_pos < fleet_pos
+    cron_pos = text.find("fleet_crontab_verify.py")
+    assert audit_pos != -1 and fleet_pos != -1 and cron_pos != -1
+    assert audit_pos < fleet_pos < cron_pos
