@@ -78,6 +78,13 @@ KEY_TOOL_FILES = [
 # Specialized heartbeat checks that are not separate registry agents.
 ORPHAN_SPECIALIZED_CHECKS = {"ic_memory_hygiene"}
 
+WATCHDOG_HERALD_RECOVERY_STRINGS = [
+    "artifacts/herald/health_check_${TODAY}.json",
+    "herald_health_check.py",
+    "--recover",
+    "recovery_done_${TODAY}.complete",
+]
+
 
 def _active_lines(text: str) -> str:
     return "\n".join(
@@ -290,6 +297,27 @@ def check_deprecated_merged_into() -> list[dict[str, Any]]:
     return findings
 
 
+def check_watchdog_herald_recovery() -> list[dict[str, Any]]:
+    path = REPO / "tools" / "cron_watchdog.sh"
+    if not path.is_file():
+        return [{"check": "watchdog_herald_recovery", "status": "FAIL", "detail": "watchdog missing"}]
+    text = path.read_text(encoding="utf-8")
+    findings: list[dict[str, Any]] = []
+    for needle in WATCHDOG_HERALD_RECOVERY_STRINGS:
+        if needle in text:
+            findings.append({"check": "watchdog_herald_recovery", "needle": needle, "status": "PASS"})
+        else:
+            findings.append(
+                {
+                    "check": "watchdog_herald_recovery",
+                    "needle": needle,
+                    "status": "FAIL",
+                    "detail": "not in cron_watchdog.sh",
+                }
+            )
+    return findings
+
+
 def check_live_crontab() -> dict[str, Any]:
     from tools.fleet_crontab_verify import verify_crontab
 
@@ -320,6 +348,7 @@ def build_audit() -> dict[str, Any]:
     registry_checks, registry_summary = check_registry_heartbeat_coverage()
     checks.extend(registry_checks)
     checks.extend(check_deprecated_merged_into())
+    checks.extend(check_watchdog_herald_recovery())
     checks.append(check_live_crontab())
 
     fail = sum(1 for c in checks if c.get("status") == "FAIL")

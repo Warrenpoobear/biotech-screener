@@ -30,6 +30,9 @@ def test_build_audit_passes_on_repo(audit_mod):
     reg = report.get("registry_coverage") or {}
     assert reg.get("active_supervised", 0) > 0
     assert reg.get("specialized", 0) > 0
+    herald_checks = [c for c in report["checks"] if c.get("check") == "watchdog_herald_recovery"]
+    assert herald_checks
+    assert all(c["status"] == "PASS" for c in herald_checks)
 
 
 def test_registry_coverage_flags_missing_paths(audit_mod, tmp_path, monkeypatch):

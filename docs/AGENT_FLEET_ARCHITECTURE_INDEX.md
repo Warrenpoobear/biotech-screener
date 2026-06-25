@@ -195,8 +195,9 @@ Phases 2–9 retired scheduled `run_agent_direct` from production cron and added
 | 11 | Live crontab verify vs install reference (`fleet_crontab_verify.py`) | Code-complete |
 | 12 | Crontab verify in evening catchup, digest, Telegram | Code-complete |
 | 13 | Watchdog herald health + F-2026-005 recovery | Code-complete |
+| 14 | Migration closure contract + Rule 12 host onboarding | Code-complete |
 
-**Migration arc (phases 2–13) is code-complete.** Host execution remains: install crontab, run checklist, close F-2026-005/006.
+**Migration arc (phases 2–14) is code-complete.** Host execution remains: install crontab, run checklist, close F-2026-005/006.
 
 Operator reference:
 

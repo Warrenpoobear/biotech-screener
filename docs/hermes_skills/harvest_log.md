@@ -9,6 +9,18 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-25 (agent fleet phase 14) — Migration closure contract
+
+### Tooling
+- **fleet_completion_audit.py**: `watchdog_herald_recovery` static check (phase 13 wiring contract)
+- **RULE_12_PROMOTION_CHECKLIST.md**: host onboarding block (post-migration)
+- **biotech_screener.md**: fleet migration complete note
+
+### Governance
+- Tier 0 (docs/audit contract). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet phase 13) — Watchdog herald recovery (F-2026-005)
 
 ### Tooling
