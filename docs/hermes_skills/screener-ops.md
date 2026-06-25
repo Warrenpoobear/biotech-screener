@@ -240,6 +240,22 @@ Only if the gateway reads stale copies from `~/.hermes/skills/` (see `docs/herme
 [ ] first_fire_ledger                → PASS or operator evidence closes B1b
 ```
 
+### Research host battery (non-fleet, WSL)
+
+After fleet onboarding, run the research battery when PIT snapshots and price history exist on the host. Research-only — does not modify production scoring.
+
+```bash
+bash tools/run_research_host_battery.sh
+# or with explicit as-of date:
+bash tools/run_research_host_battery.sh 2026-06-24
+```
+
+**Prerequisites:** `data/snapshots_pit_v2/`, `production_data/price_history.csv`, `data/snapshots/{date}/rankings.csv`
+
+**Outputs:** `output/checklist_v2_rerun/`, `output/dem_ranker_*`, `artifacts/spec105/`, optional `docs/governance/SCIART_PHASE13_2_NORMALIZATION_SAMPLE_REVIEW_*.md`
+
+Blocker context: `docs/research/CHECKLIST_V2_FINAL_SCORE_BLOCKER_2026_06_24.md`
+
 ---
 
 ## Town-Hermes Bridge (Spec 090)
@@ -342,6 +358,7 @@ Agent AGENTS.md docs updated with Llama-specific procedures:
 | Fleet audit | `tools/fleet_completion_audit.py` | Verify deterministic cron wiring |
 | Crontab verify | `tools/fleet_crontab_verify.py` | Live crontab vs install reference |
 | Host onboarding | `tools/run_fleet_host_onboarding.sh` | One-shot post-pull WSL setup |
+| Research battery | `tools/run_research_host_battery.sh` | Checklist v2 + Spec 100 IC + Spec 105 (WSL) |
 | Supervisor | `agents/ops_supervisor/supervisor.py` | Fleet-wide anomaly classification |
 | Post-snapshot | `tools/run_post_snapshot_supervisor.py` | Post-pipeline task orchestration |
 | Sentinel | `tools/agent_supervisor_sentinel.py` | Final watchdog |
@@ -554,6 +571,9 @@ Research-enablement tooling for backfilling expectation fields into historical s
 | Fleet Ops Status | `tools/fleet_ops_status.py` |
 | Fleet Completion Audit | `tools/fleet_completion_audit.py` |
 | Fleet Host Onboarding | `tools/run_fleet_host_onboarding.sh` |
+| Research Host Battery | `tools/run_research_host_battery.sh` |
+| Spec 105 Coverage Verifier | `tools/verify_expectation_coverage_spec105.py` |
+| Sci-Cart R4 Sample Review | `tools/sciart_normalization_sample_review.py` |
 | Ops Supervisor | `agents/ops_supervisor/supervisor.py` |
 | Post-Snapshot Supervisor | `tools/run_post_snapshot_supervisor.py` |
 | Ruleset Health Monitor | `tools/ruleset_health_monitor.py` |

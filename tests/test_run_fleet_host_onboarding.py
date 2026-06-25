@@ -14,3 +14,5 @@ def test_host_onboarding_invokes_checklist():
     assert "F-2026-005" in text
     assert "F-2026-006" in text
     assert "AGENT_FLEET_ARCHITECTURE_INDEX.md" in text
+    assert "run_research_host_battery.sh" in text
+    assert "phases 2–15" in text

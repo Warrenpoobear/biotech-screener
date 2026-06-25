@@ -15,7 +15,7 @@ cd "$REPO_ROOT"
 
 log() { echo "[$(date -Iseconds)] onboarding: $*"; }
 
-log "Agent fleet host onboarding — migration phases 2–14 code-complete"
+log "Agent fleet host onboarding — migration phases 2–15 code-complete"
 log "Architecture index: docs/AGENT_FLEET_ARCHITECTURE_INDEX.md"
 log "Rule 12 gates: docs/governance/RULE_12_PROMOTION_CHECKLIST.md"
 echo ""
@@ -31,3 +31,7 @@ log "  F-2026-005 Herald: confirm classified JSONL on host; watchdog runs --reco
 log "  F-2026-006 CI: restore GitHub Actions budget; green tests on main"
 log "  Update .learnings/memory.md stalled-loop table when confirmed"
 log "Done — artifacts under artifacts/fleet_ops/"
+echo ""
+echo "Step 4 — Research host battery (optional, after PIT snapshots on host):"
+echo "  bash tools/run_research_host_battery.sh"
+echo "  See docs/research/CHECKLIST_V2_FINAL_SCORE_BLOCKER_2026_06_24.md"

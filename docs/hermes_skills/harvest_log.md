@@ -9,6 +9,22 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-25 (research battery integration) — Operator docs/skills wiring
+
+### Docs + skills
+- **screener_ops**: research host battery section + monitoring/source tables
+- **hermes_tools_map**: research battery operator sequence
+- **operator_host_skills**: index row for Spec 100/105 battery
+- **run_fleet_host_onboarding.sh**: Step 4 research battery hint; phases 2–15 label fix
+
+### Artifacts
+- **SCIART_PHASE13_2_NORMALIZATION_SAMPLE_REVIEW_2026_06_25.md**: R4 worksheet (cloud-generated sample)
+
+### Governance
+- Tier 0 (docs/plumbing). No production scoring changes.
+
+---
+
 ## 2026-06-25 (non-fleet research sweep) — Host battery + Sci-Cart R4/R6
 
 ### Tooling

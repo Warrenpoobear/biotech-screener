@@ -273,6 +273,16 @@ bash tools/run_fleet_host_onboarding.sh
 
 Runs checklist (audit → fleet_ops → crontab verify) and prints F-2026-005/006 close criteria. Install crontab first via `install_agent_fleet_crontab.sh`.
 
+### Research host battery (operator WSL)
+
+```bash
+bash tools/run_research_host_battery.sh
+# optional as-of date:
+bash tools/run_research_host_battery.sh 2026-06-24
+```
+
+Runs Checklist v2, Spec 100 `final_score` IC, Spec 105 expectation coverage, and optional Sci-Cart R4 sample review. Requires `data/snapshots_pit_v2/`, `production_data/price_history.csv`, and `data/snapshots/{date}/rankings.csv` on the host. Research-only — does not modify production scoring. Blocker context: `docs/research/CHECKLIST_V2_FINAL_SCORE_BLOCKER_2026_06_24.md`.
+
 ### Skills hygiene
 
 ```bash
