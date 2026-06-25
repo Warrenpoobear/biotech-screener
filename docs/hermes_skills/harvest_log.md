@@ -9,6 +9,22 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-25 (operator host setup) — Unified fleet + research onboarding
+
+### Tooling
+- **run_operator_host_setup.sh**: chains fleet onboarding + optional research battery
+- **sciart_normalization_sample_review.py**: `--summarize --worksheet` for R4 verdict tracking
+- **fleet_completion_audit.py**: registers operator setup + research battery scripts
+
+### Docs
+- RULE_12, AGENT_FLEET_ARCHITECTURE_INDEX, hermes_tools_map, operator_host_skills
+- screener_ops, self-improving, operational_health_baselines skills synced
+
+### Governance
+- Tier 0 (docs/plumbing). No production scoring changes.
+
+---
+
 ## 2026-06-25 (research battery integration) — Operator docs/skills wiring
 
 ### Docs + skills

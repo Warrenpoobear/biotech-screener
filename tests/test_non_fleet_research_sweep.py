@@ -80,3 +80,35 @@ def test_sciart_sample_review_with_fixture(tmp_path, monkeypatch):
     text = mod.render_markdown(sample, trials_path=trials_path, as_of="2026-06-24")
     assert "Normalization Sample Review" in text
     assert "manual_verdict" in text.lower() or "verdict" in text.lower()
+
+
+def test_sciart_summarize_counts_verdicts(tmp_path):
+    worksheet = tmp_path / "worksheet.md"
+    worksheet.write_text(
+        "\n".join(
+            [
+                "## Annotated sample",
+                "",
+                "| target | nct_id | raw_condition | normalized | mondo_id | tier | confidence | verdict |",
+                "| --- | --- | --- | --- | --- | --- | --- | --- |",
+                "| lymphoma | NCT1 | foo | lymphoma | MONDO:1 | exact | 0.95 | TRUE_POSITIVE |",
+                "| lymphoma | NCT2 | bar | lymphoma | MONDO:1 | substring | 0.8 | FALSE_POSITIVE |",
+                "| breast cancer | NCT3 | baz | breast cancer | MONDO:2 | exact | 0.95 | TRUE_POSITIVE |",
+                "| breast cancer | NCT4 | qux | breast cancer | MONDO:2 | substring | 0.8 |  |",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    from tools import sciart_normalization_sample_review as mod
+
+    parsed = mod.parse_worksheet_verdicts(worksheet)
+    assert len(parsed) == 4
+    summary = mod.summarize_verdicts(parsed, worksheet=worksheet)
+    assert summary["labeled_rows"] == 3
+    assert summary["pending_rows"] == 1
+    assert summary["verdict_counts"]["TRUE_POSITIVE"] == 2
+    assert summary["verdict_counts"]["FALSE_POSITIVE"] == 1
+    assert summary["complete"] is False
+    assert summary["r4_pass"] is False
+

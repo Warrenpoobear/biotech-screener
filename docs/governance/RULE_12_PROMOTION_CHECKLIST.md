@@ -73,10 +73,19 @@ Install reference: `bash tools/install_agent_fleet_crontab.sh`
 ### Host onboarding (fleet migration complete — phases 2–15)
 
 ```bash
-bash tools/run_fleet_host_onboarding.sh
+bash tools/run_operator_host_setup.sh
 ```
 
-Or step-by-step on WSL after `git pull`:
+Unified setup runs fleet onboarding, then the research battery when PIT snapshots exist on the host.
+
+Fleet-only or research-only:
+
+```bash
+bash tools/run_operator_host_setup.sh --skip-research
+bash tools/run_operator_host_setup.sh --research-only
+bash tools/run_fleet_host_onboarding.sh
+bash tools/run_research_host_battery.sh
+```
 
 ```bash
 bash tools/install_agent_fleet_crontab.sh   # paste block into crontab -e

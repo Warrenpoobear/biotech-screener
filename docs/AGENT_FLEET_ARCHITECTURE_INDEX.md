@@ -198,13 +198,15 @@ Phases 2–9 retired scheduled `run_agent_direct` from production cron and added
 | 14 | Migration closure contract + Rule 12 host onboarding | Code-complete |
 | 15 | Unified host onboarding script + docs/skills sweep | Code-complete |
 
-**Migration arc (phases 2–15) is code-complete.** Host execution: `bash tools/run_fleet_host_onboarding.sh`
+**Migration arc (phases 2–15) is code-complete.** Host execution: `bash tools/run_operator_host_setup.sh`
 
 Operator reference:
 
 | Concern | Tool / script |
 |---------|----------------|
-| Host onboarding (one command) | `bash tools/run_fleet_host_onboarding.sh` |
+| Unified host setup (fleet + research) | `bash tools/run_operator_host_setup.sh` |
+| Fleet onboarding only | `bash tools/run_fleet_host_onboarding.sh` |
+| Research battery only | `bash tools/run_research_host_battery.sh` |
 | Install WSL crontab | `bash tools/install_agent_fleet_crontab.sh` |
 | Verify live crontab | `python3 tools/fleet_crontab_verify.py --write` |
 | Evening safety net | `tools/cron_evening_catchup.sh` |

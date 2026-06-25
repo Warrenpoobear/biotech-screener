@@ -20,6 +20,8 @@ For Phase 13 implementation continuity, the repo treats **`artifacts/scientific_
 - [ ] Promote `2026-06-23-postfix/` as active artifacts directory
 - [ ] Confirm normalizer fixes are authoritative on host cron runs
 - [ ] Authorize Phase 13.2+ tooling (sample review, mechanism design memo)
+- [ ] Complete R4 worksheet verdicts; summarize with:
+  `python3 tools/sciart_normalization_sample_review.py --summarize --worksheet docs/governance/SCIART_PHASE13_2_NORMALIZATION_SAMPLE_REVIEW_2026_06_25.md`
 
 ## Implementation note
 

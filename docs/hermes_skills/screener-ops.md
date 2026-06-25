@@ -158,6 +158,7 @@ Run on **operator WSL only** after every `git pull` that touches Hermes, skills,
 cd /mnt/c/Projects/biotech_screener/biotech-screener
 git pull origin main
 git log -1 --oneline
+bash tools/run_operator_host_setup.sh
 ```
 
 #### Phase 1 — Repo plumbing
@@ -358,6 +359,7 @@ Agent AGENTS.md docs updated with Llama-specific procedures:
 | Fleet audit | `tools/fleet_completion_audit.py` | Verify deterministic cron wiring |
 | Crontab verify | `tools/fleet_crontab_verify.py` | Live crontab vs install reference |
 | Host onboarding | `tools/run_fleet_host_onboarding.sh` | One-shot post-pull WSL setup |
+| Unified host setup | `tools/run_operator_host_setup.sh` | Fleet + optional research battery |
 | Research battery | `tools/run_research_host_battery.sh` | Checklist v2 + Spec 100 IC + Spec 105 (WSL) |
 | Supervisor | `agents/ops_supervisor/supervisor.py` | Fleet-wide anomaly classification |
 | Post-snapshot | `tools/run_post_snapshot_supervisor.py` | Post-pipeline task orchestration |
@@ -571,6 +573,7 @@ Research-enablement tooling for backfilling expectation fields into historical s
 | Fleet Ops Status | `tools/fleet_ops_status.py` |
 | Fleet Completion Audit | `tools/fleet_completion_audit.py` |
 | Fleet Host Onboarding | `tools/run_fleet_host_onboarding.sh` |
+| Unified Host Setup | `tools/run_operator_host_setup.sh` |
 | Research Host Battery | `tools/run_research_host_battery.sh` |
 | Spec 105 Coverage Verifier | `tools/verify_expectation_coverage_spec105.py` |
 | Sci-Cart R4 Sample Review | `tools/sciart_normalization_sample_review.py` |

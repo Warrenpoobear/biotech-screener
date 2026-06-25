@@ -15,7 +15,10 @@ Ranker IC on `final_score` stays **UNMEASURED** until this battery runs on a hos
 ## Commands (run on WSL after prerequisites present)
 
 ```bash
-# One-shot host battery (recommended)
+# Unified setup (recommended)
+bash tools/run_operator_host_setup.sh
+
+# Or one-shot research battery only
 bash tools/run_research_host_battery.sh
 
 # Or step-by-step:

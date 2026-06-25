@@ -265,6 +265,19 @@ Also feeds: `artifacts/heartbeat/`, `artifacts/ops_supervisor/`, `artifacts/flee
 
 ## 8. Standard operator sequences
 
+### Unified host setup (operator WSL)
+
+```bash
+bash tools/run_operator_host_setup.sh
+```
+
+Runs fleet onboarding (crontab hint + checklist + F-2026-005/006 reminders), then the research battery when `data/snapshots_pit_v2/`, `production_data/price_history.csv`, and `data/snapshots/{date}/rankings.csv` exist.
+
+```bash
+bash tools/run_operator_host_setup.sh --skip-research    # fleet only
+bash tools/run_operator_host_setup.sh --research-only    # research only
+```
+
 ### Fleet host onboarding (operator WSL)
 
 ```bash

@@ -32,6 +32,7 @@ python3 tools/fleet_ops_status.py
 python3 tools/fleet_ops_status.py --write
 python3 tools/fleet_completion_audit.py --write
 python3 tools/fleet_crontab_verify.py --write
+bash tools/run_operator_host_setup.sh
 bash tools/run_fleet_host_onboarding.sh
 bash tools/run_fleet_operator_checklist.sh
 python3 tools/agent_heartbeat_checks.py --json
