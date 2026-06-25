@@ -761,6 +761,48 @@ def _build_ew_top_n(
     }
 
 
+def _maybe_apply_path_a_overlay(
+    result: Dict[str, Any],
+    rankings: List[Dict[str, str]],
+    policy: Dict[str, Any],
+    account_usd: float,
+) -> Dict[str, Any]:
+    """Spec 106 shadow overlay when path_a_timing_gates.enabled in policy."""
+    from tools.path_a_timing_gates import apply_path_a_overlay, build_manifest, gates_from_policy
+
+    pa = apply_path_a_overlay(
+        result["positions"],
+        rankings,
+        policy,
+        account_usd=account_usd,
+    )
+    if pa is None:
+        return result
+
+    gates = gates_from_policy(policy)
+    result["positions"] = pa.positions
+    total = sum(p["target_dollars"] for p in pa.positions)
+    result["summary"]["total_positions"] = len(pa.positions)
+    result["summary"]["total_allocated"] = round(total, 2)
+    result["summary"]["residual_cash"] = round(account_usd - total, 2)
+    result["summary"]["path_a"] = {
+        "applied": True,
+        "compliant": pa.compliant,
+        "floor_relaxed": pa.floor_relaxed,
+        "swap_count": len(pa.swaps),
+        **pa.gates_summary(gates),
+    }
+    as_of = policy.get("_as_of_date", "")
+    if as_of:
+        result["path_a_manifest"] = build_manifest(
+            as_of_date=as_of,
+            gates=gates,
+            result=pa,
+            policy=policy,
+        )
+    return result
+
+
 def build_positions(
     rankings: List[Dict[str, str]],
     policy: Dict[str, Any],
@@ -781,7 +823,8 @@ def build_positions(
     # Dispatch by construction mode (default: sleeve for backward compat)
     mode = policy.get("construction_mode", "sleeve")
     if mode == "ew_top_n":
-        return _build_ew_top_n(rankings, policy, acct)
+        result = _build_ew_top_n(rankings, policy, acct)
+        return _maybe_apply_path_a_overlay(result, rankings, policy, acct)
 
     # Legacy sleeve-based construction below
     bucket_targets = policy.get("bucket_targets", {})
@@ -3035,9 +3078,17 @@ def run_shadow_portfolio(
     rankings = load_rankings(snap_dir)
     metadata = load_metadata(snap_dir)
     as_of_date = metadata.get("as_of_date", snap_dir.name)
+    policy["_as_of_date"] = as_of_date
 
     # Build positions
     positions_data = build_positions(rankings, policy, account_usd)
+
+    manifest = positions_data.pop("path_a_manifest", None)
+    if manifest is not None:
+        from tools.path_a_timing_gates import write_manifest
+
+        manifest_path = write_manifest(manifest, as_of_date=as_of_date)
+        positions_data.setdefault("summary", {})["path_a_manifest_path"] = str(manifest_path)
 
     # Compute performance vs prior (before saving, so we can annotate positions)
     perf = None

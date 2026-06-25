@@ -1,0 +1,143 @@
+{
+  "schema": "portfolio_policy.v7",
+  "description": "EW Top-30 + Path A timing gates (Spec 106 shadow). NOT production — use with --policy override only.",
+  "construction_mode": "ew_top_n",
+  "ew_top_n": 30,
+  "promotion_date": "2026-04-01",
+  "promotion_evidence": "construction_v2_promotion_report.json",
+  "rebalance_cadence": "weekly",
+  "rebalance_day": "FRIDAY",
+  "execution": "NEXT_OPEN",
+  "account_usd": 500000,
+  "family_filter_mode": "secondary",
+  "path_a_timing_gates": {
+    "enabled": true,
+    "schema": "path_a_timing_gates.v1",
+    "t0_imminent": {
+      "max_days": 7,
+      "max_weight_pct": 30.0
+    },
+    "t3_plus": {
+      "min_days": 90,
+      "min_weight_pct": 40.0,
+      "include_zones": ["T3", "T4"]
+    },
+    "enforcement": "post_selection_overlay",
+    "infeasibility_relax_order": ["t3_plus_floor"],
+    "hysteresis_days": 7
+  },
+  "bucket_targets": {
+    "binary_91_180": 0.55,
+    "binary_31_90": 0.25,
+    "binary_0_30": 0.10,
+    "less_binary": 0.10
+  },
+  "bucket_top_k": {
+    "binary_91_180": 20,
+    "binary_31_90": 15,
+    "binary_0_30": 10,
+    "less_binary": 15
+  },
+  "bucket_name_caps": {
+    "binary_91_180": 3.0,
+    "binary_31_90": 2.0,
+    "binary_0_30": 1.0,
+    "less_binary": 2.0
+  },
+  "family_overrides": {
+    "binary_91_180": {
+      "REGULATORY": {"max_k": 8, "name_cap_pct": 3.5},
+      "CLINICAL": {"max_k": 12, "name_cap_pct": 3.0}
+    },
+    "binary_31_90": {
+      "REGULATORY": {"max_k": 8, "name_cap_pct": 2.5},
+      "CLINICAL": {"max_k": 12, "name_cap_pct": 2.5}
+    }
+  },
+  "family_targets": {
+    "binary_31_90": {"REGULATORY": 0.50, "CLINICAL": 0.50},
+    "binary_0_30": {"REGULATORY": 0.30, "CLINICAL": 0.70}
+  },
+  "gap_risk": {
+    "high_days": 7,
+    "high_cap_pct": 0.5
+  },
+  "regulatory_ladder_enabled": true,
+  "regulatory_day_buckets": [14, 45, 90, 180],
+  "regulatory_bucket_caps_pct": {
+    "reg_0_14": 1.00,
+    "reg_15_45": 2.00,
+    "reg_46_90": 2.00,
+    "reg_91_180": 1.50
+  },
+  "regulatory_bucket_weights": {
+    "binary_0_30": {
+      "reg_0_14": 0.30,
+      "reg_15_45": 0.40,
+      "reg_46_90": 0.20,
+      "reg_91_180": 0.10
+    },
+    "binary_31_90": {
+      "reg_0_14": 0.05,
+      "reg_15_45": 0.40,
+      "reg_46_90": 0.40,
+      "reg_91_180": 0.15
+    },
+    "binary_91_180": {
+      "reg_0_14": 0.05,
+      "reg_15_45": 0.15,
+      "reg_46_90": 0.30,
+      "reg_91_180": 0.50
+    }
+  },
+  "regulatory_quality_tilt_enabled": true,
+  "regulatory_quality_clip_lo": 0.30,
+  "regulatory_quality_clip_hi": 1.00,
+  "regulatory_confidence_tilt_enabled": false,
+  "regulatory_confidence_weights": {"HIGH": 1.0, "MED": 0.6, "LOW": 0.3},
+  "regulatory_confidence_clip_lo": 0.30,
+  "regulatory_confidence_clip_hi": 1.00,
+  "regulatory_resolution_enabled": true,
+  "rebalance_buffer_ranks": 30,
+  "bucket_hysteresis_days": 7,
+  "alpha_health": {
+    "enabled": true,
+    "lookback_weeks": 4,
+    "min_weeks": 3,
+    "no_add_if_portfolio_hedged_excess_lt": 0.0,
+    "no_add_if_b91_hedged_excess_lt": 0.0
+  },
+  "global_name_cap": {
+    "enabled": true,
+    "cap_pct": 0.030
+  },
+  "global_cap_shock": {
+    "enabled": false
+  },
+  "risk_layer_enabled": true,
+  "therapeutic_area_cap_pct": 0.40,
+  "liquidity_max_adv_pct": 0.05,
+  "drawdown_breaker": {
+    "enabled": true,
+    "portfolio_dd_threshold": 0.15,
+    "portfolio_dd_cap_multiplier": 0.75,
+    "single_name_dd_threshold": 0.40,
+    "single_name_action": "WARN"
+  },
+  "correlated_pair_limit": {
+    "enabled": true,
+    "max_same_indication_phase": 2
+  },
+  "vol_target": {
+    "enabled": true,
+    "target_annualized": 0.50,
+    "action": "WARN",
+    "lookback_days": 60
+  },
+  "corr_cluster_limit": {
+    "enabled": true,
+    "threshold": 0.70,
+    "max_names_per_cluster": 3,
+    "lookback_days": 60
+  }
+}
