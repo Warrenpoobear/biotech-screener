@@ -46,7 +46,8 @@ cat <<EOF
 30 12 * * 1-5 ${REPO_ROOT}/tools/cron_watchdog.sh >> ${REPO_ROOT}/logs/watchdog.log 2>&1
 
 # Operator one-shot triage: python3 tools/fleet_ops_status.py --write
-# Wiring audit: python3 tools/fleet_completion_audit.py
+# Wiring audit: python3 tools/fleet_completion_audit.py --write
+# Host checklist: bash tools/run_fleet_operator_checklist.sh
 
 # Close F-2026-005/006 on host before enabling:
 #   export SELFIMPROVE_GATES_MET=1

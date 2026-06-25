@@ -13,3 +13,4 @@ def test_weekly_skills_review_runs_fleet_ops_status():
     assert "--write" in text
     assert "selfimprove_gates_status" in text
     assert "fleet_completion_audit.py" in text
+    assert "--write" in text

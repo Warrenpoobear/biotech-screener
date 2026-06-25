@@ -138,6 +138,22 @@ def _fleet_jobs_status(ds: str) -> dict[str, bool]:
     }
 
 
+def _completion_audit_status(ds: str) -> dict[str, Any]:
+    path = REPO / "artifacts" / "fleet_ops" / f"{ds}_completion_audit.json"
+    if not path.is_file():
+        return {"exists": False, "overall": None, "fail_count": None}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {"exists": True, "overall": "corrupt", "fail_count": None}
+    return {
+        "exists": True,
+        "overall": payload.get("overall"),
+        "pass_count": payload.get("pass_count"),
+        "fail_count": payload.get("fail_count"),
+    }
+
+
 def build_status(as_of: date | None = None) -> dict[str, Any]:
     as_of = as_of or date.today()
     ds = as_of.isoformat()
@@ -176,6 +192,7 @@ def build_status(as_of: date | None = None) -> dict[str, Any]:
         "heartbeat": heartbeat,
         "snapshot": snapshot,
         "fleet_jobs": jobs,
+        "completion_audit": _completion_audit_status(ds),
         "stalled_loops": stalled,
         "selfimprove_gates": gates,
         "crontab_install": "bash tools/install_agent_fleet_crontab.sh",
@@ -215,6 +232,13 @@ def _print_human(report: dict[str, Any]) -> None:
     print("\nFleet job logs (date present)")
     for name, ok in report["fleet_jobs"].items():
         print(f"  {name}: {'yes' if ok else 'no'}")
+
+    audit = report.get("completion_audit") or {}
+    print("\nCompletion audit")
+    if audit.get("exists"):
+        print(f"  overall={audit.get('overall')}  fail_count={audit.get('fail_count')}")
+    else:
+        print("  no artifact — run: python3 tools/fleet_completion_audit.py --write")
 
     print("\nStalled loops (operator confirm before close)")
     for loop in report["stalled_loops"]:

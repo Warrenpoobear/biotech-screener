@@ -7,6 +7,7 @@ crontab reference coverage, evening-catchup builder map, and key tool files.
 Usage:
     python3 tools/fleet_completion_audit.py
     python3 tools/fleet_completion_audit.py --json
+    python3 tools/fleet_completion_audit.py --write
 """
 
 from __future__ import annotations
@@ -14,11 +15,12 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
 REPO = Path(__file__).resolve().parent.parent
+OUT_DIR = REPO / "artifacts" / "fleet_ops"
 
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
@@ -213,10 +215,22 @@ def _print_human(report: dict[str, Any]) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Agent fleet completion audit (read-only)")
+    ap.add_argument("--as-of-date", help="YYYY-MM-DD for artifact filename (default: today)")
     ap.add_argument("--json", action="store_true", help="Print JSON only")
+    ap.add_argument("--write", action="store_true", help="Write artifacts/fleet_ops/{date}_completion_audit.json")
     args = ap.parse_args()
 
+    ds = args.as_of_date or date.today().isoformat()
     report = build_audit()
+    report["as_of_date"] = ds
+
+    if args.write:
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
+        out_path = OUT_DIR / f"{ds}_completion_audit.json"
+        out_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        if not args.json:
+            print(f"Wrote {out_path}")
+
     if args.json:
         print(json.dumps(report, indent=2, sort_keys=True))
     else:

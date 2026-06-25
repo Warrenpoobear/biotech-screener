@@ -48,3 +48,24 @@ def test_main_json_exit_code(audit_mod, monkeypatch):
     )
     monkeypatch.setattr(sys, "argv", ["fleet_completion_audit.py", "--json"])
     assert audit_mod.main() == 0
+
+
+def test_main_write_creates_artifact(audit_mod, tmp_path, monkeypatch):
+    monkeypatch.setattr(audit_mod, "REPO", tmp_path)
+    monkeypatch.setattr(audit_mod, "OUT_DIR", tmp_path / "artifacts" / "fleet_ops")
+    monkeypatch.setattr(
+        audit_mod,
+        "build_audit",
+        lambda: {
+            "schema": "fleet_completion_audit.v1",
+            "overall": "PASS",
+            "pass_count": 1,
+            "fail_count": 0,
+            "checks": [],
+        },
+    )
+    monkeypatch.setattr(sys, "argv", ["fleet_completion_audit.py", "--write", "--as-of-date", "2026-06-24"])
+
+    assert audit_mod.main() == 0
+    out = tmp_path / "artifacts" / "fleet_ops" / "2026-06-24_completion_audit.json"
+    assert out.is_file()

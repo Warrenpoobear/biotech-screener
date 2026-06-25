@@ -161,18 +161,61 @@ def test_agents_no_heartbeat(tmp_path, monkeypatch):
 
 
 def test_agents_with_heartbeat(tmp_path, monkeypatch):
-    """Agents command with heartbeat artifact → returns content."""
+    """Agents command reads fleet receipt (canonical heartbeat artifact)."""
     from tools.telegram_command_handler import TelegramCommandHandler
 
     monkeypatch.setattr("tools.telegram_command_handler.REPO_ROOT", tmp_path)
     hb_dir = tmp_path / "artifacts" / "heartbeat"
     hb_dir.mkdir(parents=True)
-    hb_file = hb_dir / "2026-05-15_heartbeat.md"
-    hb_file.write_text("# Fleet Heartbeat\n\nAgent 1: OK\nAgent 2: STALE")
+    hb_file = hb_dir / "2026-05-15_receipt.md"
+    hb_file.write_text("# Fleet Receipt\n\nVerdict: GREEN\n")
 
     handler = TelegramCommandHandler("token", "chat_id")
     result = handler._cmd_agents()
-    assert "Fleet Heartbeat" in result
+    assert "Fleet Receipt" in result
+
+
+def test_agents_prefers_fleet_ops_json(tmp_path, monkeypatch):
+    from tools.telegram_command_handler import TelegramCommandHandler
+
+    monkeypatch.setattr("tools.telegram_command_handler.REPO_ROOT", tmp_path)
+    fleet_dir = tmp_path / "artifacts" / "fleet_ops"
+    fleet_dir.mkdir(parents=True)
+    (fleet_dir / "2026-06-24_status.json").write_text(
+        json.dumps(
+            {
+                "as_of_date": "2026-06-24",
+                "overall": "WARN",
+                "herald": {"verdict": "WARN", "herald_done": False},
+                "heartbeat": {"verdict": "YELLOW"},
+                "completion_audit": {"exists": True, "overall": "PASS"},
+                "selfimprove_gates": {"message": "blocked"},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    handler = TelegramCommandHandler("token", "chat_id")
+    result = handler._cmd_agents()
+    assert "Fleet ops" in result
+    assert "WARN" in result
+    assert "blocked" in result
+
+
+def test_status_uses_final_severity(tmp_path, monkeypatch):
+    from tools.telegram_command_handler import TelegramCommandHandler
+
+    monkeypatch.setattr("tools.telegram_command_handler.REPO_ROOT", tmp_path)
+    sup_dir = tmp_path / "artifacts" / "ops_supervisor"
+    sup_dir.mkdir(parents=True)
+    (sup_dir / "2026-06-24_supervisor.json").write_text(
+        json.dumps({"final_severity": "ORANGE"}),
+        encoding="utf-8",
+    )
+
+    handler = TelegramCommandHandler("token", "chat_id")
+    result = handler._cmd_status()
+    assert "ORANGE" in result
 
 
 # ---------------------------------------------------------------------------

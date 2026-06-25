@@ -9,6 +9,27 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet phase 8) — Operator onboarding + Telegram fleet surface
+
+### Tooling
+- **run_fleet_operator_checklist.sh**: post-pull host verification (herald, fleet_ops write, completion audit write, Rule 12 gates)
+- **fleet_completion_audit.py**: `--write` → `artifacts/fleet_ops/{date}_completion_audit.json`
+- **fleet_ops_status.py**: includes `completion_audit` block from artifact
+- **telegram_command_handler.py**: `/agents` prefers fleet_ops JSON, falls back to heartbeat receipt; `/status` uses `final_severity`
+- **cron_weekly_skills_review.sh**: persists completion audit artifact (not log-only JSON)
+
+### Skills
+- **operational_health_baselines**: operator checklist + completion audit artifact
+
+### Tests
+- `tests/test_run_fleet_operator_checklist.py`
+- Extended telegram, fleet_completion_audit, weekly review tests
+
+### Governance
+- Tier 0 (observability/plumbing). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet phase 7) — Fleet completion audit + operator runbook
 
 ### Tooling

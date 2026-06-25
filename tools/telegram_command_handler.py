@@ -275,15 +275,26 @@ class TelegramCommandHandler:
             except (json.JSONDecodeError, OSError):
                 pass
 
-        # Any recent FAILs
+        # Ops supervisor severity (final_severity is canonical)
         ops_sup_dir = REPO_ROOT / "artifacts" / "ops_supervisor"
         if ops_sup_dir.exists():
             sup_files = sorted(ops_sup_dir.glob("*_supervisor.json"), reverse=True)
             if sup_files:
                 try:
                     sup_data = json.loads(sup_files[0].read_text())
-                    verdict = sup_data.get("overall_verdict", "?")
+                    verdict = sup_data.get("final_severity") or sup_data.get("overall_verdict", "?")
                     lines.append(f"<b>Ops verdict:</b> {verdict}")
+                except (json.JSONDecodeError, OSError):
+                    pass
+
+        # Fleet ops snapshot when available
+        fleet_ops_dir = REPO_ROOT / "artifacts" / "fleet_ops"
+        if fleet_ops_dir.exists():
+            status_files = sorted(fleet_ops_dir.glob("*_status.json"), reverse=True)
+            if status_files:
+                try:
+                    fleet = json.loads(status_files[0].read_text())
+                    lines.append(f"<b>Fleet overall:</b> {fleet.get('overall', '?')}")
                 except (json.JSONDecodeError, OSError):
                     pass
 
@@ -291,24 +302,47 @@ class TelegramCommandHandler:
 
     def _cmd_agents(self) -> str:
         """Fleet agent health summary."""
+        fleet_ops_dir = REPO_ROOT / "artifacts" / "fleet_ops"
+        if fleet_ops_dir.exists():
+            status_files = sorted(fleet_ops_dir.glob("*_status.json"), reverse=True)
+            if status_files:
+                try:
+                    data = json.loads(status_files[0].read_text())
+                    herald = data.get("herald") or {}
+                    heartbeat = data.get("heartbeat") or {}
+                    lines = [
+                        f"<b>Fleet ops</b> ({data.get('as_of_date', '?')})",
+                        f"Overall: {data.get('overall', '?')}",
+                        f"Herald: {herald.get('verdict', '?')} (done={herald.get('herald_done')})",
+                        f"Heartbeat: {heartbeat.get('verdict', '?')}",
+                    ]
+                    audit = data.get("completion_audit") or {}
+                    if audit.get("exists"):
+                        lines.append(f"Wiring audit: {audit.get('overall', '?')}")
+                    gates = data.get("selfimprove_gates") or {}
+                    if gates.get("message"):
+                        lines.append(gates["message"][:240])
+                    return "\n".join(lines)
+                except (json.JSONDecodeError, OSError):
+                    pass
+
         hb_dir = REPO_ROOT / "artifacts" / "heartbeat"
         if not hb_dir.exists():
-            return "No heartbeat artifacts found."
+            return "No fleet artifacts found. Run: python3 tools/fleet_ops_status.py --write"
 
-        hb_files = sorted(hb_dir.glob("*_heartbeat.md"), reverse=True)
-        if not hb_files:
-            return "No heartbeat artifacts found."
+        receipt_files = sorted(hb_dir.glob("*_receipt.md"), reverse=True)
+        if not receipt_files:
+            return "No fleet receipt found. Run: python3 tools/agent_heartbeat_checks.py"
 
         try:
-            content = hb_files[0].read_text()
-            # Return first ~30 lines (heartbeat summaries are usually 50-100 lines)
-            lines = content.split("\n")[:30]
-            summary = "\n".join(lines)
+            content = receipt_files[0].read_text()
+            lines_out = content.split("\n")[:30]
+            summary = "\n".join(lines_out)
             if len(content.split("\n")) > 30:
                 summary += "\n...(truncated)"
-            return summary if summary.strip() else "Heartbeat artifact empty."
+            return summary if summary.strip() else "Fleet receipt empty."
         except OSError:
-            return "Failed to read heartbeat artifact."
+            return "Failed to read fleet receipt."
 
     def _cmd_held(self) -> str:
         """Held spec ledger."""

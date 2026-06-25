@@ -189,7 +189,8 @@ Phases 2–6 retired scheduled `run_agent_direct` from production cron. Operator
 | Evening safety net | `tools/cron_evening_catchup.sh` |
 | Missed production / monitoring | `tools/cron_watchdog.sh` |
 | Fleet triage | `python3 tools/fleet_ops_status.py --write` |
-| Wiring verification | `python3 tools/fleet_completion_audit.py` |
+| Wiring verification | `python3 tools/fleet_completion_audit.py --write` |
+| Host onboarding | `bash tools/run_fleet_operator_checklist.sh` |
 | Rule 12 self-improve gate | `docs/governance/RULE_12_PROMOTION_CHECKLIST.md` |
 
 Host blockers **F-2026-005** (Herald) and **F-2026-006** (CI) must close before `SELFIMPROVE_GATES_MET=1`.
