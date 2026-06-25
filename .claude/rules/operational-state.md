@@ -8,7 +8,7 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-06-24  
+**Last updated:** 2026-06-25  
 **Update cadence:** weekly or upon governance-state change  
 **Authority:** operational status snapshot only; not architectural specification  
 **Staleness risk:** MEDIUM (reference `governance.md` for timeless process)
@@ -34,8 +34,8 @@ metadata:
 - **Safe lanes:** expectation field verification, Event EV shadow, Sci-Cart artifacts, observability/diagnostics, Hermes read-only queries
 - h20d checkpoint has passed; original v1.14.0 structural freeze superseded by the scoped freeze above
 - `ranker_active_contract.py` (branch `hygiene/ranker-active-contract-2026-04-30`) remains deferred
-- Spec 100 (ranker IC tooling correction) remains highest-priority post-freeze code change
-- **Lift condition:** explicit operator clearance
+- Spec 100 (ranker IC tooling): **IMPLEMENTED** (`measure_final_score_ic_spec100.py`); `final_score` IC interpretation deferred until host battery + freeze lift
+- **Lift condition:** explicit operator clearance — `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md`
 
 ---
 
@@ -80,7 +80,7 @@ metadata:
 - **Evidence package**: `bash tools/run_forward_evidence_package.sh` (requires `FREEZE_LIFT_ACK=1` to write). Memo: `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md`
 - **Path C close**: retrospective decision overdue (window 2026-05-28 → 2026-06-03); `python3 tools/path_c_window_close_decision.py --write`
 - **coinvest_score_z IC** (last measured 2026-05-13): Pooled mean IC = -0.031 (14 dates, 28.6% hit rate). Pre-cohort (clean): -0.051 (11.1% hit). Post-cohort (contaminated): -0.008 (60.0% hit). Verdict: OBSERVE. Refresh pending freeze lift.
-- **Ranker IC**: UNMEASURED. Existing tools conflate composite_score with final_score (Spec 095). All prior ranker IC claims remain non-authoritative until corrected tooling is reviewed (Spec 100).
+- **Ranker IC**: UNMEASURED on host until research battery runs. Spec 100 tooling measures `final_score` (not composite_score). Prior composite_score IC claims invalidated (Spec 095).
 - **inst_delta_z**: zeroed in selector since 2026-05-04. Active in ranker (NW-t = +3.32). Reinstatement requires IC recovery evidence.
 - **PIT/backtest research (2026-06-22)**: Autonomous PIT/backtest research was quarantined on 2026-06-22 (PR #379) and is **not accepted evidence**. Do not cite performance numbers or use outputs for model decisions until manually reviewed and explicitly accepted by operator.
 
@@ -112,7 +112,7 @@ metadata:
 |------|-------|--------|---------|
 | 094 | Selector-only comparator | RANKER_UNPROVEN | Rerun target 2026-05-27 |
 | 095 | Evaluation scope (IC tooling gap) | CURRENT_TOOLS_CONFLATED | Blocks ranker IC claims |
-| 100 | Ranker IC tooling correction | Spec written, no impl | Architecture freeze (~May 26) |
+| 100 | Ranker IC tooling correction | IMPLEMENTED | Host battery + freeze lift for interpretation |
 | 104 | Insider diagnostic stabilization | MEASURED | Isolation guard (R4a) |
 | 105 | Expectation layer coverage verification | CODE-CLOSED | Pending live QA |
 | 102 | Historical backfill for expectation research | DRAFT | â€” |
@@ -129,10 +129,10 @@ metadata:
 
 ## Hermes Skills Hub — Sync State
 
-*Last sync: 2026-05-30 · `python3 tools/sync_hermes_skills.py --register-meta`*
+*Last sync: 2026-06-25 · `python3 tools/sync_hermes_skills.py --register-meta`*
 
-- **Agent registry:** 34 agents in `agents/AGENT_REGISTRY.json` (31 active + 2 deprecated + 1 shadow); 4 Hermes governance jobs including `hermes-contradiction-detector`
-- **Registry:** 31 skills in `docs/hermes_skills/_meta.json` (16 Cursor `SKILL.md` mirrors + 3 `REFERENCE.md` + 12 Hermes-native)
+- **Agent registry:** 34 agents in `agents/AGENT_REGISTRY.json` (29 active + 2 deprecated + suppressed entries)
+- **Hermes skills:** 33 `.md` files in `docs/hermes_skills/` (32 registered + `harvest_log.md`)
 - **Sync map:** `tools/sync_hermes_skills.py` · audit: `tools/audit_hermes_skills.py`
 - **Authoritative (no overwrite from `skills/`):** `memory-steward` — canonical copy at `~/.hermes/skills/devops/memory-steward/`; repo backup `.hermes/skills/devops/memory-steward.SKILL.md`
 - **Recent additions (since 2026-05-30):** `biotech-mcp` registered as read-only diagnostic MCP server (PR #27233ec6); daily state brief operational (PR #374)
@@ -152,18 +152,19 @@ metadata:
 
 ---
 
-## Agent Fleet Self-Learning (2026-06-24)
+## Agent Fleet Self-Learning (2026-06-25)
 
-*Updated post-PR #397/#398, phase-2 branch*
+*Fleet migration phases 2–15 code-complete; PRs #399–#416 merged*
 
 - **Heartbeat:** 27 specialized checks in `tools/agent_heartbeat_checks.py`; Hermes on-demand jobs SKIP by design.
 - **Telemetry:** `log_agent_run` on daily builders + `data_auditor` + `ops_supervisor` + Hermes `run_job.py` exits.
-- **Outcome feedback:** all daily builders + qa/supervisor/herald/auditor/postmortem/CRT/event_binder/Hermes exits (policy_shadow overlap ≥80%, universe zero stale-alert, grok zero high alerts, etc.).
+- **Outcome feedback:** all daily builders + qa/supervisor/herald/auditor/postmortem/CRT/event_binder/Hermes exits.
 - **Herald recovery:** `tools/herald_recovery.py` / `herald_recovery.sh`; `herald_health_check.py --recover` for F-2026-005.
-- **Cron integration:** evening catchup fully deterministic; watchdog phase-2 recovery uses builders (not LLM); herald FAIL recovery via watchdog (phase 13); `install_agent_fleet_crontab.sh` for WSL install.
-- **Fleet migration:** phases 2–15 code-complete (2026-06-25); host onboarding: `bash tools/run_fleet_host_onboarding.sh`.
-- **Rule 12:** `docs/governance/RULE_12_PROMOTION_CHECKLIST.md` — weekly workflow + stalled-loop gates.
-- **Stalled loops:** F-2026-005 (Herald host recovery), F-2026-006 (Actions budget) — `SELFIMPROVE_GATES_MET=1` blocked until closed.
+- **Cron integration:** evening catchup: audit → fleet_ops → crontab verify; watchdog herald `--recover` on FAIL.
+- **Operator host:** `bash tools/run_operator_host_setup.sh` (fleet + research battery).
+- **Freeze-lift evidence:** `FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write`.
+- **Rule 12:** `docs/governance/RULE_12_PROMOTION_CHECKLIST.md`.
+- **Stalled loops:** F-2026-005 (Herald), F-2026-006 (CI) — block `SELFIMPROVE_GATES_MET=1`.
 
 ---
 

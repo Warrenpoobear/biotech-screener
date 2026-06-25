@@ -85,3 +85,18 @@ ruff format --check src tests scripts tools
 - `tools/` — utility scripts
 - `production_data/` — canonical data files
 - `artifacts/` — timestamped run outputs
+
+## Operator Host (WSL — authoritative)
+
+After `git pull`, run in order:
+
+```bash
+bash tools/run_operator_host_setup.sh              # fleet + optional research battery
+FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write  # freeze-lift evidence
+```
+
+Reference: `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md` · `.claude/rules/operational-state.md`
+
+**Scoped freeze active** — no ranker/selector/sizing/`final_score` changes without operator lift + Spec.
+
+**Stalled loops (open):** F-2026-005 Herald · F-2026-006 CI — block `SELFIMPROVE_GATES_MET=1` until closed on host.

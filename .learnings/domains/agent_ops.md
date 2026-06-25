@@ -44,9 +44,22 @@ Cloud knowledge-layer builds emit `UNKNOWN_CLOUD_ENV` for C1/C3 — not a pass/f
 3. Executable → `skills/*` + `harvest_log.md`
 4. Audit → `audit_learnings.py` + `audit_hermes_skills.py`
 
-## Fleet migration (2026-06-25)
+## Fleet migration + operator sequence (2026-06-25)
 
-Phases 2–15 code-complete on `main`. Operator WSL one-shot: `bash tools/run_fleet_host_onboarding.sh`. Close F-2026-005 (Herald) and F-2026-006 (CI) before `SELFIMPROVE_GATES_MET=1`. Index: `docs/AGENT_FLEET_ARCHITECTURE_INDEX.md`.
+Phases 2–15 code-complete on `main`. Canonical WSL sequence:
+
+```bash
+bash tools/run_operator_host_setup.sh
+FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write
+```
+
+| Script | Role |
+| --- | --- |
+| `run_operator_host_setup.sh` | Fleet onboarding + optional research battery |
+| `run_research_host_battery.sh` | Checklist v2 + Spec 100 IC + Spec 105 |
+| `run_forward_evidence_package.sh` | Path C close + forward IC (does not lift freeze) |
+
+Close F-2026-005 / F-2026-006 before `SELFIMPROVE_GATES_MET=1`. Index: `docs/AGENT_FLEET_ARCHITECTURE_INDEX.md`. Freeze-lift memo: `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md`.
 
 ## Cron sys.path isolation (Class P)
 

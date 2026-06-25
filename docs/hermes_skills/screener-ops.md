@@ -638,7 +638,7 @@ Key findings (pseudo-PIT):
 
 ## Town-Hermes Bridge Status
 
-*Last reviewed: 2026-06-24*
+*Last reviewed: 2026-06-25*
 
 - Phase A complete (dry-run mode, `OPERATOR_DELIVERY_DRY_RUN=1`)
 - Phase B wiring complete (2026-05-30): all event types in repo — held-spec, first-fire, ruleset-integrity, snapshot-missing, contradiction_detected, cron_missed

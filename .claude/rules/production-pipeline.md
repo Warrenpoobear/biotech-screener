@@ -61,11 +61,13 @@ All downstream consumers use `actionable_rank` (now driven by selector/ranker, n
 
 ## OpenClaw Ops Agent
 
-- **Workspace**: `agents/ops/` — SOUL.md (boundaries), TOOLS.md (daily working set), HEARTBEAT.md (3-check)
-- **Role**: read-mostly operator — runs pipeline, reads digest, surfaces action items, refuses to modify rulesets
-- **Gateway**: 127.0.0.1:18789, loopback only, auth via setup token
-- **Model**: Llama 3.3 70B Instruct Turbo via Together AI (switched 2026-05-13, was OpenRouter). Inference tuning: temperature 0.2, frequency penalty 0.1, repetition penalty 1.2, API timeout 2400s.
-- **Fleet**: 27 active agents per AGENT_REGISTRY.json (schema v1.0, as-of 2026-04-28). Authority levels: observe_only, observe_and_propose, write_artifacts, mutate_data, mutate_config. Only crt_resolution_watcher holds mutate_data. Three-lane routing per docs/ops/hermes_openclaw_routing_policy.md (Lane A deterministic, Lane B cheap monitoring, Lane C manual engineering). No cron job may depend on a gateway token. Terminal agents (ops_supervisor) intentionally unsupervised.
+- **Workspace:** `agents/ops/` — SOUL.md, TOOLS.md, HEARTBEAT.md
+- **Role:** read-mostly operator — runs pipeline, reads digest, refuses ruleset mutation
+- **Model:** DeepSeek v4 flash via OpenRouter on operator WSL gateway (2026-05-20+)
+- **Fleet:** 29 active agents + Hermes governance jobs; registry `agents/AGENT_REGISTRY.json`
+- **Evening catchup (22:00 ET):** `fleet_completion_audit` → `fleet_ops_status` → `fleet_crontab_verify`
+- **Operator host:** `bash tools/run_operator_host_setup.sh` after `git pull`
+- **Architecture freeze:** scoped production model freeze (2026-06-20) — no selector/ranker/sizing changes without lift
 
 ---
 

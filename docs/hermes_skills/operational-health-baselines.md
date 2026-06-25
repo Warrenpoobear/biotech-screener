@@ -39,6 +39,7 @@ python3 tools/fleet_crontab_verify.py --write
 bash tools/run_operator_host_setup.sh
 bash tools/run_fleet_host_onboarding.sh
 bash tools/run_fleet_operator_checklist.sh
+FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write
 python3 tools/agent_heartbeat_checks.py --json
 python3 tools/herald_health_check.py --stdout
 python3 tools/weekly_skills_digest.py

@@ -1,6 +1,6 @@
 # Operator Host Hermes Skills Layout
 
-Last updated: 2026-06-24 · Full skills + learnings sync workflow documented
+Last updated: 2026-06-25 · Operator host + freeze-lift evidence workflow
 
 This runbook separates **repo authority** from **operator runtime copies** so Hermes and Cursor do not drift silently.
 
@@ -126,6 +126,7 @@ If Cursor shows updated guidance but Hermes CLI does not, check for **stale `~/.
 | Unified host setup (fleet + research) | `bash tools/run_operator_host_setup.sh` |
 | Freeze-lift evidence package | `bash tools/run_forward_evidence_package.sh` · `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md` |
 | Research host battery (Spec 100/105) | `bash tools/run_research_host_battery.sh` · `docs/research/CHECKLIST_V2_FINAL_SCORE_BLOCKER_2026_06_24.md` |
+| Sci-Cart R4 sample review | `python3 tools/sciart_normalization_sample_review.py --summarize --worksheet docs/governance/SCIART_PHASE13_2_*.md` |
 | Sync history | [`../hermes_skills/harvest_log.md`](../hermes_skills/harvest_log.md) |
 | Recursive self-improvement loop | `skills/self-improving/SKILL.md` → `self-improving.md` · `REFERENCE.md` → `self-improving-reference.md` |
 | Knowledge stack + audit | `.learnings/README.md` · `python3 tools/audit_learnings.py` |

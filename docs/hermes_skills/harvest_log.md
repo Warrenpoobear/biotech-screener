@@ -9,6 +9,20 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-25 (prompt context MD sweep) — Agent bootstrap docs sync
+
+### Updated for code-prompt context
+- `.cursorrules`, `CLAUDE.md`, `.cursor/rules/hermes-context.mdc`
+- `.learnings/memory.md`, `README.md`, `domains/agent_ops.md`, `projects/biotech_screener.md`
+- `.claude/rules/operational-state.md`, `production-pipeline.md`, `governance.md`
+- `docs/AGENT_FLEET_ARCHITECTURE_INDEX.md`, `RULE_12`, `operator_host_skills.md`, `hermes_tools_map.md`
+- `skills/operational_health_baselines/SKILL.md`, `screener_ops` last-reviewed dates
+
+### Governance
+- Tier 0 docs only. Reflects PRs #413–#416 merged state.
+
+---
+
 ## 2026-06-25 (freeze-lift forward evidence) — Governance decision package
 
 ### Tooling

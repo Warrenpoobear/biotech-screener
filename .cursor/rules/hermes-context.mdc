@@ -46,12 +46,23 @@ Registry metadata must never override runtime identity documents.
 - Only `crt_resolution_watcher` has `mutate_data` authority
 - No agent has `mutate_config` -- operator-only
 - Check `held_spec_ledger` before modifying constrained areas
-- Architecture freeze ACTIVE — h20d DEFERRED (Path B, 2026-05-24); 13F quarantine ACTIVE (Jaccard 0.364, gate ≥0.70); no selector/ranker/sizing/KG changes authorized; earliest re-decision ~2026-06-15
+- **Scoped production model freeze** (2026-06-20, INC-2026-06-20-AUTOPUSH): ranker, selector, sizing, `final_score`, portfolio/snapshot files frozen. Lift requires operator sign-off via `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md`
+- Safe lanes: expectation verification, Event EV shadow, Sci-Cart diagnostics, observability, Hermes read-only
+
+## Operator host sequence (WSL)
+
+```bash
+git pull origin main
+bash tools/run_operator_host_setup.sh
+FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write
+```
+
+Fleet migration phases 2–15 code-complete. Stalled loops F-2026-005 (Herald) and F-2026-006 (CI) block `SELFIMPROVE_GATES_MET=1`.
 
 ## Agent Fleet Quick Reference
 
-- Registry `as_of` 2026-06-19: 34 entries = 29 active, 1 suppressed (`bioshort_watch`), 4 deprecated (`biotech_news_digest`, `company_news_ingest`, `policy_shadow_watch`, `shadow_watch`); 31 directories on disk. Active fleet includes 4 Hermes governance jobs (held-spec-ledger, first-fire-validator, ruleset-integrity, contradiction-detector).
-- Model: DeepSeek v4 flash via OpenRouter (switched 2026-05-20; gateway fixed to openrouter primary 2026-05-25)
+- Registry: 34 entries (29 active, 1 suppressed, 4 deprecated); 31 directories on disk
+- Model: DeepSeek v4 flash via OpenRouter (gateway on operator WSL)
 - Cron: 5:30 PM ET weekdays (daily production), 10:00 AM ET (universe maintenance)
-- Monitoring: heartbeat -> supervisor -> post-snapshot -> sentinel (4-layer stack)
-- Knowledge-layer cron checks (C1/C3) are authoritative on the **operator host** only; Cloud Agent VMs without `crontab` emit `UNKNOWN_CLOUD_ENV`, not hard contradictions
+- Monitoring: heartbeat → supervisor → post-snapshot → sentinel; evening catchup runs audit → fleet_ops → crontab verify
+- Knowledge-layer cron checks (C1/C3) authoritative on **operator WSL** only; Cloud emits `UNKNOWN_CLOUD_ENV`

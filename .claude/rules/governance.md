@@ -202,3 +202,23 @@ ticker:
 - **Tests**: 33
 - **Policy**: Read-only analysis. Canonical reporting source — console agent summaries are non-authoritative unless backed by dataset evidence.
 - **Output**: `reports/data_explorer/` (timestamped directories with markdown + PNG charts)
+
+---
+
+## Architecture Freeze & Lift (2026-06-20+)
+
+**Scoped production model freeze** (INC-2026-06-20-AUTOPUSH): ranker, selector, sizing, `final_score`, portfolio/snapshot files frozen.
+
+| Safe during freeze | Blocked without lift + Spec |
+| --- | --- |
+| Expectation verification, Spec 105 QA | Ranker/selector weight changes |
+| Event EV shadow, Sci-Cart diagnostics | `final_score` production changes |
+| Observability, fleet ops, Hermes read-only | Portfolio construction changes |
+
+**Lift workflow:** `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md`
+
+```bash
+FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write
+```
+
+Operator sign-off required. Evidence package does not auto-lift freeze.

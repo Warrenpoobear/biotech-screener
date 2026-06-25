@@ -73,6 +73,20 @@ python3 tools/audit_learnings.py   # bootstrap lines, compaction hints, LRN/HOT 
 
 Learnings and knowledge files are **Tier 0**. They must not encode ranker/selector/sizing/`final_score` changes. SOUL.md and runtime cron beat stale markdown.
 
+## Operator prompt bootstrap (agents)
+
+When starting a code session on this repo, load in order:
+
+| Order | File |
+| --- | --- |
+| 1 | `.learnings/memory.md` (HOT bootstrap) |
+| 2 | `.learnings/projects/biotech_screener.md` |
+| 3 | `.claude/rules/operational-state.md` |
+| 4 | `CLAUDE.md` / `.cursorrules` |
+| 5 | Skill for task area (`skills/screener_ops/`, `skills/codegraph/`, etc.) |
+
+WSL operator sequence: `run_operator_host_setup.sh` → `FREEZE_LIFT_ACK=1 run_forward_evidence_package.sh --write`
+
 ## Related
 
 | Resource | Path |

@@ -9,8 +9,9 @@
 | Recursion | `LEARNINGS.md` → `memory.md` / `domains/` / `projects/` → `skills/` → sync → `harvest_log.md` |
 | Audit | `python3 tools/audit_learnings.py` · map: `.learnings/README.md` |
 | CodeGraph | **First → grep/read → edit.** v0.9.9 pinned. Bounded — not cron/literals/dispatch proof. |
-| Host | **WSL** = cron, hedge, gateway. **Cloud** = repo/CI/skills; `UNKNOWN_CLOUD_ENV` expected. |
-| Governance | No ranker/selector/sizing/`final_score` without Spec. Track B skips = expected. |
+| Host | **WSL** = cron, hedge, gateway, evidence package. **Cloud** = repo/CI/skills; `UNKNOWN_CLOUD_ENV` expected. |
+| Operator | `run_operator_host_setup.sh` → `FREEZE_LIFT_ACK=1 run_forward_evidence_package.sh --write` |
+| Governance | No ranker/selector/sizing/`final_score` without Spec + freeze lift. Track B skips = expected. |
 | CI | Actions budget pre-start ≠ code failure. |
 | Hermes | MCP = read-only fleet; cron agents → `codegraph_guard.py`; gateway on WSL only. |
 | Agents | Registry has 31 dirs: 29 active + 2 deprecated (`bioshort_watch`, `shadow_watch`). |
@@ -51,7 +52,7 @@ Patch-efficacy tracking is **blocked** until both rows close. Cloud cannot confi
 
 | ID | System | Status | Evidence (2026-06-24) | Operator close criterion | Target |
 | --- | --- | --- | --- | --- | --- |
-| F-2026-005 | Herald Digest | **OPEN** | Last repo classified JSONL: `2026-02-26`; no `artifacts/herald/` in cloud clone | Host: Herald cron produces `deduped` + `classified` JSONL for ≥1 trading day; zero recurrence 14d post-fix | **2026-07-01** (operator confirm) |
-| F-2026-006 | GitHub CI | **OPEN** | `main` workflow failures complete in ~3–4s (budget pre-start pattern); merge gates unverified | Host: Actions budget restored; `tests` workflow green on `main` push | **2026-07-01** (operator confirm) |
+| F-2026-005 | Herald Digest | **OPEN** | Last repo classified JSONL: `2026-02-26`; watchdog `--recover` wired | Host: deduped + classified JSONL ≥1 trading day; 14d zero recurrence | **2026-07-01** |
+| F-2026-006 | GitHub CI | **OPEN** | `main` workflow ~3–4s fail (Actions budget) | Host: budget restored; green `tests` on `main` push | **2026-07-01** |
 
 When either closes: set `promotion_status: RESOLVED` in failure-patterns feed, append harvest_log efficacy block, unblock Rule 12 back-check for that outage's patches.

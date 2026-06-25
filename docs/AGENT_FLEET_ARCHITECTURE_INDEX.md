@@ -207,6 +207,7 @@ Operator reference:
 | Unified host setup (fleet + research) | `bash tools/run_operator_host_setup.sh` |
 | Fleet onboarding only | `bash tools/run_fleet_host_onboarding.sh` |
 | Research battery only | `bash tools/run_research_host_battery.sh` |
+| Forward evidence package | `FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write` |
 | Install WSL crontab | `bash tools/install_agent_fleet_crontab.sh` |
 | Verify live crontab | `python3 tools/fleet_crontab_verify.py --write` |
 | Evening safety net | `tools/cron_evening_catchup.sh` |
@@ -216,8 +217,9 @@ Operator reference:
 | Host onboarding | `bash tools/run_fleet_operator_checklist.sh` |
 | Registry coverage | `artifacts/fleet_ops/{date}_completion_audit.json` |
 | Rule 12 self-improve gate | `docs/governance/RULE_12_PROMOTION_CHECKLIST.md` |
+| Freeze-lift evidence memo | `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md` |
 
-Host blockers **F-2026-005** (Herald) and **F-2026-006** (CI) must close before `SELFIMPROVE_GATES_MET=1`. Crontab install on WSL host remains operator action.
+Host blockers **F-2026-005** (Herald) and **F-2026-006** (CI) must close before `SELFIMPROVE_GATES_MET=1`. Path C window close (2026-06-03) retrospective artifact via `path_c_window_close_decision.py --write`.
 
 ---
 
@@ -233,7 +235,7 @@ If you identify an issue or improvement in the fleet:
 
 ---
 
-**Document version:** 2026-05-26  
+**Document version:** 2026-06-25  
 **Validation:** Codegraph (2026-05-26, no discrepancies)  
 **Status:** Architecture documented, governance established, ready for operational use  
 **Next review:** Upon any agent proposal or governance change

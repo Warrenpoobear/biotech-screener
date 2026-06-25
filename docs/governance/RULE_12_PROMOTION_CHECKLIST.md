@@ -2,7 +2,7 @@
 
 **Authority:** Tier 0 governance / self-learning plumbing only.  
 **Canonical skill:** `skills/self-improving/SKILL.md` (Rule 12) — do not fork thresholds (F-2026-001).  
-**Last updated:** 2026-06-24
+**Last updated:** 2026-06-25
 
 ---
 
@@ -94,6 +94,16 @@ bash tools/run_fleet_operator_checklist.sh  # audit → fleet_ops → crontab ve
 
 Watchdog (`cron_watchdog.sh`) auto-runs Herald health + `--recover` on FAIL (F-2026-005).  
 Close stalled-loop rows in `.learnings/memory.md` only after host confirms recovery.
+
+### Freeze-lift forward evidence (after host battery)
+
+```bash
+bash tools/run_forward_evidence_package.sh --dry-run
+export FREEZE_LIFT_ACK=1
+bash tools/run_forward_evidence_package.sh --write
+```
+
+Memo: `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md` — operator sign-off required; package does not lift freeze.
 
 ---
 

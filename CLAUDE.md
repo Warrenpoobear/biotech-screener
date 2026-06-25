@@ -89,8 +89,13 @@ Every new signal must include:
 | Selector Engine | `selector_engine.py` |
 | Ranker Engine | `ranker_engine.py` |
 | Daily Production | `tools/run_daily_production.py` |
-| Shadow Portfolio | `tools/live_shadow_portfolio.py` |
+| **Operator host setup** | `tools/run_operator_host_setup.sh` |
+| **Forward evidence package** | `tools/run_forward_evidence_package.sh` |
+| **Freeze-lift memo** | `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md` |
 | Promotion Battery | `scripts/research/run_promotion_battery.py` |
 | Ruleset Manifest | `production_data/decision_rulesets/manifest.json` |
 | Governance Policy | `governance/AGENT_ROUTING_POLICY.md` |
 | Agent Registry | `agents/AGENT_REGISTRY.json` |
+| Operational state | `.claude/rules/operational-state.md` |
+| Agent fleet index | `docs/AGENT_FLEET_ARCHITECTURE_INDEX.md` |
+| Hermes tools map | `docs/hermes_agents/hermes_tools_map.md` |

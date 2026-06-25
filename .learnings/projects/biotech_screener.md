@@ -17,12 +17,24 @@
 - Hermes agents use `common/codegraph_guard.py` (CodegraphGuard). All 5 gates implemented. Registration no longer deferred.
 - `@latest` caused non-deterministic installs — always pin version explicitly when upgrading.
 
+## Operator workflow (2026-06-25)
+
+```bash
+bash tools/run_operator_host_setup.sh
+FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write
+```
+
+| Artifact | Path |
+| --- | --- |
+| Forward evidence | `artifacts/forward_evidence/{date}_package.json` |
+| Path C close | `artifacts/governance/path_c_window_close_{date}.json` |
+| Freeze-lift memo | `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md` |
+
+**Pending host:** ranker IC UNMEASURED until battery runs; Sci-Cart R4 0/50 verdicts; Q2 13F period ends 2026-06-30.
+
 ## Agent registry / Hermes
+
 - Repo agent fleet: 31 directories = 29 active + 2 deprecated (`bioshort_watch`, `shadow_watch`). Do not re-add absent overlap dirs (`policy_shadow_watch`, `biotech_news_digest`, `company_news_ingest`) to `AGENT_REGISTRY.json` unless their directories are restored.
-- **Fleet migration (2026-06-25):** phases 2–15 code-complete on `main`. Host: `bash tools/run_fleet_host_onboarding.sh`.
-- **Research battery (2026-06-25):** `bash tools/run_research_host_battery.sh` — Checklist v2 + Spec 100 IC + Spec 105 (WSL; needs `snapshots_pit_v2`, `price_history.csv`).
-- **Unified host setup (2026-06-25):** `bash tools/run_operator_host_setup.sh` — fleet onboarding + research battery when prerequisites exist.
-- **Freeze-lift evidence (2026-06-25):** `FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write` — Path C close + forward IC package (does not lift freeze).
 
 ## Pipeline recovery (2026-06-24)
 
