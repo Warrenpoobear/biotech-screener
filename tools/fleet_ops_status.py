@@ -8,6 +8,7 @@ Usage:
     python3 tools/fleet_ops_status.py
     python3 tools/fleet_ops_status.py --as-of-date 2026-06-24
     python3 tools/fleet_ops_status.py --json
+    python3 tools/fleet_ops_status.py --write
 """
 
 from __future__ import annotations
@@ -16,31 +17,60 @@ import argparse
 import json
 import re
 import sys
+import time
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
 REPO = Path(__file__).resolve().parent.parent
+OUT_DIR = REPO / "artifacts" / "fleet_ops"
 
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
-STALLED_LOOPS: list[dict[str, str]] = [
-    {
-        "id": "F-2026-005",
+STALLED_LOOP_ACTIONS: dict[str, dict[str, str]] = {
+    "F-2026-005": {
         "area": "Herald Digest",
-        "status": "OPEN",
         "symptom": "Herald classified JSONL stale or dark pipeline on host",
         "action": "bash tools/herald_recovery.sh && python3 tools/herald_health_check.py --recover",
     },
-    {
-        "id": "F-2026-006",
+    "F-2026-006": {
         "area": "GitHub CI",
-        "status": "OPEN",
         "symptom": "Actions budget exhausted; merge gates unverified",
         "action": "Restore GitHub Actions budget; confirm tests workflow green on main",
     },
-]
+}
+
+def _stalled_loops_status() -> list[dict[str, str]]:
+    from tools.skills_loop_review import stalled_loop_entries
+
+    rows: list[dict[str, str]] = []
+    for entry in stalled_loop_entries():
+        fid = entry.get("id", "")
+        hints = STALLED_LOOP_ACTIONS.get(fid, {})
+        rows.append(
+            {
+                "id": fid,
+                "area": hints.get("area") or entry.get("system", ""),
+                "status": entry.get("status", "UNKNOWN"),
+                "symptom": hints.get("symptom", ""),
+                "action": hints.get("action", "See .learnings/memory.md stalled-loop table"),
+            }
+        )
+    if rows:
+        return rows
+    # Fallback when memory.md table unavailable (e.g. cloud clone)
+    return [
+        {"id": fid, "status": "OPEN", **meta}
+        for fid, meta in STALLED_LOOP_ACTIONS.items()
+    ]
+
+
+def _selfimprove_gates() -> dict[str, Any]:
+    from tools.skills_loop_review import selfimprove_gates_status
+
+    return selfimprove_gates_status()
+
 
 CRONTAB_HINTS: list[dict[str, str]] = [
     {"job": "herald_health", "schedule": "40 14 * * 1-5", "log": "logs/herald_health.log"},
@@ -120,13 +150,15 @@ def build_status(as_of: date | None = None) -> dict[str, Any]:
     snapshot = _snapshot_status(ds)
     jobs = _fleet_jobs_status(ds)
 
-    blockers = [loop["id"] for loop in STALLED_LOOPS if loop["status"] == "OPEN"]
+    stalled = _stalled_loops_status()
+    gates = _selfimprove_gates()
+    blockers = [loop["id"] for loop in stalled if loop.get("status", "").upper() == "OPEN"]
     overall = "HEALTHY"
     if herald["verdict"] == "FAIL" or heartbeat.get("verdict") == "RED":
         overall = "FAIL"
     elif herald["verdict"] in ("WARN",) or heartbeat.get("verdict") in ("YELLOW", "RED"):
         overall = "WARN"
-    elif blockers:
+    elif blockers or not gates.get("selfimprove_gates_met_allowed", True):
         overall = "WARN"
 
     return {
@@ -144,7 +176,8 @@ def build_status(as_of: date | None = None) -> dict[str, Any]:
         "heartbeat": heartbeat,
         "snapshot": snapshot,
         "fleet_jobs": jobs,
-        "stalled_loops": STALLED_LOOPS,
+        "stalled_loops": stalled,
+        "selfimprove_gates": gates,
         "crontab_install": "bash tools/install_agent_fleet_crontab.sh",
         "crontab_hints": CRONTAB_HINTS,
         "rule_12_checklist": "docs/governance/RULE_12_PROMOTION_CHECKLIST.md",
@@ -191,6 +224,10 @@ def _print_human(report: dict[str, Any]) -> None:
     for hint in report["crontab_hints"]:
         print(f"  {hint['job']}: {hint['schedule']} -> {hint['log']}")
 
+    print("\nSelf-improve gates")
+    gates = report.get("selfimprove_gates") or {}
+    print(f"  {gates.get('message', 'n/a')}")
+
     print("\nRule 12 gate: close F-2026-005/006 before SELFIMPROVE_GATES_MET=1")
     print(f"  checklist: {report['rule_12_checklist']}")
     print("=" * 72)
@@ -200,15 +237,49 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Agent fleet operator status (read-only)")
     ap.add_argument("--as-of-date", help="YYYY-MM-DD (default: today)")
     ap.add_argument("--json", action="store_true", help="Print JSON only")
+    ap.add_argument("--write", action="store_true", help="Write artifacts/fleet_ops/{date}_status.json")
+    ap.add_argument("--no-telemetry", action="store_true", help="Skip agent_skill_telemetry logging")
     args = ap.parse_args()
 
     as_of = date.fromisoformat(args.as_of_date) if args.as_of_date else None
+    started = time.perf_counter()
     report = build_status(as_of)
+
+    if args.write:
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
+        out_path = OUT_DIR / f"{report['as_of_date']}_status.json"
+        out_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        if not args.json:
+            print(f"Wrote {out_path}")
 
     if args.json:
         print(json.dumps(report, indent=2, sort_keys=True))
     else:
         _print_human(report)
+
+    if not args.no_telemetry:
+        try:
+            from tools.agent_skill_telemetry import log_agent_run
+            from tools.record_skill_feedback import attach_outcome_verdict
+
+            overall = report["overall"]
+            exec_id = log_agent_run(
+                "fleet_ops_status",
+                f"Fleet ops status for {report['as_of_date']}",
+                inputs={"as_of_date": report["as_of_date"]},
+                outputs={"overall": overall, "herald_verdict": report["herald"]["verdict"]},
+                success=overall != "FAIL",
+                error=None if overall != "FAIL" else overall,
+                latency_ms=(time.perf_counter() - started) * 1000,
+            )
+            if exec_id:
+                attach_outcome_verdict(
+                    exec_id,
+                    was_correct=overall == "HEALTHY",
+                    evidence=f"overall={overall} herald={report['herald']['verdict']}",
+                )
+        except Exception:
+            pass
 
     if report["overall"] == "FAIL":
         return 2

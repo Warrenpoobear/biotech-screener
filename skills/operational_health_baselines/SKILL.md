@@ -28,11 +28,24 @@ SLA baselines for agent artifact freshness and CI health. Used by fleet heartbea
 ## Health check commands
 
 ```bash
+python3 tools/fleet_ops_status.py
+python3 tools/fleet_ops_status.py --write
 python3 tools/agent_heartbeat_checks.py --json
 python3 tools/herald_health_check.py --stdout
 python3 tools/weekly_skills_digest.py
 python3 tools/audit_learnings.py
 ```
+
+## Heartbeat escalation (phase 4+)
+
+Default cron path is **artifact-only** — no LLM unless operator sets `HEARTBEAT_LLM_ESCALATE=1`.
+
+| Artifact | Purpose |
+|----------|---------|
+| `artifacts/heartbeat/{date}_receipt.md` | Daily fleet verdict |
+| `artifacts/heartbeat/{date}_escalation.json` | Structured anomalies (ops_supervisor reads first) |
+| `artifacts/heartbeat/{date}_anomalies.md` | Human-readable fallback |
+| `artifacts/fleet_ops/{date}_status.json` | Weekly/daily operator triage (`fleet_ops_status --write`) |
 
 ## Escalation ladder
 

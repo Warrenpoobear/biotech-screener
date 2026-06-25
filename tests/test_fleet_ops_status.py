@@ -66,6 +66,62 @@ def test_build_status_json_serializable(fleet_mod, monkeypatch):
     assert report["overall"] in ("WARN", "FAIL")
 
 
+def test_build_status_includes_selfimprove_gates(fleet_mod, tmp_path, monkeypatch):
+    ds = "2026-06-24"
+    monkeypatch.setattr(
+        "tools.herald_health_check.run_check",
+        lambda _as_of: {
+            "verdict": "HEALTHY",
+            "herald_done": True,
+            "latest_classified_date": ds,
+            "source_age_days": 0,
+            "issues": [],
+        },
+    )
+    monkeypatch.setattr(
+        fleet_mod,
+        "_selfimprove_gates",
+        lambda: {
+            "stalled_loops_open": True,
+            "open_ids": ["F-2026-005"],
+            "selfimprove_gates_met_allowed": False,
+            "message": "blocked",
+        },
+    )
+
+    report = fleet_mod.build_status(date.fromisoformat(ds))
+    assert report["selfimprove_gates"]["selfimprove_gates_met_allowed"] is False
+    assert report["overall"] == "WARN"
+
+
+def test_main_writes_status_artifact(fleet_mod, tmp_path, monkeypatch):
+    monkeypatch.setattr(fleet_mod, "REPO", tmp_path)
+    monkeypatch.setattr(fleet_mod, "OUT_DIR", tmp_path / "artifacts" / "fleet_ops")
+    monkeypatch.setattr(
+        fleet_mod,
+        "build_status",
+        lambda _as_of=None: {
+            "schema": "fleet_ops_status.v1",
+            "as_of_date": "2026-06-24",
+            "overall": "HEALTHY",
+            "herald": {"verdict": "HEALTHY"},
+            "heartbeat": {},
+            "snapshot": {},
+            "fleet_jobs": {},
+            "stalled_loops": [],
+            "selfimprove_gates": {},
+            "crontab_install": "",
+            "crontab_hints": [],
+            "rule_12_checklist": "",
+        },
+    )
+    monkeypatch.setattr(sys, "argv", ["fleet_ops_status.py", "--write", "--json", "--no-telemetry"])
+
+    assert fleet_mod.main() == 0
+    out = tmp_path / "artifacts" / "fleet_ops" / "2026-06-24_status.json"
+    assert out.is_file()
+
+
 def test_main_exit_code_warn_on_open_stalled_loops(fleet_mod, monkeypatch):
     monkeypatch.setattr(
         fleet_mod,

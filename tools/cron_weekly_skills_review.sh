@@ -19,6 +19,10 @@ log() { echo "[$(date -Iseconds)] $*"; }
 log "Weekly skills review for $DATE"
 log "Rule 12 checklist: docs/governance/RULE_12_PROMOTION_CHECKLIST.md"
 
+$PYTHON tools/fleet_ops_status.py --write --no-telemetry || true
+GATES_MSG=$($PYTHON -c "from tools.skills_loop_review import selfimprove_gates_status; print(selfimprove_gates_status()['message'])")
+log "$GATES_MSG"
+
 $PYTHON tools/weekly_skills_digest.py --date "$DATE"
 $PYTHON tools/audit_learnings.py
 

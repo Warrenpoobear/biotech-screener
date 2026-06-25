@@ -328,6 +328,25 @@ def stalled_loops_open(memory_path: Path | None = None) -> bool:
     return any(e.get("status", "").upper() == "OPEN" for e in entries)
 
 
+def selfimprove_gates_status(memory_path: Path | None = None) -> dict[str, Any]:
+    """Rule 12 gate summary for weekly review and fleet_ops_status."""
+    open_entries = [e for e in stalled_loop_entries(memory_path) if e.get("status", "").upper() == "OPEN"]
+    open_ids = [e["id"] for e in open_entries]
+    allowed = not open_ids
+    if open_ids:
+        message = (
+            "SELFIMPROVE_GATES_MET=1 blocked — confirm host recovery for: " + ", ".join(open_ids)
+        )
+    else:
+        message = "Stalled loops clear — operator may set SELFIMPROVE_GATES_MET=1"
+    return {
+        "stalled_loops_open": bool(open_ids),
+        "open_ids": open_ids,
+        "selfimprove_gates_met_allowed": allowed,
+        "message": message,
+    }
+
+
 def format_loop_review_sections(
     *,
     environment: str = "prod",

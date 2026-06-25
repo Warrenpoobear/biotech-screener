@@ -133,6 +133,62 @@ def load_registry() -> dict:
         return {}
 
 
+def parse_heartbeat_escalation_json(path: Path) -> list[dict]:
+    """Parse structured heartbeat escalation JSON (phase 4+).
+
+    Preferred over markdown when present — same shape as parse_heartbeat_anomalies_md.
+    """
+    if not path.exists():
+        return []
+    try:
+        payload = json.load(open(path))
+    except Exception:
+        return []
+    agents = payload.get("agents") or []
+    anomalies: list[dict] = []
+    for entry in agents:
+        agent = str(entry.get("agent", "")).strip()
+        status = str(entry.get("status", "")).strip()
+        detail = str(entry.get("detail", "")).strip()
+        issues = [str(i).strip() for i in (entry.get("anomalies") or []) if str(i).strip()]
+        if not agent:
+            continue
+        anomalies.append(
+            {
+                "agent": agent,
+                "raw_status": status or "WARN",
+                "header": detail,
+                "issues": issues,
+                "raw_text": detail + (" | " + " | ".join(issues) if issues else ""),
+            }
+        )
+    return anomalies
+
+
+def load_heartbeat_anomalies(as_of: str) -> tuple[list[dict], dict[str, str]]:
+    """Load heartbeat anomalies; prefer escalation JSON, fallback to markdown."""
+    escalation_path = HEARTBEAT_DIR / f"{as_of}_escalation.json"
+    anomalies_path = HEARTBEAT_DIR / f"{as_of}_anomalies.md"
+    receipt_path = HEARTBEAT_DIR / f"{as_of}_receipt.md"
+
+    input_bits = {
+        "heartbeat_receipt_md": "found" if receipt_path.exists() else "missing",
+        "heartbeat_escalation_json": "missing",
+        "heartbeat_anomalies_md": "found" if anomalies_path.exists() else "missing",
+    }
+
+    if escalation_path.exists():
+        parsed = parse_heartbeat_escalation_json(escalation_path)
+        input_bits["heartbeat_escalation_json"] = "found" if parsed else "empty"
+        if parsed:
+            return parsed, input_bits
+
+    parsed_md = parse_heartbeat_anomalies_md(anomalies_path)
+    if parsed_md:
+        input_bits["heartbeat_anomalies_md"] = "found"
+    return parsed_md, input_bits
+
+
 def parse_heartbeat_anomalies_md(path: Path) -> list[dict]:
     """Parse the heartbeat anomalies markdown into structured records.
 
@@ -564,12 +620,14 @@ def main() -> int:
     SUPERVISOR_DIR.mkdir(parents=True, exist_ok=True)
 
     # -- Load inputs --
-    heartbeat_path = HEARTBEAT_DIR / f"{as_of}_anomalies.md"
     digest_md = OPS_DIGEST_DIR / f"{as_of}_digest.md"
     digest_json_path = OPS_DIGEST_DIR / f"{as_of}_digest.json"
 
+    anomalies_raw, heartbeat_input = load_heartbeat_anomalies(as_of)
     input_status = {
-        "heartbeat_anomalies_md": "found" if heartbeat_path.exists() else "missing",
+        "heartbeat_anomalies_md": heartbeat_input["heartbeat_anomalies_md"],
+        "heartbeat_escalation_json": heartbeat_input["heartbeat_escalation_json"],
+        "heartbeat_receipt_md": heartbeat_input["heartbeat_receipt_md"],
         "ops_digest_md": "found" if digest_md.exists() else "missing",
         "ops_digest_json": "found" if digest_json_path.exists() else "missing",
     }
@@ -583,7 +641,6 @@ def main() -> int:
         except Exception:
             input_status["ops_digest_json"] = "malformed"
 
-    anomalies_raw = parse_heartbeat_anomalies_md(heartbeat_path)
     prior, prior_date = find_prior_supervisor(as_of)
     input_status["prior_supervisor_json"] = "found" if prior else "missing"
     input_status["prior_supervisor_date"] = prior_date

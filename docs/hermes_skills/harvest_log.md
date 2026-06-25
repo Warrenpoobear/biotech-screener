@@ -9,6 +9,28 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet phase 5) — Escalation wiring + Rule 12 gate automation
+
+### Tooling
+- **ops_supervisor**: reads `artifacts/heartbeat/{date}_escalation.json` first (structured), markdown fallback
+- **fleet_ops_status.py**: `--write` → `artifacts/fleet_ops/{date}_status.json`; live stalled-loop parse from `memory.md`; telemetry
+- **skills_loop_review.py**: `selfimprove_gates_status()` for Rule 12 `SELFIMPROVE_GATES_MET` advisory
+- **cron_weekly_skills_review.sh**: writes fleet_ops artifact + logs gate message before digest
+
+### Skills
+- **operational_health_baselines**: fleet_ops + heartbeat escalation artifact table
+
+### Tests
+- `tests/test_ops_supervisor_escalation.py`
+- `tests/test_selfimprove_gates.py`
+- `tests/test_cron_weekly_skills_review.py`
+- Extended `tests/test_fleet_ops_status.py`
+
+### Governance
+- Tier 0 (observability/plumbing). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet phase 4) — Heartbeat artifact escalation + fleet ops status
 
 ### Tooling
