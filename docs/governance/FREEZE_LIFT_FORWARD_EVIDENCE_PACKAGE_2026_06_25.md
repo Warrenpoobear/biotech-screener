@@ -74,7 +74,7 @@ python3 tools/path_c_window_close_decision.py --window-end 2026-06-03 --write
 - [ ] Advisory verdict reviewed: `POSITIVE` | `OBSERVE` | `NEGATIVE` | `INSUFFICIENT_DATA`
 - [ ] Prior baseline superseded: coinvest pooled IC −0.031 (2026-05-13, OBSERVE)
 - [ ] Decision documented with date and operator initials below
-- [ ] If lift approved: Path A portfolio timing gate design authorized
+- [ ] If lift approved: Path A portfolio timing gate design authorized — see **Spec 106** (`docs/governance/PATH_A_PORTFOLIO_TIMING_GATES_SPEC_106_2026_06_25.md`)
 
 ### Strategic fork
 
@@ -105,6 +105,7 @@ python3 tools/path_c_window_close_decision.py --window-end 2026-06-03 --write
 - Autonomous PIT/backtest research (PR #379) is **quarantined** — not accepted evidence
 - No ranker/selector/sizing/`final_score` production changes without Spec + lift
 - Path A timing gates are the durable fix for catalyst concentration (post-freeze build)
+- **Design spec:** `docs/governance/PATH_A_PORTFOLIO_TIMING_GATES_SPEC_106_2026_06_25.md` (Spec 106)
 
 ---
 

@@ -236,7 +236,7 @@ If either trigger fires before window close, revoke Path C immediately and escal
 
 3. **Path C is not indefinite.** It's a controlled exception with hard exit conditions (floor or revert). Either observable IC validates the override, or operator chooses explicitly to extend/revert.
 
-4. **Path A is the durable fix.** Post-freeze, portfolio timing gates will enforce max 30% in 0–7d, min 40% in 90+d, decoupling institutional signal strength from portfolio timing policy. This removes the policy/signal mismatch structurally.
+4. **Path A is the durable fix.** Post-freeze, portfolio timing gates will enforce max 30% in 0–7d, min 40% in 90+d, decoupling institutional signal strength from portfolio timing policy. Design spec: `docs/governance/PATH_A_PORTFOLIO_TIMING_GATES_SPEC_106_2026_06_25.md` (Spec 106).
 
 ---
 

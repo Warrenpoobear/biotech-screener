@@ -115,6 +115,7 @@ metadata:
 | 100 | Ranker IC tooling correction | IMPLEMENTED | Host battery + freeze lift for interpretation |
 | 104 | Insider diagnostic stabilization | MEASURED | Isolation guard (R4a) |
 | 105 | Expectation layer coverage verification | CODE-CLOSED | Pending live QA |
+| 106 | Path A portfolio timing gates | DESIGN (draft) | Freeze lift + operator design lock |
 | 102 | Historical backfill for expectation research | DRAFT | â€” |
 
 ### Monitoring
