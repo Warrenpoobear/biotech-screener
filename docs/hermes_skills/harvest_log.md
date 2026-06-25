@@ -9,6 +9,24 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet phase 6) — Monitoring recovery + digest integration
+
+### Tooling
+- **cron_watchdog.sh**: recovers missed `agent_heartbeat_checks` receipt + `ops_supervisor` when snapshot exists
+- **cron_evening_catchup.sh**: writes `artifacts/fleet_ops/{date}_status.json` after supervisor chain
+- **weekly_skills_digest.py**: includes fleet_ops artifact section in Friday digest
+- **pattern_to_skillpatch.py**: refuses when stalled-loop rows still OPEN (defense in depth vs `SELFIMPROVE_GATES_MET`)
+- **agent_heartbeat_checks.py**: remove unused `OPENCLAW` variable
+
+### Tests
+- Extended `test_cron_watchdog_recovery.py`, `test_cron_evening_catchup.py`, `test_pattern_to_skillpatch_lane.py`
+- `tests/test_weekly_skills_digest_fleet_ops.py`
+
+### Governance
+- Tier 0 (observability/plumbing). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet phase 5) — Escalation wiring + Rule 12 gate automation
 
 ### Tooling

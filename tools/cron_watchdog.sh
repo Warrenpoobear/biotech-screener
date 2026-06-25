@@ -163,6 +163,24 @@ else
     fi
 fi
 
+# Monitoring layer recovery — heartbeat receipt + ops_supervisor for $TODAY when
+# production snapshot exists but evening observability was missed (WSL sleep).
+if phase2_artifact_present "data/snapshots/${TODAY}/rankings.csv"; then
+    if ! phase2_artifact_present "artifacts/heartbeat/${TODAY}_receipt.md"; then
+        log "MISSED heartbeat receipt for $TODAY — recovering"
+        $PYTHON "$REPO/tools/agent_heartbeat_checks.py" --date "$TODAY" \
+            >> "$REPO/logs/heartbeat_checks.log" 2>&1 \
+            || log "Heartbeat recovery failed (exit $?)"
+    fi
+    if phase2_artifact_present "artifacts/heartbeat/${TODAY}_receipt.md" \
+        && ! phase2_artifact_present "artifacts/ops_supervisor/${TODAY}_supervisor.json"; then
+        log "MISSED ops_supervisor for $TODAY — recovering"
+        $PYTHON "$REPO/agents/ops_supervisor/supervisor.py" --as-of "$TODAY" \
+            >> "$REPO/logs/ops_supervisor.log" 2>&1 \
+            || log "ops_supervisor recovery failed (exit $?)"
+    fi
+fi
+
 # Pre-market feed checks run on every invocation, regardless of production state.
 # Each check has its own per-run marker so a missed morning slot can recover later in the day.
 

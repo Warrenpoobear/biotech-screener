@@ -77,6 +77,35 @@ def _list_draft_files() -> list[Path]:
     return sorted(DRAFTS_DIR.glob("skill_patch_drafts_*.md"), reverse=True)
 
 
+def _fleet_ops_section(as_of: date) -> list[str]:
+    """Include fleet_ops artifact when present (written by evening/weekly cron)."""
+    path = REPO / "artifacts" / "fleet_ops" / f"{as_of.isoformat()}_status.json"
+    lines = ["## Fleet ops status", ""]
+    if not path.is_file():
+        lines.append("No artifact. Run: `python3 tools/fleet_ops_status.py --write`")
+        lines.append("")
+        return lines
+    try:
+        report = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        lines.append(f"Artifact corrupt: `{path.relative_to(REPO)}`")
+        lines.append("")
+        return lines
+    lines.append(f"- Overall: **{report.get('overall', '?')}**")
+    herald = report.get("herald") or {}
+    lines.append(f"- Herald: {herald.get('verdict', '?')} (done={herald.get('herald_done')})")
+    hb = report.get("heartbeat") or {}
+    lines.append(
+        f"- Heartbeat receipt: {'yes' if hb.get('receipt_exists') else 'no'} "
+        f"verdict={hb.get('verdict')} escalation={hb.get('escalation_mode') or 'none'}"
+    )
+    gates = report.get("selfimprove_gates") or {}
+    if gates.get("message"):
+        lines.append(f"- Rule 12: {gates['message']}")
+    lines.append("")
+    return lines
+
+
 def generate_digest(as_of: date | None = None, *, dry_run: bool = False) -> Path:
     as_of = as_of or date.today()
     month_str = as_of.strftime("%Y-%m")
@@ -109,6 +138,7 @@ def generate_digest(as_of: date | None = None, *, dry_run: bool = False) -> Path
         "",
     ]
 
+    lines.extend(_fleet_ops_section(as_of))
     lines.extend(format_loop_review_sections(as_of=as_of))
 
     lines.extend(["## Promotion candidates", ""])

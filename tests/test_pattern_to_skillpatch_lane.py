@@ -90,6 +90,16 @@ def test_draft_patch_blocks_spec_lane():
 
 def test_pattern_to_skillpatch_cli_with_gate(tmp_path, monkeypatch):
     monkeypatch.setenv("SELFIMPROVE_GATES_MET", "1")
+    memory = tmp_path / "memory.md"
+    memory.write_text(
+        """
+## Stalled-loop verdicts
+| F-2026-005 | Herald | RESOLVED | x | y | z |
+""",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("tools.skills_loop_review.MEMORY_MD", memory)
+
     learnings = tmp_path / "LEARNINGS.md"
     learnings.write_text(SAMPLE, encoding="utf-8")
     out = tmp_path / "drafts"
@@ -107,7 +117,11 @@ def test_pattern_to_skillpatch_cli_with_gate(tmp_path, monkeypatch):
         ],
         capture_output=True,
         text=True,
-        env={**os.environ, "SELFIMPROVE_GATES_MET": "1"},
+        env={
+            **os.environ,
+            "SELFIMPROVE_GATES_MET": "1",
+            "SELFIMPROVE_MEMORY_PATH": str(memory),
+        },
     )
     assert result.returncode == 0
     drafts = list(out.glob("skill_patch_drafts_*.md"))
@@ -116,3 +130,41 @@ def test_pattern_to_skillpatch_cli_with_gate(tmp_path, monkeypatch):
     assert "ops_pattern" in body
     assert "BLOCKED (spec lane)" in body
     assert "1 spec-lane entry refused" in result.stdout
+
+
+def test_pattern_to_skillpatch_blocked_when_stalled_loops_open(tmp_path, monkeypatch):
+    memory = tmp_path / "memory.md"
+    memory.write_text(
+        """
+## Stalled-loop verdicts
+| F-2026-005 | Herald | **OPEN** | x | y | z |
+""",
+        encoding="utf-8",
+    )
+
+    learnings = tmp_path / "LEARNINGS.md"
+    learnings.write_text(SAMPLE, encoding="utf-8")
+    out = tmp_path / "drafts"
+    tool = Path(__file__).resolve().parent.parent / "tools" / "pattern_to_skillpatch.py"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(tool),
+            "--learnings",
+            str(learnings),
+            "--min-recurrence",
+            "3",
+            "--out",
+            str(out),
+        ],
+        capture_output=True,
+        text=True,
+        env={
+            **os.environ,
+            "SELFIMPROVE_GATES_MET": "1",
+            "SELFIMPROVE_MEMORY_PATH": str(memory),
+        },
+    )
+    assert result.returncode == 0
+    assert "SELFIMPROVE_GATES_MET=1 blocked" in result.stderr
+    assert not list(out.glob("skill_patch_drafts_*.md"))

@@ -36,7 +36,6 @@ from tools.skills_logger_v2 import log_skill  # noqa: E402
 SNAPSHOT_DIR = REPO_ROOT / "data" / "snapshots"
 ARTIFACTS_DIR = REPO_ROOT / "artifacts"
 LOGS_DIR = REPO_ROOT / "logs"
-OPENCLAW = REPO_ROOT / "tools" / "run_openclaw.sh"
 REGISTRY_PATH = REPO_ROOT / "agents" / "AGENT_REGISTRY.json"
 TERMINAL_UNSUPERVISED_AGENTS = {"ops_supervisor"}
 HERMES_JOB_PREFIX = "hermes-"

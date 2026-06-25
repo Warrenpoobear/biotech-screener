@@ -168,4 +168,9 @@ check_supervisor_sentinel() { file_exists "$REPO/artifacts/ops_supervisor/${TODA
 run_tool supervisor_sentinel 1915 "$REPO/logs/ops_supervisor.log" check_supervisor_sentinel \
     "$PYTHON $REPO/tools/agent_supervisor_sentinel.py --as-of $TODAY"
 
+# fleet_ops_status — daily operator snapshot for weekly digest / triage
+check_fleet_ops() { file_exists "$REPO/artifacts/fleet_ops/${TODAY}_status.json"; }
+run_tool fleet_ops_status 2200 "$REPO/logs/fleet_ops.log" check_fleet_ops \
+    "$PYTHON $REPO/tools/fleet_ops_status.py --write --no-telemetry"
+
 log "=== Evening catch-up complete ==="

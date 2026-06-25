@@ -164,6 +164,14 @@ def main() -> int:
         )
         return 0
 
+    from tools.skills_loop_review import selfimprove_gates_status
+
+    memory_path = Path(os.getenv("SELFIMPROVE_MEMORY_PATH", str(REPO / ".learnings" / "memory.md")))
+    gates = selfimprove_gates_status(memory_path)
+    if not gates.get("selfimprove_gates_met_allowed", False):
+        print(f"pattern_to_skillpatch: {gates['message']}", file=sys.stderr)
+        return 0
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--learnings", default=".learnings/LEARNINGS.md")
     ap.add_argument("--min-recurrence", type=int, default=3)

@@ -54,6 +54,8 @@ Automated promotion is **staged**. Both env gates are required for their respect
 | `SELFIMPROVE_IMMEDIATE_VERDICT=1` | `run_agent_direct.py` | Enables `record_feedback()` |
 | `SELFIMPROVE_GATES_MET=1` | `pattern_to_skillpatch.py` | Writes drafts to `artifacts/skill_patch_drafts/` |
 
+`pattern_to_skillpatch.py` also refuses when stalled-loop rows are still **OPEN** in `.learnings/memory.md` (even when `SELFIMPROVE_GATES_MET=1`).
+
 **Weekly operator workflow (Friday):**
 
 ```bash

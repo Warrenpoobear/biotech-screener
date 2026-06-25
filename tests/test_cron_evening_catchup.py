@@ -48,3 +48,10 @@ def test_evening_catchup_uses_deterministic_ops_and_sentinel():
     assert "catalyst_resolution_tracker.py" in text
     assert "build_crt_options_join.py" in text
     assert "run_postmortem.py" in text
+
+
+def test_evening_catchup_writes_fleet_ops_status():
+    text = CATCHUP.read_text(encoding="utf-8")
+    assert "fleet_ops_status.py" in text
+    assert "artifacts/fleet_ops/" in text
+    assert "--write" in text
