@@ -3,9 +3,16 @@
 #
 # Uses portfolio_policy_path_a_shadow.json (gates enabled). Does NOT change production policy.
 #
+# Writes:
+#   artifacts/live_shadow_path_a/positions/{date}.json
+#   artifacts/portfolio_construction/{date}_path_a_manifest.json
+#
 # Usage:
 #   bash tools/run_path_a_shadow.sh 2026-06-24
-#   bash tools/run_path_a_shadow.sh 2026-06-24 --write
+#   bash tools/run_path_a_shadow.sh 2026-06-24 --write   # alias (manifest auto-written)
+#
+# Daily (post-production on WSL):
+#   bash tools/run_path_a_shadow.sh $(date +%Y-%m-%d)
 
 set -euo pipefail
 
@@ -29,15 +36,18 @@ for arg in "$@"; do
   fi
 done
 
-echo "[$(date -Iseconds)] Path A shadow portfolio for $DATE"
+log() { echo "[$(date -Iseconds)] path_a_shadow: $*"; }
+
+log "Path A shadow portfolio for $DATE (policy: portfolio_policy_path_a_shadow.json)"
 $PYTHON tools/live_shadow_portfolio.py \
   --as-of-date "$DATE" \
   --policy "$POLICY" \
   --out-dir "${REPO_ROOT}/artifacts/live_shadow_path_a"
 
-if [[ "$WRITE" -eq 1 ]]; then
-  $PYTHON tools/path_a_timing_gates.py \
-    --as-of-date "$DATE" \
-    --policy "$POLICY" \
-    --write
+MANIFEST="${REPO_ROOT}/artifacts/portfolio_construction/${DATE}_path_a_manifest.json"
+if [[ -f "$MANIFEST" ]]; then
+  log "Manifest: $MANIFEST"
+elif [[ "$WRITE" -eq 1 ]]; then
+  log "WARN: expected manifest missing at $MANIFEST"
+  exit 1
 fi

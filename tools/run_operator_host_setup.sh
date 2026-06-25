@@ -3,10 +3,12 @@
 #
 # Step 1 always runs fleet onboarding (crontab hint + checklist + gate reminders).
 # Step 2 runs the research host battery when PIT snapshots and price history exist.
+# Step 3 (A1) runs Path A shadow portfolio when today's rankings.csv exists.
 #
 # Usage:
 #   bash tools/run_operator_host_setup.sh
 #   bash tools/run_operator_host_setup.sh --skip-research
+#   bash tools/run_operator_host_setup.sh --skip-path-a
 #   bash tools/run_operator_host_setup.sh --research-only
 #   bash tools/run_operator_host_setup.sh 2026-06-24
 
@@ -17,12 +19,14 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$REPO_ROOT"
 
 SKIP_RESEARCH=0
+SKIP_PATH_A=0
 RESEARCH_ONLY=0
 DATE=""
 
 while [ $# -gt 0 ]; do
     case "$1" in
         --skip-research) SKIP_RESEARCH=1; shift ;;
+        --skip-path-a) SKIP_PATH_A=1; shift ;;
         --research-only) RESEARCH_ONLY=1; shift ;;
         -h|--help)
             sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'
@@ -53,6 +57,16 @@ research_prereqs_met() {
 run_research_battery() {
     log "Research prerequisites present — running research host battery for $DATE"
     bash "$REPO_ROOT/tools/run_research_host_battery.sh" "$DATE"
+}
+
+path_a_prereqs_met() {
+    [ -f "$REPO_ROOT/data/snapshots/$DATE/rankings.csv" ] \
+        && [ -f "$REPO_ROOT/production_data/portfolio_policy_path_a_shadow.json" ]
+}
+
+run_path_a_shadow() {
+    log "Path A shadow (Spec 106 A1) for $DATE"
+    bash "$REPO_ROOT/tools/run_path_a_shadow.sh" "$DATE"
 }
 
 if [ "$RESEARCH_ONLY" -eq 1 ]; then
@@ -92,4 +106,16 @@ else
     log "    data/snapshots/$DATE/rankings.csv"
     log "When ready: bash tools/run_research_host_battery.sh $DATE"
     log "After battery: bash tools/run_forward_evidence_package.sh --dry-run"
+fi
+
+if [ "$SKIP_PATH_A" -eq 0 ]; then
+    echo ""
+    if path_a_prereqs_met; then
+        run_path_a_shadow || log "WARN: Path A shadow exited non-zero (see above)"
+    else
+        log "Path A shadow skipped — need data/snapshots/$DATE/rankings.csv"
+        log "Daily (post-production): bash tools/run_path_a_shadow.sh $DATE"
+    fi
+else
+    log "Skipping Path A shadow (--skip-path-a)"
 fi

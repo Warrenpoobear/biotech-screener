@@ -311,7 +311,7 @@ New metric (add to exposure block):
 | Phase | Scope | Governance |
 | --- | --- | --- |
 | **A0** (shadow-only) | `path_a_timing_gates.py` + tests; policy `enabled: false` in prod | Tier 2 — safe during freeze if shadow-only |
-| **A1** (shadow enabled) | Daily shadow run with Path A policy alongside baseline | Tier 2 — observability |
+| **A1** (shadow enabled) | `run_path_a_shadow.sh` wired in `run_operator_host_setup.sh` step 3 | Tier 2 — observability |
 | **A2** (production) | Flip `enabled: true` in production policy; align health thresholds | **Tier 3 — requires freeze lift** |
 | **A3** (ruleset) | Bump ruleset manifest entry; update `MODEL_DOCUMENTATION.md` | Tier 3 |
 
