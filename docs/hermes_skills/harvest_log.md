@@ -9,6 +9,20 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet phase 13) — Watchdog herald recovery (F-2026-005)
+
+### Tooling
+- **cron_watchdog.sh**: runs herald health check when artifact missing; `--recover` on FAIL (once/day via marker)
+- **AGENT_FLEET_ARCHITECTURE_INDEX.md**: migration arc phases 2–13 marked code-complete
+
+### Tests
+- Extended `test_cron_watchdog_recovery.py`
+
+### Governance
+- Tier 0 (observability/recovery plumbing). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet phase 12) — Crontab verify integration capstone
 
 ### Tooling

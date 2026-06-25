@@ -181,6 +181,34 @@ if phase2_artifact_present "data/snapshots/${TODAY}/rankings.csv"; then
     fi
 fi
 
+# Herald health (14:40 ET slot) + F-2026-005 recovery when pipeline is dark.
+HERALD_HEALTH_ARTIFACT="artifacts/herald/health_check_${TODAY}.json"
+HERALD_RECOVERY_MARKER="artifacts/herald/recovery_done_${TODAY}.complete"
+if ! phase2_artifact_present "$HERALD_HEALTH_ARTIFACT"; then
+    log "MISSED herald health for $TODAY — running health check"
+    $PYTHON "$REPO/tools/herald_health_check.py" --as-of-date "$TODAY" \
+        >> "$REPO/logs/herald_health.log" 2>&1 \
+        || log "herald_health_check failed (exit $?)"
+fi
+if phase2_artifact_present "$HERALD_HEALTH_ARTIFACT" && [ ! -f "$REPO/$HERALD_RECOVERY_MARKER" ]; then
+    HERALD_VERDICT=$($PYTHON -c "
+import json
+from pathlib import Path
+p = Path('$REPO/$HERALD_HEALTH_ARTIFACT')
+print(json.loads(p.read_text()).get('verdict', ''))
+" 2>/dev/null || echo "")
+    if [ "$HERALD_VERDICT" = "FAIL" ]; then
+        log "Herald FAIL for $TODAY — running herald_recovery (F-2026-005)"
+        $PYTHON "$REPO/tools/herald_health_check.py" --as-of-date "$TODAY" --recover \
+            >> "$REPO/logs/herald_health.log" 2>&1 \
+            || log "herald recovery failed (exit $?)"
+        {
+            echo "herald_recovery_complete: $TODAY"
+            echo "recovery_timestamp: $(date '+%Y-%m-%dT%H:%M:%S%z')"
+        } > "$REPO/$HERALD_RECOVERY_MARKER"
+    fi
+fi
+
 # Pre-market feed checks run on every invocation, regardless of production state.
 # Each check has its own per-run marker so a missed morning slot can recover later in the day.
 

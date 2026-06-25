@@ -28,6 +28,15 @@ def test_watchdog_recovers_heartbeat_and_ops_supervisor():
     assert "ops_supervisor/supervisor.py" in text
 
 
+def test_watchdog_recovers_herald_health_on_fail():
+    text = WATCHDOG.read_text(encoding="utf-8")
+    assert "artifacts/herald/health_check_${TODAY}.json" in text
+    assert "herald_health_check.py" in text
+    assert "--recover" in text
+    assert "recovery_done_${TODAY}.complete" in text
+    assert "F-2026-005" in text
+
+
 def test_watchdog_phase2_checks_artifacts_not_agents_direct():
     text = WATCHDOG.read_text(encoding="utf-8")
     assert "artifacts/price_action_watch/" in text
