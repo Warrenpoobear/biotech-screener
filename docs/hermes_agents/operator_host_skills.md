@@ -122,6 +122,7 @@ If Cursor shows updated guidance but Hermes CLI does not, check for **stale `~/.
 | Hermes MCP (IDE, read-only) | `mcp_server/hermes_server.py` · bootstrap: `.cursor/rules/hermes-context.mdc` |
 | Model surfaces (gateway vs direct) | [`hermes_tools_map.md`](hermes_tools_map.md) §5 · [`HERMES_GATEWAY_SETUP.md`](../HERMES_GATEWAY_SETUP.md) |
 | WSL acceptance gate (cron + B1b + gateway) | `skills/screener_ops/SKILL.md` → Host authority + acceptance gate sections |
+| Fleet host onboarding (phases 2–15) | `bash tools/run_fleet_host_onboarding.sh` · `docs/AGENT_FLEET_ARCHITECTURE_INDEX.md` |
 | Sync history | [`../hermes_skills/harvest_log.md`](../hermes_skills/harvest_log.md) |
 | Recursive self-improvement loop | `skills/self-improving/SKILL.md` → `self-improving.md` · `REFERENCE.md` → `self-improving-reference.md` |
 | Knowledge stack + audit | `.learnings/README.md` · `python3 tools/audit_learnings.py` |

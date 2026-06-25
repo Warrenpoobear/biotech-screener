@@ -67,6 +67,7 @@ KEY_TOOL_FILES = [
     "tools/fleet_completion_audit.py",
     "tools/fleet_crontab_verify.py",
     "tools/run_fleet_operator_checklist.sh",
+    "tools/run_fleet_host_onboarding.sh",
     "tools/herald_health_check.py",
     "tools/herald_recovery.py",
     "tools/pattern_to_skillpatch.py",

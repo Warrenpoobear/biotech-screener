@@ -44,6 +44,10 @@ Cloud knowledge-layer builds emit `UNKNOWN_CLOUD_ENV` for C1/C3 — not a pass/f
 3. Executable → `skills/*` + `harvest_log.md`
 4. Audit → `audit_learnings.py` + `audit_hermes_skills.py`
 
+## Fleet migration (2026-06-25)
+
+Phases 2–15 code-complete on `main`. Operator WSL one-shot: `bash tools/run_fleet_host_onboarding.sh`. Close F-2026-005 (Herald) and F-2026-006 (CI) before `SELFIMPROVE_GATES_MET=1`. Index: `docs/AGENT_FLEET_ARCHITECTURE_INDEX.md`.
+
 ## Cron sys.path isolation (Class P)
 
 Hermes cron shells lack virtualenv activation and `PYTHONPATH`. Repo-relative imports

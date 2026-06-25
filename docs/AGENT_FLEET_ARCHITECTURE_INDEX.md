@@ -196,13 +196,15 @@ Phases 2–9 retired scheduled `run_agent_direct` from production cron and added
 | 12 | Crontab verify in evening catchup, digest, Telegram | Code-complete |
 | 13 | Watchdog herald health + F-2026-005 recovery | Code-complete |
 | 14 | Migration closure contract + Rule 12 host onboarding | Code-complete |
+| 15 | Unified host onboarding script + docs/skills sweep | Code-complete |
 
-**Migration arc (phases 2–14) is code-complete.** Host execution remains: install crontab, run checklist, close F-2026-005/006.
+**Migration arc (phases 2–15) is code-complete.** Host execution: `bash tools/run_fleet_host_onboarding.sh`
 
 Operator reference:
 
 | Concern | Tool / script |
 |---------|----------------|
+| Host onboarding (one command) | `bash tools/run_fleet_host_onboarding.sh` |
 | Install WSL crontab | `bash tools/install_agent_fleet_crontab.sh` |
 | Verify live crontab | `python3 tools/fleet_crontab_verify.py --write` |
 | Evening safety net | `tools/cron_evening_catchup.sh` |

@@ -70,14 +70,17 @@ python3 tools/audit_hermes_skills.py
 
 Install reference: `bash tools/install_agent_fleet_crontab.sh`
 
-### Host onboarding (fleet migration complete — phases 2–13)
+### Host onboarding (fleet migration complete — phases 2–15)
 
-Run on WSL after `git pull`:
+```bash
+bash tools/run_fleet_host_onboarding.sh
+```
+
+Or step-by-step on WSL after `git pull`:
 
 ```bash
 bash tools/install_agent_fleet_crontab.sh   # paste block into crontab -e
 bash tools/run_fleet_operator_checklist.sh  # audit → fleet_ops → crontab verify
-python3 tools/fleet_crontab_verify.py --write
 ```
 
 Watchdog (`cron_watchdog.sh`) auto-runs Herald health + `--recover` on FAIL (F-2026-005).  

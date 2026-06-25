@@ -259,11 +259,19 @@ tools/agent_heartbeat_checks.py
 
 Also feeds: `artifacts/heartbeat/`, `artifacts/ops_supervisor/`, `artifacts/fleet_ops/`, fleet receipts under `agents/fleet_steward/memory/`.
 
-**Deterministic chain (2026-06, phases 2–6):** production cron no longer requires `run_agent_direct`. Heartbeat writes `artifacts/heartbeat/{date}_escalation.json` (artifact-only default; `HEARTBEAT_LLM_ESCALATE=1` optional). `tools/fleet_ops_status.py` and `tools/fleet_completion_audit.py` are operator triage/verification entry points.
+**Deterministic chain (2026-06, phases 2–15):** production cron no longer requires `run_agent_direct`. Heartbeat writes `artifacts/heartbeat/{date}_escalation.json` (artifact-only default; `HEARTBEAT_LLM_ESCALATE=1` optional). Operator triage: `fleet_completion_audit.py` → `fleet_ops_status.py` → `fleet_crontab_verify.py`. Watchdog recovers Herald on FAIL (F-2026-005). One-shot host onboarding: `bash tools/run_fleet_host_onboarding.sh`.
 
 ---
 
 ## 8. Standard operator sequences
+
+### Fleet host onboarding (operator WSL)
+
+```bash
+bash tools/run_fleet_host_onboarding.sh
+```
+
+Runs checklist (audit → fleet_ops → crontab verify) and prints F-2026-005/006 close criteria. Install crontab first via `install_agent_fleet_crontab.sh`.
 
 ### Skills hygiene
 

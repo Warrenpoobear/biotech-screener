@@ -171,8 +171,8 @@ Operator quick reference: `docs/governance/RULE_12_PROMOTION_CHECKLIST.md`
 
 **Host fleet gates (before `SELFIMPROVE_GATES_MET=1`):**
 ```bash
-bash tools/run_fleet_operator_checklist.sh   # herald + fleet_ops + wiring audit must PASS
-python3 tools/fleet_completion_audit.py --write
+bash tools/run_fleet_host_onboarding.sh          # crontab hint + full checklist
+python3 tools/fleet_completion_audit.py --write  # must PASS on repo
 ```
 Close stalled-loop rows **F-2026-005** / **F-2026-006** in `.learnings/memory.md` on the operator host.
 

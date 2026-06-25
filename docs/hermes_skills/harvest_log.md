@@ -9,6 +9,17 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-25 (agent fleet phase 15) — Unified host onboarding + docs/skills sweep
+
+### Tooling
+- **run_fleet_host_onboarding.sh**: one-shot WSL onboarding (crontab hint + checklist + gate reminders)
+- Synced: RULE_12, FAILURE_PATTERN_LIBRARY F-2026-005, hermes_tools_map, operator_host_skills, screener_ops, self-improving, operational_health_baselines, agent_ops domain
+
+### Governance
+- Tier 0 (docs/plumbing). No scoring changes.
+
+---
+
 ## 2026-06-25 (agent fleet phase 14) — Migration closure contract
 
 ### Tooling

@@ -48,7 +48,7 @@ cat <<EOF
 # Operator one-shot triage: python3 tools/fleet_ops_status.py --write
 # Wiring audit: python3 tools/fleet_completion_audit.py --write
 # Crontab verify: python3 tools/fleet_crontab_verify.py --write
-# Host checklist: bash tools/run_fleet_operator_checklist.sh
+# Host onboarding (one command): bash tools/run_fleet_host_onboarding.sh
 
 # Close F-2026-005/006 on host before enabling:
 #   export SELFIMPROVE_GATES_MET=1

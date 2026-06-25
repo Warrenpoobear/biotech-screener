@@ -157,7 +157,7 @@ metadata:
 - **Outcome feedback:** all daily builders + qa/supervisor/herald/auditor/postmortem/CRT/event_binder/Hermes exits (policy_shadow overlap ≥80%, universe zero stale-alert, grok zero high alerts, etc.).
 - **Herald recovery:** `tools/herald_recovery.py` / `herald_recovery.sh`; `herald_health_check.py --recover` for F-2026-005.
 - **Cron integration:** evening catchup fully deterministic; watchdog phase-2 recovery uses builders (not LLM); herald FAIL recovery via watchdog (phase 13); `install_agent_fleet_crontab.sh` for WSL install.
-- **Fleet migration:** phases 2–14 code-complete (2026-06-25); host gates F-2026-005/006 remain operator-confirmed.
+- **Fleet migration:** phases 2–15 code-complete (2026-06-25); host onboarding: `bash tools/run_fleet_host_onboarding.sh`.
 - **Rule 12:** `docs/governance/RULE_12_PROMOTION_CHECKLIST.md` — weekly workflow + stalled-loop gates.
 - **Stalled loops:** F-2026-005 (Herald host recovery), F-2026-006 (Actions budget) — `SELFIMPROVE_GATES_MET=1` blocked until closed.
 

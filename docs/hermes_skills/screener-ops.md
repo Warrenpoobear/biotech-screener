@@ -340,6 +340,8 @@ Agent AGENTS.md docs updated with Llama-specific procedures:
 | Heartbeat | `tools/agent_heartbeat_checks.py` | Per-agent health |
 | Fleet ops | `tools/fleet_ops_status.py` | One-shot triage + `artifacts/fleet_ops/` |
 | Fleet audit | `tools/fleet_completion_audit.py` | Verify deterministic cron wiring |
+| Crontab verify | `tools/fleet_crontab_verify.py` | Live crontab vs install reference |
+| Host onboarding | `tools/run_fleet_host_onboarding.sh` | One-shot post-pull WSL setup |
 | Supervisor | `agents/ops_supervisor/supervisor.py` | Fleet-wide anomaly classification |
 | Post-snapshot | `tools/run_post_snapshot_supervisor.py` | Post-pipeline task orchestration |
 | Sentinel | `tools/agent_supervisor_sentinel.py` | Final watchdog |
@@ -551,6 +553,7 @@ Research-enablement tooling for backfilling expectation fields into historical s
 | Agent Heartbeat Checks | `tools/agent_heartbeat_checks.py` |
 | Fleet Ops Status | `tools/fleet_ops_status.py` |
 | Fleet Completion Audit | `tools/fleet_completion_audit.py` |
+| Fleet Host Onboarding | `tools/run_fleet_host_onboarding.sh` |
 | Ops Supervisor | `agents/ops_supervisor/supervisor.py` |
 | Post-Snapshot Supervisor | `tools/run_post_snapshot_supervisor.py` |
 | Ruleset Health Monitor | `tools/ruleset_health_monitor.py` |

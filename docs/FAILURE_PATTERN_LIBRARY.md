@@ -151,7 +151,7 @@ severity: CRITICAL
 summary: Herald Digest extended outage — zero output for 6+ consecutive weeks. No deduped or classified JSONL files generated.
 root_cause: UNRESOLVED
 affected_systems: [Herald pipeline, press release monitoring, downstream news-driven signals]
-resolution: OPEN (2026-06-24). Code fixes merged; host recovery unconfirmed. Last repo classified JSONL 2026-02-26. Efficacy tracking blocked until operator confirms Herald cron output on WSL. Target 2026-07-01.
+resolution: OPEN (2026-06-25). Code fixes merged (phases 2–15); watchdog auto-runs herald_health_check --recover on FAIL once/day. Host recovery unconfirmed. Last repo classified JSONL 2026-02-26. Operator: bash tools/run_fleet_host_onboarding.sh on WSL. Target 2026-07-01.
 prevention_rule: Herald should have a max-dark-days SLA (proposed 3 days) with automatic escalation. See operational-health-baselines skill.
 related_specs: []
 related_findings: [G6]
