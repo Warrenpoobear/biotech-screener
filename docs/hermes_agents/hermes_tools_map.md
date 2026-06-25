@@ -257,7 +257,9 @@ tools/agent_heartbeat_checks.py
     → tools/agent_supervisor_sentinel.py
 ```
 
-Also feeds: `artifacts/heartbeat/`, `artifacts/ops_supervisor/`, fleet receipts under `agents/fleet_steward/memory/`.
+Also feeds: `artifacts/heartbeat/`, `artifacts/ops_supervisor/`, `artifacts/fleet_ops/`, fleet receipts under `agents/fleet_steward/memory/`.
+
+**Deterministic chain (2026-06, phases 2–6):** production cron no longer requires `run_agent_direct`. Heartbeat writes `artifacts/heartbeat/{date}_escalation.json` (artifact-only default; `HEARTBEAT_LLM_ESCALATE=1` optional). `tools/fleet_ops_status.py` and `tools/fleet_completion_audit.py` are operator triage/verification entry points.
 
 ---
 

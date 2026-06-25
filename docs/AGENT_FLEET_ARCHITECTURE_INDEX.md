@@ -129,7 +129,9 @@ The biotech-screener agent fleet is organized into **three tiers**, each with di
 
 ```bash
 python tools/agent_heartbeat_checks.py --agent <name>  # Check live heartbeat
-python tools/run_agent_direct.py --agent <name> --message "IDENTITY_CHECK"  # Inspect SOUL/HEARTBEAT
+python3 tools/fleet_ops_status.py --write              # Operator triage snapshot
+python3 tools/fleet_completion_audit.py              # Verify deterministic cron wiring
+python tools/run_agent_direct.py --agent <name> --message "IDENTITY_CHECK"  # Lane C only
 ```
 
 ---
@@ -174,6 +176,23 @@ This documentation does **not** authorize or enable:
 - LLM policy changes (Lane B gates remain in place)
 - Production-data mutations by agents (staging-artifact model enforced)
 - Self-improvement without spec approval (proposal-first frozen)
+
+---
+
+## Deterministic Cron Consolidation (2026-06)
+
+Phases 2–6 retired scheduled `run_agent_direct` from production cron. Operator reference:
+
+| Concern | Tool / script |
+|---------|----------------|
+| Install WSL crontab | `bash tools/install_agent_fleet_crontab.sh` |
+| Evening safety net | `tools/cron_evening_catchup.sh` |
+| Missed production / monitoring | `tools/cron_watchdog.sh` |
+| Fleet triage | `python3 tools/fleet_ops_status.py --write` |
+| Wiring verification | `python3 tools/fleet_completion_audit.py` |
+| Rule 12 self-improve gate | `docs/governance/RULE_12_PROMOTION_CHECKLIST.md` |
+
+Host blockers **F-2026-005** (Herald) and **F-2026-006** (CI) must close before `SELFIMPROVE_GATES_MET=1`.
 
 ---
 

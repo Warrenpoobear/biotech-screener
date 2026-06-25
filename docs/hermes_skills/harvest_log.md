@@ -9,6 +9,28 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-24 (agent fleet phase 7) — Fleet completion audit + operator runbook
+
+### Tooling
+- **fleet_completion_audit.py**: read-only PASS/FAIL audit — cron LLM-free, install crontab coverage, evening catchup builders, key tools, escalation wiring
+- **cron_weekly_skills_review.sh**: runs fleet_completion_audit after fleet_ops write
+- **fleet_ops_status.py**: adds `fleet_completion_audit` operator command hint
+- **install_agent_fleet_crontab.sh**: documents audit command
+
+### Docs / skills
+- **AGENT_FLEET_ARCHITECTURE_INDEX.md**: deterministic cron consolidation table (phases 2–6)
+- **hermes_tools_map.md**: monitoring stack phase 4–6 chain
+- **screener_ops** skill: fleet_ops + fleet_completion_audit in monitoring table
+
+### Tests
+- `tests/test_fleet_completion_audit.py`
+- Extended install + weekly skills review static tests
+
+### Governance
+- Tier 0 (observability/plumbing/docs). No scoring changes.
+
+---
+
 ## 2026-06-24 (agent fleet phase 6) — Monitoring recovery + digest integration
 
 ### Tooling

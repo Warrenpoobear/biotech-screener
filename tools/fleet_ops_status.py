@@ -181,6 +181,7 @@ def build_status(as_of: date | None = None) -> dict[str, Any]:
         "crontab_install": "bash tools/install_agent_fleet_crontab.sh",
         "crontab_hints": CRONTAB_HINTS,
         "rule_12_checklist": "docs/governance/RULE_12_PROMOTION_CHECKLIST.md",
+        "fleet_completion_audit": "python3 tools/fleet_completion_audit.py",
     }
 
 
