@@ -3,3 +3,6 @@
 # `semgrep --test` to validate the rules — they must never be flagged as
 # findings in the actual repo.
 .semgrep/*.py
+
+# bind() function calls in event-outcome tests false-match sc-mcp-opens-socket ($S.bind).
+tests/test_event_outcome_binder.py

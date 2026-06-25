@@ -23,6 +23,9 @@ LOCK_FILE="${REPO_ROOT}/logs/.daily_production.lock"
 SNAPSHOT_DIR="${REPO_ROOT}/data/snapshots"
 MAX_CATCHUP_DAYS=5
 
+# Class P: cron may invoke this script by absolute path with cwd != repo.
+cd "${REPO_ROOT}"
+
 # --- Catch-up mode: find and run missed weekdays ---
 if [ "${1:-}" = "--catch-up" ]; then
     echo "[$(date -Iseconds)] Catch-up: scanning last ${MAX_CATCHUP_DAYS} weekdays for missed runs"
@@ -87,7 +90,6 @@ echo $$ > "${LOCK_FILE}"
 trap 'rm -f "${LOCK_FILE}"' EXIT
 
 # Load environment
-cd "${REPO_ROOT}"
 if [ -f "${REPO_ROOT}/.env" ]; then
     # Use python-dotenv style parsing to avoid bash expansion of $ in values.
     # `source .env` breaks on values like passwords containing $, backticks, etc.

@@ -23,7 +23,7 @@ import json
 import os
 import statistics
 import sys
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -40,6 +40,10 @@ SHADOW_START = "2026-04-03"
 
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
+
+
+def _deterministic_timestamp(as_of_date: str) -> str:
+    return f"{as_of_date}T00:00:00Z"
 
 
 def require_freeze_lift_ack(*, dry_run: bool) -> None:
@@ -314,7 +318,7 @@ def build_package(
     return {
         "schema": SCHEMA,
         "as_of_date": as_of_date,
-        "generated_at": datetime.now().isoformat(),
+        "generated_at": _deterministic_timestamp(as_of_date),
         "governance": {
             "freeze_lift_ack_required": True,
             "does_not_lift_freeze": True,

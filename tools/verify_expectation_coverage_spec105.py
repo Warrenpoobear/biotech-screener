@@ -15,7 +15,6 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import date, datetime
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -67,7 +66,7 @@ def build_report(*, as_of_date: str, rankings_path: Path | None = None) -> dict[
     return {
         "schema": "spec105_expectation_coverage.v1",
         "as_of_date": as_of_date,
-        "generated_at": datetime.now().isoformat(),
+        "generated_at": f"{as_of_date}T00:00:00Z",
         "overall": "PASS" if check.get("status") == "PASS" else "FAIL",
         "check": check.get("check"),
         "detail": check.get("detail"),
@@ -81,13 +80,13 @@ def build_report(*, as_of_date: str, rankings_path: Path | None = None) -> dict[
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Spec 105 expectation coverage verifier")
-    ap.add_argument("--as-of-date", help="YYYY-MM-DD (default: today)")
+    ap.add_argument("--as-of-date", required=True, help="YYYY-MM-DD")
     ap.add_argument("--rankings-path", help="Override rankings.csv path")
     ap.add_argument("--write", action="store_true", help="Write artifacts/spec105/{date}_coverage.json")
     ap.add_argument("--json", action="store_true", help="Print JSON only")
     args = ap.parse_args()
 
-    ds = args.as_of_date or date.today().isoformat()
+    ds = args.as_of_date
     rankings_path = Path(args.rankings_path) if args.rankings_path else None
     if rankings_path and not rankings_path.is_file():
         print(f"rankings file not found: {rankings_path}", file=sys.stderr)

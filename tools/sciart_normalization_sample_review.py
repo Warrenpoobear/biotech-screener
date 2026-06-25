@@ -19,7 +19,7 @@ import json
 import random
 import sys
 from collections import Counter, defaultdict
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -114,7 +114,7 @@ def render_markdown(sample: list[dict[str, object]], *, trials_path: Path, as_of
     lines = [
         "# Sci-Cart Phase 13.2 — Normalization Sample Review",
         "",
-        f"**Generated:** {datetime.now().isoformat()}",
+        f"**Generated:** {as_of}T00:00:00Z",
         f"**Trials source:** `{trials_label}`",
         f"**As-of:** {as_of}",
         f"**Sample:** {len(sample)} records ({SAMPLE_PER_DISEASE} per top disease, seed={SEED})",

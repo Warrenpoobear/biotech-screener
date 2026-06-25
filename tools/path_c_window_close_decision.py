@@ -19,7 +19,6 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import datetime
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -31,11 +30,17 @@ if str(REPO_ROOT) not in sys.path:
 from tools.forward_evidence_package import (  # noqa: E402
     IC_FLOOR,
     PATH_C_WINDOW_END,
+    _deterministic_timestamp,
     path_c_close_decision,
 )
 
 
-def decision_tree(*, window_end: str = PATH_C_WINDOW_END, floor: float = IC_FLOOR) -> dict:
+def decision_tree(
+    *,
+    window_end: str = PATH_C_WINDOW_END,
+    floor: float = IC_FLOOR,
+    as_of_date: str | None = None,
+) -> dict:
     """Execute decision tree at window close (stdout + structured outcome)."""
     print("\n" + "=" * 80)
     print(f"PATH C WINDOW CLOSE DECISION — through {window_end}")
@@ -95,8 +100,9 @@ def decision_tree(*, window_end: str = PATH_C_WINDOW_END, floor: float = IC_FLOO
     print("  Or run: FREEZE_LIFT_ACK=1 python3 tools/forward_evidence_package.py --write")
     print()
 
+    stamp = as_of_date or window_end
     outcome = {
-        "date": datetime.now().isoformat(),
+        "date": _deterministic_timestamp(stamp),
         "window_close_date": window_end,
         "ic_status": ic_status["status"],
         "ic_observable": ic_status["observable"],
@@ -124,7 +130,11 @@ def main() -> int:
     parser.add_argument("--output-json", action="store_true", help="Output decision as JSON")
     args = parser.parse_args()
 
-    outcome = decision_tree(window_end=args.window_end, floor=args.floor)
+    outcome = decision_tree(
+        window_end=args.window_end,
+        floor=args.floor,
+        as_of_date=args.as_of_date or args.window_end,
+    )
 
     if args.write:
         GOV_DIR.mkdir(parents=True, exist_ok=True)
