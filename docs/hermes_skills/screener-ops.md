@@ -257,6 +257,18 @@ bash tools/run_research_host_battery.sh 2026-06-24
 
 Blocker context: `docs/research/CHECKLIST_V2_FINAL_SCORE_BLOCKER_2026_06_24.md`
 
+### Freeze-lift forward evidence (post-host battery)
+
+After host setup and battery artifacts exist, run the governance evidence package before any freeze lift:
+
+```bash
+bash tools/run_forward_evidence_package.sh --dry-run
+export FREEZE_LIFT_ACK=1
+bash tools/run_forward_evidence_package.sh --write
+```
+
+Memo: `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md` — operator sign-off required; package does not lift the freeze.
+
 ---
 
 ## Town-Hermes Bridge (Spec 090)
@@ -575,6 +587,8 @@ Research-enablement tooling for backfilling expectation fields into historical s
 | Fleet Host Onboarding | `tools/run_fleet_host_onboarding.sh` |
 | Unified Host Setup | `tools/run_operator_host_setup.sh` |
 | Research Host Battery | `tools/run_research_host_battery.sh` |
+| Forward Evidence Package | `tools/forward_evidence_package.py` |
+| Path C Window Close | `tools/path_c_window_close_decision.py` |
 | Spec 105 Coverage Verifier | `tools/verify_expectation_coverage_spec105.py` |
 | Sci-Cart R4 Sample Review | `tools/sciart_normalization_sample_review.py` |
 | Ops Supervisor | `agents/ops_supervisor/supervisor.py` |

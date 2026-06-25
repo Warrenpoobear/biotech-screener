@@ -296,6 +296,16 @@ bash tools/run_research_host_battery.sh 2026-06-24
 
 Runs Checklist v2, Spec 100 `final_score` IC, Spec 105 expectation coverage, and optional Sci-Cart R4 sample review. Requires `data/snapshots_pit_v2/`, `production_data/price_history.csv`, and `data/snapshots/{date}/rankings.csv` on the host. Research-only — does not modify production scoring. Blocker context: `docs/research/CHECKLIST_V2_FINAL_SCORE_BLOCKER_2026_06_24.md`.
 
+### Freeze-lift forward evidence (operator WSL)
+
+```bash
+bash tools/run_forward_evidence_package.sh --dry-run
+export FREEZE_LIFT_ACK=1
+bash tools/run_forward_evidence_package.sh --write
+```
+
+Assembles Path C retrospective close, forward-eval IC, `coinvest_score_z` IC, `final_score` IC, and coinvest shadow summary. **Does not lift the freeze** — produces evidence for operator sign-off. Memo: `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md`.
+
 ### Skills hygiene
 
 ```bash

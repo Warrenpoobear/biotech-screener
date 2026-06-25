@@ -91,4 +91,5 @@ else
     log "    production_data/price_history.csv"
     log "    data/snapshots/$DATE/rankings.csv"
     log "When ready: bash tools/run_research_host_battery.sh $DATE"
+    log "After battery: bash tools/run_forward_evidence_package.sh --dry-run"
 fi

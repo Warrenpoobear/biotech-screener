@@ -9,6 +9,22 @@ Each entry records git activity reviewed, sessions searched, and skill patches a
 
 ---
 
+## 2026-06-25 (freeze-lift forward evidence) — Governance decision package
+
+### Tooling
+- **forward_evidence_package.py**: Path C + coinvest_score_z + final_score IC + advisory verdict
+- **run_forward_evidence_package.sh**: operator wrapper (`FREEZE_LIFT_ACK=1` to write)
+- **path_c_window_close_decision.py**: `--write` + shared IC logic; retrospective Path C close
+
+### Docs
+- **FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md**: operator memo + sign-off checklist
+- operational-state sequential gate updated
+
+### Governance
+- Tier 0 (evidence assembly). Does not lift scoped production freeze.
+
+---
+
 ## 2026-06-25 (operator host setup) — Unified fleet + research onboarding
 
 ### Tooling

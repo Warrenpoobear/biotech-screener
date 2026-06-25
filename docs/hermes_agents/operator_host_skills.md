@@ -124,6 +124,7 @@ If Cursor shows updated guidance but Hermes CLI does not, check for **stale `~/.
 | WSL acceptance gate (cron + B1b + gateway) | `skills/screener_ops/SKILL.md` → Host authority + acceptance gate sections |
 | Fleet host onboarding (phases 2–15) | `bash tools/run_fleet_host_onboarding.sh` · `docs/AGENT_FLEET_ARCHITECTURE_INDEX.md` |
 | Unified host setup (fleet + research) | `bash tools/run_operator_host_setup.sh` |
+| Freeze-lift evidence package | `bash tools/run_forward_evidence_package.sh` · `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md` |
 | Research host battery (Spec 100/105) | `bash tools/run_research_host_battery.sh` · `docs/research/CHECKLIST_V2_FINAL_SCORE_BLOCKER_2026_06_24.md` |
 | Sync history | [`../hermes_skills/harvest_log.md`](../hermes_skills/harvest_log.md) |
 | Recursive self-improvement loop | `skills/self-improving/SKILL.md` → `self-improving.md` · `REFERENCE.md` → `self-improving-reference.md` |

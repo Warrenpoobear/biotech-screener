@@ -74,19 +74,23 @@ metadata:
 
 ## Forward Shadow & IC Status
 
-*Updated: 2026-06-22*
+*Updated: 2026-06-25*
 
-- **Forward shadow**: accumulating since 2026-04-03. As of 2026-06-22, enough calendar/trading time has elapsed for a future IC refresh, but refresh is gated on explicit operator freeze lift.
+- **Forward shadow**: accumulating since 2026-04-03. Calendar time sufficient for IC refresh; refresh gated on explicit operator freeze lift.
+- **Evidence package**: `bash tools/run_forward_evidence_package.sh` (requires `FREEZE_LIFT_ACK=1` to write). Memo: `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md`
+- **Path C close**: retrospective decision overdue (window 2026-05-28 → 2026-06-03); `python3 tools/path_c_window_close_decision.py --write`
 - **coinvest_score_z IC** (last measured 2026-05-13): Pooled mean IC = -0.031 (14 dates, 28.6% hit rate). Pre-cohort (clean): -0.051 (11.1% hit). Post-cohort (contaminated): -0.008 (60.0% hit). Verdict: OBSERVE. Refresh pending freeze lift.
 - **Ranker IC**: UNMEASURED. Existing tools conflate composite_score with final_score (Spec 095). All prior ranker IC claims remain non-authoritative until corrected tooling is reviewed (Spec 100).
 - **inst_delta_z**: zeroed in selector since 2026-05-04. Active in ranker (NW-t = +3.32). Reinstatement requires IC recovery evidence.
 - **PIT/backtest research (2026-06-22)**: Autonomous PIT/backtest research was quarantined on 2026-06-22 (PR #379) and is **not accepted evidence**. Do not cite performance numbers or use outputs for model decisions until manually reviewed and explicitly accepted by operator.
 
 **Sequential gate (post-freeze):**
-1. Explicit operator freeze lift
-2. Warm Q2 13F cache via `tools/warm_13f_cache.py` (period ends Jun 30; filing deadline ~Aug 14)
-3. Run cohort quarantine check
-4. Refresh IC decomposition
+1. Explicit operator freeze lift — document in `docs/governance/FREEZE_LIFT_FORWARD_EVIDENCE_PACKAGE_2026_06_25.md`
+2. `FREEZE_LIFT_ACK=1 bash tools/run_forward_evidence_package.sh --write`
+3. Path C retrospective close artifact reviewed
+4. Warm Q2 13F cache via `tools/warm_13f_cache.py` (period ends Jun 30; filing deadline ~Aug 14)
+5. Run cohort quarantine check
+6. Refresh IC decomposition
 
 ---
 
