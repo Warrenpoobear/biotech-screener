@@ -608,12 +608,13 @@ Key findings (pseudo-PIT):
 
 ## Town-Hermes Bridge Status
 
-*Last reviewed: 2026-06-25*
+*Last reviewed: 2026-06-26*
 
-- Phase A complete (dry-run mode, `OPERATOR_DELIVERY_DRY_RUN=1`)
+- Phase A complete (dry-run validation, `OPERATOR_DELIVERY_DRY_RUN=1`) — superseded by Phase B live delivery
 - Phase B wiring complete (2026-05-30): all event types in repo — held-spec, first-fire, ruleset-integrity, snapshot-missing, contradiction_detected, cron_missed
+- **Phase B LIVE (2026-06-25):** `OPERATOR_DELIVERY_DRY_RUN=0` confirmed in `.env`; email delivery active to the operator's Town inbox for all hard-failure event types (was: "pending operator sign-off")
 - **2026-06-24:** `cron_missed` Town alerts may trace to Class P (cron `sys.path` isolation) — see `openclaw-data-pipeline-debug` Class P and `town-operator-bridge` triage table
-- Phase B live delivery: pending operator sign-off to set `OPERATOR_DELIVERY_DRY_RUN=0` in `.env` (see `docs/hermes_skills/town-operator-bridge.md`)
+- Direction: Hermes→Town delivery only. Town→Hermes write-back remains design-only / operator-mediated — no repo or runtime mutation from Town
 - Skill doc: `docs/hermes_skills/town-operator-bridge.md` · Spec 090
 
 ## Knowledge Graph Implementation Status
