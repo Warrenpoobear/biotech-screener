@@ -457,3 +457,26 @@ After adding skills/*/REFERENCE.md, always run sync + audit_hermes_skills.
 - Pattern-Key: sync_reference_mirror_source
 - Recurrence-Count: 1
 - Skill-Path: self-improving
+
+## [LRN-20260627-001] dem_is_current_ranker_not_baseline
+
+**Logged**: 2026-06-27T16:28:00Z
+**Priority**: high
+**Status**: logged
+**Area**: research
+
+### Summary
+"DEM" is the stored production top-30 output of the current pipeline, NOT a separate baseline algorithm. actionable_rank = final_score rank = A4 selector (sel_score) + clinical_50 ranker. Prior "DEM vs A4" framing compared stored production output against fresh recomputation variants (forward-filled inst_delta_z), not two independent algorithms.
+
+### Details
+Architecture confirmed across snapshots (DEM_CURRENT_RANKER_YTD_BACKTEST, 2026-06-27): pipeline is universe -> A4 selector -> clinical_50 ranker -> actionable_rank -> DEM top-30. A4 selector overlay FROZEN (anti-alpha vs DEM); inst_delta_z relaxation failed; catalyst-optionality (cat_opt, incl. solvency variant) failed and worsened the left tail, with cat_opt∩DEM overlap collapsing post-2024. Performance: 2025+ (n=14) DEM +7.898 pp/mo, t=2.167, hit 64.3% vs A4 +3.656, t=1.683 (DEM +4.2 pp/mo better); full history (n=69) DEM +3.048, t=3.309 vs A4 +0.242. Worst-month: DEM -8.87 vs A4 -14.32 vs cat_opt -21.24. Concentration: top-5 months (May/Jun/Jul 2025, Sep 2025, Feb 2026) = 100% of cumulative 2025+ alpha; DEM ex-best-5-months ≈ 0 (rally-concentrated, not yet persistent cross-sectional alpha).
+
+### Suggested Action
+Treat DEM as a forward-shadow candidate, NOT investable production. Gate any promotion on DEM_REGIME_CONDITIONAL_ALPHA (does the 2025+ edge survive outside the May–Jul 2025 rally cluster; is it alpha vs high-beta rally participation). Do not reopen A4 / inst-relax / cat_opt without a new spec and fundamentally new evidence.
+
+### Metadata
+- Source: dem_current_ranker_ytd_diagnostic_2026-06-27
+- Tags: dem, selector_ranker, naming_collision, rally_concentration, forward_shadow
+- Pattern-Key: dem_is_current_ranker_not_baseline
+- Recurrence-Count: 1
+- Skill-Path: decision-audit-trail (D-2026-008), failure-patterns (F-2026-010), selector-ranker, ic-evaluation
