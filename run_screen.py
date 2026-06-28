@@ -1339,12 +1339,19 @@ def load_json_data(
     return data
 
 
+try:
+    import orjson as _orjson
+except ImportError:
+    _orjson = None  # type: ignore[assignment]
+
+
 def _load_json_threadsafe(filepath: Path, description: str) -> List[Dict[str, Any]]:
     """JSON load safe for ThreadPoolExecutor workers.
 
     signal.alarm (used by operation_timeout) is main-thread-only on POSIX, so
     load_json_data cannot be called from worker threads. This variant preserves
     the size and symlink security checks but omits the SIGALRM timeout wrapper.
+    Uses orjson when available (3–5× faster than stdlib for large files).
     """
     try:
         validate_file_size(filepath, MAX_JSON_FILE_SIZE_MB)
@@ -1352,8 +1359,11 @@ def _load_json_threadsafe(filepath: Path, description: str) -> List[Dict[str, An
         raise FileNotFoundError(f"{description} file not found: {filepath}")
     if filepath.is_symlink():
         raise SymlinkError(f"{description} file is a symbolic link: {filepath}")
-    with open(filepath, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    if _orjson is not None:
+        data = _orjson.loads(filepath.read_bytes())
+    else:
+        with open(filepath, "r", encoding="utf-8") as f:
+            data = json.load(f)
     if not isinstance(data, list):
         raise ValueError(f"{description} must be a JSON array, got {type(data)}")
     return data

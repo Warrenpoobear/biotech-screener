@@ -156,6 +156,36 @@ class TestLoadJsonThreadsafe:
         got = run_screen._load_json_threadsafe(p, "Test")
         assert got == payload
 
+    def test_orjson_path_matches_stdlib(self, tmp_path, monkeypatch):
+        """orjson and stdlib paths return identical data for the same file."""
+        import run_screen
+
+        p = tmp_path / "data.json"
+        payload = [{"ticker": "AAA", "val": 1}, {"ticker": "BBB", "val": 2}]
+        p.write_text(json.dumps(payload), encoding="utf-8")
+
+        # Force orjson path
+        import orjson
+
+        monkeypatch.setattr(run_screen, "_orjson", orjson)
+        got_orjson = run_screen._load_json_threadsafe(p, "Test")
+
+        # Force stdlib fallback path
+        monkeypatch.setattr(run_screen, "_orjson", None)
+        got_stdlib = run_screen._load_json_threadsafe(p, "Test")
+
+        assert got_orjson == got_stdlib == payload
+
+    def test_stdlib_fallback_when_orjson_absent(self, tmp_path, monkeypatch):
+        """Falls back to json.load when _orjson is None (graceful degradation)."""
+        import run_screen
+
+        monkeypatch.setattr(run_screen, "_orjson", None)
+        p = tmp_path / "data.json"
+        p.write_text('[{"x": 1}]', encoding="utf-8")
+        got = run_screen._load_json_threadsafe(p, "Test")
+        assert got == [{"x": 1}]
+
     def test_raises_on_missing_file(self, tmp_path):
         """FileNotFoundError for a path that does not exist."""
         import run_screen
