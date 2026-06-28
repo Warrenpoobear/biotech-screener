@@ -1369,6 +1369,32 @@ def _load_json_threadsafe(filepath: Path, description: str) -> List[Dict[str, An
     return data
 
 
+def _load_json_any_threadsafe(filepath: Path, description: str) -> Any:
+    """Like _load_json_threadsafe but accepts a dict or list at the JSON root.
+
+    Used for files such as morningstar_price_history.json whose root is an
+    object rather than an array.
+    """
+    try:
+        validate_file_size(filepath, MAX_JSON_FILE_SIZE_MB)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"{description} file not found: {filepath}")
+    if filepath.is_symlink():
+        raise SymlinkError(f"{description} file is a symbolic link: {filepath}")
+    if _orjson is not None:
+        return _orjson.loads(filepath.read_bytes())
+    with open(filepath, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _load_pit_json_worker(path: Path) -> dict:
+    """Load a single PIT financial JSON file for use in ThreadPoolExecutor workers."""
+    if _orjson is not None:
+        return _orjson.loads(path.read_bytes())
+    with open(path, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
 # =============================================================================
 # HOLDINGS SCHEMA VALIDATION (fail-loud, forward compatible)
 # =============================================================================
@@ -1766,6 +1792,7 @@ def enrich_volatility_from_morningstar_prices(
     price_history_path: Path,
     market_data_by_ticker: Dict[str, Dict],
     min_trading_days: int = 60,
+    preloaded_data: Optional[Dict] = None,
 ) -> int:
     """
     Compute annualized volatility from Morningstar daily close prices (HS377).
@@ -1778,6 +1805,7 @@ def enrich_volatility_from_morningstar_prices(
         price_history_path: Path to morningstar_price_history.json
         market_data_by_ticker: Dict to enrich (modified in place)
         min_trading_days: Minimum observations required (default 60)
+        preloaded_data: Pre-parsed JSON dict (skips file I/O when provided)
 
     Returns:
         Number of tickers enriched
@@ -1785,11 +1813,14 @@ def enrich_volatility_from_morningstar_prices(
     import json as _json
     import math
 
-    try:
-        with open(price_history_path, "r", encoding="utf-8") as fh:
-            raw = _json.load(fh)
-    except (OSError, ValueError):
-        return 0
+    if preloaded_data is not None:
+        raw = preloaded_data
+    else:
+        try:
+            with open(price_history_path, "r", encoding="utf-8") as fh:
+                raw = _json.load(fh)
+        except (OSError, ValueError):
+            return 0
 
     records = raw.get("records", {})
     enriched = 0
@@ -9787,16 +9818,23 @@ def run_screening_pipeline(
         _trial_preload_cache if _trial_preload_cache is not None else data_dir / "trial_records.json"
     )
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as _preload_pool:
+    _ms_preload_path = data_dir / "morningstar_price_history.json"
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as _preload_pool:
         _fut_universe = _preload_pool.submit(_load_json_threadsafe, data_dir / "universe.json", "Universe")
         _fut_financial = _preload_pool.submit(_load_json_threadsafe, data_dir / "financial_records.json", "Financial")
         _fut_trials = _preload_pool.submit(_load_json_threadsafe, _trial_preload_path, "Trials")
         _fut_market = _preload_pool.submit(_load_json_threadsafe, data_dir / "market_data.json", "Market data")
+        _fut_morningstar = (
+            _preload_pool.submit(_load_json_any_threadsafe, _ms_preload_path, "Morningstar")
+            if _ms_preload_path.exists()
+            else None
+        )
         _preloaded: Dict[str, Any] = {
             "universe": _fut_universe.result(),
             "financial": _fut_financial.result(),
             "trials": _fut_trials.result(),
             "market": _fut_market.result(),
+            "morningstar": _fut_morningstar.result() if _fut_morningstar is not None else None,
         }
     print(f"[timing] preload (parallel I/O): {__import__('time').time() - _preload_t0:.2f}s", flush=True)
 
@@ -9951,6 +9989,24 @@ def run_screening_pipeline(
     if pit_mode != "off" and _pit_fin_dir.is_dir():
         from pit_financials import pit_financial_snapshot
 
+        # Parallel preload all PIT financial JSON files (replaces 341 serial opens)
+        _pit_preload_t0 = __import__("time").time()
+        _pit_preloaded_data: Dict[str, dict] = {}
+        _pit_paths = list(_pit_fin_dir.glob("*.json"))
+        if _pit_paths:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=8) as _pit_pool:
+                _pit_futs = {p.stem.upper(): _pit_pool.submit(_load_pit_json_worker, p) for p in _pit_paths}
+                for _t, _f in _pit_futs.items():
+                    try:
+                        _pit_preloaded_data[_t] = _f.result()
+                    except Exception:
+                        pass  # fall back to file load for this ticker
+            print(
+                f"[timing] pit_financial preload ({len(_pit_preloaded_data)}/{len(_pit_paths)} files): "
+                f"{__import__('time').time() - _pit_preload_t0:.2f}s",
+                flush=True,
+            )
+
         # Index existing static records by ticker for in-place replacement
         _fin_by_ticker = {}
         for _idx, _rec in enumerate(financial_records):
@@ -9963,7 +10019,12 @@ def run_screening_pipeline(
         _pit_total = len(_fin_by_ticker)
 
         for _ticker, _idx in _fin_by_ticker.items():
-            _pit_snap = pit_financial_snapshot(_ticker, as_of_date, _pit_fin_dir)
+            _pit_snap = pit_financial_snapshot(
+                _ticker,
+                as_of_date,
+                _pit_fin_dir,
+                preloaded_data=_pit_preloaded_data.get(_ticker),
+            )
             if _pit_snap is not None:
                 financial_records[_idx] = _pit_snap
                 _pit_overridden += 1
@@ -10073,6 +10134,7 @@ def run_screening_pipeline(
         vol_enriched = enrich_volatility_from_morningstar_prices(
             price_history_path=ms_price_path,
             market_data_by_ticker=market_data_by_ticker,
+            preloaded_data=_preloaded.get("morningstar"),
         )
         if vol_enriched > 0:
             logger.info(f"  Volatility (252d) computed for {vol_enriched} tickers")

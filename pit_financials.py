@@ -208,6 +208,7 @@ def pit_financial_snapshot(
     ticker: str,
     as_of_date: str,
     data_dir: Optional[Path] = None,
+    preloaded_data: Optional[dict] = None,
 ) -> Optional[dict]:
     """Return financial record for ticker as known on as_of_date.
 
@@ -220,8 +221,11 @@ def pit_financial_snapshot(
         - CashAndSecurities_date, collected_at
 
     Returns None if no PIT data file exists for the ticker.
+
+    Args:
+        preloaded_data: Pre-loaded JSON dict for this ticker (skips file I/O).
     """
-    pit_data = _load_pit_data(ticker, data_dir)
+    pit_data = preloaded_data if preloaded_data is not None else _load_pit_data(ticker, data_dir)
     if pit_data is None:
         return None
 

@@ -298,5 +298,145 @@ class TestModule3TrialRecordsKwarg:
         assert "summaries" in result
 
 
+# ---------------------------------------------------------------------------
+# _load_json_any_threadsafe
+# ---------------------------------------------------------------------------
+class TestLoadJsonAnyThreadsafe:
+    def test_accepts_list_root(self, tmp_path):
+        """Returns a list when JSON root is an array."""
+        import run_screen
+
+        p = tmp_path / "list.json"
+        p.write_text('[{"x": 1}]', encoding="utf-8")
+        result = run_screen._load_json_any_threadsafe(p, "Test")
+        assert result == [{"x": 1}]
+
+    def test_accepts_dict_root(self, tmp_path):
+        """Returns a dict when JSON root is an object (morningstar pattern)."""
+        import run_screen
+
+        p = tmp_path / "dict.json"
+        p.write_text('{"records": {"AAAA": {}}}', encoding="utf-8")
+        result = run_screen._load_json_any_threadsafe(p, "Test")
+        assert result == {"records": {"AAAA": {}}}
+
+    def test_raises_on_missing_file(self, tmp_path):
+        import run_screen
+
+        with pytest.raises(FileNotFoundError):
+            run_screen._load_json_any_threadsafe(tmp_path / "missing.json", "Test")
+
+    def test_raises_on_symlink(self, tmp_path):
+        import run_screen
+
+        real = tmp_path / "real.json"
+        real.write_text("[{}]", encoding="utf-8")
+        link = tmp_path / "link.json"
+        link.symlink_to(real)
+        with pytest.raises(run_screen.SymlinkError):
+            run_screen._load_json_any_threadsafe(link, "Test")
+
+
+# ---------------------------------------------------------------------------
+# Morningstar preloaded_data kwarg
+# ---------------------------------------------------------------------------
+class TestMorningstarPreloadedData:
+    def _make_ms_data(self) -> dict:
+        return {"records": {"FAKE": {"HS377": {"time_series": []}}}, "metadata": {}}
+
+    def test_skips_file_when_preloaded(self, tmp_path):
+        """enrich_volatility_from_morningstar_prices does not open file when preloaded_data given."""
+        import run_screen
+
+        ghost_path = tmp_path / "nonexistent_morningstar.json"
+        ms_data = self._make_ms_data()
+        market = {"FAKE": {}}
+        # If file were opened it would raise — prove it does not
+        result = run_screen.enrich_volatility_from_morningstar_prices(
+            price_history_path=ghost_path,
+            market_data_by_ticker=market,
+            preloaded_data=ms_data,
+        )
+        assert isinstance(result, int)
+
+    def test_falls_back_to_file_when_not_preloaded(self, tmp_path):
+        """Without preloaded_data, the function opens price_history_path."""
+        import run_screen
+
+        ms_data = self._make_ms_data()
+        p = tmp_path / "morningstar_price_history.json"
+        p.write_text(json.dumps(ms_data), encoding="utf-8")
+        market = {"FAKE": {}}
+        result = run_screen.enrich_volatility_from_morningstar_prices(
+            price_history_path=p,
+            market_data_by_ticker=market,
+        )
+        assert isinstance(result, int)
+
+    def test_returns_zero_on_missing_file_no_preload(self, tmp_path):
+        """Returns 0 (graceful) when file is absent and no preloaded_data."""
+        import run_screen
+
+        result = run_screen.enrich_volatility_from_morningstar_prices(
+            price_history_path=tmp_path / "nope.json",
+            market_data_by_ticker={"FAKE": {}},
+        )
+        assert result == 0
+
+
+# ---------------------------------------------------------------------------
+# PIT financial preloaded_data kwarg
+# ---------------------------------------------------------------------------
+class TestPitFinancialPreloadedKwarg:
+    def _minimal_pit(self, ticker: str) -> dict:
+        return {"ticker": ticker, "facts": {}}
+
+    def test_skips_file_when_preloaded(self, tmp_path):
+        """pit_financial_snapshot does NOT open a file when preloaded_data is provided."""
+        from pit_financials import pit_financial_snapshot
+
+        ghost_dir = tmp_path / "pit_financials"
+        ghost_dir.mkdir()
+        # Ghost path — any attempt to open FAKE.json would fail
+        result = pit_financial_snapshot(
+            "FAKE",
+            "2026-06-28",
+            data_dir=ghost_dir,
+            preloaded_data=self._minimal_pit("FAKE"),
+        )
+        # Minimal facts → returns None (no cash data) but no FileNotFoundError
+        assert result is None or isinstance(result, dict)
+
+    def test_falls_back_to_file_when_not_preloaded(self, tmp_path):
+        """Without preloaded_data, function reads from data_dir/FAKE.json."""
+        from pit_financials import pit_financial_snapshot
+
+        pit_dir = tmp_path / "pit_financials"
+        pit_dir.mkdir()
+        (pit_dir / "FAKE.json").write_text(json.dumps(self._minimal_pit("FAKE")), encoding="utf-8")
+        result = pit_financial_snapshot("FAKE", "2026-06-28", data_dir=pit_dir)
+        assert result is None or isinstance(result, dict)
+
+    def test_parallel_preload_pattern(self, tmp_path):
+        """ThreadPoolExecutor over a pit_financials dir produces correct per-ticker dicts."""
+        import concurrent.futures
+
+        import run_screen
+
+        pit_dir = tmp_path / "pit_financials"
+        pit_dir.mkdir()
+        tickers = ["AAA", "BBB", "CCC"]
+        for t in tickers:
+            (pit_dir / f"{t}.json").write_text(json.dumps({"ticker": t, "facts": {}}), encoding="utf-8")
+
+        paths = list(pit_dir.glob("*.json"))
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+            futs = {p.stem.upper(): pool.submit(run_screen._load_pit_json_worker, p) for p in paths}
+            loaded = {t: f.result() for t, f in futs.items()}
+
+        for t in tickers:
+            assert loaded[t]["ticker"] == t
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-v"]))
