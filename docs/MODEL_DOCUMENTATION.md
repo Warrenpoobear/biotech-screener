@@ -1,7 +1,7 @@
 # Wake Robin DEM — Model Documentation
 
 **Version:** 1.7.2 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
-**Last updated:** 2026-06-28 (YTD backtest data integrity audit — split-adjusted price fix + Jun 26 endpoint correction; corrected YTD DEM +38.52% vs XBI +27.43% (+11.09pp); regime diagnostic corrected; **no production change**)
+**Last updated:** 2026-06-28 (YTD backtest data integrity audit — split-adjusted price fix + Jun 26 endpoint correction; corrected YTD DEM +38.52% vs XBI +27.43% (+11.09pp); regime diagnostic corrected; weekly validation vs S&P 500 added — DEM +31.79% vs SPY +12.32% (+19.5pp), Sharpe 2.49 vs 1.93; **no production change**)
 **Prior update:** 2026-06-25 (EES v3 raw_veto_core shadow gate MET; freeze-lift review memo prepared; `READY_FOR_OPERATOR_FREEZE_LIFT_REVIEW`; **no production change**)
 **Earlier update:** 2026-06-21 (ranking-tightening audit track [robustness Phases 1–2d, A–C], institutional-circularity finding, catalyst_decay_w PROMISING_BUT_UNPROVEN, IC tooling `--score-field`, and the 2026-06-20/21 repo-integrity incident; **diagnosis/docs-only, no behavior change**)
 **Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature, ordinal-only) + EW Top-30. **FROZEN** until governance gates clear.
@@ -164,6 +164,70 @@ because `DEM_raw = bl_hedged + XBI` by construction (bl_hedged is XBI-hedged exc
 The DEM portfolio runs at approximately market-level XBI beta pre-2025 (~1.05), rising to ~1.52 in 2025+ as the model selected high-beta names during the biotech rally. It is not a low-beta strategy.
 
 The **alpha-stream beta** (excess vs XBI) remains the correct diagnostic for selection quality: 0.05 pre-2025 means the excess return was nearly uncorrelated with XBI movements over 55 periods — alpha came from cross-sectional stock picking, not sector-timing. The 2025+ alpha-stream beta of 0.52 reflects that the excess return itself became partly driven by the rally (model picked names that surged with the sector), consistent with the "rally participation" alpha label.
+
+### Weekly Validation vs S&P 500 — YTD 2026
+
+Source: `artifacts/autopsy/top30_ytd_validation/2026_ytd_top30_validation.json`  
+Method: **equal-weight weekly-rebalanced Top-30** (25 non-overlapping 5-day windows, 2026-01-02 → 2026-06-22). Note: this is a different methodology than the monthly-rebalanced figures above (+31.79% here vs +38.52% monthly chain).
+
+#### Cumulative Returns
+
+| Series | YTD Return | XS vs DEM |
+|---|---|---|
+| **DEM Top-30** | **+31.79%** | — |
+| XBI | +17.97% | −13.82pp |
+| S&P 500 (SPY) | +12.32% | −19.47pp |
+
+#### Weekly Statistics
+
+| Metric | DEM Top-30 | XBI | S&P 500 (SPY) |
+|---|---|---|---|
+| Mean wkly return | +1.22% | +0.74% | +0.49% |
+| Std wkly return | 4.92% | 3.97% | 2.06% |
+| Hit rate (abs > 0) | **64%** | 52% | 52% |
+| Ann return (×52) | +88% | +47% | +29% |
+| Ann volatility | 35.5% | 28.6% | 14.9% |
+| Sharpe (ann) | **2.49** | 1.63 | 1.93 |
+| Max drawdown | −18.3% | −10.3% | −9.1% |
+| t-stat (abs) | 1.25 | 0.93 | 1.18 |
+
+#### Excess vs Benchmarks (weekly)
+
+| | vs XBI | vs SPY |
+|---|---|---|
+| Mean XS/week | +0.49% | +0.74% |
+| XS t-stat | **1.09** | 0.84 |
+| XS hit rate | 52% | 52% |
+| Cumulative XS | +13.82pp | +19.47pp |
+
+#### Monthly XS vs XBI
+
+| Month | Mean XS/week |
+|---|---|
+| Jan 2026 | +0.33% |
+| Feb 2026 | +1.61% |
+| Mar 2026 | +0.14% |
+| Apr 2026 | +0.32% |
+| May 2026 | −1.25% ← weak month |
+| Jun 2026 | +0.08% |
+
+#### Failure Windows (XS ≤ −1.50pp vs XBI)
+
+| Window | Port | XBI | XS | Flag |
+|---|---|---|---|---|
+| 2026-03-16 → 2026-03-23 | −4.73% | −1.81% | −2.92pp | *** HARD FAIL |
+| 2026-05-04 → 2026-05-11 | −1.01% | +0.94% | −1.95pp | HARD FAIL |
+| 2026-05-19 → 2026-05-26 | +3.50% | +5.17% | −1.67pp | |
+| 2026-05-26 → 2026-06-02 | −6.64% | −4.19% | −2.45pp | *** HARD FAIL |
+| 2026-06-01 → 2026-06-08 | −5.53% | −3.88% | −1.64pp | |
+
+**Key interpretation notes:**
+- t-stat of 1.09 (XS vs XBI) over 25 weeks is directionally encouraging but below the 2.0 threshold for statistical significance. ~40+ weeks needed to clear.
+- DEM Sharpe of 2.49 vs SPY 1.93 is strong on a risk-adjusted basis despite higher absolute vol (35.5% vs 14.9%) — the ann return differential (+88% vs +29%) more than compensates.
+- Higher DEM drawdown (−18.3% vs −10.3% XBI) reflects the higher-beta biotech portfolio concentration, not model failure.
+- May was the weakest month (2 hard-fail windows); Jun is recovering. Five failure windows over 25 weeks = 80% clean-window rate.
+
+`VALIDATION_DIAGNOSTIC / NO_MODEL_CHANGE / NO_SELECTOR_CHANGE / NO_TRADING_CHANGE`
 
 ---
 
