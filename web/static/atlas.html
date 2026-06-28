@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biotech Cell Atlas — Wake Robin</title>
-<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"
+        integrity="sha384-cCVCZkAjYNxaYKbM8lsArLznDF/SvMFr1jcZrvOpSTCa0W40ZAdLzHCEulnUa5i7"
+        crossorigin="anonymous"
+        onerror="document.documentElement.dataset.plotlyFailed='1'"></script>
 <style>
 :root {
   --bg: #0d1117;
@@ -430,6 +433,18 @@ const TISSUE_COLORS = {
 
 function colorFor(tissue) { return TISSUE_COLORS[tissue] || '#8b949e'; }
 
+// Escape externally-sourced strings (sponsor/company names, statuses, flags)
+// before interpolating into innerHTML to prevent HTML injection.
+function esc(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // API
 // ═══════════════════════════════════════════════════════════════════
@@ -636,18 +651,23 @@ function renderNetwork() {
     companyPos[node.id] = { x: Math.cos(angle) * 3, y: Math.sin(angle) * 3 };
   });
 
-  // Trial nodes positioned near their company
+  // Trial nodes positioned near their company, fanned out deterministically
+  // (no Math.random -> stable layout across re-renders).
   const trialPos = {};
+  const trialsByCompany = {};
   trials.forEach((node) => {
-    // Find connected company
     const edge = edges.find(e => e.target === node.id && e.type === 'trial');
     const compId = edge ? edge.source : null;
-    if (compId && companyPos[compId]) {
-      const cp = companyPos[compId];
-      trialPos[node.id] = { x: cp.x + (Math.random() - 0.5) * 2, y: cp.y + (Math.random() - 0.5) * 2 };
-    } else {
-      trialPos[node.id] = { x: 0, y: 0 };
-    }
+    (trialsByCompany[compId] = trialsByCompany[compId] || []).push(node.id);
+  });
+  Object.entries(trialsByCompany).forEach(([compId, ids]) => {
+    const cp = companyPos[compId];
+    if (!cp) { ids.forEach(id => { trialPos[id] = { x: 0, y: 0 }; }); return; }
+    ids.forEach((id, k) => {
+      const a = (k / ids.length) * 2 * Math.PI;
+      const r = 0.6 + 0.25 * (k % 3);
+      trialPos[id] = { x: cp.x + Math.cos(a) * r, y: cp.y + Math.sin(a) * r };
+    });
   });
 
   // Edge traces (by type)
@@ -688,8 +708,8 @@ function renderNetwork() {
       opacity: 0.85,
     },
     name: 'Companies',
-    customdata: companies.map(n => n.id),
-    hovertemplate: '<b>%{customdata}</b><br>Trials: %{marker.size}<extra></extra>',
+    customdata: companies.map(n => [n.id, n.trial_count]),
+    hovertemplate: '<b>%{customdata[0]}</b><br>Trials: %{customdata[1]}<extra></extra>',
     hoverlabel: { bgcolor: '#161b22', bordercolor: '#30363d' },
   };
 
@@ -724,7 +744,7 @@ function renderNetwork() {
   document.getElementById('mainChart').removeAllListeners?.('plotly_click');
   document.getElementById('mainChart').on('plotly_click', (e) => {
     const p = e.points?.[0];
-    if (p?.customdata && p.data.name === 'Companies') selectCompany(p.customdata);
+    if (p?.customdata && p.data.name === 'Companies') selectCompany(p.customdata[0]);
   });
 }
 
@@ -736,8 +756,12 @@ function renderBacktest() {
   }
 
   const summary = bt.summary;
-  const periods = summary.periods;
-  const horizons = summary.horizons;
+  const periods = (summary && summary.periods) || [];
+  const horizons = (summary && summary.horizons) || [];
+  if (!periods.length) {
+    Plotly.react('mainChart', [], { ...CHART_LAYOUT, title: { text: 'No backtest periods available', font: { color: '#8b949e' } } }, CHART_CONFIG);
+    return;
+  }
   const dates = periods.map(p => p.date);
   const colors = { '3m': '#58a6ff', '6m': '#3fb950', '12m': '#bc8cff' };
 
@@ -1002,9 +1026,9 @@ function renderDetail(cell) {
 
   let html = `
     <div class="detail-header">
-      <div class="detail-ticker">${cell.ticker}</div>
-      <div class="detail-name">${cell.name}</div>
-      <span class="detail-tissue" style="background:${colorFor(cell.tissue)}">${cell.tissue}</span>
+      <div class="detail-ticker">${esc(cell.ticker)}</div>
+      <div class="detail-name">${esc(cell.name)}</div>
+      <span class="detail-tissue" style="background:${colorFor(cell.tissue)}">${esc(cell.tissue)}</span>
     </div>
   `;
 
@@ -1035,9 +1059,9 @@ function renderDetail(cell) {
   html += `
     <div class="detail-section">
       <h3>🧬 Nucleus (Pipeline)</h3>
-      <div class="score-row"><span class="label">Lead Phase</span><span class="value">${nucleus.lead_phase || '—'}</span></div>
-      <div class="score-row"><span class="label">Lead NCT</span><span class="value" style="color:${nucleus.lead_nct ? 'var(--purple)' : 'inherit'}">${nucleus.lead_nct || '—'}</span></div>
-      <div class="score-row"><span class="label">Status</span><span class="value">${nucleus.lead_status || '—'}</span></div>
+      <div class="score-row"><span class="label">Lead Phase</span><span class="value">${esc(nucleus.lead_phase) || '—'}</span></div>
+      <div class="score-row"><span class="label">Lead NCT</span><span class="value" style="color:${nucleus.lead_nct ? 'var(--purple)' : 'inherit'}">${esc(nucleus.lead_nct) || '—'}</span></div>
+      <div class="score-row"><span class="label">Status</span><span class="value">${esc(nucleus.lead_status) || '—'}</span></div>
       ${nucleus.lead_pcd ? `<div class="score-row"><span class="label">Primary Completion</span><span class="value" style="color:var(--orange)">${nucleus.lead_pcd}</span></div>` : ''}
     </div>
   `;
@@ -1058,10 +1082,10 @@ function renderDetail(cell) {
       <h3>📡 Receptors (${receptors.catalyst_count || 0} catalysts)</h3>
       ${(receptors.catalysts || []).map(cat => `
         <div class="trial-item">
-          <span class="nct">${cat.nct_id}</span>
-          <span class="phase">${cat.phase}</span>
-          <br><span class="status">${cat.status}</span>
-          ${cat.primary_completion_date ? `<br><span class="pcd">PCD: ${cat.primary_completion_date}</span>` : ''}
+          <span class="nct">${esc(cat.nct_id)}</span>
+          <span class="phase">${esc(cat.phase)}</span>
+          <br><span class="status">${esc(cat.status)}</span>
+          ${cat.primary_completion_date ? `<br><span class="pcd">PCD: ${esc(cat.primary_completion_date)}</span>` : ''}
         </div>
       `).join('') || '<div style="color:var(--text-dim);font-size:12px">No upcoming catalysts</div>'}
     </div>
@@ -1071,7 +1095,7 @@ function renderDetail(cell) {
   html += `
     <div class="detail-section">
       <h3>🔗 Signaling (${signaling.trial_connections || 0} connections)</h3>
-      ${(signaling.shared_sponsors || []).slice(0, 8).map(s => `<span class="flag-tag">${s}</span>`).join('') || '<div style="color:var(--text-dim);font-size:12px">No shared sponsors</div>'}
+      ${(signaling.shared_sponsors || []).slice(0, 8).map(s => `<span class="flag-tag">${esc(s)}</span>`).join('') || '<div style="color:var(--text-dim);font-size:12px">No shared sponsors</div>'}
     </div>
   `;
 
@@ -1082,10 +1106,10 @@ function renderDetail(cell) {
         <h3>📋 Trials (${trials.length})</h3>
         ${trials.slice(0, 10).map(t => `
           <div class="trial-item">
-            <span class="nct">${t.nct_id}</span>
-            <span class="phase">${t.phase || 'Unknown'}</span>
-            <br><span class="status">${t.overall_status || t.status || 'Unknown'}</span>
-            ${t.primary_completion_date ? `<br><span class="pcd">PCD: ${t.primary_completion_date}</span>` : ''}
+            <span class="nct">${esc(t.nct_id)}</span>
+            <span class="phase">${esc(t.phase) || 'Unknown'}</span>
+            <br><span class="status">${esc(t.overall_status || t.status) || 'Unknown'}</span>
+            ${t.primary_completion_date ? `<br><span class="pcd">PCD: ${esc(t.primary_completion_date)}</span>` : ''}
           </div>
         `).join('')}
         ${trials.length > 10 ? `<div style="text-align:center;color:var(--text-dim);font-size:11px;padding:4px">+${trials.length - 10} more</div>` : ''}
@@ -1095,7 +1119,7 @@ function renderDetail(cell) {
 
   // Flags
   if (flags.length) {
-    html += `<div class="detail-section"><h3>🚩 Flags</h3>${flags.map(f => `<span class="flag-tag">${f}</span>`).join('')}</div>`;
+    html += `<div class="detail-section"><h3>🚩 Flags</h3>${flags.map(f => `<span class="flag-tag">${esc(f)}</span>`).join('')}</div>`;
   }
 
   document.getElementById('detailContent').innerHTML = html;
@@ -1105,7 +1129,7 @@ function renderDetailError(ticker, msg) {
   document.getElementById('detailContent').innerHTML = `
     <div class="detail-empty">
       <span class="icon">⚠️</span>
-      Error loading ${ticker}: ${msg}
+      Error loading ${esc(ticker)}: ${esc(msg)}
     </div>
   `;
 }

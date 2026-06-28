@@ -57,11 +57,11 @@ def get_cells(
         if has_catalyst is False and c["receptors"]["catalyst_count"] >= 1:
             continue
         out.append(c)
+    dates = dl.load_snapshot_dates()
+    resolved_snapshot = snapshot or (dates[-1] if dates else None)
     return {
         "count": len(out),
-        "snapshot": snapshot or dl.load_snapshot_dates()[-1]
-        if dl.load_snapshot_dates()
-        else None,
+        "snapshot": resolved_snapshot,
         "cells": out,
     }
 

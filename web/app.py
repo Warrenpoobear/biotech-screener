@@ -38,8 +38,11 @@ app = FastAPI(
 # ---- CORS (allow local dev + any origin for dashboards) ----
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    # Local single-user dashboard: scope to localhost origins. The previous
+    # wildcard + allow_credentials=True combination is rejected by browsers
+    # per the CORS spec, and no cookies/auth are in use here.
+    allow_origins=["http://localhost:8000", "http://127.0.0.1:8000"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

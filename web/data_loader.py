@@ -20,7 +20,7 @@ from __future__ import annotations
 import csv
 import json
 import logging
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -130,6 +130,16 @@ def _to_int(value: Any) -> Optional[int]:
     return int(round(f)) if f is not None else None
 
 
+def _parse_iso_date(value: Optional[str]) -> Optional[date]:
+    """Parse a YYYY-MM-DD prefix into a ``date``; ``None`` on empty/failure."""
+    if not value or len(value) < 10:
+        return None
+    try:
+        return date.fromisoformat(value[:10])
+    except ValueError:
+        return None
+
+
 # ---------------------------------------------------------------------------
 # Loaders
 # ---------------------------------------------------------------------------
@@ -151,8 +161,12 @@ def load_universe() -> Dict[str, Dict[str, str]]:
     return out
 
 
-def load_latest_prices() -> Dict[str, Dict[str, Any]]:
+def load_latest_prices(as_of: Optional[str] = None) -> Dict[str, Dict[str, Any]]:
     """Load the most recent (date, adj_close) per ticker from daily prices.
+
+    When ``as_of`` (YYYY-MM-DD) is provided, only rows dated on or before it are
+    considered, so the price is point-in-time aligned with the selected
+    snapshot rather than always reflecting the latest available close.
 
     Returns ``{ticker: {price, date}}``.
     """
@@ -167,6 +181,8 @@ def load_latest_prices() -> Dict[str, Dict[str, Any]]:
             if not ticker:
                 continue
             d = (row.get("date") or "").strip()
+            if as_of and d and d > as_of:
+                continue  # PIT guard: ignore prices after the as-of date
             price = _to_float(row.get("adj_close"))
             if price is None:
                 continue
@@ -341,8 +357,13 @@ def build_cell(
     scores: Dict[str, Dict[str, Any]],
     aact_studies: Dict[str, Dict[str, str]],
     aact_sponsors: Dict[str, List[str]],
+    as_of: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Build the full cell-atlas record for a single ticker."""
+    """Build the full cell-atlas record for a single ticker.
+
+    ``as_of`` (YYYY-MM-DD) anchors the "upcoming catalyst" test to a snapshot's
+    as-of date for point-in-time correctness; defaults to today when omitted.
+    """
     ticker = ticker.upper()
     uni = universe.get(ticker, {})
     price_info = prices.get(ticker, {})
@@ -369,7 +390,8 @@ def build_cell(
 
     # ---- Receptors: catalysts (upcoming trial readouts) ----
     catalysts: List[Dict[str, Any]] = []
-    today = datetime.utcnow().date()
+    # PIT anchor: a snapshot's as-of date when provided, else today.
+    today = _parse_iso_date(as_of) or datetime.now(timezone.utc).date()
     for trial in ticker_trials:
         nct = trial.get("nct_id", "")
         study = aact_studies.get(nct, {})
@@ -487,7 +509,6 @@ def build_all_cells(snapshot_date: Optional[str] = None) -> List[Dict[str, Any]]
     universe tickers and tickers present in the chosen snapshot is returned.
     """
     universe = load_universe()
-    prices = load_latest_prices()
     trials = load_trial_mapping()
     aact_studies = load_aact_studies()
     aact_sponsors = load_aact_sponsors()
@@ -498,6 +519,10 @@ def build_all_cells(snapshot_date: Optional[str] = None) -> List[Dict[str, Any]]
     else:
         snapshot = load_snapshot(snapshot_date)
 
+    # Point-in-time anchor: prefer the snapshot's own as_of_date so prices and
+    # "upcoming" catalysts align with the selected snapshot rather than today.
+    as_of = snapshot.get("as_of_date") or snapshot_date
+    prices = load_latest_prices(as_of)
     scores = snapshot_scores_for(snapshot)
 
     # Union of tickers: universe + any ticker in the snapshot scores.
@@ -509,7 +534,13 @@ def build_all_cells(snapshot_date: Optional[str] = None) -> List[Dict[str, Any]]
     if cache_key in _cells_cache:
         return _cells_cache[cache_key]
 
-    cells = [build_cell(t, universe, prices, trials, scores, aact_studies, aact_sponsors) for t in sorted(tickers)]
+    cells = [
+        build_cell(
+            t, universe, prices, trials, scores, aact_studies, aact_sponsors,
+            as_of=as_of,
+        )
+        for t in sorted(tickers)
+    ]
     _cells_cache[cache_key] = cells
     return cells
 
