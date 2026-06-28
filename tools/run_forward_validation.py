@@ -141,6 +141,46 @@ def get_bottom30(rows: list[dict]) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
+# Rank-depth shadow cohorts
+# ---------------------------------------------------------------------------
+# VALIDATION_INFRASTRUCTURE / RANK_DEPTH_SHADOW_TRACKING / NO_MODEL_CHANGE.
+# Top-30 = primary basket; ranks 31-60 = shadow reserve bench; Top-60 = depth
+# cohort. Annotation only — these baskets are never tradable by default.
+
+RANK_BAND_LO = 31
+RANK_BAND_HI = 60
+TOP60_N = 60
+
+
+def _ranked_eligible(rows: list[dict]) -> list[dict]:
+    """All rows with a numeric actionable_rank, sorted ascending by rank."""
+    eligible = []
+    for r in rows:
+        try:
+            rank = int(float(r.get("actionable_rank", 9999) or 9999))
+        except (ValueError, TypeError):
+            continue
+        eligible.append({"ticker": r["ticker"], "rank": rank})
+    eligible.sort(key=lambda x: x["rank"])
+    return eligible
+
+
+def get_rank_band(rows: list[dict], lo: int, hi: int) -> list[dict]:
+    """Names whose actionable_rank falls in [lo, hi], sorted by rank."""
+    return [e for e in _ranked_eligible(rows) if lo <= e["rank"] <= hi]
+
+
+def build_cohort_baskets(rows: list[dict]) -> dict[str, list[str]]:
+    """Return {cohort: [tickers]} for top30, rank31_60, top60 (rank-ordered)."""
+    ranked = _ranked_eligible(rows)
+    return {
+        "top30": [e["ticker"] for e in ranked if 1 <= e["rank"] <= TOP_N],
+        "rank31_60": [e["ticker"] for e in ranked if RANK_BAND_LO <= e["rank"] <= RANK_BAND_HI],
+        "top60": [e["ticker"] for e in ranked if 1 <= e["rank"] <= TOP60_N],
+    }
+
+
+# ---------------------------------------------------------------------------
 # Price readers — production_data/price_history.csv (long: date, ticker, close)
 # ---------------------------------------------------------------------------
 
@@ -484,6 +524,9 @@ def main() -> int:
 
     top30 = get_top30(rows)
     bottom30 = get_bottom30(rows)
+    # Rank-depth shadow cohorts (annotation only — never tradable by default)
+    cohort_baskets = build_cohort_baskets(rows)
+    rank31_60 = get_rank_band(rows, RANK_BAND_LO, RANK_BAND_HI)
 
     # --- Model hash ---
     model_hash = compute_model_hash()
@@ -517,6 +560,10 @@ def main() -> int:
         "data_quality": quality,
         "dq_checks": dq_checks,
         "top30": top30,
+        # Rank-depth shadow cohorts: ticker lists for forward-return measurement.
+        # top30 remains the primary basket; rank31_60 + top60 are shadow only.
+        "cohorts": cohort_baskets,
+        "rank31_60": [{"ticker": e["ticker"], "rank": e["rank"]} for e in rank31_60],
         "effective_price_date": effective_price_date,
         "xbi_price_at_capture": xbi_price,
         "adversarial": adversarial,

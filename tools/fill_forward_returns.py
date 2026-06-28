@@ -157,6 +157,56 @@ def compute_control_returns(
     return compute_basket_return(control_tickers, start_date, end_date)
 
 
+# ---------------------------------------------------------------------------
+# Rank-depth shadow cohorts
+# ---------------------------------------------------------------------------
+# VALIDATION_INFRASTRUCTURE / RANK_DEPTH_SHADOW_TRACKING / NO_MODEL_CHANGE.
+COHORT_RANGES = {
+    "top30": (1, 30),
+    "rank31_60": (31, 60),
+    "top60": (1, 60),
+}
+
+
+def compute_cohort_returns(
+    cohorts: dict[str, list[str]],
+    effective_start: str,
+    universe_dates: list[str],
+    xbi_start: float | None,
+) -> dict:
+    """Per-cohort equal-weight forward returns vs XBI at each horizon.
+
+    Returns {cohort: {horizon: {rank_min, rank_max, n_names, ew_return,
+    xbi_return, xs_return, end_date}}}. Return fields are None until the
+    forward endpoint exists in price_history.csv. Annotation only.
+    """
+    out: dict[str, dict] = {}
+    for cohort, tickers in cohorts.items():
+        rank_min, rank_max = COHORT_RANGES.get(cohort, (None, None))
+        out[cohort] = {}
+        for label, n_days in HORIZONS.items():
+            end_date = nth_trading_day_after(effective_start, n_days, universe_dates)
+            rec: dict[str, Any] = {
+                "rank_min": rank_min,
+                "rank_max": rank_max,
+                "n_names": len(tickers),
+                "ew_return": None,
+                "xbi_return": None,
+                "xs_return": None,
+                "end_date": end_date,
+            }
+            if end_date is not None and xbi_start:
+                ew = compute_basket_return(tickers, effective_start, end_date)
+                xbi_end = get_xbi_price(end_date)
+                if ew is not None and xbi_end is not None and xbi_start:
+                    xbi_ret = (xbi_end - xbi_start) / xbi_start
+                    rec["ew_return"] = round(ew, 6)
+                    rec["xbi_return"] = round(xbi_ret, 6)
+                    rec["xs_return"] = round(ew - xbi_ret, 6)
+            out[cohort][label] = rec
+    return out
+
+
 def compute_bootstrap_percentile(
     top30_xs: float,
     bootstraps: list[list[str]],
@@ -268,6 +318,18 @@ def fill_capture(capture: dict, existing_fill: dict | None, dry_run: bool) -> di
         fill[f"control_bottom30_{label}"] = round(b30_ret, 6) if b30_ret is not None else None
         fill[f"control_bootstrap_pct_{label}"] = round(boot_pct, 4) if boot_pct is not None else None
         changed = True
+
+    # --- Rank-depth shadow cohorts (top30 / rank31_60 / top60) ---
+    # Computed fresh each pass (cheap price lookups). Only flips `changed`
+    # when the cohort returns actually differ from the prior fill, so a fully
+    # matured capture is not re-appended every run.
+    cohorts = capture.get("cohorts")
+    if cohorts:
+        xbi_start = capture.get("xbi_price_at_capture") or get_xbi_price(effective_start)
+        cohort_returns = compute_cohort_returns(cohorts, effective_start, universe_dates, xbi_start)
+        fill["cohorts"] = cohort_returns
+        if not existing_fill or existing_fill.get("cohorts") != cohort_returns:
+            changed = True
 
     if not changed and existing_fill is not None:
         return None  # Nothing new

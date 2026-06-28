@@ -340,6 +340,45 @@ class DriftThresholds:
 # Step 1: Price refresh
 # ---------------------------------------------------------------------------
 
+# Mode → baseline refresh breadth + warm sources. A mode never changes the
+# model, ranker, selector, ruleset, or PIT integrity checks — only refresh
+# breadth and snapshot location.
+MODE_DEFAULTS = {
+    "daily-validation": {
+        "price_refresh_scope": "top30",
+        "warm_sources": "ctgov",
+    },
+    "daily-production": {
+        "price_refresh_scope": "full",
+        "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory",
+    },
+    "full-refresh": {
+        "price_refresh_scope": "full",
+        "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory,euctr,ctis,isrctn,merged_trials",
+    },
+    "research": {
+        "price_refresh_scope": "top30",
+        "warm_sources": "ctgov",
+    },
+}
+
+
+def resolve_validation_rank_depth_scope(
+    validation_rank_depth: Optional[int],
+    scope_explicitly_set: bool,
+    current_scope: str,
+) -> str:
+    """Resolve the price-refresh scope after applying --validation-rank-depth.
+
+    VALIDATION_INFRASTRUCTURE / NO_MODEL_CHANGE: governs refresh breadth only.
+    Explicit --price-refresh-scope always wins. When a rank depth is given and
+    scope was not set explicitly, widen to cover the cohort (>=60 -> top60,
+    else top30). Otherwise the scope is left unchanged.
+    """
+    if validation_rank_depth is None or scope_explicitly_set:
+        return current_scope
+    return "top60" if validation_rank_depth >= 60 else "top30"
+
 
 def _load_top_n_tickers_from_prior_snapshot(
     snapshot_dir: Path,
@@ -4860,14 +4899,24 @@ def run_daily(
     if not skip_price_refresh:
         _logger.info("\n[1/5] Refreshing price_history.csv ...")
         universe_path = data_dir / "universe.json"
-        # Scoped refresh: only fetch prices for Top-N + XBI (fast daily validation)
+        # Scoped refresh: only fetch prices for Top-N + XBI (fast daily validation).
+        # top60 widens scope to the rank-depth shadow cohort (ranks 1-60) so that
+        # ranks 31-60 forward returns are computed on fresh prices. Annotation/
+        # validation only — never changes the model, ranker, selector, or sizing.
         _top_n_tickers: Optional[List[str]] = None
-        if price_refresh_scope == "top30":
-            _top_n_tickers = _load_top_n_tickers_from_prior_snapshot(final_snapshots_dir, as_of_date, top_n=30)
+        if price_refresh_scope in ("top30", "top60"):
+            _scope_n = 60 if price_refresh_scope == "top60" else 30
+            _top_n_tickers = _load_top_n_tickers_from_prior_snapshot(final_snapshots_dir, as_of_date, top_n=_scope_n)
             if _top_n_tickers:
-                _logger.info(f"  Price refresh scope=top30: {len(_top_n_tickers)} prior-snapshot tickers + XBI")
+                _logger.info(
+                    f"  Price refresh scope={price_refresh_scope}: "
+                    f"{len(_top_n_tickers)} prior-snapshot tickers + XBI"
+                )
             else:
-                _logger.info("  Price refresh scope=top30: no prior snapshot found — falling back to full universe")
+                _logger.info(
+                    f"  Price refresh scope={price_refresh_scope}: "
+                    "no prior snapshot found — falling back to full universe"
+                )
         price_stats = refresh_prices(price_csv, as_of_date, universe_path, tickers_override=_top_n_tickers)
         _logger.info(
             f"  Extended {price_stats.get('n_extended', 0)} tickers, "
@@ -7018,12 +7067,28 @@ def main():
     parser.add_argument(
         "--price-refresh-scope",
         default=None,
-        choices=["full", "top30"],
+        choices=["full", "top30", "top60"],
         help=(
-            "Price refresh scope: 'full' (all universe tickers) or 'top30' "
-            "(only prior-snapshot Top-30 + XBI — fastest, for daily validation runs). "
-            "Falls back to full if no prior snapshot found. "
-            "Default is set by --mode (top30 for daily-validation, full otherwise)."
+            "Price refresh scope: 'full' (all universe tickers), 'top30' "
+            "(prior-snapshot Top-30 + XBI — fastest), or 'top60' (prior-snapshot "
+            "Top-60 + XBI — covers the rank-depth shadow cohort so ranks 31-60 "
+            "forward returns use fresh prices). Falls back to full if no prior "
+            "snapshot found. Default is set by --mode (top30 for daily-validation, "
+            "full otherwise). Annotation/validation only — never changes the model."
+        ),
+    )
+    parser.add_argument(
+        "--validation-rank-depth",
+        type=int,
+        default=None,
+        choices=[30, 60],
+        help=(
+            "Explicit rank-depth for daily validation runs. When set, widens the "
+            "price-refresh scope to cover the cohort (30 -> top30, 60 -> top60 + XBI) "
+            "unless --price-refresh-scope is given explicitly. The rank-depth shadow "
+            "cohorts (top30 / rank31_60 / top60) are tracked in the forward "
+            "validation ledger regardless. VALIDATION_INFRASTRUCTURE / NO_MODEL_CHANGE: "
+            "does not change ranking, selection, scoring, eligibility, sizing, or trading."
         ),
     )
     parser.add_argument(
@@ -7155,29 +7220,28 @@ def main():
     # sentinel None for scope/sources, and sys.argv for snapshot-dir).
     # NOTE: mode never changes the model, ranker, selector, ruleset, or PIT
     # integrity checks — it only governs refresh breadth and snapshot location.
-    _MODE_DEFAULTS = {
-        "daily-validation": {
-            "price_refresh_scope": "top30",
-            "warm_sources": "ctgov",
-        },
-        "daily-production": {
-            "price_refresh_scope": "full",
-            "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory",
-        },
-        "full-refresh": {
-            "price_refresh_scope": "full",
-            "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory,euctr,ctis,isrctn,merged_trials",
-        },
-        "research": {
-            "price_refresh_scope": "top30",
-            "warm_sources": "ctgov",
-        },
-    }
-    _mode_cfg = _MODE_DEFAULTS[args.mode]
+    _mode_cfg = MODE_DEFAULTS[args.mode]
     if args.price_refresh_scope is None:
         args.price_refresh_scope = _mode_cfg["price_refresh_scope"]
     if args.warm_sources is None:
         args.warm_sources = _mode_cfg["warm_sources"]
+
+    # --validation-rank-depth makes rank-depth shadow tracking explicit and widens
+    # the price-refresh scope to cover the cohort so ranks 31-60 use fresh prices.
+    # Explicit --price-refresh-scope still wins. NO_MODEL_CHANGE: this only governs
+    # refresh breadth — never ranking, selection, scoring, sizing, or trading.
+    _resolved_scope = resolve_validation_rank_depth_scope(
+        args.validation_rank_depth,
+        scope_explicitly_set="--price-refresh-scope" in sys.argv,
+        current_scope=args.price_refresh_scope,
+    )
+    if _resolved_scope != args.price_refresh_scope:
+        args.price_refresh_scope = _resolved_scope
+        _logger.info(
+            "[MODE] --validation-rank-depth=%s → price_refresh_scope=%s",
+            args.validation_rank_depth,
+            args.price_refresh_scope,
+        )
 
     # Research mode: never write a production snapshot. Redirect to a scratch
     # snapshot tree and skip drift/forward-eval gates (they compare against

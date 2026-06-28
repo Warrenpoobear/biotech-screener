@@ -369,6 +369,127 @@ def _timed(label: str):
 
 
 # =============================================================================
+# RANK-DEPTH SHADOW COHORTS
+# =============================================================================
+# VALIDATION_INFRASTRUCTURE / RANK_DEPTH_SHADOW_TRACKING / NO_MODEL_CHANGE.
+#
+# Annotation-only layer that labels ranked names by depth-of-rank cohort and
+# exports a Top-60 sidecar. It NEVER affects rank, score, eligibility, sizing,
+# or production selection. The Top-30 remains the primary model basket; ranks
+# 31-60 are monitored as shadow candidates only; Top-60 tests rank-depth
+# robustness. Nothing here is tradable by default.
+
+_RANK_DEPTH_TOP30_MAX = 30
+_RANK_DEPTH_BAND_MAX = 60  # ranks 31..60 form the shadow reserve bench
+
+# Sidecar column -> source field in rankings.csv (csv_rows). Computed/derived
+# columns (as_of_date + cohort flags) are filled separately.
+_RANK_DEPTH_SIDECAR_FIELDS = [
+    ("ticker", "ticker"),
+    ("company_name", "company_name"),
+    ("actionable_rank", "actionable_rank"),
+    ("final_score", "final_score"),
+    ("market_cap_mm", "market_cap_mm"),
+    ("close_price", "close_price"),
+    ("catalyst_bucket", "catalyst_bucket"),
+    ("catalyst_date", "next_catalyst_date"),
+    ("primary_catalyst", "catalyst_event_type"),
+    ("institutional_score", "inst_delta_z"),
+    ("coinvest_score", "coinvest_score_z"),
+    ("expectation_gap", "expectation_error_score"),
+    ("ees_shadow_flag", "ees_v3_gate"),
+    ("options_shadow_flag", "opt_use_for_judgment"),
+    ("data_quality_flags", "risk_flags"),
+]
+
+
+def _rank_depth_safe_rank(rank):
+    """Coerce an actionable_rank to int; non-numeric/blank -> large sentinel."""
+    try:
+        return int(float(rank))
+    except (TypeError, ValueError):
+        return 10**9
+
+
+def _classify_rank_depth(rank):
+    """Return (cohort, is_top30, is_rank31_60, is_top60) for one actionable_rank.
+
+    Non-numeric / blank ranks (ineligible rows) fall into ``outside_top60``.
+    """
+    r = _rank_depth_safe_rank(rank)
+    is_top30 = 1 <= r <= _RANK_DEPTH_TOP30_MAX
+    is_band = _RANK_DEPTH_TOP30_MAX < r <= _RANK_DEPTH_BAND_MAX
+    is_top60 = 1 <= r <= _RANK_DEPTH_BAND_MAX
+    if is_top30:
+        cohort = "top30"
+    elif is_band:
+        cohort = "rank31_60"
+    else:
+        cohort = "outside_top60"
+    return (cohort, is_top30, is_band, is_top60)
+
+
+def add_rank_depth_cohorts(df, rank_col="actionable_rank"):
+    """Annotate a ranked dataframe with rank-depth shadow cohorts.
+
+    VALIDATION_INFRASTRUCTURE / RANK_DEPTH_SHADOW_TRACKING / NO_MODEL_CHANGE.
+    Adds ``rank_depth_cohort`` (top30 | rank31_60 | outside_top60) plus boolean
+    ``is_top30`` / ``is_rank31_60`` / ``is_top60`` columns. Annotation only:
+    does not affect rank, score, eligibility, sizing, or selection.
+    """
+    import pandas as pd
+
+    out = df.copy()
+    rank = pd.to_numeric(out[rank_col], errors="coerce")
+    is_top30 = rank.between(1, _RANK_DEPTH_TOP30_MAX)
+    is_band = rank.between(_RANK_DEPTH_TOP30_MAX + 1, _RANK_DEPTH_BAND_MAX)
+
+    out["rank_depth_cohort"] = "outside_top60"
+    out.loc[is_top30, "rank_depth_cohort"] = "top30"
+    out.loc[is_band, "rank_depth_cohort"] = "rank31_60"
+    out["is_top30"] = is_top30
+    out["is_rank31_60"] = is_band
+    out["is_top60"] = rank.between(1, _RANK_DEPTH_BAND_MAX)
+    return out
+
+
+def export_rank_depth_top60_sidecar(csv_rows, snap_path, as_of_date):
+    """Write snapshots/<date>/rank_depth_top60.csv from the ranked rows.
+
+    Shadow discovery + depth-validation artifact: who is populating ranks
+    31-60, and why. Annotation only — derived from the already-written
+    rankings.csv rows, never mutating them. Returns the output Path or None.
+    """
+    out_path = Path(snap_path) / "rank_depth_top60.csv"
+    header = (
+        ["as_of_date"]
+        + [name for name, _ in _RANK_DEPTH_SIDECAR_FIELDS]
+        + ["rank_depth_cohort", "is_top30", "is_rank31_60", "is_top60"]
+    )
+    out_rows = []
+    for row in csv_rows:
+        cohort, is_top30, is_band, is_top60 = _classify_rank_depth(row.get("actionable_rank"))
+        if not is_top60:
+            continue  # sidecar is Top-60 only
+        rec = {"as_of_date": as_of_date}
+        for name, src in _RANK_DEPTH_SIDECAR_FIELDS:
+            rec[name] = row.get(src, "")
+        rec["rank_depth_cohort"] = cohort
+        rec["is_top30"] = is_top30
+        rec["is_rank31_60"] = is_band
+        rec["is_top60"] = is_top60
+        out_rows.append(rec)
+
+    out_rows.sort(key=lambda r: _rank_depth_safe_rank(r["actionable_rank"]))
+    with open(out_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=header, extrasaction="ignore", lineterminator="\n")
+        writer.writeheader()
+        for rec in out_rows:
+            writer.writerow(rec)
+    return out_path
+
+
+# =============================================================================
 # CATALYST WINDOW PRESETS AND DECAY FUNCTIONS
 # =============================================================================
 
@@ -6898,6 +7019,15 @@ def save_validation_snapshot(
         write_snapshot_manifest(snap_path)
     except Exception as exc:
         logger.debug("Snapshot manifest write failed: %s", exc)
+
+    # --- Write rank-depth Top-60 shadow sidecar (annotation only) ---
+    # VALIDATION_INFRASTRUCTURE / RANK_DEPTH_SHADOW_TRACKING / NO_MODEL_CHANGE.
+    # Non-blocking: a failure here must never affect the production snapshot.
+    try:
+        _rd_path = export_rank_depth_top60_sidecar(csv_rows, snap_path, as_of_date)
+        logger.info(f"  Rank-depth Top-60 sidecar written: {_rd_path}")
+    except Exception as exc:
+        logger.warning(f"  rank_depth_top60.csv sidecar write failed (non-blocking): {exc}")
 
     # --- Write options diagnostics sidecar ---
     try:
