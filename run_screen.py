@@ -33,6 +33,7 @@ Architecture:
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import csv
 import hashlib
 import json
@@ -1335,6 +1336,26 @@ def load_json_data(
         raise ValueError(f"{description} must be a JSON array, got {type(data)}")
 
     logger.debug(f"Loaded {description}: {len(data)} records from {filepath}")
+    return data
+
+
+def _load_json_threadsafe(filepath: Path, description: str) -> List[Dict[str, Any]]:
+    """JSON load safe for ThreadPoolExecutor workers.
+
+    signal.alarm (used by operation_timeout) is main-thread-only on POSIX, so
+    load_json_data cannot be called from worker threads. This variant preserves
+    the size and symlink security checks but omits the SIGALRM timeout wrapper.
+    """
+    try:
+        validate_file_size(filepath, MAX_JSON_FILE_SIZE_MB)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"{description} file not found: {filepath}")
+    if filepath.is_symlink():
+        raise SymlinkError(f"{description} file is a symbolic link: {filepath}")
+    with open(filepath, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    if not isinstance(data, list):
+        raise ValueError(f"{description} must be a JSON array, got {type(data)}")
     return data
 
 
@@ -9737,6 +9758,38 @@ def run_screening_pipeline(
             f"{len(_inputs_manifest['validation']['warnings'])} warnings"
         )
 
+    # ==========================================================================
+    # PARALLEL I/O PRELOAD: fire all 4 independent JSON reads concurrently.
+    # File I/O releases the GIL, so ThreadPoolExecutor gives real parallelism.
+    # _load_json_threadsafe omits SIGALRM (signal.alarm is main-thread-only).
+    # Path resolution for trial_records must happen here so the trial future
+    # can start alongside universe/financial/market.
+    # ==========================================================================
+    _preload_t0 = __import__("time").time()
+    if ctgov_cache_dir is False:
+        _trial_preload_cache: Optional[Path] = None
+    else:
+        _trial_preload_root = Path(ctgov_cache_dir) if ctgov_cache_dir else Path(__file__).parent / "cache" / "ctgov"
+        _trial_preload_cache = _trial_preload_root / f"trial_records_{as_of_date}.json"
+        if not _trial_preload_cache.exists():
+            _trial_preload_cache = None
+    _trial_preload_path: Path = (
+        _trial_preload_cache if _trial_preload_cache is not None else data_dir / "trial_records.json"
+    )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as _preload_pool:
+        _fut_universe = _preload_pool.submit(_load_json_threadsafe, data_dir / "universe.json", "Universe")
+        _fut_financial = _preload_pool.submit(_load_json_threadsafe, data_dir / "financial_records.json", "Financial")
+        _fut_trials = _preload_pool.submit(_load_json_threadsafe, _trial_preload_path, "Trials")
+        _fut_market = _preload_pool.submit(_load_json_threadsafe, data_dir / "market_data.json", "Market data")
+        _preloaded: Dict[str, Any] = {
+            "universe": _fut_universe.result(),
+            "financial": _fut_financial.result(),
+            "trials": _fut_trials.result(),
+            "market": _fut_market.result(),
+        }
+    print(f"[timing] preload (parallel I/O): {__import__('time').time() - _preload_t0:.2f}s", flush=True)
+
     # Load input data
     logger.info("[1/7] Loading input data...")
     _t_load_data = __import__("time").time()
@@ -9745,7 +9798,7 @@ def run_screening_pipeline(
     logger.info(f"  Universe file exists: {universe_path.exists()}")
     if universe_path.exists():
         logger.info(f"  Universe file size: {universe_path.stat().st_size} bytes")
-    raw_universe = load_json_data(universe_path, "Universe")
+    raw_universe = _preloaded["universe"]
     logger.info(f"  Loaded {len(raw_universe)} records from universe.json")
     print(f"DEBUG_TRACE: Loaded {len(raw_universe)} records from {universe_path}", flush=True)
     # Pruning observability: record the loaded count so the cheap-exclusion
@@ -9869,7 +9922,7 @@ def run_screening_pipeline(
     print(f"[timing] load universe: {__import__('time').time() - _t_load_data:.2f}s", flush=True)
 
     _t_load_financial = __import__("time").time()
-    financial_records = load_json_data(data_dir / "financial_records.json", "Financial")
+    financial_records = _preloaded["financial"]
 
     # Financial records staleness check
     _fin_path = data_dir / "financial_records.json"
@@ -9946,7 +9999,7 @@ def run_screening_pipeline(
                 f"falling back to {trial_records_path.name} (may be stale, pit_mode={pit_mode})"
             )
 
-    trial_records = load_json_data(trial_records_path, "Trials")
+    trial_records = _preloaded["trials"]  # already loaded by parallel preload
 
     # PIT safety net: if we fell back to unfiltered trial_records.json, apply
     # a runtime PIT filter so records must have been posted before the screen
@@ -9963,7 +10016,7 @@ def run_screening_pipeline(
     print(f"[timing] load trials: {__import__('time').time() - _t_load_trials:.2f}s", flush=True)
 
     _t_load_market = __import__("time").time()
-    market_records = load_json_data(data_dir / "market_data.json", "Market data")
+    market_records = _preloaded["market"]
 
     # --- Ingestion schema validation (advisory, non-blocking) ---
     for _label, _validator, _data in [
@@ -10363,6 +10416,7 @@ def run_screening_pipeline(
         # This ensures stable delta comparisons regardless of Module 1 filtering
         m3_result = compute_module_3_catalyst(
             trial_records_path=trial_records_path,  # Resolved above (PIT cache or production)
+            trial_records=trial_records,  # pass pre-loaded list; avoids re-parsing 15MB file
             state_dir=state_dir,  # State directory for snapshots (namespaced by universe)
             active_tickers=full_universe_tickers,  # FULL universe, not filtered active_tickers
             as_of_date=as_of_date_obj,  # Date object

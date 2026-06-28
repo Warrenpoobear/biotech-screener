@@ -4,6 +4,8 @@
 Covers (all behavior-preserving / additive):
   - _read_price_history_rows: parse-once caching keyed by (path, mtime, size)
   - detect_no_material_input_change: logging-only no-op detector
+  - _load_json_threadsafe: thread-safe JSON loader for parallel preload
+  - compute_module_3_catalyst trial_records kwarg: skips redundant 15MB re-parse
 
 These guard the production-infrastructure changes only; model/ranker/selector
 behavior is covered by the golden-baseline regression suite.
@@ -138,6 +140,132 @@ class TestNoOpDetection:
         )
         assert out["no_material_input_change"] is False
         assert "price_hash" in out["changed_inputs"]
+
+
+# ---------------------------------------------------------------------------
+# _load_json_threadsafe
+# ---------------------------------------------------------------------------
+class TestLoadJsonThreadsafe:
+    def test_returns_same_data_as_json_load(self, tmp_path):
+        """Produces identical output to a direct json.load call."""
+        import run_screen
+
+        p = tmp_path / "data.json"
+        payload = [{"ticker": "AAA", "val": 1}, {"ticker": "BBB", "val": 2}]
+        p.write_text(json.dumps(payload), encoding="utf-8")
+        got = run_screen._load_json_threadsafe(p, "Test")
+        assert got == payload
+
+    def test_raises_on_missing_file(self, tmp_path):
+        """FileNotFoundError for a path that does not exist."""
+        import run_screen
+
+        with pytest.raises(FileNotFoundError, match="Test file not found"):
+            run_screen._load_json_threadsafe(tmp_path / "missing.json", "Test")
+
+    def test_raises_on_non_list_json(self, tmp_path):
+        """ValueError when the JSON root is not an array."""
+        import run_screen
+
+        p = tmp_path / "obj.json"
+        p.write_text('{"key": "value"}', encoding="utf-8")
+        with pytest.raises(ValueError, match="must be a JSON array"):
+            run_screen._load_json_threadsafe(p, "Test")
+
+    def test_raises_on_symlink(self, tmp_path):
+        """SymlinkError for symlinked files (security check)."""
+        import run_screen
+
+        real = tmp_path / "real.json"
+        real.write_text("[{}]", encoding="utf-8")
+        link = tmp_path / "link.json"
+        link.symlink_to(real)
+        with pytest.raises(run_screen.SymlinkError):
+            run_screen._load_json_threadsafe(link, "Test")
+
+    def test_parallel_loads_return_correct_data(self, tmp_path):
+        """ThreadPoolExecutor with 4 workers returns correct data for each file."""
+        import concurrent.futures
+
+        import run_screen
+
+        files = {}
+        for i in range(4):
+            p = tmp_path / f"f{i}.json"
+            payload = [{"idx": i, "ticker": f"T{i}"}]
+            p.write_text(json.dumps(payload), encoding="utf-8")
+            files[f"f{i}"] = (p, payload)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+            futs = {k: pool.submit(run_screen._load_json_threadsafe, p, k) for k, (p, _) in files.items()}
+            results = {k: fut.result() for k, fut in futs.items()}
+
+        for k, (_, expected) in files.items():
+            assert results[k] == expected, f"parallel load mismatch for {k}"
+
+
+# ---------------------------------------------------------------------------
+# Module 3 trial_records kwarg (pre-loaded bypass)
+# ---------------------------------------------------------------------------
+class TestModule3TrialRecordsKwarg:
+    def _minimal_record(self, nct_id: str, ticker: str) -> dict:
+        """Minimal trial record that passes ctgov_adapter critical-field validation."""
+        return {
+            "nct_id": nct_id,
+            "ticker": ticker,
+            "status": "RECRUITING",
+            "overall_status": "RECRUITING",
+            "primary_completion_date": "2027-06-01",
+            "last_update_posted": "2026-06-01",
+            "phases": ["PHASE2"],
+            "conditions": ["Cancer"],
+            "interventions": [{"intervention_type": "DRUG", "intervention_name": "TestDrug"}],
+            "sponsor": "Test Pharma",
+        }
+
+    def test_accepts_preloaded_trial_records(self, tmp_path):
+        """compute_module_3_catalyst uses trial_records kwarg and does NOT open the path."""
+        from datetime import date
+
+        from module_3_catalyst import compute_module_3_catalyst
+
+        records = [self._minimal_record("NCT00000001", "FAKE")]
+        state_dir = tmp_path / "state"
+        state_dir.mkdir()
+        # Ghost path does not exist — a file-open would raise FileNotFoundError.
+        ghost_path = tmp_path / "nonexistent_trial_records.json"
+
+        result = compute_module_3_catalyst(
+            trial_records_path=ghost_path,
+            trial_records=records,
+            state_dir=state_dir,
+            active_tickers={"FAKE"},
+            as_of_date=date(2026, 6, 28),
+            pit_mode="degrade",
+        )
+        assert "summaries" in result
+        assert isinstance(result["summaries"], dict)
+
+    def test_falls_back_to_file_when_not_provided(self, tmp_path):
+        """Without trial_records kwarg, the function reads from trial_records_path."""
+        from datetime import date
+
+        from module_3_catalyst import compute_module_3_catalyst
+
+        records = [self._minimal_record("NCT00000002", "FAKE2")]
+        p = tmp_path / "trial_records.json"
+        p.write_text(json.dumps(records), encoding="utf-8")
+        state_dir = tmp_path / "state"
+        state_dir.mkdir()
+
+        result = compute_module_3_catalyst(
+            trial_records_path=p,
+            state_dir=state_dir,
+            active_tickers={"FAKE2"},
+            as_of_date=date(2026, 6, 28),
+            pit_mode="degrade",
+        )
+        assert "summaries" in result
 
 
 if __name__ == "__main__":

@@ -1047,6 +1047,7 @@ def compute_module_3_catalyst(
     config: Optional[Module3Config] = None,
     output_dir: Optional[Path] = None,
     pit_mode: str = "strict",
+    trial_records: Optional[List] = None,
 ) -> Dict[str, Any]:
     """
     Main Module 3 Catalyst Detection Entry Point (vNext)
@@ -1132,23 +1133,29 @@ def compute_module_3_catalyst(
     event_detector = EventDetector(config.event_detector_config)
     aggregator = CatalystAggregator(market_calendar, config.decay_constant)
 
-    # Load trial records with explicit error handling and schema validation
-    logger.info(f"Loading trial records from {trial_records_path}")
-    try:
-        with open(trial_records_path) as f:
-            trial_records_raw = json.load(f)
-    except FileNotFoundError:
-        raise FileNotFoundError(
-            f"Trial records file not found: {trial_records_path}. " "Ensure the file exists and path is correct."
-        )
-    except json.JSONDecodeError as e:
-        raise ValueError(
-            f"Invalid JSON in trial records file {trial_records_path}: {e}. " "File may be corrupted or malformed."
-        )
-    except PermissionError:
-        raise PermissionError(
-            f"Permission denied reading trial records: {trial_records_path}. " "Check file permissions."
-        )
+    # Load trial records with explicit error handling and schema validation.
+    # If trial_records is provided (pre-loaded by the parallel I/O preload in
+    # run_screening_pipeline), use it directly to avoid re-parsing the 15MB file.
+    if trial_records is not None:
+        logger.info(f"Using pre-loaded trial records ({len(trial_records)} records)")
+        trial_records_raw = trial_records
+    else:
+        logger.info(f"Loading trial records from {trial_records_path}")
+        try:
+            with open(trial_records_path) as f:
+                trial_records_raw = json.load(f)
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f"Trial records file not found: {trial_records_path}. " "Ensure the file exists and path is correct."
+            )
+        except json.JSONDecodeError as e:
+            raise ValueError(
+                f"Invalid JSON in trial records file {trial_records_path}: {e}. " "File may be corrupted or malformed."
+            )
+        except PermissionError:
+            raise PermissionError(
+                f"Permission denied reading trial records: {trial_records_path}. " "Check file permissions."
+            )
 
     # Schema validation: fail fast on malformed data
     if not isinstance(trial_records_raw, list):
