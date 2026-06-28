@@ -15,6 +15,61 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
+## Recent Updates — 2026-06-28 (Rank-Depth Shadow Tracking)
+
+Classification: `VALIDATION_INFRASTRUCTURE / RANK_DEPTH_SHADOW_TRACKING / NO_MODEL_CHANGE`
+
+**Summary:**
+- Added shadow tracking for the **Top-60** ranked names and the **ranks 31–60** band, alongside the existing Top-30 forward-validation basket.
+- **Top-30 remains the primary validation basket / selected model** — unchanged.
+- **Ranks 31–60** are now monitored as a reserve-candidate ("shadow bench") cohort.
+- **Top-60** is tracked as a depth-of-rank validation cohort (does alpha persist beyond rank 30?).
+- Diagnostic/measurement only. Not tradable by default.
+
+**Governance verdict:**
+- `NO_MODEL_CHANGE`. No ranker, selector, scoring, eligibility, sizing, production-default, cron, or trading change.
+- Frozen status: **2026-06-20 scoped architecture freeze remains in effect** (DEM FROZEN / BLOCKED_LEVEL_0). This change does not promote or clear any gate.
+- Operator action required: none. Optionally decide later whether to (a) commit the docs, (b) record a ratification entry in `docs/FORWARD_VALIDATION_PROTOCOL.md`, and (c) promote daily rank-depth reporting to cron — see "Cron boundary" below.
+
+**Evidence:**
+- Commit `10cae69e` on branch `feat/rank-depth-shadow` (pushed to origin; not merged).
+- `run_screen.py` — `add_rank_depth_cohorts()` + `export_rank_depth_top60_sidecar()`.
+- `tools/run_forward_validation.py` — captures record `cohorts {top30, rank31_60, top60}`.
+- `tools/fill_forward_returns.py` — `compute_cohort_returns()` (per-cohort EW/XBI/XS at 1d/5d/20d).
+- `tools/run_daily_production.py` — `top60` price-refresh scope + opt-in `--validation-rank-depth {30,60}`.
+- `tools/rank_depth_validation_summary.py` (new) → `artifacts/validation/rank_depth/RANK_DEPTH_VALIDATION.md`.
+- `tests/test_rank_depth_validation.py` — 9/9 pass; ~770 regression tests touching the modified tools pass (0 failures); real-snapshot smoke test produced exactly 60 sidecar rows.
+
+**Impact on alpha interpretation:**
+- Provides a cleaner read on whether the ranker has a real **slope** beyond the Top-30 cutoff. A genuine slope would look like `Top-30 XS > Top-60 XS > Ranks 31–60 XS > 0`; a positive 31–60 band would indicate a viable substitute pool rather than a fragile top basket.
+- **No alpha is claimed.** Cohort returns are pending forward data and are diagnostic only; the Top-30 forward-validation gate remains the primary proof path and is still unmet.
+
+**What changed:**
+- A new **non-blocking production sidecar artifact** `snapshots/<date>/rank_depth_top60.csv` is now written on every snapshot (try/except-guarded — cannot affect the frozen production snapshot). This is validation infrastructure, not model behavior.
+- Forward-validation captures/fills now carry rank-depth cohorts; a new rank-depth summary card tool exists (run manually).
+
+**What did not change:**
+- Ranker: unchanged.
+- Selector: unchanged.
+- Scoring: unchanged.
+- Eligibility: unchanged.
+- Sizing: unchanged.
+- Production wiring / cron / default behavior: unchanged. `daily-production` still defaults to `full` price scope; Top-60 refresh is opt-in only.
+- Trading / actionability: unchanged.
+
+**Cron boundary (explicit):** `docs/FORWARD_VALIDATION_PROTOCOL.md` (ratified 2026-06-28) defers pipeline/cron scheduling of validation artifacts to a separate operator authorization. This change respects that: the opt-in flags and the always-on sidecar were operator-instructed, but **daily rank-depth reporting was NOT wired into cron**. Promotion to cron remains a separate, explicit operator decision.
+
+**Skill synchronization:**
+- Skills reviewed: repo-scoped skills/agents referencing forward validation, Top-30 framing, weekly sweep, roster/IC. No repo-scoped skill asserted a claim made stale by this change (Top-30 remains primary; rank-depth is additive shadow-only).
+- Skills updated: none required.
+- Skills not updated: global `~/.claude/skills/*` left untouched by policy (out of repo scope; no behavior change warranted).
+
+**Open questions / next validation:**
+- Accrue ≥20 non-overlapping weekly 5d windows per cohort, then read the rank-depth slope.
+- Operator decision pending on whether to promote daily rank-depth reporting to cron and/or record a protocol ratification entry.
+
+---
+
 ## Recent Updates — 2026-06-28
 
 Diagnostic and documentation only. **No selector, ranker, weight, formula, eligibility, sizing, or production-output changes.** DEM remains **FROZEN (BLOCKED_LEVEL_0)**.
