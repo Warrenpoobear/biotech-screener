@@ -12,6 +12,7 @@ from pathlib import Path
 from common.adcom_vote_features import ADCOM_VOTE_COLUMNS
 from common.event_quality_features import OPTIONS_QUALITY_COLUMNS
 from common.options_diagnostics import OPTIONS_DIAGNOSTIC_COLUMNS
+from common.options_features import OPTIONS_FEATURE_COLUMNS
 from decision_engine import SORT_CONTRIB_KEYS
 
 # =============================================================================
@@ -179,6 +180,8 @@ SNAPSHOT_COLUMNS = (
         *OPTIONS_DIAGNOSTIC_COLUMNS,
         # --- Options quality composite (derived from diagnostics) ---
         *OPTIONS_QUALITY_COLUMNS,
+        # --- Options Stage 1 shadow features (quality score, expectation gap) ---
+        *OPTIONS_FEATURE_COLUMNS,
         # --- Market-model disagreement (shadow diagnostic, not ranking) ---
         "implied_event_move",
         "pos_divergence",

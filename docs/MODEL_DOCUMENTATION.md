@@ -2607,4 +2607,31 @@ Post-review (2026-05-28 onward):
 
 ---
 
-*Document updated 2026-06-02 (added § 14.6.7 PIT trim shadow study documentation; research-only artifact with forward-window maturity blocker). Prior updates: 2026-05-24 (v1.14.0 sync), 2026-05-06 (ruleset reference), 2026-04-27 (baseline). Active ruleset: 8887576e (v1.14.0; was 2a3e79eb v1.13.0 until 2026-05-04 demotion of `inst_delta_z` — demotion path, not Checklist v2 — see `RULESET_CHANGELOG.md` and `policy_demotion_path_2026_05_06.md`). QA baseline: Checklist v2 rerun (for the prior B6 65/35 bundle; v1.14.0 is a demotion-class change and does not require Checklist v2 retrospectively).*
+## Options Features Stage 1 — shadow quality/gap fields (2026-06-28)
+
+`NO_MODEL_CHANGE / NO_RANKER_CHANGE / NO_SELECTOR_CHANGE`
+
+Production output schema expanded with **shadow columns only**. No rank / order /
+selector / sizing / trading impact.
+
+`common/options_features.py::enrich_csv_rows()` adds the following diagnostic
+columns to `rankings.csv` (wired into `SNAPSHOT_COLUMNS`; safety defaults applied):
+
+- `options_quality_score`, `options_quality_status` — surface/liquidity quality of
+  the listed-options signal (usable / thin / stale / unusable / missing).
+- `event_premium_iv_pp`, `event_premium_ratio` — event-implied move premium.
+- `expectation_gap_score` — z-scored gap between model opportunity (`score_rank_pct`)
+  and the options-priced move (`priced_move_pct`); positive = model sees more
+  opportunity than already priced.
+- `options_shadow_verdict` — categorical shadow verdict (no model impact).
+
+These fields are **read/observe only**: they are emitted for downstream analysis and
+do not feed the ranker, selector, sizing, eligibility, or decision engine. Coverage
+of the broader expectation layer (e.g. `short_interest_pct`, `close_price`,
+`market_cap_mm`, `priced_move_pct`) is improved by this surfacing; insider remains
+the unwired gap. Tests: `tests/test_options_features_stage1.py`. Schema consumers
+that pin column sets should add the new columns.
+
+---
+
+*Document updated 2026-06-28 (added § Options Features Stage 1; shadow-only production output-schema expansion, no model/ranker/selector change). Prior: 2026-06-02 (added § 14.6.7 PIT trim shadow study documentation; research-only artifact with forward-window maturity blocker). Prior updates: 2026-05-24 (v1.14.0 sync), 2026-05-06 (ruleset reference), 2026-04-27 (baseline). Active ruleset: 8887576e (v1.14.0; was 2a3e79eb v1.13.0 until 2026-05-04 demotion of `inst_delta_z` — demotion path, not Checklist v2 — see `RULESET_CHANGELOG.md` and `policy_demotion_path_2026_05_06.md`). QA baseline: Checklist v2 rerun (for the prior B6 65/35 bundle; v1.14.0 is a demotion-class change and does not require Checklist v2 retrospectively).*

@@ -6713,6 +6713,23 @@ def save_validation_snapshot(
     except Exception as _insider_exc:
         logger.warning("Insider enrichment failed: %s", _insider_exc, exc_info=True)
 
+    # --- Options features Stage 1: shadow quality/gap scores (no rank impact) ---
+    try:
+        from common.options_features import enrich_csv_rows as _enrich_options_features
+
+        _opts_summary = _enrich_options_features(csv_rows, as_of_date)
+        logger.info(
+            "[options_features] usable=%d thin=%d missing=%d confirmed=%d gap+=%d gap-=%d",
+            _opts_summary.get("n_usable", 0),
+            _opts_summary.get("n_thin", 0),
+            _opts_summary.get("n_missing", 0),
+            _opts_summary.get("n_confirmed", 0),
+            _opts_summary.get("n_gap_positive", 0),
+            _opts_summary.get("n_gap_negative", 0),
+        )
+    except Exception as _opts_feat_exc:
+        logger.warning("Options features enrichment failed: %s", _opts_feat_exc, exc_info=True)
+
     # =========================================================================
     # PHASE 3: WRITE — rankings.csv, checksum, manifest
     # =========================================================================
@@ -6796,6 +6813,18 @@ def save_validation_snapshot(
         if "transition_p_distress_90d" not in row:
             row["transition_p_distress_90d"] = ""
             _missing_col_count["transition_p_distress_90d"] = _missing_col_count.get("transition_p_distress_90d", 0) + 1
+        # Stage 1 options shadow features (set by common.options_features.enrich_csv_rows)
+        for _opt_col in (
+            "options_quality_score",
+            "options_quality_status",
+            "event_premium_iv_pp",
+            "event_premium_ratio",
+            "expectation_gap_score",
+            "options_shadow_verdict",
+        ):
+            if _opt_col not in row:
+                row[_opt_col] = ""
+                _missing_col_count[_opt_col] = _missing_col_count.get(_opt_col, 0) + 1
 
     if _missing_col_count:
         logger.warning("Missing enrichment columns added with empty defaults: %s", _missing_col_count)
