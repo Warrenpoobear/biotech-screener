@@ -94,6 +94,13 @@ artifacts/ic_council/*
 !artifacts/ic_council/shadows/
 artifacts/ic_council/shadows/*
 !artifacts/ic_council/shadows/*.md
+# Allow forward bootstrap results (shadow mandate SM artifacts)
+!artifacts/forward_bootstrap/
+artifacts/forward_bootstrap/*
+!artifacts/forward_bootstrap/SM-*/
+artifacts/forward_bootstrap/SM-*/*
+!artifacts/forward_bootstrap/SM-*/*.json
+!artifacts/forward_bootstrap/SM-*/*.csv
 # Allow quality audit reports (data accuracy findings, system diagnostics)
 !artifacts/quality_audits/
 artifacts/quality_audits/*
