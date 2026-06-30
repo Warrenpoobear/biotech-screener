@@ -11497,7 +11497,7 @@
     "name": "CNTA",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
-    "status": "active",
+    "status": "delisted",
     "added_from_etf": true,
     "added_date": "2026-01-07",
     "etf_sources": [
@@ -11557,7 +11557,9 @@
       "scientific_cartography": "covered"
     },
     "coverage_refreshed_as_of": "2026-06-29",
-    "company_name": "Centessa Pharmaceuticals plc"
+    "company_name": "Centessa Pharmaceuticals plc",
+    "delisted_date": "2026-06-23",
+    "delisted_reason": "corp_action_no_price_data"
   },
   {
     "ticker": "CNTX",

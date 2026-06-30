@@ -158,6 +158,8 @@ Hermes: Load `memory.md` first. Load namespaces on demand.
 ### Rule 10 - Skill recursion governance
 Architecture freeze: skill updates are **Tier 0 docs/plumbing** unless they encode scoring or selector behavior. When in doubt, log to LEARNINGS as `pending` and stop.
 
+**Recursivity bounds:** The full taxonomy of which self-improvement loops are LIVE, GATED, and FORBIDDEN is codified in `docs/RECURSIVITY_CHARTER.md` (v0.1 DRAFT, 2026-06-29). The charter is the authority on loop classification; this rule governs execution within the LIVE tier only. Any change that would promote a pattern into a model-affecting (GATED) loop must follow the charter's gate sequence, not this rule.
+
 ### Rule 11 - Selfimprove containment (FENCE)
 
 Automated skill promotion is **staged**, not live by default (2026-06-24):
