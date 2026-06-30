@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 """
-run_forward_bootstrap.py — Forward bootstrap for SM-20260629-001
+run_forward_bootstrap.py — Backfilled current-model bootstrap baseline for SM-20260629-001
 
 For each weekly snapshot window, compare the model's Top-30 5d forward excess
 to a null distribution of 2,000 random same-universe EW baskets.
 
-Classification: FORWARD_SHADOW_EXECUTION / BOOTSTRAP_VALIDATION / NO_MODEL_CHANGE
+⚠️  BACKFILL NOTICE: The 2026 TRUTH_CARDs were generated 2026-06-28 by replaying
+    the current frozen model (hash a9983a67c6954813) on historical snapshots.
+    They are NOT live forward selections. These results establish a baseline for
+    the current model, not out-of-sample investability proof.
+    SM-20260629-001 resolution requires post-mandate forward windows only
+    (2026-06-29 onward).
+
+Classification: BACKFILLED_FORWARD_BOOTSTRAP_BASELINE / CURRENT_MODEL_REPLAY
+              / BOOTSTRAP_VALIDATION / NO_MODEL_CHANGE
 Mandate: SM-20260629-001 / ICD-20260629-001
 """
 
@@ -339,7 +347,9 @@ def main():
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     args = parser.parse_args()
 
-    print("\n=== Forward Bootstrap SM-20260629-001 ===")
+    print("\n=== Backfilled Current-Model Bootstrap Baseline — SM-20260629-001 ===")
+    print("⚠️  BACKFILL: TRUTH_CARDs generated 2026-06-28 by replaying current model on historical snapshots.")
+    print("   These are NOT live forward selections. Use as baseline only.")
     print(f"n_bootstrap={args.n_bootstrap}, cost_bps={args.cost_bps}, seed={args.seed}")
     print(f"Output: {args.output_dir}\n")
 
@@ -381,7 +391,18 @@ def main():
         "mandate_id": "SM-20260629-001",
         "dol_row": "ICD-20260629-001",
         "generated_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ"),
-        "classification": "FORWARD_SHADOW_EXECUTION / BOOTSTRAP_VALIDATION / NO_MODEL_CHANGE",
+        "classification": (
+            "BACKFILLED_FORWARD_BOOTSTRAP_BASELINE / CURRENT_MODEL_REPLAY" " / BOOTSTRAP_VALIDATION / NO_MODEL_CHANGE"
+        ),
+        "backfilled_current_model_replay": True,
+        "truth_cards_generated_at": "2026-06-28",
+        "model_hash": "a9983a67...",  # truncated; full hash in TRUTH_CARD model_hash field
+        "forward_evidence_status": "BASELINE_ONLY",
+        "forward_window_start": "2026-06-29",
+        "resolution_requires": (
+            "post-mandate live forward windows only (2026-06-29 onward); "
+            "backfilled windows do not count toward 20-window success gate"
+        ),
         "summary": summary,
         "windows": results,
         "skipped": skipped,
@@ -394,7 +415,7 @@ def main():
     s = summary
     g = s.get("mandate_gate", {})
     print("\n" + "=" * 70)
-    print("RESULTS — SM-20260629-001 Forward Bootstrap")
+    print("BACKFILLED BASELINE — SM-20260629-001 (current-model replay, NOT forward proof)")
     print("=" * 70)
     print(f"Windows processed:       {s['n_windows']} / {s['n_windows_total']}")
     print(f"Skipped:                 {len(skipped)}")
@@ -420,10 +441,13 @@ def main():
             f"pct>50={nr['pct_above_50']:.0f}%  xs={nr['mean_model_xs']:+.3f}%"
         )
     print()
-    print(f"SM-20260629-001 verdict: {g.get('verdict', 'N/A')}")
+    print(f"Baseline verdict:        {g.get('verdict', 'N/A')} (backfilled; does not resolve mandate)")
     print(f"  success gate (median>=75 & >50% above 50):  {g.get('success')}")
     print(f"  non-rally gate (non_rally median pct>50):   {g.get('non_rally_ok')}")
     print(f"  failure gate  (median<=50 & <50% above 50): {g.get('failure')}")
+    print()
+    print("⚠️  SM-20260629-001 remains OPEN. Resolution requires post-mandate")
+    print("   forward windows (2026-06-29 onward). 20-window gate starts from today.")
     print("=" * 70)
     print(f"\nCSV:  {csv_path}")
     print(f"JSON: {json_path}")
