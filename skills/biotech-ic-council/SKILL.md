@@ -325,10 +325,13 @@ Return a table with these rows:
 - rollback clarity
 - recursive improvement value
 - **false-negative risk** (if edge advocate was active: advocate's read on whether real edge is being discarded)
+- **evaluator-integrity** — could this change have degraded the evaluator rather than improved the signal?
 
 Use status values only: `pass`, `watch`, `fail`, `unobserved`.
 
 For `false-negative risk`: `pass` = no plausible edge being discarded; `watch` = plausible edge, shadow mandate warranted; `fail` = council is about to discard likely valid conditional alpha without a forward test; `unobserved` = insufficient evidence to judge.
+
+For `evaluator-integrity`: `pass` = no evaluator-degradation risk; `watch` = plausible degradation risk, flag for monitoring; `fail` = change likely corrupts the measurement basis (evaluator change masquerading as signal improvement).
 
 ### 7. Recursive improvement register
 
@@ -456,6 +459,7 @@ Use this structure:
 |---|---|---|
 ...
 | false-negative risk | pass/watch/fail/unobserved | [advocate's read] |
+| evaluator-integrity | pass/watch/fail | [could this change degrade the evaluator rather than improve the signal?] |
 
 ### 7. Recursive Improvement Register
 | Improvement | Class | Owner | Trigger | Alpha relevance |
