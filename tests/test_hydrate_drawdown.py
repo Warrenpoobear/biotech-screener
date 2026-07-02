@@ -921,3 +921,38 @@ class TestBetaAlphaOverwrite:
         # With ticker +0.5%/bar and XBI +0.3%/bar, ticker outperforms
         # Alpha should be positive (ticker grows faster than beta * XBI)
         assert alpha > -0.5  # sanity bound
+
+
+class TestVol60dHydration:
+    """Step C: vol_60d filled from price_history when missing, else preserved."""
+
+    def _build(self, ticker, n=70):
+        from datetime import date, timedelta
+
+        base = date(2024, 6, 1)
+        rows = []
+        px = 100.0
+        for i in range(n):
+            # deterministic +/-2% zig-zag → non-zero daily-return variance
+            px *= 1.02 if i % 2 == 0 else 0.98
+            rows.append({"ticker": ticker, "date": (base + timedelta(days=i)).isoformat(), "close": f"{px:.4f}"})
+        return rows, rows[-1]["date"]
+
+    def test_fills_missing_vol60d(self):
+        recs = {"NOVOL": {"ticker": "NOVOL", "defensive_features": {}}}
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            rows, last = self._build("NOVOL")
+            _write_price_csv(csv_path, rows)
+            _hydrate_beta_rsi(recs, csv_path, last)
+        v = recs["NOVOL"]["defensive_features"].get("vol_60d")
+        assert v is not None and float(v) > 0.0
+
+    def test_preserves_existing_vol60d(self):
+        recs = {"HASVOL": {"ticker": "HASVOL", "defensive_features": {"vol_60d": "0.1234"}}}
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            rows, last = self._build("HASVOL")
+            _write_price_csv(csv_path, rows)
+            _hydrate_beta_rsi(recs, csv_path, last)
+        assert recs["HASVOL"]["defensive_features"]["vol_60d"] == "0.1234"

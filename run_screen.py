@@ -2856,6 +2856,42 @@ def _hydrate_beta_rsi(
         dfe["rsi_14d"] = new_rsi
         hydrated += 1
 
+    # ------------------------------------------------------------------
+    # Step C: vol_60d from price_history.csv (FILL-IF-MISSING)
+    # Annualized daily-return volatility over the last 60 trading days.
+    # Unlike beta/rsi (overwrite_always), vol_60d is only filled when absent so
+    # we don't perturb the 272 tickers that already carry a value under the
+    # model freeze — this closes the coverage gap for tickers whose universe
+    # record lacked a defensive_features block (e.g. TEVA/CAPR/DNTH).
+    # ------------------------------------------------------------------
+    VOL_WINDOW = 60
+    MIN_RETURNS_VOL = 30
+    for ticker in all_tickers:
+        dfe = rec_by_ticker[ticker].get("defensive_features")
+        if dfe is None:
+            dfe = {}
+            rec_by_ticker[ticker]["defensive_features"] = dfe
+        # Only fill when missing/invalid — respect existing values.
+        existing = dfe.get("vol_60d")
+        if existing not in (None, ""):
+            try:
+                float(existing)
+                continue  # already has a usable value
+            except (ValueError, TypeError):
+                pass  # invalid → recompute
+        series = prices_by_ticker.get(ticker)
+        if not series or len(series) < MIN_RETURNS_VOL + 1:
+            continue
+        closes = [p for _, p in series][-(VOL_WINDOW + 1) :]
+        rets = [closes[i] / closes[i - 1] - 1.0 for i in range(1, len(closes))]
+        if len(rets) < MIN_RETURNS_VOL:
+            continue
+        mean = sum(rets) / len(rets)
+        var = sum((r - mean) ** 2 for r in rets) / (len(rets) - 1)  # sample var (ddof=1)
+        vol_60d = (var**0.5) * (252**0.5)
+        dfe["vol_60d"] = f"{vol_60d:.4f}"
+        hydrated += 1
+
     return hydrated
 
 
@@ -4167,6 +4203,21 @@ def _write_coverage_quality(
             disagree_high_names.append(r.get("ticker", "?"))
 
     # -- Build JSON --
+    # -- Risk-feature coverage (universe-wide) --
+    # de_vol_60d had a silent gap: it was read from universe.json's
+    # defensive_features block (partial) while beta/drawdown/rsi are hydrated
+    # from price_history. Surface per-feature coverage over ALL screened rows so
+    # a coverage regression can't hide (the exposure_missingness gate only
+    # inspects held / top-K names).
+    _risk_feats = ["de_vol_60d", "de_beta_xbi_60d", "de_drawdown", "de_rsi_14d", "de_alpha_60d"]
+    risk_feature_coverage: Dict[str, Any] = {"n_total": n_total}
+    for _f in _risk_feats:
+        _present = sum(1 for r in csv_rows if str(r.get(_f, "")).strip() not in ("", "None", "nan", "NaN"))
+        risk_feature_coverage[_f] = {
+            "present": _present,
+            "coverage_pct": round(_present / max(n_total, 1) * 100, 1),
+        }
+
     cq: Dict[str, Any] = {
         "schema_version": "coverage_quality.v1",
         "as_of_date": as_of_date,
@@ -4192,6 +4243,7 @@ def _write_coverage_quality(
             "coverage_pct": catalyst_family_coverage_pct,
             "family_distribution": dict(sorted(family_dist.items(), key=lambda x: -x[1])),
         },
+        "risk_feature_coverage": risk_feature_coverage,
         "rescue_counters": {
             "far_window_ctgov": n_far_ctgov,
             "far_window_m3_fallback": n_far_m3,
