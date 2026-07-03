@@ -2,6 +2,48 @@
 
 Two-stage execution system for biotech screener top-K portfolio construction.
 
+## MCP Connection & Live Position Fetch
+
+**The Robinhood MCP is a hosted remote server, not a local install.** Do NOT run
+`pip install robinhood-mcp` / `mcp-server-robinhood` — those are unofficial third-party
+packages that take your username/password. The official server is authorized via OAuth.
+
+### Connect (one-time, desktop only)
+
+Claude Code (Hermes environment):
+```bash
+claude mcp add robinhood-trading --transport http https://agent.robinhood.com/mcp/trading
+# then inside Claude Code:
+#   /mcp  ->  select robinhood-trading  ->  complete OAuth in a desktop browser
+```
+
+Notes:
+- Auth requires a desktop browser. On a headless VM, copy the printed OAuth URL into a
+  local browser, approve, and the token lands back on the box.
+- Agentic Trading is gated by rollout — Robinhood emails you when you have access.
+- Read access spans ALL your Robinhood accounts (IRAs, Individual, Agentic).
+  Trade placement is restricted to the Agentic account (802349084) only.
+
+### Live position fetch (read-only) — for mark-to-market / analysis
+
+Read-only. Does NOT place, review, or modify any orders.
+```
+Using the robinhood-trading MCP (read tools only):
+1. get_accounts  -> list all accounts
+2. get_equity_positions (all accounts) -> ticker, quantity, average_buy_price, market_value
+3. get_portfolio (each account) -> equity, market_value, cash, buying_power
+4. get_equity_quotes (Top-30 names) -> last_trade_price, timestamp
+Write pretty JSON to artifacts/trading/live_positions_YYYY-MM-DD.json with a top-level
+"fetched_at" timestamp and "data_source": "robinhood-mcp-live". Commit the artifact.
+```
+
+### Verify
+
+`get_portfolio` returns real balances (not the carry-forward baseline), and the next
+daily monitoring run shows real equity instead of `robinhood_mcp_status: UNAVAILABLE`.
+
+---
+
 ## Quick Start
 
 ### Stage 1: Generate Trade Plan (Review Only)

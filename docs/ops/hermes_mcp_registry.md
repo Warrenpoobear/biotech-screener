@@ -2,7 +2,7 @@
 
 Authoritative list of registered MCP servers and their tool permissions.  
 **Policy:** `docs/ops/hermes_mcp_security_policy.md`  
-**Last updated:** 2026-06-26
+**Last updated:** 2026-07-02
 
 ---
 
@@ -14,8 +14,17 @@ Authoritative list of registered MCP servers and their tool permissions.
 |---|---|
 | Admitted | 2026-06-10 |
 | Approver | Operator (agentic account 802349084 validation) |
+| Transport | Hosted remote MCP (HTTP) — `https://agent.robinhood.com/mcp/trading` |
+| Connection | OAuth (desktop browser). NOT a local install — do not `pip install`/run a server. |
 | Minimum tier | 0 (read), 3 (write-trade) |
 | Autonomous use | Read tools only |
+
+**Read scope (per Robinhood Agentic Trading docs, verified 2026-07-02):**
+Read access spans **ALL** Robinhood accounts on the login — Traditional IRA (4010),
+Roth IRA (0727), Individual (1219), and the Agentic account (802349084) — including
+account numbers, all positions/balances, and all transactions/order history.
+**Trade placement is restricted to the Agentic account (802349084) only.**
+(Prior registry text implying read access was scoped to 802349084 was inaccurate.)
 
 **Allowed tools (autonomous):**
 
@@ -36,7 +45,7 @@ Authoritative list of registered MCP servers and their tool permissions.
 
 | Tool | Category | Notes |
 |---|---|---|
-| `place_equity_order` | write-trade | Requires operator to be present; no cron use |
+| `place_equity_order` | write-trade | Requires operator to be present; no cron use; Agentic account only |
 | `review_equity_order` | write-trade | Confirmation step before execution |
 | `cancel_equity_order` | write-trade | Emergency cancellation; operator-initiated |
 | `place_option_order` | write-trade | Options; operator-only |
@@ -49,6 +58,8 @@ Authoritative list of registered MCP servers and their tool permissions.
 | `create_watchlist`, `update_watchlist` | Not required by current workflow |
 | `create_scan`, `run_scan` | Not in use |
 | `get_realized_pnl` | Available when needed |
+
+**Connection runbook:** see `docs/ROBINHOOD_TRADING_GUIDE.md` → "MCP Connection & Live Position Fetch".
 
 ---
 
