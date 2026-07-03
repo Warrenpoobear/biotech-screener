@@ -42,10 +42,16 @@ if os.environ.get("HTTPS_PROXY"):
 
         _orig_ticker_init = _yfbase.TickerBase.__init__
 
+        import inspect as _inspect
+        _orig_params = set(_inspect.signature(_orig_ticker_init).parameters)
+
         def _proxy_safe_ticker_init(self, ticker, session=None, proxy=None):
             if session is None:
                 session = _cffi_requests.Session()
-            _orig_ticker_init(self, ticker, session=session, proxy=proxy)
+            kw = {"session": session}
+            if "proxy" in _orig_params:
+                kw["proxy"] = proxy
+            _orig_ticker_init(self, ticker, **kw)
 
         _yfbase.TickerBase.__init__ = _proxy_safe_ticker_init
     except Exception:
