@@ -360,6 +360,14 @@ Agent AGENTS.md docs updated with Llama-specific procedures:
 | Post-snapshot | `tools/run_post_snapshot_supervisor.py` | Post-pipeline task orchestration |
 | Sentinel | `tools/agent_supervisor_sentinel.py` | Final watchdog |
 
+### Robinhood MCP status field (monitoring output)
+
+When emitting `robinhood_mcp_status` in daily monitoring JSON:
+
+- The Robinhood MCP is a **hosted remote OAuth server** at `https://agent.robinhood.com/mcp/trading` — there is **nothing to install**. Do NOT emit "install mcp-server-robinhood" (or reference `pip install robinhood-mcp`); those are unofficial third-party packages that harvest username/password.
+- If the MCP is not reachable, emit: `UNAVAILABLE — connect via 'claude mcp add robinhood-trading --transport http https://agent.robinhood.com/mcp/trading' (hosted OAuth, desktop browser; not a local install)`.
+- Read access spans ALL accounts (IRAs, Individual, Agentic); trade placement is Agentic-only. See `docs/ops/hermes_mcp_registry.md` and `docs/ROBINHOOD_TRADING_GUIDE.md`.
+
 ### Anomaly Classification
 
 | Classification | Severity | Meaning |
