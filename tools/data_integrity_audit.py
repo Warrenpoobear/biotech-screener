@@ -21,9 +21,19 @@ import sys
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import pandas as pd
+
+if TYPE_CHECKING:
+    from common.corporate_actions import CorporateActionRegistry
+
+# When invoked as a script (the production pipeline runs it as a direct
+# subprocess), sys.path[0] is tools/, so repo-internal imports like
+# common.corporate_actions are not resolvable. Put the repo root on the path.
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -363,6 +373,45 @@ def _compute_alpha_from_prices(
     b = beta if beta is not None else 1.0
     alpha = t_ret - b * x_ret
     return round(alpha, 6)
+
+
+def _split_adjust_prices(
+    prices: pd.DataFrame,
+    as_of: str,
+    registry: Optional["CorporateActionRegistry"] = None,
+) -> pd.DataFrame:
+    """Split-adjust raw closes to be comparable to ``as_of``.
+
+    The production price-derived features (drawdown, RSI, beta, alpha) are
+    computed from split-adjusted prices. This audit historically recomputed
+    from the *raw* ``price_history.csv``, so any ticker with a split in the
+    trailing window (e.g. MLTX's 10:1 forward split on 2025-09-29) produced a
+    phantom drawdown mismatch — comparing a post-split price to a pre-split
+    high. Applying the same ``corporate_actions.json`` split factors the
+    features use makes the recompute a valid cross-check.
+
+    Uses ``cumulative_split_factor`` per (ticker, date): the multiplier that
+    scales a price on that date to be comparable to ``as_of``. Only tickers
+    with a split on/before ``as_of`` are touched; everything else is returned
+    unchanged. Fail-open: an empty/None registry is a no-op.
+    """
+    from common.corporate_actions import cumulative_split_factor, get_splits_only, load_actions
+
+    reg = registry if registry is not None else load_actions()
+    if not reg.actions:
+        return prices
+
+    split_tickers = {t for t in prices["ticker"].unique() if get_splits_only(t, reg, as_of=as_of)}
+    if not split_tickers:
+        return prices
+
+    adjusted = prices.copy()
+    mask = adjusted["ticker"].isin(split_tickers)
+    adjusted.loc[mask, "close"] = adjusted.loc[mask].apply(
+        lambda r: r["close"] * cumulative_split_factor(r["ticker"], r["date"], as_of, reg),
+        axis=1,
+    )
+    return adjusted
 
 
 def recompute_price_fields(
@@ -856,7 +905,13 @@ def main():
             prices = pd.read_csv(price_path, dtype={"ticker": str})
             prices["date"] = prices["date"].astype(str)
             print(f"  Loaded {len(prices)} price rows, {prices['ticker'].nunique()} tickers")
-            price_diffs = recompute_price_fields(df, prices, args.as_of_date)
+            # Cross-validate against split-adjusted prices — the same basis the
+            # production features use. Without this, split tickers (e.g. MLTX's
+            # 10:1 forward split) false-flag as stale drawdown mismatches.
+            adjusted = _split_adjust_prices(prices, args.as_of_date)
+            if adjusted is not prices:
+                print("  Applied corporate-action split adjustment before recompute")
+            price_diffs = recompute_price_fields(df, adjusted, args.as_of_date)
             diff_path = out_dir / "price_recompute_diff.csv"
             pd.DataFrame(price_diffs).to_csv(diff_path, index=False)
 

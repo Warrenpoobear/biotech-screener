@@ -2288,10 +2288,42 @@ def _validate_price_splits(
     return all_warnings
 
 
+def _corp_action_split_adjust(
+    ticker: str,
+    series: List[Any],
+    as_of_date: str,
+    registry: Any,
+) -> Optional[List[Any]]:
+    """Return a split-adjusted copy of ``series`` if ``ticker`` has a confirmed
+    split on/before ``as_of_date`` in the corporate-actions registry, else None.
+
+    ``series`` is a sorted list of ``(date, close)``. Each close is scaled by
+    ``cumulative_split_factor(ticker, date, as_of_date)`` so pre-split prices are
+    comparable to the post-split regime (the same basis the audit uses). Returning
+    None signals "no confirmed corporate action" so the caller can preserve the
+    raw fallback (a genuine crash the split heuristic misfired on).
+    """
+    if registry is None:
+        return None
+    from common.corporate_actions import cumulative_split_factor, get_splits_only
+
+    if not get_splits_only(ticker, registry, as_of=as_of_date):
+        return None
+    adjusted = []
+    for d, close in series:
+        # cumulative_split_factor compares ISO date strings; series dates may be
+        # datetime.date objects, so coerce.
+        d_str = d.isoformat() if hasattr(d, "isoformat") else str(d)
+        factor = cumulative_split_factor(ticker, d_str, as_of_date, registry)
+        adjusted.append((d, close * factor))
+    return adjusted
+
+
 def _hydrate_drawdown(
     rec_by_ticker: Dict[str, Dict[str, Any]],
     price_history_path: Optional[Path],
     as_of_date: str,
+    corporate_actions: Any = None,
 ) -> int:
     """Ensure ``defensive_features["drawdown"]`` is fresh for every record.
 
@@ -2408,6 +2440,16 @@ def _hydrate_drawdown(
                     alias_to_csv_sym[v] = csv_sym
 
     WINDOW = 252
+    # Resolve the corporate-actions registry once (used only by the recent-split
+    # fallback below). Default-load if not injected; fail-open on any error.
+    _ca_registry = corporate_actions
+    if _ca_registry is None:
+        try:
+            from common.corporate_actions import load_actions
+
+            _ca_registry = load_actions()
+        except Exception:  # pragma: no cover - fail-open
+            _ca_registry = None
     recomputed_tickers: set = set()
     for ticker in all_tickers:
         rec = rec_by_ticker[ticker]
@@ -2464,20 +2506,37 @@ def _hydrate_drawdown(
                 "; ".join(f"{w['date']} {w['pct_change']:+.0%}" for w in split_warns),
             )
         if len(series) < MIN_BARS_FOR_ESTIMATE:
-            # Fallback: if the filter over-truncated (e.g. a real biotech
-            # crash misidentified as a split), use the unfiltered series
-            # when it had sufficient bars.  The drawdown will use the
-            # post-event price regime via the WINDOW cap anyway.
+            # The split-filter over-truncated: a recent split left < MIN_BARS
+            # post-split bars. Restoring the RAW unfiltered series here would
+            # compute the 252-bar peak across the split (pre-split high) and
+            # report a phantom deep drawdown — this is the IMMP/GOSS bug.
             if len(unfiltered_series) >= MIN_BARS_FOR_ESTIMATE and split_warns:
-                logger.info(
-                    "_hydrate_drawdown: %s split-filter fallback: "
-                    "filtered=%d bars < %d, restoring unfiltered %d bars",
-                    ticker,
-                    len(series),
-                    MIN_BARS_FOR_ESTIMATE,
-                    len(unfiltered_series),
-                )
-                series = unfiltered_series
+                # If corporate_actions.json confirms a real split, scale the
+                # restored series so the peak is on the post-split basis. If no
+                # action is registered (a genuine crash the −75% heuristic
+                # misfired on), keep the raw series — the deep drawdown is real.
+                adjusted = _corp_action_split_adjust(ticker, unfiltered_series, as_of_date, _ca_registry)
+                if adjusted is not None:
+                    logger.info(
+                        "_hydrate_drawdown: %s recent-split fallback: filtered=%d < %d, "
+                        "using corporate-action split-adjusted series (%d bars)",
+                        ticker,
+                        len(series),
+                        MIN_BARS_FOR_ESTIMATE,
+                        len(adjusted),
+                    )
+                    series = adjusted
+                else:
+                    logger.info(
+                        "_hydrate_drawdown: %s split-filter fallback: "
+                        "filtered=%d bars < %d, restoring unfiltered %d bars "
+                        "(no corporate action — treated as real crash)",
+                        ticker,
+                        len(series),
+                        MIN_BARS_FOR_ESTIMATE,
+                        len(unfiltered_series),
+                    )
+                    series = unfiltered_series
             else:
                 df["drawdown_missing_reason"] = "series_too_short"
                 continue
