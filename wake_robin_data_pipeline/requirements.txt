@@ -5,7 +5,7 @@
 morningstar-data>=1.0.0
 
 # Yahoo Finance data (fallback for market prices, volume, company info)
-yfinance>=0.2.36
+yfinance>=1.5.1
 
 # HTTP requests for SEC and ClinicalTrials.gov APIs
 requests>=2.31.0
