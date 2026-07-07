@@ -4770,7 +4770,7 @@ def run_daily(
     skip_pit_warm: bool = False,
     warm_sources: str = "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory",
     warm_price_pit: bool = True,
-    price_pit_backfill: bool = False,
+    price_pit_backfill: bool = True,
     auto_refresh_market_data: bool = True,
     allow_candidate: bool = False,
     enrich_pubmed: bool = False,
@@ -7248,9 +7248,11 @@ def main():
         help="Skip PIT price anchor creation in step 2.5.",
     )
     parser.add_argument(
-        "--price-pit-backfill",
+        "--no-price-pit-backfill",
         action="store_true",
-        help="After promotion, backfill matured forward returns for all PIT price caches.",
+        help="Skip the post-promotion backfill of matured forward returns for PIT price "
+        "caches. Backfill runs by default; without it the forward_eval gate goes stale "
+        "(its rolling window can only advance as horizons mature into the caches).",
     )
     parser.add_argument(
         "--no-auto-refresh-market-data",
@@ -7377,7 +7379,7 @@ def main():
             skip_pit_warm=args.skip_pit_warm,
             warm_sources=args.warm_sources,
             warm_price_pit=not args.no_warm_price_pit,
-            price_pit_backfill=args.price_pit_backfill,
+            price_pit_backfill=not args.no_price_pit_backfill,
             auto_refresh_market_data=not args.no_auto_refresh_market_data,
             allow_candidate=args.allow_candidate,
             enrich_pubmed=args.enrich_pubmed,
