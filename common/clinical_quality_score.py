@@ -453,7 +453,7 @@ def compute_mechanism_maturity_tier(
 
     # Collect conditions and interventions
     all_conditions: List[str] = []
-    all_text = []
+    all_text: List[str] = []
     max_phase = 0.0
     for t in pit_trials:
         conds = t.get("conditions") or []

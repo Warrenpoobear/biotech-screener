@@ -815,7 +815,7 @@ class CompetitiveIntensityEngine:
         if not landscape:
             return []
 
-        competitors = []
+        competitors: List[Dict[str, Any]] = []
         for comp_ticker, count in landscape.programs_by_ticker.items():
             if comp_ticker != ticker.upper():
                 competitors.append(

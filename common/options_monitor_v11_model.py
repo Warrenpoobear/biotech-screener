@@ -322,7 +322,11 @@ def compute_full_verdict(
     catalyst_class = features.get("om11_catalyst_class", "other")
 
     # Get probabilities from model if available
-    probs = {"p_move_gt_implied": None, "p_post_event_iv_crush": None, "p_false_positive": None}
+    probs: dict[str, float | None] = {
+        "p_move_gt_implied": None,
+        "p_post_event_iv_crush": None,
+        "p_false_positive": None,
+    }
     if model and model.is_trained:
         probs = model.predict(features)
 

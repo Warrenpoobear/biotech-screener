@@ -209,13 +209,14 @@ def setup_logging(
         log_format = DEFAULT_LOG_FORMAT_WITH_RUN_ID if enable_run_id else DEFAULT_LOG_FORMAT
 
     # Create formatter
+    formatter: logging.Formatter
     if structured_output:
         formatter = StructuredFormatter(include_run_id=enable_run_id)
     else:
         formatter = logging.Formatter(log_format, datefmt=DEFAULT_DATE_FORMAT)
 
     # Add filters
-    filters = []
+    filters: list[logging.Filter] = []
     if enable_sanitization:
         filters.append(SanitizingFilter())
     if enable_run_id:

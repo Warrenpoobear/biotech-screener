@@ -51,7 +51,7 @@ def kaplan_meier(
     at_risk = n
     survival = 1.0
 
-    table = []
+    table: list = []
     for time in unique_times:
         # Count events and censorings before this time
         n_events = int(np.sum((t == time) & (e == 1)))

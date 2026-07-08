@@ -319,7 +319,7 @@ def _find_catalyst_aligned_expiry(
         dte = (exp - ref).days
         if dte < 7:  # too short, gamma-distorted
             continue
-        gap = abs(dte - catalyst_days)
+        gap: float = abs(dte - catalyst_days)
         # Prefer expiry at or after catalyst (captures event)
         if dte >= catalyst_days:
             gap -= 0.5  # slight preference for post-catalyst

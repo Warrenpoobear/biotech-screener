@@ -127,12 +127,12 @@ def add_trading_days(d: str, trading_days: int) -> str:
         return _format_date(dt)
 
 
-def compute_forward_windows(as_of_date: str, horizons: List[str] = None) -> Dict[str, Dict[str, str]]:
+def compute_forward_windows(as_of_date: str, horizons: List[str] = None) -> Dict[str, Dict[str, Any]]:
     if horizons is None:
         horizons = list(HORIZON_TRADING_DAYS.keys())
 
     start = next_trading_day(as_of_date)
-    windows = {}
+    windows: Dict[str, Dict[str, Any]] = {}
     for h in horizons:
         h_norm = _normalize_horizon(h)
         days = HORIZON_TRADING_DAYS[h_norm]
@@ -401,7 +401,7 @@ def compute_cohort_ic(
             cohorts[key] = []
         cohorts[key].append(sec)
 
-    result = {}
+    result: Dict[str, Dict[str, Any]] = {}
     for cohort_key, secs in cohorts.items():
         valid = [(sec, returns[sec["ticker"]]) for sec in secs if sec["ticker"] in returns]
         if len(valid) < min_cohort_n:

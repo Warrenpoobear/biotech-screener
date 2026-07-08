@@ -50,7 +50,7 @@ def ols_regression(
     except np.linalg.LinAlgError:
         return {"error": "singular matrix"}
 
-    residuals = y - X @ beta
+    residuals: Any = y - X @ beta
     sse = float(residuals @ residuals)
     sst = float(np.sum((y - np.mean(y)) ** 2))
     r_squared = 1.0 - sse / sst if sst > 1e-12 else 0.0
@@ -145,7 +145,7 @@ def fama_macbeth(
     """
     feature_names = (["intercept"] if add_intercept else []) + list(x_cols)
 
-    monthly_coefs = {name: [] for name in feature_names}
+    monthly_coefs: dict[str, list] = {name: [] for name in feature_names}
     monthly_dates = []
     monthly_n_obs = []
     monthly_r2 = []

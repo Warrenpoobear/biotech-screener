@@ -2069,7 +2069,7 @@ def compute_sort_contribs(
     alpha_raw: Optional[float] = None,
     catalyst_event_type: str = "",
     catalyst_source: str = "",
-) -> Tuple[float, Dict[str, float]]:
+) -> Tuple[Decimal, Dict[str, Decimal]]:
     """Return sort contribution deltas without recomputing the full sort key.
 
     Returns ``(total_adj, contrib_map)`` where *contrib_map* has an entry

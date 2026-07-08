@@ -52,7 +52,7 @@ _PREFIX_TRADES = "us_options_opra/trades_v1"
 SCHEMA_VERSION = "massive_options_cache.v1"
 
 
-def _get_config() -> Dict[str, str]:
+def _get_config() -> Dict[str, Any]:
     """Read configuration from environment variables."""
     return {
         "api_key": os.environ.get("MASSIVE_API_KEY", ""),

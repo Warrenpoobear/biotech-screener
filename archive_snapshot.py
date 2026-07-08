@@ -241,7 +241,7 @@ def create_archive(
 
     if archive_path.exists():
         print(f"  WARNING: Archive already exists at {archive_path} — skipping to preserve original", file=sys.stderr)
-        return str(archive_path)
+        return archive_path
 
     # Build manifest (archive_size filled in after creation)
     manifest = build_manifest(snapshot_date, snapshot_path, data_dir, input_files)
@@ -399,7 +399,7 @@ def list_archives(archive_dir: Path) -> None:
         print(f"  {date_str:<14} {size_str:>12} {ticker_count:>8}  {model}")
 
 
-def _human_size(n: int) -> str:
+def _human_size(n: float) -> str:
     """Format byte count as human-readable string."""
     for unit in ("B", "KB", "MB", "GB"):
         if abs(n) < 1024:

@@ -321,7 +321,8 @@ class AlpacaQuoteClient:
     def _get_session(self):
         if self._session is not None:
             return self._session
-        import requests  # lazy import
+        # lazy import
+        import requests  # type: ignore[import-untyped]
 
         self._session = requests.Session()
         return self._session

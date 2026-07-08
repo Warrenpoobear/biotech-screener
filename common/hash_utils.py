@@ -54,7 +54,7 @@ def stable_json_dumps(obj: Union[Dict[str, Any], List[Any], str, int, float, boo
         if isinstance(o, Decimal):
             return str(o.normalize())
         if hasattr(o, "value"):  # Enum
-            return str(o.value)
+            return str(o.value)  # type: ignore[union-attr]
         if hasattr(o, "to_dict"):  # TrialRow and similar
             return o.to_dict()  # type: ignore[union-attr]
         raise TypeError(f"Object of type {type(o).__name__} is not JSON serializable")

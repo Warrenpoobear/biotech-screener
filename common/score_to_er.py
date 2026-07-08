@@ -188,7 +188,7 @@ def attach_rank_and_z(
         Dict with validation metadata: {valid_count, invalid_count, degraded, warnings}
     """
     n = len(rows)
-    result = {
+    result: Dict[str, Any] = {
         "valid_count": 0,
         "invalid_count": 0,
         "degraded": False,

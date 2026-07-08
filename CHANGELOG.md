@@ -2,6 +2,16 @@
 
 All notable changes to the biotech screener will be documented in this file.
 
+## [Unreleased] - 2026-07-08
+
+### Changed (non-model / typing only)
+- `decision_engine.compute_sort_contribs` return annotation corrected from
+  `Tuple[float, Dict[str, float]]` to `Tuple[Decimal, Dict[str, Decimal]]`.
+  Annotation-only: the function already returned `Decimal` values (the sort
+  contributions use deterministic Decimal arithmetic); the previous `float`
+  annotation was incorrect. No scoring, ranking, eligibility, or numeric
+  behavior changes. Part of the incremental mypy `type-check` cleanup (#485).
+
 ## [v4.0.2] - 2026-01-30
 
 ### Summary

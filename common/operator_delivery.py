@@ -247,18 +247,15 @@ def _send_telegram(
 
 
 def _is_duplicate(event_type: str, severity: str) -> bool:
-    try:
-        from common.alert_dedupe import AlertDedupeStore
-
-        window = DEDUPE_WINDOW_SECONDS.get(severity, 3600)
-        store = AlertDedupeStore()
-        key = f"operator_delivery:{event_type}"
-        if store.is_duplicate(key, window_seconds=window):
-            return True
-        store.record(key)
-        return False
-    except Exception:  # noqa: BLE001
-        return False
+    # Dedup is intentionally a no-op. The original implementation called
+    # AlertDedupeStore() with no `path` and invoked is_duplicate()/record(),
+    # neither of which exists (the real API is AlertDedupeStore(path, ...) with
+    # decide()/record_sent()). That call raised at runtime and was swallowed by
+    # a bare `except`, so this function always reported "not duplicate". This
+    # preserves that behaviour explicitly instead of via a broken call; wiring
+    # real dedup (which requires a state-file path and would start suppressing
+    # alerts) is a separate, reviewed change. See issue #485.
+    return False
 
 
 # ---------------------------------------------------------------------------

@@ -44,7 +44,7 @@ import os
 from datetime import date as _date
 from typing import Any, Dict, List, Optional, Tuple
 
-from common.options_quality import MAX_SPREAD_PCT, MIN_OI_THRESHOLD
+from common.options_quality import MIN_OI_THRESHOLD
 
 logger = logging.getLogger(__name__)
 
@@ -578,7 +578,7 @@ async def _fetch_streaming_skew(
     logger.info("Streaming skew fetch for %d liquid symbols", len(candidates))
 
     try:
-        async with DXLinkStreamer(session) as streamer:
+        async with DXLinkStreamer(session) as streamer:  # type: ignore[var-annotated]
             for symbol in candidates:
                 diag = diag_results[symbol]
                 front_str = diag.get("opt_nearest_expiry", "")

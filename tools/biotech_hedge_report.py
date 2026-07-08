@@ -2263,8 +2263,8 @@ def _compute_weekly_diff(
     # Historical down-month payoff
     p_regime = prior.get("regime_analysis", [])
     c_regime = current.get("regime_analysis", [])
-    p_down = next((r for r in p_regime if "Down" in r.get("regime", "")), {})
-    c_down = next((r for r in c_regime if "Down" in r.get("regime", "")), {})
+    p_down: dict = next((r for r in p_regime if "Down" in r.get("regime", "")), {})
+    c_down: dict = next((r for r in c_regime if "Down" in r.get("regime", "")), {})
     diff["down_month_avg_pnl_prior"] = p_down.get("avg_hedge_pnl", 0)
     diff["down_month_avg_pnl_current"] = c_down.get("avg_hedge_pnl", 0)
 
@@ -2456,7 +2456,7 @@ def run_hedge_report(
         sigma = surf.get("atm_iv_near") or surf.get("realized_vol_30d") or 0.30
 
         # Try loading chain for multi-DTE evaluation
-        chain: List[Dict[str, Any]] = []
+        chain = []
         if snap_dir and snap_dir.exists():
             chain = load_chain_snapshot(snap_dir, etf)
 

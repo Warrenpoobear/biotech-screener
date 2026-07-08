@@ -1631,7 +1631,7 @@ class ICTimeSeriesDatabase:
 
         # Get all horizons and tickers
         horizons = sorted(returns.keys())
-        all_tickers = set()
+        all_tickers: set = set()
         for horizon_returns in returns.values():
             all_tickers.update(horizon_returns.keys())
 
