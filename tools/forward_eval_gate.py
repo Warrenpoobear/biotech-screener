@@ -16,8 +16,9 @@ import json
 import logging
 import re
 import sys
+from datetime import date as _date
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 # ---------------------------------------------------------------------------
 # Repo root
@@ -45,17 +46,27 @@ def _discover_pit_dates(
     before_date: str,
     horizon: int,
     lookback_n: int,
+    min_gap_days: int = 0,
 ) -> List[str]:
     """Find up to lookback_n snapshot dates with PIT caches having horizon filled.
 
     Returns dates sorted descending (most recent first), all < before_date.
+
+    When ``min_gap_days > 0`` the dates are de-overlapped: walking from the most
+    recent, a candidate is kept only if it is at least ``min_gap_days`` calendar
+    days before the previously kept date. This prevents near-adjacent snapshots
+    (whose forward-return windows overlap almost entirely) from being counted as
+    independent observations — the flat mean over the window would otherwise
+    double-count a single market episode. Callers pass a gap derived from the
+    horizon (≈ horizon trading days) so the retained windows are non-overlapping.
     """
     if not cache_base.exists():
         return []
 
     date_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-    candidates: List[str] = []
 
+    # Gather all filled candidates first (descending), then de-overlap greedily.
+    filled: List[str] = []
     for entry in sorted(cache_base.iterdir(), reverse=True):
         if not entry.is_dir() or not date_re.match(entry.name):
             continue
@@ -73,11 +84,21 @@ def _discover_pit_dates(
             continue
 
         if horizon in index.get("horizons_filled", []):
-            candidates.append(entry.name)
-            if len(candidates) >= lookback_n:
-                break
+            filled.append(entry.name)
 
-    return candidates
+    selected: List[str] = []
+    last_kept: Optional[str] = None
+    for d in filled:  # descending (most recent first)
+        if min_gap_days > 0 and last_kept is not None:
+            gap = (_date.fromisoformat(last_kept) - _date.fromisoformat(d)).days
+            if gap < min_gap_days:
+                continue
+        selected.append(d)
+        last_kept = d
+        if len(selected) >= lookback_n:
+            break
+
+    return selected
 
 
 def _load_pit_prices(cache_dir: Path) -> List[Dict[str, str]]:
@@ -89,27 +110,80 @@ def _load_pit_prices(cache_dir: Path) -> List[Dict[str, str]]:
         return list(csv.DictReader(f))
 
 
-def _load_rankings_signal(snapshot_dir: Path) -> Dict[str, float]:
+def _is_truthy(val: Any) -> bool:
+    """Parse a CSV cell as a boolean (handles True/1/yes and float-ish '1.0')."""
+    s = str(val).strip().lower()
+    return s in ("true", "1", "1.0", "yes", "t", "y")
+
+
+def _load_rankings_signal(
+    snapshot_dir: Path,
+    scope: str = "universe",
+    top_k: int = 20,
+) -> Dict[str, float]:
     """Load rankings.csv and return {ticker: negative_rank} signal.
 
     Lower actionable_rank = better → higher signal value (negated).
+
+    ``scope`` restricts which names enter the IC — the gate should measure the
+    model we actually trade, not the full universe:
+
+      - ``"universe"``  — every ranked row (legacy behaviour).
+      - ``"eligible"``  — only rows with ``eligible`` truthy. Excludes names the
+        decision engine gates out (distressed/ineligible), which otherwise
+        pollute the IC: they are correctly not held, yet a full-universe rank IC
+        penalises the model when such names bounce, and lets a distressed name
+        that floated to a high composite rank dominate the score.
+      - ``"portfolio"`` — only rows with ``target_weight_pct > 0``.
+      - ``"top_k"``     — only rows with rank <= ``top_k``.
+
+    If the column a scope needs is absent from rankings.csv, we fall back to
+    ``"universe"`` (with a warning) rather than silently dropping every row —
+    a malformed file must not quietly blank the gate.
     """
     rankings_path = snapshot_dir / "rankings.csv"
     if not rankings_path.exists():
         return {}
 
-    signal: Dict[str, float] = {}
     with open(rankings_path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-        for row in reader:
-            ticker = (row.get("ticker") or "").strip().upper()
-            rank_str = (row.get("actionable_rank") or row.get("composite_rank") or "").strip()
-            if not ticker or not rank_str:
+        fieldnames = reader.fieldnames or []
+        rows = list(reader)
+
+    effective_scope = scope
+    if scope == "eligible" and "eligible" not in fieldnames:
+        logger.warning("forward_eval: scope='eligible' but no 'eligible' column — falling back to universe")
+        effective_scope = "universe"
+    elif scope == "portfolio" and "target_weight_pct" not in fieldnames:
+        logger.warning("forward_eval: scope='portfolio' but no 'target_weight_pct' column — falling back to universe")
+        effective_scope = "universe"
+
+    signal: Dict[str, float] = {}
+    for row in rows:
+        ticker = (row.get("ticker") or "").strip().upper()
+        rank_str = (row.get("actionable_rank") or row.get("composite_rank") or "").strip()
+        if not ticker or not rank_str:
+            continue
+        try:
+            rank_val = float(rank_str)
+        except (ValueError, TypeError):
+            continue
+
+        if effective_scope == "eligible":
+            if not _is_truthy(row.get("eligible", "")):
                 continue
+        elif effective_scope == "portfolio":
             try:
-                signal[ticker] = -float(rank_str)
+                weight = float(row.get("target_weight_pct") or 0)
             except (ValueError, TypeError):
+                weight = 0.0
+            if weight <= 0:
                 continue
+        elif effective_scope == "top_k":
+            if rank_val > top_k:
+                continue
+
+        signal[ticker] = -rank_val
     return signal
 
 
@@ -142,21 +216,34 @@ def evaluate_rolling_ic(
     min_dates: int = 3,
     top_k: int = 20,
     ic_warn_floor: float = 0.00,
+    scope: str = "eligible",
+    min_gap_days: Optional[int] = None,
 ) -> Tuple[str, str, Dict[str, Any], Dict[str, Any]]:
     """Rolling-window IC from PIT price caches.
 
     Returns (status, detail, value, threshold).
     Status is always "PASS" or "WARN" — never "FAIL".
+
+    ``scope`` (default ``"eligible"``) restricts the IC to the tradeable set so
+    the gate measures the model actually run, not full-universe monotonicity —
+    see ``_load_rankings_signal``. ``min_gap_days`` de-overlaps the rolling
+    window; when None it defaults to ≈ ``horizon`` trading days
+    (``round(horizon * 7 / 5)`` calendar days) so retained forward-return
+    windows do not overlap and one market episode is not counted many times.
     """
+    gap_days = min_gap_days if min_gap_days is not None else int(round(horizon * 7 / 5))
+
     thresholds = {
         "ic_warn_floor": ic_warn_floor,
         "lookback_n": lookback_n,
         "min_dates": min_dates,
         "horizon": horizon,
+        "scope": scope,
+        "min_gap_days": gap_days,
     }
 
-    # Discover dates with filled PIT caches
-    pit_dates = _discover_pit_dates(price_cache_base, current_date, horizon, lookback_n)
+    # Discover dates with filled PIT caches (de-overlapped by gap_days)
+    pit_dates = _discover_pit_dates(price_cache_base, current_date, horizon, lookback_n, min_gap_days=gap_days)
 
     if not pit_dates:
         return (
@@ -174,8 +261,8 @@ def evaluate_rolling_ic(
         cache_dir = price_cache_base / snap_date
         snap_dir = snapshot_dir / snap_date
 
-        # Load signal from rankings
-        signal = _load_rankings_signal(snap_dir)
+        # Load signal from rankings (scoped to the tradeable set)
+        signal = _load_rankings_signal(snap_dir, scope=scope, top_k=top_k)
         if not signal:
             date_details.append({"date": snap_date, "ic": None, "reason": "no_rankings"})
             continue
@@ -242,6 +329,8 @@ def evaluate_rolling_ic(
         "n_evaluated": n_evaluated,
         "n_pit_dates": len(pit_dates),
         "date_details": date_details,
+        "scope": scope,
+        "min_gap_days": gap_days,
     }
 
     if n_evaluated == 0:

@@ -12,6 +12,7 @@ from __future__ import annotations
 import csv
 import json
 import sys
+from datetime import date
 from pathlib import Path
 from typing import Dict, List
 
@@ -35,14 +36,31 @@ from run_daily_production import GATE_ALLOWLIST, GateConfig, check_forward_eval
 # ---------------------------------------------------------------------------
 
 
-def _write_rankings_csv(path: Path, tickers_ranks: List[tuple]) -> None:
-    """Write rankings.csv with (ticker, rank) pairs."""
+def _write_rankings_csv(
+    path: Path, tickers_ranks: List[tuple], eligible=None, weights=None, with_scope_cols=True
+) -> None:
+    """Write rankings.csv with (ticker, rank) pairs.
+
+    ``eligible``: None → all rows eligible; else an iterable of eligible tickers.
+    ``weights``: optional {ticker: target_weight_pct}; default 0.
+    ``with_scope_cols``: when False, omit eligible/target_weight_pct columns
+    entirely (used to test the scope-fallback path).
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
+    elig_set = None if eligible is None else set(eligible)
+    weights = weights or {}
+    fieldnames = ["ticker", "actionable_rank"]
+    if with_scope_cols:
+        fieldnames += ["eligible", "target_weight_pct"]
     with open(path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=["ticker", "actionable_rank"])
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         for t, r in tickers_ranks:
-            writer.writerow({"ticker": t, "actionable_rank": str(r)})
+            row = {"ticker": t, "actionable_rank": str(r)}
+            if with_scope_cols:
+                row["eligible"] = "True" if (elig_set is None or t in elig_set) else "False"
+                row["target_weight_pct"] = str(weights.get(t, 0))
+            writer.writerow(row)
 
 
 def _write_pit_cache(cache_dir: Path, as_of: str, rows: List[Dict], horizons_filled=None, split_warnings=None):
@@ -134,7 +152,8 @@ class TestEvaluateRollingIC:
         tickers_ranks, pit_rows = _make_positive_ic_data()
 
         # Create 5 snapshot dates with positive IC data
-        dates = ["2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06"]
+        # Spaced >= 7 days apart so the default de-overlap (horizon 5 → 7d gap) keeps all 5.
+        dates = ["2026-01-05", "2026-01-12", "2026-01-19", "2026-01-26", "2026-02-02"]
         for d in dates:
             _write_rankings_csv(snapshot_dir / d / "rankings.csv", tickers_ranks)
             # Adjust pit_rows anchor_date for each
@@ -160,7 +179,8 @@ class TestEvaluateRollingIC:
 
         tickers_ranks, pit_rows = _make_negative_ic_data()
 
-        dates = ["2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06"]
+        # Spaced >= 7 days apart so the default de-overlap (horizon 5 → 7d gap) keeps all 5.
+        dates = ["2026-01-05", "2026-01-12", "2026-01-19", "2026-01-26", "2026-02-02"]
         for d in dates:
             _write_rankings_csv(snapshot_dir / d / "rankings.csv", tickers_ranks)
             rows = [{**r, "anchor_date": d} for r in pit_rows]
@@ -341,3 +361,107 @@ class TestDiscoverPitDates:
 
         dates = _discover_pit_dates(tmp_path, "2026-02-02", 5, 10)
         assert len(dates) == 0
+
+
+# ---------------------------------------------------------------------------
+# TestDeoverlap — issue #482: rolling window must not double-count episodes
+# ---------------------------------------------------------------------------
+
+
+class TestDeoverlap:
+
+    def _mk(self, tmp_path):
+        for d in ["2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06"]:
+            cache = tmp_path / d
+            cache.mkdir(parents=True)
+            with open(cache / "index.json", "w") as f:
+                json.dump({"horizons_filled": [5]}, f)
+
+    def test_no_gap_returns_consecutive(self, tmp_path):
+        self._mk(tmp_path)
+        dates = _discover_pit_dates(tmp_path, "2026-02-10", 5, 10, min_gap_days=0)
+        assert dates == ["2026-02-06", "2026-02-05", "2026-02-04", "2026-02-03", "2026-02-02"]
+
+    def test_gap_deoverlaps_adjacent_dates(self, tmp_path):
+        self._mk(tmp_path)
+        # From newest 02-06: keep; skip 02-05/04 (<3d); keep 02-03; skip 02-02.
+        dates = _discover_pit_dates(tmp_path, "2026-02-10", 5, 10, min_gap_days=3)
+        assert dates == ["2026-02-06", "2026-02-03"]
+        for a, b in zip(dates, dates[1:]):
+            gap = (date.fromisoformat(a) - date.fromisoformat(b)).days
+            assert gap >= 3
+
+    def test_default_gap_derived_from_horizon(self, tmp_path):
+        # Consecutive daily caches; default de-overlap (horizon 5 → 7d gap) collapses
+        # them to a single episode, so evaluate reports insufficient dates rather than
+        # a spurious high-n window.
+        snapshot_dir = tmp_path / "snapshots"
+        cache_base = tmp_path / "caches"
+        tickers_ranks, pit_rows = _make_positive_ic_data()
+        for d in ["2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06"]:
+            _write_rankings_csv(snapshot_dir / d / "rankings.csv", tickers_ranks)
+            rows = [{**r, "anchor_date": d} for r in pit_rows]
+            _write_pit_cache(cache_base / d, d, rows, horizons_filled=[5])
+        status, detail, value, threshold = evaluate_rolling_ic(
+            snapshot_dir=snapshot_dir,
+            price_cache_base=cache_base,
+            current_date="2026-02-10",
+            horizon=5,
+            lookback_n=10,
+            min_dates=3,
+        )
+        assert value["min_gap_days"] == 7  # round(5 * 7 / 5)
+        assert value["n_evaluated"] == 1  # 5 adjacent days → 1 independent window
+
+
+# ---------------------------------------------------------------------------
+# TestScope — issue #482: IC must measure the tradeable set, not full universe
+# ---------------------------------------------------------------------------
+
+
+class TestScope:
+
+    def test_eligible_scope_excludes_ineligible(self, tmp_path):
+        ranks = [("A", 1), ("B", 2), ("C", 3), ("D", 4)]
+        _write_rankings_csv(tmp_path / "rankings.csv", ranks, eligible={"A", "B"})
+        universe = _load_rankings_signal(tmp_path, scope="universe")
+        eligible = _load_rankings_signal(tmp_path, scope="eligible")
+        assert set(universe) == {"A", "B", "C", "D"}
+        assert set(eligible) == {"A", "B"}
+
+    def test_portfolio_scope_only_weighted(self, tmp_path):
+        ranks = [("A", 1), ("B", 2), ("C", 3)]
+        _write_rankings_csv(tmp_path / "rankings.csv", ranks, weights={"A": 0.5, "B": 0.0})
+        port = _load_rankings_signal(tmp_path, scope="portfolio")
+        assert set(port) == {"A"}
+
+    def test_top_k_scope(self, tmp_path):
+        ranks = [("A", 1), ("B", 2), ("C", 3), ("D", 4)]
+        _write_rankings_csv(tmp_path / "rankings.csv", ranks)
+        top2 = _load_rankings_signal(tmp_path, scope="top_k", top_k=2)
+        assert set(top2) == {"A", "B"}
+
+    def test_missing_column_falls_back_to_universe(self, tmp_path):
+        ranks = [("A", 1), ("B", 2), ("C", 3)]
+        _write_rankings_csv(tmp_path / "rankings.csv", ranks, with_scope_cols=False)
+        # scope='eligible' but no 'eligible' column → must not blank the gate
+        sig = _load_rankings_signal(tmp_path, scope="eligible")
+        assert set(sig) == {"A", "B", "C"}
+
+    def test_evaluate_records_scope(self, tmp_path):
+        snapshot_dir = tmp_path / "snapshots"
+        cache_base = tmp_path / "caches"
+        tickers_ranks, pit_rows = _make_positive_ic_data()
+        d = "2026-02-02"
+        _write_rankings_csv(snapshot_dir / d / "rankings.csv", tickers_ranks)
+        rows = [{**r, "anchor_date": d} for r in pit_rows]
+        _write_pit_cache(cache_base / d, d, rows, horizons_filled=[5])
+        _, _, value, threshold = evaluate_rolling_ic(
+            snapshot_dir=snapshot_dir,
+            price_cache_base=cache_base,
+            current_date="2026-02-09",
+            horizon=5,
+            min_dates=1,
+        )
+        assert value["scope"] == "eligible"
+        assert threshold["scope"] == "eligible"
