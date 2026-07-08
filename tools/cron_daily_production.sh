@@ -116,6 +116,23 @@ if [ "${DOW}" -gt 5 ]; then
     exit 0
 fi
 
+# --- Drift guard (issue #484): warn if this checkout is behind origin/main ---
+# The cron checkout does not auto-pull, so merged fixes do not take effect
+# until it is fast-forwarded. Surface drift loudly instead of silently running
+# stale code. Non-blocking: this only logs — it never aborts the run.
+DRIFT_WARN_THRESHOLD=5
+if command -v git >/dev/null 2>&1 && git -C "${REPO_ROOT}" rev-parse --git-dir >/dev/null 2>&1; then
+    timeout 30 git -C "${REPO_ROOT}" fetch --quiet origin main 2>/dev/null \
+        || echo "[$(date -Iseconds)] WARN: drift-guard fetch failed (offline?) — comparing against last-known origin/main" | tee -a "${LOG_FILE}"
+    LOCAL_HEAD=$(git -C "${REPO_ROOT}" rev-parse --short HEAD 2>/dev/null || echo "?")
+    BEHIND=$(git -C "${REPO_ROOT}" rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
+    if [ "${BEHIND}" -gt "${DRIFT_WARN_THRESHOLD}" ]; then
+        echo "[$(date -Iseconds)] WARN: checkout drift — HEAD ${LOCAL_HEAD} is ${BEHIND} commits behind origin/main. Cron is running STALE code; merged fixes are not live until this checkout is fast-forwarded (issue #484)." | tee -a "${LOG_FILE}"
+    elif [ "${BEHIND}" -gt 0 ]; then
+        echo "[$(date -Iseconds)] INFO: checkout is ${BEHIND} commit(s) behind origin/main (HEAD ${LOCAL_HEAD})." | tee -a "${LOG_FILE}"
+    fi
+fi
+
 # Run the production pipeline (timeout: 75 minutes).
 # Budget breakdown observed: snapshot ~25 min + Herald ≤10 min + AACT ≤30 min
 # (Mondays only) + tail steps ≤5 min = ~70 min worst case. The previous 45-min
