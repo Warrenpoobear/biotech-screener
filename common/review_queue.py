@@ -281,7 +281,7 @@ def format_review_queue_md(
         )
         lines.append("")
 
-    groups = {
+    groups: dict[str, list] = {
         "no_add_until_review": [],
         "size_haircut": [],
         "manual_review_required": [],

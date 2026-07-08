@@ -73,7 +73,7 @@ def _adv_bucket(avg_dollar_volume: float | None) -> str:
 def estimate_trade_cost_bps(
     market_cap_mm: float | None = None,
     avg_dollar_volume: float | None = None,
-) -> dict[str, float]:
+) -> dict[str, Any]:
     """Estimate one-way trade cost in basis points.
 
     Returns dict with spread_bps, impact_bps, total_bps.

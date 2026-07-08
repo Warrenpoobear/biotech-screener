@@ -102,7 +102,7 @@ def _estimate_completion_months(
     phase_norm = phase.lower().replace(" ", "")
 
     if phase_norm in ("phase1", "phase 1"):
-        months = (
+        months: float = (
             PHASE_DURATION_MONTHS["phase1"]
             + PHASE_DURATION_MONTHS["phase2"]
             + PHASE_DURATION_MONTHS["phase3"]
@@ -123,7 +123,7 @@ def _estimate_completion_months(
 
     accel = 1.0
     if has_pr:
-        review_months = PHASE_DURATION_MONTHS["nda_review"]
+        review_months: float = PHASE_DURATION_MONTHS["nda_review"]
         dev_months = months - review_months
         review_months = review_months * DESIGNATION_ACCELERATION["PR"]
         months = dev_months + review_months
@@ -181,7 +181,7 @@ def compute_milestone_features(
     w_corr = 1.0 / (1.0 + corr_alpha * max(0, n_cluster - 1))
     result.milestone_corr_penalty = round(w_corr, 4)
 
-    evs = []
+    evs: List[Dict[str, Any]] = []
     primary_idx = 0
     primary_ev = -1.0
 

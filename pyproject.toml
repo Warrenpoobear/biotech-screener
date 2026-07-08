@@ -122,7 +122,13 @@ module = [
     "scripts.*",
 ]
 disallow_untyped_defs = false
-warn_unreachable = true
+# warn_unreachable is unsound while strict_optional = false: mypy treats
+# Optionals as never-None, so legitimate defensive guards (`if x is None:`,
+# `if not regex.match(...):`, `if not isinstance(x, dict):`) are reported as
+# unreachable. Those guards protect real runtime paths and must stay. Re-enable
+# this together with strict_optional in the surgical typing pass (see the
+# strict_optional note above).
+warn_unreachable = false
 
 # -- Noisy modules: suppress until refactored (7 files, 63 errors) -----------
 [[tool.mypy.overrides]]
