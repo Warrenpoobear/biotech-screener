@@ -143,9 +143,20 @@ Cross-sectional regression with Newey-West corrected standard errors.
 
 The ONLY true out-of-sample evidence. Accumulates daily from production.
 
-> **Related forward test — DEM Top-30 candidate (RATIFIED + WIRED 2026-06-28):** `docs/FORWARD_VALIDATION_PROTOCOL.md` pre-registers a separate forward out-of-sample test for the **DEM Top-30 candidate** (v1.4 / ruleset `8887576e`; candidate `model_hash=a9983a67c6954813`): weekly non-overlapping 5-day excess vs XBI as the primary gate, 20-window minimum, adversarial controls (bootstrap percentile + bottom-30), confirmation eligibility ≈ 2026-10-31. The protocol's §2 test is locked and must not be re-specified after forward data is seen.
+> **Related forward test — DEM Top-30 candidate (mandate SM-20260629-001):** `docs/FORWARD_VALIDATION_PROTOCOL.md` (RATIFIED 2026-06-28, §2 test locked — not to be re-specified after forward data is seen) pre-registers weekly non-overlapping 5-day excess vs XBI as the primary gate, 20-window minimum, adversarial controls (bootstrap percentile + bottom-30). Candidate identity: `model_hash=827c35a9ed3ee6e1` / `hash_scheme=ast-v1` (behavioral AST fingerprint of ranker/selector/decision engines; legacy raw-bytes hash `a9983a67c6954813`; `registered=2026-06-26` unchanged — same freeze, re-hashed 2026-07-10). Authority for current status: `artifacts/forward_validation/CANDIDATE.json` + `docs/model_documentation.md` § "Recent Updates — 2026-07-10".
 >
-> **NOW WIRED (commit `a90297f8`, 2026-06-28):** the tooling exists and runs in the daily pipeline — `tools/run_forward_validation.py` (immutable daily truth-card capture + 8-point DQ gate), `tools/fill_forward_returns.py` (1d/5d/20d return fill on observability), `tools/weekly_validation_summary.py` (non-overlapping window stats + gate progress), wired via `tools/cron_daily_production.sh`. Initial ledger: 10 captures (2026-06-12 → 2026-06-26); 1 completed 5d window (2026-W25 / Jun 15: basket +9.76%, XBI +8.31%, excess +1.45%, boot-pct 98%). This is distinct from coinvest\_shadow\_tracker v2 (which remains the live signal-level shadow). NO_MODEL_CHANGE — the candidate is observed, not promoted; clearing the gate only makes it *eligible* for an operator promotion decision.
+> **Hardened 2026-07-10 (PR #489):** captures run only on pipeline exit 0/2 with a freshness/provenance gate; every capture is classified LIVE or REPLAY (`fv_capture.v2`); a window counts toward the mandate only if LIVE ∧ quality PASS ∧ model-hash match ∧ XBI benchmark present ∧ realized 5d excess. Backfilled/replay rows never count. Tooling: `tools/run_forward_validation.py`, `tools/fill_forward_returns.py`, `tools/weekly_validation_summary.py`, liveness monitor `tools/forward_validation_liveness_monitor.py`. This is distinct from coinvest\_shadow\_tracker v2 (which remains the live signal-level shadow). NO_MODEL_CHANGE — the candidate is observed, not promoted; clearing the gate only makes it *eligible* for an operator promotion decision.
+
+### Which evaluator measures what (do not conflate)
+
+| Evaluator | Score field | Scope | Overlap rule | Role |
+| --- | --- | --- | --- | --- |
+| Daily forward_eval gate (`tools/forward_eval_gate.py`) | negated `actionable_rank` | `eligible` (tradeable) rows | PIT dates ≥ ~horizon apart (28 cal days @ h20) | WARN-only evaluator-health tripwire; floor +0.02 |
+| IC dashboard (`tools/build_ic_dashboard.py`) | `score_rank_pct`, `inst_delta_z` | ranked universe | daily overlapping (60-date lookback) | selector signal-health monitoring |
+| Spec 100 backtest (`run_rank_ic_backtest.py`) | `final_score` (default) | configurable | research-side | ranker IC / promotion research |
+| Forward-shadow mandate (SM-20260629-001) | Top-30 EW 5d excess vs XBI | frozen candidate basket | one window per ISO week | only evidence that can resolve DEM HOLD |
+
+A HEALTHY dashboard or PASS gate is **not** mandate progress; zero mandate windows is **zero evidence, not zero alpha**.
 
 ### Arms
 
@@ -266,15 +277,13 @@ Any IC research on expectation-gap features against historical snapshots must ve
 
 **Verdict**: OBSERVE. April selloff drove pre-cohort negativity. Post-cohort recovering.
 
-**IMPORTANT**: These IC figures measure coinvest\_score\_z across the full eligible universe. They do NOT measure ranker IC within the top-60 cohort (Spec 095 confirmed this gap on 2026-05-13). Ranker-specific IC is UNMEASURED until Spec 100 tooling is implemented.
+**IMPORTANT**: These IC figures measure coinvest\_score\_z across the full eligible universe. They do NOT measure ranker IC within the top-60 cohort (Spec 095 confirmed this gap on 2026-05-13). Ranker IC is measurable via Spec 100 tooling (see "Ranker IC Tooling Status" below); its Checklist v2 interpretation remains deferred per `docs/model_documentation.md`.
 
 ### Upcoming Checkpoints
 
-- h20d horizon: 2026-05-26
-- Post-Q1 2026 13F refresh: ALL THREE FILED May 15, 2026. Cache warm + cohort quarantine + IC decomposition refresh needed. 5-day observation window runs through \~May 22.
-- Forward shadow 30+ trading day evaluation (accumulating since 2026-04-03 -- should be at or past 30 trading days as of mid-May)
-- Spec 094 selector-only comparator rerun: target 2026-05-27 (when post-PIT outcomes resolve)
-- Spec 100 ranker IC tooling fix: blocked on architecture freeze (lifts \~2026-05-26)
+- SM-20260629-001 status checkpoint: **2026-09-30** (status review, not a resolution deadline); 20-window gate ≈ mid-November 2026.
+- h20d gate: HOLD / NOT CLEARED per `artifacts/readiness/H20D_REEVAL_VERDICT_2026_07_04.md` — clearable only by `tools/check_13f_cohort_quarantine.py` run against a post-Q1-promotion snapshot.
+- For all other dates, consult `docs/model_documentation.md` (canonical); do not trust dates cached in skills.
 
 ## Ranker IC Tooling Status (Spec 095 / Spec 100)
 
@@ -288,57 +297,22 @@ Any IC research on expectation-gap features against historical snapshots must ve
 - Prior composite\_score IC claims remain invalidated
 - Ranker IC measurement now available for forward validation
 
-## Forward Shadow Status
+## DEM Top-30 Forward Validation Status (2026-07-10)
 
-*Accumulating since: 2026-04-03. As of 2026-05-17, approximately 30+ trading days accumulated.*
+*Candidate `model_hash=827c35a9ed3ee6e1` (`ast-v1`; legacy `a9983a67c6954813`) / ruleset `8887576e`, registered 2026-06-26 (re-hashed 2026-07-10, same freeze).*
 
-Should be at or past the 30-day evaluation threshold. Architecture freeze in effect until post-h20d checkpoint (2026-05-26). Evaluate per the rules in Section 1 once confirmed >= 30 trading days of true-PIT daily production data.
-
-## DEM Top-30 Forward Validation Status (2026-06-28)
-
-*Tooling wired via commit `a90297f8`; candidate `model_hash=a9983a67c6954813` / ruleset `8887576e`, registered 2026-06-26.*
-
-- Ledger: 10 daily captures (2026-06-12 → 2026-06-26); 1 completed non-overlapping 5d window (2026-W25 / Jun 15: basket +9.76%, XBI +8.31%, excess +1.45%, bootstrap-pct 98%).
-- Gate progress: 1/20 completed windows toward the minimum-sample gate. Confirmation eligibility ≈ 2026-10-31.
-- Status: OBSERVE — candidate is being measured, not promoted. Per `docs/FORWARD_VALIDATION_PROTOCOL.md`, clearing the gate only makes the candidate *eligible* for an operator promotion decision; promotion/unfreeze remain explicit operator actions.
+- **Mandate progress: 0/20 eligible LIVE windows (code-enforced).** The 10 captures dated 2026-06-12 → 2026-06-26 are a one-time 2026-06-28 backfill (`fv_capture.v1`, legacy hash) and do not count. The production capture tail never ran live 2026-04-17 → 2026-07-10 (`set -e` swallowed it); repaired + deployed 2026-07-10 (PR #489). The clock starts at the first clean LIVE capture.
+- Live status source: `artifacts/forward_validation/LIVENESS_STATUS.json` (refresh via `tools/forward_validation_liveness_monitor.py`); windows: `artifacts/forward_validation/WEEKLY_SUMMARY.md`.
+- Status: OBSERVE / DEM thesis HOLD. Per `docs/FORWARD_VALIDATION_PROTOCOL.md`, clearing the gate only makes the candidate *eligible* for an operator promotion decision; promotion/unfreeze remain explicit operator actions.
 
 ---
 
-## Governance Freeze Status (2026-05-17)
+## Governance Freeze Status (2026-07-10)
 
-**Architecture Freeze** — Active through ~2026-05-26 (h20d checkpoint)
-- No model logic changes, feature promotions, or ranking modifications authorized
-- Deterministic tooling (preflight, monitoring, verification) permitted
-- Spec 100 ranker IC evaluation deferred post-freeze
-
-**13F Q1 2026 Cohort Quarantine** — Active
-- 42/48 managers filed (as of 2026-05-19; up from 6/48 on 2026-05-15)
-- Validation trigger: ~2026-05-23 (≥34 managers filed — threshold MET as of 2026-05-19)
-- Clearance decision: ~2026-05-26 (requires Jaccard ≥0.70 + all 6 gates pass)
-- No selector/ranker/sizing changes authorized until cohort clears
-- IC health monitor ALERT as of 2026-05-19: lagging historical IC baseline, NOT a system failure — expected post-13F refresh transient
-
-**Decision Gates Ahead**
-- **May 19**: Phase 2 Step 3 verification ✓ (IC health monitor ALERT = lagging IC, not failure)
-- **~May 23**: 13F refresh validation rerun — trigger MET (42 managers filed)
-- **~May 26**: Architecture freeze lift + cohort clearance decision; h20d Decision Memo Draft ready (2026-05-21)
-- **Post-May 26**: Spec 100 corrected final_score IC evaluation + Checklist v2 battery
-
-**Interpretation**: All IC evaluation and ranker promotion decisions are deferred until post-freeze when full validation battery can be applied. Current Spec 100 baseline is ready but explicitly labeled for deferred interpretation.
+- The May-era "architecture freeze through ~2026-05-26" is superseded. Current binding constraints: **DEM candidate freeze + NO_MODEL_CHANGE forward-validation window** (`docs/FORWARD_VALIDATION_PROTOCOL.md` §1) and **FROZEN (BLOCKED_LEVEL_0)** per `docs/model_documentation.md` (canonical). The 2026-06-24 operator lift was scoped to Spec-100 tooling only; no model-behavior change is authorized.
+- **13F Q1 2026: HOLD / observation-only.** 55-manager cohort Jaccard last measured 0.463 (FAIL vs 0.70); the 0.875 figure was the Q4/49-manager comparison and must not be cited as clearance. Authority: `artifacts/readiness/H20D_REEVAL_VERDICT_2026_07_04.md`.
+- Any change to ranker, selector, eligibility, sizing, or the candidate registration resets the out-of-sample clock and requires explicit operator authorization.
 
 ## Session-end learning
 
-After completing this skill's task, if you encountered an unexpected behavior, constraint, API response, or workflow edge case, log it:
-
-```
-[LRN-YYYYMMDD-NNN]
-Pattern-Key: SKILL_IC_EVALUATION_{description}
-Area: hermes_ops | data_pipeline | research | portfolio
-Promotion-lane: skill | none
-Recurrence-Count: 1
-Context: <one line — what happened>
-Rule: <one line — what to do differently>
-Suggested-Action: <patch to this SKILL.md, or none>
-```
-
-Recurrence ≥ 3 in 7 days → propose a patch to this `SKILL.md` via `tools/pattern_to_skillpatch.py`. Full protocol: see `self-improving` skill.
+If anything surprised you, log a learning per the `self-improving` skill (Pattern-Key `SKILL_IC_EVALUATION_{description}`); recurrence ≥ 3 in 7 days → propose a patch via `tools/pattern_to_skillpatch.py`.

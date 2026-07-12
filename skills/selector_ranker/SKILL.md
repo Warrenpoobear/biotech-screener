@@ -265,39 +265,13 @@ size_multiplier = max(0.40, 1.0 - 0.60 * ev_severity_score)
 
 ---
 
-## Governance Freeze & Quarantine Status (2026-05-17)
+## Governance Freeze & Quarantine Status (2026-07-10)
 
-**Architecture Freeze** — Active through ~2026-05-26 (h20d checkpoint)
-- No selector/ranker/sizing changes authorized
-- Production ruleset frozen at `8887576e` (v1.14.0)
-- ranker_active_contract.py remains on unmerged branch (deferred post-freeze)
-- Spec 100 ranker IC evaluation ready but interpretation deferred
-
-**13F Q1 2026 Cohort Quarantine** — Active
-- 42/48 managers filed (as of 2026-05-19; up from 6/48 on 2026-05-15)
-- Validation trigger: ~2026-05-23 (≥34 threshold MET as of 2026-05-19)
-- Clearance decision: ~2026-05-26 (requires Jaccard ≥0.70 + all gates pass)
-- No selector/ranker changes until cohort clears
-
-**Next Milestones**
-- **May 19**: Phase 2 Step 3 verification ✓ complete
-- **~May 23**: 13F refresh validation rerun — trigger MET
-- **~May 26**: Architecture freeze lift + cohort clearance decision; h20d Decision Memo Draft ready (2026-05-21)
-- **Post-May 26**: Spec 100 ranker IC evaluation + Checklist v2 battery (if cohort clears)
+- Production ruleset frozen at `8887576e` (v1.14.0). Model status: **FROZEN (BLOCKED_LEVEL_0)** — canonical authority `docs/model_documentation.md`. The binding window is the **DEM candidate freeze + NO_MODEL_CHANGE forward-validation window** (`docs/FORWARD_VALIDATION_PROTOCOL.md` §1; mandate SM-20260629-001, 0/20 eligible live windows). No selector/ranker/sizing change is authorized; any such change resets the out-of-sample clock and requires explicit operator authorization.
+- **Candidate identity:** `model_hash=827c35a9ed3ee6e1` (`ast-v1` behavioral fingerprint over `ranker_engine.py`/`selector_engine.py`/`decision_engine.py`); legacy raw-bytes `a9983a67c6954813`. Registered 2026-06-26 (unchanged); re-hashed 2026-07-10.
+- **Deployed ≠ trained:** `production_data/ranker_v2_model.json` is a 2-feature `pairwise_logistic` with `coinvest_score_z` capped to +0.02 (trained +0.0613) and `financial_score` −0.0533; see the artifact's `provenance` block. Any prose claiming a 5- or 6-feature production ranker is wrong.
+- **13F Q1 2026: HOLD / observation-only.** 55-manager Jaccard last measured 0.463 (FAIL vs 0.70); the 0.875 figure was Q4/49-manager. Authority: `artifacts/readiness/H20D_REEVAL_VERDICT_2026_07_04.md`; clearance requires `tools/check_13f_cohort_quarantine.py` against a post-Q1-promotion snapshot.
 
 ## Session-end learning
 
-After completing this skill's task, if you encountered an unexpected behavior, constraint, API response, or workflow edge case, log it:
-
-```
-[LRN-YYYYMMDD-NNN]
-Pattern-Key: SKILL_SELECTOR_RANKER_{description}
-Area: hermes_ops | data_pipeline | research | portfolio
-Promotion-lane: skill | none
-Recurrence-Count: 1
-Context: <one line — what happened>
-Rule: <one line — what to do differently>
-Suggested-Action: <patch to this SKILL.md, or none>
-```
-
-Recurrence ≥ 3 in 7 days → propose a patch to this `SKILL.md` via `tools/pattern_to_skillpatch.py`. Full protocol: see `self-improving` skill.
+If anything surprised you, log a learning per the `self-improving` skill (Pattern-Key `SKILL_SELECTOR_RANKER_{description}`); recurrence ≥ 3 in 7 days → propose a patch via `tools/pattern_to_skillpatch.py`.

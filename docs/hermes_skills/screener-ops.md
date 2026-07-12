@@ -65,17 +65,18 @@ Always warm 8-K cache BEFORE running screen.
 
 6000s (100 min) to cover worst-case AACT + tail steps. Previous 4500s was killing mid-AACT on Mondays.
 
-### Forward Validation Protocol — daily truth-card (RATIFIED + WIRED 2026-06-28)
+### Forward Validation Protocol — daily truth-card (hardened 2026-07-10, PR #489)
 
-`docs/FORWARD_VALIDATION_PROTOCOL.md` (RATIFIED 2026-06-28) pre-registers a daily "truth card" plus weekly/monthly summaries for the frozen DEM Top-30 candidate (v1.4 / ruleset `8887576e`; candidate `model_hash=a9983a67c6954813`).
+`docs/FORWARD_VALIDATION_PROTOCOL.md` (RATIFIED 2026-06-28) pre-registers a daily "truth card" plus weekly/monthly summaries for the frozen DEM Top-30 candidate (v1.4 / ruleset `8887576e`; candidate `model_hash=827c35a9ed3ee6e1`, `hash_scheme=ast-v1`; legacy `a9983a67c6954813`; registered 2026-06-26 unchanged).
 
-**WIRED into the daily pipeline (commit `a90297f8`, 2026-06-28).** The tooling exists and runs:
-- `tools/run_forward_validation.py` — immutable daily truth-card capture (top-30 EW by `actionable_rank`), model-hash check vs `CANDIDATE.json`, 8-point DQ gate, adversarial seeds (1000-bootstrap + bottom-30)
+**WIRED and hardened.** Originally wired `a90297f8` (2026-06-28), but the capture tail never actually ran in production 2026-04-17 → 2026-07-10 (`set -euo pipefail` aborted it on the pipeline's WARN exit 2); repaired + deployed 2026-07-10 (PR #489, `4d8623e5`). Current behavior:
+- `tools/run_forward_validation.py` — immutable daily truth-card capture (top-30 EW by `actionable_rank`), model-hash check vs `CANDIDATE.json`, 8-point DQ gate, adversarial seeds (1000-bootstrap + bottom-30) — invoked by the wrapper **only on pipeline exit 0/2** with a freshness/provenance gate; every capture is LIVE or REPLAY (`fv_capture.v2`); only LIVE + quality-PASS + hash-match + benchmark + realized 5d excess counts toward mandate SM-20260629-001
 - `tools/fill_forward_returns.py` — fills 1d/5d/20d forward returns when each endpoint becomes observable
 - `tools/weekly_validation_summary.py` — non-overlapping 5d window stats + gate progress → `WEEKLY_SUMMARY.md`
+- `tools/forward_validation_liveness_monitor.py` — 6 silent-failure checks → `artifacts/forward_validation/LIVENESS_STATUS.json`; cron wrapper `tools/cron_forward_validation_liveness.sh` authored (suggested 19:00 ET weekdays) — **operator must install it in crontab**
 - wired via `tools/cron_daily_production.sh` (after the diagnostic-reports block)
 
-Initial ledger: 10 captures (2026-06-12 → 2026-06-26); 1 completed 5d window (2026-W25 / Jun 15: basket +9.76%, XBI +8.31%, excess +1.45%, boot-pct 98%). Gate progress: 1/20 windows; confirmation eligibility ≈ 2026-10-31.
+Gate progress: **0/20 eligible LIVE windows (code-enforced)** — the 10 legacy captures (2026-06-12 → 2026-06-26) are a one-time backfill and do not count. 2026-09-30 = status checkpoint (not a deadline); ~mid-November 2026 = 20-window gate. For current status always read `docs/model_documentation.md` § "Recent Updates — 2026-07-10" and `artifacts/forward_validation/LIVENESS_STATUS.json` — do not trust counts cached in skills.
 
 **Governance:** NO_MODEL_CHANGE — the candidate is *observed*, not promoted. Clearing the 20-window gate only makes it *eligible* for an operator promotion decision; promotion/unfreeze remain explicit operator actions, and the §2 test is locked (not to be re-specified after data is seen).
 
