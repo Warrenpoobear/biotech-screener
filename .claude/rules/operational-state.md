@@ -8,7 +8,7 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-06-24  
+**Last updated:** 2026-07-12  
 **Update cadence:** weekly or upon governance-state change  
 **Authority:** operational status snapshot only; not architectural specification  
 **Staleness risk:** MEDIUM (reference `governance.md` for timeless process)
@@ -28,12 +28,15 @@ metadata:
 
 ## Architecture Freeze Status
 
-**SCOPED PRODUCTION MODEL FREEZE — LIFTED 2026-06-24 (operator clearance)**
+**MODEL BEHAVIOR REMAINS FROZEN. The 2026-06-24 "lift" was tooling-scoped only — do not read it as authorization to change the model.**
 
-- **Lifted:** 2026-06-24. Operator explicitly authorized freeze lift to unblock Spec 100 (ranker IC tooling correction).
-- **Was frozen:** ranker, selector, sizing logic, `final_score`, portfolio/snapshot files, gate configs (effective 2026-06-20, INC-2026-06-20-AUTOPUSH)
+- **INC-2026-06-20 scoped freeze — narrowly lifted 2026-06-24:** operator authorized the lift **solely to unblock Spec 100** (ranker IC tooling correction). Spec 100 is implemented (commit `2faa88e6`); that lift is spent.
+- **Currently binding (2026-07-12):**
+  - **DEM candidate freeze + NO_MODEL_CHANGE forward-validation window** — `docs/FORWARD_VALIDATION_PROTOCOL.md` §1 (RATIFIED 2026-06-28; mandate SM-20260629-001, 0/20 eligible LIVE windows). No ranker/selector/feature/eligibility/sizing/rebalance-policy/price-source change; any authorized bug fix resets the out-of-sample clock.
+  - **FROZEN (BLOCKED_LEVEL_0)** per `docs/model_documentation.md` (canonical; synced 2026-07-10) — model doc governs where this snapshot disagrees.
+- **Candidate identity:** `model_hash=827c35a9ed3ee6e1` / `hash_scheme=ast-v1` (legacy `a9983a67c6954813`; `registered=2026-06-26` unchanged) — `artifacts/forward_validation/CANDIDATE.json`.
 - `ranker_active_contract.py` (branch `hygiene/ranker-active-contract-2026-04-30`) remains deferred
-- **First post-freeze priority:** Spec 100 — correct ranker IC tooling to measure `final_score` (not `composite_score`); all prior ranker IC claims are non-authoritative until this runs
+- All prior ranker IC claims based on `composite_score` remain non-authoritative; ranker IC = `final_score` per Spec 100, interpretation deferred pending governance battery
 
 ---
 
