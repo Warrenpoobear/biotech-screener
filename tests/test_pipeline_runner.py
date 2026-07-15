@@ -215,16 +215,16 @@ class TestInputValidation:
 
         data = [{"ticker": "ACME", "price": 50.0, "extra": "ok"}]
 
-        # Should not raise
-        basic_pipeline.validate_input_schema(data, "market_data")
+        # Valid schema returns None (no raise)
+        assert basic_pipeline.validate_input_schema(data, "market_data") is None
 
     def test_validate_input_schema_skips_unknown_source(self, basic_pipeline):
         """Schema validation skips unknown source types."""
         basic_pipeline.initialize()
         basic_pipeline.mapping = {"source_schemas": {}}
 
-        # Should not raise even with empty data
-        basic_pipeline.validate_input_schema({}, "unknown_source")
+        # Unknown source type is skipped and returns None (no raise)
+        assert basic_pipeline.validate_input_schema({}, "unknown_source") is None
 
 
 # ============================================================================
@@ -302,23 +302,25 @@ class TestStageLogging:
         """Log successful stage."""
         basic_pipeline.initialize()
 
-        # Should not raise
-        basic_pipeline.log_stage(
+        # log_stage returns None on success (no raise)
+        result = basic_pipeline.log_stage(
             stage=AuditStage.LOAD,
             inputs=None,
             outputs=None,
         )
+        assert result is None
 
     def test_log_failure(self, basic_pipeline):
         """Log failed stage."""
         basic_pipeline.initialize()
 
-        # Should not raise
-        basic_pipeline.log_failure(
+        # log_failure returns None (no raise)
+        result = basic_pipeline.log_failure(
             stage=AuditStage.SCORE,
             error_code=AuditErrorCode.VALIDATION_ERROR,
             error_message="Test error",
         )
+        assert result is None
 
 
 # ============================================================================
