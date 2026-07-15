@@ -61,8 +61,8 @@ class TestModule1Validation:
             "excluded_securities": [],
             "diagnostic_counts": {"active": 1, "excluded": 0},
         }
-        # Should not raise
-        validate_module_1_output(output)
+        # Valid output passes the schema check, which returns None on success
+        assert validate_module_1_output(output) is None
 
     def test_missing_active_securities(self):
         """Missing active_securities raises error."""
@@ -116,7 +116,7 @@ class TestModule2Validation:
             "scores": [{"ticker": "AAPL", "financial_normalized": 85.5, "severity": "none"}],
             "diagnostic_counts": {},
         }
-        validate_module_2_output(output)
+        assert validate_module_2_output(output) is None
 
 
 class TestModule3Validation:
@@ -205,13 +205,13 @@ class TestPipelineHandoff:
             "excluded_securities": [],
             "diagnostic_counts": {},
         }
-        validate_pipeline_handoff("module_1", "module_2", m1_output)
+        assert validate_pipeline_handoff("module_1", "module_2", m1_output) is None
 
     def test_unknown_source_module_passes_without_validation(self):
         """Unknown source module passes validation (no validator defined)."""
         # When source module is unknown, validate_pipeline_handoff uses the source module validator
         # which doesn't exist, so it passes through
-        validate_pipeline_handoff("module_99", "module_2", {"any": "data"})
+        assert validate_pipeline_handoff("module_99", "module_2", {"any": "data"}) is None
 
     def test_valid_module_2_to_module_5_handoff(self):
         """Validate Module 2 -> Module 5 handoff."""
@@ -219,7 +219,7 @@ class TestPipelineHandoff:
             "scores": [{"ticker": "AAPL", "financial_score": 85.0}],
             "diagnostic_counts": {"scored": 1},
         }
-        validate_pipeline_handoff("module_2", "module_5", m2_output)
+        assert validate_pipeline_handoff("module_2", "module_5", m2_output) is None
 
 
 class TestScoreExtraction:
@@ -406,9 +406,9 @@ class TestDeterminism:
             "diagnostic_counts": {"active": 2},
         }
 
-        # Run validation multiple times
+        # Run validation multiple times; each run returns None (no raise)
         for _ in range(10):
-            validate_module_1_output(output)  # Should not raise
+            assert validate_module_1_output(output) is None
 
     def test_validation_order_independent(self):
         """Validation works regardless of dict key order."""
@@ -423,6 +423,6 @@ class TestDeterminism:
             "active_securities": [],
         }
 
-        # Both should pass
-        validate_module_1_output(output1)
-        validate_module_1_output(output2)
+        # Both should pass (validation returns None on success regardless of key order)
+        assert validate_module_1_output(output1) is None
+        assert validate_module_1_output(output2) is None
