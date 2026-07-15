@@ -83,11 +83,11 @@ class TestWarmFdaRegulatory:
         ):
             from warm_caches import warm_fda_regulatory
 
-            warm_fda_regulatory(as_of, data_dir, cache_dir)
+            count = warm_fda_regulatory(as_of, data_dir, cache_dir)
 
-        # The collector itself writes the cache file (internal to collect_fda_regulatory_notices).
-        # warm_fda_regulatory just returns the count. The cache path is managed by the collector.
-        # We verify count was returned correctly above.
+        # The collector (mocked here) is what writes the cache file, so no file is produced in this
+        # unit test; warm_fda_regulatory returns the notice count, which we assert directly.
+        assert count == 1
 
 
 class TestFdaRegulatoryDispatcher:
