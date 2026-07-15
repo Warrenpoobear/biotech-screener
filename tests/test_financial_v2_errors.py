@@ -84,8 +84,9 @@ class TestSafeDivideEdgeCases:
 
     def test_divide_by_eps_returns_default(self):
         """Division by EPS (very small) should return default."""
-        _safe_divide(Decimal("100"), EPS / 10)
-        # Should handle very small divisors without raising
+        # A divisor below EPS is treated as effectively zero, so the default is returned
+        assert _safe_divide(Decimal("100"), EPS / 10) is None
+        assert _safe_divide(Decimal("100"), EPS / 10, default=Decimal("999")) == Decimal("999")
 
     def test_normal_division(self):
         """Normal division should work."""
