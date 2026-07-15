@@ -480,3 +480,7 @@ data/herald_cache/
 __pycache__/
 *.pyc
 dev/
+
+# Expression log atomic-write temps (#495); backups covered by *.bak* above
+data/*.jsonl.tmp.*
+data/*.jsonl.compact.tmp

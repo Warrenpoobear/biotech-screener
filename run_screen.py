@@ -2515,9 +2515,7 @@ def _hydrate_drawdown(
                 # restored series so the peak is on the post-split basis. If no
                 # action is registered (a genuine crash the −75% heuristic
                 # misfired on), keep the raw series — the deep drawdown is real.
-                adjusted = _corp_action_split_adjust(
-                    ticker, unfiltered_series, as_of_date, _ca_registry
-                )
+                adjusted = _corp_action_split_adjust(ticker, unfiltered_series, as_of_date, _ca_registry)
                 if adjusted is not None:
                     logger.info(
                         "_hydrate_drawdown: %s recent-split fallback: filtered=%d < %d, "
@@ -8696,12 +8694,15 @@ def save_validation_snapshot(
     # Logs decisions (all names) and attribution (tradeable only).
     # Outputs a sidecar summary. Zero production impact.
     try:
+        from event_ev.expression_attribution import append_records_idempotent as _append_expr_records
+        from event_ev.expression_attribution import build_attribution_record as _build_expr_attr_record
+        from event_ev.expression_attribution import build_decision_record as _build_expr_dec_record
         from event_ev.expression_attribution import evaluate_kill_switches, load_attribution_log
-        from event_ev.expression_attribution import log_decision as _log_expr_decision
-        from event_ev.expression_attribution import log_recommendation as _log_expr_rec
         from event_ev.expression_layer import build_recommendation as _build_expr_rec
 
         _expr_decisions = []
+        _expr_dec_records: List[Dict[str, Any]] = []
+        _expr_attr_records: List[Dict[str, Any]] = []
         _expr_n_tradeable = 0
         _expr_n_rejected = 0
         _expr_by_type: Dict[str, int] = {}
@@ -8878,21 +8879,22 @@ def save_validation_snapshot(
             _rec.inputs_used["ev_source"] = _ev_source
             _rec.inputs_used["misprice_source"] = _misprice_source
 
-            # Log decision (ALL names)
+            # Decision record (ALL names) — batched, written once after the loop
             _ks_active = not _ks_state.get("overlay_enabled", True)
             _ks_reason = "; ".join(_ks_state.get("triggered_rules", [])) if _ks_active else None
-            _log_expr_decision(
-                _rec,
-                log_path=_dec_log_path,
-                timestamp=as_of_date + "T00:00:00",
-                kill_switch_active=_ks_active,
-                kill_switch_reason=_ks_reason,
+            _expr_dec_records.append(
+                _build_expr_dec_record(
+                    _rec,
+                    timestamp=as_of_date + "T00:00:00",
+                    kill_switch_active=_ks_active,
+                    kill_switch_reason=_ks_reason,
+                )
             )
             _expr_decisions.append(_rec)
 
-            # Log attribution (tradeable only)
+            # Attribution record (tradeable only) — batched
             if _rec.is_tradeable and not _ks_active:
-                _log_expr_rec(_rec, log_path=_attr_log_path, timestamp=as_of_date + "T00:00:00")
+                _expr_attr_records.append(_build_expr_attr_record(_rec, timestamp=as_of_date + "T00:00:00"))
                 _expr_n_tradeable += 1
             else:
                 _expr_n_rejected += 1
@@ -8902,6 +8904,18 @@ def save_validation_snapshot(
             _expr_by_class[_rec.overlay_class] = _expr_by_class.get(_rec.overlay_class, 0) + 1
             for _gf in _rec.gate_failures:
                 _expr_by_gate[_gf] = _expr_by_gate.get(_gf, 0) + 1
+
+        # Persist logs once per run. Idempotent per (ticker, node_id): a re-run
+        # for the same as_of date replaces its own records instead of appending
+        # duplicates that would skew kill-switch metrics (#495).
+        _dec_write = _append_expr_records(_dec_log_path, _expr_dec_records)
+        _attr_write = _append_expr_records(_attr_log_path, _expr_attr_records)
+        if _dec_write["replaced"] or _attr_write["replaced"]:
+            logger.info(
+                "Expression logs: replaced %d decision / %d attribution records from a prior same-day run",
+                _dec_write["replaced"],
+                _attr_write["replaced"],
+            )
 
         # Calibration diagnostics — EV source distribution + score distributions
         _ev_sources: Dict[str, int] = {}

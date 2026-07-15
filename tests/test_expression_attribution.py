@@ -24,7 +24,9 @@ from event_ev.expression_attribution import (
     _compute_pnl_estimate,
     _recommendation_to_attribution_record,
     _recommendation_to_decision_record,
+    append_records_idempotent,
     compute_attribution_metrics,
+    dedup_keep_last,
     evaluate_kill_switches,
     load_attribution_log,
     load_decision_log,
@@ -207,11 +209,24 @@ class TestLogRecommendation:
         assert parsed["ticker"] == "ACAD"
         assert result["ticker"] == "ACAD"
 
-    def test_append_multiple(self, tmp_path: Path):
+    def test_same_node_replaces_not_duplicates(self, tmp_path: Path):
+        # Re-running the pipeline for the same node must not duplicate (#495)
         log_path = tmp_path / "attr.jsonl"
         rec = _make_rec()
         log_recommendation(rec, log_path=log_path, timestamp="2026-04-13T10:00:00")
         log_recommendation(rec, log_path=log_path, timestamp="2026-04-13T11:00:00")
+        lines = log_path.read_text().strip().split("\n")
+        assert len(lines) == 1
+        assert json.loads(lines[0])["timestamp"] == "2026-04-13T11:00:00"
+
+    def test_distinct_nodes_append(self, tmp_path: Path):
+        log_path = tmp_path / "attr.jsonl"
+        log_recommendation(_make_rec(), log_path=log_path, timestamp="2026-04-13T10:00:00")
+        log_recommendation(
+            _make_rec(node=_make_node(ticker="SRPT")),
+            log_path=log_path,
+            timestamp="2026-04-13T10:00:00",
+        )
         lines = log_path.read_text().strip().split("\n")
         assert len(lines) == 2
 
@@ -263,6 +278,88 @@ class TestLogDecision:
         assert len(records) == 1
         if rec.is_tradeable:
             assert records[0]["decision"] == "tradeable"
+
+
+class TestIdempotentAppend:
+    def _rec_dict(self, ticker: str, node_id: str, **extra: Any) -> dict:
+        return {"ticker": ticker, "node_id": node_id, "timestamp": "2026-04-13T00:00:00", **extra}
+
+    def test_rerun_batch_does_not_grow_file(self, tmp_path: Path):
+        log_path = tmp_path / "log.jsonl"
+        batch = [self._rec_dict("ACAD", "ACAD_2026-04-13"), self._rec_dict("SRPT", "SRPT_2026-04-13")]
+        append_records_idempotent(log_path, batch)
+        counts = append_records_idempotent(log_path, batch)
+        assert counts == {"appended": 2, "replaced": 2, "kept_resolved": 0}
+        lines = log_path.read_text().strip().split("\n")
+        assert len(lines) == 2
+
+    def test_resolved_record_not_displaced_by_pending(self, tmp_path: Path):
+        log_path = tmp_path / "log.jsonl"
+        resolved = self._rec_dict("ACAD", "ACAD_2026-04-13", attribution_status="resolved", realized_outcome="HIT")
+        append_records_idempotent(log_path, [resolved])
+        pending = self._rec_dict("ACAD", "ACAD_2026-04-13", attribution_status="pending")
+        counts = append_records_idempotent(log_path, [pending])
+        assert counts == {"appended": 0, "replaced": 0, "kept_resolved": 1}
+        records = [json.loads(line) for line in log_path.read_text().strip().split("\n")]
+        assert len(records) == 1
+        assert records[0]["attribution_status"] == "resolved"
+
+    def test_keyless_existing_records_preserved(self, tmp_path: Path):
+        log_path = tmp_path / "log.jsonl"
+        log_path.write_text('{"existing": true}\nnot json at all\n')
+        append_records_idempotent(log_path, [self._rec_dict("ACAD", "ACAD_2026-04-13")])
+        lines = log_path.read_text().strip().split("\n")
+        assert len(lines) == 3
+        assert json.loads(lines[0]) == {"existing": True}
+        assert lines[1] == "not json at all"
+
+    def test_empty_batch_is_noop(self, tmp_path: Path):
+        log_path = tmp_path / "log.jsonl"
+        counts = append_records_idempotent(log_path, [])
+        assert counts == {"appended": 0, "replaced": 0, "kept_resolved": 0}
+        assert not log_path.exists()
+
+    def test_legacy_duplicates_compact_on_touch(self, tmp_path: Path):
+        # Pre-#495 files hold the same key many times; writing that key
+        # again collapses all copies to one.
+        log_path = tmp_path / "log.jsonl"
+        legacy = self._rec_dict("ACAD", "ACAD_2026-04-13")
+        log_path.write_text("".join(json.dumps(legacy) + "\n" for _ in range(8)))
+        append_records_idempotent(log_path, [self._rec_dict("ACAD", "ACAD_2026-04-13")])
+        lines = log_path.read_text().strip().split("\n")
+        assert len(lines) == 1
+
+
+class TestDedupKeepLast:
+    def test_keeps_last_per_key(self):
+        records = [
+            {"ticker": "ACAD", "node_id": "n1", "v": 1},
+            {"ticker": "ACAD", "node_id": "n1", "v": 2},
+            {"ticker": "SRPT", "node_id": "n2", "v": 3},
+        ]
+        out = dedup_keep_last(records)
+        assert len(out) == 2
+        assert out[0]["v"] == 2
+
+    def test_resolved_wins_over_later_pending(self):
+        records = [
+            {"ticker": "ACAD", "node_id": "n1", "attribution_status": "resolved"},
+            {"ticker": "ACAD", "node_id": "n1", "attribution_status": "pending"},
+        ]
+        out = dedup_keep_last(records)
+        assert len(out) == 1
+        assert out[0]["attribution_status"] == "resolved"
+
+    def test_keyless_records_pass_through(self):
+        records = [{"foo": 1}, {"ticker": "ACAD", "node_id": "n1"}, {"foo": 2}]
+        assert len(dedup_keep_last(records)) == 3
+
+    def test_loader_dedups_legacy_duplicates(self, tmp_path: Path):
+        log_path = tmp_path / "attr.jsonl"
+        rec = {"ticker": "ACAD", "node_id": "n1", "attribution_status": "pending"}
+        log_path.write_text("".join(json.dumps(rec) + "\n" for _ in range(13)))
+        assert len(load_attribution_log(log_path)) == 1
+        assert len(load_decision_log(log_path)) == 1
 
 
 class TestLoadLog:

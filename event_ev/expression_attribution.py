@@ -15,16 +15,23 @@ or change behavior.
 Hard constraints:
   - No backfilling
   - No recomputation of past records
-  - No overwriting
+  - No overwriting of resolved records
   - No dependency on future data
   - No optimization loops
   - Pure forward accumulation
+
+Idempotency (issue #495): the pipeline may run several times per day.
+Writes are keyed by (ticker, node_id): a re-run replaces its own pending
+records for the same node instead of appending duplicates, and a resolved
+record is never displaced by a pending one. Without this, kill-switch
+metrics were computed over records duplicated once per re-run.
 """
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -38,8 +45,109 @@ DEFAULT_ATTRIBUTION_LOG = Path("data/expression_attribution_log.jsonl")
 DEFAULT_DECISION_LOG = Path("data/expression_decision_log.jsonl")
 
 
+def _record_key(record: Dict[str, Any]) -> Optional[tuple]:
+    """Identity key for a log record; None when it cannot be keyed."""
+    ticker = record.get("ticker")
+    node_id = record.get("node_id")
+    if ticker and node_id:
+        return (str(ticker), str(node_id))
+    return None
+
+
+def dedup_keep_last(records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Collapse duplicate (ticker, node_id) records, keeping the last.
+
+    A resolved record wins over a later pending one, so a stale re-append
+    can never shadow a resolution. Keyless records pass through unchanged.
+    """
+    out: List[Dict[str, Any]] = []
+    pos: Dict[tuple, int] = {}
+    for rec in records:
+        key = _record_key(rec) if isinstance(rec, dict) else None
+        if key is None:
+            out.append(rec)
+            continue
+        if key in pos:
+            existing = out[pos[key]]
+            if existing.get("attribution_status") == "resolved" and rec.get("attribution_status") != "resolved":
+                continue
+            out[pos[key]] = rec
+        else:
+            pos[key] = len(out)
+            out.append(rec)
+    return out
+
+
+def append_records_idempotent(
+    path: Path,
+    new_records: List[Dict[str, Any]],
+) -> Dict[str, int]:
+    """Append records, replacing same-key rows instead of duplicating them.
+
+    Existing records whose (ticker, node_id) matches an incoming record are
+    dropped and the incoming record is appended at the end — except that an
+    existing *resolved* record is kept and the incoming pending duplicate is
+    discarded. Keyless or malformed existing lines are preserved verbatim.
+    The rewrite is atomic (temp file + rename).
+
+    Returns counts: {"appended", "replaced", "kept_resolved"}.
+    """
+    path = Path(path)
+    if not new_records:
+        return {"appended": 0, "replaced": 0, "kept_resolved": 0}
+
+    new_by_key: Dict[tuple, Dict[str, Any]] = {}
+    keyless_new: List[Dict[str, Any]] = []
+    for rec in new_records:
+        key = _record_key(rec)
+        if key is None:
+            keyless_new.append(rec)
+        else:
+            new_by_key[key] = rec
+
+    out_lines: List[str] = []
+    replaced = 0
+    kept_resolved = 0
+    if path.exists():
+        with open(path) as f:
+            for line in f:
+                s = line.strip()
+                if not s:
+                    continue
+                try:
+                    rec = json.loads(s)
+                except json.JSONDecodeError:
+                    out_lines.append(s)
+                    continue
+                key = _record_key(rec) if isinstance(rec, dict) else None
+                if key is None or key not in new_by_key:
+                    out_lines.append(s)
+                elif (
+                    rec.get("attribution_status") == "resolved"
+                    and new_by_key[key].get("attribution_status") != "resolved"
+                ):
+                    kept_resolved += 1
+                    del new_by_key[key]
+                    out_lines.append(s)
+                else:
+                    replaced += 1
+
+    appended = list(new_by_key.values()) + keyless_new
+    for rec in appended:
+        out_lines.append(json.dumps(rec, default=str))
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(f"{path.name}.tmp.{os.getpid()}")
+    with open(tmp, "w") as f:
+        for s in out_lines:
+            f.write(s + "\n")
+    tmp.replace(path)
+
+    return {"appended": len(appended), "replaced": replaced, "kept_resolved": kept_resolved}
+
+
 # ============================================================================
-# Logging — forward-only append
+# Logging — forward-only append (idempotent per node)
 # ============================================================================
 
 
@@ -130,23 +238,30 @@ def _recommendation_to_decision_record(
     }
 
 
+# Public record builders — batch callers (run_screen) construct records in
+# their evaluation loop, then persist once via append_records_idempotent.
+build_attribution_record = _recommendation_to_attribution_record
+build_decision_record = _recommendation_to_decision_record
+
+
 def log_recommendation(
     rec: ExpressionRecommendation,
     log_path: Optional[Path] = None,
     timestamp: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Append one attribution record for a tradeable recommendation.
+    """Log one attribution record for a tradeable recommendation.
 
-    Returns the record dict (for testing / caller inspection).
-    Only logs tradeable recommendations — non-tradeable go to decision log only.
+    Idempotent per (ticker, node_id): re-logging the same node replaces the
+    prior pending record instead of duplicating it; a resolved record is
+    never displaced. Returns the record dict (for testing / caller
+    inspection). Only logs tradeable recommendations — non-tradeable go to
+    decision log only. Callers logging many records per run should build
+    them with build_attribution_record and write once via
+    append_records_idempotent instead.
     """
     path = log_path or DEFAULT_ATTRIBUTION_LOG
     record = _recommendation_to_attribution_record(rec, timestamp)
-
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "a") as f:
-        f.write(json.dumps(record, default=str) + "\n")
-
+    append_records_idempotent(path, [record])
     logger.debug("Attribution logged: %s %s → %s", rec.ticker, rec.overlay_class, path)
     return record
 
@@ -158,18 +273,16 @@ def log_decision(
     kill_switch_active: bool = False,
     kill_switch_reason: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Append one decision record for ANY evaluated name.
+    """Log one decision record for ANY evaluated name.
 
-    Covers: tradeable, rejected, demoted, kill-switched.
-    Returns the record dict.
+    Covers: tradeable, rejected, demoted, kill-switched. Idempotent per
+    (ticker, node_id) — see log_recommendation. Returns the record dict.
+    Callers logging many records per run should build them with
+    build_decision_record and write once via append_records_idempotent.
     """
     path = log_path or DEFAULT_DECISION_LOG
     record = _recommendation_to_decision_record(rec, timestamp, kill_switch_active, kill_switch_reason)
-
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "a") as f:
-        f.write(json.dumps(record, default=str) + "\n")
-
+    append_records_idempotent(path, [record])
     logger.debug("Decision logged: %s → %s", rec.ticker, record["decision"])
     return record
 
@@ -205,7 +318,9 @@ def _compute_pnl_estimate(
 
 
 def load_attribution_log(log_path: Optional[Path] = None) -> List[Dict[str, Any]]:
-    """Load all attribution records from JSONL."""
+    """Load attribution records from JSONL, deduplicated keep-last per
+    (ticker, node_id) so metrics are never computed over re-run duplicates
+    left by pre-#495 appends."""
     path = log_path or DEFAULT_ATTRIBUTION_LOG
     if not path.exists():
         return []
@@ -218,11 +333,12 @@ def load_attribution_log(log_path: Optional[Path] = None) -> List[Dict[str, Any]
                     records.append(json.loads(line))
                 except json.JSONDecodeError:
                     logger.warning("Skipping malformed attribution line")
-    return records
+    return dedup_keep_last(records)
 
 
 def load_decision_log(log_path: Optional[Path] = None) -> List[Dict[str, Any]]:
-    """Load all decision records from JSONL."""
+    """Load decision records from JSONL, deduplicated keep-last per
+    (ticker, node_id)."""
     path = log_path or DEFAULT_DECISION_LOG
     if not path.exists():
         return []
@@ -235,7 +351,7 @@ def load_decision_log(log_path: Optional[Path] = None) -> List[Dict[str, Any]]:
                     records.append(json.loads(line))
                 except json.JSONDecodeError:
                     logger.warning("Skipping malformed decision line")
-    return records
+    return dedup_keep_last(records)
 
 
 def resolve_attributions(
