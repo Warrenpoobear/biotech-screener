@@ -601,8 +601,8 @@ class TestLogConsistencyReport:
             market_data=sample_market_data,
         )
 
-        # Should not raise
-        log_consistency_report(report)
+        # No-throw contract: logging the report returns None without raising
+        assert log_consistency_report(report) is None
 
 
 # ============================================================================
