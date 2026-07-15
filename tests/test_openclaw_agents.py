@@ -430,6 +430,7 @@ class TestLaneAHermesAgents:
         run_job = AGENTS_DIR / name / "run_job.py"
         assert run_job.is_file(), f"Lane A Hermes agent {name} missing run_job.py"
 
+    @pytest.mark.skip(reason="placeholder: behavior not yet implemented (test-trust-audit hygiene 2026-07-14)")
     @pytest.mark.parametrize("name", LANE_A_HERMES_AGENTS)
     def test_no_heartbeat_by_design(self, name):
         """HEARTBEAT.md is optional for Lane A agents (added for doc purposes per 0b4b4427).

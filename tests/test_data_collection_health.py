@@ -381,6 +381,7 @@ class TestRunFromScreen:
         # Should not crash — returns status even if sources are mostly WARN
         assert result is not None or result is None  # graceful either way
 
+    @pytest.mark.skip(reason="placeholder: behavior not yet implemented (test-trust-audit hygiene 2026-07-14)")
     def test_opt_out_not_tested_here(self):
         """Opt-out (--no-data-collection-health) is tested at run_screen CLI level."""
         pass

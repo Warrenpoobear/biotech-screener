@@ -220,6 +220,7 @@ class TestPhase7BIntegration:
             # The actual parsing is tested via the CLI
             pass
 
+    @pytest.mark.skip(reason="placeholder: behavior not yet implemented (test-trust-audit hygiene 2026-07-14)")
     def test_hook_not_called_when_flag_absent(self, tmp_path):
         """Verify hook is not invoked when --run-scientific-cartography is absent."""
         # This would require mocking the full run_daily() call
@@ -227,21 +228,25 @@ class TestPhase7BIntegration:
         # directory after a normal run_daily() call.
         pass
 
+    @pytest.mark.skip(reason="placeholder: behavior not yet implemented (test-trust-audit hygiene 2026-07-14)")
     def test_hook_called_when_flag_present(self, tmp_path):
         """Verify hook is invoked when --run-scientific-cartography is present."""
         # This would require mocking the full run_daily() call with the flag
         pass
 
+    @pytest.mark.skip(reason="placeholder: behavior not yet implemented (test-trust-audit hygiene 2026-07-14)")
     def test_non_blocking_failure_does_not_fail_run(self, tmp_path):
         """Verify wrapper failure does not fail production run in non-strict mode."""
         # This would require mocking run_daily() with a failing wrapper
         pass
 
+    @pytest.mark.skip(reason="placeholder: behavior not yet implemented (test-trust-audit hygiene 2026-07-14)")
     def test_strict_failure_fails_run(self, tmp_path):
         """Verify wrapper failure fails production run in strict mode."""
         # This would require mocking run_daily() with a failing wrapper and strict=True
         pass
 
+    @pytest.mark.skip(reason="placeholder: behavior not yet implemented (test-trust-audit hygiene 2026-07-14)")
     def test_no_forbidden_mutations(self, tmp_path):
         """Verify hook does not mutate forbidden production files."""
         # Assertions: rankings.csv, decision_portfolio.csv, screen_output.json unchanged

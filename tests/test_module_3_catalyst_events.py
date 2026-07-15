@@ -193,6 +193,7 @@ class TestTimelineChangeDetection:
         # 5 days is typically noise, not signal
         assert days_change < 30  # Below typical threshold
 
+    @pytest.mark.skip(reason="placeholder: behavior not yet implemented (test-trust-audit hygiene 2026-07-14)")
     def test_date_from_estimated_to_actual(self):
         """Detects confirmation of actual date."""
         # This would be detected by checking date type fields

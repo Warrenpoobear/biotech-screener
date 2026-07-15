@@ -1722,6 +1722,10 @@ class TestIntegration:
         # (depends on test data, but late stage distress should trigger)
         interaction_types = ["clinical_financial_synergy", "late_stage_distress", "mid_stage_runway_warning"]
         has_interactions = any(f in all_flags for f in interaction_types)
+        assert has_interactions, (
+            "expected at least one interaction flag "
+            f"({interaction_types}) to fire on the sample universe; got {all_flags}"
+        )
         # This may or may not be true depending on exact thresholds
 
     def test_volatility_affects_ranking(

@@ -260,6 +260,41 @@ def has_pytest_raises(fn: ast.AST) -> bool:
     return False
 
 
+def has_fail_call(fn: ast.AST) -> bool:
+    """True if the test uses pytest.fail()/self.fail() as an explicit failure primitive.
+
+    These are effective assertions -- they fail the test on the negative path -- even
+    though they are neither ``assert`` statements, ``assert*`` calls, nor
+    ``pytest.raises`` blocks. Without this, contract tests that branch and then call
+    ``pytest.fail(...)`` (sort-order contracts, import barriers, golden-baseline
+    mismatch) are misreported as T2 no-effective-assert.
+    """
+    for node in ast.walk(fn):
+        if isinstance(node, ast.Call):
+            fname = dotted_name(node.func)
+            if fname in {"pytest.fail", "self.fail", "fail"}:
+                return True
+    return False
+
+
+def is_unconditionally_skipped(fn: ast.AST) -> bool:
+    """True if the test carries an unconditional skip/xfail (or skipif(True)) decorator.
+
+    Such a test makes no passing claim, so T2/T3 -- which detect tests that run and
+    fake a pass -- do not apply. T7 already accounts for the suppressed execution, so
+    routing these to T7 only avoids double-flagging an honestly-declared gap.
+    """
+    for dec in getattr(fn, "decorator_list", []):
+        dec_name = dotted_name(dec.func) if isinstance(dec, ast.Call) else dotted_name(dec)
+        if dec_name.endswith(".skip") or dec_name.endswith(".xfail"):
+            return True
+        if isinstance(dec, ast.Call) and dec_name.endswith(".skipif") and dec.args:
+            cond = dec.args[0]
+            if isinstance(cond, ast.Constant) and cond.value is True:
+                return True
+    return False
+
+
 def is_constant_truthy_assert(expr: ast.AST) -> bool:
     if isinstance(expr, ast.Constant):
         return bool(expr.value) is True
@@ -658,7 +693,8 @@ def detect_t2_no_effective_assert(rel_path: str, test_name: str, fn: ast.AST) ->
     asserts = [n for n in ast.walk(fn) if isinstance(n, ast.Assert)]
     calls = list(iter_assert_calls(fn))
     has_raises = has_pytest_raises(fn)
-    if not asserts and not calls and not has_raises:
+    has_fail = has_fail_call(fn)
+    if not asserts and not calls and not has_raises and not has_fail:
         return [
             Finding(
                 finding_id="",
@@ -677,7 +713,7 @@ def detect_t2_no_effective_assert(rel_path: str, test_name: str, fn: ast.AST) ->
         ]
 
     non_constant_asserts = [a for a in asserts if not is_constant_truthy_assert(a.test)]
-    if not non_constant_asserts and not calls and not has_raises and asserts:
+    if not non_constant_asserts and not calls and not has_raises and not has_fail and asserts:
         return [
             Finding(
                 finding_id="",
@@ -728,8 +764,9 @@ def analyze_source_text(
     test_fns = collect_test_functions(tree)
     for class_name, fn in test_fns:
         test_name = f"{class_name}::{fn.name}" if class_name else fn.name
-        findings.extend(detect_t2_no_effective_assert(rel_path, test_name, fn))
-        findings.extend(detect_t3_tautological_assertions(rel_path, test_name, fn))
+        if not is_unconditionally_skipped(fn):
+            findings.extend(detect_t2_no_effective_assert(rel_path, test_name, fn))
+            findings.extend(detect_t3_tautological_assertions(rel_path, test_name, fn))
         findings.extend(detect_t4_mock_of_subject(rel_path, test_name, fn))
         findings.extend(detect_t5_swallowed_failure(rel_path, test_name, fn))
         findings.extend(detect_t6_vacuous_parametrize(rel_path, test_name, fn))

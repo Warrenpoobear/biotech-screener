@@ -155,6 +155,7 @@ def test_forbidden_fields_allows_governance_disclaimer():
         assert violations is None or len(violations) == 0
 
 
+@pytest.mark.skip(reason="placeholder: behavior not yet implemented (test-trust-audit hygiene 2026-07-14)")
 def test_exit_codes():
     """Verify script exit codes."""
     # Exit 0: success
@@ -164,6 +165,7 @@ def test_exit_codes():
     pass  # Tested via integration with run_daily_production
 
 
+@pytest.mark.skip(reason="placeholder: behavior not yet implemented (test-trust-audit hygiene 2026-07-14)")
 def test_manifest_file_written():
     """Verify manifest.json is written to output directory."""
     # This is an integration test that would run with actual Phase 7A output
