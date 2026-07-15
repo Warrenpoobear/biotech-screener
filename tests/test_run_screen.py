@@ -51,9 +51,10 @@ class TestDateValidation:
 
     def test_valid_date_format_passes(self):
         """Valid YYYY-MM-DD format should not raise."""
-        validate_as_of_date_param("2026-01-15")
-        validate_as_of_date_param("2025-12-31")
-        validate_as_of_date_param("2024-02-29")  # Leap year
+        # Valid dates return None (no raise); includes a leap-year date
+        assert validate_as_of_date_param("2026-01-15") is None
+        assert validate_as_of_date_param("2025-12-31") is None
+        assert validate_as_of_date_param("2024-02-29") is None  # Leap year
 
     def test_invalid_date_format_raises(self):
         """Invalid date formats should raise ValueError."""

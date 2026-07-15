@@ -65,13 +65,15 @@ class TestSnapshotOutputOverwritePolicy:
         existing_snapshot.mkdir(parents=True)
         explicit_output = tmp_path / "custom_outputs" / "screen_output.json"
 
-        _enforce_snapshot_output_overwrite_policy(
+        # Output outside the managed snapshot dir is allowed (no raise; returns None)
+        result = _enforce_snapshot_output_overwrite_policy(
             explicit_output,
             as_of_date="2026-02-28",
             data_dir=data_dir,
             snapshot_dir=None,
             force_overwrite=False,
         )
+        assert result is None
 
     def test_blocks_default_output_when_snapshot_dir_already_exists(self, tmp_path):
         data_dir = tmp_path / "production_data"
@@ -116,10 +118,12 @@ class TestSnapshotOutputOverwritePolicy:
         snap_dir = tmp_path / "data" / "snapshots" / "2026-02-28"
         snap_dir.mkdir(parents=True)
 
-        _enforce_snapshot_output_overwrite_policy(
+        # force_overwrite=True permits writing into the managed snapshot dir (no raise; returns None)
+        result = _enforce_snapshot_output_overwrite_policy(
             snap_dir / "screen_output.json",
             as_of_date="2026-02-28",
             data_dir=data_dir,
             snapshot_dir=None,
             force_overwrite=True,
         )
+        assert result is None

@@ -709,7 +709,10 @@ class TestSnapshotPhaseHelpers:
         from run_screen import _enrich_market_data_fields
 
         rows = [{"ticker": "ACME"}]
-        _enrich_market_data_fields(rows, None)  # should not crash
+        # None market data must not crash; market-derived fields are simply not populated
+        result = _enrich_market_data_fields(rows, None)
+        assert result is None
+        assert "market_cap_mm" not in rows[0]
 
     def test_enrich_applicability_flags(self):
         from run_screen import _enrich_applicability_flags
