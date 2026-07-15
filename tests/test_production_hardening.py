@@ -164,8 +164,12 @@ class TestOperationTimeout:
     @pytest.mark.skipif(os.name != "posix", reason="SIGALRM not available on Windows")
     def test_operation_timeout_completes_in_time(self):
         """Operations completing in time should succeed."""
+        completed = False
         with operation_timeout(5, "Quick operation"):
             time.sleep(0.1)  # Should complete quickly
+            completed = True
+        # No OperationTimeoutError raised; the guarded block ran to completion
+        assert completed
 
     @pytest.mark.skipif(os.name != "posix", reason="SIGALRM not available on Windows")
     def test_operation_timeout_exceeds_limit(self):
