@@ -27,7 +27,9 @@ def setup_env(monkeypatch):
 
 def test_import():
     """Import cleanly."""
-    from tools.telegram_command_handler import TelegramCommandHandler  # noqa: F401
+    from tools.telegram_command_handler import TelegramCommandHandler
+
+    assert TelegramCommandHandler is not None
 
 
 # ---------------------------------------------------------------------------
@@ -380,9 +382,8 @@ def test_once_flag_exits_after_batch(monkeypatch):
 
     # Mock _get_updates to return empty list (no updates)
     with patch.object(handler, "_get_updates", return_value=[]):
-        # Should exit immediately without error
-        handler.run(once=True)
-        # If we get here, it didn't hang
+        # Should exit immediately without error; run() returns None after one batch
+        assert handler.run(once=True) is None
 
 
 def test_handles_updates_without_text(monkeypatch):
@@ -405,7 +406,8 @@ def test_handles_updates_without_text(monkeypatch):
     with patch.object(handler, "_get_updates", return_value=updates):
         with patch.object(handler, "_send_reply") as mock_reply:
             handler.run(once=True)
-            # Should not crash; _send_reply not called
+            # Updates without text are skipped: no reply is sent
+            mock_reply.assert_not_called()
 
 
 # ---------------------------------------------------------------------------
@@ -487,9 +489,8 @@ def test_loads_env_from_dotenv(tmp_path, monkeypatch):
 
     monkeypatch.setattr("tools.telegram_command_handler.REPO_ROOT", tmp_path)
 
-    _load_env()
-    # dotenv.load_dotenv should have set this in os.environ
-    # (actual behavior depends on dotenv availability, but should not raise)
+    # dotenv availability varies, but _load_env must not raise; returns None
+    assert _load_env() is None
 
 
 def test_main_missing_credentials(monkeypatch):

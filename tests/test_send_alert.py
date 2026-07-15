@@ -135,7 +135,8 @@ class TestNoWebhook:
 
     def test_no_webhook_no_exception(self):
         """send_alert with no webhook URL exits cleanly (no exception)."""
-        send_alert("FAIL", "2026-03-05", webhook_url=None)  # must not raise
+        # No webhook configured → returns None without raising
+        assert send_alert("FAIL", "2026-03-05", webhook_url=None) is None
 
     def test_no_webhook_no_http_call(self):
         """No HTTP request is made when webhook URL is None."""
