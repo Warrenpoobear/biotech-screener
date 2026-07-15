@@ -550,7 +550,8 @@ class TestActivityProxyEdgeCases:
 
         # Should not crash, but may not generate event
         events = event_detector.detect_events(current, prior, as_of_date)
-        # Result depends on implementation - just verify no crash
+        # Graceful handling contract: returns a normal event list without raising
+        assert isinstance(events, list)
 
 
 if __name__ == "__main__":

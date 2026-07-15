@@ -166,8 +166,10 @@ class TestComputeAdjustments:
             vix_current=Decimal("35"),  # High VIX
         )
 
-        # May have VIX adjustment
-        # Result depends on implementation details
+        # High VIX applies a financial-score adjustment (clamped to MAX_MULTIPLIER)
+        assert result.ticker == "TEST"
+        assert any(adj.startswith("vix_adjustment") for adj in result.adjustments_applied)
+        assert result.financial_adjustment == Decimal("1.30")
 
     def test_market_regime_normalization(self, adapter, as_of_date):
         """Should handle market regime parameter.
@@ -492,8 +494,13 @@ class TestFeatureFlags:
             vix_current=Decimal("50"),  # High VIX
         )
 
-        # With all features disabled, adjustments should be minimal
-        # (only decay might still apply if not disabled)
+        # With all features disabled, no adjustments are applied and multipliers stay neutral
+        assert result.ticker == "TEST"
+        assert result.adjustments_applied == []
+        assert result.clinical_adjustment == Decimal("1.00")
+        assert result.financial_adjustment == Decimal("1.00")
+        assert result.catalyst_adjustment == Decimal("1.00")
+        assert result.regulatory_bonus == Decimal("0")
 
     def test_selective_enable(self, as_of_date):
         """Selective features should be respected."""

@@ -106,9 +106,11 @@ class TestForbiddenSourceGuard:
             _check_forbidden(Path("/data/final_score.json"))
 
     def test_allowed_path_passes(self):
-        _check_forbidden(Path("/data/program_records.jsonl"))
-        _check_forbidden(Path("/data/competitive_clusters.jsonl"))
-        _check_forbidden(Path("/data/map_index.json"))
+        # Allowed (non-scoring) artifact paths must pass the guard without raising;
+        # _check_forbidden returns None on success.
+        assert _check_forbidden(Path("/data/program_records.jsonl")) is None
+        assert _check_forbidden(Path("/data/competitive_clusters.jsonl")) is None
+        assert _check_forbidden(Path("/data/map_index.json")) is None
 
     def test_generate_map_aborts_on_forbidden_input_dir(self, tmp_path):
         forbidden_dir = tmp_path / "rankings.csv_dir"
