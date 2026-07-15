@@ -547,7 +547,9 @@ class TestEdgeCases:
         """Handles zero universe size gracefully."""
         validator = AdaptiveValidator()
         reports, overall_pass = validator.validate_coverage(sample_coverage_data, universe_size=0)
-        # Should not crash
+        # Should not crash and still return a report per category
+        assert len(reports) == 4
+        assert isinstance(overall_pass, bool)
 
     def test_missing_backtest_fields(self):
         """Handles missing backtest fields gracefully."""

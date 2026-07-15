@@ -267,8 +267,9 @@ class TestConditionsParsing:
         for _ in range(MAX_CONDITIONS_DEPTH + 2):
             deep = [deep]
         result = _normalize_conditions(deep)
-        # Should still find something due to partial traversal
-        # but not crash
+        # Content nested beyond MAX_CONDITIONS_DEPTH is ignored (no crash, empty result)
+        assert isinstance(result, list)
+        assert result == []
 
     def test_deduplication(self):
         """Duplicate conditions should be deduplicated."""
