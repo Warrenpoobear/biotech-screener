@@ -108,6 +108,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset(
         "hard_queue_actionability",
         "optionality_stability",
         "phase2_health",
+        "price_append_health",
     }
 )
 
