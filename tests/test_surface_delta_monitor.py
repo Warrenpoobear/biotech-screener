@@ -514,3 +514,75 @@ class TestRunIntegration:
         # BIIB should not flag (tiny changes)
         biib_delta = next((d for d in j["deltas"] if d["ticker"] == "BIIB"), None)
         assert biib_delta is None
+
+
+# ---------------------------------------------------------------------------
+# run() error contract + crash-fragment walk-back (2026-07-15 outage)
+# ---------------------------------------------------------------------------
+
+
+class TestRunErrorContract:
+    """run() must raise RuntimeError, never SystemExit: it is called in-process
+    by run_daily_production's non-blocking step, and SystemExit bypasses that
+    step's `except Exception`, failing the whole pipeline."""
+
+    @staticmethod
+    def _write_diag(snap_dir, rows):
+        snap_dir.mkdir(parents=True, exist_ok=True)
+        path = snap_dir / "options_diagnostics.csv"
+        fieldnames = sorted({k for r in rows for k in r})
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=fieldnames)
+            w.writeheader()
+            w.writerows(rows)
+
+    _ROW = {
+        "ticker": "AAPL",
+        "opt_has_data": "1",
+        "opt_atm_iv": "0.30",
+        "opt_rr_25d": "0.05",
+        "opt_put_call_skew": "0.01",
+        "opt_term_slope": "0.05",
+        "opt_use_for_judgment": "YES",
+        "opt_liquidity_state": "liquid",
+    }
+
+    def test_no_prior_snapshot_raises_runtime_error(self, tmp_path, monkeypatch):
+        from tools import surface_delta_monitor as mod
+
+        monkeypatch.setattr(mod, "REPO_ROOT", tmp_path)
+        (tmp_path / "data" / "snapshots").mkdir(parents=True)
+        with pytest.raises(RuntimeError):
+            mod.run(as_of_date="2026-07-15", live=False, dry_run=True)
+
+    def test_explicit_prior_without_diagnostics_raises(self, tmp_path, monkeypatch):
+        from tools import surface_delta_monitor as mod
+
+        monkeypatch.setattr(mod, "REPO_ROOT", tmp_path)
+        snap_root = tmp_path / "data" / "snapshots"
+        (snap_root / "2026-07-14").mkdir(parents=True)  # fragment: no diagnostics
+        with pytest.raises(RuntimeError):
+            mod.run(as_of_date="2026-07-15", prior_date="2026-07-14", live=False, dry_run=True)
+
+    def test_autofind_walks_past_fragment_days(self, tmp_path, monkeypatch):
+        from tools import surface_delta_monitor as mod
+
+        monkeypatch.setattr(mod, "REPO_ROOT", tmp_path)
+        snap_root = tmp_path / "data" / "snapshots"
+        # 07-10 has diagnostics; 07-13/07-14 are crash fragments without them
+        self._write_diag(snap_root / "2026-07-10", [self._ROW])
+        (snap_root / "2026-07-13").mkdir(parents=True)
+        (snap_root / "2026-07-14").mkdir(parents=True)
+        self._write_diag(snap_root / "2026-07-15", [dict(self._ROW, opt_atm_iv="0.31")])
+
+        result = mod.run(as_of_date="2026-07-15", live=False, dry_run=True, json_only=True)
+        assert result["prior_date"] == "2026-07-10"
+
+    def test_find_prior_snapshots_newest_first(self, tmp_path):
+        from tools import surface_delta_monitor as mod
+
+        snap_root = tmp_path / "snaps"
+        for d in ("2026-07-08", "2026-07-10", "2026-07-14", "state", "_staging"):
+            (snap_root / d).mkdir(parents=True)
+        found = mod.find_prior_snapshots(snap_root, "2026-07-15")
+        assert [p.name for p in found] == ["2026-07-14", "2026-07-10", "2026-07-08"]

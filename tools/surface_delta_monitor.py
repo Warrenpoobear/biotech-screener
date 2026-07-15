@@ -123,6 +123,27 @@ def find_prior_snapshot(
     return snapshots_root / candidates[-1]
 
 
+def find_prior_snapshots(
+    snapshots_root: Path,
+    current_date: str,
+    limit: int = 10,
+) -> List[Path]:
+    """Promoted snapshot directories before current_date, newest first.
+
+    Used to walk back past crash-fragment days whose directories exist but
+    hold no diagnostics (e.g. 2026-07-13/14 GATE_ALLOWLIST outage).
+    """
+    candidates = sorted(
+        (
+            d.name
+            for d in snapshots_root.iterdir()
+            if d.is_dir() and _is_promoted_snapshot(d.name) and d.name < current_date
+        ),
+        reverse=True,
+    )
+    return [snapshots_root / n for n in candidates[:limit]]
+
+
 def find_latest_snapshot(snapshots_root: Path) -> Optional[Path]:
     """Find the latest promoted snapshot directory."""
     candidates = sorted(d.name for d in snapshots_root.iterdir() if d.is_dir() and _is_promoted_snapshot(d.name))
@@ -483,22 +504,29 @@ def run(
         as_of_date = date.today().isoformat()
 
     # --- Find prior snapshot ---
+    # Errors raise RuntimeError, never sys.exit: run() is called in-process by
+    # run_daily_production's non-blocking step, and SystemExit would sail past
+    # its `except Exception` and fail the whole pipeline (2026-07-15 outage).
     if prior_date:
         prior_dir = snapshots_root / prior_date
         if not prior_dir.exists():
-            logger.error("Prior snapshot not found: %s", prior_dir)
-            sys.exit(1)
+            raise RuntimeError(f"Prior snapshot not found: {prior_dir}")
+        prior_diag = load_diagnostics_csv(prior_dir / "options_diagnostics.csv")
+        if not prior_diag:
+            raise RuntimeError(f"No diagnostics data in prior snapshot {prior_date}")
     else:
-        prior_dir = find_prior_snapshot(snapshots_root, as_of_date)
+        # Auto-find: most recent prior snapshot that actually HAS diagnostics,
+        # so a crash-fragment day doesn't blind the monitor.
+        prior_dir = None
+        prior_diag: Dict[str, Dict[str, Any]] = {}
+        for _candidate in find_prior_snapshots(snapshots_root, as_of_date):
+            _diag = load_diagnostics_csv(_candidate / "options_diagnostics.csv")
+            if _diag:
+                prior_dir, prior_diag = _candidate, _diag
+                break
         if prior_dir is None:
-            logger.error("No prior snapshot found before %s", as_of_date)
-            sys.exit(1)
+            raise RuntimeError(f"No prior snapshot with options diagnostics found before {as_of_date}")
         prior_date = prior_dir.name
-
-    prior_diag = load_diagnostics_csv(prior_dir / "options_diagnostics.csv")
-    if not prior_diag:
-        logger.error("No diagnostics data in prior snapshot %s", prior_date)
-        sys.exit(1)
     logger.info("Loaded prior diagnostics: %s (%d names)", prior_date, len(prior_diag))
 
     # --- Get current diagnostics ---
@@ -516,13 +544,11 @@ def run(
     else:
         current_dir = snapshots_root / as_of_date
         if not current_dir.exists():
-            logger.error("Current snapshot not found: %s", current_dir)
-            sys.exit(1)
+            raise RuntimeError(f"Current snapshot not found: {current_dir}")
         current_diag = load_diagnostics_csv(current_dir / "options_diagnostics.csv")
 
     if not current_diag:
-        logger.error("No current diagnostics available")
-        sys.exit(1)
+        raise RuntimeError("No current diagnostics available")
     logger.info("Current diagnostics: %d names", len(current_diag))
 
     # --- Compute deltas for overlapping tickers ---
@@ -648,13 +674,17 @@ def main():
     )
     args = parser.parse_args()
 
-    result = run(
-        as_of_date=args.as_of_date,
-        prior_date=args.prior_date,
-        live=not args.no_live,
-        dry_run=args.dry_run,
-        json_only=args.json_only,
-    )
+    try:
+        result = run(
+            as_of_date=args.as_of_date,
+            prior_date=args.prior_date,
+            live=not args.no_live,
+            dry_run=args.dry_run,
+            json_only=args.json_only,
+        )
+    except RuntimeError as err:
+        logger.error("%s", err)
+        sys.exit(1)
 
     # Exit code: 0 if no alerts, 2 if watch-only, 1 if alerts
     if result["n_alert"] > 0:
