@@ -193,11 +193,11 @@ class TestValidateAsOfDate:
 
     def test_validate_as_of_date_valid_string(self):
         """Valid ISO string should not raise."""
-        validate_as_of_date("2026-01-15")  # Should not raise
+        assert validate_as_of_date("2026-01-15") is None  # returns None on success
 
     def test_validate_as_of_date_valid_date(self):
         """Valid date object should not raise."""
-        validate_as_of_date(date(2026, 1, 15))  # Should not raise
+        assert validate_as_of_date(date(2026, 1, 15)) is None  # returns None on success
 
     def test_validate_as_of_date_invalid_string_raises(self):
         """Invalid string should raise ValueError."""
@@ -211,11 +211,11 @@ class TestValidateAsOfDate:
 
     def test_validate_as_of_date_future_date_allowed(self):
         """Future dates should be allowed (PIT enforced elsewhere)."""
-        validate_as_of_date("2099-12-31")  # Should not raise
+        assert validate_as_of_date("2099-12-31") is None  # returns None on success
 
     def test_validate_as_of_date_past_date_allowed(self):
         """Historical dates should be allowed."""
-        validate_as_of_date("2020-01-01")  # Should not raise
+        assert validate_as_of_date("2020-01-01") is None  # returns None on success
 
 
 class TestLeapYearHandling:

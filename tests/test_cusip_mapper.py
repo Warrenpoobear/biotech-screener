@@ -409,8 +409,8 @@ class TestCUSIPMapper:
         # Note: In real tests, we'd mock the API call
         mapping = mapper.get_mapping("999999999")
 
-        # Without mocking, unknown CUSIPs return None
-        # (API would be called if available)
+        # Without an API key, unknown CUSIPs cannot be looked up and return None
+        assert mapping is None
 
     def test_mapper_get_batch(self, static_map_file, cache_file, reference_time):
         """Get batch of tickers."""

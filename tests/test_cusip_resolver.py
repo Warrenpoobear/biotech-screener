@@ -380,8 +380,9 @@ class TestCusipMappingHash:
         mappings = {"CUSIP1": "TICK1"}
         hash_val = cusip_mapping_hash(mappings)
 
-        # Should be valid hex
-        int(hash_val, 16)  # Will raise if not hex
+        # Should be valid hex — every character is a hex digit and it parses as base-16
+        assert all(c in "0123456789abcdefABCDEF" for c in hash_val)
+        assert int(hash_val, 16) >= 0
 
 
 # ============================================================================
