@@ -292,5 +292,5 @@ class TestZScore:
             "A": {"pi_count": 1, "pi_max_trial_count": 10, "pi_experience_z": 0.0},
         }
         z_score_pi_features(features)
-        # With only one value, z-score can't be computed meaningfully
-        # Should not crash
+        # With only one value, z-score can't be computed meaningfully; value stays neutral (no crash)
+        assert features["A"]["pi_experience_z"] == 0.0

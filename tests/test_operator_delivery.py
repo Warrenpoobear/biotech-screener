@@ -33,7 +33,9 @@ def dry_run_env(monkeypatch):
 
 
 def test_import():
-    from common.operator_delivery import send_operator_event  # noqa: F401
+    from common.operator_delivery import send_operator_event
+
+    assert callable(send_operator_event)
 
 
 # ---------------------------------------------------------------------------
