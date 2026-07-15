@@ -183,7 +183,8 @@ class TestPostmortemSchemaValid:
         assert sample_postmortem["ticker"].isupper()
 
     def test_event_date_iso(self, sample_postmortem):
-        date.fromisoformat(sample_postmortem["event_date"])
+        parsed = date.fromisoformat(sample_postmortem["event_date"])
+        assert parsed.isoformat() == sample_postmortem["event_date"]
 
     def test_pre_event_all_fields(self, sample_postmortem):
         pre = sample_postmortem["pre_event"]

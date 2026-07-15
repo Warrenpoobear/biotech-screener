@@ -241,4 +241,6 @@ class TestAutoAdjustExplicit:
     def test_price_history_backfill(self):
         from wake_robin_data_pipeline.price_history_backfill import fetch_prices_yfinance
 
-        self._assert_auto_adjust_explicit(fetch_prices_yfinance, "price_history_backfill")
+        # Helper asserts the yfinance call passes auto_adjust=True; returns None once the check completes
+        result = self._assert_auto_adjust_explicit(fetch_prices_yfinance, "price_history_backfill")
+        assert result is None
