@@ -142,6 +142,7 @@ class TestStatusChangeDetection:
 
         # This is actually a "completion" which is positive
         # Completed is 3, active is 2 - slight increase but good outcome
+        assert new_sev > old_sev
 
     def test_recruiting_to_active_is_upgrade(self):
         """Transition from recruiting to active is upgrade."""
@@ -149,6 +150,7 @@ class TestStatusChangeDetection:
         new_status = "active"
 
         # active (2) > recruiting (1) - trial progressing
+        assert STATUS_SEVERITY[new_status] > STATUS_SEVERITY[old_status]
 
     def test_suspended_to_recruiting_is_upgrade(self):
         """Resumption from suspended is upgrade."""
