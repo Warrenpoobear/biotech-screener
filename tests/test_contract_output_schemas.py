@@ -288,6 +288,9 @@ class TestGateAllowlist:
             "drift_monitoring",
             "ruleset_health",
             "cache_health",
+            # Wired at build_run_manifest time but omitted from the allowlist
+            # 2026-07-13..15, crashing every daily run at manifest build
+            "price_append_health",
         }
         missing = critical - GATE_ALLOWLIST
         assert not missing, f"Missing critical gates: {missing}"
