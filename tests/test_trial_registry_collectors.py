@@ -159,6 +159,45 @@ class TestCtisCollector:
         assert pagination["totalElements"] == 3
 
 
+class TestCtisDetailCache:
+    """Detail-response caching (avoids the enrichment-timeout regression)."""
+
+    def test_fresh_cache_skips_network(self, tmp_path):
+        from wake_robin_data_pipeline.collectors import ctis_collector as mod
+
+        raw_dir = tmp_path / "raw"
+        raw_dir.mkdir()
+        (raw_dir / "ctis_detail_2024_000123_45_67.json").write_text('{"cached": true}')
+
+        with patch.object(mod, "_get_session") as sess:
+            result = mod._fetch_ctis_detail("2024-000123-45-67", raw_dir=raw_dir)
+        assert result == {"cached": True}
+        sess.assert_not_called()  # no network call on a fresh cache hit
+
+    def test_stale_cache_refetches(self, tmp_path):
+        import os
+        import time as _time
+
+        from wake_robin_data_pipeline.collectors import ctis_collector as mod
+
+        raw_dir = tmp_path / "raw"
+        raw_dir.mkdir()
+        stale = raw_dir / "ctis_detail_2024_000123_45_67.json"
+        stale.write_text('{"cached": true}')
+        old = _time.time() - (mod._DETAIL_CACHE_TTL_DAYS + 1) * 86400
+        os.utime(stale, (old, old))
+
+        resp = MagicMock()
+        resp.json.return_value = {"fresh": True}
+        resp.raise_for_status.return_value = None
+        with patch.object(mod, "_get_session") as sess, patch.object(mod.time, "sleep"):
+            sess.return_value.get.return_value = resp
+            result = mod._fetch_ctis_detail("2024-000123-45-67", raw_dir=raw_dir)
+        assert result == {"fresh": True}
+        sess.return_value.get.assert_called_once()  # stale cache → refetched
+        assert json.loads(stale.read_text()) == {"fresh": True}  # cache rewritten
+
+
 # ===========================================================================
 # CTIS Detail Enrichment
 # ===========================================================================

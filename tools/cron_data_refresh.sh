@@ -115,11 +115,13 @@ stage_euctr() {
 }
 
 stage_ctis() {
-    log "CTIS warm cache (sources: ctis, timeout 1200s)..."
+    # 1800s headroom above the collector's internal 900s enrichment budget so a
+    # cold-cache run still reaches the atomic cache write (see ctis_collector).
+    log "CTIS warm cache (sources: ctis, timeout 1800s)..."
     local rc=0
-    timeout 1200 $PYTHON warm_caches.py --sources ctis --as-of-date "$TODAY" 2>&1 | tail -5 || rc=$?
+    timeout 1800 $PYTHON warm_caches.py --sources ctis --as-of-date "$TODAY" 2>&1 | tail -5 || rc=$?
     if [ $rc -eq 124 ]; then
-        log "CTIS warm TIMED OUT after 1200s — partial cache may be present"
+        log "CTIS warm TIMED OUT after 1800s — partial cache may be present"
     elif [ $rc -ne 0 ]; then
         log "CTIS warm failed (exit $rc) — continuing"
     else

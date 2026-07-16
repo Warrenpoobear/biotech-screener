@@ -41,6 +41,17 @@ _REQUEST_TIMEOUT = 30
 _MAX_PAGES_PER_SPONSOR = 10
 _PAGE_SIZE = 100
 
+# Detail-enrichment tuning. Enrichment makes one detail call per record missing
+# a completion date (~1200 candidates); at the rate limit that alone exceeds the
+# 20-min cron timeout, so the pass was killed before writing any cache and CTIS
+# went stale (2026-06-24 → 2026-07-16). Two guardrails fix this:
+#  1. Detail responses cached to raw_dir are re-used within a TTL (no re-fetch,
+#     no rate-limit sleep) — the common case is now near-instant.
+#  2. A wall-clock budget stops the enrichment pass so the collector always
+#     reaches the atomic cache write; remaining candidates enrich on later runs.
+_DETAIL_CACHE_TTL_DAYS = 30
+_DEFAULT_ENRICH_BUDGET_SECS = 900
+
 _CTIS_SEARCH_URL = "https://euclinicaltrials.eu/ctis-public-api/search"
 _CTIS_DETAIL_URL = "https://euclinicaltrials.eu/ctis-public-api/retrieve"
 
@@ -108,6 +119,7 @@ def collect_ctis_trials(
     cache_dir: Path,
     cache_only: bool = False,
     enrich_detail: bool = False,
+    enrich_budget_secs: float = _DEFAULT_ENRICH_BUDGET_SECS,
 ) -> List[dict]:
     """Collect CTIS trials for tickers in universe.
 
@@ -118,8 +130,12 @@ def collect_ctis_trials(
         cache_only: If True, only read from cache (no network).
         enrich_detail: If True, call detail endpoint for records missing
             primary_completion_date to get corrected status, NCT IDs,
-            and future completion dates. Default False to avoid timeout
-            (1000+ sequential detail API calls at 0.5s rate limit = ~30 min).
+            and future completion dates. Cached detail responses (see
+            _fetch_ctis_detail) make the common case fast.
+        enrich_budget_secs: Wall-clock ceiling for the enrichment pass. When
+            exceeded, remaining candidates are left for a later run so the
+            collector always reaches the cache write instead of being killed
+            by the cron timeout. <= 0 disables the budget.
 
     Returns:
         List of normalized TrialRecord dicts.
@@ -201,6 +217,7 @@ def collect_ctis_trials(
     enrich_candidates = 0
     enrich_ok = 0
     enrich_errors = 0
+    enrich_skipped = 0
     if enrich_detail:
         candidates = [r for r in records if not r.get("primary_completion_date")]
         enrich_candidates = len(candidates)
@@ -209,7 +226,18 @@ def collect_ctis_trials(
             enrich_candidates,
             len(records),
         )
-        for rec in candidates:
+        enrich_start = time.monotonic()
+        for i, rec in enumerate(candidates):
+            if enrich_budget_secs > 0 and time.monotonic() - enrich_start > enrich_budget_secs:
+                enrich_skipped = enrich_candidates - i
+                logger.warning(
+                    "CTIS enrichment budget (%.0fs) reached after %d/%d candidates; " "%d deferred to a later run",
+                    enrich_budget_secs,
+                    i,
+                    enrich_candidates,
+                    enrich_skipped,
+                )
+                break
             ct_number = rec["primary_id"]
             try:
                 detail = _fetch_ctis_detail(ct_number, raw_dir=raw_dir)
@@ -223,9 +251,10 @@ def collect_ctis_trials(
                     e,
                 )
         logger.info(
-            "CTIS enrichment done: %d enriched, %d errors (of %d candidates)",
+            "CTIS enrichment done: %d enriched, %d errors, %d deferred (of %d candidates)",
             enrich_ok,
             enrich_errors,
+            enrich_skipped,
             enrich_candidates,
         )
 
@@ -254,6 +283,7 @@ def collect_ctis_trials(
             "candidates": enrich_candidates,
             "enriched": enrich_ok,
             "errors": enrich_errors,
+            "deferred": enrich_skipped,
         },
     }
     meta_path.write_text(json.dumps(meta, indent=2))
@@ -319,7 +349,22 @@ def _fetch_ctis_detail(ct_number: str, raw_dir: Path | None = None) -> dict:
 
     GET /retrieve/{ct_number}
     Returns parsed JSON with full trial metadata.
+
+    A detail response cached in ``raw_dir`` within ``_DETAIL_CACHE_TTL_DAYS`` is
+    reused as-is — no network call, no rate-limit sleep. CTIS completion dates
+    change on the order of weeks, so a bounded-age cache keeps enrichment within
+    the cron timeout without meaningfully staling the data.
     """
+    raw_path = raw_dir / f"ctis_detail_{ct_number.replace('-', '_')}.json" if raw_dir is not None else None
+
+    if raw_path is not None and raw_path.exists():
+        age_secs = time.time() - raw_path.stat().st_mtime
+        if age_secs <= _DETAIL_CACHE_TTL_DAYS * 86400:
+            try:
+                return json.loads(raw_path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                pass  # corrupt/unreadable cache — fall through to a live fetch
+
     time.sleep(_RATE_LIMIT_SECS)
 
     resp = _get_session().get(
@@ -331,8 +376,7 @@ def _fetch_ctis_detail(ct_number: str, raw_dir: Path | None = None) -> dict:
 
     result = resp.json()
 
-    if raw_dir is not None:
-        raw_path = raw_dir / f"ctis_detail_{ct_number.replace('-', '_')}.json"
+    if raw_path is not None:
         raw_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
 
     return result
