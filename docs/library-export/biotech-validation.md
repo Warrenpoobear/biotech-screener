@@ -109,10 +109,10 @@ Every record must pass PIT admissibility before entering any scoring module. The
 | --- | --- | --- |
 | Liquidity (ADV) | < $500,000/day | Exclude ticker |
 | Price (penny stock) | < $5.00 | Exclude ticker |
-| Market field coverage | < 80% fields present | Exclude ticker |
-| Financial field coverage | < 50% fields present | Issue warning |
 
-> **Penny stock threshold note (W7):** This $5.00 hard gate in Gate 3 is the production exclusion threshold — any ticker below $5.00 is removed from the rankable universe before scoring begins. The financial-health skill's $2.00 penny stock penalty (Step 6, liquidity score capped at 10) is a SECONDARY safeguard that would only apply if Gate 3's threshold were lowered. At the current $5.00 gate, the $2.00 penalty is unreachable in production. If Gate 3 is ever revised to a lower threshold, the financial-health $2.00 penalty becomes the operative backstop. Both thresholds are intentional.
+> **Penny stock threshold note (W7):** This $5.00 hard gate in Gate 3 is the production exclusion threshold — any ticker below $5.00 is removed from the rankable universe before scoring begins. The financial-health skill's $2.00 penny stock penalty (Step 6, liquidity score capped at 10) is a SECONDARY safeguard that would only apply if Gate 3's threshold were lowered. At the current $5.00 gate, the $2.00 penalty is unreachable in production. If Gate 3 is ever revised to a lower threshold, the financial-health $2.00 penalty becomes the operative backstop. Both thresholds are intentional — Gate 3 is the hard exclusion, financial-health is the soft penalty for a lower price band.
+> | Market field coverage | < 80% fields present | Exclude ticker |
+> | Financial field coverage | < 50% fields present | Issue warning |
 
 ---
 
@@ -405,7 +405,9 @@ Post-hash/manifest checks that detect content-level signal collapse:
 
 **Tool**: `tools/verify_snapshot_integrity.py` (Section 4)
 
-These guards run AFTER the existing hash/manifest checks and catch silent degradation that hash-level validation cannot detect. Verified against production: SD = 0.6833 (PASS), 261/261 (100%) catalyst rows classified (PASS).
+These guards run AFTER the existing hash/manifest checks and catch silent degradation that hash-level validation cannot detect (e.g., all tickers receiving identical coinvest scores due to a fallback path).
+
+Verified against production: SD = 0.6833 (PASS), 261/261 (100%) catalyst rows classified (PASS).
 
 ---
 
@@ -511,3 +513,48 @@ After a pipeline run completes, verify:
 | IC Measurement | `backtest/ic_measurement.py` |
 | Audit Log | `governance/audit_log.py` |
 | Pipeline Config | `config.yml` |
+
+## FDA Real-Time Trial Initiative (May 2026)
+
+### Proof-of-Concept Studies
+
+FDA launched two real-time clinical trial (RTCT) proof-of-concept studies:
+
+1. AstraZeneca TRAVERSE - mantle cell lymphoma
+2. Amgen STREAM-SCLC - small cell lung cancer
+Both use AI and cloud-based data feeds via Paradigm Health for real-time safety signal detection.
+
+### AI-Enabled Early-Phase Trial Pilot Program
+
+- FDA RFI published April 29, 2026 (Federal Register)
+- Comments due May 29, 2026; pilot selections by August 2026
+- Focus: AI improvements in trial efficiency, dose selection, safety monitoring, go/no-go decisions
+- Aligned with NIST AI Risk Management Framework
+
+### Projected Impact
+
+- 20-40% trial duration reduction
+- $120 million annual savings
+- Continuous trials eliminating inter-phase delays
+
+### DEM Implication
+
+If clinical trials become continuous rather than phase-gated, the binary catalyst model (trial readout = binary stock event) evolves toward a continuous information release model. This would affect catalyst_decay_w and catalyst_quality calibration. Monitor as Tier 4 governance question.
+
+### ODIN Feature Comparison
+
+ODIN's 51-feature model includes signal categories not in the DEM's clinical scoring:
+
+- Manufacturing/CMC risk scoring
+- FDA era effects (temporal patterns in regulatory stringency)
+- Options market implied approval probability
+- Sponsor historical approval rate by therapeutic area
+These are evaluation candidates through the T5 promotion path (Tier 4 design decisions).
+
+### AI Drug Pipeline Scale (Q1 2026)
+
+- 173+ AI-originated programs in human clinical trials (94 Phase I, 56 Phase II, 15 Phase III)
+- 7x increase since 2022
+- Pre-clinical timeline compression: 4-6 years to 12-24 months
+- Clinical trial timelines remain unchanged (the phase AI has NOT yet shortened)
+- 2026 is definitive validation year - Phase III results determine if AI improves success rates beyond ~90% historical failure rate
