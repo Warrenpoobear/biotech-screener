@@ -317,6 +317,11 @@ def test_write_fleet_receipt_creates_file_with_core_sections(hb_mod, tmp_path):
 
     assert out_path.exists()
     assert out_path.name == f"{ds}_receipt.md"
+    # Canonical location every consumer reads (cron_watchdog, ops_supervisor,
+    # fleet_ops_status, telegram_command_handler) — must be artifacts/heartbeat/.
+    assert out_path == hb_mod.ARTIFACTS_DIR / "heartbeat" / f"{ds}_receipt.md"
+    # Historical agent-memory audit copy is also written.
+    assert (hb_mod.REPO_ROOT / "agents" / "fleet_steward" / "memory" / f"{ds}_receipt.md").exists()
     text = out_path.read_text()
     assert "# Fleet Receipt" in text
     assert "Verdict: RED" in text

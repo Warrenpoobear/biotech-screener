@@ -1622,16 +1622,24 @@ def _find_previous_snapshot(dt: date) -> str | None:
 
 
 def write_fleet_receipt(results: list[CheckResult], counts: dict, dt: date) -> Path:
-    """Write a deterministic daily fleet receipt to agents/fleet_steward/memory/.
+    """Write a deterministic daily fleet receipt.
+
+    Canonical location is artifacts/heartbeat/<ds>_receipt.md — every consumer
+    reads there (cron_watchdog, ops_supervisor, fleet_ops_status,
+    telegram_command_handler). A copy is also kept in
+    agents/fleet_steward/memory/ as the historical agent-memory audit trail.
+    Returns the canonical path.
 
     This is the Conductor/Director output restored after the fleet_steward LLM
     agent was replaced by this orchestrator. Format matches the historical
     receipts but scope is narrower: status-only, no analyst synthesis.
     """
     ds = as_of_date(dt)
-    receipt_dir = REPO_ROOT / "agents" / "fleet_steward" / "memory"
-    receipt_dir.mkdir(parents=True, exist_ok=True)
-    out_path = receipt_dir / f"{ds}_receipt.md"
+    canonical_dir = ARTIFACTS_DIR / "heartbeat"
+    canonical_dir.mkdir(parents=True, exist_ok=True)
+    out_path = canonical_dir / f"{ds}_receipt.md"
+    memory_dir = REPO_ROOT / "agents" / "fleet_steward" / "memory"
+    memory_dir.mkdir(parents=True, exist_ok=True)
 
     snapshot_ok = (SNAPSHOT_DIR / ds / "rankings.csv").exists()
     snapshot_unknown = is_cloud_agent_environment() and not snapshot_ok
@@ -1690,7 +1698,9 @@ def write_fleet_receipt(results: list[CheckResult], counts: dict, dt: date) -> P
         "analyst synthesis and are not generated here._\n"
     )
 
-    out_path.write_text("".join(lines))
+    content = "".join(lines)
+    out_path.write_text(content)
+    (memory_dir / f"{ds}_receipt.md").write_text(content)
     return out_path
 
 
