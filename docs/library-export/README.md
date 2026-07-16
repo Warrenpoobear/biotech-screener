@@ -8,6 +8,10 @@ collection were intentionally excluded.
 
 Exported: June 26, 2026. Source of truth remains the Content Library documents linked below.
 
+Addendum — July 15, 2026: added `failure-patterns.md` and `decision-audit-trail.md`, the two
+Hermes governance catalogs (Town docs authoritative; both activated 2026-07-15), bringing the
+failure-mode and decision-rationale catalogs into the same Town→repo mirror as the skills above.
+
 | File | Title | Source document |
 | --- | --- | --- |
 | `financial-health.md` | Financial Health Scoring Skill | [nx7dnwzrypqjknaqxbvjeq6b6n86dnaa](https://www.town.com/content/document/nx7dnwzrypqjknaqxbvjeq6b6n86dnaa) |
@@ -23,6 +27,8 @@ Exported: June 26, 2026. Source of truth remains the Content Library documents l
 | `sec-edgar-mechanics.md` | SEC EDGAR Mechanics | [nx7bxvb02baeshvm8bh293d92986ys0q](https://www.town.com/content/document/nx7bxvb02baeshvm8bh293d92986ys0q) |
 | `backtest-framework.md` | Backtest Framework | [nx75h20c1ahez575pzt260t6tx86zap1](https://www.town.com/content/document/nx75h20c1ahez575pzt260t6tx86zap1) |
 | `regime-detection.md` | Regime Detection | [nx7f0czty2ch4vqjshg44s12ks86ysg6](https://www.town.com/content/document/nx7f0czty2ch4vqjshg44s12ks86ysg6) |
+| `failure-patterns.md` | Failure Pattern Library | [nx743mtmm8xyqvv8rjhabqggp586zvdt](https://www.town.com/content/document/nx743mtmm8xyqvv8rjhabqggp586zvdt) |
+| `decision-audit-trail.md` | Decision Audit Trail | [nx7a3rat86f35z743sh5rp1k2s86y1qs](https://www.town.com/content/document/nx7a3rat86f35z743sh5rp1k2s86y1qs) |
 
 **Note:** Several of these documents carry a `Status: DRAFT / NOT ACTIVE` header and contain
 point-in-time "Operational State" snapshots that go stale. They are reference material, not
