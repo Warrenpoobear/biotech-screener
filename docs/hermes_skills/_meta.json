@@ -1,7 +1,20 @@
 {
   "registry_version": "1.0",
-  "last_updated": "2026-07-12",
+  "last_updated": "2026-07-15",
   "skills": {
+    "document-lineage": {
+      "name": "Document Lineage Map",
+      "file": "document-lineage.md",
+      "status": "DRAFT / NOT ACTIVE",
+      "topics": [
+        "per-fact authority table",
+        "document dependency graph",
+        "sync-state protocol",
+        "registry count authority"
+      ],
+      "source": "town_skill",
+      "source_authority": "Town Content Library (skills://document-lineage)"
+    },
     "town-operator-bridge": {
       "name": "Town-Hermes Bridge (Spec 090)",
       "file": "town-operator-bridge.md",
