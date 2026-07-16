@@ -3,9 +3,9 @@
 Tests correctness invariants discovered during the full backtest harness audit.
 Each test documents a specific risk and prevents regression.
 """
-import pytest
-
 from __future__ import annotations
+
+import pytest
 
 import statistics
 import sys
