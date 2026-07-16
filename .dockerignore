@@ -1,6 +1,9 @@
 data/
 cache/
 production_data/
+# Re-include the tracked ranker model so the container-smoke test can load
+# pairwise_minimal inside the image (fixes CI container-smoke FileNotFoundError).
+!production_data/ranker_v2_model.json
 output/
 logs/
 .git/
