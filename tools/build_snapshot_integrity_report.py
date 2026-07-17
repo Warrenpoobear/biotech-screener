@@ -4,7 +4,9 @@
 Validates the per-snapshot rankings.csv for invariants that must hold
 regardless of model behavior. Catches silent breakage early — duplicate
 ranks, gaps in rank space, missing required columns, blank tickers, off-size
-v2 cohort, etc.
+v2 cohort, etc. Also surfaces run provenance (dirty tree / commit / screen
+exit) from run_manifest.json so a non-reproducible run is visible rather than
+silently passing every structural check.
 
 Diagnostic only. Does NOT modify scoring, selectors, ranking, eligibility,
 or portfolio construction.
@@ -24,6 +26,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import re
 from datetime import datetime, timezone
 from pathlib import Path
@@ -245,6 +248,84 @@ def check_decision_engine_consistency(rows: list[dict[str, str]]) -> dict[str, A
     }
 
 
+def check_provenance(snapshot_dir: Path) -> dict[str, Any]:
+    """Surface the code-provenance state of the run that produced this snapshot.
+
+    Reads run_manifest.json (written by run_daily_production). Closes the gap
+    where the integrity report was blind to *how* a snapshot was produced: a run
+    on a dirty tree / mismatched commit / non-zero screen exit passes every
+    structural check yet is non-reproducible (see the 2026-07-15 provenance
+    flag and its blast-radius diff).
+
+    Severity is deliberately calibrated to be non-blocking, because dirty-tree
+    and non-zero screen_exit runs are currently tolerated by design
+    (run_daily_production logs a non-zero screen exit as a warning and
+    continues):
+      - PASS : clean run, or no manifest to assess
+      - INFO : dirty working tree and/or non-zero screen_exit_code
+               (surfaced, keeps report `ok` True)
+      - WARN : commit_sha does not match an explicitly pinned reference
+               (env BIOTECH_PRODUCTION_PINNED_SHA) — a real provenance mismatch
+
+    INFO (not WARN) for dirty/exit means this never flips `ok` to False on the
+    ~norm of dirty runs, so it does not disturb any consumer that reads `ok`.
+    """
+    manifest_path = snapshot_dir / "run_manifest.json"
+    if not manifest_path.exists():
+        return {
+            "name": "run_provenance",
+            "severity": "PASS",
+            "manifest_present": False,
+            "note": "no run_manifest.json — provenance not assessable",
+        }
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (ValueError, OSError) as exc:
+        return {
+            "name": "run_provenance",
+            "severity": "INFO",
+            "manifest_present": True,
+            "note": f"run_manifest.json unreadable: {exc}",
+        }
+
+    git = manifest.get("git") or {}
+    commit_sha = git.get("commit_sha")
+    dirty = bool(git.get("dirty"))
+    screen_exit = manifest.get("screen_exit_code")
+
+    pinned = os.environ.get("BIOTECH_PRODUCTION_PINNED_SHA") or None
+    # short/full sha tolerant match (pin may be an 8-char short sha)
+    pin_mismatch = bool(
+        pinned
+        and commit_sha
+        and not str(commit_sha).startswith(str(pinned))
+        and not str(pinned).startswith(str(commit_sha))
+    )
+
+    severity = "PASS"
+    reasons: list[str] = []
+    if dirty:
+        severity = _max_severity(severity, "INFO")
+        reasons.append("dirty_working_tree")
+    if screen_exit not in (0, None):
+        severity = _max_severity(severity, "INFO")
+        reasons.append(f"screen_exit_code={screen_exit}")
+    if pin_mismatch:
+        severity = _max_severity(severity, "WARN")
+        reasons.append(f"commit_sha={str(commit_sha)[:10]} != pinned={pinned}")
+
+    return {
+        "name": "run_provenance",
+        "severity": severity,
+        "manifest_present": True,
+        "commit_sha": commit_sha,
+        "dirty": dirty,
+        "screen_exit_code": screen_exit,
+        "pinned_sha": pinned,
+        "reasons": reasons,
+    }
+
+
 def build_integrity_report(snapshot_dir: Path) -> dict[str, Any]:
     rankings_path = snapshot_dir / "rankings.csv"
     if not rankings_path.exists():
@@ -267,6 +348,7 @@ def build_integrity_report(snapshot_dir: Path) -> dict[str, Any]:
         check_v2_cohort(rows),
         check_eligible_count(rows),
         check_decision_engine_consistency(rows),
+        check_provenance(snapshot_dir),
     ]
     overall = "PASS"
     for c in checks:

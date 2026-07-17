@@ -17,6 +17,7 @@ from tools.build_snapshot_integrity_report import (
     check_columns,
     check_decision_engine_consistency,
     check_eligible_count,
+    check_provenance,
     check_rank_space,
     check_ticker_uniqueness,
     check_top_n,
@@ -157,6 +158,128 @@ def test_decision_engine_drift_fails():
     r = check_decision_engine_consistency(rows)
     assert r["severity"] == "FAIL"
     assert len(r["versions"]) == 2
+
+
+# ---------------------------------------------------------------------------
+# Provenance check
+# ---------------------------------------------------------------------------
+
+
+def _write_manifest(snap_dir: Path, **manifest) -> None:
+    snap_dir.mkdir(parents=True, exist_ok=True)
+    (snap_dir / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+
+def test_provenance_pass_when_no_manifest(tmp_path):
+    # No run_manifest.json -> nothing to assess -> PASS (must not raise overall)
+    r = check_provenance(tmp_path)
+    assert r["severity"] == "PASS"
+    assert r["manifest_present"] is False
+
+
+def test_provenance_pass_when_clean(tmp_path):
+    _write_manifest(tmp_path, git={"commit_sha": "abc123", "dirty": False}, screen_exit_code=0)
+    r = check_provenance(tmp_path)
+    assert r["severity"] == "PASS"
+    assert r["dirty"] is False
+    assert r["reasons"] == []
+
+
+def test_provenance_info_when_dirty(tmp_path):
+    _write_manifest(tmp_path, git={"commit_sha": "abc123", "dirty": True}, screen_exit_code=0)
+    r = check_provenance(tmp_path)
+    assert r["severity"] == "INFO"
+    assert "dirty_working_tree" in r["reasons"]
+
+
+def test_provenance_info_when_nonzero_screen_exit(tmp_path):
+    _write_manifest(tmp_path, git={"commit_sha": "abc123", "dirty": False}, screen_exit_code=1)
+    r = check_provenance(tmp_path)
+    assert r["severity"] == "INFO"
+    assert any("screen_exit_code=1" in x for x in r["reasons"])
+
+
+# Non-hex placeholder tokens below are deliberate: the pin logic is plain
+# string-prefix matching, so tokens test it identically while avoiding
+# detect-secrets false positives on high-entropy hex literals.
+def test_provenance_warn_on_pin_mismatch(tmp_path, monkeypatch):
+    monkeypatch.setenv("BIOTECH_PRODUCTION_PINNED_SHA", "PIN_REF_499")
+    _write_manifest(tmp_path, git={"commit_sha": "COMMIT_500_DIFFERENT", "dirty": True}, screen_exit_code=1)
+    r = check_provenance(tmp_path)
+    assert r["severity"] == "WARN"
+    assert any("pinned" in x for x in r["reasons"])
+
+
+def test_provenance_pass_when_pin_matches_short_sha(tmp_path, monkeypatch):
+    # Short pinned token is a prefix of the full commit token -> match, no WARN
+    monkeypatch.setenv("BIOTECH_PRODUCTION_PINNED_SHA", "COMMIT_PREFIX")
+    _write_manifest(tmp_path, git={"commit_sha": "COMMIT_PREFIX_AND_MORE", "dirty": False}, screen_exit_code=0)
+    r = check_provenance(tmp_path)
+    assert r["severity"] == "PASS"
+
+
+def _clean_rows() -> list[dict[str, str]]:
+    """Structurally-invariant-clean rows (mirrors the clean end-to-end fixture)."""
+    rows = []
+    for i in range(1, 31):
+        rows.append(
+            make_row(
+                ticker=f"T{i:03d}",
+                company_name=f"Company {i}",
+                actionable_rank=i,
+                eligible="1",
+                ranker_v2_score=0.6,
+                decision_engine_version="v1.13.0",
+                decision_engine_ruleset_id="2a3e79eb",
+            )
+        )
+    for i in range(31, 61):
+        rows.append(
+            make_row(
+                ticker=f"V{i:03d}",
+                company_name=f"V{i}",
+                ranker_v2_score=0.6,
+                eligible="0",
+                decision_engine_version="v1.13.0",
+                decision_engine_ruleset_id="2a3e79eb",
+            )
+        )
+    for i in range(61, 66):
+        rows.append(
+            make_row(
+                ticker=f"X{i:03d}",
+                company_name=f"X{i}",
+                eligible="0",
+                decision_engine_version="v1.13.0",
+                decision_engine_ruleset_id="2a3e79eb",
+            )
+        )
+    return rows
+
+
+def test_provenance_check_included_in_report(tmp_path):
+    snap_dir = write_snapshot(
+        tmp_path / "snap",
+        "2026-04-27",
+        [make_row(ticker="A", actionable_rank=1, eligible="1")],
+    )
+    _write_manifest(snap_dir, git={"commit_sha": "abc123", "dirty": True}, screen_exit_code=2)
+    report = build_integrity_report(snap_dir)
+    by_name = {c["name"]: c for c in report["checks"]}
+    assert "run_provenance" in by_name
+    assert by_name["run_provenance"]["severity"] == "INFO"
+
+
+def test_provenance_info_keeps_report_ok_true_on_clean_snapshot(tmp_path):
+    # Structurally clean snapshot but produced on a dirty tree -> provenance INFO,
+    # overall INFO, and `ok` stays True (non-blocking on tolerated dirty runs).
+    snap_dir = write_snapshot(tmp_path / "snap", "2026-04-27", _clean_rows())
+    _write_manifest(snap_dir, git={"commit_sha": "abc123", "dirty": True}, screen_exit_code=2)
+    report = build_integrity_report(snap_dir)
+    by_name = {c["name"]: c for c in report["checks"]}
+    assert by_name["run_provenance"]["severity"] == "INFO"
+    assert report["overall_severity"] == "INFO"
+    assert report["ok"] is True
 
 
 # ---------------------------------------------------------------------------
