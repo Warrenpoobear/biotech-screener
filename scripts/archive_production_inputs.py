@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Snapshot production_data input files before each daily run.
 
-Archives key reference files to data/pit_archives/YYYY-MM-DD/ with a
-SHA-256 manifest so that the exact inputs for any historical date can be
-recovered.
+Archives key reference files (and the forward-shadow evidence ledgers) to
+data/pit_archives/YYYY-MM-DD/ with a SHA-256 manifest so that the exact
+inputs for any historical date can be recovered. The evidence ledgers are
+snapshotted here because they are being untracked from git (B2) to stop
+dirtying the working tree on every run.
 
 Usage:
     python3 scripts/archive_production_inputs.py --as-of-date 2026-04-02
@@ -24,13 +26,26 @@ SCRIPT_DIR = Path(__file__).resolve().parent.parent
 _DEFAULT_DATA_DIR = SCRIPT_DIR / "production_data"
 _DEFAULT_ARCHIVE_ROOT = SCRIPT_DIR / "data" / "pit_archives"
 
-# Static reference files archived every run.
+# Static reference files archived every run (sourced from --data-dir).
 _STATIC_FILES = [
     "universe.json",
     "financial_records.json",
     "market_data.json",
     "price_history.csv",
     "trial_records.json",
+]
+
+# Forward-shadow evidence ledgers, as (archive_name, repo-relative source).
+# These are append-only book-of-record ledgers (forward-validation mandate
+# SM-20260629-001; inst_delta / cross_signal shadow audits). They are being
+# untracked from git (B2) to stop dirtying the tree every run, so snapshotting
+# them here preserves point-in-time content. Sourced from the repo root rather
+# than --data-dir; archive names are namespaced to keep them flat and unambiguous.
+_EVIDENCE_FILES = [
+    ("forward_validation_captures.jsonl", "artifacts/forward_validation/captures.jsonl"),
+    ("forward_validation_fills.jsonl", "artifacts/forward_validation/fills.jsonl"),
+    ("inst_delta_forward_shadow_checkpoints.jsonl", "artifacts/audit/inst_delta_forward_shadow/checkpoints.jsonl"),
+    ("cross_signal_forward_shadow_buckets.jsonl", "artifacts/audit/cross_signal_forward_shadow/buckets.jsonl"),
 ]
 
 
@@ -59,6 +74,14 @@ def _resolve_files(data_dir: Path, date_str: str) -> list[tuple[str, Path]]:
         pairs.append((cat_name, cat_src))
     else:
         print(f"[ARCHIVE] WARN: {cat_name} not found in {data_dir}", file=sys.stderr)
+
+    # Forward-shadow evidence ledgers (repo-relative, outside --data-dir).
+    for arch_name, relpath in _EVIDENCE_FILES:
+        src = SCRIPT_DIR / relpath
+        if src.exists():
+            pairs.append((arch_name, src))
+        else:
+            print(f"[ARCHIVE] WARN: {relpath} not found", file=sys.stderr)
 
     return pairs
 
