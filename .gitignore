@@ -465,7 +465,11 @@ data/bvf_backfill/
 
 # --- Append-only runtime logs (regenerable; tracked files already in repo are unaffected by these patterns, but exempt explicitly for defense) ---
 data/*_log.jsonl
-!data/expression_decision_log.jsonl
+# expression_decision_log.jsonl is a regenerable append-only log written by every
+# production run; keeping it tracked made the working tree dirty on every run and
+# polluted commit_sha provenance (2026-07-15 provenance flag). Untracked here so
+# `git.dirty` reflects code state only. Working copy is retained locally.
+.learnings/corrections.md
 
 # --- Auto-extracted PDUFA dates (regenerated each run; committed only on structural change) ---
 production_data/pdufa_dates_extracted.json
