@@ -82,6 +82,15 @@ repos:
         language: system
         types: [python]
         require_serial: true
+        # pre-commit passes explicit filenames, which makes semgrep bypass
+        # .semgrepignore. Mirror .semgrepignore here so `--all-files` (the CI
+        # lint job) does not scan the rule-test fixtures or the known bind()
+        # false-match — matching the standalone Semgrep Governance Audit job.
+        exclude: |
+          (?x)^(
+            \.semgrep/.*\.py|
+            tests/test_event_outcome_binder\.py
+          )$
 
       # Model-affecting diffs (scoring/ranking/selector/ruleset/model weights)
       # must ship with a documentation update so hash-locked changes leave a
