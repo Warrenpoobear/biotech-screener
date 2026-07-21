@@ -298,11 +298,7 @@ def enforce_path_a_gates(
             _, t3_w = measure_zone_weights(work, zones, t3_plus_zones=gates.t3_plus_zones)
             if t3_w >= gates.t3_plus_min_weight_pct:
                 break
-            non_t3 = [
-                p
-                for p in work
-                if zones.get((p.get("ticker") or "").upper(), "T4") not in gates.t3_plus_zones
-            ]
+            non_t3 = [p for p in work if zones.get((p.get("ticker") or "").upper(), "T4") not in gates.t3_plus_zones]
             candidates_in = [
                 row
                 for row in ranked_pool
@@ -343,9 +339,7 @@ def enforce_path_a_gates(
     _equal_reweight(work, account_usd)
     _stamp_zones(work, zones)
     t0_w, t3_w = measure_zone_weights(work, zones, t3_plus_zones=gates.t3_plus_zones)
-    compliant = t0_w <= gates.t0_max_weight_pct and (
-        t3_w >= gates.t3_plus_min_weight_pct or floor_relaxed
-    )
+    compliant = t0_w <= gates.t0_max_weight_pct and (t3_w >= gates.t3_plus_min_weight_pct or floor_relaxed)
 
     return PathAResult(
         positions=work,

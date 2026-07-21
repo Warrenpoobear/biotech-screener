@@ -536,7 +536,13 @@ def build_all_cells(snapshot_date: Optional[str] = None) -> List[Dict[str, Any]]
 
     cells = [
         build_cell(
-            t, universe, prices, trials, scores, aact_studies, aact_sponsors,
+            t,
+            universe,
+            prices,
+            trials,
+            scores,
+            aact_studies,
+            aact_sponsors,
             as_of=as_of,
         )
         for t in sorted(tickers)

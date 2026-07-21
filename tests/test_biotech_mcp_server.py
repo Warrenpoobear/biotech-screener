@@ -35,37 +35,49 @@ def _build_fixture(root: Path) -> None:
     for date in ("2026-06-19", "2026-06-20"):
         d = snaps / date
         d.mkdir(parents=True)
-        (d / "snapshot_manifest.json").write_text(json.dumps(
-            {"snapshot_dir": date, "files": [{"name": "rankings.csv", "size_bytes": 10}]}))
-        (d / "phase2_health.json").write_text(json.dumps(
-            {"status": "OK" if date == "2026-06-20" else "WARN", "reasons": [], "metrics": {}}))
+        (d / "snapshot_manifest.json").write_text(
+            json.dumps({"snapshot_dir": date, "files": [{"name": "rankings.csv", "size_bytes": 10}]})
+        )
+        (d / "phase2_health.json").write_text(
+            json.dumps({"status": "OK" if date == "2026-06-20" else "WARN", "reasons": [], "metrics": {}})
+        )
         (d / "rankings.csv").write_text("ticker,actionable_rank,target_weight_pct\nCOGT,1,5.0\nDNTH,2,4.0\n")
-        (d / "ees_gate_diagnostics.json").write_text(json.dumps(
-            {"as_of_date": date, "gate_mode": "advisory"}))
+        (d / "ees_gate_diagnostics.json").write_text(json.dumps({"as_of_date": date, "gate_mode": "advisory"}))
 
     art = root / "artifacts"
     (art / "readiness").mkdir(parents=True)
     (art / "gate_verdict_ledger.jsonl").write_text(
-        json.dumps({"as_of_date": "2026-06-19", "overall_status": "WARN", "n_fail": 0}) + "\n"
-        + json.dumps({"as_of_date": "2026-06-20", "overall_status": "PASS", "n_fail": 0}) + "\n")
-    (art / "readiness" / "forward_eval_ic_baseline.json").write_text(json.dumps({
-        "window_start": "2026-06-01", "path_c_status": "IC_UNOBSERVABLE",
-        "observations": [{"date": f"2026-06-{d:02d}", "mean_ic": 0.0} for d in range(1, 21)],
-    }))
+        json.dumps({"as_of_date": "2026-06-19", "overall_status": "WARN", "n_fail": 0})
+        + "\n"
+        + json.dumps({"as_of_date": "2026-06-20", "overall_status": "PASS", "n_fail": 0})
+        + "\n"
+    )
+    (art / "readiness" / "forward_eval_ic_baseline.json").write_text(
+        json.dumps(
+            {
+                "window_start": "2026-06-01",
+                "path_c_status": "IC_UNOBSERVABLE",
+                "observations": [{"date": f"2026-06-{d:02d}", "mean_ic": 0.0} for d in range(1, 21)],
+            }
+        )
+    )
 
     cart = art / "scientific_cartography" / "2026-06-18"
     cart.mkdir(parents=True)
-    (cart / "scientific_cartography_status.json").write_text(json.dumps(
-        {"as_of_date": "2026-06-18", "status": "ok", "governance": {"read_only_diagnostic": True}}))
-    (cart / "landscape_feature_coverage_report.json").write_text(json.dumps(
-        {"as_of_date": "2026-06-18", "program_records": 5, "mean_white_space_score": 0.4}))
+    (cart / "scientific_cartography_status.json").write_text(
+        json.dumps({"as_of_date": "2026-06-18", "status": "ok", "governance": {"read_only_diagnostic": True}})
+    )
+    (cart / "landscape_feature_coverage_report.json").write_text(
+        json.dumps({"as_of_date": "2026-06-18", "program_records": 5, "mean_white_space_score": 0.4})
+    )
     (cart / "disease_map_summary.json").write_text(json.dumps({"diseases": 3, "mapped": 2}))
     (cart / "program_records.jsonl").write_text('{"id": "p1"}\n')
 
     semgrep = root / ".semgrep"
     semgrep.mkdir()
     (semgrep / "governance.yml").write_text(
-        "rules:\n  - id: no-autopush-to-main\n    severity: ERROR\n  - id: langgraph-none-guard\n    severity: WARNING\n")
+        "rules:\n  - id: no-autopush-to-main\n    severity: ERROR\n  - id: langgraph-none-guard\n    severity: WARNING\n"
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -93,8 +105,9 @@ def test_notification_has_no_response(srv):
 
 
 def test_call_unknown_tool(srv):
-    resp = srv._handle_message({"jsonrpc": "2.0", "id": 4, "method": "tools/call",
-                                "params": {"name": "nope", "arguments": {}}})
+    resp = srv._handle_message(
+        {"jsonrpc": "2.0", "id": 4, "method": "tools/call", "params": {"name": "nope", "arguments": {}}}
+    )
     assert resp["error"]["code"] == -32602
 
 

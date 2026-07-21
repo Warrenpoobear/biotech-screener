@@ -7,12 +7,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from tools.pattern_to_skillpatch import (
-    draft_patch,
-    infer_promotion_lane,
-    parse_learnings,
-    refuse_spec_lane_entries,
-)
+from tools.pattern_to_skillpatch import draft_patch, infer_promotion_lane, parse_learnings, refuse_spec_lane_entries
 
 SAMPLE = """
 ## [LRN-20260601-001] ops_pattern

@@ -257,9 +257,7 @@ def build_report() -> AuditReport:
 
     pin = _codegraph_pin()
     if pin and pin not in memory_text and "codegraph" in memory_text.lower():
-        report.stale_hints.append(
-            f"memory.md may stale-pin codegraph; environment.json has @{pin}"
-        )
+        report.stale_hints.append(f"memory.md may stale-pin codegraph; environment.json has @{pin}")
     if "pytest-xdist" in memory_text.lower() and "not required" not in memory_text.lower():
         report.stale_hints.append("memory.md: verify pytest-xdist guidance (see LRN-20260528-002)")
 
@@ -292,7 +290,9 @@ def print_report(report: AuditReport) -> None:
         print("None.")
     else:
         for c in report.skill_candidates[:15]:
-            print(f"- {c['lrn_id']} → skills/{c['skill_path']}/ (lane={c.get('promotion_lane', 'skill')}, {c['status']})")
+            print(
+                f"- {c['lrn_id']} → skills/{c['skill_path']}/ (lane={c.get('promotion_lane', 'skill')}, {c['status']})"
+            )
         if len(report.skill_candidates) > 15:
             print(f"  ... and {len(report.skill_candidates) - 15} more")
 

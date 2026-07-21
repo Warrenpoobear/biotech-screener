@@ -395,21 +395,13 @@ def _split_adjust_prices(
     with a split on/before ``as_of`` are touched; everything else is returned
     unchanged. Fail-open: an empty/None registry is a no-op.
     """
-    from common.corporate_actions import (
-        cumulative_split_factor,
-        get_splits_only,
-        load_actions,
-    )
+    from common.corporate_actions import cumulative_split_factor, get_splits_only, load_actions
 
     reg = registry if registry is not None else load_actions()
     if not reg.actions:
         return prices
 
-    split_tickers = {
-        t
-        for t in prices["ticker"].unique()
-        if get_splits_only(t, reg, as_of=as_of)
-    }
+    split_tickers = {t for t in prices["ticker"].unique() if get_splits_only(t, reg, as_of=as_of)}
     if not split_tickers:
         return prices
 

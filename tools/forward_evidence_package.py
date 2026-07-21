@@ -130,9 +130,7 @@ def path_c_close_decision(*, window_end: str = PATH_C_WINDOW_END) -> dict[str, A
             action = "Revert to HOLD; Path C override not supported by forward-eval IC."
     else:
         decision = "IC_UNOBSERVABLE"
-        action = (
-            "Operator must choose: extend observation window or revert to HOLD pending Path A."
-        )
+        action = "Operator must choose: extend observation window or revert to HOLD pending Path A."
 
     return {
         "window_end": window_end,
@@ -140,8 +138,7 @@ def path_c_close_decision(*, window_end: str = PATH_C_WINDOW_END) -> dict[str, A
         "decision": decision,
         "action": action,
         "overdue_note": (
-            f"Path C window closed {window_end}; no formal closure artifact was on file "
-            "before this package run."
+            f"Path C window closed {window_end}; no formal closure artifact was on file " "before this package run."
         ),
     }
 
@@ -154,11 +151,7 @@ def compute_signal_ic(
     snapshot_dir: Path,
     horizons: list[int],
 ) -> dict[str, Any]:
-    from tools.measure_final_score_ic_spec100 import (
-        discover_snapshots,
-        load_snapshot,
-        measure_final_score_ic,
-    )
+    from tools.measure_final_score_ic_spec100 import discover_snapshots, load_snapshot, measure_final_score_ic
 
     snap_dates = discover_snapshots(snapshot_dir, start_date, end_date)
     if not snap_dates:
@@ -189,9 +182,7 @@ def compute_signal_ic(
                     ic_values.append(float(ic))
 
         mean_ic = statistics.mean(ic_values) if ic_values else None
-        pct_positive = (
-            sum(1 for x in ic_values if x > 0) / len(ic_values) if ic_values else None
-        )
+        pct_positive = sum(1 for x in ic_values if x > 0) / len(ic_values) if ic_values else None
         horizons_out[f"T+{horizon}"] = {
             "n_observations": len(ic_values),
             "mean_ic": mean_ic,
@@ -436,9 +427,7 @@ def write_package(package: dict[str, Any], *, as_of_date: str) -> tuple[Path, Pa
     md_path.write_text(render_markdown(package) + "\n", encoding="utf-8")
 
     path_c_path = GOV_DIR / f"path_c_window_close_{as_of_date}.json"
-    path_c_path.write_text(
-        json.dumps(package["path_c"], indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
+    path_c_path.write_text(json.dumps(package["path_c"], indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return json_path, md_path
 
 

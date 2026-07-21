@@ -69,9 +69,7 @@ def test_csv_aliases_populate_and_resolve_variants(tmp_path):
     csv_path = tmp_path / "universe.csv"
     # Mixed ';' and '|' delimiters; aliases are sponsor-name variants for one ticker.
     csv_path.write_text("ticker,company,aliases\nLLY,Eli Lilly and Company,Lilly USA;Eli Lilly|Lilly Research\n")
-    companies, source = diag._load_company_records(
-        _args(company_file=str(csv_path)), tmp_path, "2026-06-27", _status()
-    )
+    companies, source = diag._load_company_records(_args(company_file=str(csv_path)), tmp_path, "2026-06-27", _status())
     assert source == "universe.csv"
     (company,) = companies
     assert company.ticker == "LLY"
@@ -83,9 +81,11 @@ def test_csv_aliases_populate_and_resolve_variants(tmp_path):
 
 def test_json_explicit_aliases_resolve(tmp_path):
     json_path = tmp_path / "universe.json"
-    json_path.write_text(json.dumps([
-        {"ticker": "VRTX", "company": "Vertex Pharmaceuticals", "aliases": ["Vertex Pharma", "Vertex Inc"]}
-    ]))
+    json_path.write_text(
+        json.dumps(
+            [{"ticker": "VRTX", "company": "Vertex Pharmaceuticals", "aliases": ["Vertex Pharma", "Vertex Inc"]}]
+        )
+    )
     companies, source = diag._load_company_records(
         _args(company_file=str(json_path)), tmp_path, "2026-06-27", _status()
     )
@@ -97,9 +97,7 @@ def test_json_explicit_aliases_resolve(tmp_path):
 def test_no_aliases_column_is_backward_compatible(tmp_path):
     csv_path = tmp_path / "universe.csv"
     csv_path.write_text("ticker,company\nLLY,Eli Lilly and Company\n")
-    companies, _ = diag._load_company_records(
-        _args(company_file=str(csv_path)), tmp_path, "2026-06-27", _status()
-    )
+    companies, _ = diag._load_company_records(_args(company_file=str(csv_path)), tmp_path, "2026-06-27", _status())
     assert companies[0].aliases == []
     assert SponsorResolver(company_records=companies).resolve("Eli Lilly and Company")["ticker"] == "LLY"
 
@@ -111,22 +109,36 @@ def test_alias_sponsor_resolves_end_to_end(tmp_path):
     # Trial sponsor below ("Lilly USA") is ONLY present as an alias, never the canonical name.
     company.write_text("ticker,company,aliases\nLLY,Eli Lilly and Company,Lilly USA;Lilly Research\n")
     trials = tmp_path / "trials.json"
-    trials.write_text(json.dumps([
-        {"nct_id": "NCT93000001", "brief_title": "Variant sponsor T2D", "sponsor": "Lilly USA",
-         "conditions": ["Type 2 Diabetes Mellitus"], "interventions": ["DrugAlias"], "phases": ["Phase 2"],
-         "overall_status": "Recruiting", "study_type": "Interventional"},
-        {"nct_id": "NCT93000002", "brief_title": "Private T2D", "sponsor": "Tiny Private Biotech LLC",
-         "conditions": ["Type 2 Diabetes Mellitus"], "interventions": ["PRV-1"], "phases": ["Phase 1"],
-         "overall_status": "Recruiting", "study_type": "Interventional"},
-    ]))
+    trials.write_text(
+        json.dumps(
+            [
+                {
+                    "nct_id": "NCT93000001",
+                    "brief_title": "Variant sponsor T2D",
+                    "sponsor": "Lilly USA",
+                    "conditions": ["Type 2 Diabetes Mellitus"],
+                    "interventions": ["DrugAlias"],
+                    "phases": ["Phase 2"],
+                    "overall_status": "Recruiting",
+                    "study_type": "Interventional",
+                },
+                {
+                    "nct_id": "NCT93000002",
+                    "brief_title": "Private T2D",
+                    "sponsor": "Tiny Private Biotech LLC",
+                    "conditions": ["Type 2 Diabetes Mellitus"],
+                    "interventions": ["PRV-1"],
+                    "phases": ["Phase 1"],
+                    "overall_status": "Recruiting",
+                    "study_type": "Interventional",
+                },
+            ]
+        )
+    )
     diag_out = tmp_path / "diagout"
     assert diag.run_diagnostics(_diag_args(tmp_path, company, trials, diag_out)) == 0
 
-    progs = [
-        json.loads(l)
-        for l in (diag_out / "program_records.jsonl").read_text().splitlines()
-        if l.strip()
-    ]
+    progs = [json.loads(l) for l in (diag_out / "program_records.jsonl").read_text().splitlines() if l.strip()]
     tickers = {p["ticker"] for p in progs}
     assert "LLY" in tickers  # resolved purely through the 'Lilly USA' alias
     assert any(p["ticker"] in (None, "") for p in progs)  # private sponsor stays unresolved (no false map)

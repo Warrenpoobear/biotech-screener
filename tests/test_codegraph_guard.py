@@ -16,8 +16,7 @@ from unittest.mock import patch
 
 import pytest
 
-from common.codegraph_guard import CodegraphGuard, ProofConfidence, TIER3_SURFACES
-
+from common.codegraph_guard import TIER3_SURFACES, CodegraphGuard, ProofConfidence
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -56,9 +55,7 @@ class TestFilePathLiteralGate:
         assert result.confidence == ProofConfidence.UNVERIFIED
 
     def test_plain_symbol_does_not_trigger_gate(self):
-        guard, mock = _make_guard(
-            "Callers of \"save_validation_snapshot\" (1):\nfunction main  run_screen.py:1"
-        )
+        guard, mock = _make_guard('Callers of "save_validation_snapshot" (1):\nfunction main  run_screen.py:1')
         result = guard.callers("save_validation_snapshot")
         mock.assert_called_once()
         assert result.confidence == ProofConfidence.FULL
@@ -89,9 +86,7 @@ class TestAmbiguousSymbolGate:
 
     def test_single_definition_is_full_confidence(self):
         guard, _ = _make_guard(
-            'Search Results for "final_score":\n'
-            "variable    final_score (99%)\n"
-            "  decision_engine.py:42\n"
+            'Search Results for "final_score":\n' "variable    final_score (99%)\n" "  decision_engine.py:42\n"
         )
         result = guard.query("final_score")
         assert result.confidence == ProofConfidence.FULL
@@ -106,25 +101,21 @@ class TestAmbiguousSymbolGate:
 class TestDynamicDispatchGate:
     def test_dynamic_dispatch_in_output_warns(self):
         guard, _ = _make_guard(
-            "Callees of \"run_screen\":\n"
-            "  dynamic dispatch detected at line 200 — cannot trace further\n"
+            'Callees of "run_screen":\n' "  dynamic dispatch detected at line 200 — cannot trace further\n"
         )
         result = guard.callees("run_screen")
         assert result.confidence == ProofConfidence.PARTIAL
         assert any("DYNAMIC DISPATCH" in w for w in result.warnings)
 
     def test_impact_with_dynamic_dispatch_adds_lower_bound_warning(self):
-        guard, _ = _make_guard(
-            "Impact: 3 symbols affected\n"
-            "  dynamic dispatch break point at compositor\n"
-        )
+        guard, _ = _make_guard("Impact: 3 symbols affected\n" "  dynamic dispatch break point at compositor\n")
         result = guard.impact("composite_score")
         assert result.confidence == ProofConfidence.PARTIAL
         assert any("PARTIAL PROOF" in w for w in result.warnings)
         assert any("lower bound" in w for w in result.warnings)
 
     def test_clean_output_has_full_confidence(self):
-        guard, _ = _make_guard("Impact of changing \"foo\" — 2 affected symbols:\n  bar\n  baz")
+        guard, _ = _make_guard('Impact of changing "foo" — 2 affected symbols:\n  bar\n  baz')
         result = guard.impact("foo")
         assert result.confidence == ProofConfidence.FULL
         assert not result.warnings
@@ -137,15 +128,12 @@ class TestDynamicDispatchGate:
 
 class TestCronShellBoundaryGate:
     def test_subprocess_in_symbol_warns(self):
-        guard, _ = _make_guard("Callees of \"subprocess_runner\":\n  nothing\n")
+        guard, _ = _make_guard('Callees of "subprocess_runner":\n  nothing\n')
         result = guard.callers("subprocess_runner")
         assert any("CRON/SHELL BOUNDARY" in w for w in result.warnings)
 
     def test_subprocess_in_output_warns(self):
-        guard, _ = _make_guard(
-            "Callers of \"warm_caches\":\n"
-            "  subprocess.run called at warm_caches.py:88\n"
-        )
+        guard, _ = _make_guard('Callers of "warm_caches":\n' "  subprocess.run called at warm_caches.py:88\n")
         result = guard.callers("warm_caches")
         assert any("CRON/SHELL BOUNDARY" in w for w in result.warnings)
 
@@ -176,7 +164,7 @@ class TestPartialProofGate:
 class TestTier3Gate:
     def test_hits_selector_engine(self):
         guard, _ = _make_guard(
-            "Impact of changing \"coinvest_score_z\" — 5 affected symbols:\n"
+            'Impact of changing "coinvest_score_z" — 5 affected symbols:\n'
             "  selector_engine.py:42\n"
             "  run_screen_columns.py:100\n"
         )
@@ -186,8 +174,7 @@ class TestTier3Gate:
 
     def test_no_tier3_hit(self):
         guard, _ = _make_guard(
-            "Impact of changing \"format_report\" — 1 affected symbol:\n"
-            "  tools/report_formatter.py:10\n"
+            'Impact of changing "format_report" — 1 affected symbol:\n' "  tools/report_formatter.py:10\n"
         )
         hit, surfaces = guard.tier3_gate("format_report")
         assert hit is False
@@ -207,7 +194,7 @@ class TestTier3Gate:
 
 class TestCodegraphResultContract:
     def test_full_confidence_no_warnings_is_trustworthy(self):
-        guard, _ = _make_guard("Callers of \"foo\" (1):\n  bar  baz.py:10")
+        guard, _ = _make_guard('Callers of "foo" (1):\n  bar  baz.py:10')
         result = guard.callers("foo")
         assert result.is_trustworthy
 

@@ -4,6 +4,7 @@ Covers the P1-P3 fixes: HTML/SVG escaping, nav active-state, Blocking column,
 real ticker-linked count, SVG accessibility attributes + node tooltips, and
 acronym-preserving disease title-casing.
 """
+
 import importlib.util
 from pathlib import Path
 
@@ -33,30 +34,52 @@ gen = _load("generate_scientific_cartography_map", "tools/generate_scientific_ca
 
 def _programs():
     return [
-        {"asset_name": "DrugA", "ticker": "LLY", "modality": "small molecule",
-         "mechanism_class": "GLP-1", "clinical_stage": "phase3", "confidence": 0.8,
-         "disease_name": "type 2 diabetes", "mondo_id": "MONDO:0005148",
-         "therapeutic_area": "Metabolic"},
-        {"asset_name": "DrugB", "ticker": "", "modality": "monoclonal antibody",
-         "mechanism_class": "", "clinical_stage": "phase1", "confidence": 0.0,
-         "disease_name": "type 2 diabetes"},
-        {"asset_name": "DrugC", "ticker": "VRTX", "modality": "small molecule",
-         "mechanism_class": "GLP-1", "clinical_stage": "phase2", "confidence": 0.5,
-         "disease_name": "type 2 diabetes"},
+        {
+            "asset_name": "DrugA",
+            "ticker": "LLY",
+            "modality": "small molecule",
+            "mechanism_class": "GLP-1",
+            "clinical_stage": "phase3",
+            "confidence": 0.8,
+            "disease_name": "type 2 diabetes",
+            "mondo_id": "MONDO:0005148",
+            "therapeutic_area": "Metabolic",
+        },
+        {
+            "asset_name": "DrugB",
+            "ticker": "",
+            "modality": "monoclonal antibody",
+            "mechanism_class": "",
+            "clinical_stage": "phase1",
+            "confidence": 0.0,
+            "disease_name": "type 2 diabetes",
+        },
+        {
+            "asset_name": "DrugC",
+            "ticker": "VRTX",
+            "modality": "small molecule",
+            "mechanism_class": "GLP-1",
+            "clinical_stage": "phase2",
+            "confidence": 0.5,
+            "disease_name": "type 2 diabetes",
+        },
     ]
 
 
 # ----- Dashboard (P1 escaping + P2 nav + P2/P3 blocking) -----
 
+
 def test_human_decisions_escapes_markup():
-    decisions = [{
-        "created_at_utc": "2026-06-28T00:00:00Z",
-        "decision_state": "s<1",
-        "decision_actor": "a&b",
-        "decision_reason": "<script>alert(1)</script>",
-        "review_continuation_approved": True,
-        "automation_approval": False,
-    }]
+    decisions = [
+        {
+            "created_at_utc": "2026-06-28T00:00:00Z",
+            "decision_state": "s<1",
+            "decision_actor": "a&b",
+            "decision_reason": "<script>alert(1)</script>",
+            "review_continuation_approved": True,
+            "automation_approval": False,
+        }
+    ]
     out = templates.human_decisions_template(decisions, NAV)
     assert "<script>" not in out
     assert "&lt;script&gt;alert(1)&lt;/script&gt;" in out
@@ -71,13 +94,15 @@ def test_review_runs_escapes_values():
 
 
 def test_scheduled_review_nav_active_and_blocking():
-    execs = [{
-        "executed_at_utc": "2026-06-28T00:00:00Z",
-        "outcome": "failure",
-        "duration_seconds": 1.2,
-        "error_message": "E" * 250,
-        "governance": {"non_blocking": True},
-    }]
+    execs = [
+        {
+            "executed_at_utc": "2026-06-28T00:00:00Z",
+            "outcome": "failure",
+            "duration_seconds": 1.2,
+            "error_message": "E" * 250,
+            "governance": {"non_blocking": True},
+        }
+    ]
     out = templates.scheduled_review_health_template(execs, NAV)
     # nav active-state now matches (was "Scheduled Review Health")
     assert 'class="active">Scheduled Review</a>' in out
@@ -90,13 +115,15 @@ def test_scheduled_review_nav_active_and_blocking():
 
 
 def test_scheduled_review_short_error_no_ellipsis():
-    execs = [{
-        "executed_at_utc": "t",
-        "outcome": "success",
-        "duration_seconds": 0.1,
-        "error_message": "short",
-        "governance": {"non_blocking": False},
-    }]
+    execs = [
+        {
+            "executed_at_utc": "t",
+            "outcome": "success",
+            "duration_seconds": 0.1,
+            "error_message": "short",
+            "governance": {"non_blocking": False},
+        }
+    ]
     out = templates.scheduled_review_health_template(execs, NAV)
     assert "short" in out
     assert "short\u2026" not in out
@@ -104,14 +131,13 @@ def test_scheduled_review_short_error_no_ellipsis():
 
 
 def test_index_template_has_nav():
-    out = templates.index_template(
-        "/art", "2026-06-28", [("Index", "index.html", "overview")], [], [], NAV
-    )
+    out = templates.index_template("/art", "2026-06-28", [("Index", "index.html", "overview")], [], [], NAV)
     assert "<nav>" in out
     assert 'class="active">Index</a>' in out
 
 
 # ----- Poster / map emitter (P2 count + P2 a11y + P2 title-case) -----
+
 
 def test_summary_exports_ticker_linked_count():
     md = gen.build_map_data(_programs(), "type 2 diabetes", {"as_of_date": "2026-06-28"})

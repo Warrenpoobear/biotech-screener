@@ -201,8 +201,7 @@ def run_check(as_of: date | None = None) -> dict[str, Any]:
             "fetch": f"python3 tools/fetch_company_press_releases.py --as-of-date {ds}",
             "dedupe": f"python3 tools/dedupe_press_releases.py --input data/press_releases/releases_{ds}.jsonl",
             "classify": (
-                f"python3 tools/classify_press_releases.py "
-                f"--input data/press_releases/deduped/deduped_{ds}.jsonl"
+                f"python3 tools/classify_press_releases.py " f"--input data/press_releases/deduped/deduped_{ds}.jsonl"
             ),
             "digest": f"python3 scripts/build_news_digest.py --window evening --as-of-date {ds}",
         },

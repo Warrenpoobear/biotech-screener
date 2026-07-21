@@ -68,9 +68,7 @@ def test_escalate_anomalies_llm_when_env_set(hb_mod, monkeypatch):
     assert any("run_agent_direct.py" in str(part) for part in cmd)
     assert "ops" in cmd
 
-    payload = json.loads(
-        (hb_mod.ARTIFACTS_DIR / "heartbeat" / "2026-06-24_escalation.json").read_text()
-    )
+    payload = json.loads((hb_mod.ARTIFACTS_DIR / "heartbeat" / "2026-06-24_escalation.json").read_text())
     assert payload["mode"] == "llm"
     assert payload["llm_requested"] is True
     assert payload["llm_status"] == "ok"
@@ -84,9 +82,7 @@ def test_escalate_anomalies_dry_run_skips_subprocess(hb_mod, monkeypatch):
         hb_mod.escalate_anomalies([_anomaly_result(hb_mod)], dry_run=True, dt=dt)
 
     mock_run.assert_not_called()
-    payload = json.loads(
-        (hb_mod.ARTIFACTS_DIR / "heartbeat" / "2026-06-24_escalation.json").read_text()
-    )
+    payload = json.loads((hb_mod.ARTIFACTS_DIR / "heartbeat" / "2026-06-24_escalation.json").read_text())
     assert payload["mode"] == "dry_run"
     assert payload["llm_status"] == "skipped_dry_run"
 

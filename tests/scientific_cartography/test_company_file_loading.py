@@ -31,9 +31,7 @@ def _status():
 def test_company_file_csv_populates_tickers(tmp_path):
     csv_path = tmp_path / "universe.csv"
     csv_path.write_text("ticker,company\nVRTX,Vertex Pharmaceuticals\nALNY,Alnylam Pharmaceuticals\n")
-    companies, source = diag._load_company_records(
-        _args(company_file=str(csv_path)), tmp_path, "2026-06-27", _status()
-    )
+    companies, source = diag._load_company_records(_args(company_file=str(csv_path)), tmp_path, "2026-06-27", _status())
     assert source == "universe.csv"
     assert {c.ticker for c in companies} == {"VRTX", "ALNY"}
     resolved = SponsorResolver(company_records=companies).resolve("Vertex Pharmaceuticals")
@@ -67,18 +65,14 @@ def test_missing_company_file_warns_loudly_no_fallback(tmp_path):
 
 def test_default_falls_back_to_rankings(tmp_path):
     (tmp_path / "rankings.csv").write_text("ticker,company\nVRTX,Vertex Pharmaceuticals\n")
-    companies, source = diag._load_company_records(
-        _args(company_file=None), tmp_path, "2026-06-27", _status()
-    )
+    companies, source = diag._load_company_records(_args(company_file=None), tmp_path, "2026-06-27", _status())
     assert source == "rankings.csv"
     assert companies[0].ticker == "VRTX"
 
 
 def test_no_sources_returns_empty(tmp_path):
     status = _status()
-    companies, source = diag._load_company_records(
-        _args(company_file=None), tmp_path, "2026-06-27", status
-    )
+    companies, source = diag._load_company_records(_args(company_file=None), tmp_path, "2026-06-27", status)
     assert companies == []
     assert source is None
     assert any("rankings.csv not found" in w for w in status["warnings"])

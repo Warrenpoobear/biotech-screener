@@ -42,26 +42,30 @@ def _make_snapshots():
         t = f"TST{i:02d}"
         # final_score decreasing with rank; catalyst_score in a different order
         final_score = 0.90 - i * 0.05
-        catalyst_score = 50.0 + ((i * 7) % n)          # scrambled vs rank
+        catalyst_score = 50.0 + ((i * 7) % n)  # scrambled vs rank
         base_price = 100.0 + i
         # forward return loosely tracks final_score (so final_score IC is positive)
         fwd_price = base_price * (1.0 + (0.10 - i * 0.012))
-        base_rows.append({
-            "ticker": t,
-            "actionable_rank": str(i + 1),
-            "final_score": f"{final_score:.6f}",
-            "catalyst_score": f"{catalyst_score:.6f}",
-            "composite_score": f"{0.05 - i*0.001:.6f}",
-            "close_price": f"{base_price:.4f}",
-        })
-        fwd_rows.append({
-            "ticker": t,
-            "actionable_rank": str(i + 1),
-            "final_score": f"{final_score:.6f}",
-            "catalyst_score": f"{catalyst_score:.6f}",
-            "composite_score": f"{0.05 - i*0.001:.6f}",
-            "close_price": f"{fwd_price:.4f}",
-        })
+        base_rows.append(
+            {
+                "ticker": t,
+                "actionable_rank": str(i + 1),
+                "final_score": f"{final_score:.6f}",
+                "catalyst_score": f"{catalyst_score:.6f}",
+                "composite_score": f"{0.05 - i*0.001:.6f}",
+                "close_price": f"{base_price:.4f}",
+            }
+        )
+        fwd_rows.append(
+            {
+                "ticker": t,
+                "actionable_rank": str(i + 1),
+                "final_score": f"{final_score:.6f}",
+                "catalyst_score": f"{catalyst_score:.6f}",
+                "composite_score": f"{0.05 - i*0.001:.6f}",
+                "close_price": f"{fwd_price:.4f}",
+            }
+        )
     snaps = {
         base: {"date": base, "rows": base_rows},
         fwd: {"date": fwd, "rows": fwd_rows},
@@ -98,6 +102,7 @@ def run():
 
     # --- Check 1: function default is "final_score" ---
     import inspect
+
     sig = inspect.signature(mod.measure_final_score_ic)
     default = sig.parameters["score_field"].default
     if default != "final_score":

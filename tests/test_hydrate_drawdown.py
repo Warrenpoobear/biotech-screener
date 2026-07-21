@@ -14,6 +14,7 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from common.corporate_actions import CorporateAction, CorporateActionRegistry  # noqa: E402
 from run_screen import (
     BETA_WINDOW,
     MIN_BARS_FOR_ESTIMATE,
@@ -21,10 +22,6 @@ from run_screen import (
     XBI_STALE_THRESHOLD,
     _hydrate_beta_rsi,
     _hydrate_drawdown,
-)
-from common.corporate_actions import (  # noqa: E402
-    CorporateAction,
-    CorporateActionRegistry,
 )
 
 # ---------------------------------------------------------------------------
@@ -971,11 +968,7 @@ class TestRecentSplitDrawdown:
 
     def _registry(self, ticker, split_date, factor=0.1):
         reg = CorporateActionRegistry(
-            actions=[
-                CorporateAction(
-                    ticker=ticker, action="forward_split", effective_date=split_date, factor=factor
-                )
-            ]
+            actions=[CorporateAction(ticker=ticker, action="forward_split", effective_date=split_date, factor=factor)]
         )
         reg._build_indices()
         return reg

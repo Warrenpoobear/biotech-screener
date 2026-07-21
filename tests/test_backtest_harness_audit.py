@@ -3,13 +3,14 @@
 Tests correctness invariants discovered during the full backtest harness audit.
 Each test documents a specific risk and prevents regression.
 """
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 import statistics
 import sys
 from pathlib import Path
+
+import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))

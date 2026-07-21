@@ -23,9 +23,7 @@ def audit_mod():
 def test_build_audit_passes_on_repo(audit_mod):
     report = audit_mod.build_audit()
     assert report["schema"] == "fleet_completion_audit.v1"
-    assert report["fail_count"] == 0, json.dumps(
-        [c for c in report["checks"] if c.get("status") == "FAIL"], indent=2
-    )
+    assert report["fail_count"] == 0, json.dumps([c for c in report["checks"] if c.get("status") == "FAIL"], indent=2)
     assert report["overall"] == "PASS"
     reg = report.get("registry_coverage") or {}
     assert reg.get("active_supervised", 0) > 0

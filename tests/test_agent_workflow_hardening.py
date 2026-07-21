@@ -24,10 +24,7 @@ def test_dependency_lock_passes_when_all_pins_are_locked(tmp_path: Path):
     lock = tmp_path / "requirements.lock"
     requirements.write_text("requests==2.34.2\nlanggraph==1.2.6\n", encoding="utf-8")
     lock.write_text(
-        "requests==2.34.2 \\\n"
-        "    --hash=sha256:abc\n"
-        "langgraph==1.2.6 \\\n"
-        "    --hash=sha256:def\n",
+        "requests==2.34.2 \\\n" "    --hash=sha256:abc\n" "langgraph==1.2.6 \\\n" "    --hash=sha256:def\n",
         encoding="utf-8",
     )
 
@@ -163,7 +160,9 @@ def test_network_marker_detector_flags_unmarked_live_call(tmp_path: Path):
     from tools.check_agent_workflow import check_network_tests_marked
 
     test_file = tmp_path / "test_live.py"
-    test_file.write_text("import requests\n\ndef test_live():\n    requests.get('https://example.com')\n", encoding="utf-8")
+    test_file.write_text(
+        "import requests\n\ndef test_live():\n    requests.get('https://example.com')\n", encoding="utf-8"
+    )
 
     result = check_network_tests_marked([test_file])
 

@@ -134,21 +134,12 @@ def _is_probabilistic_feature_field(fieldname: str) -> bool:
         return True
     if name.startswith("p_"):
         return True
-    return (
-        "probability" in name
-        or name.endswith("_prob")
-        or "_prob_" in name
-        or name.endswith("_probability")
-    )
+    return "probability" in name or name.endswith("_prob") or "_prob_" in name or name.endswith("_probability")
 
 
 def _gate_by_name(manifest: dict[str, Any]) -> dict[str, dict[str, Any]]:
     gates = manifest.get("gates") or []
-    return {
-        str(gate.get("name", "")): dict(gate)
-        for gate in gates
-        if isinstance(gate, dict)
-    }
+    return {str(gate.get("name", "")): dict(gate) for gate in gates if isinstance(gate, dict)}
 
 
 def _gate_status(gate: dict[str, Any] | None) -> str:
@@ -167,9 +158,7 @@ def _gate_evidence(gate: dict[str, Any]) -> str:
     return f"{name}: {status} - {detail}"
 
 
-def _field_coverage(
-    fieldnames: list[str], rows: list[dict[str, str]]
-) -> dict[str, Any]:
+def _field_coverage(fieldnames: list[str], rows: list[dict[str, str]]) -> dict[str, Any]:
     row_count = len(rows)
     fields: dict[str, dict[str, Any]] = {}
     for field in EXPECTED_EXPORT_FIELDS:
@@ -182,9 +171,7 @@ def _field_coverage(
             }
             continue
         non_null_count = sum(1 for row in rows if _non_null(row.get(field)))
-        coverage_pct = (
-            round((non_null_count / row_count) * 100, 2) if row_count else 0.0
-        )
+        coverage_pct = round((non_null_count / row_count) * 100, 2) if row_count else 0.0
         if non_null_count == 0:
             status = "EMPTY"
         elif non_null_count == row_count:
@@ -200,27 +187,17 @@ def _field_coverage(
     return {
         "rankings_present": bool(fieldnames),
         "row_count": row_count,
-        "eligible_count": sum(
-            1 for row in rows if str(row.get("eligible", "")).strip() == "1"
-        ),
+        "eligible_count": sum(1 for row in rows if str(row.get("eligible", "")).strip() == "1"),
         "fields": fields,
     }
 
 
-def _probabilistic_feature_feedback(
-    fieldnames: list[str], rows: list[dict[str, str]]
-) -> dict[str, Any]:
+def _probabilistic_feature_feedback(fieldnames: list[str], rows: list[dict[str, str]]) -> dict[str, Any]:
     row_count = len(rows)
-    observed_fields = [
-        field for field in fieldnames if _is_probabilistic_feature_field(field)
-    ]
+    observed_fields = [field for field in fieldnames if _is_probabilistic_feature_field(field)]
     all_fields = [
         *CORE_PROBABILISTIC_FEATURE_FIELDS,
-        *[
-            field
-            for field in observed_fields
-            if field not in CORE_PROBABILISTIC_FEATURE_FIELDS
-        ],
+        *[field for field in observed_fields if field not in CORE_PROBABILISTIC_FEATURE_FIELDS],
     ]
     fields: dict[str, dict[str, Any]] = {}
     for field in all_fields:
@@ -242,30 +219,16 @@ def _probabilistic_feature_feedback(
 
         non_null_values = [row.get(field) for row in rows if _non_null(row.get(field))]
         parsed_values = [
-            parsed
-            for parsed in (_parse_probability(value) for value in non_null_values)
-            if parsed is not None
+            parsed for parsed in (_parse_probability(value) for value in non_null_values) if parsed is not None
         ]
-        out_of_bounds = [
-            value for value in parsed_values if value < 0.0 or value > 1.0
-        ]
-        bounded_values = [
-            value for value in parsed_values if 0.0 <= value <= 1.0
-        ]
-        extreme_count = sum(
-            1 for value in bounded_values if value <= 0.05 or value >= 0.95
-        )
+        out_of_bounds = [value for value in parsed_values if value < 0.0 or value > 1.0]
+        bounded_values = [value for value in parsed_values if 0.0 <= value <= 1.0]
+        extreme_count = sum(1 for value in bounded_values if value <= 0.05 or value >= 0.95)
         non_null_count = len(non_null_values)
         numeric_count = len(parsed_values)
         parse_error_count = non_null_count - numeric_count
-        coverage_pct = (
-            round((non_null_count / row_count) * 100, 2) if row_count else 0.0
-        )
-        extreme_rate_pct = (
-            round((extreme_count / len(bounded_values)) * 100, 2)
-            if bounded_values
-            else 0.0
-        )
+        coverage_pct = round((non_null_count / row_count) * 100, 2) if row_count else 0.0
+        extreme_rate_pct = round((extreme_count / len(bounded_values)) * 100, 2) if bounded_values else 0.0
         if non_null_count == 0:
             status = "EMPTY"
         elif parse_error_count:
@@ -352,14 +315,10 @@ def _build_data_coverage_findings(
     data_coverage: dict[str, Any],
 ) -> list[dict[str, Any]]:
     fields = data_coverage["fields"]
-    missing = sorted(
-        name for name, stats in fields.items() if stats["status"] == "MISSING_COLUMN"
-    )
+    missing = sorted(name for name, stats in fields.items() if stats["status"] == "MISSING_COLUMN")
     empty = sorted(name for name, stats in fields.items() if stats["status"] == "EMPTY")
     partial = sorted(
-        name
-        for name, stats in fields.items()
-        if stats["status"] == "PARTIAL" and float(stats["coverage_pct"]) < 95.0
+        name for name, stats in fields.items() if stats["status"] == "PARTIAL" and float(stats["coverage_pct"]) < 95.0
     )
     if not missing and not empty and not partial:
         return []
@@ -368,13 +327,9 @@ def _build_data_coverage_findings(
     if missing:
         evidence.append(f"Missing expected exported fields: {', '.join(missing)}")
     if empty:
-        evidence.append(
-            f"Expected exported fields are present but empty: {', '.join(empty)}"
-        )
+        evidence.append(f"Expected exported fields are present but empty: {', '.join(empty)}")
     if partial:
-        details = ", ".join(
-            f"{name}={fields[name]['coverage_pct']}%" for name in partial
-        )
+        details = ", ".join(f"{name}={fields[name]['coverage_pct']}%" for name in partial)
         evidence.append(f"Expected exported fields below 95% coverage: {details}")
 
     return [
@@ -406,24 +361,14 @@ def _build_probabilistic_feature_findings(
 ) -> list[dict[str, Any]]:
     fields = feedback["fields"]
     core_missing = sorted(
-        field
-        for field in CORE_PROBABILISTIC_FEATURE_FIELDS
-        if fields[field]["status"] == "MISSING_COLUMN"
+        field for field in CORE_PROBABILISTIC_FEATURE_FIELDS if fields[field]["status"] == "MISSING_COLUMN"
     )
-    empty = sorted(
-        name for name, stats in fields.items() if stats["status"] == "EMPTY"
-    )
+    empty = sorted(name for name, stats in fields.items() if stats["status"] == "EMPTY")
     partial = sorted(
-        name
-        for name, stats in fields.items()
-        if stats["status"] == "PARTIAL" and float(stats["coverage_pct"]) < 95.0
+        name for name, stats in fields.items() if stats["status"] == "PARTIAL" and float(stats["coverage_pct"]) < 95.0
     )
-    non_numeric = sorted(
-        name for name, stats in fields.items() if stats["status"] == "NON_NUMERIC"
-    )
-    out_of_bounds = sorted(
-        name for name, stats in fields.items() if stats["status"] == "OUT_OF_BOUNDS"
-    )
+    non_numeric = sorted(name for name, stats in fields.items() if stats["status"] == "NON_NUMERIC")
+    out_of_bounds = sorted(name for name, stats in fields.items() if stats["status"] == "OUT_OF_BOUNDS")
     degenerate = sorted(
         name
         for name, stats in fields.items()
@@ -436,23 +381,14 @@ def _build_probabilistic_feature_findings(
         if not feedback["observed_fields"]:
             evidence.append("No probabilistic feature columns were found in rankings.csv")
         if core_missing:
-            evidence.append(
-                f"Missing core probabilistic fields: {', '.join(core_missing)}"
-            )
+            evidence.append(f"Missing core probabilistic fields: {', '.join(core_missing)}")
         if empty:
-            evidence.append(
-                f"Probabilistic fields are present but empty: {', '.join(empty)}"
-            )
+            evidence.append(f"Probabilistic fields are present but empty: {', '.join(empty)}")
         if partial:
-            details = ", ".join(
-                f"{name}={fields[name]['coverage_pct']}%" for name in partial
-            )
+            details = ", ".join(f"{name}={fields[name]['coverage_pct']}%" for name in partial)
             evidence.append(f"Probabilistic fields below 95% coverage: {details}")
         if non_numeric:
-            details = ", ".join(
-                f"{name} parse_errors={fields[name]['parse_error_count']}"
-                for name in non_numeric
-            )
+            details = ", ".join(f"{name} parse_errors={fields[name]['parse_error_count']}" for name in non_numeric)
             evidence.append(f"Probabilistic fields contain non-numeric values: {details}")
         findings.append(
             _finding(
@@ -511,8 +447,7 @@ def _build_probabilistic_feature_findings(
     if degenerate:
         evidence = [
             ", ".join(
-                f"{name} extreme_rate={fields[name]['extreme_rate_pct']}% "
-                f"n={fields[name]['numeric_count']}"
+                f"{name} extreme_rate={fields[name]['extreme_rate_pct']}% " f"n={fields[name]['numeric_count']}"
                 for name in degenerate
             )
         ]
@@ -562,9 +497,7 @@ def _build_gate_findings(gates: dict[str, dict[str, Any]]) -> list[dict[str, Any
                 finding_id="catalyst_attribution_anomaly",
                 title="Catalyst attribution or hard-catalyst supply anomaly",
                 area="Catalyst attribution",
-                severity="HIGH"
-                if any(_gate_status(g) == "FAIL" for g in catalyst_gates)
-                else "MEDIUM",
+                severity="HIGH" if any(_gate_status(g) == "FAIL" for g in catalyst_gates) else "MEDIUM",
                 classification="Event extraction/classification issue",
                 allowed_hypothesis="Wrong catalyst timing",
                 proposal_type="Data-source fix",
@@ -618,9 +551,7 @@ def _build_gate_findings(gates: dict[str, dict[str, Any]]) -> list[dict[str, Any
                 finding_id="portfolio_policy_risk_breach",
                 title="Portfolio risk or policy limit breach",
                 area="Portfolio risk",
-                severity="HIGH"
-                if any(_gate_status(g) == "FAIL" for g in risk_gates)
-                else "MEDIUM",
+                severity="HIGH" if any(_gate_status(g) == "FAIL" for g in risk_gates) else "MEDIUM",
                 classification="Portfolio construction policy mismatch",
                 allowed_hypothesis="Excess 0-7d exposure",
                 proposal_type="Policy fix",
@@ -680,9 +611,7 @@ def _build_gate_findings(gates: dict[str, dict[str, Any]]) -> list[dict[str, Any
                     evidence=[_gate_evidence(forward_gate)],
                     likely_cause="The forward horizon or IC ledger may not have enough observable data yet.",
                     suggested_owner="Diagnostics / evidence",
-                    forbidden_changes=[
-                        "Do not infer model weakness until the forward horizon is observable."
-                    ],
+                    forbidden_changes=["Do not infer model weakness until the forward horizon is observable."],
                     verification="Confirm forward_eval IC ledger persistence once horizon data matures.",
                     promotion_status="Pending observable forward-return evidence.",
                 )
@@ -709,9 +638,7 @@ def _build_gate_findings(gates: dict[str, dict[str, Any]]) -> list[dict[str, Any
                 finding_id="agent_ops_or_ledger_health",
                 title="Agent ops, cache, or ledger health warning",
                 area="Agent ops",
-                severity="HIGH"
-                if any(_gate_status(g) == "FAIL" for g in ops_gates)
-                else "LOW",
+                severity="HIGH" if any(_gate_status(g) == "FAIL" for g in ops_gates) else "LOW",
                 classification="Agent ops or freshness check failure",
                 allowed_hypothesis="Agent ops",
                 proposal_type="Diagnostic fix",
@@ -720,9 +647,7 @@ def _build_gate_findings(gates: dict[str, dict[str, Any]]) -> list[dict[str, Any
                 evidence=[_gate_evidence(g) for g in ops_gates],
                 likely_cause="Hermes/cron/cache/ledger freshness or validation needs operational follow-up.",
                 suggested_owner="Ops / Hermes",
-                forbidden_changes=[
-                    "Do not mutate caches or ledgers from this diagnosis artifact."
-                ],
+                forbidden_changes=["Do not mutate caches or ledgers from this diagnosis artifact."],
                 verification="Inspect the named ledger/cache gate and confirm the next daily run clears or repeats the warning.",
                 promotion_status="Diagnostic-only.",
             )
@@ -737,9 +662,7 @@ def build_daily_model_diagnosis(
     as_of_date: str | None = None,
 ) -> dict[str, Any]:
     """Build the governed daily self-improvement diagnosis payload."""
-    effective_date = _normal_date(
-        as_of_date or manifest.get("effective_as_of_date") or manifest.get("as_of_date")
-    )
+    effective_date = _normal_date(as_of_date or manifest.get("effective_as_of_date") or manifest.get("as_of_date"))
     fieldnames, rows = _read_rankings(snapshot_date_dir / "rankings.csv")
     data_coverage = _field_coverage(fieldnames, rows)
     probabilistic_feature_feedback = _probabilistic_feature_feedback(fieldnames, rows)
@@ -783,12 +706,8 @@ def _finding_lines(findings: list[dict[str, Any]]) -> list[str]:
         )
         for evidence in finding.get("evidence", []):
             lines.append(f"  - Evidence: {evidence}")
-        lines.append(
-            f"  - Allowed action: {finding['proposal_type']} ({finding['risk_level']} risk)."
-        )
-        lines.append(
-            f"  - Forbidden: {'; '.join(finding.get('forbidden_changes', []))}"
-        )
+        lines.append(f"  - Allowed action: {finding['proposal_type']} ({finding['risk_level']} risk).")
+        lines.append(f"  - Forbidden: {'; '.join(finding.get('forbidden_changes', []))}")
         lines.append(f"  - Verification: {finding['verification']}")
     return lines
 
@@ -823,9 +742,7 @@ def render_daily_model_diagnosis_markdown(diagnosis: dict[str, Any]) -> str:
     fields = diagnosis["data_coverage"]["fields"]
     for field in EXPECTED_EXPORT_FIELDS:
         stats = fields[field]
-        lines.append(
-            f"| {field} | {stats['status']} | {stats['non_null_count']} | {stats['coverage_pct']} |"
-        )
+        lines.append(f"| {field} | {stats['status']} | {stats['non_null_count']} | {stats['coverage_pct']} |")
     lines.extend(["", *_finding_lines(by_area("Data coverage"))])
     lines.extend(
         [
@@ -855,16 +772,8 @@ def render_daily_model_diagnosis_markdown(diagnosis: dict[str, Any]) -> str:
         lines.extend(["", f"## {title}", ""])
         lines.extend(_finding_lines(by_area(area)))
 
-    low_risk = [
-        f
-        for f in findings
-        if f.get("governance_classification") == "AUTO_SAFE_DIAGNOSTIC"
-    ]
-    high_risk = [
-        f
-        for f in findings
-        if f.get("governance_classification") != "AUTO_SAFE_DIAGNOSTIC"
-    ]
+    low_risk = [f for f in findings if f.get("governance_classification") == "AUTO_SAFE_DIAGNOSTIC"]
+    high_risk = [f for f in findings if f.get("governance_classification") != "AUTO_SAFE_DIAGNOSTIC"]
     lines.extend(["", "## Agent ops", ""])
     lines.extend(_finding_lines(by_area("Agent ops")))
     lines.extend(["", "## 6. Suggested low-risk fixes", ""])
@@ -890,12 +799,8 @@ def write_daily_model_diagnosis(
     token = _date_token(diagnosis["as_of_date"])
     json_path = output_dir / f"DAILY_MODEL_DIAGNOSIS_{token}.json"
     md_path = output_dir / f"DAILY_MODEL_DIAGNOSIS_{token}.md"
-    json_path.write_text(
-        json.dumps(diagnosis, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-    md_path.write_text(
-        render_daily_model_diagnosis_markdown(diagnosis), encoding="utf-8"
-    )
+    json_path.write_text(json.dumps(diagnosis, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    md_path.write_text(render_daily_model_diagnosis_markdown(diagnosis), encoding="utf-8")
     return {"json": json_path, "markdown": md_path}
 
 
@@ -950,9 +855,11 @@ def build_weekly_remediation_queue(
     items = sorted(
         items,
         key=lambda item: (
-            QUEUE_CLASSIFICATIONS.index(item["classification"])
-            if item["classification"] in QUEUE_CLASSIFICATIONS
-            else 999,
+            (
+                QUEUE_CLASSIFICATIONS.index(item["classification"])
+                if item["classification"] in QUEUE_CLASSIFICATIONS
+                else 999
+            ),
             SEVERITY_RANK.get(str(item.get("severity", "INFO")), 99),
             str(item.get("as_of_date", "")),
             str(item.get("finding_id", "")),
@@ -961,9 +868,7 @@ def build_weekly_remediation_queue(
     return {
         "artifact_version": "1.0",
         "week": week,
-        "source_dates": sorted(
-            d.get("as_of_date") for d in diagnoses if d.get("as_of_date")
-        ),
+        "source_dates": sorted(d.get("as_of_date") for d in diagnoses if d.get("as_of_date")),
         "items": items,
         "do_not_change": list(DO_NOT_CHANGE),
     }
@@ -980,9 +885,7 @@ def render_weekly_remediation_queue_markdown(queue: dict[str, Any]) -> str:
     items = queue.get("items", [])
     for classification in QUEUE_CLASSIFICATIONS:
         lines.extend([f"## {classification}", ""])
-        classified = [
-            item for item in items if item["classification"] == classification
-        ]
+        classified = [item for item in items if item["classification"] == classification]
         if not classified:
             lines.append("- No items.")
             lines.append("")
@@ -1006,20 +909,14 @@ def render_weekly_remediation_queue_markdown(queue: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def write_weekly_remediation_queue(
-    queue: dict[str, Any], output_dir: Path = DEFAULT_OUTPUT_DIR
-) -> dict[str, Path]:
+def write_weekly_remediation_queue(queue: dict[str, Any], output_dir: Path = DEFAULT_OUTPUT_DIR) -> dict[str, Path]:
     """Write weekly remediation queue JSON and Markdown artifacts."""
     output_dir.mkdir(parents=True, exist_ok=True)
     token = _week_token(queue["week"])
     json_path = output_dir / f"WEEKLY_REMEDIATION_QUEUE_{token}.json"
     md_path = output_dir / f"WEEKLY_REMEDIATION_QUEUE_{token}.md"
-    json_path.write_text(
-        json.dumps(queue, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-    md_path.write_text(
-        render_weekly_remediation_queue_markdown(queue), encoding="utf-8"
-    )
+    json_path.write_text(json.dumps(queue, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    md_path.write_text(render_weekly_remediation_queue_markdown(queue), encoding="utf-8")
     return {"json": json_path, "markdown": md_path}
 
 
@@ -1050,9 +947,7 @@ def _load_week_diagnoses(diagnosis_dir: Path, week: str | None) -> list[dict[str
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="Write governed self-improvement diagnosis artifacts."
-    )
+    parser = argparse.ArgumentParser(description="Write governed self-improvement diagnosis artifacts.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     daily = subparsers.add_parser("daily", help="Write daily model diagnosis artifacts")
@@ -1061,9 +956,7 @@ def main(argv: list[str] | None = None) -> int:
     daily.add_argument("--as-of-date", required=True)
     daily.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
 
-    weekly = subparsers.add_parser(
-        "weekly", help="Write weekly remediation queue artifacts"
-    )
+    weekly = subparsers.add_parser("weekly", help="Write weekly remediation queue artifacts")
     weekly.add_argument("--diagnosis-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     weekly.add_argument("--week", help="ISO week label, e.g. 2026-W23")
     weekly.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
@@ -1071,13 +964,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "daily":
         manifest = _load_json(args.manifest)
-        paths = write_daily_model_diagnosis(
-            args.snapshot_dir, manifest, args.as_of_date, args.output_dir
-        )
+        paths = write_daily_model_diagnosis(args.snapshot_dir, manifest, args.as_of_date, args.output_dir)
     else:
-        paths = write_weekly_remediation_queue_from_dir(
-            args.diagnosis_dir, args.week, args.output_dir
-        )
+        paths = write_weekly_remediation_queue_from_dir(args.diagnosis_dir, args.week, args.output_dir)
 
     for path in paths.values():
         print(path)

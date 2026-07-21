@@ -88,7 +88,4 @@ def age_days(as_of: date, artifact_date: date) -> int:
 
 def format_stale_source(latest: date, as_of: date, threshold: int) -> str:
     age = age_days(as_of, latest)
-    return (
-        f"STALE_SOURCE: latest artifact {latest.isoformat()} "
-        f"({age}d ago; threshold {threshold}d)"
-    )
+    return f"STALE_SOURCE: latest artifact {latest.isoformat()} " f"({age}d ago; threshold {threshold}d)"

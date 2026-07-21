@@ -16,7 +16,6 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 PIN_RE = re.compile(r"^\s*([A-Za-z0-9_.-]+)==([^\s\\#]+)")
@@ -268,7 +267,9 @@ def check_langgraph_declared(requirements_path: Path, lock_path: Path, repo_root
         repo_root / "scientific_cartography" / "langgraph_review",
         repo_root / "tools" / "run_scientific_cartography_langgraph_review.py",
     ]
-    uses_langgraph = any("langgraph" in path.read_text(encoding="utf-8") for path in _iter_python_files(langgraph_paths))
+    uses_langgraph = any(
+        "langgraph" in path.read_text(encoding="utf-8") for path in _iter_python_files(langgraph_paths)
+    )
     if not uses_langgraph:
         return CheckResult("langgraph_dependency", True, "No LangGraph usage detected.")
 
@@ -397,7 +398,9 @@ def check_approval_language(paths: list[Path]) -> CheckResult:
             "Risky approval language found: " + "; ".join(offenders),
         )
 
-    return CheckResult("approval_language", True, "Approval language keeps review, deployment, and automation separate.")
+    return CheckResult(
+        "approval_language", True, "Approval language keeps review, deployment, and automation separate."
+    )
 
 
 def check_artifact_schema_registry(path: Path) -> CheckResult:

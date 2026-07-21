@@ -91,13 +91,13 @@ def html_page(title: str, content: str, nav_items: list = None, current_page: st
 </html>"""
 
 
-def index_template(artifact_dir: str, as_of_date: str, pages: list, missing_artifacts: list, warnings: list, nav_items: list = None) -> str:
+def index_template(
+    artifact_dir: str, as_of_date: str, pages: list, missing_artifacts: list, warnings: list, nav_items: list = None
+) -> str:
     """Index page showing available pages and status."""
     warnings_html = ""
     if missing_artifacts:
-        warnings_html += (
-            f'<div class="warning"><strong>Missing Artifacts:</strong> {", ".join(_esc(m) for m in missing_artifacts)}</div>'
-        )
+        warnings_html += f'<div class="warning"><strong>Missing Artifacts:</strong> {", ".join(_esc(m) for m in missing_artifacts)}</div>'
     if warnings:
         for warning in warnings:
             warnings_html += f'<div class="warning">{_esc(warning)}</div>'
@@ -293,7 +293,9 @@ def scheduled_review_health_template(executions: list, nav_items: list) -> str:
             outcome_icon = "✓" if outcome == "success" else "⚠"
             outcome_color = "green" if outcome == "success" else "orange"
             error_text = (
-                f"<details><summary>View error</summary><pre>{_esc(error_msg[:200])}{'\u2026' if len(error_msg) > 200 else ''}</pre></details>" if error_msg else "—"
+                f"<details><summary>View error</summary><pre>{_esc(error_msg[:200])}{'\u2026' if len(error_msg) > 200 else ''}</pre></details>"
+                if error_msg
+                else "—"
             )
 
             rows += f"""

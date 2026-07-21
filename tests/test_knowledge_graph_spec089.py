@@ -555,11 +555,7 @@ class TestIntegration:
             edges,
         )
 
-        missing_edges = [
-            edge
-            for edge in edges
-            if edge["source"] not in nodes or edge["target"] not in nodes
-        ]
+        missing_edges = [edge for edge in edges if edge["source"] not in nodes or edge["target"] not in nodes]
         assert missing_edges == []
         assert "spec_089" in nodes
         assert "spec_100" in nodes

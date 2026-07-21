@@ -133,7 +133,7 @@ def main():
             event_type="ruleset_mismatch_fail",
             title="Ruleset integrity: CLAUDE.md check FAILED",
             summary=checks["claude_declared"][1],
-            next_operator_action="investigate"
+            next_operator_action="investigate",
         )
         return 1
 
@@ -190,7 +190,7 @@ def main():
                     "checks_passed": sum(1 for v in checks.values() if isinstance(v, tuple) and v[0] == "PASS"),
                     "checks_warned": len(warnings),
                     "checks_failed": len(failures),
-                }
+                },
             )
             logger.info("PASS event routed to Town")
             return 0
@@ -216,7 +216,7 @@ def main():
                     "checks_passed": sum(1 for v in checks.values() if isinstance(v, tuple) and v[0] == "PASS"),
                     "checks_warned": len(warnings),
                     "checks_failed": len(failures),
-                }
+                },
             )
             logger.error("FAIL event routed to Town")
             return 1

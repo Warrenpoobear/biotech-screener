@@ -29,14 +29,11 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 SERVER_NAME = "biotech-mcp"
 SERVER_VERSION = "0.1.0"
 PROTOCOL_VERSION = "2025-06-18"
 
-REPO_ROOT = Path(
-    os.environ.get("BIOTECH_MCP_REPO", Path(__file__).resolve().parent.parent)
-).resolve()
+REPO_ROOT = Path(os.environ.get("BIOTECH_MCP_REPO", Path(__file__).resolve().parent.parent)).resolve()
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _OUTPUT_FRAMING = "ndjson"
@@ -155,54 +152,104 @@ def _tool_definitions() -> list[dict[str, Any]]:
         "pattern": r"^\d{4}-\d{2}-\d{2}$",
     }
     return [
-        _tool("list_snapshots",
-              "List dated snapshot directories under data/snapshots/ with key-file presence.",
-              {"limit": {"type": "integer", "minimum": 1, "maximum": 500, "default": 30,
-                         "description": "Max snapshots to return (most recent first)."}}),
-        _tool("read_latest_snapshot_manifest",
-              "Read snapshot_manifest.json for a snapshot (latest if date omitted).",
-              {"date": date_prop}),
-        _tool("read_gate_verdicts",
-              "Read recent governance gate verdicts from artifacts/gate_verdict_ledger.jsonl "
-              "(most recent first), plus optional per-snapshot EES gate diagnostics.",
-              {"limit": {"type": "integer", "minimum": 1, "maximum": 50, "default": 5,
-                         "description": "Number of recent ledger records to return."},
-               "date": date_prop}),
-        _tool("read_phase2_health",
-              "Read phase2_health.json for a snapshot (latest if date omitted).",
-              {"date": date_prop}),
-        _tool("read_rankings_schema",
-              "Read the rankings.csv schema (column headers, row count, small sample) "
-              "for a snapshot. Schema-focused: does not return the full table.",
-              {"date": date_prop,
-               "sample_rows": {"type": "integer", "minimum": 0, "maximum": 5, "default": 0,
-                               "description": "Optional number of sample rows (<=5)."}}),
-        _tool("read_event_ev_feature_coverage",
-              "Read the Scientific Cartography landscape_feature_coverage_report.json "
-              "(Event-EV / expectation-model feature coverage) for the latest or given date.",
-              {"date": date_prop}),
-        _tool("read_forward_eval_ic_ledger",
-              "Read artifacts/readiness/forward_eval_ic_baseline.json, returning the "
-              "most recent IC observations and window/status fields.",
-              {"limit": {"type": "integer", "minimum": 1, "maximum": 50, "default": 10,
-                         "description": "Number of most-recent observations to return."}}),
-        _tool("read_scientific_cartography_status",
-              "Read scientific_cartography_status.json (governance flags, warnings, errors) "
-              "for the latest or given cartography run date.",
-              {"date": date_prop}),
-        _tool("list_disease_map_artifacts",
-              "List the disease-map / asset-indication artifacts in a Scientific Cartography "
-              "run directory, with the disease_map_summary if present.",
-              {"date": date_prop}),
-        _tool("read_semgrep_findings",
-              "Read the Semgrep governance rule inventory from .semgrep/. Note: scan findings "
-              "are not persisted in-repo (CI-generated); this reports the ruleset, not results.",
-              {}),
-        _tool("run_readonly_diagnostics",
-              "Aggregate a read-only health rollup across the latest snapshot, gate verdicts, "
-              "phase-2 health, cartography status, and IC ledger. Reads existing artifacts only "
-              "— does NOT execute any script, mutate, or call the network.",
-              {"date": date_prop}),
+        _tool(
+            "list_snapshots",
+            "List dated snapshot directories under data/snapshots/ with key-file presence.",
+            {
+                "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 30,
+                    "description": "Max snapshots to return (most recent first).",
+                }
+            },
+        ),
+        _tool(
+            "read_latest_snapshot_manifest",
+            "Read snapshot_manifest.json for a snapshot (latest if date omitted).",
+            {"date": date_prop},
+        ),
+        _tool(
+            "read_gate_verdicts",
+            "Read recent governance gate verdicts from artifacts/gate_verdict_ledger.jsonl "
+            "(most recent first), plus optional per-snapshot EES gate diagnostics.",
+            {
+                "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 50,
+                    "default": 5,
+                    "description": "Number of recent ledger records to return.",
+                },
+                "date": date_prop,
+            },
+        ),
+        _tool(
+            "read_phase2_health",
+            "Read phase2_health.json for a snapshot (latest if date omitted).",
+            {"date": date_prop},
+        ),
+        _tool(
+            "read_rankings_schema",
+            "Read the rankings.csv schema (column headers, row count, small sample) "
+            "for a snapshot. Schema-focused: does not return the full table.",
+            {
+                "date": date_prop,
+                "sample_rows": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 5,
+                    "default": 0,
+                    "description": "Optional number of sample rows (<=5).",
+                },
+            },
+        ),
+        _tool(
+            "read_event_ev_feature_coverage",
+            "Read the Scientific Cartography landscape_feature_coverage_report.json "
+            "(Event-EV / expectation-model feature coverage) for the latest or given date.",
+            {"date": date_prop},
+        ),
+        _tool(
+            "read_forward_eval_ic_ledger",
+            "Read artifacts/readiness/forward_eval_ic_baseline.json, returning the "
+            "most recent IC observations and window/status fields.",
+            {
+                "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 50,
+                    "default": 10,
+                    "description": "Number of most-recent observations to return.",
+                }
+            },
+        ),
+        _tool(
+            "read_scientific_cartography_status",
+            "Read scientific_cartography_status.json (governance flags, warnings, errors) "
+            "for the latest or given cartography run date.",
+            {"date": date_prop},
+        ),
+        _tool(
+            "list_disease_map_artifacts",
+            "List the disease-map / asset-indication artifacts in a Scientific Cartography "
+            "run directory, with the disease_map_summary if present.",
+            {"date": date_prop},
+        ),
+        _tool(
+            "read_semgrep_findings",
+            "Read the Semgrep governance rule inventory from .semgrep/. Note: scan findings "
+            "are not persisted in-repo (CI-generated); this reports the ruleset, not results.",
+            {},
+        ),
+        _tool(
+            "run_readonly_diagnostics",
+            "Aggregate a read-only health rollup across the latest snapshot, gate verdicts, "
+            "phase-2 health, cartography status, and IC ledger. Reads existing artifacts only "
+            "— does NOT execute any script, mutate, or call the network.",
+            {"date": date_prop},
+        ),
     ]
 
 
@@ -306,11 +353,13 @@ def _list_snapshots(arguments: dict[str, Any]) -> dict[str, Any]:
     rows = []
     for date in dates:
         snap = _safe_subdir(_snapshots_dir(), date)
-        rows.append({
-            "date": date,
-            "path": _repo_relative(snap),
-            "key_files": {f: (snap / f).is_file() for f in SNAPSHOT_KEY_FILES},
-        })
+        rows.append(
+            {
+                "date": date,
+                "path": _repo_relative(snap),
+                "key_files": {f: (snap / f).is_file() for f in SNAPSHOT_KEY_FILES},
+            }
+        )
     return {
         "snapshots_dir": _repo_relative(_snapshots_dir()),
         "count": len(rows),
@@ -332,8 +381,7 @@ def _read_gate_verdicts(arguments: dict[str, Any]) -> dict[str, Any]:
     if arguments.get("date") is not None:
         date = _resolve_date(arguments.get("date"), _list_snapshot_dates(), label="snapshot")
         snap = _safe_subdir(_snapshots_dir(), date)
-        result["ees_gate_diagnostics"] = {
-            "date": date, **_read_json_artifact(snap / "ees_gate_diagnostics.json")}
+        result["ees_gate_diagnostics"] = {"date": date, **_read_json_artifact(snap / "ees_gate_diagnostics.json")}
     return result
 
 
@@ -449,8 +497,9 @@ def _read_semgrep_findings(_arguments: dict[str, Any]) -> dict[str, Any]:
     rule_ids: list[str] = []
     for rule_file in sorted(semgrep_dir.glob("*.y*ml")):
         out["rule_files"].append(_repo_relative(rule_file))
-        for match in re.finditer(r"^\s*-?\s*id:\s*(.+?)\s*$", rule_file.read_text(
-                encoding="utf-8", errors="replace"), flags=re.MULTILINE):
+        for match in re.finditer(
+            r"^\s*-?\s*id:\s*(.+?)\s*$", rule_file.read_text(encoding="utf-8", errors="replace"), flags=re.MULTILINE
+        ):
             rule_ids.append(match.group(1).strip().strip("'\""))
     out["rules"] = rule_ids
     out["rule_count"] = len(rule_ids)

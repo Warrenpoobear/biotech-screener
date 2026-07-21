@@ -47,7 +47,7 @@ def main():
             event_type="first_fire_fail",
             title="First-fire validation: job FAILED — ledger file missing",
             summary=f"Expected {ledger_path} not found. Knowledge layer may not have run.",
-            next_operator_action="investigate"
+            next_operator_action="investigate",
         )
         return 1
 
@@ -62,7 +62,7 @@ def main():
             event_type="first_fire_fail",
             title="First-fire validation: job FAILED — parse error",
             summary=f"Error reading {ledger_path}: {str(e)[:100]}",
-            next_operator_action="investigate"
+            next_operator_action="investigate",
         )
         return 1
 
@@ -94,16 +94,13 @@ def main():
                 severity="INFO",
                 event_type="first_fire_pass",
                 title=f"First-fire validation PASS: {job_names}",
-                summary=(
-                    f"{len(passes)} job(s) passed first-fire validation. "
-                    f"Ready for promotion to production."
-                ),
+                summary=(f"{len(passes)} job(s) passed first-fire validation. " f"Ready for promotion to production."),
                 artifact=str(ledger_path.relative_to(REPO_ROOT)),
                 next_operator_action="approve",
                 extra={
                     "passed_jobs": [j.get("job") for j in passes],
                     "pass_count": len(passes),
-                }
+                },
             )
             if success:
                 logger.info(f"PASS event routed to Town for {len(passes)} job(s)")
@@ -130,7 +127,7 @@ def main():
                 extra={
                     "failed_jobs": [j.get("job") for j in failures],
                     "fail_count": len(failures),
-                }
+                },
             )
             if success:
                 logger.info(f"FAIL event routed to Town for {len(failures)} job(s)")

@@ -60,6 +60,7 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 # Root + convenience routes
 # ---------------------------------------------------------------------------
 
+
 @app.get("/", include_in_schema=False)
 def index():
     """Serve the single-page dashboard at the root URL."""

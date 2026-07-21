@@ -245,9 +245,7 @@ def generate_monthly_report(month_str: str = None, environment: str = "prod") ->
     try:
         from tools.skills_loop_review import format_loop_review_sections
 
-        report_lines.extend(
-            format_loop_review_sections(environment=environment, logs_dir=logs_dir)
-        )
+        report_lines.extend(format_loop_review_sections(environment=environment, logs_dir=logs_dir))
     except ImportError:
         pass
 

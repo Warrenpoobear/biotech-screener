@@ -5,12 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from tools.audit_learnings import (
-    _bootstrap_line_count,
-    _hot_pattern_keys,
-    build_report,
-    parse_learnings,
-)
+from tools.audit_learnings import _bootstrap_line_count, _hot_pattern_keys, build_report, parse_learnings
 
 SAMPLE = """
 # Learnings

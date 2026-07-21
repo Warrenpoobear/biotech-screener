@@ -183,7 +183,7 @@ def main() -> int:
                     "sentinel_state": sentinel_state,
                     "supervisor_final_severity": sup.get("final_severity") if sup else None,
                     "failure_count": len(failures),
-                }
+                },
             )
         except Exception as e:
             print(f"[sentinel] WARNING: Failed to route snapshot_missing event to Town: {e}")

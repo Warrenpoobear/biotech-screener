@@ -7,12 +7,7 @@ import time
 from datetime import date
 from pathlib import Path
 
-from tools.artifact_freshness import (
-    age_days,
-    newest_artifact_freshness,
-    newest_content_date_under,
-    parse_dates_in_name,
-)
+from tools.artifact_freshness import age_days, newest_artifact_freshness, newest_content_date_under, parse_dates_in_name
 
 
 def test_parse_dates_in_name_extracts_iso_dates():

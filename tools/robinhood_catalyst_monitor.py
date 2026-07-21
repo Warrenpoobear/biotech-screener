@@ -21,7 +21,9 @@ def find_latest_snapshot():
     if not snap_dir.exists():
         raise FileNotFoundError(f"❌ Snapshot directory not found: {snap_dir}")
 
-    snapshots = sorted([d for d in snap_dir.iterdir() if d.is_dir() and len(d.name) == 10 and d.name[4] == "-" and d.name[7] == "-"])
+    snapshots = sorted(
+        [d for d in snap_dir.iterdir() if d.is_dir() and len(d.name) == 10 and d.name[4] == "-" and d.name[7] == "-"]
+    )
     if not snapshots:
         raise FileNotFoundError("❌ No snapshots found in data/snapshots_pit/")
 

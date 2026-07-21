@@ -4,7 +4,6 @@ import json
 import tempfile
 from pathlib import Path
 
-
 from scientific_cartography.cli import export_artifacts_command
 from scientific_cartography.schemas.cluster_schema import CompetitiveClusterRecord
 from scientific_cartography.schemas.landscape_feature_schema import LandscapeFeatureRecord

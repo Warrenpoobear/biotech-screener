@@ -27,6 +27,7 @@ router = APIRouter(prefix="/api/network", tags=["network"])
 
 try:
     import networkx as nx  # type: ignore
+
     _HAS_NX = True
 except ImportError:  # networkx optional
     nx = None  # type: ignore
@@ -37,6 +38,7 @@ except ImportError:  # networkx optional
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _shared_sponsor_edges(
     ticker_trials: Dict[str, List[Dict[str, str]]],
@@ -50,11 +52,7 @@ def _shared_sponsor_edges(
     # Map sponsor -> set of tickers that touch it.
     sponsor_to_tickers: Dict[str, Set[str]] = defaultdict(set)
     for ticker, trials in ticker_trials.items():
-        own = {
-            (t.get("sponsor_name_at_map_time") or "").lower()
-            for t in trials
-            if t.get("sponsor_name_at_map_time")
-        }
+        own = {(t.get("sponsor_name_at_map_time") or "").lower() for t in trials if t.get("sponsor_name_at_map_time")}
         for t in trials:
             nct = t.get("nct_id", "")
             for sp in aact_sponsors.get(nct, []):
@@ -101,6 +99,7 @@ def _target_edges(cells: List[Dict[str, Any]]) -> List[Tuple[str, str, str, str]
 # Graph construction
 # ---------------------------------------------------------------------------
 
+
 def build_graph(snapshot: Optional[str] = None) -> Dict[str, Any]:
     """Construct the network graph payload."""
     cells = dl.build_all_cells(snapshot)
@@ -108,9 +107,7 @@ def build_graph(snapshot: Optional[str] = None) -> Dict[str, Any]:
     aact_sponsors = dl.load_aact_sponsors()
     aact_studies = dl.load_aact_studies()
 
-    ticker_index: Dict[str, Dict[str, Any]] = {
-        c["ticker"]: c for c in cells
-    }
+    ticker_index: Dict[str, Dict[str, Any]] = {c["ticker"]: c for c in cells}
 
     # ---- Build nodes ----
     company_nodes: List[Dict[str, Any]] = []
@@ -120,15 +117,17 @@ def build_graph(snapshot: Optional[str] = None) -> Dict[str, Any]:
 
     for ticker, trials in ticker_trials.items():
         cell = ticker_index.get(ticker)
-        company_nodes.append({
-            "id": ticker,
-            "type": "company",
-            "label": (cell.get("name") if cell else ticker) or ticker,
-            "tissue": (cell.get("tissue") if cell else "Diversified") or "Diversified",
-            "composite_score": (cell.get("composite_score") if cell else None),
-            "trial_count": len(trials),
-            "catalyst_count": (cell.get("receptors", {}).get("catalyst_count") if cell else 0),
-        })
+        company_nodes.append(
+            {
+                "id": ticker,
+                "type": "company",
+                "label": (cell.get("name") if cell else ticker) or ticker,
+                "tissue": (cell.get("tissue") if cell else "Diversified") or "Diversified",
+                "composite_score": (cell.get("composite_score") if cell else None),
+                "trial_count": len(trials),
+                "catalyst_count": (cell.get("receptors", {}).get("catalyst_count") if cell else 0),
+            }
+        )
         for t in trials:
             nct = t.get("nct_id", "")
             if not nct or nct in seen_ncts:
@@ -137,15 +136,17 @@ def build_graph(snapshot: Optional[str] = None) -> Dict[str, Any]:
                 continue
             seen_ncts.add(nct)
             study = aact_studies.get(nct, {})
-            trial_nodes.append({
-                "id": nct,
-                "type": "trial",
-                "label": nct,
-                "phase": study.get("phase", "Unknown"),
-                "status": study.get("overall_status", "Unknown"),
-                "primary_completion_date": study.get("primary_completion_date", ""),
-                "sponsors": aact_sponsors.get(nct, []),
-            })
+            trial_nodes.append(
+                {
+                    "id": nct,
+                    "type": "trial",
+                    "label": nct,
+                    "phase": study.get("phase", "Unknown"),
+                    "status": study.get("overall_status", "Unknown"),
+                    "primary_completion_date": study.get("primary_completion_date", ""),
+                    "sponsors": aact_sponsors.get(nct, []),
+                }
+            )
             trial_edges.append((ticker, nct, nct, "trial"))
 
     # ---- Build inter-company edges ----
@@ -176,9 +177,7 @@ def build_graph(snapshot: Optional[str] = None) -> Dict[str, Any]:
             "edge_count": G.number_of_edges(),
             "connected_components": nx.number_connected_components(G),
             "density": nx.density(G),
-            "company_degrees": {
-                n["id"]: G.degree(n["id"]) for n in company_nodes
-            },
+            "company_degrees": {n["id"]: G.degree(n["id"]) for n in company_nodes},
             "most_connected_company": max(
                 ((n["id"], G.degree(n["id"])) for n in company_nodes),
                 key=lambda kv: kv[1],
@@ -218,9 +217,7 @@ def build_graph(snapshot: Optional[str] = None) -> Dict[str, Any]:
             "edge_count": n_edges,
             "connected_components": components,
             "density": density,
-            "company_degrees": {
-                n["id"]: degree[n["id"]] for n in company_nodes
-            },
+            "company_degrees": {n["id"]: degree[n["id"]] for n in company_nodes},
             "most_connected_company": max(
                 ((n["id"], degree[n["id"]]) for n in company_nodes),
                 key=lambda kv: kv[1],
@@ -229,8 +226,7 @@ def build_graph(snapshot: Optional[str] = None) -> Dict[str, Any]:
         }
 
     return {
-        "snapshot": snapshot
-        or (dl.load_snapshot_dates()[-1] if dl.load_snapshot_dates() else None),
+        "snapshot": snapshot or (dl.load_snapshot_dates()[-1] if dl.load_snapshot_dates() else None),
         "nodes": {
             "companies": company_nodes,
             "trials": trial_nodes,
@@ -253,6 +249,7 @@ def build_graph(snapshot: Optional[str] = None) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Endpoint
 # ---------------------------------------------------------------------------
+
 
 @router.get("")
 def get_network(snapshot: Optional[str] = Query(default=None)):

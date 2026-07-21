@@ -17,9 +17,7 @@ from self_improvement_harness import (  # noqa: E402
 )
 
 
-def _write_rankings(
-    path: Path, rows: list[dict[str, str]], fieldnames: list[str]
-) -> None:
+def _write_rankings(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -69,22 +67,14 @@ def test_daily_diagnosis_treats_missing_expectation_fields_as_plumbing_gap(tmp_p
     }
 
     diagnosis = build_daily_model_diagnosis(snapshot, manifest, "2026-06-05")
-    finding = next(
-        item for item in diagnosis["findings"] if item["area"] == "Data coverage"
-    )
+    finding = next(item for item in diagnosis["findings"] if item["area"] == "Data coverage")
 
     assert finding["classification"] == "Plumbing/export gap"
     assert finding["proposal_type"] == "Plumbing fix"
     assert finding["governance_classification"] == "AUTO_SAFE_DIAGNOSTIC"
     assert "Do not invent insider signal" in finding["forbidden_changes"]
-    assert (
-        diagnosis["data_coverage"]["fields"]["market_cap_mm"]["status"]
-        == "MISSING_COLUMN"
-    )
-    assert (
-        diagnosis["data_coverage"]["fields"]["priced_move_pct"]["status"]
-        == "MISSING_COLUMN"
-    )
+    assert diagnosis["data_coverage"]["fields"]["market_cap_mm"]["status"] == "MISSING_COLUMN"
+    assert diagnosis["data_coverage"]["fields"]["priced_move_pct"]["status"] == "MISSING_COLUMN"
     assert "selector" in " ".join(diagnosis["do_not_change"]).lower()
 
 
@@ -134,9 +124,7 @@ def test_daily_diagnosis_surfaces_probabilistic_feature_feedback_gap(tmp_path):
         "confidence_pos",
         "p_move_gt_implied",
     ]
-    assert (
-        feedback["fields"]["confidence_pos"]["out_of_bounds_count"] == 1
-    )
+    assert feedback["fields"]["confidence_pos"]["out_of_bounds_count"] == 1
     assert "probabilistic_feature_feedback_gap" in finding_ids
     assert "probabilistic_feature_contract_violation" in finding_ids
 
@@ -168,9 +156,7 @@ def test_daily_diagnosis_writes_markdown_and_machine_readable_json(tmp_path):
         ],
     }
 
-    paths = write_daily_model_diagnosis(
-        snapshot, manifest, "2026-06-05", tmp_path / "out"
-    )
+    paths = write_daily_model_diagnosis(snapshot, manifest, "2026-06-05", tmp_path / "out")
 
     assert paths["json"].name == "DAILY_MODEL_DIAGNOSIS_2026_06_05.json"
     assert paths["markdown"].name == "DAILY_MODEL_DIAGNOSIS_2026_06_05.md"
@@ -253,9 +239,7 @@ def test_weekly_queue_can_be_written_from_daily_diagnosis_directory(tmp_path):
     )
 
     week = week_for_as_of_date("2026-06-05")
-    paths = write_weekly_remediation_queue_from_dir(
-        diagnosis_dir, week, tmp_path / "weekly"
-    )
+    paths = write_weekly_remediation_queue_from_dir(diagnosis_dir, week, tmp_path / "weekly")
 
     assert week == "2026-W23"
     assert paths["json"].name == "WEEKLY_REMEDIATION_QUEUE_2026_W23.json"

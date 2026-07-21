@@ -22,6 +22,7 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from common.corporate_actions import load_actions  # noqa: E402
 from tools.data_integrity_audit import (  # noqa: E402
     _safe_float,
     _split_adjust_prices,
@@ -31,7 +32,6 @@ from tools.data_integrity_audit import (  # noqa: E402
     check_universe_coverage,
     recompute_price_fields,
 )
-from common.corporate_actions import load_actions  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -404,9 +404,7 @@ class TestSplitAdjustedRecompute:
             ]
         )
         out = _split_adjust_prices(prices.copy(), AS_OF, registry)
-        pd.testing.assert_frame_equal(
-            out.reset_index(drop=True), prices.reset_index(drop=True)
-        )
+        pd.testing.assert_frame_equal(out.reset_index(drop=True), prices.reset_index(drop=True))
 
     def test_split_adjust_empty_registry_is_noop(self):
         """No registry / no actions -> prices returned unchanged."""
@@ -414,6 +412,4 @@ class TestSplitAdjustedRecompute:
 
         prices = _split_prices()
         out = _split_adjust_prices(prices.copy(), AS_OF, CorporateActionRegistry())
-        pd.testing.assert_frame_equal(
-            out.reset_index(drop=True), prices.reset_index(drop=True)
-        )
+        pd.testing.assert_frame_equal(out.reset_index(drop=True), prices.reset_index(drop=True))

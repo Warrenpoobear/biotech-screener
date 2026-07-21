@@ -42,18 +42,36 @@ def _diag_args(tmp_path, company_file, trials_file, out):
 
 def _trials():
     return [
-        {"nct_id": "NCT90000001", "brief_title": "Tirzepatide in T2D",
-         "sponsor": "Eli Lilly and Company", "conditions": ["Type 2 Diabetes Mellitus"],
-         "interventions": ["Tirzepatide"], "phases": ["Phase 3"],
-         "overall_status": "Recruiting", "study_type": "Interventional"},
-        {"nct_id": "NCT90000002", "brief_title": "VX-880 in T2D",
-         "sponsor": "Vertex Pharmaceuticals", "conditions": ["Type 2 Diabetes Mellitus"],
-         "interventions": ["VX-880"], "phases": ["Phase 2"],
-         "overall_status": "Recruiting", "study_type": "Interventional"},
-        {"nct_id": "NCT90000003", "brief_title": "Private agent in T2D",
-         "sponsor": "Tiny Private Biotech LLC", "conditions": ["Type 2 Diabetes Mellitus"],
-         "interventions": ["XYZ-123"], "phases": ["Phase 1"],
-         "overall_status": "Recruiting", "study_type": "Interventional"},
+        {
+            "nct_id": "NCT90000001",
+            "brief_title": "Tirzepatide in T2D",
+            "sponsor": "Eli Lilly and Company",
+            "conditions": ["Type 2 Diabetes Mellitus"],
+            "interventions": ["Tirzepatide"],
+            "phases": ["Phase 3"],
+            "overall_status": "Recruiting",
+            "study_type": "Interventional",
+        },
+        {
+            "nct_id": "NCT90000002",
+            "brief_title": "VX-880 in T2D",
+            "sponsor": "Vertex Pharmaceuticals",
+            "conditions": ["Type 2 Diabetes Mellitus"],
+            "interventions": ["VX-880"],
+            "phases": ["Phase 2"],
+            "overall_status": "Recruiting",
+            "study_type": "Interventional",
+        },
+        {
+            "nct_id": "NCT90000003",
+            "brief_title": "Private agent in T2D",
+            "sponsor": "Tiny Private Biotech LLC",
+            "conditions": ["Type 2 Diabetes Mellitus"],
+            "interventions": ["XYZ-123"],
+            "phases": ["Phase 1"],
+            "overall_status": "Recruiting",
+            "study_type": "Interventional",
+        },
     ]
 
 
@@ -81,11 +99,7 @@ def test_company_file_to_map_ticker_flow(tmp_path):
     assert rc == 0
 
     # Diagnostic resolved tickers via the sponsor path into program records.
-    progs = [
-        json.loads(l)
-        for l in (diag_out / "program_records.jsonl").read_text().splitlines()
-        if l.strip()
-    ]
+    progs = [json.loads(l) for l in (diag_out / "program_records.jsonl").read_text().splitlines() if l.strip()]
     by_company = {p["company_name"]: p["ticker"] for p in progs}
     assert by_company.get("Eli Lilly and Company") == "LLY"
     assert by_company.get("Vertex Pharmaceuticals") == "VRTX"

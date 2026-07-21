@@ -26,21 +26,16 @@ router = APIRouter(prefix="/api/atlas", tags=["atlas"])
 # /cells
 # ---------------------------------------------------------------------------
 
+
 @router.get("/cells")
 def get_cells(
     snapshot: Optional[str] = Query(
         default=None,
         description="Snapshot date YYYY-MM-DD; defaults to latest",
     ),
-    tissue: Optional[str] = Query(
-        default=None, description="Filter by therapeutic category"
-    ),
-    min_composite: Optional[float] = Query(
-        default=None, description="Minimum composite score"
-    ),
-    has_catalyst: Optional[bool] = Query(
-        default=None, description="Only cells with >=1 upcoming catalyst"
-    ),
+    tissue: Optional[str] = Query(default=None, description="Filter by therapeutic category"),
+    min_composite: Optional[float] = Query(default=None, description="Minimum composite score"),
+    has_catalyst: Optional[bool] = Query(default=None, description="Only cells with >=1 upcoming catalyst"),
 ):
     """Return every cell (company) as an array of cell-atlas records."""
     cells = dl.build_all_cells(snapshot)
@@ -70,6 +65,7 @@ def get_cells(
 # /cell/{ticker}
 # ---------------------------------------------------------------------------
 
+
 @router.get("/cell/{ticker}")
 def get_cell(ticker: str, snapshot: Optional[str] = Query(default=None)):
     """Detailed cell record for a single ticker."""
@@ -84,12 +80,8 @@ def get_cell(ticker: str, snapshot: Optional[str] = Query(default=None)):
         {
             **t,
             "phase": aact.get(t.get("nct_id", ""), {}).get("phase", "Unknown"),
-            "overall_status": aact.get(t.get("nct_id", ""), {}).get(
-                "overall_status", "Unknown"
-            ),
-            "primary_completion_date": aact.get(t.get("nct_id", ""), {}).get(
-                "primary_completion_date", ""
-            ),
+            "overall_status": aact.get(t.get("nct_id", ""), {}).get("overall_status", "Unknown"),
+            "primary_completion_date": aact.get(t.get("nct_id", ""), {}).get("primary_completion_date", ""),
             "all_sponsors": sponsors.get(t.get("nct_id", ""), []),
         }
         for t in trials
@@ -102,6 +94,7 @@ def get_cell(ticker: str, snapshot: Optional[str] = Query(default=None)):
 # static path is matched before the {category} path parameter would grab it.
 # ---------------------------------------------------------------------------
 
+
 @router.get("/tissues")
 def list_tissues(snapshot: Optional[str] = Query(default=None)):
     """List every therapeutic category present, with member counts."""
@@ -109,10 +102,7 @@ def list_tissues(snapshot: Optional[str] = Query(default=None)):
     counts: Dict[str, int] = {}
     for c in cells:
         counts[c["tissue"]] = counts.get(c["tissue"], 0) + 1
-    items = [
-        {"tissue": t, "cell_count": n}
-        for t, n in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
-    ]
+    items = [{"tissue": t, "cell_count": n} for t, n in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))]
     return {"tissues": items, "total": len(items)}
 
 
@@ -120,24 +110,19 @@ def list_tissues(snapshot: Optional[str] = Query(default=None)):
 # /tissue/{category}
 # ---------------------------------------------------------------------------
 
+
 @router.get("/tissue/{category}")
 def get_tissue(category: str, snapshot: Optional[str] = Query(default=None)):
     """All cells belonging to a therapeutic category ("tissue")."""
     cells = dl.build_all_cells(snapshot)
     members = [c for c in cells if c["tissue"].lower() == category.lower()]
-    scores = [
-        c["composite_score"]
-        for c in members
-        if c.get("composite_score") is not None
-    ]
+    scores = [c["composite_score"] for c in members if c.get("composite_score") is not None]
     return {
         "tissue": category,
         "cell_count": len(members),
         "tickers": [c["ticker"] for c in members],
         "avg_composite_score": statistics.fmean(scores) if scores else None,
-        "total_catalysts": sum(
-            c["receptors"]["catalyst_count"] for c in members
-        ),
+        "total_catalysts": sum(c["receptors"]["catalyst_count"] for c in members),
         "total_trials": sum(c["trial_count"] for c in members),
         "cells": members,
     }
@@ -146,6 +131,7 @@ def get_tissue(category: str, snapshot: Optional[str] = Query(default=None)):
 # ---------------------------------------------------------------------------
 # /stats
 # ---------------------------------------------------------------------------
+
 
 @router.get("/stats")
 def get_stats(snapshot: Optional[str] = Query(default=None)):
@@ -174,8 +160,7 @@ def get_stats(snapshot: Optional[str] = Query(default=None)):
         hist[idx] += 1
 
     return {
-        "snapshot": snapshot
-        or (dl.load_snapshot_dates()[-1] if dl.load_snapshot_dates() else None),
+        "snapshot": snapshot or (dl.load_snapshot_dates()[-1] if dl.load_snapshot_dates() else None),
         "total_cells": len(cells),
         "cells_with_score": len(scores),
         "avg_composite_score": statistics.fmean(scores) if scores else None,
@@ -198,6 +183,7 @@ def get_stats(snapshot: Optional[str] = Query(default=None)):
 # /snapshots  (timeline list)
 # ---------------------------------------------------------------------------
 
+
 @router.get("/snapshots")
 def list_snapshots():
     """Available snapshot dates for the timeline slider."""
@@ -208,6 +194,7 @@ def list_snapshots():
 # ---------------------------------------------------------------------------
 # /meta (UI vocabulary)
 # ---------------------------------------------------------------------------
+
 
 @router.get("/meta")
 def get_meta():

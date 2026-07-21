@@ -351,7 +351,9 @@ class TestClassifySafetyMiss:
 
 
 class TestCheck8kSkipsSafetySignal:
-    def _make_8k_event(self, ticker, event_date, event_type="DATA_READOUT", confidence="HIGH", name="Positive topline data"):
+    def _make_8k_event(
+        self, ticker, event_date, event_type="DATA_READOUT", confidence="HIGH", name="Positive topline data"
+    ):
         return {
             "ticker": ticker,
             "event_date": event_date,
@@ -365,8 +367,9 @@ class TestCheck8kSkipsSafetySignal:
         # Bug fix (issue #514): low-confidence SAFETY_SIGNAL 8-Ks must not
         # be treated as resolution signals.
         events = [
-            self._make_8k_event("CATX", "2026-03-16", event_type="SAFETY_SIGNAL",
-                                 confidence="MED", name="8-K: serious adverse event"),
+            self._make_8k_event(
+                "CATX", "2026-03-16", event_type="SAFETY_SIGNAL", confidence="MED", name="8-K: serious adverse event"
+            ),
         ]
         result = check_8k_for_resolution("CATX", events, date(2026, 3, 16), date(2026, 3, 31))
         assert result is None
@@ -374,8 +377,13 @@ class TestCheck8kSkipsSafetySignal:
     def test_safety_signal_high_confidence_accepted(self):
         # HIGH-confidence SAFETY_SIGNAL (e.g. DSMB halt) should still resolve.
         events = [
-            self._make_8k_event("XENE", "2026-03-09", event_type="SAFETY_SIGNAL",
-                                 confidence="HIGH", name="DSMB recommended halt due to safety"),
+            self._make_8k_event(
+                "XENE",
+                "2026-03-09",
+                event_type="SAFETY_SIGNAL",
+                confidence="HIGH",
+                name="DSMB recommended halt due to safety",
+            ),
         ]
         result = check_8k_for_resolution("XENE", events, date(2026, 3, 9), date(2026, 3, 31))
         assert result is not None
@@ -383,8 +391,13 @@ class TestCheck8kSkipsSafetySignal:
     def test_non_safety_signal_unaffected(self):
         # Normal DATA_READOUT events should still be returned as before.
         events = [
-            self._make_8k_event("PVLA", "2026-03-31", event_type="DATA_READOUT",
-                                 confidence="HIGH", name="Phase 3 SELVA met primary endpoint"),
+            self._make_8k_event(
+                "PVLA",
+                "2026-03-31",
+                event_type="DATA_READOUT",
+                confidence="HIGH",
+                name="Phase 3 SELVA met primary endpoint",
+            ),
         ]
         result = check_8k_for_resolution("PVLA", events, date(2026, 3, 31), date(2026, 4, 15))
         assert result is not None
@@ -405,8 +418,9 @@ class TestSafetySignalTypeMap:
             }
         ]
         wl = build_watchlist(events, date(2026, 3, 31), existing_resolutions=set())
-        corporate_update_entries = [w for w in wl if w.get("catalyst_type") == "CORPORATE_UPDATE"
-                                    and w["ticker"] == "CATX"]
+        corporate_update_entries = [
+            w for w in wl if w.get("catalyst_type") == "CORPORATE_UPDATE" and w["ticker"] == "CATX"
+        ]
         assert corporate_update_entries == []
 
 

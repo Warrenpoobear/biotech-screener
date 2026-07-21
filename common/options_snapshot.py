@@ -130,6 +130,7 @@ def _build_summary(
                     "catalyst_days": r.get("catalyst_days", ""),
                 }
             )
+
     def _term_slope_sort_key(row: Dict[str, Any]) -> float:
         # A missing/empty opt_term_slope is NOT the same as a confirmed slope
         # of 0.0 (flat term structure) -- treat missing as "sort last" (most

@@ -5,12 +5,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import time
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any, Callable
-
-import sys
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -122,7 +121,11 @@ def _fetch_market_data(ticker: str, as_of_date: str) -> dict[str, Any] | None:
         high_52 = info.get("fiftyTwoWeekHigh")
         low_52 = info.get("fiftyTwoWeekLow")
 
-    if price in (None, "") and info.get("marketCap") in (None, "") and not (info.get("longName") or info.get("shortName")):
+    if (
+        price in (None, "")
+        and info.get("marketCap") in (None, "")
+        and not (info.get("longName") or info.get("shortName"))
+    ):
         return None
 
     return {
@@ -173,7 +176,9 @@ def _fetch_financial_data(row: dict[str, Any], ticker: str, as_of_date: str) -> 
         return None
 
 
-def _merge_trials(existing: list[dict[str, Any]], fetched: list[dict[str, Any]], as_of_date: str) -> tuple[list[dict[str, Any]], int, int]:
+def _merge_trials(
+    existing: list[dict[str, Any]], fetched: list[dict[str, Any]], as_of_date: str
+) -> tuple[list[dict[str, Any]], int, int]:
     """Merge fetched trials by (ticker, nct_id), preserving existing order."""
     existing_keys = {
         (_ticker(record), record.get("nct_id")): record
@@ -305,7 +310,9 @@ def main() -> int:
     parser.add_argument("--as-of-date", required=True)
     parser.add_argument("--universe-path", type=Path, default=REPO_ROOT / "production_data" / "universe.json")
     parser.add_argument("--trial-records-path", type=Path, default=REPO_ROOT / "production_data" / "trial_records.json")
-    parser.add_argument("--report-path", type=Path, default=REPO_ROOT / "artifacts" / "universe_refresh" / "pending_fetch_report.json")
+    parser.add_argument(
+        "--report-path", type=Path, default=REPO_ROOT / "artifacts" / "universe_refresh" / "pending_fetch_report.json"
+    )
     parser.add_argument("--sleep-seconds", type=float, default=0.2)
     parser.add_argument("--apply", action="store_true", help="Write fetched universe/trial data. Defaults to dry-run.")
     args = parser.parse_args()

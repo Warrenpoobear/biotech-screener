@@ -59,7 +59,13 @@ class ExistingUniverseIngest:
         seen = {value.lower() for value in (company_name, ticker) if value}
         explicit = item.get("aliases")
         explicit = explicit if isinstance(explicit, list) else ([explicit] if explicit else [])
-        for value in [*explicit, item.get("company"), market_data.get("company_name"), item.get("company_name"), item.get("name")]:
+        for value in [
+            *explicit,
+            item.get("company"),
+            market_data.get("company_name"),
+            item.get("company_name"),
+            item.get("name"),
+        ]:
             if not value:
                 continue
             alias = str(value).strip()

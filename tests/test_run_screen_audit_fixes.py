@@ -10,20 +10,9 @@ import sys
 from pathlib import Path
 
 from run_production_screen import save_run_log
-from run_screen import (
-    _attach_phase2_decision_ruleset_manifest,
-    add_bootstrap_analysis,
-    compute_data_hash,
-)
+from run_screen import _attach_phase2_decision_ruleset_manifest, add_bootstrap_analysis, compute_data_hash
 from run_screen_checkpoint import verify_against_prior_manifest
-from tools.run_daily_production import (
-    GateConfig,
-    _load_progress,
-    _mark_step,
-    build_run_manifest,
-    promote_snapshot,
-)
-
+from tools.run_daily_production import GateConfig, _load_progress, _mark_step, build_run_manifest, promote_snapshot
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 

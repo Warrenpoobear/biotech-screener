@@ -17,8 +17,8 @@ import argparse
 import subprocess
 import sys
 import time
-from pathlib import Path
 from datetime import date
+from pathlib import Path
 from typing import Any
 
 REPO = Path(__file__).resolve().parent.parent

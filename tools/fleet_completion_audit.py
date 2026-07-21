@@ -98,9 +98,7 @@ WATCHDOG_HERALD_RECOVERY_STRINGS = [
 
 
 def _active_lines(text: str) -> str:
-    return "\n".join(
-        line for line in text.splitlines() if line.strip() and not line.strip().startswith("#")
-    )
+    return "\n".join(line for line in text.splitlines() if line.strip() and not line.strip().startswith("#"))
 
 
 def check_cron_llm_free() -> list[dict[str, Any]]:
@@ -197,11 +195,7 @@ def check_supervisor_escalation_json() -> dict[str, Any]:
 
 def check_registry_heartbeat_coverage() -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Every active supervised agent must have specialized check, generic paths, or skip reason."""
-    from tools.agent_heartbeat_checks import (
-        SPECIALIZED_CHECKS,
-        TERMINAL_UNSUPERVISED_AGENTS,
-        heartbeat_skip_reason,
-    )
+    from tools.agent_heartbeat_checks import SPECIALIZED_CHECKS, TERMINAL_UNSUPERVISED_AGENTS, heartbeat_skip_reason
 
     registry_path = REPO / "agents" / "AGENT_REGISTRY.json"
     if not registry_path.is_file():
@@ -242,20 +236,14 @@ def check_registry_heartbeat_coverage() -> tuple[list[dict[str, Any]], dict[str,
         skip_reason = heartbeat_skip_reason(name, entry)
         if skip_reason:
             summary["on_demand_skip"] += 1
-            findings.append(
-                {"check": "registry_coverage", "agent": name, "status": "PASS", "mode": "on_demand_skip"}
-            )
+            findings.append({"check": "registry_coverage", "agent": name, "status": "PASS", "mode": "on_demand_skip"})
             continue
         if name in SPECIALIZED_CHECKS:
             summary["specialized"] += 1
-            findings.append(
-                {"check": "registry_coverage", "agent": name, "status": "PASS", "mode": "specialized"}
-            )
+            findings.append({"check": "registry_coverage", "agent": name, "status": "PASS", "mode": "specialized"})
         elif entry.get("artifact_paths"):
             summary["generic_fallback"] += 1
-            findings.append(
-                {"check": "registry_coverage", "agent": name, "status": "PASS", "mode": "generic_fallback"}
-            )
+            findings.append({"check": "registry_coverage", "agent": name, "status": "PASS", "mode": "generic_fallback"})
         else:
             findings.append(
                 {

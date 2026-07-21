@@ -15,7 +15,6 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_LOGS_DIR = REPO_ROOT / "artifacts" / "skills_learning"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "artifacts" / "skills_learning"

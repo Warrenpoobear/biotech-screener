@@ -24,11 +24,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from tools.audit_learnings import build_report
-from tools.skills_loop_review import (
-    format_loop_review_sections,
-    stalled_loop_entries,
-    trim_candidates,
-)
+from tools.skills_loop_review import format_loop_review_sections, stalled_loop_entries, trim_candidates
 
 LOGS_DIR = REPO / "artifacts" / "skills_learning"
 DRAFTS_DIR = REPO / "artifacts" / "skill_patch_drafts"
@@ -56,9 +52,7 @@ def _telemetry_summary(month_str: str, environment: str = "prod") -> dict[str, d
     legacy_path = LOGS_DIR / f"execution_log_{month_str}.jsonl"
     executions = _load_jsonl(log_path) or _load_jsonl(legacy_path)
 
-    stats: dict[str, dict] = defaultdict(
-        lambda: {"executions": 0, "successes": 0, "failures": 0, "total_latency": 0.0}
-    )
+    stats: dict[str, dict] = defaultdict(lambda: {"executions": 0, "successes": 0, "failures": 0, "total_latency": 0.0})
     for row in executions:
         skill = row.get("skill_name", "unknown")
         s = stats[skill]
@@ -135,7 +129,9 @@ def _fleet_ops_section(as_of: date) -> list[str]:
     path = REPO / "artifacts" / "fleet_ops" / f"{as_of.isoformat()}_status.json"
     lines = ["## Fleet ops status", ""]
     if not path.is_file():
-        lines.append("No artifact. Run: `python3 tools/fleet_completion_audit.py --write` then `fleet_ops_status.py --write`")
+        lines.append(
+            "No artifact. Run: `python3 tools/fleet_completion_audit.py --write` then `fleet_ops_status.py --write`"
+        )
         lines.append("")
         lines.extend(_registry_coverage_lines(as_of))
         if lines[-1] != "":

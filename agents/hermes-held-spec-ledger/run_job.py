@@ -26,7 +26,6 @@ logger = logging.getLogger(__name__)
 
 from common.operator_delivery import send_operator_event  # noqa: E402
 
-
 APPROVED_STATUSES = {"APPROVED", "CLEARED", "RELEASED"}
 BLOCKED_STATUSES = {"HELD", "HELD_SUPPRESSED", "SPEC_REQUIRED", "BLOCKED"}
 WAITING_STATUSES = {"AWAITING_FIRST_FIRE", "WAITING_CLEARANCE", "NEEDS_OPERATOR_DECISION"}
@@ -51,7 +50,7 @@ def main():
             event_type="held_spec_ledger",
             title="Held spec ledger: job FAILED — ledger file missing",
             summary=f"Expected {ledger_path} not found. Knowledge layer may not have run.",
-            next_operator_action="investigate"
+            next_operator_action="investigate",
         )
         return 1
 
@@ -66,7 +65,7 @@ def main():
             event_type="held_spec_ledger",
             title="Held spec ledger: job FAILED — parse error",
             summary=f"Error reading {ledger_path}: {str(e)[:100]}",
-            next_operator_action="investigate"
+            next_operator_action="investigate",
         )
         return 1
 
@@ -76,7 +75,9 @@ def main():
     blocked = [s for s in held_specs if _status_for(s) in BLOCKED_STATUSES]
     waiting = [s for s in held_specs if _status_for(s) in WAITING_STATUSES]
 
-    logger.info(f"Held specs: {len(held_specs)} total ({len(approved)} approved, {len(blocked)} blocked, {len(waiting)} waiting)")
+    logger.info(
+        f"Held specs: {len(held_specs)} total ({len(approved)} approved, {len(blocked)} blocked, {len(waiting)} waiting)"
+    )
 
     # Route to Town
     try:
@@ -96,7 +97,7 @@ def main():
                 "approved": len(approved),
                 "blocked": len(blocked),
                 "waiting_clearance": len(waiting),
-            }
+            },
         )
 
         if success:

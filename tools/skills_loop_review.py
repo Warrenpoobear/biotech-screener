@@ -69,9 +69,7 @@ def load_executions_in_window(
 ) -> dict[str, int]:
     """Return skill_name -> execution count in the last `days` days."""
     as_of = as_of or date.today()
-    cutoff = datetime.combine(as_of - timedelta(days=days), datetime.min.time()).replace(
-        tzinfo=timezone.utc
-    )
+    cutoff = datetime.combine(as_of - timedelta(days=days), datetime.min.time()).replace(tzinfo=timezone.utc)
     logs_dir = logs_dir or LOGS_DIR
     counts: dict[str, int] = {}
 
@@ -168,9 +166,7 @@ def check_skill_contradiction(skill_text: str, lesson_text: str) -> list[str]:
         window = lesson_lower[max(0, idx - 40) : idx]
         if re.search(r"(?:never|do not|must not|don't)\s", window):
             continue
-        conflicts.append(
-            f"Lesson may contradict skill prohibition: “{prohibition[:80]}”"
-        )
+        conflicts.append(f"Lesson may contradict skill prohibition: “{prohibition[:80]}”")
 
     for match in re.finditer(r"(?i)(?:always|must)\s+([^.!\n]{8,120})", skill_text):
         requirement = _normalize_phrase(match.group(1))
@@ -182,9 +178,7 @@ def check_skill_contradiction(skill_text: str, lesson_text: str) -> list[str]:
             continue
         window = lesson_lower[max(0, idx - 40) : idx + len(needle) + 10]
         if re.search(r"(?:never|do not|must not|don't|avoid)\s", window):
-            conflicts.append(
-                f"Lesson may contradict skill requirement: “{requirement[:80]}”"
-            )
+            conflicts.append(f"Lesson may contradict skill requirement: “{requirement[:80]}”")
 
     return conflicts
 
@@ -334,9 +328,7 @@ def selfimprove_gates_status(memory_path: Path | None = None) -> dict[str, Any]:
     open_ids = [e["id"] for e in open_entries]
     allowed = not open_ids
     if open_ids:
-        message = (
-            "SELFIMPROVE_GATES_MET=1 blocked — confirm host recovery for: " + ", ".join(open_ids)
-        )
+        message = "SELFIMPROVE_GATES_MET=1 blocked — confirm host recovery for: " + ", ".join(open_ids)
     else:
         message = "Stalled loops clear — operator may set SELFIMPROVE_GATES_MET=1"
     return {

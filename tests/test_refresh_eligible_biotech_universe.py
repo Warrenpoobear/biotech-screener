@@ -39,7 +39,10 @@ def test_refresh_marks_uncovered_biotech_pending():
     refreshed, report = refresh_universe(universe, trials, "2026-06-19")
 
     assert refreshed[0]["status"] == "pending_data_collection"
-    assert refreshed[0]["status_reason"] == "coverage_pending:company_name,market_data,clinical_trials,scientific_cartography"
+    assert (
+        refreshed[0]["status_reason"]
+        == "coverage_pending:company_name,market_data,clinical_trials,scientific_cartography"
+    )
     assert refreshed[0]["coverage_status"]["company_name"] == "pending"
     assert refreshed[0]["coverage_status"]["scientific_cartography"] == "pending"
     assert refreshed[0]["coverage_refreshed_as_of"] == "2026-06-19"

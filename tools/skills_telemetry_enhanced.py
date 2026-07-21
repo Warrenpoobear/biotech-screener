@@ -135,9 +135,7 @@ def identify_stale_skills(executions: List[Dict[str, Any]], days_threshold: int 
     return stale
 
 
-def identify_slow_skills(
-    skills: Dict[str, Dict[str, Any]], latency_threshold_ms: float = 5000
-) -> Dict[str, Any]:
+def identify_slow_skills(skills: Dict[str, Dict[str, Any]], latency_threshold_ms: float = 5000) -> Dict[str, Any]:
     """Identify skills with high latency (>N ms average)."""
     slow = {}
     for skill, stats in skills.items():
@@ -150,9 +148,7 @@ def identify_slow_skills(
     return slow
 
 
-def identify_costly_skills(
-    skills: Dict[str, Dict[str, Any]], cost_threshold_usd: float = 0.01
-) -> Dict[str, Any]:
+def identify_costly_skills(skills: Dict[str, Dict[str, Any]], cost_threshold_usd: float = 0.01) -> Dict[str, Any]:
     """Identify skills with high cost per execution (>$N)."""
     costly = {}
     for skill, stats in skills.items():
@@ -179,9 +175,7 @@ def identify_unreliable_skills(skills: Dict[str, Dict[str, Any]], failure_thresh
     return unreliable
 
 
-def identify_underexecuted_skills(
-    skills: Dict[str, Dict[str, Any]], expected_executions: int = 5
-) -> Dict[str, Any]:
+def identify_underexecuted_skills(skills: Dict[str, Dict[str, Any]], expected_executions: int = 5) -> Dict[str, Any]:
     """Identify skills that haven't had enough execution for evaluation."""
     underexecuted = {}
     for skill, stats in skills.items():

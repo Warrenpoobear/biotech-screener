@@ -536,9 +536,7 @@ class TestPitLiveSourceGuards:
         )
 
         assert refreshed is True
-        assert calls == [
-            ["--price-csv", str(tmp_path / "price_history.csv"), "--days-back", "5"]
-        ]
+        assert calls == [["--price-csv", str(tmp_path / "price_history.csv"), "--days-back", "5"]]
 
 
 # =============================================================================

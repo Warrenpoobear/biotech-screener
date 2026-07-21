@@ -6,6 +6,7 @@ ticker's DataFrame rather than all 338 concatenated.
 Usage:
     python tools/_price_refresh_lowmem.py --as-of-date 2026-06-04
 """
+
 import argparse
 import csv
 import gc
@@ -17,9 +18,7 @@ import tempfile
 import time
 from pathlib import Path
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -102,7 +101,7 @@ def fetch_ticker(ticker: str, start: str, end: str) -> list[dict]:
         except Exception as e:
             err = str(e)
             if "429" in err or "Too Many Requests" in err or "Expecting value" in err:
-                backoff = delay * (1.5 ** retry) * (0.5 + random.random())
+                backoff = delay * (1.5**retry) * (0.5 + random.random())
                 logger.warning("Rate-limit on %s, backoff %.1fs", ticker, backoff)
                 time.sleep(backoff)
                 retry += 1
@@ -158,11 +157,7 @@ def main():
             if k[0] == t.upper() and (latest is None or k[1] > latest):
                 latest = k[1]
         if latest is None or latest < through_date:
-            needs_fetch[t] = (
-                latest  # incremental from last date
-                if latest and latest >= args.start
-                else args.start
-            )
+            needs_fetch[t] = latest if latest and latest >= args.start else args.start  # incremental from last date
 
     logger.info(
         "%d tickers need fetching, %d already current",
