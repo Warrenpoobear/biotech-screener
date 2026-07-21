@@ -32,6 +32,15 @@ from tools.phase3_corrected_regime_replay import (
     run_replay,
 )
 
+# Integration test: exercises the production regime-replay against
+# artifacts/surveillance/pit_backtest_5d_ytd_2026.csv, which is not committed
+# and is absent in a clean / CI checkout. Skip cleanly there; runs where the
+# data exists. (CI_RED_2026 #521)
+pytestmark = pytest.mark.skipif(
+    not module.BACKTEST_CSV.exists(),
+    reason="requires artifacts/surveillance/pit_backtest_5d_ytd_2026.csv (absent in clean/CI checkout)",
+)
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------

@@ -28,6 +28,15 @@ from tools.run_stressed_optionality_shadow_test import (
     run_shadow_test,
 )
 
+# Integration test: exercises the production stressed-optionality shadow test
+# against production_data/price_history.csv and artifacts/surveillance/pit_backtest_5d_ytd_2026.csv,
+# neither committed / present in a clean / CI checkout. Skip cleanly there;
+# runs where the data exists. (CI_RED_2026 #521)
+pytestmark = pytest.mark.skipif(
+    not (module.PRICE_HISTORY_CSV.exists() and module.BACKTEST_CSV.exists()),
+    reason="requires production_data/price_history.csv + artifacts/surveillance/pit_backtest_5d_ytd_2026.csv (absent in clean/CI checkout)",
+)
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------

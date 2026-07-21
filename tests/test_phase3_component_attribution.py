@@ -33,6 +33,14 @@ from tools.analyze_phase3_component_attribution import (
     run_attribution,
 )
 
+# Integration test: exercises the production attribution tool against
+# production_data/price_history.csv, which is not committed and is absent in a
+# clean / CI checkout. Skip cleanly there; runs where the data exists. (CI_RED_2026 #521)
+pytestmark = pytest.mark.skipif(
+    not module.PRICE_HISTORY_CSV.exists(),
+    reason="requires production_data/price_history.csv (absent in clean/CI checkout)",
+)
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------

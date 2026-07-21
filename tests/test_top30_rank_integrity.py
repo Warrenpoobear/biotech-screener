@@ -32,6 +32,15 @@ from tools.audit_top30_rank_integrity import (
     spearman_ic,
 )
 
+# Integration test: exercises the production rank-integrity audit against
+# production_data/price_history.csv and artifacts/surveillance/pit_backtest_5d_ytd_2026.csv,
+# neither of which is committed / present in a clean / CI checkout. Skip cleanly
+# there; runs where the data exists. (CI_RED_2026 #521)
+pytestmark = pytest.mark.skipif(
+    not (module.PRICE_HISTORY_PATH.exists() and module.BACKTEST_CSV.exists()),
+    reason="requires production_data/price_history.csv + artifacts/surveillance/pit_backtest_5d_ytd_2026.csv (absent in clean/CI checkout)",
+)
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------

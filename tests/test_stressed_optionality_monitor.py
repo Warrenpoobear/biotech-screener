@@ -36,6 +36,14 @@ from tools.run_stressed_optionality_shadow_test import (
     MOMENTUM_CONFIRM_THRESHOLD,
 )
 
+# Integration test: exercises the production stressed-optionality monitor against
+# production_data/price_history.csv, which is not committed and is absent in a
+# clean / CI checkout. Skip cleanly there; runs where the data exists. (CI_RED_2026 #521)
+pytestmark = pytest.mark.skipif(
+    not module.PRICE_HISTORY_CSV.exists(),
+    reason="requires production_data/price_history.csv (absent in clean/CI checkout)",
+)
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
