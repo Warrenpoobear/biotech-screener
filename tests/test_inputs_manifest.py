@@ -389,6 +389,26 @@ class TestDriftCheck:
         errs = verify_against_prior_manifest(current, prior)
         assert any("new_required_dep" in e and "absent from prior" in e for e in errs)
 
+    def test_drift_new_required_dep_tolerated_in_replay(self, data_dir, all_conditions_off):
+        """Replay mode: a now-required dep absent from the (older) bundle manifest
+        is schema evolution, not drift — no hard error when allow_new_required_deps."""
+        prior = build_inputs_manifest("2026-02-17", data_dir, all_conditions_off)
+        current = json.loads(json.dumps(prior))
+        current["dependencies"].append(
+            {
+                "key": "new_required_dep",
+                "required": True,
+                "exists": True,
+                "sha256": "0" * 64,
+                "path": "/fake",
+                "resolved_from": "test",
+                "load_site": "test.py:1",
+                "record_count": None,
+            }
+        )
+        errs = verify_against_prior_manifest(current, prior, allow_new_required_deps=True)
+        assert not any("new_required_dep" in e and "absent from prior" in e for e in errs)
+
 
 # ===========================================================================
 # Metadata integration

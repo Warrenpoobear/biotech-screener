@@ -9783,6 +9783,9 @@ def run_screening_pipeline(
     # Input manifest mode: "off", "write", "verify"
     inputs_manifest_mode: str = "off",
     inputs_manifest_verify_path: Optional[Path] = None,
+    # True when replaying a frozen bundle: tolerate now-required deps that predate
+    # the bundle's manifest (schema evolution) rather than hard-failing drift.
+    from_replay_bundle: bool = False,
     phase_scores_v2: bool = False,
     phase_scores_v3: bool = True,
     phase_scores_v1: bool = False,
@@ -9910,7 +9913,11 @@ def run_screening_pipeline(
                 raise FileNotFoundError(f"Prior inputs_manifest not found: {inputs_manifest_verify_path}")
             with open(inputs_manifest_verify_path, "r", encoding="utf-8") as _mf:
                 _prior_manifest = json.load(_mf)
-            drift_errors = verify_against_prior_manifest(_inputs_manifest, _prior_manifest)
+            drift_errors = verify_against_prior_manifest(
+                _inputs_manifest,
+                _prior_manifest,
+                allow_new_required_deps=from_replay_bundle,
+            )
             if drift_errors:
                 for de in drift_errors:
                     logger.error(f"[INPUT MANIFEST DRIFT] {de}")
@@ -11872,6 +11879,7 @@ def _attach_phase2_decision_ruleset_manifest(
 def _verify_inputs_manifest_after_cli_patch(
     results: Dict[str, Any],
     verify_path: Optional[Path],
+    from_replay_bundle: bool = False,
 ) -> None:
     """Re-run manifest verification after CLI-only dependencies are patched in."""
     manifest = (results.get("run_metadata") or {}).get("inputs_manifest")
@@ -11885,7 +11893,7 @@ def _verify_inputs_manifest_after_cli_patch(
         raise FileNotFoundError(f"Prior inputs_manifest not found: {verify_path}")
     with open(verify_path, "r", encoding="utf-8") as _mf:
         prior_manifest = json.load(_mf)
-    drift_errors = verify_against_prior_manifest(manifest, prior_manifest)
+    drift_errors = verify_against_prior_manifest(manifest, prior_manifest, allow_new_required_deps=from_replay_bundle)
     if drift_errors:
         for drift_error in drift_errors:
             logger.error(f"[INPUT MANIFEST DRIFT] {drift_error}")
@@ -13158,6 +13166,7 @@ Module 3 Catalyst Detection:
             scoring_mode=getattr(args, "scoring_mode", None),
             inputs_manifest_mode=args.inputs_manifest,
             inputs_manifest_verify_path=getattr(args, "inputs_manifest_path", None),
+            from_replay_bundle=bool(getattr(args, "replay_bundle", None)),
             ctgov_cache_dir=getattr(args, "ctgov_cache_dir", None),
             phase_scores_v1=getattr(args, "phase_scores_v1", False),
             phase_scores_v2=getattr(args, "phase_scores_v2", False),
@@ -13214,6 +13223,7 @@ Module 3 Catalyst Detection:
                 _verify_inputs_manifest_after_cli_patch(
                     results,
                     getattr(args, "inputs_manifest_path", None),
+                    from_replay_bundle=bool(getattr(args, "replay_bundle", None)),
                 )
 
         # Write output

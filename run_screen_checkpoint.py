@@ -459,8 +459,17 @@ def verify_inputs_manifest(manifest: Dict[str, Any]) -> bool:
 def verify_against_prior_manifest(
     current: Dict[str, Any],
     prior: Dict[str, Any],
+    *,
+    allow_new_required_deps: bool = False,
 ) -> List[str]:
-    """Compare current manifest against a prior one. Returns drift errors."""
+    """Compare current manifest against a prior one. Returns drift errors.
+
+    allow_new_required_deps: when True (replay against a frozen bundle whose
+        manifest predates a now-required dep), a required dep present in
+        ``current`` but absent from ``prior`` is treated as schema evolution
+        (warn + continue) rather than a hard drift error. Defaults to False so
+        day-over-day production still flags contract growth.
+    """
     errs: List[str] = []
     if prior.get("manifest_version") != current.get("manifest_version"):
         return [
@@ -472,7 +481,19 @@ def verify_against_prior_manifest(
     cur_map = {d["key"]: d for d in current.get("dependencies", []) if d.get("required")}
     prior_req = {d["key"] for d in prior.get("dependencies", []) if d.get("required")}
     for key in sorted(set(cur_map.keys()) - prior_req):
-        errs.append(f"{key}: required dep absent from prior manifest (cannot drift-check)")
+        if allow_new_required_deps:
+            # Replay against a frozen bundle: a dep that is required now but has no
+            # entry in the (older) bundle manifest is schema evolution, not input
+            # drift — there is no prior baseline to sha-compare against, and the
+            # dep's *presence* is already enforced by verify_inputs_manifest. A hard
+            # error here aborts replay before any rankings are produced (e.g.
+            # `decision_ruleset` vs the Feb golden bundle). Warn and continue.
+            logger.warning(
+                f"[INPUT MANIFEST] {key}: required dep absent from prior manifest — "
+                "no baseline to drift-check (replay against pre-existing bundle)"
+            )
+        else:
+            errs.append(f"{key}: required dep absent from prior manifest (cannot drift-check)")
 
     for p in prior.get("dependencies", []):
         if not p.get("required"):
