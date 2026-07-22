@@ -234,10 +234,14 @@ class TestClassificationPriority:
         r = _classify_locally("FDA Accepts Phase 3 Topline Data Submission")
         assert r["event_category"] == "clinical"
 
-    def test_informational_beats_clinical(self):
-        """Informational filter runs before clinical keywords."""
+    def test_clinical_guard_beats_informational(self):
+        """Clinical guard takes priority over informational suppression: a Phase 3
+        data presentation is a substantive catalyst even when announced 'at an
+        investor conference' (Spec remediation 2026-06-02). So despite matching
+        the 'conference'/'investor'/'present' informational keywords, the clinical
+        guard keeps informational_only=False."""
         r = _classify_locally("Company to Present Phase 3 Data at Investor Conference")
-        assert r["informational_only"] is True
+        assert r["informational_only"] is False
 
 
 # ---------------------------------------------------------------------------
@@ -636,7 +640,7 @@ class TestSoftCollisionRouting:
             "source_url": "",
             "published_at_utc": "2026-04-01",
         }
-        out = classify_releases([rec], use_grok=False)
+        out = classify_releases([rec])
         assert len(out) == 1
         r = out[0]
         assert r["ticker_collision_flag"] is True
@@ -655,7 +659,7 @@ class TestSoftCollisionRouting:
             "source_url": "",
             "published_at_utc": "2026-04-01",
         }
-        out = classify_releases([rec], use_grok=False)
+        out = classify_releases([rec])
         assert len(out) == 1
         r = out[0]
         assert r["ticker_collision_flag"] is True
@@ -674,7 +678,7 @@ class TestSoftCollisionRouting:
             "source_url": "",
             "published_at_utc": "2026-04-01",
         }
-        out = classify_releases([rec], use_grok=False)
+        out = classify_releases([rec])
         assert len(out) == 1
         r = out[0]
         assert r["ticker_collision_flag"] is False
@@ -690,7 +694,7 @@ class TestSoftCollisionRouting:
             "source_url": "",
             "published_at_utc": "2026-04-01",
         }
-        out = classify_releases([rec], use_grok=False)
+        out = classify_releases([rec])
         r = out[0]
         assert r["ticker_collision_flag"] is True
         assert r["collision_severity"] == "soft"
@@ -706,7 +710,7 @@ class TestSoftCollisionRouting:
             "source_url": "",
             "published_at_utc": "2026-04-01",
         }
-        out = classify_releases([rec], use_grok=False)
+        out = classify_releases([rec])
         r = out[0]
         assert r["ticker_collision_flag"] is True
         assert r["collision_severity"] == "soft"
