@@ -1895,7 +1895,7 @@ class TestExtendPriceCsvSafe:
 
         call_log = []
 
-        def mock_safe_download(tickers, start, end, delay_sec=1.5, max_retries=3):
+        def mock_safe_download(tickers, start, end, delay_sec=1.5, max_retries=3, starts=None):
             call_log.append(
                 {
                     "tickers": tickers,
@@ -1903,6 +1903,7 @@ class TestExtendPriceCsvSafe:
                     "end": end,
                     "delay_sec": delay_sec,
                     "max_retries": max_retries,
+                    "starts": starts,
                 }
             )
             return {
@@ -1984,7 +1985,7 @@ class TestExtendPriceCsvSafe:
 
         from scripts import yfinance_safe
 
-        def mock_safe_download(tickers, start, end, delay_sec=1.5, max_retries=3):
+        def mock_safe_download(tickers, start, end, delay_sec=1.5, max_retries=3, starts=None):
             return {
                 "data": mock_data,
                 "failed_tickers": ["FAILED"],

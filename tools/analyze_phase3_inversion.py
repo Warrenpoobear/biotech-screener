@@ -549,7 +549,7 @@ def module_structural_defensiveness(snap_dates: List[str], price_pivot: pd.DataF
         top30 = df[df["actionable_rank"] <= 30]
 
         n_elig = len(elig)
-        n_ees_blocked = int((elig["ees_eligible"] is False).sum())
+        n_ees_blocked = int(elig["ees_eligible"].eq(False).sum())
         ees_block_rate = n_ees_blocked / n_elig if n_elig > 0 else np.nan
 
         mean_final_score = float(top30["final_score"].mean()) if len(top30) > 0 else np.nan

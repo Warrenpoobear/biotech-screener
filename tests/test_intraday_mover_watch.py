@@ -175,22 +175,18 @@ def test_severity_low_when_no_tiered_code():
 def test_news_lookup_prefers_herald_classified(tmp_path: Path):
     herald_c = tmp_path / "herald" / "classified"
     herald_r = tmp_path / "herald" / "raw"
-    grok = tmp_path / "grok"
     herald_c.mkdir(parents=True)
     herald_r.mkdir(parents=True)
-    grok.mkdir(parents=True)
 
     (herald_c / "2026-04-17.json").write_text(
         json.dumps({"releases": [{"ticker": "SRPT", "headline": "Sarepta topline", "source_type": "company_ir"}]})
     )
-    (grok / "2026-04-17_watch.json").write_text(json.dumps({"alerts": [{"ticker": "SRPT", "headline": "Grok noise"}]}))
 
     news = lookup_same_day_news(
         "SRPT",
         "2026-04-17",
         herald_classified_dir=herald_c,
         herald_raw_dir=herald_r,
-        grok_watch_dir=grok,
     )
     assert news["news_status"] == "OFFICIAL"
     assert news["headline"] == "Sarepta topline"
@@ -198,27 +194,22 @@ def test_news_lookup_prefers_herald_classified(tmp_path: Path):
     assert news["source_rank"] == 1
 
 
-def test_news_lookup_grok_only_is_supporting_never_official(tmp_path: Path):
+def test_news_lookup_no_herald_record_returns_none(tmp_path: Path):
+    # Grok/xAI ingestion was removed (809da0ce): only herald-backed news is
+    # recognized. A ticker with no herald classified/raw record yields NONE —
+    # there is no longer a non-herald "SUPPORTING" fallback.
     herald_c = tmp_path / "herald" / "classified"
     herald_r = tmp_path / "herald" / "raw"
-    grok = tmp_path / "grok"
     herald_c.mkdir(parents=True)
     herald_r.mkdir(parents=True)
-    grok.mkdir(parents=True)
-
-    (grok / "2026-04-17_watch.json").write_text(
-        json.dumps({"alerts": [{"ticker": "KROS", "headline": "Unverified chatter"}]})
-    )
 
     news = lookup_same_day_news(
         "KROS",
         "2026-04-17",
         herald_classified_dir=herald_c,
         herald_raw_dir=herald_r,
-        grok_watch_dir=grok,
     )
-    assert news["news_status"] == "SUPPORTING"
-    assert news["source_type"] == "grok"
+    assert news["news_status"] == "NONE"
     assert news["news_status"] != "OFFICIAL"
 
 
@@ -228,7 +219,6 @@ def test_news_lookup_returns_none_when_empty(tmp_path: Path):
         "2026-04-17",
         herald_classified_dir=tmp_path / "a",
         herald_raw_dir=tmp_path / "b",
-        grok_watch_dir=tmp_path / "c",
     )
     assert news["news_status"] == "NONE"
 

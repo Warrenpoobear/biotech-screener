@@ -13,6 +13,31 @@ Governance: Tests-first remediation for systemic classifier issues identified 20
 import json
 from pathlib import Path
 
+import pytest
+
+# The snapshot smoke tests read a point-in-time production snapshot that is NOT
+# tracked in git (untracked `data/snapshots/2026-06-01/rankings.csv`). On a clean
+# checkout — which is exactly what CI runs — the artifact is absent, so these
+# tests are data-coupled and must skip rather than fail. This mirrors the
+# decoupling of the other data-coupled integration suites (PR #526); this file
+# was missed there. The unit tests below (classifier + collision + COGT trace)
+# use in-file stubs and stay active regardless. Guarding on the artifact's
+# presence also removes the host-only order-dependence, which stemmed from this
+# shared untracked snapshot being present-then-mutated by another suite.
+_SNAPSHOT_2026_06_01 = Path("data/snapshots/2026-06-01/rankings.csv")
+_requires_snapshot = pytest.mark.skipif(
+    not _SNAPSHOT_2026_06_01.exists(),
+    reason=f"data-coupled: {_SNAPSHOT_2026_06_01} not present (untracked production artifact)",
+)
+
+# The COGT trace test reads the classified press-release set for the same date,
+# another untracked production artifact. Same data-coupling; guard identically.
+_CLASSIFIED_2026_06_01 = Path("data/press_releases/classified/classified_2026-06-01.jsonl")
+_requires_classified = pytest.mark.skipif(
+    not _CLASSIFIED_2026_06_01.exists(),
+    reason=f"data-coupled: {_CLASSIFIED_2026_06_01} not present (untracked production artifact)",
+)
+
 
 def test_clinical_event_classification_phase3_rvmd():
     """RVMD Phase 3 RASolute 302-style event must classify as clinical."""
@@ -142,6 +167,7 @@ def test_collision_scoring_exclusion_alks():
     assert is_rejected, "Competitor company collision must be rejected from CRT intake"
 
 
+@_requires_classified
 def test_cogt_trace_no_impact_assumption():
     """COGT: Trace whether needs_review=True events affected catalyst scoring.
 
@@ -178,6 +204,7 @@ def test_cogt_trace_no_impact_assumption():
     return cogt_trace
 
 
+@_requires_snapshot
 def test_snapshot_smoke_rvmd_catalyst_days():
     """RVMD: Before/after catalyst_days after remediation."""
     # Load 2026-06-01 snapshot
@@ -195,6 +222,7 @@ def test_snapshot_smoke_rvmd_catalyst_days():
     ), "RVMD catalyst_days should reflect Phase 3 event (may need upstream review)"
 
 
+@_requires_snapshot
 def test_snapshot_smoke_celc_catalyst_days():
     """CELC: Before/after catalyst_days after remediation."""
     snapshot_path = Path("data/snapshots/2026-06-01/rankings.csv")
@@ -205,6 +233,7 @@ def test_snapshot_smoke_celc_catalyst_days():
     assert celc_data["catalyst_days"] == 29, "CELC catalyst_days should reflect Phase 3 cohort event"
 
 
+@_requires_snapshot
 def test_snapshot_smoke_eras_collision_exclusion():
     """ERAS: Collision-flagged events must not contribute to catalyst_days."""
     snapshot_path = Path("data/snapshots/2026-06-01/rankings.csv")
@@ -219,6 +248,7 @@ def test_snapshot_smoke_eras_collision_exclusion():
     return {"ticker": "ERAS", "catalyst_days": eras_data["catalyst_days"], "before": 183}
 
 
+@_requires_snapshot
 def test_snapshot_smoke_drug_collision_exclusion():
     """DRUG: Collision-flagged events should not inflate catalyst_days."""
     snapshot_path = Path("data/snapshots/2026-06-01/rankings.csv")
@@ -231,6 +261,7 @@ def test_snapshot_smoke_drug_collision_exclusion():
     return {"ticker": "DRUG", "catalyst_days": drug_data["catalyst_days"], "before": 153}
 
 
+@_requires_snapshot
 def test_snapshot_smoke_mbx_clean_control():
     """MBX: Clean negative control (should remain unchanged)."""
     snapshot_path = Path("data/snapshots/2026-06-01/rankings.csv")
