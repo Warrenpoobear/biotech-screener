@@ -17,7 +17,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from data_sources.ctgov_client import BIOTECH_TICKER_MAP, CTGOV_API_BASE, CTGOV_RATE_LIMIT, ClinicalTrialsClient
+from data_sources.ctgov_client import (
+    BIOTECH_TICKER_MAP,
+    CTGOV_API_BASE,
+    CTGOV_RATE_LIMIT,
+    ClinicalTrialsClient,
+    date_provenance_shadow,
+    derive_date_precision,
+)
 
 
 class TestClinicalTrialsClientInit:
@@ -120,6 +127,90 @@ class TestParseDate:
         """Should truncate to first 10 chars."""
         result = client._parse_date({"date": "2024-06-15T00:00:00Z"})
         assert result == "2024-06-15"
+
+
+class TestDerivePrecision:
+    """Granularity actually present in a CT.gov date string (shadow-only).
+
+    See specs/changes/spec_114_catalyst_date_precision_provenance_2026_07_28.md.
+    _parse_date() snaps "2026-08" to "2026-08-01" and discards the fact that the
+    source was month-only; these helpers record what was discarded without
+    changing any production value.
+    """
+
+    def test_full_date_is_day(self):
+        assert derive_date_precision("2026-08-14") == "DAY"
+
+    def test_month_only_is_month(self):
+        assert derive_date_precision("2026-08") == "MONTH"
+
+    def test_year_only_is_year(self):
+        assert derive_date_precision("2026") == "YEAR"
+
+    def test_timestamp_is_day(self):
+        assert derive_date_precision("2026-08-14T00:00:00Z") == "DAY"
+
+    def test_none_is_unknown(self):
+        assert derive_date_precision(None) == "UNKNOWN"
+
+    def test_garbage_is_unknown(self):
+        assert derive_date_precision("not-a-date") == "UNKNOWN"
+        assert derive_date_precision("") == "UNKNOWN"
+
+    def test_whitespace_tolerated(self):
+        assert derive_date_precision("  2026-08  ") == "MONTH"
+
+
+class TestDateProvenanceShadow:
+    """Non-routing provenance block for one CT.gov date struct."""
+
+    def test_month_only_estimated_is_the_real_world_case(self):
+        """The exact struct returned for NCT06669754 / NCT06727565 /
+        NCT06775379 / NCT07298330, all of which produced a bogus
+        day-precision 2026-08-01 (a Saturday) in the 2026-07-27 snapshot."""
+        result = date_provenance_shadow({"date": "2026-08", "type": "ESTIMATED"})
+        assert result == {
+            "ctgov_raw_date": "2026-08",
+            "ctgov_date_precision_raw": "MONTH",
+            "ctgov_date_type": "ESTIMATED",
+            "ctgov_precision_normalized_candidate": "MONTH",
+        }
+
+    def test_exact_day_actual_still_floored_by_source(self):
+        """Even an exact ACTUAL date is floored to the CTGOV_CALENDAR source
+        precision, because Spec 114 invariant 5 prefers the weaker claim."""
+        result = date_provenance_shadow({"date": "2026-08-14", "type": "ACTUAL"})
+        assert result["ctgov_date_precision_raw"] == "DAY"
+        assert result["ctgov_date_type"] == "ACTUAL"
+        assert result["ctgov_precision_normalized_candidate"] == "MONTH"
+
+    def test_missing_type_is_not_assumed_actual(self):
+        result = date_provenance_shadow({"date": "2026-08"})
+        assert result["ctgov_date_type"] == "UNKNOWN"
+
+    def test_empty_struct(self):
+        result = date_provenance_shadow({})
+        assert result["ctgov_raw_date"] is None
+        assert result["ctgov_date_precision_raw"] == "UNKNOWN"
+        assert result["ctgov_date_type"] == "UNKNOWN"
+        assert result["ctgov_precision_normalized_candidate"] == "UNKNOWN"
+
+    def test_none_struct(self):
+        assert date_provenance_shadow(None)["ctgov_raw_date"] is None
+
+    def test_source_override(self):
+        """A DAY-precision source keeps DAY."""
+        result = date_provenance_shadow({"date": "2026-08-14", "type": "ACTUAL"}, source="SEC_8K_FILING")
+        assert result["ctgov_precision_normalized_candidate"] == "DAY"
+
+    def test_deterministic(self):
+        struct = {"date": "2026-08", "type": "ESTIMATED"}
+        assert date_provenance_shadow(struct) == date_provenance_shadow(struct)
+
+    def test_does_not_mutate_input(self):
+        struct = {"date": "2026-08", "type": "ESTIMATED"}
+        date_provenance_shadow(struct)
+        assert struct == {"date": "2026-08", "type": "ESTIMATED"}
 
 
 class TestParseBlinding:
@@ -247,6 +338,71 @@ class TestSearchBySponsor:
             assert result[0]["nct_id"] == "NCT00000001"
             assert result[0]["phase"] == "phase 3"
             assert result[0]["status"] == "RECRUITING"
+
+    def test_record_carries_shadow_precision_for_month_only_pcd(self, client):
+        """A month-only ESTIMATED PCD must keep its production value AND record
+        the precision that value silently discards (Spec 114 shadow capture)."""
+        mock_response = {
+            "studies": [
+                {
+                    "protocolSection": {
+                        "identificationModule": {"nctId": "NCT06669754", "briefTitle": "T"},
+                        "statusModule": {
+                            "overallStatus": "RECRUITING",
+                            "primaryCompletionDateStruct": {"date": "2026-08", "type": "ESTIMATED"},
+                        },
+                        "designModule": {"phases": ["PHASE2"]},
+                        "conditionsModule": {"conditions": []},
+                    }
+                }
+            ]
+        }
+
+        with patch.object(client, "_make_request", return_value=mock_response):
+            record = client.search_by_sponsor("Test Company", max_results=1)[0]
+
+        # Production value unchanged — still the snapped 1st of the month.
+        assert record["primary_completion_date"] == "2026-08-01"
+        # ...but the discarded precision is now recorded alongside it.
+        assert record["ctgov_raw_date"] == "2026-08"
+        assert record["ctgov_date_precision_raw"] == "MONTH"
+        assert record["ctgov_date_type"] == "ESTIMATED"
+        assert record["ctgov_precision_normalized_candidate"] == "MONTH"
+
+    def test_shadow_fields_present_even_when_pcd_absent(self, client):
+        """CCFT: no silent nulls — the block is always emitted."""
+        mock_response = {
+            "studies": [
+                {
+                    "protocolSection": {
+                        "identificationModule": {"nctId": "NCT00000002", "briefTitle": "T"},
+                        "statusModule": {"overallStatus": "RECRUITING"},
+                        "designModule": {"phases": ["PHASE1"]},
+                        "conditionsModule": {"conditions": []},
+                    }
+                }
+            ]
+        }
+
+        with patch.object(client, "_make_request", return_value=mock_response):
+            record = client.search_by_sponsor("Test Company", max_results=1)[0]
+
+        assert record["ctgov_raw_date"] is None
+        assert record["ctgov_date_precision_raw"] == "UNKNOWN"
+        assert record["ctgov_date_type"] == "UNKNOWN"
+        assert record["ctgov_precision_normalized_candidate"] == "UNKNOWN"
+
+    def test_shadow_fields_do_not_collide_with_required_schema(self, client):
+        """The added keys must not disturb the required trial-record schema."""
+        from common.data_integration_contracts import TRIAL_REQUIRED_FIELDS
+
+        shadow_keys = {
+            "ctgov_raw_date",
+            "ctgov_date_precision_raw",
+            "ctgov_date_type",
+            "ctgov_precision_normalized_candidate",
+        }
+        assert not (shadow_keys & TRIAL_REQUIRED_FIELDS)
 
 
 class TestGetTrialByNct:

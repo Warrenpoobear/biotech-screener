@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import time
 import urllib.error
 import urllib.parse
@@ -26,6 +27,73 @@ CTGOV_RATE_LIMIT = 0.2  # 5 requests/second max
 # Cache directory — resolved relative to repo root
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 CACHE_DIR = _REPO_ROOT / "data" / "cache" / "ctgov"
+
+# --- Shadow-only date-precision provenance -----------------------------------
+# _parse_date() below snaps "2026-08" to "2026-08-01" and returns a bare ISO
+# string, discarding both the month-only granularity and the ACTUAL/ESTIMATED
+# type. Nothing downstream can recover either, so month placeholders end up
+# asserted as exact-day catalysts.
+#
+# These helpers record what is being discarded. They are NON-ROUTING: no
+# scoring, sizing, catalyst mode, decay or tilt path reads them. Production
+# behaviour is unchanged, including _parse_date()'s return contract. The
+# corrected-parser proposal is specs/changes/spec_114_catalyst_date_precision_provenance_2026_07_28.md,
+# which is freeze-gated; this capture builds the forward evidence for it.
+
+# Shape-matched, not length-matched: "not-a-date" is also ten characters.
+_DAY_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}")
+_MONTH_PATTERN = re.compile(r"^\d{4}-\d{2}$")
+_YEAR_PATTERN = re.compile(r"^\d{4}$")
+
+# The source these date structs come from, for the normalized candidate.
+_CTGOV_DEFAULT_SOURCE = "CTGOV_CALENDAR"
+
+
+def derive_date_precision(date_str: Optional[str]) -> str:
+    """Granularity actually present in a CT.gov date string.
+
+    ``"2026-08-14"`` -> ``DAY``, ``"2026-08"`` -> ``MONTH``, ``"2026"`` -> ``YEAR``.
+    A full timestamp is ``DAY``. Anything unrecognised is ``UNKNOWN`` rather
+    than an assumed ``DAY``.
+    """
+    if not isinstance(date_str, str):
+        return "UNKNOWN"
+    trimmed = date_str.strip()
+    if _DAY_PATTERN.match(trimmed):
+        return "DAY"
+    if _MONTH_PATTERN.match(trimmed):
+        return "MONTH"
+    if _YEAR_PATTERN.match(trimmed):
+        return "YEAR"
+    return "UNKNOWN"
+
+
+def date_provenance_shadow(
+    date_struct: Optional[Dict[str, Any]],
+    source: str = _CTGOV_DEFAULT_SOURCE,
+) -> Dict[str, Optional[str]]:
+    """Non-routing provenance for one CT.gov date struct.
+
+    ``ctgov_precision_normalized_candidate`` is the precision a corrected
+    parser *would* assign: the weaker of the observed granularity and the
+    source's declared precision floor. Recording it in shadow is how Spec 114
+    can be validated before anything is switched over.
+    """
+    # Imported lazily: this module is otherwise stdlib-only, and data_sources
+    # sits below common in the layering. Keeping the import here preserves
+    # standalone importability rather than inverting that dependency at import
+    # time. _SOURCE_PRECISION stays the single authority either way.
+    from common.event_quality_features import source_precision_floor, weakest_precision
+
+    struct = date_struct or {}
+    raw = struct.get("date")
+    precision_raw = derive_date_precision(raw)
+    return {
+        "ctgov_raw_date": raw,
+        "ctgov_date_precision_raw": precision_raw,
+        "ctgov_date_type": struct.get("type") or "UNKNOWN",
+        "ctgov_precision_normalized_candidate": weakest_precision(precision_raw, source_precision_floor(source)),
+    }
 
 
 _ctgov_breaker = None
@@ -202,6 +270,11 @@ class ClinicalTrialsClient:
                 "primary_endpoint": self._get_primary_endpoint(outcomes),
                 "conditions": protocol.get("conditionsModule", {}).get("conditions", []),
             }
+
+            # Shadow-only provenance for the primary completion date — the field
+            # that drives catalyst timing. Non-routing; recorded so the precision
+            # discarded by _parse_date() stops being unrecoverable. See Spec 114.
+            trial.update(date_provenance_shadow(status_mod.get("primaryCompletionDateStruct", {})))
 
             trials.append(trial)
 

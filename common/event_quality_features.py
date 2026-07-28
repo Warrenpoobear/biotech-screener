@@ -171,6 +171,44 @@ _PRECISION_CONFIDENCE: Dict[str, float] = {
     "UNKNOWN": 0.10,
 }
 
+# Coarseness ranking — higher is weaker/less precise. Used to pick the more
+# conservative of two precision claims.
+PRECISION_WEAKNESS: Dict[str, int] = {
+    "DAY": 0,
+    "WEEK": 1,
+    "MONTH": 2,
+    "QUARTER": 3,
+    "HALF_YEAR": 4,
+    "YEAR": 5,
+    "UNKNOWN": 6,
+}
+
+
+def source_precision_floor(source: str) -> str:
+    """Weakest precision a source can legitimately support.
+
+    Reads ``_SOURCE_PRECISION`` so that table stays the single authority on
+    per-source precision. An unrecognised source returns ``UNKNOWN`` — never
+    ``DAY``, since defaulting to the strongest claim is the defect this guards
+    against (see specs/changes/spec_114_catalyst_date_precision_provenance_2026_07_28.md).
+
+    Diagnostic/shadow use only — no routing or scoring path consumes this.
+    """
+    return _SOURCE_PRECISION.get(source, "UNKNOWN")
+
+
+def weakest_precision(*precisions: str) -> str:
+    """Most conservative (coarsest) of the given precision labels.
+
+    Unrankable labels are ignored; if nothing is rankable the result is
+    ``UNKNOWN``.
+    """
+    known = [p for p in precisions if p in PRECISION_WEAKNESS]
+    if not known:
+        return "UNKNOWN"
+    return max(known, key=lambda p: PRECISION_WEAKNESS[p])
+
+
 # source reliability bonus (stacks with precision)
 _SOURCE_CONFIDENCE_BONUS: Dict[str, float] = {
     "SEC_8K_FILING": 0.05,

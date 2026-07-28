@@ -9,11 +9,51 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from common.event_quality_features import (
+    _SOURCE_PRECISION,
     EVENT_QUALITY_COLUMNS,
     OPTIONS_QUALITY_COLUMNS,
+    PRECISION_WEAKNESS,
     compute_event_quality_features,
     compute_options_quality_composite,
+    source_precision_floor,
+    weakest_precision,
 )
+
+
+class TestPrecisionHelpers:
+    """Shadow-only precision helpers — see specs/changes/spec_114_*.md.
+
+    These exist so the CT.gov client can record what precision a corrected
+    parser *would* assign, without any routing or scoring change.
+    """
+
+    def test_every_source_precision_value_is_orderable(self):
+        """D3 guard: _SOURCE_PRECISION is the single authority, so every value
+        it declares must be rankable by PRECISION_WEAKNESS."""
+        for source, precision in _SOURCE_PRECISION.items():
+            assert precision in PRECISION_WEAKNESS, f"{source} -> {precision} not orderable"
+
+    def test_source_precision_floor_reads_the_table(self):
+        assert source_precision_floor("CTGOV_CALENDAR") == _SOURCE_PRECISION["CTGOV_CALENDAR"]
+        assert source_precision_floor("SEC_8K_FILING") == "DAY"
+        assert source_precision_floor("CTGOV_PCD_FAR") == "QUARTER"
+
+    def test_source_precision_floor_unknown_source(self):
+        """Never default an unrecognised source to DAY."""
+        assert source_precision_floor("NOT_A_REAL_SOURCE") == "UNKNOWN"
+
+    def test_weakest_precision_prefers_the_weaker_claim(self):
+        assert weakest_precision("DAY", "MONTH") == "MONTH"
+        assert weakest_precision("MONTH", "DAY") == "MONTH"
+        assert weakest_precision("QUARTER", "MONTH") == "QUARTER"
+        assert weakest_precision("DAY", "DAY") == "DAY"
+
+    def test_weakest_precision_ignores_unrankable(self):
+        assert weakest_precision("MONTH", "NONSENSE") == "MONTH"
+
+    def test_weakest_precision_no_known_input(self):
+        assert weakest_precision("NONSENSE") == "UNKNOWN"
+        assert weakest_precision() == "UNKNOWN"
 
 
 class TestRegulatoryQuality:
