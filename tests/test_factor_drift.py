@@ -9,6 +9,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from tools.build_factor_drift import (
+    _check_momentum_alert,
+    _check_signal_drift_alerts,
     _is_eligible,
     _mean,
     _std,
@@ -377,3 +379,80 @@ def test_std_single():
 def test_std_pair():
     result = _std([10.0, 20.0])
     assert abs(result - 7.0711) < 0.01
+
+
+# ---------------------------------------------------------------------------
+# _check_momentum_alert — trailing history shape (issue #533)
+# ---------------------------------------------------------------------------
+
+STEADY_MIX = {"tailwind": 60.0, "neutral": 20.0, "headwind": 20.0}
+UNIVERSE_MIX = {"tailwind": 38.8, "neutral": 20.1, "headwind": 41.1}
+
+
+def _nested_history(port_mix, n=5):
+    """History entries as build_factor_drift writes them: nested under 'portfolio'."""
+    return [{"momentum_mix": {"portfolio": dict(port_mix), "universe": dict(UNIVERSE_MIX)}} for _ in range(n)]
+
+
+def test_momentum_alert_reads_nested_history_shape():
+    """A steady portfolio mix must not alert.
+
+    build_factor_drift writes momentum_mix as {"portfolio": ..., "universe": ...}.
+    Reading it as a flat {state: pct} mapping silently yields a 0% baseline for
+    every state, so the whole current mix is reported as a shift.
+    """
+    assert _check_momentum_alert(STEADY_MIX, _nested_history(STEADY_MIX)) == []
+
+
+def test_momentum_alert_flat_legacy_history_still_supported():
+    """Pre-nesting history entries stored the portfolio mix flat."""
+    trailing = [{"momentum_mix": dict(STEADY_MIX)} for _ in range(5)]
+    assert _check_momentum_alert(STEADY_MIX, trailing) == []
+
+
+def test_momentum_alert_detects_real_shift_with_nested_history():
+    """A genuine shift still alerts, and reports the true trailing baseline."""
+    prior = {"tailwind": 40.0, "neutral": 30.0, "headwind": 30.0}
+    current = {"tailwind": 80.0, "neutral": 10.0, "headwind": 10.0}
+    alerts = _check_momentum_alert(current, _nested_history(prior))
+
+    assert {a["code"] for a in alerts} == {"MOMENTUM_SHIFT"}
+    tailwind = next(a for a in alerts if a["detail"].startswith("tailwind"))
+    assert "vs trail avg 40%" in tailwind["detail"]
+    assert "shift=40pp" in tailwind["detail"]
+
+
+def test_momentum_alert_no_history():
+    assert _check_momentum_alert(STEADY_MIX, []) == []
+
+
+# ---------------------------------------------------------------------------
+# _check_signal_drift_alerts — marginal-crossing legibility (issue #534)
+# ---------------------------------------------------------------------------
+
+
+def test_signal_drift_marginal_crossing_shows_two_decimals():
+    """A z just over the 1.0 threshold must not render as a bare "1.0".
+
+    Rounding to one decimal makes every marginal crossing print the threshold
+    value itself, so unrelated signals with very different deltas both display
+    "z=1.0" and look artificially saturated.
+    """
+    col = "inst_delta_z"
+    # trail means 1,2,3 -> mean 2.0, sample std 1.0; current 3.02 -> z = 1.02
+    trailing = [{"signal_moments": {col: {"port_mean": v}}} for v in (1.0, 2.0, 3.0)]
+    moments = {col: {"port_mean": 3.02}}
+
+    alerts = _check_signal_drift_alerts(moments, trailing)
+
+    assert len(alerts) == 1
+    assert alerts[0]["level"] == "YELLOW"
+    assert "z=1.02" in alerts[0]["detail"]
+
+
+def test_signal_drift_degenerate_trailing_std_suppressed():
+    """A constant trailing window has no dispersion — no z is defined."""
+    col = "selector_score"
+    trailing = [{"signal_moments": {col: {"port_mean": 0.5}}} for _ in range(5)]
+    moments = {col: {"port_mean": 0.9}}
+    assert _check_signal_drift_alerts(moments, trailing) == []

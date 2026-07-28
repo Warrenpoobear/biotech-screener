@@ -343,11 +343,26 @@ def _check_hhi_alert(hhi: float, trailing: List[Dict[str, Any]]) -> List[Dict[st
     return []
 
 
+def _history_portfolio_mix(entry: Dict[str, Any]) -> Dict[str, float]:
+    """Portfolio momentum mix from one history entry.
+
+    build_factor_drift writes ``momentum_mix`` as ``{"portfolio": ..., "universe": ...}``.
+    Reading that nested mapping as a flat ``{state: pct}`` yields 0 for every state,
+    which reports the entire current mix as a shift. Entries written before the
+    nesting was introduced stored the portfolio mix flat, so both are accepted.
+    """
+    mix = entry.get("momentum_mix") or {}
+    nested = mix.get("portfolio")
+    if isinstance(nested, dict):
+        return nested
+    return mix
+
+
 def _check_momentum_alert(current_mix: Dict[str, float], trailing: List[Dict[str, Any]]) -> List[Dict[str, str]]:
     """Momentum-state mix shift vs trailing 20-cycle average."""
     if not trailing:
         return []
-    trailing_mixes = [h.get("momentum_mix", {}) for h in trailing if h.get("momentum_mix")]
+    trailing_mixes = [mix for mix in (_history_portfolio_mix(h) for h in trailing) if mix]
     if not trailing_mixes:
         return []
 
@@ -401,7 +416,7 @@ def _check_signal_drift_alerts(
                 {
                     "level": "RED",
                     "code": "SIGNAL_DRIFT",
-                    "detail": f"{col} mean={current_mean:.3f} vs trail {t_mean:.3f} (z={z:.1f})",
+                    "detail": f"{col} mean={current_mean:.3f} vs trail {t_mean:.3f} (z={z:.2f})",
                 }
             )
         elif z > YELLOW_SIGNAL_DRIFT_SD:
@@ -409,7 +424,7 @@ def _check_signal_drift_alerts(
                 {
                     "level": "YELLOW",
                     "code": "SIGNAL_DRIFT",
-                    "detail": f"{col} mean={current_mean:.3f} vs trail {t_mean:.3f} (z={z:.1f})",
+                    "detail": f"{col} mean={current_mean:.3f} vs trail {t_mean:.3f} (z={z:.2f})",
                 }
             )
     return alerts
