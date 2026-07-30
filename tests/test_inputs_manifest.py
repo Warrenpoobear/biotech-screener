@@ -410,6 +410,98 @@ class TestDriftCheck:
         assert not any("new_required_dep" in e and "absent from prior" in e for e in errs)
 
 
+class TestDriftDeferredKeys:
+    """The mirror of allow_new_required_deps: required in PRIOR, not yet in CURRENT.
+
+    ``decision_ruleset`` is patched into the manifest by
+    ``_attach_phase2_decision_ruleset_manifest`` (run_screen.py:11866) at the CLI
+    layer, which runs *after* the pipeline's own drift check. On replay against a
+    bundle whose manifest already carries the dep as required, that early check
+    sees no current entry and aborts before any rankings exist — so no bundle
+    produced by current code can be replayed at all.
+
+    Deferring is safe because the post-CLI check
+    (``_verify_inputs_manifest_after_cli_patch``) re-runs the same comparison once
+    the dep is present, with sha256 enforcement intact. Verification moves later;
+    it is not removed.
+    """
+
+    @staticmethod
+    def _prior_with_required(prior, key):
+        prior = json.loads(json.dumps(prior))
+        prior["dependencies"].append(
+            {
+                "key": key,
+                "required": True,
+                "exists": True,
+                "sha256": "a" * 64,
+                "path": f"/orig/{key}.json",
+                "resolved_from": "production_data",
+                "load_site": "run_screen.py:phase2_cli",
+                "record_count": None,
+            }
+        )
+        return prior
+
+    def test_prior_required_dep_absent_from_current_errors_by_default(self, data_dir, all_conditions_off):
+        """Default behaviour is unchanged: this is still a hard drift error."""
+        base = build_inputs_manifest("2026-02-17", data_dir, all_conditions_off)
+        prior = self._prior_with_required(base, "decision_ruleset")
+        errs = verify_against_prior_manifest(base, prior)
+        assert any("decision_ruleset" in e and "missing" in e for e in errs)
+
+    def test_deferred_key_tolerated(self, data_dir, all_conditions_off):
+        """Naming the key as deferred suppresses the premature error."""
+        base = build_inputs_manifest("2026-02-17", data_dir, all_conditions_off)
+        prior = self._prior_with_required(base, "decision_ruleset")
+        errs = verify_against_prior_manifest(base, prior, deferred_keys=frozenset({"decision_ruleset"}))
+        assert not any("decision_ruleset" in e for e in errs)
+
+    def test_deferral_is_scoped_to_named_key(self, data_dir, all_conditions_off):
+        """A different missing required dep still errors while one key is deferred."""
+        base = build_inputs_manifest("2026-02-17", data_dir, all_conditions_off)
+        prior = self._prior_with_required(base, "decision_ruleset")
+        (data_dir / "market_data.json").unlink()
+        current = build_inputs_manifest("2026-02-17", data_dir, all_conditions_off)
+        errs = verify_against_prior_manifest(current, prior, deferred_keys=frozenset({"decision_ruleset"}))
+        assert any("market_data" in e and "missing" in e for e in errs)
+        assert not any("decision_ruleset" in e for e in errs)
+
+    def test_deferral_does_not_suppress_sha_drift(self, data_dir, all_conditions_off):
+        """If the deferred dep IS present but its sha differs, that still errors.
+
+        Deferral covers absence only — it must not become a way to smuggle a
+        changed ruleset past the guardrail.
+        """
+        base = build_inputs_manifest("2026-02-17", data_dir, all_conditions_off)
+        prior = self._prior_with_required(base, "decision_ruleset")
+        current = self._prior_with_required(base, "decision_ruleset")
+        for d in current["dependencies"]:
+            if d["key"] == "decision_ruleset":
+                d["sha256"] = "b" * 64
+        errs = verify_against_prior_manifest(current, prior, deferred_keys=frozenset({"decision_ruleset"}))
+        assert any("decision_ruleset" in e and "sha256 drift" in e for e in errs)
+
+    def test_deferral_does_not_suppress_present_but_nonexistent(self, data_dir, all_conditions_off):
+        """A deferred dep present in current but flagged exists=False still errors."""
+        base = build_inputs_manifest("2026-02-17", data_dir, all_conditions_off)
+        prior = self._prior_with_required(base, "decision_ruleset")
+        current = self._prior_with_required(base, "decision_ruleset")
+        for d in current["dependencies"]:
+            if d["key"] == "decision_ruleset":
+                d["exists"] = False
+        errs = verify_against_prior_manifest(current, prior, deferred_keys=frozenset({"decision_ruleset"}))
+        assert any("decision_ruleset" in e and "missing" in e for e in errs)
+
+    def test_default_deferred_keys_is_empty(self, data_dir, all_conditions_off):
+        """Omitting the argument must not change any existing call site."""
+        base = build_inputs_manifest("2026-02-17", data_dir, all_conditions_off)
+        prior = self._prior_with_required(base, "decision_ruleset")
+        assert verify_against_prior_manifest(base, prior) == verify_against_prior_manifest(
+            base, prior, deferred_keys=frozenset()
+        )
+
+
 # ===========================================================================
 # Metadata integration
 # ===========================================================================

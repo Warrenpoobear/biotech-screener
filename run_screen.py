@@ -9354,6 +9354,7 @@ def log_smart_money_debug(
 
 from run_screen_checkpoint import (  # noqa: E402,F811
     CHECKPOINT_MODULES,
+    CLI_DEFERRED_MANIFEST_KEYS,
     DEPENDENCY_REGISTRY,
     MANIFEST_VERSION,
     InputDependency,
@@ -9919,6 +9920,10 @@ def run_screening_pipeline(
                 _inputs_manifest,
                 _prior_manifest,
                 allow_new_required_deps=from_replay_bundle,
+                # decision_ruleset is attached by the CLI layer further down, so
+                # it cannot be present yet at this point in a replay. Defer it to
+                # _verify_inputs_manifest_after_cli_patch, which checks it in full.
+                deferred_keys=(CLI_DEFERRED_MANIFEST_KEYS if from_replay_bundle else frozenset()),
             )
             if drift_errors:
                 for de in drift_errors:
