@@ -126,6 +126,29 @@ if command -v git >/dev/null 2>&1 && git -C "${REPO_ROOT}" rev-parse --git-dir >
         || echo "[$(date -Iseconds)] WARN: drift-guard fetch failed (offline?) — comparing against last-known origin/main" | tee -a "${LOG_FILE}"
     LOCAL_HEAD=$(git -C "${REPO_ROOT}" rev-parse --short HEAD 2>/dev/null || echo "?")
     BEHIND=$(git -C "${REPO_ROOT}" rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
+    # Spec 115 Phase 1: bind HEAD *here*, at run start. The capture step below
+    # used to read HEAD at its own invocation time, so any mid-run HEAD move
+    # (a pull, a commit from an interactive session) guaranteed a mismatch
+    # against the snapshot's stamp and silently cost a mandate-eligible window.
+    # This is what happened on 2026-07-27 — see docs/incidents/FV_GAP_2026_07_27.md.
+    RUN_START_COMMIT="$(git -C "${REPO_ROOT}" rev-parse HEAD 2>/dev/null || echo "")"
+
+    # Spec 115 Phase 2 (visibility half): surface mandate evidence that is
+    # sitting uncommitted. On 2026-07-23 a working-tree revert destroyed an
+    # already-written capture and nobody noticed for five days, because nothing
+    # reported the gap. This does not prevent Mode B — it makes it visible
+    # within one run instead of a week. Non-blocking: warn only, never abort.
+    CAPTURES_REL="artifacts/forward_validation/captures.jsonl"
+    CAPTURES_ABS="${REPO_ROOT}/${CAPTURES_REL}"
+    if [ -f "${CAPTURES_ABS}" ]; then
+        COMMITTED_LINES=$(git -C "${REPO_ROOT}" show "HEAD:${CAPTURES_REL}" 2>/dev/null | grep -c . || echo 0)
+        WORKING_LINES=$(grep -c . "${CAPTURES_ABS}" 2>/dev/null || echo 0)
+        if [ "${WORKING_LINES}" -gt "${COMMITTED_LINES}" ]; then
+            UNCOMMITTED_DATES=$(tail -n +"$((COMMITTED_LINES + 1))" "${CAPTURES_ABS}" 2>/dev/null \
+                | ${PYTHON} -c 'import sys,json;print(", ".join(json.loads(l)["date"] for l in sys.stdin if l.strip()))' 2>/dev/null || echo "")
+            echo "[$(date -Iseconds)] WARN: UNCOMMITTED_MANDATE_EVIDENCE — $((WORKING_LINES - COMMITTED_LINES)) capture(s) in ${CAPTURES_REL} are not committed: ${UNCOMMITTED_DATES:-<unparsed>}. A working-tree revert would destroy them silently (this is how 2026-07-23 was lost). Commit them." | tee -a "${LOG_FILE}"
+        fi
+    fi
     if [ "${BEHIND}" -gt "${DRIFT_WARN_THRESHOLD}" ]; then
         echo "[$(date -Iseconds)] WARN: checkout drift — HEAD ${LOCAL_HEAD} is ${BEHIND} commits behind origin/main. Cron is running STALE code; merged fixes are not live until this checkout is fast-forwarded (issue #484)." | tee -a "${LOG_FILE}"
     elif [ "${BEHIND}" -gt 0 ]; then
@@ -273,14 +296,35 @@ fi
 # feed a stale-output false positive into the forward mandate. The capture script
 # applies its own freshness/provenance gate as defense-in-depth, and is passed the
 # wrapper's HEAD commit so it can confirm the snapshot came from this invocation.
-INVOCATION_COMMIT="$(git -C "${REPO_ROOT}" rev-parse HEAD 2>/dev/null || echo "")"
+# Spec 115 Phase 1: RUN_START_COMMIT is bound at run start (drift guard above),
+# NOT here. Re-reading HEAD at this point is the bug that cost the 2026-07-27
+# window. If HEAD moved during the run, the run may have executed a mix of two
+# commits, so the capture is still refused — but with an unambiguous, greppable
+# diagnosis instead of a generic provenance refusal that reads like a pipeline
+# fault. Early-binding alone would MASK a genuinely mixed-code run.
+CURRENT_COMMIT="$(git -C "${REPO_ROOT}" rev-parse HEAD 2>/dev/null || echo "")"
+INVOCATION_COMMIT="${RUN_START_COMMIT:-${CURRENT_COMMIT}}"
+HEAD_MOVED=0
+if [ -n "${RUN_START_COMMIT}" ] && [ -n "${CURRENT_COMMIT}" ] && [ "${RUN_START_COMMIT}" != "${CURRENT_COMMIT}" ]; then
+    HEAD_MOVED=1
+    echo "[$(date -Iseconds)] ERROR: RUN_HEAD_MOVED — HEAD changed during this run: start=${RUN_START_COMMIT} now=${CURRENT_COMMIT}." | tee -a "${LOG_FILE}"
+    echo "[$(date -Iseconds)] ERROR: RUN_HEAD_MOVED — refusing the mandate capture; this run may have executed a mix of two commits. Do not --force (that yields REPLAY, which is never mandate-eligible). Do not run git state changes while production is in flight." | tee -a "${LOG_FILE}"
+fi
 if { [ "${EXIT_CODE}" -eq 0 ] || [ "${EXIT_CODE}" -eq 2 ]; } && [ -f "${SNAPSHOT_DIR}/${AS_OF_DATE}/rankings.csv" ]; then
-    ${PYTHON} tools/run_forward_validation.py \
-        --as-of-date "${AS_OF_DATE}" \
-        --expect-commit "${INVOCATION_COMMIT}" \
-        --capture-mode LIVE \
-        2>&1 | tee -a "${LOG_FILE}" || \
-        echo "[$(date -Iseconds)] WARN: run_forward_validation exited non-zero" | tee -a "${LOG_FILE}"
+    # Only the capture is gated on HEAD stability — it is the one step whose
+    # provenance depends on this run. The fill and summary steps below operate on
+    # PRIOR captures, so skipping them would delay evidence maturation for no
+    # reason.
+    if [ "${HEAD_MOVED}" -eq 0 ]; then
+        ${PYTHON} tools/run_forward_validation.py \
+            --as-of-date "${AS_OF_DATE}" \
+            --expect-commit "${INVOCATION_COMMIT}" \
+            --capture-mode LIVE \
+            2>&1 | tee -a "${LOG_FILE}" || \
+            echo "[$(date -Iseconds)] WARN: run_forward_validation exited non-zero" | tee -a "${LOG_FILE}"
+    else
+        echo "[$(date -Iseconds)] SKIP: mandate capture for ${AS_OF_DATE} — RUN_HEAD_MOVED (see ERROR above). Window is lost and is NOT recoverable." | tee -a "${LOG_FILE}"
+    fi
 
     ${PYTHON} tools/fill_forward_returns.py \
         2>&1 | tee -a "${LOG_FILE}" || \

@@ -576,6 +576,19 @@ def append_capture(record: dict) -> None:
     with open(CAPTURES_LEDGER, "a", encoding="utf-8") as f:
         f.write(json.dumps(record, separators=(",", ":")) + "\n")
 
+    # Spec 115 Phase 2a: also append to a mirror outside the git working tree.
+    # The tracked ledger above stays the published audit record; the mirror
+    # exists so that a working-tree revert — which silently destroyed the
+    # 2026-07-23 capture — is recoverable rather than terminal. Best-effort by
+    # design: mirror_append() swallows I/O errors so a durability aid can never
+    # fail the capture it is protecting.
+    try:
+        from tools.fv_durable_mirror import mirror_append
+
+        mirror_append(record)
+    except Exception as exc:  # pragma: no cover - defensive import guard
+        print(f"  WARN: durable mirror unavailable ({exc}); tracked ledger written", file=sys.stderr)
+
 
 # ---------------------------------------------------------------------------
 # Truth card
