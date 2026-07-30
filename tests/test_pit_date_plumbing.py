@@ -20,7 +20,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from collect_ctgov_data import _normalize_date
+from collect_ctgov_data import _normalize_date, _parse_study
 from export_results_csv import CLINICAL_PIT_COLUMNS, export_to_csv
 from module_4_clinical_dev import _select_pit_date, compute_module_4_clinical_dev
 
@@ -50,6 +50,91 @@ class TestNormalizeDate:
 
     def test_whitespace_stripped(self):
         assert _normalize_date("  2024-06  ") == "2024-06-01"
+
+
+# ---------------------------------------------------------------------------
+# Unit tests: _parse_study precision provenance (Spec 114 / #535)
+#
+# The collector is what actually writes production_data/trial_records.json.
+# #538 captured CT.gov date granularity and #543 plumbed it through
+# CanonicalTrialRecord -> CalendarCatalyst, but both sat on the
+# data_sources/ctgov_client.py path, which the production cache does not flow
+# through. Without the fields below, ctgov_adapter's
+# record.get("ctgov_date_precision_raw") is always None and Spec 114 Phase 2
+# is a guaranteed no-op.
+#
+# Non-routing: primary_completion_date must keep its existing normalized
+# value. These tests lock provenance capture only.
+# ---------------------------------------------------------------------------
+
+
+def _study(pcd_struct: dict | None) -> dict:
+    """Minimal CT.gov API v2 study payload with a given primaryCompletionDateStruct."""
+    status_module: dict = {"overallStatus": "RECRUITING"}
+    if pcd_struct is not None:
+        status_module["primaryCompletionDateStruct"] = pcd_struct
+    return {
+        "protocolSection": {
+            "identificationModule": {"nctId": "NCT99999999", "briefTitle": "Fixture"},
+            "statusModule": status_module,
+            "designModule": {"phases": ["PHASE3"], "studyType": "INTERVENTIONAL"},
+            "sponsorCollaboratorsModule": {"leadSponsor": {"name": "Fixture Sponsor"}},
+            "conditionsModule": {"conditions": ["Fixture Condition"]},
+            "armsInterventionsModule": {"interventions": []},
+        }
+    }
+
+
+class TestParseStudyDatePrecision:
+    def test_month_only_pcd_records_month_precision(self):
+        rec = _parse_study(_study({"date": "2026-08", "type": "ESTIMATED"}), "TEST")
+        assert rec["ctgov_date_precision_raw"] == "MONTH"
+
+    def test_full_day_pcd_records_day_precision(self):
+        rec = _parse_study(_study({"date": "2026-08-14", "type": "ACTUAL"}), "TEST")
+        assert rec["ctgov_date_precision_raw"] == "DAY"
+
+    def test_year_only_pcd_records_year_precision(self):
+        rec = _parse_study(_study({"date": "2026", "type": "ESTIMATED"}), "TEST")
+        assert rec["ctgov_date_precision_raw"] == "YEAR"
+
+    def test_absent_pcd_is_unknown_never_day(self):
+        """The contract locked by #543: absence means UNKNOWN, never DAY.
+
+        Defaulting to the strongest claim is the defect Spec 114 fixes.
+        """
+        rec = _parse_study(_study(None), "TEST")
+        assert rec["ctgov_date_precision_raw"] == "UNKNOWN"
+
+    def test_raw_date_and_type_preserved(self):
+        rec = _parse_study(_study({"date": "2026-08", "type": "ESTIMATED"}), "TEST")
+        assert rec["ctgov_raw_date"] == "2026-08"
+        assert rec["ctgov_date_type"] == "ESTIMATED"
+
+    def test_month_only_normalized_candidate_is_month(self):
+        """CTGOV_CALENDAR declares a MONTH floor, so a month-only date stays MONTH."""
+        rec = _parse_study(_study({"date": "2026-08", "type": "ESTIMATED"}), "TEST")
+        assert rec["ctgov_precision_normalized_candidate"] == "MONTH"
+
+    def test_day_precision_floored_to_source_declaration(self):
+        """Even an exact day is floored by the CTGOV_CALENDAR MONTH declaration."""
+        rec = _parse_study(_study({"date": "2026-08-14", "type": "ACTUAL"}), "TEST")
+        assert rec["ctgov_precision_normalized_candidate"] == "MONTH"
+
+    def test_routing_unchanged_pcd_still_snapped(self):
+        """NON-ROUTING guarantee: the consumed date keeps its normalized value."""
+        rec = _parse_study(_study({"date": "2026-08", "type": "ESTIMATED"}), "TEST")
+        assert rec["primary_completion_date"] == "2026-08-01"
+
+    def test_precision_matches_client_path_for_same_struct(self):
+        """The two CT.gov paths must not disagree about precision."""
+        from data_sources.ctgov_client import date_provenance_shadow
+
+        struct = {"date": "2026-08", "type": "ESTIMATED"}
+        rec = _parse_study(_study(struct), "TEST")
+        shadow = date_provenance_shadow(struct)
+        for key, value in shadow.items():
+            assert rec[key] == value, f"collector disagrees with client on {key}"
 
 
 # ---------------------------------------------------------------------------

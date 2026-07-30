@@ -17,6 +17,11 @@ from typing import Dict, List
 
 import requests
 
+# Single authority for CT.gov date granularity. Reused rather than
+# reimplemented so this collector and data_sources/ctgov_client.py cannot drift
+# apart on what "MONTH" means. See Spec 114.
+from data_sources.ctgov_client import date_provenance_shadow
+
 # =============================================================================
 # SPONSOR NAME MAPPING
 # =============================================================================
@@ -404,7 +409,7 @@ def _parse_study(study: dict, ticker: str) -> dict:
     conditions_module = protocol.get("conditionsModule", {})
     arms_module = protocol.get("armsInterventionsModule", {})
 
-    return {
+    record = {
         "ticker": ticker,
         "nct_id": id_module.get("nctId"),
         "title": id_module.get("briefTitle"),
@@ -423,6 +428,19 @@ def _parse_study(study: dict, ticker: str) -> dict:
         "sponsor": sponsor_module.get("leadSponsor", {}).get("name"),
         "collected_at": date.today().isoformat(),
     }
+
+    # Provenance for the primary completion date — the field that drives
+    # catalyst timing. _normalize_date() above snaps "2026-08" to "2026-08-01"
+    # and returns a bare string, so without this the granularity is
+    # unrecoverable downstream and ctgov_adapter resolves precision to None.
+    #
+    # NON-ROUTING: additive only. primary_completion_date keeps its normalized
+    # value and module_3_catalyst still stamps date_precision="DAY"
+    # unconditionally. Flipping that is Spec 114 Phase 2, which is held back
+    # under the DEM candidate freeze / NO_MODEL_CHANGE window.
+    record.update(date_provenance_shadow(status_module.get("primaryCompletionDateStruct", {})))
+
+    return record
 
 
 def _fetch_all_trials(query_params: dict, ticker: str, max_retries: int = 3, max_results: int = 1000) -> List[Dict]:
