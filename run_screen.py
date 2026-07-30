@@ -130,6 +130,8 @@ from decision_engine import (
 from ranker_engine import compute_ranker_adjustments
 from ranker_v2_pairwise import RankerV2Config, model_from_dict, score_snapshot
 from selector_engine import BlockWeight, SelectorConfig, SignalSpec, compute_selector_scores, get_regime_modulation
+from tools.check_market_snapshot_freshness import check_freshness as _check_snapshot_freshness
+from tools.check_market_snapshot_freshness import emit_diagnostic as _emit_snapshot_diagnostic
 from tools.compute_path_c_drawdown import compute_drawdown_vs_xbi
 
 # Spec 050 → v1.14.0: coinvest-only selector (inst_delta_z removed)
@@ -10431,6 +10433,30 @@ def run_screening_pipeline(
             logger.info("  Loading market snapshot for regime detection...")
             with open(snapshot_file, "r", encoding="utf-8") as f:
                 market_snapshot = json.load(f)
+
+            # Regime-input preflight — OBSERVABILITY ONLY.
+            #
+            # tools/check_market_snapshot_freshness.py was fully implemented and
+            # tested but wired into nothing, so the regime input ran unguarded.
+            # This closes the observability half: the check now runs against the
+            # real snapshot on every production run and reports staleness or a
+            # wholesale feed failure.
+            #
+            # market_snapshot is deliberately NOT nullified. Nullifying it would
+            # move regime detection and therefore the regime pruner, which is
+            # frozen under the DEM candidate freeze / NO_MODEL_CHANGE window, and
+            # any authorized behaviour change resets the out-of-sample clock
+            # (docs/FORWARD_VALIDATION_PROTOCOL.md §1). The nullification half
+            # stays pending an explicit operator freeze lift; see
+            # tests/test_market_snapshot_preflight_wire.py.
+            regime_input_diagnostic = _check_snapshot_freshness(snapshot_file, reference_date=as_of_date)
+            _emit_snapshot_diagnostic(regime_input_diagnostic)
+            if not regime_input_diagnostic.get("ok"):
+                logger.warning(
+                    "  REGIME_INPUT_STALE_OR_INVALID: %s",
+                    "; ".join(regime_input_diagnostic.get("issues", [])) or "no detail",
+                )
+                logger.warning("  Observability only — market_snapshot NOT nullified (frozen behaviour).")
         else:
             logger.warning(f"  --enable-enhancements specified but {snapshot_file} not found")
             logger.warning("  Regime detection will use UNKNOWN regime with neutral weights")
