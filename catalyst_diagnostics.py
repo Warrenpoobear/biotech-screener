@@ -435,6 +435,10 @@ class CalendarCatalyst:
     confidence: float
     rule_id: str
     evidence: EventEvidence
+    # Granularity of the underlying CT.gov source date (#535 / Spec 114).
+    # None means "not known" — NOT "DAY". Consumers must not treat absence as an
+    # exact date. Nothing routes on this yet; module_3_catalyst still stamps DAY.
+    date_precision: Optional[str] = None
 
     def to_dict(self) -> dict:
         return {
@@ -447,6 +451,7 @@ class CalendarCatalyst:
             "confidence": self.confidence,
             "rule_id": self.rule_id,
             "evidence": self.evidence.to_dict(),
+            "date_precision": self.date_precision,
         }
 
 
@@ -522,6 +527,7 @@ def detect_calendar_catalysts(
                         window=window,
                         confidence=confidence,
                         rule_id=rule_id,
+                        date_precision=record.primary_completion_precision,
                         evidence=EventEvidence(
                             rule_id=rule_id,
                             fields={

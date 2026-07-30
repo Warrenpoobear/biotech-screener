@@ -173,6 +173,19 @@ class CanonicalTrialRecord:
     completion_date: Optional[date]
     completion_type: Optional[CompletionType]
     results_first_posted: Optional[date]
+    # Granularity actually present in the CT.gov source date for
+    # primary_completion_date: DAY | MONTH | YEAR | UNKNOWN, or None when the
+    # producing cache predates the capture (#535 / Spec 114).
+    #
+    # CT.gov reports many completion dates as month-only and ESTIMATED;
+    # ctgov_client._parse_date() snaps "2026-08" to "2026-08-01" and returns a
+    # bare string, so downstream code cannot tell an exact date from a month
+    # placeholder. Carrying the granularity here is what makes the correction
+    # possible. Nothing routes on this field yet — module_3_catalyst still
+    # stamps date_precision="DAY" — because changing that moves
+    # catalyst_decay_w -> catalyst_tilt_mult -> target_weight_pct, and sizing is
+    # frozen under the DEM NO_MODEL_CHANGE window.
+    primary_completion_precision: Optional[str] = None
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize for JSONL storage"""
@@ -188,6 +201,7 @@ class CanonicalTrialRecord:
             "completion_date": self.completion_date.isoformat() if self.completion_date else None,
             "completion_type": self.completion_type.value if self.completion_type else None,
             "results_first_posted": self.results_first_posted.isoformat() if self.results_first_posted else None,
+            "primary_completion_precision": self.primary_completion_precision,
         }
 
     @classmethod
@@ -209,6 +223,8 @@ class CanonicalTrialRecord:
             results_first_posted=(
                 date.fromisoformat(data["results_first_posted"]) if data["results_first_posted"] else None
             ),
+            # .get(): caches written before #538 have no precision field.
+            primary_completion_precision=data.get("primary_completion_precision"),
         )
 
     def compute_hash(self) -> str:
@@ -369,6 +385,10 @@ class CTGovAdapter:
             completion_type = self._extract_completion_type(record, root)
             results_first_posted = self._extract_results_first_posted(record, root)
 
+            # Shadow precision captured by ctgov_client (#538). Absent on caches
+            # written before that landed, hence .get() -> None.
+            primary_completion_precision = record.get("ctgov_date_precision_raw")
+
             canonical = CanonicalTrialRecord(
                 ticker=ticker,
                 nct_id=nct_id,
@@ -376,6 +396,7 @@ class CTGovAdapter:
                 last_update_posted=last_update_posted,
                 primary_completion_date=primary_completion_date,
                 primary_completion_type=primary_completion_type,
+                primary_completion_precision=primary_completion_precision,
                 completion_date=completion_date,
                 completion_type=completion_type,
                 results_first_posted=results_first_posted,
