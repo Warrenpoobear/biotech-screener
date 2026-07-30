@@ -28,9 +28,10 @@ import csv
 import hashlib
 import json
 import logging
+import re
 import sys
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -48,6 +49,67 @@ LEDGER_PATH = EV_ARTIFACTS / "ev_validation_ledger.jsonl"
 SUMMARY_PATH = EV_ARTIFACTS / "ev_validation_summary.json"
 
 SCHEMA_VERSION = "ev_validation.v1"
+
+# --- Point-in-time guards (issue #541) --------------------------------------
+# match_predictions_to_resolutions() filters on `pred_date < catalyst_date`. The
+# intent is right, but catalyst_date is month-snapped (#535) and is future-dated
+# in 14 resolution records, so it is not the event date. A prediction made AFTER
+# the real outcome passes that check — ELVN: catalyst_date 2026-07-01, real event
+# 2024-09-28, prediction 2026-05-04, i.e. 583 days of hindsight admitted as a
+# prediction. All 25 affected records are HIT, so the contamination runs in the
+# direction that flatters calibration.
+#
+# These guards compare against evidence of the ACTUAL event instead. They are
+# deliberately conservative: when no independent event date is available the pair
+# is NOT excluded, because only 27 of 250 records carry a parseable source date
+# and silently dropping the rest would be worse than the bias being fixed.
+
+_SOURCE_URL_DATE = re.compile(r"/(20\d{2})/(\d{2})/(\d{2})/")
+
+
+def source_event_date(resolution: Dict[str, Any]) -> Optional[str]:
+    """Actual event date evidenced by the resolution's own source URL.
+
+    Returns an ISO date, or None when the source carries no ``/YYYY/MM/DD/``
+    path segment or the segment is not a real calendar date. This is the only
+    event date in the record not derived from the snapped ``catalyst_date``.
+    """
+    m = _SOURCE_URL_DATE.search(str(resolution.get("source_id") or ""))
+    if not m:
+        return None
+    try:
+        return date(int(m.group(1)), int(m.group(2)), int(m.group(3))).isoformat()
+    except ValueError:
+        return None
+
+
+def is_lookahead_pair(resolution: Dict[str, Any], prediction_date: Optional[str]) -> bool:
+    """True when the prediction postdates the event evidenced by the source.
+
+    Same-day is treated as clean — it is a boundary case, not hindsight.
+    """
+    if not prediction_date:
+        return False
+    src = source_event_date(resolution)
+    if not src:
+        return False  # no independent evidence — do not exclude
+    return str(prediction_date)[:10] > src
+
+
+def is_future_resolution_hit(resolution: Dict[str, Any], today: Optional[str] = None) -> bool:
+    """True when a resolution claims HIT with a resolution_date in the future.
+
+    Scoped to HIT deliberately: a future MISS is a different anomaly.
+    """
+    if resolution.get("outcome") != "HIT":
+        return False
+    rd = str(resolution.get("resolution_date") or "")[:10]
+    ref = str(today) if today else date.today().isoformat()
+    try:
+        return date.fromisoformat(rd) > date.fromisoformat(ref)
+    except ValueError:
+        return False
+
 
 # Phases where CRT data is Herald-biased (positive press release selection)
 # Mirrors event_ev/outcome_model.py::HERALD_BIASED_PHASES
@@ -259,6 +321,10 @@ def match_predictions_to_resolutions(
     BEFORE the catalyst date for the same ticker and event type.
     """
     matched = []
+    # PIT exclusions (#541) — surfaced in the log so the count is visible rather
+    # than silently absorbed into the matched total.
+    excluded_lookahead: List[Dict[str, Any]] = []
+    excluded_future_hit: List[Dict[str, Any]] = []
 
     # Index resolutions by (ticker, normalized_type)
     for res in resolutions:
@@ -290,6 +356,40 @@ def match_predictions_to_resolutions(
 
         if best_pred is None:
             continue  # No matching prediction found
+
+        # PIT guards (#541). The `pred_date < catalyst_date` filter above cannot
+        # protect against look-ahead, because catalyst_date is month-snapped and
+        # sometimes future-dated. Compare against the source's own event date.
+        if is_future_resolution_hit(res):
+            logger.warning(
+                "EXCLUDED future-dated HIT: %s resolution_date=%s is in the future — "
+                "cannot be a resolved outcome (#541)",
+                ticker,
+                resolution_date,
+            )
+            excluded_future_hit.append({"ticker": ticker, "resolution_date": resolution_date})
+            continue
+
+        if is_lookahead_pair(res, best_pred_date):
+            src = source_event_date(res)
+            logger.warning(
+                "EXCLUDED look-ahead pair: %s prediction=%s postdates source event=%s "
+                "(catalyst_date=%s admitted it) — hindsight, not a prediction (#541)",
+                ticker,
+                best_pred_date,
+                src,
+                catalyst_date,
+            )
+            excluded_lookahead.append(
+                {
+                    "ticker": ticker,
+                    "prediction_date": best_pred_date,
+                    "source_event_date": src,
+                    "catalyst_date": catalyst_date,
+                    "outcome": outcome,
+                }
+            )
+            continue
 
         # Dedup
         rec_hash = _record_hash(ticker, catalyst_date, best_pred_date)
@@ -366,6 +466,25 @@ def match_predictions_to_resolutions(
 
         matched.append(record)
         existing_hashes.add(rec_hash)
+
+    if excluded_lookahead or excluded_future_hit:
+        logger.warning(
+            "PIT exclusions (#541): %d look-ahead pair(s), %d future-dated HIT(s) "
+            "removed from calibration. These would previously have been admitted, "
+            "because the pred_date < catalyst_date filter compares against a "
+            "month-snapped date (#535).",
+            len(excluded_lookahead),
+            len(excluded_future_hit),
+        )
+        for e in excluded_lookahead:
+            logger.warning(
+                "  look-ahead: %s pred=%s > source_event=%s (catalyst_date=%s, outcome=%s)",
+                e["ticker"],
+                e["prediction_date"],
+                e["source_event_date"],
+                e["catalyst_date"],
+                e["outcome"],
+            )
 
     return matched
 
