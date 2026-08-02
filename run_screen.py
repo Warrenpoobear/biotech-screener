@@ -704,6 +704,7 @@ def _write_cohort_churn_alert(
     csv_rows: List[Dict[str, Any]],
     snap_path: Path,
     threshold_pct: float = 10.0,
+    prior_snapshot_dir: Optional[Path] = None,
 ) -> Optional[Dict[str, Any]]:
     """
     Compute today vs prior-snapshot v2 cohort delta and write a JSON alert
@@ -711,10 +712,15 @@ def _write_cohort_churn_alert(
 
     Returns the alert dict (None if no prior snapshot found). Does not
     modify csv_rows or any scoring/decision-engine output.
+
+    `prior_snapshot_dir` defaults to `snap_path.parent`, which is only correct
+    when writing directly into the real snapshots root. Production writes into a
+    throwaway staging dir, so the caller must pass the real root or no prior
+    snapshot is ever found (churn permanently null at severity "info").
     """
     if snap_path is None:
         return None
-    snapshots_root = snap_path.parent
+    snapshots_root = Path(prior_snapshot_dir) if prior_snapshot_dir else snap_path.parent
     current_dir = snap_path.name
     _date_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
     try:
@@ -790,16 +796,23 @@ def _annotate_cohort_membership_streaks(
     csv_rows: List[Dict[str, Any]],
     snap_path: Path,
     max_walkback_days: int = 30,
+    prior_snapshot_dir: Optional[Path] = None,
 ) -> None:
     """
     Display-only annotation of `cohort_membership` ("in"/"out") and
     `cohort_membership_streak` (consecutive prior snapshots with same status)
     on each row in csv_rows.
 
-    Walks back through sibling snapshot dirs (plain `YYYY-MM-DD` only — skips
-    `__pre_…` and other suffixed dirs) and reads their rankings.csv files;
-    membership = "in" iff ranker_v2_score is populated. Streak is capped by
-    max_walkback_days. Pure-read on csv_rows except for the two new fields.
+    Walks back through dated snapshot dirs under `prior_snapshot_dir` (plain
+    `YYYY-MM-DD` only — skips `__pre_…` and other suffixed dirs) and reads their
+    rankings.csv files; membership = "in" iff ranker_v2_score is populated.
+    Streak is capped by max_walkback_days. Pure-read on csv_rows except for the
+    two new fields.
+
+    `prior_snapshot_dir` defaults to `snap_path.parent`, which is only correct
+    when writing directly into the real snapshots root. Production writes into a
+    throwaway staging dir, so the caller must pass the real root or no history
+    is ever found (streak pinned at 1 for every ticker).
     """
     if snap_path is None:
         for _r in csv_rows:
@@ -807,7 +820,7 @@ def _annotate_cohort_membership_streaks(
             _r["cohort_membership_streak"] = 1
         return
 
-    snapshots_root = snap_path.parent
+    snapshots_root = Path(prior_snapshot_dir) if prior_snapshot_dir else snap_path.parent
     current_dir = snap_path.name
 
     # Only consider plain YYYY-MM-DD sibling dirs strictly before today's.
@@ -7098,17 +7111,18 @@ def save_validation_snapshot(
         _row["lead_program_phase_raw"] = _raw_phase
 
     # --- Display-only ranker_v2 cohort_membership_streak (per audit 2026-04-26) ---
-    # Walks back through sibling snapshot dirs to count consecutive prior days
-    # with the same cohort membership state. Read-only against historical
+    # Walks back through dated dirs under _prior_dir to count consecutive prior
+    # days with the same cohort membership state. Read-only against historical
     # rankings.csv files; never mutates scoring/selector/ranker logic.
-    _annotate_cohort_membership_streaks(csv_rows, snap_path)
+    # _prior_dir (not snap_path.parent) — snap_path is a staging dir in production.
+    _annotate_cohort_membership_streaks(csv_rows, snap_path, prior_snapshot_dir=_prior_dir)
 
     # --- Cohort churn diagnostic alert (per audit 2026-04-26) ---
     # Writes snap_path/cohort_churn_alert.json comparing today's v2 cohort to
     # the prior snapshot. severity=warn when churn >= 10% (boundary noise
     # threshold from the audit).
     try:
-        _churn_alert = _write_cohort_churn_alert(csv_rows, snap_path)
+        _churn_alert = _write_cohort_churn_alert(csv_rows, snap_path, prior_snapshot_dir=_prior_dir)
         if _churn_alert and _churn_alert.get("severity") == "warn":
             logger.warning(
                 f"Cohort churn WARN: {_churn_alert['churn_n']} names "

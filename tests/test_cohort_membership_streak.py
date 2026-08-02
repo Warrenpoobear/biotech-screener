@@ -224,3 +224,86 @@ class TestSchemaIntegrity:
 
     def test_no_duplicates(self):
         assert len(SNAPSHOT_COLUMNS) == len(set(SNAPSHOT_COLUMNS))
+
+
+class TestStagingDirPriorSnapshotResolution:
+    """Production runs write into a throwaway staging dir, not data/snapshots.
+
+    `tools/run_daily_production.py` creates the staging root via
+    `tempfile.mkdtemp(prefix=f"phase2_staging_{as_of_date}_")` and passes
+    `--prior-snapshot-dir <real snapshots root>`. Deriving the search root from
+    `snap_path.parent` therefore finds no history: the staging parent holds
+    exactly one dated dir (today's). These tests pin the fix — both helpers must
+    honour an explicit prior-snapshot root the way the rest of
+    `save_validation_snapshot` already does via `_prior_dir`.
+    """
+
+    @staticmethod
+    def _staging_and_history(tmp_path, history):
+        """Build (staging_snap_path, real_snapshots_root) mirroring production."""
+        real_root = tmp_path / "data" / "snapshots"
+        for date, rows in history.items():
+            _write_csv(real_root / date / "rankings.csv", rows)
+        staging_root = tmp_path / "phase2_staging_2026-04-25_xyz"
+        snap = staging_root / "2026-04-25"
+        snap.mkdir(parents=True)
+        return snap, real_root
+
+    def test_churn_alert_uses_prior_snapshot_dir(self, tmp_path):
+        snap, real_root = self._staging_and_history(
+            tmp_path,
+            {
+                "2026-04-24": [
+                    {"ticker": "A", "ranker_v2_score": "0.5"},
+                    {"ticker": "B", "ranker_v2_score": "0.5"},
+                ]
+            },
+        )
+        rows = [
+            {"ticker": "A", "ranker_v2_score": "0.6"},
+            {"ticker": "B", "ranker_v2_score": ""},
+        ]
+        alert = _write_cohort_churn_alert(rows, snap, prior_snapshot_dir=real_root)
+        assert alert["prior_snapshot"] == "2026-04-24"
+        assert alert["churn_n"] == 1
+        assert alert["churn_pct"] == 50.0
+        assert alert["severity"] == "warn"
+        assert alert["names_left"] == ["B"]
+
+    def test_streak_walks_back_via_prior_snapshot_dir(self, tmp_path):
+        snap, real_root = self._staging_and_history(
+            tmp_path,
+            {
+                "2026-04-22": [{"ticker": "A", "ranker_v2_score": "0.5"}],
+                "2026-04-23": [{"ticker": "A", "ranker_v2_score": "0.5"}],
+                "2026-04-24": [{"ticker": "A", "ranker_v2_score": "0.5"}],
+            },
+        )
+        rows = [{"ticker": "A", "ranker_v2_score": "0.6"}]
+        _annotate_cohort_membership_streaks(rows, snap, prior_snapshot_dir=real_root)
+        assert rows[0]["cohort_membership"] == "in"
+        assert rows[0]["cohort_membership_streak"] == 4
+
+    def test_todays_dir_in_history_is_not_self_compared(self, tmp_path):
+        """A same-day rerun leaves 2026-04-25 in the real root; it must be skipped."""
+        snap, real_root = self._staging_and_history(
+            tmp_path,
+            {
+                "2026-04-24": [{"ticker": "A", "ranker_v2_score": "0.5"}],
+                "2026-04-25": [{"ticker": "A", "ranker_v2_score": ""}],
+            },
+        )
+        rows = [{"ticker": "A", "ranker_v2_score": "0.6"}]
+        alert = _write_cohort_churn_alert(rows, snap, prior_snapshot_dir=real_root)
+        assert alert["prior_snapshot"] == "2026-04-24"
+
+    def test_omitting_prior_snapshot_dir_preserves_sibling_behaviour(self, tmp_path):
+        """Back-compat: with no explicit root, both helpers still use snap_path.parent."""
+        _write_csv(tmp_path / "2026-04-24" / "rankings.csv", [{"ticker": "A", "ranker_v2_score": "0.5"}])
+        snap = tmp_path / "2026-04-25"
+        snap.mkdir()
+        rows = [{"ticker": "A", "ranker_v2_score": "0.6"}]
+        alert = _write_cohort_churn_alert(rows, snap)
+        _annotate_cohort_membership_streaks(rows, snap)
+        assert alert["prior_snapshot"] == "2026-04-24"
+        assert rows[0]["cohort_membership_streak"] == 2
