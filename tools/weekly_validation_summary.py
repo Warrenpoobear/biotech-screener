@@ -208,7 +208,8 @@ def main() -> int:
         "## Adversarial Controls (once ≥20 windows)",
         "",
         f"Boot% = fraction of {1000}-sample random baskets the Top-30 EW beats in excess-vs-XBI.  ",
-        "B30 = equal-weight bottom-30 basket return over the same window.  ",
+        "B30 = equal-weight bottom-30 basket **raw return** over the same window "
+        "(not an excess — the §6 control compares B30 *excess* vs XBI, tabulated below).  ",
         "",
         "| Control | Current average |",
         "|---------|----------------|",
@@ -216,6 +217,14 @@ def main() -> int:
 
     boot_vals = [r["control_boot_pct"] for r in rows if r["control_boot_pct"] is not None]
     b30_vals = [r["control_b30"] for r in rows if r["control_b30"] is not None]
+    # control_b30 is a RAW RETURN (see legend above), so the excess-vs-XBI control
+    # must subtract the same-window XBI return per window BEFORE averaging.
+    # Averaging the raw returns and labelling the result "excess" overstated the
+    # control by the mean XBI return, which inverted the §6 adversarial comparison
+    # in rising tape (the control appeared to beat the candidate).
+    b30_xs_vals = [
+        r["control_b30"] - r["xbi_5d"] for r in rows if r["control_b30"] is not None and r["xbi_5d"] is not None
+    ]
 
     if boot_vals:
         avg_boot = sum(boot_vals) / len(boot_vals)
@@ -223,11 +232,17 @@ def main() -> int:
     else:
         lines.append("| Bootstrap percentile (avg) | — (pending) |")
 
-    if b30_vals:
-        avg_b30 = sum(b30_vals) / len(b30_vals)
-        lines.append(f"| Bottom-30 avg excess vs XBI | {avg_b30:+.2%} |")
+    if b30_xs_vals:
+        avg_b30_xs = sum(b30_xs_vals) / len(b30_xs_vals)
+        lines.append(f"| Bottom-30 avg excess vs XBI | {avg_b30_xs:+.2%} |")
     else:
         lines.append("| Bottom-30 avg excess vs XBI | — (pending) |")
+
+    if b30_vals:
+        avg_b30 = sum(b30_vals) / len(b30_vals)
+        lines.append(f"| Bottom-30 avg raw return | {avg_b30:+.2%} |")
+    else:
+        lines.append("| Bottom-30 avg raw return | — (pending) |")
 
     lines += [
         "",
