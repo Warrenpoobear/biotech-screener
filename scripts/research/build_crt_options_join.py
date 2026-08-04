@@ -16,6 +16,7 @@ Usage:
 
 from __future__ import annotations
 
+import bisect
 import csv
 import json
 import logging
@@ -156,45 +157,88 @@ def load_crt_resolutions() -> list[dict]:
     return records
 
 
+_SNAPSHOT_DATES_CACHE: List[str] | None = None
+
+
+def _snapshot_dates_with_rankings() -> List[str]:
+    """Sorted names of every snapshot dir containing a rankings.csv.
+
+    Scanned once per process. The previous implementation re-walked all ~223
+    snapshot dirs and stat'd rankings.csv in each on every call; at ~1.05 s per
+    call over 257 CRT resolutions that alone projected to ~270 s and guaranteed
+    the caller's 120 s timeout. Directory contents do not change mid-run, so a
+    single scan is equivalent.
+    """
+    global _SNAPSHOT_DATES_CACHE
+    if _SNAPSHOT_DATES_CACHE is None:
+        _SNAPSHOT_DATES_CACHE = sorted(
+            d.name for d in SNAPSHOT_DIR.iterdir() if d.is_dir() and (d / "rankings.csv").exists()
+        )
+    return _SNAPSHOT_DATES_CACHE
+
+
 def find_prediction_snapshot(ticker: str, catalyst_date: str) -> str | None:
-    """Find the most recent snapshot before the catalyst date for this ticker."""
-    dates = sorted(
-        d.name
-        for d in SNAPSHOT_DIR.iterdir()
-        if d.is_dir() and d.name < catalyst_date and (d / "rankings.csv").exists()
-    )
-    if not dates:
+    """Find the most recent snapshot before the catalyst date for this ticker.
+
+    ``ticker`` is unused (kept for call-site compatibility) — the snapshot choice
+    depends only on ``catalyst_date``.
+    """
+    dates = _snapshot_dates_with_rankings()
+    # Largest name strictly less than catalyst_date, matching the original
+    # string comparison and max() semantics exactly.
+    idx = bisect.bisect_left(dates, catalyst_date)
+    if idx == 0:
         return None
-    return dates[-1]
+    return dates[idx - 1]
+
+
+_OPTIONS_BY_SNAPSHOT: Dict[str, Dict[str, dict]] = {}
+
+
+def _options_index(snapshot_date: str) -> Dict[str, dict]:
+    """Parse one snapshot's rankings.csv into {TICKER: options fields}, memoized.
+
+    Previously each call re-parsed the whole ~890 KB / 341-column rankings.csv
+    and linear-scanned it for a single ticker. Records frequently share a
+    snapshot, so parsing once per snapshot removes the repeated work while
+    returning identical values. First row wins on duplicate tickers, matching
+    the original early-return behaviour.
+    """
+    cached = _OPTIONS_BY_SNAPSHOT.get(snapshot_date)
+    if cached is not None:
+        return cached
+    index: Dict[str, dict] = {}
+    rpath = SNAPSHOT_DIR / snapshot_date / "rankings.csv"
+    if rpath.exists():
+        with open(rpath, encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                key = row.get("ticker", "").upper()
+                if key and key not in index:
+                    index[key] = {
+                        "opt_has_data": row.get("opt_has_data", ""),
+                        "opt_atm_iv": _sf(row.get("opt_atm_iv")),
+                        "opt_front_iv": _sf(row.get("opt_front_iv")),
+                        "opt_back_iv": _sf(row.get("opt_back_iv")),
+                        "opt_rr_25d": _sf(row.get("opt_rr_25d")),
+                        "opt_term_slope": _sf(row.get("opt_term_slope")),
+                        "opt_event_premium": row.get("opt_event_premium", ""),
+                        "opt_iv_regime": row.get("opt_iv_regime", ""),
+                        "opt_liquidity_ok": row.get("opt_liquidity_ok", ""),
+                        "opt_liquidity_state": get_liquidity_state(row),
+                        "actual_implied_move_pctile": _sf(row.get("actual_implied_move_pctile")),
+                        "implied_event_move": _sf(row.get("implied_event_move")),
+                        "opt_dte": _sf(row.get("opt_dte")),
+                        "catalyst_days": _sf(row.get("catalyst_days")),
+                        "actionable_rank": row.get("actionable_rank", ""),
+                        "tier_any": row.get("tier_any", ""),
+                    }
+    _OPTIONS_BY_SNAPSHOT[snapshot_date] = index
+    return index
 
 
 def load_options_at_prediction(ticker: str, snapshot_date: str) -> dict:
-    """Load options fields from the prediction-date snapshot."""
-    rpath = SNAPSHOT_DIR / snapshot_date / "rankings.csv"
-    if not rpath.exists():
-        return {}
-    with open(rpath, encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row.get("ticker", "").upper() == ticker.upper():
-                return {
-                    "opt_has_data": row.get("opt_has_data", ""),
-                    "opt_atm_iv": _sf(row.get("opt_atm_iv")),
-                    "opt_front_iv": _sf(row.get("opt_front_iv")),
-                    "opt_back_iv": _sf(row.get("opt_back_iv")),
-                    "opt_rr_25d": _sf(row.get("opt_rr_25d")),
-                    "opt_term_slope": _sf(row.get("opt_term_slope")),
-                    "opt_event_premium": row.get("opt_event_premium", ""),
-                    "opt_iv_regime": row.get("opt_iv_regime", ""),
-                    "opt_liquidity_ok": row.get("opt_liquidity_ok", ""),
-                    "opt_liquidity_state": get_liquidity_state(row),
-                    "actual_implied_move_pctile": _sf(row.get("actual_implied_move_pctile")),
-                    "implied_event_move": _sf(row.get("implied_event_move")),
-                    "opt_dte": _sf(row.get("opt_dte")),
-                    "catalyst_days": _sf(row.get("catalyst_days")),
-                    "actionable_rank": row.get("actionable_rank", ""),
-                    "tier_any": row.get("tier_any", ""),
-                }
-    return {}
+    """Load options fields for one ticker from the prediction-date snapshot."""
+    return _options_index(snapshot_date).get(ticker.upper(), {})
 
 
 # ---------------------------------------------------------------------------
