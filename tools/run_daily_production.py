@@ -30,7 +30,7 @@ import tempfile
 from dataclasses import asdict, dataclass
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 # ---------------------------------------------------------------------------
 # Repo root — all paths relative to the repo
@@ -470,6 +470,105 @@ def refresh_prices(
     return stats
 
 
+def _read_price_pairs(path: Path) -> Dict[Tuple[str, str], str]:
+    """Read a price CSV into {(ticker, date): close} for cheap set comparison."""
+    import csv as _csv
+
+    out: Dict[Tuple[str, str], str] = {}
+    if not path.exists():
+        return out
+    with open(path, newline="", encoding="utf-8-sig") as f:
+        for row in _csv.DictReader(f):
+            out[(row["ticker"], row["date"])] = row["close"]
+    return out
+
+
+def refresh_split_adjusted_prices(
+    price_csv: Path,
+    split_adj_csv: Path,
+    repo_root: Path,
+    timeout: int = 120,
+) -> Dict[str, Any]:
+    """Regenerate the split-adjusted price series from the raw series.
+
+    ``price_history_split_adj.csv`` is the price source declared in
+    docs/FORWARD_VALIDATION_PROTOCOL.md; beyond its last date the pipeline falls
+    back to raw prices. Nothing refreshed it, so it silently drifted 17 trading
+    days behind (last 2026-07-10 vs raw 2026-08-03) before being caught by hand.
+
+    Split adjustment is RETROACTIVE: a new split rewrites every earlier price for
+    that ticker. That is correct for return continuity, but it also means a
+    regeneration can silently change prices underneath already-completed forward
+    validation windows. So this does not blind-overwrite: it generates to a temp
+    file, compares the overlapping (ticker, date) pairs against the incumbent,
+    and reports whether the change was a pure append or a retroactive rewrite.
+
+    A retroactive rewrite is still installed — the adjusted values are the correct
+    ones — but it is surfaced loudly so an operator can decide whether completed
+    FV windows need recomputation. Silence is the failure mode being removed here.
+
+    Returns a stats dict; never raises.
+    """
+    import subprocess as _sp
+
+    stats: Dict[str, Any] = {"status": "SKIPPED", "n_appended": 0, "n_retroactive": 0}
+    script = repo_root / "scripts" / "repair_price_history_splits.py"
+    if not script.exists():
+        stats["status"] = "SCRIPT_MISSING"
+        return stats
+
+    tmp_out = split_adj_csv.with_suffix(".csv.regen.tmp")
+    try:
+        proc = _sp.run(
+            [sys.executable, str(script), "--prices", str(price_csv), "--out", str(tmp_out)],
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            cwd=str(repo_root),
+        )
+        if proc.returncode != 0 or not tmp_out.exists():
+            stats["status"] = "FAILED"
+            stats["detail"] = f"exit={proc.returncode}: {(proc.stderr or '')[-300:]}"
+            return stats
+
+        incumbent = _read_price_pairs(split_adj_csv)
+        regenerated = _read_price_pairs(tmp_out)
+
+        overlap = incumbent.keys() & regenerated.keys()
+        changed = [k for k in overlap if incumbent[k] != regenerated[k]]
+        appended = len(regenerated.keys() - incumbent.keys())
+        lost = len(incumbent.keys() - regenerated.keys())
+
+        stats.update(
+            {
+                "n_appended": appended,
+                "n_retroactive": len(changed),
+                "n_lost": lost,
+                "n_rows": len(regenerated),
+                "retroactive_tickers": sorted({k[0] for k in changed})[:20],
+                "last_date": max((k[1] for k in regenerated), default=None),
+            }
+        )
+        stats["status"] = "APPENDED" if not changed else "RETROACTIVE_CHANGE"
+
+        # Atomic install on the same filesystem.
+        os.replace(tmp_out, split_adj_csv)
+        return stats
+    except _sp.TimeoutExpired:
+        stats["status"] = "TIMEOUT"
+        return stats
+    except Exception as exc:  # never let this abort the run
+        stats["status"] = "ERROR"
+        stats["detail"] = str(exc)[:300]
+        return stats
+    finally:
+        try:
+            if tmp_out.exists():
+                tmp_out.unlink()
+        except OSError:
+            pass
+
+
 def validate_xbi_freshness(
     price_csv: Path,
     through_date: str,
@@ -881,6 +980,96 @@ def check_price_append_health(
         detail=f"price append OK: {n_appended} rows for {n_extended} extended tickers",
         value=n_appended,
         threshold=int(n_extended * min_ratio),
+    )
+
+
+def _get_max_date(price_csv: Path) -> Optional[str]:
+    """Latest date present in a long-format price CSV (date,ticker,close,...)."""
+    import csv as _csv
+
+    if not price_csv.exists():
+        return None
+    latest: Optional[str] = None
+    with open(price_csv, newline="", encoding="utf-8-sig") as f:
+        for row in _csv.DictReader(f):
+            d = row.get("date")
+            if d and (latest is None or d > latest):
+                latest = d
+    return latest
+
+
+def _count_trading_days_between(start: str, end: str) -> int:
+    """Approximate trading days between two ISO dates, weekdays only.
+
+    Mirrors the idiom already used by check_xbi_staleness so both gates report
+    gaps on the same basis.
+    """
+    from datetime import timedelta
+
+    start_dt = datetime.strptime(start, "%Y-%m-%d")
+    end_dt = datetime.strptime(end, "%Y-%m-%d")
+    if end_dt <= start_dt:
+        return 0
+    delta = end_dt - start_dt
+    return sum(1 for i in range(1, delta.days + 1) if (start_dt + timedelta(days=i)).weekday() < 5)
+
+
+def check_split_adj_freshness(
+    price_csv: Path,
+    split_adj_csv: Path,
+    max_gap_days: int = 4,
+) -> GateResult:
+    """WARN gate: the split-adjusted series must not fall behind the raw series.
+
+    ``price_history_split_adj.csv`` is the price source declared in
+    docs/FORWARD_VALIDATION_PROTOCOL.md. Beyond its last date the pipeline falls
+    back to raw prices, which is per-spec but silent — which is how it drifted 17
+    trading days behind before anyone noticed. This gate makes that visible.
+
+    WARN rather than FAIL: a stale split-adjusted series degrades provenance but
+    does not invalidate the run, because raw and adjusted prices are identical for
+    any period containing no split. It becomes materially wrong only once a split
+    lands inside the gap, and then the WARN is already showing.
+    """
+    if not split_adj_csv.exists():
+        return GateResult(
+            name="split_adj_freshness",
+            status="WARN",
+            detail=f"{split_adj_csv.name} missing — FV price source unavailable, raw fallback in use",
+            value=None,
+            threshold=max_gap_days,
+        )
+
+    raw_last = _get_max_date(price_csv)
+    adj_last = _get_max_date(split_adj_csv)
+    if not raw_last or not adj_last:
+        return GateResult(
+            name="split_adj_freshness",
+            status="WARN",
+            detail=f"could not determine last dates (raw={raw_last}, split_adj={adj_last})",
+            value=None,
+            threshold=max_gap_days,
+        )
+
+    gap = _count_trading_days_between(adj_last, raw_last)
+    if gap > max_gap_days:
+        return GateResult(
+            name="split_adj_freshness",
+            status="WARN",
+            detail=(
+                f"split-adjusted series {gap} trading days behind raw "
+                f"(split_adj last={adj_last}, raw last={raw_last}); FV is using the raw fallback"
+            ),
+            value=gap,
+            threshold=max_gap_days,
+        )
+
+    return GateResult(
+        name="split_adj_freshness",
+        status="PASS",
+        detail=f"split-adjusted series current: last={adj_last}, raw last={raw_last}, gap={gap}",
+        value=gap,
+        threshold=max_gap_days,
     )
 
 
@@ -5007,6 +5196,43 @@ def run_daily(
         append_gate = check_price_append_health(price_stats)
         gate_results.append(append_gate)
         _logger.info(f"Price-append gate: {append_gate.status} — {append_gate.detail}")
+
+    # --- Step 1b: refresh the split-adjusted series (non-blocking) ---
+    # price_history_split_adj.csv is the FV protocol's declared price source but
+    # nothing refreshed it, so it silently drifted 17 trading days behind. Runs
+    # after the raw append because it is derived from it.
+    _split_adj_csv = price_csv.parent / "price_history_split_adj.csv"
+    if not skip_price_refresh:
+        split_adj_stats = refresh_split_adjusted_prices(price_csv, _split_adj_csv, REPO_ROOT)
+        price_stats["split_adj"] = split_adj_stats
+        _sa_status = split_adj_stats.get("status")
+        if _sa_status == "APPENDED":
+            _logger.info(
+                "Split-adj refresh → appended %s rows, last=%s (pure append, no history rewritten)",
+                split_adj_stats.get("n_appended"),
+                split_adj_stats.get("last_date"),
+            )
+        elif _sa_status == "RETROACTIVE_CHANGE":
+            # A new split retroactively rewrote earlier prices. Correct, but it can
+            # change the inputs to already-completed forward-validation windows.
+            _logger.warning(
+                "Split-adj refresh → RETROACTIVE REWRITE of %s historical price(s) "
+                "across %s: completed FV windows may need recomputation. Tickers: %s",
+                split_adj_stats.get("n_retroactive"),
+                len(split_adj_stats.get("retroactive_tickers") or []),
+                ", ".join(split_adj_stats.get("retroactive_tickers") or []),
+            )
+        else:
+            _logger.warning(
+                "Split-adj refresh → %s (%s); leaving incumbent file in place",
+                _sa_status,
+                split_adj_stats.get("detail", "no detail"),
+            )
+
+    # --- Gate: split-adjusted freshness (WARN) — stops silent drift recurring ---
+    split_adj_gate = check_split_adj_freshness(price_csv, _split_adj_csv)
+    gate_results.append(split_adj_gate)
+    _logger.info(f"Split-adj gate: {split_adj_gate.status} — {split_adj_gate.detail}")
 
     # --- Gate: XBI staleness (check early, before expensive screen run) ---
     xbi_gate = check_xbi_staleness(price_csv, as_of_date, config.xbi_stale_days)
