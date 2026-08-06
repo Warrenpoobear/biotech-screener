@@ -31,6 +31,38 @@ class StatusGate(Enum):
     NOT_FOUND = "not_found"
 
 
+RETIRED_UNIVERSE_STATUSES = frozenset(
+    {
+        "delisted",
+        "d",
+        "acquired",
+        "m&a",
+        "excluded_acquired",
+        "retired",
+    }
+)
+"""Raw ``universe.json`` ``status`` values meaning "no longer a tradable security".
+
+``tools/maintain_universe.py retire`` writes ``delisted``, ``excluded_acquired`` or
+``retired`` depending on the reason text, and ``module_1_universe._classify_status``
+already treats all of them as exclusions.  Call sites that hardcoded
+``status == "delisted"`` did not: an acquired ticker retired as
+``excluded_acquired`` was dropped from scoring but still fetched from yfinance every
+run, forever.  Use :func:`is_retired_status` instead of comparing to one literal.
+
+Deliberately EXCLUDES ``pending_coverage`` / ``pending_data_collection``: those are
+"not ready yet", not "gone", and they still want a price feed so coverage can be
+built.
+"""
+
+
+def is_retired_status(status: object) -> bool:
+    """True when a ``universe.json`` status means the security is no longer tradable."""
+    if not isinstance(status, str):
+        return False
+    return status.strip().lower() in RETIRED_UNIVERSE_STATUSES
+
+
 @dataclass
 class SecurityRecord:
     """Core security record."""

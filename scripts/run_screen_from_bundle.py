@@ -1436,6 +1436,7 @@ def main() -> None:
     # Add project root to sys.path
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+    from common.types import is_retired_status
     from decision_engine import DecisionRuleset
 
     # Load ruleset
@@ -1463,9 +1464,9 @@ def main() -> None:
     universe = _load_json(args.universe)
     # Exclude delisted tickers — keep entries in universe.json for history,
     # but never pass them into the screening pipeline.
-    _delisted = [e.get("ticker") for e in universe if isinstance(e, dict) and e.get("status") == "delisted"]
+    _delisted = [e.get("ticker") for e in universe if isinstance(e, dict) and is_retired_status(e.get("status"))]
     if _delisted:
-        universe = [e for e in universe if not (isinstance(e, dict) and e.get("status") == "delisted")]
+        universe = [e for e in universe if not (isinstance(e, dict) and is_retired_status(e.get("status")))]
         print(
             f"  Delisted filter: excluded {len(_delisted)} tickers (status=delisted): {sorted(_delisted)}",
             file=sys.stderr,

@@ -176,11 +176,12 @@ PRODUCTION_RANKER_V2_CONFIG = RankerV2Config(
     train_window=36,
 )
 
+# Module imports
+from common.types import is_retired_status
+
 # Module 3A specific imports
 from event_detector import SimpleMarketCalendar
 from event_ledger import REGULATORY_EVENT_TYPES, classify_catalyst_family
-
-# Module imports
 from module_1_universe import compute_module_1_universe
 from module_2_financial_v2 import compute_module_2_financial
 from module_3_catalyst import Module3Config, compute_module_3_catalyst
@@ -10009,9 +10010,11 @@ def run_screening_pipeline(
     # --- Delisted filter: exclude tickers marked status="delisted" in universe.json ---
     # These are acquired/merged/OTC-moved companies with no active price feed.
     # Kept in universe.json for history; excluded from all active screening.
-    _delisted_excl = [r.get("ticker") for r in raw_universe if isinstance(r, dict) and r.get("status") == "delisted"]
+    _delisted_excl = [
+        r.get("ticker") for r in raw_universe if isinstance(r, dict) and is_retired_status(r.get("status"))
+    ]
     if _delisted_excl:
-        raw_universe = [r for r in raw_universe if not (isinstance(r, dict) and r.get("status") == "delisted")]
+        raw_universe = [r for r in raw_universe if not (isinstance(r, dict) and is_retired_status(r.get("status")))]
         logger.info(
             f"  Delisted filter: excluded {len(_delisted_excl)} tickers " f"(status=delisted): {sorted(_delisted_excl)}"
         )

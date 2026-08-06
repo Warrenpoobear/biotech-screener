@@ -42,7 +42,9 @@ sys.path.insert(0, str(REPO_ROOT))
 from dotenv import load_dotenv
 
 load_dotenv(REPO_ROOT / ".env")
+
 from archive_snapshot import get_git_info, sha256_file
+from common.types import is_retired_status  # noqa: E402  (needs REPO_ROOT on sys.path)
 
 # ---------------------------------------------------------------------------
 # Ops contract constants
@@ -445,10 +447,14 @@ def refresh_prices(
             with open(universe_path) as f:
                 universe = json.load(f)
             if isinstance(universe, list):
+                # Skip every retirement status, not just "delisted" — an acquired
+                # ticker retired as "excluded_acquired" would otherwise be re-fetched
+                # from yfinance every run forever, logging errors for a company that
+                # no longer trades.
                 tickers = [
                     e.get("ticker", e) if isinstance(e, dict) else str(e)
                     for e in universe
-                    if not (isinstance(e, dict) and e.get("status") == "delisted")
+                    if not (isinstance(e, dict) and is_retired_status(e.get("status")))
                 ]
             elif isinstance(universe, dict) and "tickers" in universe:
                 tickers = universe["tickers"]
@@ -4061,8 +4067,8 @@ def check_market_data_coverage(
     mkt_tickers = {r["ticker"] for r in records if isinstance(r, dict) and r.get("ticker")}
     uni_tickers = set()
     for entry in universe:
-        if isinstance(entry, dict) and entry.get("status") == "delisted":
-            continue  # exclude delisted tickers from coverage denominator
+        if isinstance(entry, dict) and is_retired_status(entry.get("status")):
+            continue  # exclude retired tickers from coverage denominator
         t = entry.get("ticker") if isinstance(entry, dict) else str(entry)
         if t and not t.startswith("_"):  # exclude synthetic like _XBI_BENCHMARK_
             uni_tickers.add(t)
@@ -4155,8 +4161,8 @@ def _compute_market_data_refresh(
                 universe = json.load(f)
             uni_tickers = set()
             for entry in universe:
-                if isinstance(entry, dict) and entry.get("status") == "delisted":
-                    continue  # exclude delisted tickers from coverage denominator
+                if isinstance(entry, dict) and is_retired_status(entry.get("status")):
+                    continue  # exclude retired tickers from coverage denominator
                 t = entry.get("ticker") if isinstance(entry, dict) else str(entry)
                 if t and not t.startswith("_"):
                     uni_tickers.add(t)
