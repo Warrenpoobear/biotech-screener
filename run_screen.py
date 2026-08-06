@@ -1940,6 +1940,25 @@ def _read_price_history_rows(price_history_path: Path) -> List[Dict[str, str]]:
     return cached
 
 
+PRICE_STALENESS_WARN_DAYS = 4
+"""Calendar-day gap between a scored ticker's last close and as_of_date that counts
+as stale.  4 tolerates a Fri close read on a Mon as_of (3 days) plus one holiday,
+and the normal one-run append lag."""
+
+PRICE_STALENESS_ALERT_DAYS = 10
+"""Gap beyond which a ticker's momentum features should not be trusted at all."""
+
+_STRICT_PRICE_STALENESS = os.getenv("BIOTECH_STRICT_PRICE_STALENESS", "0").strip().lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
+"""Detection-only by default.  Set ``BIOTECH_STRICT_PRICE_STALENESS=1`` to make
+ALERT-level staleness abort the run instead of logging.  Left off so this guard
+cannot change production behaviour on its own."""
+
+
 def compute_momentum_from_price_history(
     price_history_path: Path, as_of_date: str, market_data_by_ticker: Dict[str, Dict], xbi_ticker: str = "XBI"
 ) -> int:
@@ -1997,17 +2016,62 @@ def compute_momentum_from_price_history(
 
     logger.info(f"Loaded price history for {len(prices_by_ticker)} tickers")
 
-    # Staleness check: warn if latest price date is far before as_of_date
+    # Staleness check — PER-TICKER, scoped to the tickers actually being scored.
+    #
+    # The previous form took max() over every ticker's latest date and compared that
+    # single global maximum against as_of_date.  That is structurally blind: one fresh
+    # ticker pins the maximum at as_of_date, so the check reports 0 days stale no
+    # matter how far behind every other ticker is.  Those names still get
+    # return_20d/60d/120d computed from their stale closes just below, and are then
+    # ranked against fresh peers.
+    #
+    # Observed 2026-08-05: the global check saw 0 days stale while CPRX (15d),
+    # ESPR (21d) and SGMO (35d) were being scored off stale closes — their yfinance
+    # fetches had been failing silently for weeks.
+    #
+    # Scoped to market_data_by_ticker so delisted names still sitting in
+    # price_history.csv (MRSN/CVAC at 211d, IBB, etc.) do not raise false alarms.
     if prices_by_ticker:
-        _max_dates = [max(pts, key=lambda x: x[0])[0] for pts in prices_by_ticker.values() if pts]
-        if _max_dates:
-            _latest_price_date = max(_max_dates)
-            _staleness_days = (ref_date - _latest_price_date).days
-            if _staleness_days > 7:
-                logger.warning(
-                    f"  Price history stale: latest date {_latest_price_date} is "
-                    f"{_staleness_days} days before as_of_date {as_of_date} — "
-                    f"momentum returns may be invalid"
+        _scored = {str(_t).upper() for _t in (market_data_by_ticker or {})}
+        _gaps = []
+        for _tkr, _pts in prices_by_ticker.items():
+            if _scored and _tkr not in _scored:
+                continue
+            if not _pts:
+                continue
+            _tkr_last = max(_pts, key=lambda x: x[0])[0]
+            _gaps.append((_tkr, _tkr_last, (ref_date - _tkr_last).days))
+
+        _stale = [_g for _g in _gaps if _g[2] > PRICE_STALENESS_WARN_DAYS]
+        _severe = [_g for _g in _gaps if _g[2] > PRICE_STALENESS_ALERT_DAYS]
+
+        if _gaps:
+            _current = len(_gaps) - len(_stale)
+            logger.info(
+                f"  [price-staleness] scored tickers with price history: {len(_gaps)}; "
+                f"current (<={PRICE_STALENESS_WARN_DAYS}d): {_current} "
+                f"({_current / len(_gaps) * 100:.1f}%); stale: {len(_stale)}; "
+                f"severe (>{PRICE_STALENESS_ALERT_DAYS}d): {len(_severe)}"
+            )
+
+        if _stale:
+            _worst = sorted(_stale, key=lambda _g: _g[2], reverse=True)[:15]
+            _detail = ", ".join(f"{_t}@{_d.isoformat()}({_n}d)" for _t, _d, _n in _worst)
+            _more = f" (+{len(_stale) - len(_worst)} more)" if len(_stale) > len(_worst) else ""
+            _emit = logger.error if _severe else logger.warning
+            _emit(
+                f"  Price history stale for {len(_stale)}/{len(_gaps)} scored tickers "
+                f"(as_of {as_of_date}) — momentum returns for these are computed from "
+                f"stale closes and ranked against fresh peers. Worst: {_detail}{_more}"
+            )
+            if _STRICT_PRICE_STALENESS and _severe:
+                _names = ", ".join(
+                    f"{_t}({_n}d)" for _t, _, _n in sorted(_severe, key=lambda _g: _g[2], reverse=True)[:15]
+                )
+                raise RuntimeError(
+                    f"Price history severely stale for {len(_severe)} scored ticker(s) "
+                    f">{PRICE_STALENESS_ALERT_DAYS}d behind as_of_date {as_of_date}: {_names}. "
+                    f"Unset BIOTECH_STRICT_PRICE_STALENESS to downgrade this to a log line."
                 )
 
     # Sort each ticker's prices by date (most recent first for easy lookups)
