@@ -6327,6 +6327,46 @@ def save_validation_snapshot(
         for k in SORT_CONTRIB_KEYS:
             r[f"de_sort_contrib_{k}"] = round(cmap[k], 6)
 
+    # --- Pending-acquisition veto: gate from ranker/selector ----------------
+    # An announced-but-unclosed acquisition still trades, so it is NOT dead: it
+    # stays in the universe and keeps its row, features and diagnostics here.
+    # But its price is pinned near the agreed deal price and carries essentially
+    # no remaining alpha, so ranking it against live names is misleading.
+    #
+    # corporate_actions.json has asked for exactly this since APGE was added
+    # ("Gate from ranker/selector until acquisition closes"). That request was
+    # inert until 2026-08-05 because "pending_acquisition" was not a recognised
+    # action type, so the registry silently dropped the entry on every load and
+    # APGE was ranked 6th at $134.19 against a $135.11 deal price (+0.69%).
+    #
+    # Veto, not exclusion: the row loses only actionable_rank / target_weight_pct
+    # and records the reason, so the name stays observable in rankings.csv.
+    try:
+        from common.corporate_actions import is_pending_deal, load_actions
+
+        _pa_registry = load_actions()
+        _pa_vetoed: List[str] = []
+        for _pa_row in csv_rows:
+            _pa_tkr = str(_pa_row.get("ticker", "") or "").upper()
+            if not _pa_tkr or not _is_eligible(_pa_row):
+                continue
+            if is_pending_deal(_pa_tkr, as_of_date, _pa_registry):
+                _pa_row["eligible"] = ""
+                _pa_prior = str(_pa_row.get("ineligible_reasons", "") or "")
+                _pa_row["ineligible_reasons"] = (
+                    f"{_pa_prior}|pending_acquisition" if _pa_prior else "pending_acquisition"
+                )
+                _pa_vetoed.append(_pa_tkr)
+        if _pa_vetoed:
+            logger.info(
+                f"  Pending-acquisition veto: {len(_pa_vetoed)} name(s) gated from "
+                f"ranker/selector (still in universe): {sorted(_pa_vetoed)}"
+            )
+    except Exception as _pa_err:
+        # Fail open, loudly — a registry problem must not take down the run, but
+        # a silently skipped gate is worse than a noisy one.
+        logger.warning(f"  Pending-acquisition veto SKIPPED due to error: {_pa_err}")
+
     # Assign actionable_rank: eligible rows get 1..N, ineligible get blank
     eligible_rows = [r for r in csv_rows if _is_eligible(r)]
     ineligible_rows = [r for r in csv_rows if not _is_eligible(r)]
