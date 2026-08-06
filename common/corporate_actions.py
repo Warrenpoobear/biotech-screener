@@ -41,12 +41,22 @@ ACTION_TYPES = frozenset(
         "reverse_split",
         "forward_split",
         "acquisition",
+        "pending_acquisition",
         "delisted",
         "ticker_change",
         "spinoff",
         "bankruptcy",
     }
 )
+
+DEAD_ACTION_TYPES = frozenset({"acquisition", "delisted", "bankruptcy"})
+"""Action types that mean the security no longer trades.
+
+``pending_acquisition`` is deliberately NOT here: an announced-but-unclosed deal
+still trades, so the ticker must stay in the universe.  It is a recognised action
+type only so the registry stops silently dropping it — see the loader warning
+that hid APGE's AbbVie deal until 2026-08-05.
+"""
 
 
 @dataclass(frozen=True)
@@ -55,13 +65,15 @@ class CorporateAction:
 
     ticker: str
     action: str
-    effective_date: str  # ISO date
+    effective_date: str  # ISO date. For pending_acquisition (no close yet) the
+    # loader substitutes announced_date so PIT filtering still works — never None.
     # Split fields
     ratio: Optional[str] = None
     factor: Optional[float] = None
     # Acquisition fields
     acquirer: Optional[str] = None
     deal_price: Optional[float] = None
+    announced_date: Optional[str] = None
     # Rename fields
     old_ticker: Optional[str] = None
     new_ticker: Optional[str] = None
@@ -120,15 +132,24 @@ def load_actions(path: Optional[Path] = None) -> CorporateActionRegistry:
                 raw.get("ticker"),
             )
             continue
+        # effective_date may be absent OR explicitly null (a pending deal has no
+        # close date yet), and `.get(k, "")` does NOT protect against an explicit
+        # null. A None here propagates into `a.effective_date > as_of` and
+        # `sorted(key=effective_date)`, both of which raise TypeError against str.
+        # Fall back to announced_date so PIT filtering stays correct: an announced
+        # deal is knowable from its announcement, not from the beginning of time.
+        announced = raw.get("announced_date") or None
+        effective = raw.get("effective_date") or announced or ""
         actions.append(
             CorporateAction(
                 ticker=raw.get("ticker", ""),
                 action=action_type,
-                effective_date=raw.get("effective_date", ""),
+                effective_date=effective,
                 ratio=raw.get("ratio"),
                 factor=raw.get("factor"),
                 acquirer=raw.get("acquirer"),
                 deal_price=raw.get("deal_price"),
+                announced_date=announced,
                 old_ticker=raw.get("old_ticker"),
                 new_ticker=raw.get("new_ticker"),
                 notes=raw.get("notes", ""),
@@ -164,12 +185,15 @@ def get_actions(
     candidates = registry._by_ticker.get(ticker, [])
     results = []
     for a in candidates:
-        if as_of and a.effective_date > as_of:
+        # effective_date is normalised to a str by the loader, but stay defensive:
+        # comparing None to a str raises TypeError and would take down the caller.
+        eff = a.effective_date or ""
+        if as_of and eff > as_of:
             continue
         if action_type and a.action != action_type:
             continue
         results.append(a)
-    return sorted(results, key=lambda a: a.effective_date)
+    return sorted(results, key=lambda a: a.effective_date or "")
 
 
 def get_splits(
@@ -207,9 +231,30 @@ def is_dead(
     registry: CorporateActionRegistry,
 ) -> bool:
     """Return True if the ticker is acquired, delisted, or bankrupt as of the given date."""
-    dead_types = {"acquisition", "delisted", "bankruptcy"}
     for a in get_actions(ticker, registry, as_of=as_of):
-        if a.action in dead_types:
+        if a.action in DEAD_ACTION_TYPES:
+            return True
+    return False
+
+
+def is_pending_deal(
+    ticker: str,
+    as_of: str,
+    registry: CorporateActionRegistry,
+) -> bool:
+    """True if the ticker has an announced-but-unclosed acquisition as of ``as_of``.
+
+    Such a ticker still trades, so :func:`is_dead` is False and it stays in the
+    universe — but its price is pinned near the deal price and carries essentially
+    no remaining alpha, so ranking it against live names is misleading.
+
+    NOT wired into any gate yet.  The registry's own APGE note says "Gate from
+    ranker/selector until acquisition closes", but acting on that changes the
+    scored cohort and is an operator decision under the NO_MODEL_CHANGE window.
+    Exposed here so the gate can be wired deliberately rather than by accident.
+    """
+    for a in get_actions(ticker, registry, as_of=as_of):
+        if a.action == "pending_acquisition":
             return True
     return False
 
@@ -219,9 +264,8 @@ def death_date(
     registry: CorporateActionRegistry,
 ) -> Optional[str]:
     """Return the effective date of the first death event, or None."""
-    dead_types = {"acquisition", "delisted", "bankruptcy"}
     for a in registry._by_ticker.get(ticker, []):
-        if a.action in dead_types:
+        if a.action in DEAD_ACTION_TYPES:
             return a.effective_date
     return None
 

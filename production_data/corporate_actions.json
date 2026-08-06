@@ -2,77 +2,507 @@
   "_schema": "corporate_actions.v1",
   "_generated_at": "2026-04-05",
   "_description": "Authoritative corporate action registry for the biotech screener universe. All dates are effective dates (the date the action took effect in the market). PIT safety: do not apply any action before its effective_date in historical contexts.",
-
   "actions": [
-
-    {"ticker": "ABVX",  "action": "reverse_split", "effective_date": "2025-07-23", "ratio": "1:7",  "factor": 6.86,  "notes": "Reverse split to maintain NASDAQ listing compliance"},
-    {"ticker": "ACRS",  "action": "forward_split",  "effective_date": "2023-11-13", "ratio": "7:1",  "factor": 0.136, "notes": ""},
-    {"ticker": "AKTX",  "action": "reverse_split", "effective_date": "2026-03-31", "ratio": "1:40", "factor": 42.56, "notes": "Extreme reverse split; near-delisting risk"},
-    {"ticker": "AMLX",  "action": "forward_split",  "effective_date": "2024-03-08", "ratio": "6:1",  "factor": 0.177, "notes": ""},
-    {"ticker": "BIOA",  "action": "forward_split",  "effective_date": "2024-12-09", "ratio": "4:1",  "factor": 0.231, "notes": ""},
-    {"ticker": "COGT",  "action": "reverse_split", "effective_date": "2020-07-06", "ratio": "1:5",  "factor": 4.94,  "notes": ""},
-    {"ticker": "DFTX",  "action": "reverse_split", "effective_date": "2020-03-03", "ratio": "1:5",  "factor": 4.60,  "notes": ""},
-    {"ticker": "DRUG",  "action": "reverse_split", "effective_date": "2024-10-15", "ratio": "1:15", "factor": 15.46, "notes": "Bright Minds Biosciences"},
-    {"ticker": "FGEN",  "action": "forward_split",  "effective_date": "2023-06-26", "ratio": "6:1",  "factor": 0.169, "notes": "FibroGen"},
-    {"ticker": "GOSS",  "action": "forward_split",  "effective_date": "2026-02-23", "ratio": "5:1",  "factor": 0.199, "notes": "Gossamer Bio"},
-    {"ticker": "IMMP",  "action": "forward_split",  "effective_date": "2026-03-13", "ratio": "5:1",  "factor": 0.193, "notes": "Immutep"},
-    {"ticker": "INDV",  "action": "reverse_split", "effective_date": "2022-11-28", "ratio": "1:7",  "factor": 6.72,  "notes": "Indivior; had prior forward split on 2022-11-23"},
-    {"ticker": "IVVD",  "action": "forward_split",  "effective_date": "2021-12-14", "ratio": "5:1",  "factor": 0.212, "notes": "Invivyd"},
-    {"ticker": "JBIO",  "action": "forward_split",  "effective_date": "2024-06-17", "ratio": "15:1", "factor": 0.067, "notes": "First of two splits"},
-    {"ticker": "JBIO",  "action": "forward_split",  "effective_date": "2025-04-29", "ratio": "9:1",  "factor": 0.108, "notes": "Second split"},
-    {"ticker": "KALA",  "action": "forward_split",  "effective_date": "2025-09-29", "ratio": "9:1",  "factor": 0.107, "notes": "Kala Bio"},
-    {"ticker": "KOD",   "action": "forward_split",  "effective_date": "2022-02-23", "ratio": "5:1",  "factor": 0.196, "notes": "Kodiak Sciences"},
-    {"ticker": "LYRA",  "action": "forward_split",  "effective_date": "2024-05-06", "ratio": "8:1",  "factor": 0.130, "notes": "First of two splits"},
-    {"ticker": "LYRA",  "action": "reverse_split", "effective_date": "2025-06-02", "ratio": "1:4",  "factor": 4.11,  "notes": "Second action (reverse)"},
-    {"ticker": "MCRB",  "action": "reverse_split", "effective_date": "2020-08-10", "ratio": "1:5",  "factor": 4.89,  "notes": "Seres Therapeutics"},
-    {"ticker": "MENS",  "action": "forward_split",  "effective_date": "2025-12-17", "ratio": "5:1",  "factor": 0.190, "notes": ""},
-    {"ticker": "MLTX",  "action": "forward_split",  "effective_date": "2025-09-29", "ratio": "10:1", "factor": 0.101, "notes": "MoonLake Immunotherapeutics"},
-    {"ticker": "NMRA",  "action": "forward_split",  "effective_date": "2025-01-02", "ratio": "5:1",  "factor": 0.186, "notes": "Neumora Therapeutics"},
-    {"ticker": "ORKA",  "action": "reverse_split", "effective_date": "2020-05-28", "ratio": "1:5",  "factor": 4.86,  "notes": "Oruka Therapeutics"},
-    {"ticker": "PHVS",  "action": "reverse_split", "effective_date": "2022-12-08", "ratio": "1:5",  "factor": 4.57,  "notes": "Pharvaris"},
-    {"ticker": "PRAX",  "action": "forward_split",  "effective_date": "2022-06-06", "ratio": "5:1",  "factor": 0.219, "notes": "Praxis Precision Medicine"},
-    {"ticker": "PRQR",  "action": "forward_split",  "effective_date": "2022-02-11", "ratio": "4:1",  "factor": 0.246, "notes": "ProQR Therapeutics"},
-    {"ticker": "REPL",  "action": "forward_split",  "effective_date": "2025-07-22", "ratio": "4:1",  "factor": 0.228, "notes": "Replimune"},
-    {"ticker": "RNA",   "action": "acquisition", "effective_date": "2026-02-27", "acquirer": "Novartis", "deal_price": null, "notes": "Avidity Biosciences acquired by Novartis. Price series ends 2026-02-27. Removed from universe."},
-    {"ticker": "SRRK",  "action": "reverse_split", "effective_date": "2024-10-07", "ratio": "1:5",  "factor": 4.62,  "notes": "Scholar Rock"},
-    {"ticker": "SYRE",  "action": "reverse_split", "effective_date": "2023-06-22", "ratio": "1:4",  "factor": 4.30,  "notes": "Spyre Therapeutics"},
-    {"ticker": "TECX",  "action": "forward_split",  "effective_date": "2024-06-21", "ratio": "12:1", "factor": 0.083, "notes": "First of two (forward then reverse)"},
-    {"ticker": "TECX",  "action": "reverse_split", "effective_date": "2024-06-24", "ratio": "1:12", "factor": 11.50, "notes": "Second action (net effect ~1:1)"},
-    {"ticker": "VTYX",  "action": "forward_split",  "effective_date": "2023-11-07", "ratio": "5:1",  "factor": 0.194, "notes": "Ventyx Biosciences; later acquired"},
-
-    {"ticker": "CNTA",  "action": "acquisition", "effective_date": "2026-06-24", "acquirer": "Eli Lilly", "deal_price": 38.00, "notes": "Centessa Pharmaceuticals acquired by Eli Lilly (via LDH XV Corp). Scheme of Arrangement effective 2026-06-24; ADSs delisted from Nasdaq. Consideration $38.00 cash/share plus up to $9.00 CVR. Frozen price series carries to 2026-06-29. Removed from universe."},
-    {"ticker": "BHVN",  "action": "acquisition", "effective_date": "2024-10-15", "acquirer": "AbbVie",   "deal_price": 44.00, "notes": "Cerevel Therapeutics acquired by AbbVie. CVR structure."},
-    {"ticker": "ACLX",  "action": "acquisition", "effective_date": "2026-04-28", "acquirer": "Gilead",   "deal_price": 115.00, "notes": "Arcellx acquired by Gilead Sciences. Merger agreement 2026-02-22; tender offer + merger completed 2026-04-28. Consideration $115.00 cash/share plus one $5.00 CVR (pays if cumulative worldwide anito-cel sales exceed $6.0B by 2029-12-31); ~$7.8B implied equity value at close. Removed from universe. [corrected 2026-07-05: prior effective_date 2025-12-15 / deal_price 114.50 were a PIT error - verified vs Gilead completion PR + SEC 8-K acc 0001104659-26-049874]"},
-
-    {"ticker": "AKRO",  "action": "acquisition", "effective_date": "2025-12-09", "acquirer": "Unknown",  "deal_price": null, "notes": "Price series ends 2025-12-09. Removed from universe."},
-    {"ticker": "ATXS",  "action": "delisted",    "effective_date": "2026-01-23", "notes": "Astria Therapeutics. Price series ends 2026-01-23. Removed from universe."},
-    {"ticker": "CDTX",  "action": "delisted",    "effective_date": "2026-01-08", "notes": "Cidara Therapeutics. Price series ends 2026-01-08. Removed from universe."},
-    {"ticker": "CVAC",  "action": "delisted",    "effective_date": "2026-01-06", "notes": "CureVac. Price series ends 2026-01-06. Removed from universe."},
-    {"ticker": "DVAX",  "action": "delisted",    "effective_date": "2026-02-10", "notes": "Dynavax Technologies. Removed from universe."},
-    {"ticker": "FGEN",  "action": "delisted",    "effective_date": "2026-03-09", "notes": "FibroGen. Price series ends 2026-03-09. Removed from universe."},
-    {"ticker": "GBIO",  "action": "delisted",    "effective_date": "2026-02-10", "notes": "Generation Bio. Price series ends 2026-02-10. Removed from universe."},
-    {"ticker": "MRSN",  "action": "delisted",    "effective_date": "2026-01-06", "notes": "Mersana Therapeutics. Price series ends 2026-01-06. Removed from universe."},
-    {"ticker": "MRUS",  "action": "delisted",    "effective_date": "2026-01-02", "notes": "Merus N.V. Price series ends 2026-01-02. Removed from universe."},
-    {"ticker": "RAPT",  "action": "delisted",    "effective_date": "2026-03-06", "notes": "RAPT Therapeutics. Removed from universe."},
-    {"ticker": "VTYX",  "action": "acquisition", "effective_date": "2026-03-06", "acquirer": "Unknown",  "deal_price": null, "notes": "Ventyx Biosciences. Price series ends 2026-03-06. Removed from universe."},
-    {"ticker": "MNMD",  "action": "delisted",    "effective_date": "2026-03-17", "notes": "MindMed. Price series ends 2026-03-17. Removed from universe."},
-
-    {"ticker": "HOWL",  "action": "ticker_change", "effective_date": "2024-08-01", "old_ticker": "WERW",  "new_ticker": "HOWL",  "notes": "Werewolf Therapeutics renamed to Howl Therapeutics. Same CUSIP, same CIK."},
-    {"ticker": "ONC",   "action": "ticker_change", "effective_date": "2025-01-02", "old_ticker": "BGNE",  "new_ticker": "ONC",   "notes": "BeiGene renamed to BeOne Medicines. CUSIP unchanged."},
-    {"ticker": "SYRE",  "action": "ticker_change", "effective_date": "2023-10-01", "old_ticker": "AGLE",  "new_ticker": "SYRE",  "notes": "Aeglea BioTherapeutics renamed to Spyre Therapeutics after reverse merge."},
-    {"ticker": "BBOT",  "action": "ticker_change", "effective_date": "2025-04-07", "old_ticker": "BIOR",  "new_ticker": "BBOT",  "notes": "BioAtla renamed ticker BIOR to BBOT. Same CUSIP 107924102."},
-    {"ticker": "CAI",   "action": "ticker_change", "effective_date": "2025-09-15", "old_ticker": "CRIS",  "new_ticker": "CAI",   "notes": "Curis renamed to Context AI Therapeutics. CUSIP 142152107 unchanged."},
-
-    {"ticker": "DAWN",  "action": "acquisition", "effective_date": "2026-03-15", "acquirer": "Unknown",  "deal_price": 21.35, "notes": "Day One Biopharmaceuticals. Flat price suggests acquisition. Needs confirmation."},
-    {"ticker": "FOLD",  "action": "acquisition", "effective_date": "2026-03-01", "acquirer": "Unknown",  "deal_price": 14.40, "notes": "Amicus Therapeutics. Flat price suggests acquisition. Needs confirmation."},
-
-    {"ticker": "APLS",  "action": "acquisition", "effective_date": "2026-05-14", "acquirer": "Biogen",   "deal_price": 41.00, "notes": "Apellis Pharmaceuticals acquired by Biogen. Merger agreement 2026-03-31; tender offer + merger completed 2026-05-14. Consideration $41.00 cash/share plus one CVR worth up to $4.00 aggregate (two $2.00 payments contingent on SYFOVRE net-sales milestones); ~$5.6B implied equity value at close. Price series ends 2026-05-14. Removed from universe. [backfilled 2026-07-05: verified vs Biogen completion PR + SEC 8-K acc 000119312526222923; CVR milestone wording reconciled 2026-07-05 to two $2.00 net-sales milestones per verified source]"},
-    {"ticker": "KALV",  "action": "acquisition", "effective_date": "2026-06-11", "acquirer": "Chiesi",   "deal_price": 27.00, "notes": "KalVista Pharmaceuticals acquired by Chiesi Group. Merger agreement 2026-04-29; tender offer + merger completed 2026-06-11. Consideration $27.00 cash/share, all-cash with NO CVR; ~$1.9B implied equity value at close. Price series ends 2026-06-11. Removed from universe. [backfilled 2026-07-05: verified vs Chiesi completion PR + SEC 8-K acc 000114036126024949; no-CVR structure explicitly recorded 2026-07-05 per verified source]"},
-    {"ticker": "TERN",  "action": "acquisition", "effective_date": "2026-05-05", "acquirer": "Merck",    "deal_price": null, "notes": "Terns Pharmaceuticals acquired by Merck. Announced Mar 25, 2026; completed May 5, 2026. Removed from universe."},
-
-    {"ticker": "THRD",  "action": "delisted",    "effective_date": "2025-07-31", "notes": "Third Harmonic Bio liquidation/dissolution. Nasdaq trading suspended before open Jul 31, 2025. Price series ends 2025-07-30. Removed from universe."},
-
-    {"ticker": "NUVL",  "action": "acquisition", "announced_date": "2026-06-24", "effective_date": "2026-07-15", "acquirer": "GSK", "deal_price": 124.00, "notes": "Nuvalent acquired by GSK via tender offer at $124.00/share cash (~$10.6B deal value). Tender offer commenced 2026-06-24; completed 2026-07-15. Price series freezes at deal value; removed from universe. [action pending_acquisition->acquisition and effective_date 2026-07-15 set 2026-07-23 per Reliability Gate A2 remediation: verified vs SEC Form 25-NSE acc 0001354457-26-000673 + 8-K completion acc 0001193125-26-304126, both 2026-07-15]"},
-    {"ticker": "APGE",  "action": "pending_acquisition", "announced_date": "2026-06-22", "effective_date": null, "acquirer": "AbbVie", "deal_price": 135.11, "notes": "Apogee Therapeutics acquisition by AbbVie at $135.11/share cash (~$10.9B deal value). Announced 2026-06-22. APGE trading at ~$132.55 (1.9% arb discount to deal price). Gate from ranker/selector until acquisition closes; price series freezes at deal value at close."}
+    {
+      "ticker": "ABVX",
+      "action": "reverse_split",
+      "effective_date": "2025-07-23",
+      "ratio": "1:7",
+      "factor": 6.86,
+      "notes": "Reverse split to maintain NASDAQ listing compliance"
+    },
+    {
+      "ticker": "ACRS",
+      "action": "forward_split",
+      "effective_date": "2023-11-13",
+      "ratio": "7:1",
+      "factor": 0.136,
+      "notes": ""
+    },
+    {
+      "ticker": "AKTX",
+      "action": "reverse_split",
+      "effective_date": "2026-03-31",
+      "ratio": "1:40",
+      "factor": 42.56,
+      "notes": "Extreme reverse split; near-delisting risk"
+    },
+    {
+      "ticker": "AMLX",
+      "action": "forward_split",
+      "effective_date": "2024-03-08",
+      "ratio": "6:1",
+      "factor": 0.177,
+      "notes": ""
+    },
+    {
+      "ticker": "BIOA",
+      "action": "forward_split",
+      "effective_date": "2024-12-09",
+      "ratio": "4:1",
+      "factor": 0.231,
+      "notes": ""
+    },
+    {
+      "ticker": "COGT",
+      "action": "reverse_split",
+      "effective_date": "2020-07-06",
+      "ratio": "1:5",
+      "factor": 4.94,
+      "notes": ""
+    },
+    {
+      "ticker": "DFTX",
+      "action": "reverse_split",
+      "effective_date": "2020-03-03",
+      "ratio": "1:5",
+      "factor": 4.6,
+      "notes": ""
+    },
+    {
+      "ticker": "DRUG",
+      "action": "reverse_split",
+      "effective_date": "2024-10-15",
+      "ratio": "1:15",
+      "factor": 15.46,
+      "notes": "Bright Minds Biosciences"
+    },
+    {
+      "ticker": "FGEN",
+      "action": "forward_split",
+      "effective_date": "2023-06-26",
+      "ratio": "6:1",
+      "factor": 0.169,
+      "notes": "FibroGen"
+    },
+    {
+      "ticker": "GOSS",
+      "action": "forward_split",
+      "effective_date": "2026-02-23",
+      "ratio": "5:1",
+      "factor": 0.199,
+      "notes": "Gossamer Bio"
+    },
+    {
+      "ticker": "IMMP",
+      "action": "forward_split",
+      "effective_date": "2026-03-13",
+      "ratio": "5:1",
+      "factor": 0.193,
+      "notes": "Immutep"
+    },
+    {
+      "ticker": "INDV",
+      "action": "reverse_split",
+      "effective_date": "2022-11-28",
+      "ratio": "1:7",
+      "factor": 6.72,
+      "notes": "Indivior; had prior forward split on 2022-11-23"
+    },
+    {
+      "ticker": "IVVD",
+      "action": "forward_split",
+      "effective_date": "2021-12-14",
+      "ratio": "5:1",
+      "factor": 0.212,
+      "notes": "Invivyd"
+    },
+    {
+      "ticker": "JBIO",
+      "action": "forward_split",
+      "effective_date": "2024-06-17",
+      "ratio": "15:1",
+      "factor": 0.067,
+      "notes": "First of two splits"
+    },
+    {
+      "ticker": "JBIO",
+      "action": "forward_split",
+      "effective_date": "2025-04-29",
+      "ratio": "9:1",
+      "factor": 0.108,
+      "notes": "Second split"
+    },
+    {
+      "ticker": "KALA",
+      "action": "forward_split",
+      "effective_date": "2025-09-29",
+      "ratio": "9:1",
+      "factor": 0.107,
+      "notes": "Kala Bio"
+    },
+    {
+      "ticker": "KOD",
+      "action": "forward_split",
+      "effective_date": "2022-02-23",
+      "ratio": "5:1",
+      "factor": 0.196,
+      "notes": "Kodiak Sciences"
+    },
+    {
+      "ticker": "LYRA",
+      "action": "forward_split",
+      "effective_date": "2024-05-06",
+      "ratio": "8:1",
+      "factor": 0.13,
+      "notes": "First of two splits"
+    },
+    {
+      "ticker": "LYRA",
+      "action": "reverse_split",
+      "effective_date": "2025-06-02",
+      "ratio": "1:4",
+      "factor": 4.11,
+      "notes": "Second action (reverse)"
+    },
+    {
+      "ticker": "MCRB",
+      "action": "reverse_split",
+      "effective_date": "2020-08-10",
+      "ratio": "1:5",
+      "factor": 4.89,
+      "notes": "Seres Therapeutics"
+    },
+    {
+      "ticker": "MENS",
+      "action": "forward_split",
+      "effective_date": "2025-12-17",
+      "ratio": "5:1",
+      "factor": 0.19,
+      "notes": ""
+    },
+    {
+      "ticker": "MLTX",
+      "action": "forward_split",
+      "effective_date": "2025-09-29",
+      "ratio": "10:1",
+      "factor": 0.101,
+      "notes": "MoonLake Immunotherapeutics"
+    },
+    {
+      "ticker": "NMRA",
+      "action": "forward_split",
+      "effective_date": "2025-01-02",
+      "ratio": "5:1",
+      "factor": 0.186,
+      "notes": "Neumora Therapeutics"
+    },
+    {
+      "ticker": "ORKA",
+      "action": "reverse_split",
+      "effective_date": "2020-05-28",
+      "ratio": "1:5",
+      "factor": 4.86,
+      "notes": "Oruka Therapeutics"
+    },
+    {
+      "ticker": "PHVS",
+      "action": "reverse_split",
+      "effective_date": "2022-12-08",
+      "ratio": "1:5",
+      "factor": 4.57,
+      "notes": "Pharvaris"
+    },
+    {
+      "ticker": "PRAX",
+      "action": "forward_split",
+      "effective_date": "2022-06-06",
+      "ratio": "5:1",
+      "factor": 0.219,
+      "notes": "Praxis Precision Medicine"
+    },
+    {
+      "ticker": "PRQR",
+      "action": "forward_split",
+      "effective_date": "2022-02-11",
+      "ratio": "4:1",
+      "factor": 0.246,
+      "notes": "ProQR Therapeutics"
+    },
+    {
+      "ticker": "REPL",
+      "action": "forward_split",
+      "effective_date": "2025-07-22",
+      "ratio": "4:1",
+      "factor": 0.228,
+      "notes": "Replimune"
+    },
+    {
+      "ticker": "RNA",
+      "action": "acquisition",
+      "effective_date": "2026-02-27",
+      "acquirer": "Novartis",
+      "deal_price": null,
+      "notes": "Avidity Biosciences acquired by Novartis. Price series ends 2026-02-27. Removed from universe."
+    },
+    {
+      "ticker": "SRRK",
+      "action": "reverse_split",
+      "effective_date": "2024-10-07",
+      "ratio": "1:5",
+      "factor": 4.62,
+      "notes": "Scholar Rock"
+    },
+    {
+      "ticker": "SYRE",
+      "action": "reverse_split",
+      "effective_date": "2023-06-22",
+      "ratio": "1:4",
+      "factor": 4.3,
+      "notes": "Spyre Therapeutics"
+    },
+    {
+      "ticker": "TECX",
+      "action": "forward_split",
+      "effective_date": "2024-06-21",
+      "ratio": "12:1",
+      "factor": 0.083,
+      "notes": "First of two (forward then reverse)"
+    },
+    {
+      "ticker": "TECX",
+      "action": "reverse_split",
+      "effective_date": "2024-06-24",
+      "ratio": "1:12",
+      "factor": 11.5,
+      "notes": "Second action (net effect ~1:1)"
+    },
+    {
+      "ticker": "VTYX",
+      "action": "forward_split",
+      "effective_date": "2023-11-07",
+      "ratio": "5:1",
+      "factor": 0.194,
+      "notes": "Ventyx Biosciences; later acquired"
+    },
+    {
+      "ticker": "CNTA",
+      "action": "acquisition",
+      "effective_date": "2026-06-24",
+      "acquirer": "Eli Lilly",
+      "deal_price": 38.0,
+      "notes": "Centessa Pharmaceuticals acquired by Eli Lilly (via LDH XV Corp). Scheme of Arrangement effective 2026-06-24; ADSs delisted from Nasdaq. Consideration $38.00 cash/share plus up to $9.00 CVR. Frozen price series carries to 2026-06-29. Removed from universe."
+    },
+    {
+      "ticker": "BHVN",
+      "action": "acquisition",
+      "effective_date": "2024-10-15",
+      "acquirer": "AbbVie",
+      "deal_price": 44.0,
+      "notes": "Cerevel Therapeutics acquired by AbbVie. CVR structure."
+    },
+    {
+      "ticker": "ACLX",
+      "action": "acquisition",
+      "effective_date": "2026-04-28",
+      "acquirer": "Gilead",
+      "deal_price": 115.0,
+      "notes": "Arcellx acquired by Gilead Sciences. Merger agreement 2026-02-22; tender offer + merger completed 2026-04-28. Consideration $115.00 cash/share plus one $5.00 CVR (pays if cumulative worldwide anito-cel sales exceed $6.0B by 2029-12-31); ~$7.8B implied equity value at close. Removed from universe. [corrected 2026-07-05: prior effective_date 2025-12-15 / deal_price 114.50 were a PIT error - verified vs Gilead completion PR + SEC 8-K acc 0001104659-26-049874]"
+    },
+    {
+      "ticker": "AKRO",
+      "action": "acquisition",
+      "effective_date": "2025-12-09",
+      "acquirer": "Unknown",
+      "deal_price": null,
+      "notes": "Price series ends 2025-12-09. Removed from universe."
+    },
+    {
+      "ticker": "ATXS",
+      "action": "delisted",
+      "effective_date": "2026-01-23",
+      "notes": "Astria Therapeutics. Price series ends 2026-01-23. Removed from universe."
+    },
+    {
+      "ticker": "CDTX",
+      "action": "delisted",
+      "effective_date": "2026-01-08",
+      "notes": "Cidara Therapeutics. Price series ends 2026-01-08. Removed from universe."
+    },
+    {
+      "ticker": "CVAC",
+      "action": "delisted",
+      "effective_date": "2026-01-06",
+      "notes": "CureVac. Price series ends 2026-01-06. Removed from universe."
+    },
+    {
+      "ticker": "DVAX",
+      "action": "delisted",
+      "effective_date": "2026-02-10",
+      "notes": "Dynavax Technologies. Removed from universe."
+    },
+    {
+      "ticker": "FGEN",
+      "action": "delisted",
+      "effective_date": "2026-03-09",
+      "notes": "FibroGen. Price series ends 2026-03-09. Removed from universe."
+    },
+    {
+      "ticker": "GBIO",
+      "action": "delisted",
+      "effective_date": "2026-02-10",
+      "notes": "Generation Bio. Price series ends 2026-02-10. Removed from universe."
+    },
+    {
+      "ticker": "MRSN",
+      "action": "delisted",
+      "effective_date": "2026-01-06",
+      "notes": "Mersana Therapeutics. Price series ends 2026-01-06. Removed from universe."
+    },
+    {
+      "ticker": "MRUS",
+      "action": "delisted",
+      "effective_date": "2026-01-02",
+      "notes": "Merus N.V. Price series ends 2026-01-02. Removed from universe."
+    },
+    {
+      "ticker": "RAPT",
+      "action": "delisted",
+      "effective_date": "2026-03-06",
+      "notes": "RAPT Therapeutics. Removed from universe."
+    },
+    {
+      "ticker": "VTYX",
+      "action": "acquisition",
+      "effective_date": "2026-03-06",
+      "acquirer": "Unknown",
+      "deal_price": null,
+      "notes": "Ventyx Biosciences. Price series ends 2026-03-06. Removed from universe."
+    },
+    {
+      "ticker": "MNMD",
+      "action": "delisted",
+      "effective_date": "2026-03-17",
+      "notes": "MindMed. Price series ends 2026-03-17. Removed from universe."
+    },
+    {
+      "ticker": "HOWL",
+      "action": "ticker_change",
+      "effective_date": "2024-08-01",
+      "old_ticker": "WERW",
+      "new_ticker": "HOWL",
+      "notes": "Werewolf Therapeutics renamed to Howl Therapeutics. Same CUSIP, same CIK."
+    },
+    {
+      "ticker": "ONC",
+      "action": "ticker_change",
+      "effective_date": "2025-01-02",
+      "old_ticker": "BGNE",
+      "new_ticker": "ONC",
+      "notes": "BeiGene renamed to BeOne Medicines. CUSIP unchanged."
+    },
+    {
+      "ticker": "SYRE",
+      "action": "ticker_change",
+      "effective_date": "2023-10-01",
+      "old_ticker": "AGLE",
+      "new_ticker": "SYRE",
+      "notes": "Aeglea BioTherapeutics renamed to Spyre Therapeutics after reverse merge."
+    },
+    {
+      "ticker": "BBOT",
+      "action": "ticker_change",
+      "effective_date": "2025-04-07",
+      "old_ticker": "BIOR",
+      "new_ticker": "BBOT",
+      "notes": "BioAtla renamed ticker BIOR to BBOT. Same CUSIP 107924102."
+    },
+    {
+      "ticker": "CAI",
+      "action": "ticker_change",
+      "effective_date": "2025-09-15",
+      "old_ticker": "CRIS",
+      "new_ticker": "CAI",
+      "notes": "Curis renamed to Context AI Therapeutics. CUSIP 142152107 unchanged."
+    },
+    {
+      "ticker": "DAWN",
+      "action": "acquisition",
+      "effective_date": "2026-03-15",
+      "acquirer": "Unknown",
+      "deal_price": 21.35,
+      "notes": "Day One Biopharmaceuticals. Flat price suggests acquisition. Needs confirmation."
+    },
+    {
+      "ticker": "FOLD",
+      "action": "acquisition",
+      "effective_date": "2026-03-01",
+      "acquirer": "Unknown",
+      "deal_price": 14.4,
+      "notes": "Amicus Therapeutics. Flat price suggests acquisition. Needs confirmation."
+    },
+    {
+      "ticker": "APLS",
+      "action": "acquisition",
+      "effective_date": "2026-05-14",
+      "acquirer": "Biogen",
+      "deal_price": 41.0,
+      "notes": "Apellis Pharmaceuticals acquired by Biogen. Merger agreement 2026-03-31; tender offer + merger completed 2026-05-14. Consideration $41.00 cash/share plus one CVR worth up to $4.00 aggregate (two $2.00 payments contingent on SYFOVRE net-sales milestones); ~$5.6B implied equity value at close. Price series ends 2026-05-14. Removed from universe. [backfilled 2026-07-05: verified vs Biogen completion PR + SEC 8-K acc 000119312526222923; CVR milestone wording reconciled 2026-07-05 to two $2.00 net-sales milestones per verified source]"
+    },
+    {
+      "ticker": "KALV",
+      "action": "acquisition",
+      "effective_date": "2026-06-11",
+      "acquirer": "Chiesi",
+      "deal_price": 27.0,
+      "notes": "KalVista Pharmaceuticals acquired by Chiesi Group. Merger agreement 2026-04-29; tender offer + merger completed 2026-06-11. Consideration $27.00 cash/share, all-cash with NO CVR; ~$1.9B implied equity value at close. Price series ends 2026-06-11. Removed from universe. [backfilled 2026-07-05: verified vs Chiesi completion PR + SEC 8-K acc 000114036126024949; no-CVR structure explicitly recorded 2026-07-05 per verified source]"
+    },
+    {
+      "ticker": "TERN",
+      "action": "acquisition",
+      "effective_date": "2026-05-05",
+      "acquirer": "Merck",
+      "deal_price": null,
+      "notes": "Terns Pharmaceuticals acquired by Merck. Announced Mar 25, 2026; completed May 5, 2026. Removed from universe."
+    },
+    {
+      "ticker": "THRD",
+      "action": "delisted",
+      "effective_date": "2025-07-31",
+      "notes": "Third Harmonic Bio liquidation/dissolution. Nasdaq trading suspended before open Jul 31, 2025. Price series ends 2025-07-30. Removed from universe."
+    },
+    {
+      "ticker": "NUVL",
+      "action": "acquisition",
+      "announced_date": "2026-06-24",
+      "effective_date": "2026-07-15",
+      "acquirer": "GSK",
+      "deal_price": 124.0,
+      "notes": "Nuvalent acquired by GSK via tender offer at $124.00/share cash (~$10.6B deal value). Tender offer commenced 2026-06-24; completed 2026-07-15. Price series freezes at deal value; removed from universe. [action pending_acquisition->acquisition and effective_date 2026-07-15 set 2026-07-23 per Reliability Gate A2 remediation: verified vs SEC Form 25-NSE acc 0001354457-26-000673 + 8-K completion acc 0001193125-26-304126, both 2026-07-15]"
+    },
+    {
+      "ticker": "APGE",
+      "action": "pending_acquisition",
+      "announced_date": "2026-06-22",
+      "effective_date": null,
+      "acquirer": "AbbVie",
+      "deal_price": 135.11,
+      "notes": "Apogee Therapeutics acquisition by AbbVie at $135.11/share cash (~$10.9B deal value). Announced 2026-06-22. APGE trading at ~$132.55 (1.9% arb discount to deal price). Gate from ranker/selector until acquisition closes; price series freezes at deal value at close."
+    },
+    {
+      "ticker": "CPRX",
+      "action": "acquisition",
+      "announced_date": "2026-05-07",
+      "effective_date": "2026-07-15",
+      "acquirer": "Angelini Pharma",
+      "deal_price": 31.5,
+      "notes": "Catalyst Pharmaceuticals acquired by Angelini Pharma at $31.50/share cash. Announced 2026-05-07; shareholder approval 2026-07-08; merger effective 2026-07-15 (Angelini Cielo merged into Catalyst, which survives as a wholly owned subsidiary). Nasdaq trading suspended 2026-07-16 on Form 25 effectiveness; SEC reporting terminated. Frozen price series carries to 2026-07-21. Remove from universe. [registered 2026-08-05: yfinance returned no data past 2026-07-21 for 5 weeks and the per-ticker staleness gap was invisible because the staleness check used a global max]"
+    },
+    {
+      "ticker": "ESPR",
+      "action": "acquisition",
+      "announced_date": "2026-05-01",
+      "effective_date": "2026-07-13",
+      "acquirer": "ARCHIMED",
+      "deal_price": 3.16,
+      "notes": "Esperion Therapeutics acquired by ARCHIMED at $3.16/share cash plus one CVR (up to $100M aggregate contingent milestone payments; ~$1.1B total equity value). Announced 2026-05-01; special meeting 2026-07-08; effective 2026-07-13, at which point all common shares were cancelled. Form 25 submitted for Nasdaq delisting. Frozen price series carries to 2026-07-15. Remove from universe. [registered 2026-08-05 \u2014 see CPRX note]"
+    },
+    {
+      "ticker": "SGMO",
+      "action": "bankruptcy",
+      "announced_date": "2026-05-05",
+      "effective_date": "2026-06-24",
+      "notes": "Sangamo Therapeutics \u2014 three-stage event, registered as bankruptcy on the date the SGMO symbol stopped resolving. (1) Nasdaq delisting determination for continued failure of the $1.00 minimum bid price; trading suspended and moved to OTCQB 2026-05-05. (2) Hearings-panel appeal stayed delisting but not the trading suspension. (3) Voluntary Chapter 11 petition; common stock began trading on OTCID Basic 2026-06-24 under the NEW symbol SGMOQ. Frozen price series carries to 2026-07-01. Remove from universe. NOTE: effective_date 2026-06-24 chosen because that is when the SGMO ticker ceased to resolve, matching where our price feed dies; the Nasdaq venue change was 2026-05-05. A separate ticker_change SGMO->SGMOQ action was deliberately NOT added, to avoid resolve_ticker() redirecting fetches to a bankrupt sub-$0.10 OTCID listing. [registered 2026-08-05 \u2014 see CPRX note]"
+    }
   ]
 }

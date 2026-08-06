@@ -495,14 +495,42 @@ class TestCorporateActionsGate:
             "market_cap_mm": mcap,
         }
 
+    @staticmethod
+    def _registry(ticker: str, effective_date: str, action: str = "acquisition"):
+        """Build a hermetic single-action registry.
+
+        This test used to rely on production_data/corporate_actions.json and
+        asserted CNTA was acquired 2026-03-31. The real Lilly close is
+        2026-06-24, so once the registry carried the correct date the test failed
+        against as_of=2026-04-01 — the code was right and the fixture was stale.
+        Inject the registry instead so the assertion cannot drift with prod data.
+        """
+        from common.corporate_actions import CorporateAction, CorporateActionRegistry
+
+        reg = CorporateActionRegistry(
+            actions=[CorporateAction(ticker=ticker, action=action, effective_date=effective_date)]
+        )
+        reg._build_indices()
+        return reg
+
     def test_acquired_ticker_excluded(self):
-        """CNTA was acquired 2026-03-31 — excluded after that date."""
+        """A ticker acquired before as_of is excluded."""
         records = [self._make_record("CNTA")]
-        result = compute_module_1_universe(records, "2026-04-01")
+        result = compute_module_1_universe(
+            records, "2026-04-01", corporate_actions=self._registry("CNTA", "2026-03-31")
+        )
         assert len(result["active_securities"]) == 0
         assert len(result["excluded_securities"]) == 1
         assert result["excluded_securities"][0]["reason"] == "excluded_acquired"
         assert "corporate_actions" in result["excluded_securities"][0]["reason_detail"]
+
+    def test_acquisition_is_pit_safe(self):
+        """The same ticker is still active the day BEFORE the acquisition closes."""
+        records = [self._make_record("CNTA")]
+        result = compute_module_1_universe(
+            records, "2026-03-30", corporate_actions=self._registry("CNTA", "2026-03-31")
+        )
+        assert len(result["active_securities"]) == 1
 
     def test_acquired_ticker_active_before_deal(self):
         """CNTA was alive before 2026-03-31 — should be active."""
