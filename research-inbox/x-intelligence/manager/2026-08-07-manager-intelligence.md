@@ -12,8 +12,21 @@ source_class: primary_source_found (REPL approval, VRDN earnings, IMVT pipeline)
 confidence: high (REPL approval confirmed) | med (VRDN, IMVT coinvest read) | low (ERAS, ORKA pre-13F)
 confirming_monitor: SEC Filing Monitor — Q2 13F deadline Aug 14 (7 days)
 lead_time_estimate: 0h (REPL confirmed); 7 days (Q2 13F window)
-ladder_stage: independent_confirmation (REPL) | primary_source_found (VRDN, IMVT, AUTL) | x_post (ERAS, RVMD positioning chatter)
-status: unverified
+ladder_stage: independent_confirmation (REPL, VRDN FM+DT position, REPL EcoR1 Q1, AUTL source event) | primary_source_found (VRDN thesis, IMVT, AUTL equity) | x_post (ERAS, RVMD positioning chatter, AUTL equity)
+status: partially_verified
+---
+
+## Verification Update — 2026-08-10 (Primary-Source Verification Queue)
+
+### VRDN — Fairmount + Deep Track Position Claim — PROMOTED to independent_confirmation
+SEC 13D (Fairmount, May 2026): 17,201,800 shares = 14.04%, independently confirmed by secform4.com. SEC Schedule 13G (Deep Track, accession 0001172661-26-001638, filed 2026-05-08): 5,417,660 shares = 5.30%, independently confirmed by StockTitan. Two independent sources each. ladder_stage: independent_confirmation. terminal_state: Partially confirmed (Q1 ownership confirmed; Q2 post-LUMVOA direction awaits Q2 13F Aug 14). Ledger row 90 updated.
+
+### REPL — EcoR1 Capital Q1 Position — PROMOTED to independent_confirmation
+SEC EDGAR accession 0000935836-26-000270 (EcoR1 13F-HR, filed 2026-05-15, as of 2026-03-31): 1,000,000 shares REPL = $7.65M. Independently confirmed: PortfolioSavvy (https://portfoliosavvy.com/investor/0001587114/investment/76029N106), WallStRank, 13Foresight (all citing EDGAR directly). Return-to-name confirmed (exited Q3 2025, re-entered Q1 2026). ladder_stage: independent_confirmation. terminal_state: Partially confirmed (Q1 ownership confirmed; Q2 persistence post-approval Aug 6 awaits Q2 13F Aug 14). Ledger row 92 updated.
+
+### AUTL — Perceptive Source Event — PROMOTED to independent_confirmation
+Primary: Autolus GlobeNewswire IR (Aug 3): https://www.globenewswire.com/news-release/2026/08/03/3337385/0/en/Autolus-Therapeutics-Reports-Preliminary-Second-Quarter-2026-Net-Product-Revenue-and-Announces-Credit-Facility-of-up-to-250-Million-with-Perceptive-Advisors.html. Independent 2: StockTitan/SEC 8-K — Perceptive Credit Holdings V LP, $75M Tranche 1 closed July 30, warrants for 3.5M ADSs at $1.9314/ADS confirmed. Independent 3: Cooley law firm press release (independent legal counsel). Event facts confirmed: $250M facility, $75M drawn July 30, 3.5M ADS warrants at $1.9314. EQUITY POSITION: no Perceptive 13G/D found on AUTL equity — remains x_post; do not fuse source-event confirmation with equity claim. ladder_stage: independent_confirmation (source event). terminal_state: Partially confirmed. Ledger row 93 updated.
+
 ---
 
 ## X-Read Gap Note
@@ -36,7 +49,9 @@ Primary journalist/KOL OR-batched searches (adamfeuerstein, matthewherper, bradl
 
 **[SOURCE EVENT]** FDA accelerated approval Aug 6 — CONFIRMED. Terminal_state: Confirmed (Content Library 2026-08-06-REPL-fda-approval). No new ledger row needed.
 
-**[POSITION CLAIM — EcoR1 Q1 re-entry]** EcoR1 Capital holds 1,000,000 shares REPL per Q1 2026 13F (EDGAR 0000935836-26-000270, confirmed Jul 31 digest). Return position (exited Q3 2025, re-entered Q1 2026). Q2 13F Aug 14 required read for persistence/change post-approval. RUMOR: Q2 direction unknown. Confidence: med (Q1 confirmed) / low (Q2 direction).
+**[POSITION CLAIM — EcoR1 Q1 re-entry]** EcoR1 Capital holds 1,000,000 shares REPL per Q1 2026 13F (EDGAR 0000935836-26-000270, confirmed Jul 31 digest). Return position (exited Q3 2025, re-entered Q1 2026). Q2 13F Aug 14 required read for persistence/change post-approval. RUMOR: Q2 direction unknown. Confidence: med (Q1 confirmed; Q2 direction: low).
+
+VERIFICATION (2026-08-10): Q1 ownership promoted to independent_confirmation / Partially confirmed. Q2 direction remains Open pending Q2 13F Aug 14.
 
 **[INVESTMENT INTERPRETATION]** Accelerated-approval contingency + cash runway + Amtagvi competition = structurally high-risk commercial profile. Facts verifiable; commercial outcome is judgment. Label: interpretation. Confidence: low.
 
@@ -55,7 +70,9 @@ Primary journalist/KOL OR-batched searches (adamfeuerstein, matthewherper, bradl
 
 **Decomposed components:**
 
-**[POSITION CLAIM — Fairmount + Deep Track]** Fairmount holds 14.04%, Deep Track holds 5.4M shares per most-recent disclosed filings. Q2 13F Aug 14 will show whether either added into the commercial launch (LUMVOA approved late June, first doses July). RUMOR: Q2 direction unknown. Confidence: high (existence, prior filings) / low (Q2 direction).
+**[POSITION CLAIM — Fairmount + Deep Track]** Fairmount holds 14.04% (17,201,800 sh, SEC 13D May 2026), Deep Track holds 5.30% (5,417,660 sh, SEC 13G filed May 8, 2026). Q2 13F Aug 14 will show whether either added into the commercial launch (LUMVOA approved late June, first doses July). RUMOR: Q2 direction unknown. Confidence: high (Q1 existence, filing-confirmed) / low (Q2 direction).
+
+VERIFICATION (2026-08-10): Position claim (Q1 existence) promoted to independent_confirmation / Partially confirmed. Q2 direction remains Open pending Q2 13F Aug 14.
 
 **[SOURCE EVENT]** Q2 earnings confirmed. Commercial-momentum thesis is informed interpretation.
 
@@ -116,13 +133,13 @@ High-engagement X post (seedy19tron, Aug 6, 34,302 impressions) advocates AstraZ
 All items are RUMOR until Q2 13F filings (deadline Aug 14, seven days).
 
 ### VRDN — Fairmount + Deep Track Q2 sizing post-LUMVOA launch (CARRY, ELEVATED — week 2)
-Fairmount 14.04% + Deep Track 5.4M sh confirmed prior filings. Whether either added into the commercial launch appears in Q2 13F. Strong Aug 6 earnings + Aug 7 conference call contextualizes the sizing decision. ELEVATED from prior run. Confidence: med. Confirming: Q2 13F Aug 14. Lead: 7 days.
+Fairmount 14.04% + Deep Track 5.4M sh confirmed prior filings (Q1 existence now independent_confirmation). Whether either added into the commercial launch appears in Q2 13F. Strong Aug 6 earnings + Aug 7 conference call contextualizes the sizing decision. ELEVATED from prior run. Confidence: med. Confirming: Q2 13F Aug 14. Lead: 7 days.
 
 ### REPL — EcoR1 Q2 persistence post-approval (NEW)
-EcoR1 re-entered REPL in Q1 (1M sh confirmed). Q2 13F shows whether EcoR1 held through / added pre-Aug 2 PDUFA. Approval (Aug 6) occurred after Q2 period end; any Q2 position was built pre-approval. Confidence: low. Confirming: Q2 13F Aug 14. Lead: 7 days.
+EcoR1 re-entered REPL in Q1 (1M sh confirmed, independent_confirmation). Q2 13F shows whether EcoR1 held through / added pre-Aug 2 PDUFA. Approval (Aug 6) occurred after Q2 period end; any Q2 position was built pre-approval. Confidence: low. Confirming: Q2 13F Aug 14. Lead: 7 days.
 
 ### AUTL — Perceptive Advisors warrant / equity exposure (NEW)
-Perceptive Advisors (elite_core) provided AUTL a $250M senior credit facility (initial $75M drawn), with warrants for up to 3.5M ADSs at $1.9314/ADS. Two independent confirmations: MSWPulse (Aug 3). Warrants create potential equity-conversion exposure. Equity position unknown without current 13F. AUTL NOT on event_alert_watchlist — flag for watchlist-addition review. Confidence: low (equity) / high (debt+warrant event confirmed). Confirming: Q2 13F Aug 14 + Perceptive 13G/D. Lead: 7 days.
+Source event (debt+warrant facility, $250M, $75M drawn July 30, 3.5M ADS warrants at $1.9314) now independent_confirmation / Partially confirmed. Equity position remains x_post — no Perceptive 13G/D on AUTL equity found. AUTL NOT on event_alert_watchlist — flag for watchlist-addition review. Confirming: Q2 13F Aug 14 + Perceptive 13G/D. Lead: 7 days.
 
 ### RVMD — Logos Q2 post-NDA (CARRY — week 2)
 Logos #1 hold ($194.5M Q1 13F). NDA accepted Jul 22. Q2 13F shows post-NDA sizing. Confidence: low. Confirming: Q2 13F Aug 14.
@@ -135,7 +152,7 @@ Fairmount ~19.5% ORKA post-Jul 1 preferred conversion. Ph2a primary endpoint hit
 ## Manager-Position Claims (to verify)
 
 ### AUTL — Perceptive Advisors debt + warrant facility (NEW — to ledger)
-**POSITION CLAIM (warrant/equity):** Perceptive Advisors provided AUTL a senior credit facility up to $250M with warrants to purchase up to 3.5M ADSs at $1.9314/ADS. Confirmed via MSWPulse (Aug 3). Debt is not equity; warrants create future equity exposure. Verify: Q2 13F or Perceptive 13G/D on EDGAR. Confidence: low (equity) / high (source event). Confirming: Q2 13F Aug 14. AUTL not on watchlist; flag for addition.
+**SOURCE EVENT (warrant facility):** PROMOTED to independent_confirmation / Partially confirmed (2026-08-10). Primary: Autolus GlobeNewswire IR (Aug 3). Independent 2: StockTitan/SEC 8-K (Perceptive Credit Holdings V LP). Independent 3: Cooley law firm press release. Equity position remains x_post — awaiting Q2 13F Aug 14 / Perceptive 13G/D. AUTL not on watchlist; flag for addition.
 
 ### ARTV — RA Capital 37.9% (CARRY — confirmed)
 Confirmed 13D/A + Form 4 (Jul 24). 6th consecutive buy. In prior ledger. Q2 13F Aug 14 confirms full context.
@@ -159,12 +176,10 @@ Confirmed EDGAR 0000935836-26-000361. On watchlist. Q2 13F Aug 14 confirms size.
 
 ## Verification Steps
 
-1. **CRITICAL — Q2 13F deadline Aug 14 (7 days):** Tier 1 reads: Fairmount (VRDN, ORKA, CBIO), Deep Track (VRDN, IMVT, GH/LNTH), Logos (RVMD, ERAS). No Tier 1 filings as of Aug 7. Soft-escalation threshold reached today; hard-warning if no Tier 1 filings by Aug 8.
-2. **VRDN conference call (Aug 7, 9:30 AM ET):** FM 14.04% + DT 5.4M sh. Management commentary on LUMVOA launch metrics contextualizes Q2 13F read.
-3. **REPL 8-K accession on EDGAR (Aug 6):** Confirm for dedup ledger (CIK 1587114).
-4. **AUTL / Perceptive:** Check EDGAR for Perceptive 13G/D on AUTL.
-5. **ERAS class-action lead-plaintiff deadline Aug 10:** Logos #2 hold. Monitor.
-6. **SRRK:** No new monitoring until primary regulatory update surfaces.
+1. **CRITICAL — Q2 13F deadline Aug 14 (4 days):** Tier 1 reads: Fairmount (VRDN, ORKA, CBIO), Deep Track (VRDN, IMVT, GH/LNTH), Logos (RVMD, ERAS). No Tier 1 filings as of Aug 10. Hard-critical escalation in effect.
+2. **AUTL / Perceptive:** Equity position unconfirmed — check EDGAR for Perceptive 13G/D on AUTL at next run.
+3. **ERAS class-action lead-plaintiff deadline Aug 10 (today):** Logos #2 hold. Monitor for settlement/regulatory news.
+4. **SRRK:** No new monitoring until primary regulatory update surfaces.
 
 ---
 
@@ -175,6 +190,5 @@ Confirmed EDGAR 0000935836-26-000361. On watchlist. Q2 13F Aug 14 confirms size.
 - Candidate signals: 9 (REPL, VRDN, IMVT, RVMD, AUTL, ERAS, ORKA, ARTV, SRRK dropped).
 - Patterns: Convergence ×3; Divergence ×2; Pre-13F ×5; Position_claim ×2 new.
 - Mapped to registry/watchlist: 8 of 9 (AUTL not on watchlist — flagged).
-- New ledger rows: 4 (VRDN FM+DT position claim; REPL EcoR1 Q2 position claim; AUTL Perceptive source event; AUTL Perceptive warrant position claim).
 - Carry items (prior ledger): ARTV, CBIO, ANRO, RVMD, ORKA.
 - Governance: No position asserted as fact. All Q2 pre-13F items labeled RUMOR. Three-leg confidence applied throughout. Schema v1.0 maintained.
