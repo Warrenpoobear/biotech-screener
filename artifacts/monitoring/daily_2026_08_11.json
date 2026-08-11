@@ -1,0 +1,530 @@
+{
+    "date": "2026-08-11",
+    "monitoring_day": 47,
+    "timestamp": "2026-08-11T09:37:00.000000Z",
+    "phase": "Day 47 — PRE-MARKET / OPEN snapshot (Aug 11 ~09:37 ET). GAP FLAG TRIGGERED: ALMS -10.07% (121k volume, cause unidentified — manual review required). COGT continues elevated selling pressure (-3.31%, 130k vol). CMPS surging +3.57% ahead of Canaccord Genuity conference tomorrow (Aug 12). PRAX EMERALD Phase 3 now 21 days out (Sep 1) — +0.20% quiet session. Q2 13F EDGAR WATCH LIVE — no filings yet from Fairmount, Deep Track, or Logos Global (deadline ~Aug 14). XBI -0.34%.",
+
+    "data_integrity": {
+        "primary_source": "Finviz (all 15 tickers + XBI, timestamped 2026-08-11 ~09:35-09:45 ET)",
+        "secondary_source": "Yahoo Finance — NOT USED (rejected due to persistent stale data issues identified Aug 10)",
+        "previous_session_closes": "Aug 10, 2026 close (Finviz 'Previous Close' field for all tickers — confirmed represents full Aug 10 session close, NOT the Aug 10 open from yesterday's monitoring)",
+        "quantities_source": "production_data/phase2_entry_prices.json (sourced via MCP 2026-06-24, unchanged)",
+        "aug10_close_vs_morning_note": "Aug 10 intraday recoveries confirmed: COGT closed $41.53 (vs $40.37 morning open); DNTH closed $111.80 (vs $108.38); PRAX closed $366.96 (vs $358.18). TRVI declined to close $17.80 (vs $18.73 morning). CMPS declined to close $13.18 (vs $13.50 morning)."
+    },
+
+    "account": {
+        "account_id": "Robinhood 802349084",
+        "equity_fetchable": false,
+        "equity_estimated_usd": 136.98,
+        "equity_note": "Robinhood MCP unavailable Day 47. Equity computed from phase2_entry_prices.json quantities × Finviz prices (~09:37 ET Aug 11). Down from Day 46 estimate $137.84 — ALMS -10.07% gap flag (-$0.81 impact on ALMS position alone) partially offset by CMPS +3.57%, SLDB +2.38%, TRVI +2.11%. Net equity slightly lower.",
+        "cash_carried": 99.87,
+        "buying_power_carried": null,
+        "total_estimated_account_value": 236.85,
+        "equity_delta_vs_day46": "-0.86 (est) — ALMS gap flag primary driver of decline. Partially offset by CMPS, SLDB, TRVI gains.",
+        "data_source": "Finviz Aug 11 open (all 15 tickers + XBI confirmed, ~09:35-09:45 ET). Quantities from phase2_entry_prices.json."
+    },
+
+    "benchmark": {
+        "xbi_entry_price": 133.62,
+        "xbi_aug10_close": 158.03,
+        "xbi_aug11_current": 157.50,
+        "xbi_change_today_pct": -0.34,
+        "xbi_return_since_entry_pct": 17.87,
+        "xbi_volume_early": 624456,
+        "xbi_note": "XBI -0.34% on moderate volume. Mild broad sector pullback. Not a sector catalyst event — ALMS move idiosyncratic."
+    },
+
+    "portfolio_overview": {
+        "total_positions": 15,
+        "positions_negative_vs_entry": 0,
+        "positions_at_risk_below_entry": "NONE — lowest is STOK at +11.6% vs entry",
+        "positions_positive_vs_entry": 15,
+        "avg_pnl_vs_entry_pct": 36.8,
+        "equity_usd": 136.98,
+        "cash_usd": 99.87,
+        "total_account_usd": 236.85,
+        "xbi_return_since_entry_pct": 17.87,
+        "portfolio_return_since_entry_pct": 36.8,
+        "drawdown_vs_xbi_pp": 18.9,
+        "drawdown_threshold_pp": -2.0,
+        "drawdown_status": "CLEAR — +18.9pp vs XBI (threshold -2.0pp). Gate NOT tripped. Slight compression vs Day 46 (+20.0pp) due to ALMS gap flag.",
+        "gap_flags_today": 1,
+        "gap_threshold_pct": 5.0,
+        "near_threshold_flags": 1,
+        "near_threshold_note": "COGT -3.31% (130k vol) — approaching -5% downside flag. Second consecutive session of elevated selling pressure. COGT was at -4.77% at yesterday's open (closed $41.53). Now -3.31% from that close.",
+        "session_character": "ACTIVE ALERT — 1 gap flag (ALMS -10.07%). 5 positive / 10 negative. XBI mild pullback. ALMS move idiosyncratic vs sector. CMPS/SLDB/TRVI positive offsets."
+    },
+
+    "positions": [
+        {
+            "ticker": "NRIX",
+            "company": "Nurix Therapeutics, Inc.",
+            "entry_price": 15.46,
+            "quantity": 0.430232,
+            "aug10_close": 25.88,
+            "aug11_current": 25.76,
+            "pnl_vs_entry_pct": 66.6,
+            "day_change_pct": -0.47,
+            "position_value": 11.08,
+            "volume_early": 36743,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "NRIX -0.47% today. Aug 10 closed $25.88 (vs $25.36 morning open — intraday recovery). +66.6% vs entry. Best P&L in portfolio today. Post-Roche $700M deal momentum sustained."
+        },
+        {
+            "ticker": "URGN",
+            "company": "UroGen Pharma Ltd.",
+            "entry_price": 28.02,
+            "quantity": 0.237681,
+            "aug10_close": 46.31,
+            "aug11_current": 45.72,
+            "pnl_vs_entry_pct": 63.1,
+            "day_change_pct": -1.27,
+            "position_value": 10.87,
+            "volume_early": 30101,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "URGN -1.27% today. Aug 10 closed $46.31 (vs $46.35 morning open — essentially flat session). Near 52-week high. +63.1% vs entry. ZUSDURI commercialization driving sustained gains."
+        },
+        {
+            "ticker": "DNTH",
+            "company": "Dianthus Therapeutics, Inc.",
+            "entry_price": 72.10,
+            "quantity": 0.092928,
+            "aug10_close": 111.80,
+            "aug11_current": 110.68,
+            "pnl_vs_entry_pct": 53.5,
+            "day_change_pct": -1.00,
+            "position_value": 10.28,
+            "volume_early": 24060,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "DNTH -1.00% today. Aug 10 closed $111.80 (strong intraday recovery from $108.38 morning open). +53.5% vs entry. Phase 3 EMERGE trial ongoing."
+        },
+        {
+            "ticker": "PRAX",
+            "company": "Praxis Precision Medicine, Inc.",
+            "entry_price": 241.92,
+            "quantity": 0.027530,
+            "aug10_close": 366.96,
+            "aug11_current": 367.71,
+            "pnl_vs_entry_pct": 52.0,
+            "day_change_pct": 0.20,
+            "position_value": 10.12,
+            "volume_early": 10490,
+            "gap_flag": false,
+            "status": "MONITORING — EMERALD_PHASE3_21_DAYS",
+            "note": "PRAX +0.20% today — quiet positive session. Aug 10 closed $366.96 (strong recovery from $358.18 morning open). Now +52.0% vs entry. EMERALD Phase 3 (SLC6A1 LOF, elsunersen) readout: SEPTEMBER 1 — 21 DAYS. Breakthrough therapy designation confirmed. Analyst PT $1,201. Low volume (10.5k) consistent with pre-readout calm. Dominant binary value driver — daily monitoring critical."
+        },
+        {
+            "ticker": "RVMD",
+            "company": "Revolution Medicines, Inc.",
+            "entry_price": 143.76,
+            "quantity": 0.046465,
+            "aug10_close": 206.97,
+            "aug11_current": 205.52,
+            "pnl_vs_entry_pct": 42.9,
+            "day_change_pct": -0.70,
+            "position_value": 9.55,
+            "volume_early": 41503,
+            "gap_flag": false,
+            "status": "MONITORING — ATH_ZONE",
+            "note": "RVMD -0.70% today. Aug 10 closed $206.97 (slight decline from ATH $207.45 morning). Still trading in ATH zone — four consecutive sessions above $200 (Aug 6 $201.77, Aug 7 $205.15, Aug 10 $207.45/close $206.97, Aug 11 $205.52). +42.9% vs entry. Sustained institutional momentum."
+        },
+        {
+            "ticker": "SYRE",
+            "company": "Synta Biosciences",
+            "entry_price": 76.10,
+            "quantity": 0.088041,
+            "aug10_close": 105.33,
+            "aug11_current": 103.79,
+            "pnl_vs_entry_pct": 36.4,
+            "day_change_pct": -1.47,
+            "position_value": 9.14,
+            "volume_early": 125696,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "SYRE -1.47% today with elevated volume (125k). Aug 10 closed $105.33 (vs $105.98 morning). Consolidating after SKYLINE Phase 2 positive data. +36.4% vs entry."
+        },
+        {
+            "ticker": "ERAS",
+            "company": "Erasca, Inc.",
+            "entry_price": 13.27,
+            "quantity": 0.503396,
+            "aug10_close": 18.12,
+            "aug11_current": 18.01,
+            "pnl_vs_entry_pct": 35.7,
+            "day_change_pct": -0.61,
+            "position_value": 9.07,
+            "volume_early": 117494,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "ERAS -0.61% today, elevated volume (117k). Aug 10 closed $18.12. Stable. +35.7% vs entry."
+        },
+        {
+            "ticker": "TRVI",
+            "company": "Trevi Therapeutics, Inc.",
+            "entry_price": 13.43,
+            "quantity": 0.496649,
+            "aug10_close": 17.80,
+            "aug11_current": 18.17,
+            "pnl_vs_entry_pct": 35.3,
+            "day_change_pct": 2.11,
+            "position_value": 9.02,
+            "volume_early": 102120,
+            "gap_flag": false,
+            "status": "MONITORING — POSITIVE",
+            "note": "TRVI +2.11% today with elevated volume (102k). Aug 10 closed $17.80 (pullback from $18.73 morning open — notable Aug 10 giveback). Today recovering. Analyst price target increases cited in early August. +35.3% vs entry. DATA NOTE: Prior monitoring artifacts labeled this position 'Travere Therapeutics, Inc.' — Travere Therapeutics actually trades as TVTX. TRVI is Trevi Therapeutics. Both companies attended Canaccord Growth Conference week; TVTX on Aug 11, CMPS/TRVI on Aug 12. P&L tracking is consistent across all prior artifacts (same price series). Operator review of company name labeling recommended."
+        },
+        {
+            "ticker": "SLDB",
+            "company": "Solid Biosciences Inc.",
+            "entry_price": 6.49,
+            "quantity": 1.028527,
+            "aug10_close": 8.56,
+            "aug11_current": 8.76,
+            "pnl_vs_entry_pct": 35.0,
+            "day_change_pct": 2.38,
+            "position_value": 9.01,
+            "volume_early": 19308,
+            "gap_flag": false,
+            "status": "MONITORING — POSITIVE",
+            "note": "SLDB +2.38% today. Aug 10 closed $8.56. Recovering. Q2 earnings reported (Aug 6): net loss $54.8M, $377.7M cash (runway to mid-2028). 52-week high $11.45. Analyst consensus Buy, avg PT $17.64. +35.0% vs entry."
+        },
+        {
+            "ticker": "ALMS",
+            "company": "Alumis Inc.",
+            "entry_price": 20.37,
+            "quantity": 0.326013,
+            "aug10_close": 27.53,
+            "aug11_current": 24.76,
+            "pnl_vs_entry_pct": 21.6,
+            "day_change_pct": -10.07,
+            "position_value": 8.07,
+            "volume_early": 121096,
+            "gap_flag": true,
+            "gap_flag_direction": "DOWN",
+            "gap_flag_priority": "ALERT — MANUAL REVIEW REQUIRED",
+            "status": "GAP_FLAG — CATALYST_UNIDENTIFIED",
+            "note": "ALMS -10.07% today ($27.53 → $24.76) — GAP FLAG TRIGGERED. Volume elevated (121k vs typical ~30-50k). Aug 10: positive psoriasis news (envudeucitinib 54% PASI 100 at 48wk, leading oral therapy; NDA submission Q4 2026 planned). Despite positive Aug 10 news, stock declined materially today. Possible causes: (1) LUMUS Phase 2b SLE topline data released (negative outcome — most likely given timing, magnitude, and volume); (2) secondary offering dilution (prior $300M raise at Phase 3 psoriasis win already absorbed); (3) sector-specific selling not attributable to specific catalyst. LUMUS Phase 2b SLE readout (envudeucitinib/ESK-001, 408 patients, BICLA at Week 48) was expected Q3 2026 — timing is consistent with today's move. No specific press release identified in web search. Operator should check ALMS investor relations and SEC EDGAR filings. Still +21.6% vs entry — gate not tripped."
+        },
+        {
+            "ticker": "XENE",
+            "company": "Xenon Pharmaceuticals Inc.",
+            "entry_price": 51.95,
+            "quantity": 0.128578,
+            "aug10_close": 64.23,
+            "aug11_current": 64.14,
+            "pnl_vs_entry_pct": 23.5,
+            "day_change_pct": -0.15,
+            "position_value": 8.25,
+            "volume_early": 17503,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "XENE -0.15% today — essentially flat. Steady performer. +23.5% vs entry."
+        },
+        {
+            "ticker": "DRUG",
+            "company": "Nuvation Bio (DRUG)",
+            "entry_price": 63.59,
+            "quantity": 0.105839,
+            "aug10_close": 80.79,
+            "aug11_current": 80.11,
+            "pnl_vs_entry_pct": 26.0,
+            "day_change_pct": -0.84,
+            "position_value": 8.48,
+            "volume_early": 958,
+            "gap_flag": false,
+            "status": "MONITORING — ILLIQUID",
+            "note": "DRUG -0.84% today. Extremely low volume (958 shares). Aug 10 closed $80.79 (significant recovery from $78.61 morning open — large intraday move). Illiquid name, prices may not reflect true market. +26.0% vs entry."
+        },
+        {
+            "ticker": "COGT",
+            "company": "Cogent Biosciences, Inc.",
+            "entry_price": 31.35,
+            "quantity": 0.212789,
+            "aug10_close": 41.53,
+            "aug11_current": 40.16,
+            "pnl_vs_entry_pct": 28.1,
+            "day_change_pct": -3.31,
+            "position_value": 8.55,
+            "volume_early": 130797,
+            "gap_flag": false,
+            "status": "NEAR_THRESHOLD — WATCH",
+            "note": "COGT -3.31% today ($41.53 → $40.16). Elevated volume (130k). Aug 10: opened at $40.37 but recovered strongly to close $41.53 (+2.9% recovery during session). Now giving back those gains. Second consecutive session of elevated selling pressure. COGT was at -4.77% yesterday morning (Aug 10) — intraday recovery to $41.53 prevented flag. Today at -3.31%. FDA context: NDA for bezuclastinib (GIST) accepted May 28, 2026 with Priority Review; PDUFA date November 30, 2026. NDA for NonAdvSM (separate indication) also in review per Finviz note. Selling may be pre-PDUFA profit-taking ahead of regulatory binary. +28.1% vs entry. Monitor for continuation below -5%."
+        },
+        {
+            "ticker": "CMPS",
+            "company": "COMPASS Pathways plc",
+            "entry_price": 11.30,
+            "quantity": 0.590265,
+            "aug10_close": 13.18,
+            "aug11_current": 13.65,
+            "pnl_vs_entry_pct": 20.8,
+            "day_change_pct": 3.57,
+            "position_value": 8.06,
+            "volume_early": 210242,
+            "gap_flag": false,
+            "status": "MONITORING — POSITIVE — CANACCORD_TOMORROW",
+            "note": "CMPS +3.57% today — highest positive mover. Elevated volume (210k). Aug 10 closed $13.18 (pullback from $13.50 morning open, then today's surge). CATALYST: Canaccord Genuity 46th Annual Growth Conference on August 12, 2026 (TOMORROW — fireside chat 8:00am ET). Pre-conference positioning driving today's move. Canaccord recently raised PT to $20 (Buy); TD Cowen maintains Buy/PT $29; consensus 16 analysts Strong Buy, avg PT $23.75. COMP360 Phase 3 data (ASCP 2026) well-received. +20.8% vs entry."
+        },
+        {
+            "ticker": "STOK",
+            "company": "Stoke Therapeutics, Inc.",
+            "entry_price": 28.74,
+            "quantity": 0.231758,
+            "aug10_close": 32.23,
+            "aug11_current": 32.08,
+            "pnl_vs_entry_pct": 11.6,
+            "day_change_pct": -0.48,
+            "position_value": 7.43,
+            "volume_early": 92861,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "STOK -0.48% today. Aug 10 closed $32.23 (slight giveback from $32.38 morning). Lowest P&L in portfolio at +11.6% vs entry — still comfortably positive. Consolidating above $32."
+        }
+    ],
+
+    "aug10_session_recap": {
+        "note": "Aug 10 full-session performance (confirmed from today's previous close data)",
+        "significant_intraday_recoveries": [
+            "COGT: opened $40.37 → closed $41.53 (+2.9% recovery)",
+            "DNTH: opened $108.38 → closed $111.80 (+3.2% recovery)",
+            "PRAX: opened $358.18 → closed $366.96 (+2.5% recovery)",
+            "DRUG: opened $78.61 → closed $80.79 (+2.8% recovery)"
+        ],
+        "significant_intraday_declines": [
+            "TRVI: opened $18.73 → closed $17.80 (-5.0% during session)",
+            "CMPS: opened $13.50 → closed $13.18 (-2.4% during session)"
+        ],
+        "character": "Strong intraday bid on the broader dips. Aug 10 was healthier than the open prices suggested."
+    },
+
+    "gap_flags_summary": {
+        "count": 1,
+        "threshold_pct": 5.0,
+        "session_as_of": "Aug 11 open ~09:37 ET",
+        "flags": [
+            {
+                "ticker": "ALMS",
+                "direction": "DOWN",
+                "change_pct": -10.07,
+                "prev_close": 27.53,
+                "current": 24.76,
+                "volume": 121096,
+                "catalyst": "UNIDENTIFIED — LUMUS Phase 2b SLE readout suspected (Q3 window active)",
+                "priority": "ALERT — MANUAL REVIEW REQUIRED",
+                "pnl_impact": "P&L compression: was +37.1% (Day 46) → now +21.6% (Day 47). Still above zero.",
+                "action": "Check ALMS investor relations (investors.alumis.com) and EDGAR for press release or 8-K filing. Confirm catalyst."
+            }
+        ],
+        "near_threshold": [
+            {
+                "ticker": "COGT",
+                "direction": "DOWN",
+                "change_pct": -3.31,
+                "distance_to_threshold_pp": 1.69,
+                "priority": "WATCH",
+                "note": "Second consecutive session of elevated selling. Was at -4.77% yesterday morning before intraday recovery. Monitor for continuation below -5%."
+            }
+        ]
+    },
+
+    "forward_catalyst_watch": {
+        "PRAX_EMERALD": {
+            "ticker": "PRAX",
+            "event": "EMERALD Phase 3 — SLC6A1 LOF (elsunersen, social communication primary endpoint)",
+            "readout_expected": "2026-09-01",
+            "days_to_readout": 21,
+            "priority": "CRITICAL — Primary binary value driver. 21 days.",
+            "current_price": 367.71,
+            "current_pnl_pct": 52.0,
+            "analyst_pt": 1201,
+            "breakthrough_therapy": true,
+            "note": "PRAX +0.20% quiet session. Strong Aug 10 recovery to $366.96 (from $358.18 morning low). Now $367.71. Each passing day without negative news is positive for positioning. 21 days to readout."
+        },
+        "ALMS_LUMUS": {
+            "ticker": "ALMS",
+            "event": "LUMUS Phase 2b SLE topline readout — envudeucitinib (ESK-001)",
+            "readout_window": "Q3 2026 (any day through Sep 30)",
+            "priority": "CRITICAL — GAP FLAG TODAY. Binary catalyst may have landed.",
+            "current_price": 24.76,
+            "current_pnl_pct": 21.6,
+            "note": "ALMS -10.07% today with 121k volume. LUMUS readout timing is consistent with today's move. If negative data confirmed, stock may face further pressure. If cause is other (offering, sector rotation), recovery possible. Manual verification urgent. Q3 window through Sep 30 remains open if data not yet announced."
+        },
+        "CMPS_CANACCORD": {
+            "ticker": "CMPS",
+            "event": "Canaccord Genuity 46th Annual Growth Conference — fireside chat",
+            "event_date": "2026-08-12",
+            "event_time": "8:00 AM ET",
+            "priority": "NEAR-TERM — TOMORROW",
+            "current_price": 13.65,
+            "current_pnl_pct": 20.8,
+            "note": "CMPS up +3.57% with 210k volume today in pre-conference positioning. Canaccord recently raised PT to $20. TD Cowen Buy/PT $29. COMP360 Phase 3 data positive (ASCP 2026). Conference tomorrow morning."
+        },
+        "COGT_FDA_PDUFA": {
+            "ticker": "COGT",
+            "event": "Bezuclastinib GIST NDA PDUFA target action date",
+            "pdufa_date": "2026-11-30",
+            "days_to_pdufa": 111,
+            "priority": "MEDIUM — Monitor selling pattern",
+            "current_price": 40.16,
+            "current_pnl_pct": 28.1,
+            "note": "COGT -3.31% today (-4.77% yesterday morning, recovered intraday). FDA Priority Review PDUFA Nov 30, 2026 (bezuclastinib + sunitinib for GIST). Advisory committee NOT planned. Selling pressure may be pre-PDUFA profit-taking. Phase 3 PEAK trial: PFS 16.5m vs 9.2m (HR=0.50, p<0.0001). Also NonAdvSM indication in review."
+        },
+        "Q2_13F_EDGAR": {
+            "event": "Q2 2026 13F-HR filings — Fairmount, Deep Track, Logos Global",
+            "priority": "CRITICAL OPERATIONAL — WATCH LIVE",
+            "edgar_watch_date": "2026-08-11 (TODAY — ACTIVE)",
+            "filing_deadline": "~2026-08-14 (3 days)",
+            "period_ending": "2026-06-30",
+            "filing_status": {
+                "fairmount": {
+                    "cik": "0001802528",
+                    "status": "NOT_FILED",
+                    "last_filing": "2026-05-15 (Q1 2026, accession 0001104659-26-062419)",
+                    "checked": "2026-08-11 ~09:40 ET"
+                },
+                "deep_track": {
+                    "cik": "0001856083",
+                    "status": "NOT_FILED",
+                    "last_filing": "2026-05-15 (Q1 2026, accession 0001856083-26-000003)",
+                    "checked": "2026-08-11 ~09:40 ET"
+                },
+                "logos_global": {
+                    "cik": "0001792126",
+                    "status": "NOT_FILED",
+                    "last_filing": "2026-05-15 (Q1 2026, accession 0001172661-26-002196)",
+                    "checked": "2026-08-11 ~09:40 ET"
+                }
+            },
+            "next_check": "2026-08-12 (tomorrow) — all three deadline day (Aug 14) filers historically file on or around deadline",
+            "post_filing_action": [
+                "python3 tools/warm_13f_cache.py --ciks 1802528,1856083,1792126 --existing-pit-dirs --elite-only",
+                "Run cohort quarantine check after promotion",
+                "Requires operator freeze lift before IC decomposition refresh"
+            ],
+            "q2_key_positions_to_watch": [
+                "NRIX — post-Roche $700M deal: likely significant institutional repositioning",
+                "ALMS — TYK2 specialist interest: LUMUS + ONWARD psoriasis data in Q2",
+                "COGT — bezuclastinib FDA PDUFA prep: specialist accumulation expected",
+                "PRAX — pre-EMERALD specialist accumulation (Breakthrough therapy)"
+            ]
+        }
+    },
+
+    "governance_gates": {
+        "drawdown_gate": {
+            "status": "CLEAR",
+            "portfolio_return_since_entry_pct": 36.8,
+            "xbi_return_since_entry_pct": 17.87,
+            "outperformance_pp": 18.9,
+            "threshold_pp": -2.0,
+            "detail": "Portfolio +36.8% vs XBI +17.87% since Jun 10 entry. Outperformance +18.9pp. Gate not tripped. Slight compression vs Day 46 (+20.0pp) due to ALMS gap flag."
+        },
+        "ic_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 41,
+            "gate_was_due": "2026-07-01",
+            "last_measured": "2026-06-24",
+            "last_ic": 0.0432,
+            "hit_rate": 0.543,
+            "note": "41 days overdue. Requires explicit operator freeze lift. DEM candidate freeze + NO_MODEL_CHANGE forward-validation window active (0/20 LIVE windows)."
+        },
+        "h20d_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 41,
+            "gate_date": "2026-07-01",
+            "override_posture": "MAINTAINED (OPTION_B_OVERRIDE_2026_05_26)",
+            "note": "Sequential: (1) operator freeze lift, (2) quarantine script, (3) warm Q2 13F cache (filings due Aug 14). All blocked pending lift."
+        },
+        "jaccard_gate": {
+            "status": "MAINTAINED",
+            "last_value": 0.875,
+            "last_measured": "2026-06-23",
+            "threshold": 0.40,
+            "note": "0.875 well above threshold. Refresh pending freeze lift."
+        },
+        "emergency_gate": {
+            "status": "CLEAR",
+            "detail": "No positions below entry. Even after ALMS gap flag, lowest P&L is STOK at +11.6%."
+        },
+        "positions_20pct_loss_gate": {
+            "status": "CLEAR",
+            "count": 0,
+            "lowest_pnl_name": "STOK",
+            "lowest_pnl_pct": 11.6,
+            "alms_note": "ALMS after gap flag: +21.6% vs entry — still well above zero, gate not tripped."
+        }
+    },
+
+    "escalation_flags": [
+        {
+            "ticker": "ALMS",
+            "reason": "GAP FLAG: -10.07% from Aug 10 close ($27.53 → $24.76). Volume 121k. Catalyst unidentified — LUMUS Phase 2b SLE data most likely. Check investor relations and 8-K filings immediately.",
+            "priority": "ALERT — IMMEDIATE MANUAL REVIEW",
+            "current_pnl_pct": 21.6,
+            "pnl_change_vs_day46": -15.5
+        },
+        {
+            "ticker": "PRAX",
+            "reason": "EMERALD Phase 3 readout September 1 — now 21 days. Primary binary. Daily monitoring required.",
+            "priority": "HIGH",
+            "current_pnl_pct": 52.0
+        },
+        {
+            "ticker": "COGT",
+            "reason": "NEAR_THRESHOLD: -3.31% today (130k vol). Second consecutive elevated-selling session. Was -4.77% yesterday morning before intraday recovery. PDUFA Nov 30, 2026.",
+            "priority": "WATCH",
+            "current_pnl_pct": 28.1
+        },
+        {
+            "ticker": "TRVI",
+            "reason": "DATA INTEGRITY: Prior artifacts labeled as 'Travere Therapeutics' — TRVI is actually Trevi Therapeutics. Travere Therapeutics trades as TVTX. P&L tracking consistent but company name should be corrected. Recommend operator review.",
+            "priority": "DATA_QUALITY",
+            "current_pnl_pct": 35.3
+        }
+    ],
+
+    "monitoring_status": {
+        "period_extended": true,
+        "original_end": "2026-06-30",
+        "extension_rationale": "Extended through PRAX EMERALD Phase 3 readout (Sep 1), ALMS LUMUS Q3 binary, Q2 13F cycle (deadline Aug 14), governance gates",
+        "robinhood_mcp_status": "UNAVAILABLE — Days 1-47. All equity from Finviz prices × quantities.",
+        "data_quality_flag": "YAHOO_FINANCE_STALE — Rejected all sessions. Finviz is primary price source.",
+        "alerts_active": [
+            "ALMS_GAP_FLAG_DOWN_10pct_CATALYST_UNIDENTIFIED — IMMEDIATE REVIEW",
+            "COGT_NEAR_THRESHOLD_WATCH (-3.31%, 130k vol, second consecutive session)",
+            "PRAX_EMERALD_PHASE3_SEP1_21_DAYS",
+            "Q2_13F_EDGAR_WATCH_ACTIVE_DEADLINE_AUG14_3_DAYS",
+            "IC_GATE_OVERDUE_41_DAYS",
+            "H20D_GATE_OVERDUE_41_DAYS",
+            "TRVI_COMPANY_NAME_MISLABELED_DATA_QUALITY"
+        ],
+        "new_today": [
+            "ALMS_GAP_FLAG_DOWN_10pct — first gap flag since Aug 6 banner session",
+            "Q2_13F_EDGAR_WATCH_NOW_ACTIVE — monitoring began today",
+            "CMPS_CANACCORD_CONFERENCE_TOMORROW — +3.57% pre-conference positioning",
+            "TRVI_COMPANY_NAME_DISCREPANCY — identified and flagged"
+        ],
+        "next_key_dates": [
+            "2026-08-12: CMPS Canaccord Genuity conference fireside chat (8:00am ET) — TOMORROW",
+            "2026-08-12: Q2 13F EDGAR check — Day 2 of watch window",
+            "2026-08-14: Q2 13F filing deadline (~3 days) — Fairmount, Deep Track, Logos Global",
+            "2026-09-01: PRAX EMERALD Phase 3 readout (21 days) — primary binary",
+            "2026-09-30: ALMS LUMUS readout window closes (if not yet announced)",
+            "2026-11-30: COGT bezuclastinib GIST PDUFA target action date"
+        ],
+        "next_scheduled_monitoring": "2026-08-12 09:00 ET (Wednesday) — CMPS conference day + Q2 13F Day 2 watch"
+    },
+
+    "_data_integrity": {
+        "source": "Finviz (primary — all 15 tickers + XBI)",
+        "fetch_timestamp": "2026-08-11T09:35-09:45Z",
+        "tickers_fetched": ["COGT","DNTH","NRIX","URGN","ALMS","SYRE","RVMD","CMPS","SLDB","DRUG","STOK","PRAX","TRVI","ERAS","XENE","XBI"],
+        "tickers_failed": [],
+        "yahoo_finance_rejected": "All sessions — persistent stale data confirmed Aug 10",
+        "price_interpretation": "Previous Close = Aug 10, 2026 full-session close. Current = Aug 11, 2026 early session (~09:35-09:45 ET).",
+        "equity_basis": "Quantities from production_data/phase2_entry_prices.json"
+    }
+}
