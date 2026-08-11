@@ -684,6 +684,41 @@ Determines whether a name is eligible for ranking. All gates must pass.
 `missing_cash` / `missing_burn_data` are misleading for profitable companies
 with positive cash flow.
 
+### Layer 0b — Pending-Acquisition Veto (Selector/Ranker Gate)
+
+Added 2026-08-05 (PRs #553, #555). An announced-but-unclosed acquisition still
+trades, so `is_dead()` stays False and the ticker keeps its universe membership —
+but its price is pinned near the agreed deal price and carries essentially no
+remaining alpha, so ranking it against live names is misleading.
+
+| Property | Behavior |
+|----------|----------|
+| Applied in | `run_screen.py` → `save_validation_snapshot()`, immediately before `actionable_rank` assignment |
+| Predicate | `common.corporate_actions.is_pending_deal(ticker, as_of, registry)` |
+| Trigger | Registry `action == "pending_acquisition"`, visible from the announcement date onward (PIT-safe) |
+| Semantics | **Veto, not exclusion** — row keeps its features, `final_score` and diagnostics and stays visible in `rankings.csv` |
+| Row loses | `actionable_rank`, `target_weight_pct` |
+| Row gains | `pending_acquisition` appended to `ineligible_reasons` (existing reasons preserved) |
+| On registry error | Fails **open**, logged at WARNING — no veto applied |
+
+`pending_acquisition` is a recognised `ACTION_TYPES` member but deliberately **not**
+in `DEAD_ACTION_TYPES` (`{acquisition, delisted, bankruptcy}`): a live deal still
+trades and must stay in the universe. Before #553 the type was unrecognised, so the
+registry logged `Unknown action type ... skipping` and dropped the entry on every
+load — which is why APGE's AbbVie deal was invisible to the whole pipeline until
+2026-08-05.
+
+**Key pitfall:** registry entries may carry `effective_date: null` (APGE does). The
+loader falls back to `announced_date`, which is also the PIT-correct visibility date
+— an announced deal is knowable from its announcement, not from the beginning of
+time. An unguarded `raw.get("effective_date", "")` does **not** protect against an
+explicit null, and the None then reaches both the `> as_of` comparison and the
+`sorted(key=effective_date)` call, raising `TypeError` against `str` in each.
+
+**Observed, 2026-08-10 snapshot:** APGE is the sole vetoed row — `ineligible_reasons`
+= `pending_acquisition`, `actionable_rank` and `target_weight_pct` blank, `final_score`
+0.627217 retained; 220 of 299 rows ranked.
+
 ### Layer 2 — Risk Flags & Momentum
 
 Overlay risk signals on eligible names. These inform sizing and reporting but
