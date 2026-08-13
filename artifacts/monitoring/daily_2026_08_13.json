@@ -1,0 +1,469 @@
+{
+    "date": "2026-08-13",
+    "monitoring_day": 49,
+    "timestamp": "2026-08-13T09:00:00.000000Z",
+    "phase": "Day 49 — PRE-MARKET snapshot (Aug 13 09:00 ET). MONITORING GAP: Aug 11 and Aug 12 files missing — no price data captured for those sessions. Prices carried from Aug 10 close (Finviz ~09:35-09:37 ET) as last known values. Q2 13F EDGAR DEADLINE TOMORROW (Aug 14) — Fairmount, Deep Track, Logos Global must file by end of day Aug 14. PRAX EMERALD Phase 3 readout September 1 — now 19 days away. COGT unknown intraday behavior during gap; was at -4.77% on Aug 10 near the -5% flag threshold. Robinhood MCP unavailable Day 49.",
+
+    "data_integrity": {
+        "primary_source": "Aug 10 Finviz prices (last known — carried forward)",
+        "price_date": "2026-08-10 ~09:35-09:37 ET",
+        "note": "No live market data available this session. Robinhood MCP unavailable (Days 1-49). Yahoo Finance rejected as unreliable (Aug 10 session). Prices are Aug 10 early session estimates carried forward through the Aug 11-12 monitoring gap. Position P&L figures reflect Aug 10 prices, not current prices.",
+        "monitoring_gap": {
+            "missing_days": ["2026-08-11 (Day 47)", "2026-08-12 (Day 48)"],
+            "gap_reason": "Monitoring artifacts not generated on Aug 11-12. Retroactive price data not available.",
+            "impact": "Unknown intraday/interday moves Aug 11-13 for all 15 positions. COGT was near -5% threshold on Aug 10 — unknown if it crossed during gap."
+        },
+        "quantities_source": "production_data/phase2_entry_prices.json (sourced via MCP 2026-06-24, unchanged)"
+    },
+
+    "account": {
+        "account_id": "Robinhood 802349084",
+        "equity_fetchable": false,
+        "equity_estimated_usd": 137.84,
+        "equity_note": "CARRIED FORWARD from Aug 10 estimate. Robinhood MCP unavailable. Actual equity unknown Aug 11-13. Aug 10 figure computed from phase2_entry_prices.json quantities × Finviz prices at ~09:35 ET Aug 10. Gap days (Aug 11-12) create additional uncertainty.",
+        "cash_carried": 99.87,
+        "buying_power_carried": null,
+        "total_estimated_account_value": 237.71,
+        "equity_delta_vs_day46": "UNKNOWN — 3-day gap. Aug 10 estimate was $137.84.",
+        "data_source": "Aug 10 Finviz prices × phase2_entry_prices.json quantities. Carried forward."
+    },
+
+    "benchmark": {
+        "xbi_entry_price": 133.62,
+        "xbi_aug10_last_known": 157.27,
+        "xbi_aug13_current": "UNKNOWN — no live data",
+        "xbi_return_since_entry_pct_last_known": 17.69,
+        "xbi_note": "XBI last known from Aug 10: $157.27 (+17.69% since Jun 10 entry). Aug 11-13 moves unknown."
+    },
+
+    "portfolio_overview": {
+        "total_positions": 15,
+        "positions_negative_vs_entry": 0,
+        "positions_at_risk_below_entry": "NONE as of Aug 10 — lowest was STOK at +12.7% vs entry",
+        "positions_positive_vs_entry": 15,
+        "avg_pnl_vs_entry_pct": 37.7,
+        "avg_pnl_note": "Aug 10 estimate (last known). Actual P&L Aug 13 unknown due to monitoring gap.",
+        "equity_usd": 137.84,
+        "cash_usd": 99.87,
+        "total_account_usd": 237.71,
+        "xbi_return_since_entry_pct": 17.69,
+        "drawdown_vs_xbi_pp": 20.0,
+        "drawdown_threshold_pp": -2.0,
+        "drawdown_status": "CLEAR (as of Aug 10) — +20.0pp vs XBI. Gap days may have changed this.",
+        "gap_flags_today": "UNKNOWN — no live price data",
+        "gap_threshold_pct": 5.0,
+        "session_character": "DATA GAP — Aug 11-12 monitoring missing. Aug 13 prices not fetched. Carried forward from Aug 10.",
+        "monitoring_gap_risk_note": "COGT was at -4.77% on Aug 10 (near -5% flag threshold). Unknown if it crossed during Aug 11-12. Elevated priority for manual price check today."
+    },
+
+    "positions": [
+        {
+            "ticker": "URGN",
+            "company": "UroGen Pharma Ltd.",
+            "entry_price": 28.02,
+            "quantity": 0.237681,
+            "last_known_price": 46.35,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 65.4,
+            "position_value_last_known": 11.02,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — PRICES STALE",
+            "note": "Last known Aug 10: $46.35, +65.4% vs entry. Best P&L in portfolio. ZUSDURI revenue strength. Near 52-week high ($48.19). Q2 earnings resolved positively Aug 6."
+        },
+        {
+            "ticker": "NRIX",
+            "company": "Nurix Therapeutics, Inc.",
+            "entry_price": 15.46,
+            "quantity": 0.430232,
+            "last_known_price": 25.36,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 64.0,
+            "position_value_last_known": 10.91,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — PRICES STALE",
+            "note": "Last known Aug 10: $25.36, +64.0% vs entry. Post-Roche $700M deal. Second-highest P&L."
+        },
+        {
+            "ticker": "DNTH",
+            "company": "Dianthus Therapeutics, Inc.",
+            "entry_price": 72.10,
+            "quantity": 0.092928,
+            "last_known_price": 108.38,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 50.3,
+            "position_value_last_known": 10.07,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — PRICES STALE",
+            "note": "Last known Aug 10: $108.38, +50.3% vs entry. Phase 3 EMERGE trial ongoing."
+        },
+        {
+            "ticker": "PRAX",
+            "company": "Praxis Precision Medicine, Inc.",
+            "entry_price": 241.92,
+            "quantity": 0.027530,
+            "last_known_price": 358.18,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 48.1,
+            "position_value_last_known": 9.86,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "CRITICAL_WATCH — EMERALD_PHASE3_19_DAYS — PRICES STALE",
+            "note": "EMERALD Phase 3 readout September 1 — now 19 days away (was 22 on Aug 10). Last known: $358.18, +48.1% vs entry. Breakthrough therapy designation. Analyst PT $1,201. This is the dominant binary value driver. Daily monitoring required — gap in Aug 11-12 data is a risk."
+        },
+        {
+            "ticker": "RVMD",
+            "company": "Revolution Medicines, Inc.",
+            "entry_price": 143.76,
+            "quantity": 0.046465,
+            "last_known_price": 207.45,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 44.3,
+            "position_value_last_known": 9.64,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — ATH_BREAKOUT — PRICES STALE",
+            "note": "Last known Aug 10: $207.45, +44.3% vs entry. New all-time high on Aug 10 (third consecutive ATH session). Strong momentum — unknown continuation Aug 11-13."
+        },
+        {
+            "ticker": "TRVI",
+            "company": "Travere Therapeutics, Inc.",
+            "entry_price": 13.43,
+            "quantity": 0.496649,
+            "last_known_price": 18.73,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 39.5,
+            "position_value_last_known": 9.30,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — PRICES STALE",
+            "note": "Last known Aug 10: $18.73, +39.5% vs entry."
+        },
+        {
+            "ticker": "SYRE",
+            "company": "Synta Biosciences",
+            "entry_price": 76.10,
+            "quantity": 0.088041,
+            "last_known_price": 105.98,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 39.3,
+            "position_value_last_known": 9.33,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — PRICES STALE",
+            "note": "Last known Aug 10: $105.98, +39.3% vs entry. SKYLINE Phase 2 positive (SPY001/SPY002 met primary endpoints Q2)."
+        },
+        {
+            "ticker": "ERAS",
+            "company": "Erasca, Inc.",
+            "entry_price": 13.27,
+            "quantity": 0.503396,
+            "last_known_price": 18.30,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 37.9,
+            "position_value_last_known": 9.21,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — PRICES STALE",
+            "note": "Last known Aug 10: $18.30, +37.9% vs entry."
+        },
+        {
+            "ticker": "ALMS",
+            "company": "Alumis Inc.",
+            "entry_price": 20.37,
+            "quantity": 0.326013,
+            "last_known_price": 27.92,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 37.1,
+            "position_value_last_known": 9.10,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "ELEVATED_WATCH — LUMUS_BINARY_IMMINENT — PRICES STALE",
+            "note": "Last known Aug 10: $27.92, +37.1% vs entry. LUMUS Phase 2b SLE readout (envudeucitinib) — Q3 2026 window (any day through Sep 30). Binary catalyst could arrive any session. Gap days (Aug 11-12) increase miss risk."
+        },
+        {
+            "ticker": "SLDB",
+            "company": "Solid Biosciences Inc.",
+            "entry_price": 6.49,
+            "quantity": 1.028527,
+            "last_known_price": 8.60,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 32.5,
+            "position_value_last_known": 8.85,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — PRICES STALE",
+            "note": "Last known Aug 10: $8.60, +32.5% vs entry. Q2 cash runway mid-2028. Analyst Buy consensus, avg PT $17.64."
+        },
+        {
+            "ticker": "COGT",
+            "company": "Cogent Biosciences, Inc.",
+            "entry_price": 31.35,
+            "quantity": 0.212789,
+            "last_known_price": 40.37,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 28.8,
+            "position_value_last_known": 8.59,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN — PRIORITY CHECK NEEDED",
+            "status": "PRIORITY_WATCH — NEAR_THRESHOLD_RISK — PRICES STALE",
+            "note": "PRIORITY: COGT was at -4.77% on Aug 10, only 0.23pp from the -5% downside gap flag threshold. Highest early volume in portfolio on Aug 10 (163k). Unknown if -5% threshold was breached during Aug 11-12. Bezuclastinib BezginD Phase 3 ongoing. +28.8% vs entry as of Aug 10. MANUAL PRICE CHECK RECOMMENDED."
+        },
+        {
+            "ticker": "DRUG",
+            "company": "Nuvation Bio (DRUG)",
+            "entry_price": 63.59,
+            "quantity": 0.105839,
+            "last_known_price": 78.61,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 23.6,
+            "position_value_last_known": 8.32,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — ILLIQUID — PRICES STALE",
+            "note": "Last known Aug 10: $78.61, +23.6% vs entry. Extremely illiquid (669 shares early Aug 10). Price reliability low even when fetched."
+        },
+        {
+            "ticker": "XENE",
+            "company": "Xenon Pharmaceuticals Inc.",
+            "entry_price": 51.95,
+            "quantity": 0.128578,
+            "last_known_price": 63.57,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 22.4,
+            "position_value_last_known": 8.17,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — PRICES STALE",
+            "note": "Last known Aug 10: $63.57, +22.4% vs entry."
+        },
+        {
+            "ticker": "CMPS",
+            "company": "COMPASS Pathways plc",
+            "entry_price": 11.30,
+            "quantity": 0.590265,
+            "last_known_price": 13.50,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 19.5,
+            "position_value_last_known": 7.97,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — PRICES STALE",
+            "note": "Last known Aug 10: $13.50, +19.5% vs entry. Canaccord Genuity conference was Aug 12 (yesterday). Any presentation data or updated guidance unknown due to monitoring gap. Q2 earnings/NDA progress previously identified as Aug 6 catalyst."
+        },
+        {
+            "ticker": "STOK",
+            "company": "Stoke Therapeutics, Inc.",
+            "entry_price": 28.74,
+            "quantity": 0.231758,
+            "last_known_price": 32.38,
+            "last_known_date": "2026-08-10",
+            "pnl_vs_entry_pct_last_known": 12.7,
+            "position_value_last_known": 7.50,
+            "aug13_current": "UNKNOWN",
+            "gap_flag": "UNKNOWN",
+            "status": "MONITORING — PRICES STALE",
+            "note": "Last known Aug 10: $32.38, +12.7% vs entry. Lowest P&L in portfolio — still comfortably above entry. Previously closed above $30 on Jul 30; held through Aug 10."
+        }
+    ],
+
+    "gap_flags_summary": {
+        "count": "UNKNOWN",
+        "threshold_pct": 5.0,
+        "session_as_of": "Aug 13 09:00 ET — no live data fetched",
+        "priority_watch": [
+            {
+                "ticker": "COGT",
+                "reason": "Was at -4.77% on Aug 10 (0.23pp from -5% flag threshold). Unknown behavior Aug 11-13. Highest portfolio volume on Aug 10.",
+                "priority": "PRIORITY_CHECK",
+                "last_known_pnl_pct": 28.8
+            },
+            {
+                "ticker": "ALMS",
+                "reason": "LUMUS SLE binary catalyst could have arrived any day Aug 11-13. Binary outcome (gap possible in either direction).",
+                "priority": "PRIORITY_CHECK",
+                "last_known_pnl_pct": 37.1
+            },
+            {
+                "ticker": "PRAX",
+                "reason": "EMERALD Phase 3 Sep 1 readout — 19 days out. Pre-readout volatility possible. Any regulatory or enrollment news could gap.",
+                "priority": "PRIORITY_CHECK",
+                "last_known_pnl_pct": 48.1
+            }
+        ],
+        "monitoring_gap_note": "2-day data gap (Aug 11-12) means up to 3 sessions of gap events may have gone unrecorded. Manual price verification recommended for COGT, ALMS, PRAX today."
+    },
+
+    "forward_catalyst_watch": {
+        "PRAX_EMERALD": {
+            "ticker": "PRAX",
+            "event": "EMERALD Phase 3 — SLC6A1 LOF (elsunersen, social communication primary endpoint)",
+            "readout_expected": "2026-09-01",
+            "days_to_readout": 19,
+            "priority": "CRITICAL — Primary binary value driver. 19 days.",
+            "last_known_price": 358.18,
+            "last_known_pnl_pct": 48.1,
+            "analyst_pt": 1201,
+            "breakthrough_therapy": true,
+            "note": "Now 19 days to readout (was 22 on Aug 10). Each passing day without negative news increases pre-readout positioning. Binary outcome will dominate portfolio performance. Monitor daily — Aug 11-12 gap is a risk."
+        },
+        "ALMS_LUMUS": {
+            "ticker": "ALMS",
+            "event": "LUMUS Phase 2b SLE topline readout — envudeucitinib (ESK-001)",
+            "readout_window": "Q3 2026 (any day through Sep 30)",
+            "priority": "ELEVATED — Binary catalyst. Could have arrived Aug 11-13 during gap.",
+            "last_known_price": 27.92,
+            "last_known_pnl_pct": 37.1,
+            "note": "LUMUS SLE data could drop any session. Aug 11-12 monitoring gap means a catalyst move may have been missed. PRIORITY: Check ALMS news/price manually today."
+        },
+        "Q2_13F_EDGAR": {
+            "event": "Q2 2026 13F-HR filings — Fairmount, Deep Track, Logos Global",
+            "priority": "CRITICAL OPERATIONAL — DEADLINE TOMORROW (Aug 14)",
+            "edgar_watch_started": "2026-08-11",
+            "filing_deadline": "2026-08-14",
+            "days_to_deadline": 1,
+            "period_ending": "2026-06-30",
+            "managers": [
+                {"name": "Fairmount Funds Management", "cik": "0001802528"},
+                {"name": "Deep Track Capital", "cik": "0001856083"},
+                {"name": "Logos Global Management", "cik": "0001792126"}
+            ],
+            "note": "Deadline is TOMORROW (Aug 14). EDGAR watch started Aug 11 per Day 46 plan. Monitor EDGAR today for any early filings. Post-filing action sequence: (1) warm_13f_cache.py, (2) cohort quarantine check, (3) IC decomp refresh — all require operator freeze lift.",
+            "status": "PENDING — no Q2 filing records in 13f_filing_status.json (file still shows Q1 2026 data as of last_check 2026-07-04). Q2 filings not yet processed by the pipeline."
+        },
+        "CMPS_CANACCORD": {
+            "ticker": "CMPS",
+            "event": "Canaccord Genuity conference — Aug 12",
+            "status": "OCCURRED during monitoring gap",
+            "note": "CMPS participated in Canaccord conference Aug 12 (yesterday). Any new guidance or updated NDA timeline from management presentation is unknown. Check CMPS news feed today."
+        },
+        "RVMD_ATH_WATCH": {
+            "ticker": "RVMD",
+            "event": "Sustained all-time high extension",
+            "priority": "MONITOR",
+            "last_known_price": 207.45,
+            "last_known_pnl_pct": 44.3,
+            "note": "Three consecutive ATH sessions as of Aug 10 ($201.77 → $205.15 → $207.45). Unknown continuation Aug 11-13."
+        }
+    },
+
+    "governance_gates": {
+        "drawdown_gate": {
+            "status": "CLEAR (as of Aug 10 — gap may have changed)",
+            "portfolio_pnl_vs_entry_pct_last_known": 37.7,
+            "xbi_return_since_entry_pct_last_known": 17.69,
+            "outperformance_pp_last_known": 20.0,
+            "threshold_pp": -2.0,
+            "detail": "As of Aug 10: +20.0pp outperformance vs XBI. Well above -2.0pp threshold. 3-day data gap — unknown current status."
+        },
+        "ic_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 43,
+            "gate_was_due": "2026-07-01",
+            "last_measured": "2026-06-24",
+            "last_ic": 0.0432,
+            "hit_rate": 0.543,
+            "note": "43 days overdue (was 40 on Aug 10). Requires explicit operator freeze lift. DEM candidate freeze + NO_MODEL_CHANGE forward-validation window (SM-20260629-001). 0/20 LIVE windows completed."
+        },
+        "h20d_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 43,
+            "gate_date": "2026-07-01",
+            "override_posture": "MAINTAINED (OPTION_B_OVERRIDE_2026_05_26)",
+            "note": "43 days overdue. Requires: (1) operator freeze lift, (2) quarantine script, (3) Q2 13F cache (deadline tomorrow Aug 14). Post-deadline warm possible once filings are in."
+        },
+        "jaccard_gate": {
+            "status": "MAINTAINED",
+            "last_value": 0.875,
+            "last_measured": "2026-06-23",
+            "threshold": 0.40,
+            "note": "0.875 well above threshold. Refresh pending freeze lift. Q2 13F filings (deadline tomorrow) will enable updated computation."
+        },
+        "emergency_gate": {
+            "status": "CLEAR (as of Aug 10)",
+            "detail": "No positions below entry as of Aug 10. Lowest P&L: STOK +12.7%. Unknown current status due to gap."
+        },
+        "positions_20pct_loss_gate": {
+            "status": "CLEAR (as of Aug 10)",
+            "count": 0,
+            "lowest_pnl_name": "STOK",
+            "lowest_pnl_pct_last_known": 12.7
+        }
+    },
+
+    "escalation_flags": [
+        {
+            "ticker": "COGT",
+            "reason": "NEAR_THRESHOLD RISK: Was -4.77% on Aug 10 (0.23pp from -5% flag). 2-day monitoring gap means threshold breach possible and undetected. Highest portfolio volume on Aug 10. MANUAL PRICE CHECK TODAY.",
+            "priority": "HIGH",
+            "last_known_pnl_pct": 28.8
+        },
+        {
+            "ticker": "ALMS",
+            "reason": "LUMUS SLE Phase 2b binary catalyst — any session through Sep 30. 2-day gap means announcement may have occurred Aug 11-12 without detection. MANUAL NEWS CHECK TODAY.",
+            "priority": "HIGH",
+            "last_known_pnl_pct": 37.1
+        },
+        {
+            "ticker": "PRAX",
+            "reason": "EMERALD Phase 3 — 19 days to Sep 1 readout. Primary binary value driver. Any data leak, regulatory filing, or enrollment news in gap days is unknown.",
+            "priority": "HIGH",
+            "last_known_pnl_pct": 48.1
+        },
+        {
+            "ticker": "Q2_13F",
+            "reason": "Q2 13F filing deadline TOMORROW (Aug 14). Fairmount, Deep Track, Logos Global must file. EDGAR monitoring required today. Any early filings in Aug 11-12 gap are unknown.",
+            "priority": "CRITICAL_OPERATIONAL"
+        },
+        {
+            "ticker": "MONITORING_GAP",
+            "reason": "2-day data gap (Aug 11-12). No price, volume, or news data captured. All positions have stale Aug 10 prices. Multiple binary catalysts at risk of occurring undetected.",
+            "priority": "SYSTEMIC"
+        }
+    ],
+
+    "monitoring_status": {
+        "period_extended": true,
+        "original_end": "2026-06-30",
+        "extension_rationale": "Extended through PRAX EMERALD Phase 3 readout (Sep 1), ALMS LUMUS Q3 binary, Q2 13F cycle (deadline Aug 14), governance gates (IC/h20d overdue)",
+        "robinhood_mcp_status": "UNAVAILABLE — Days 1-49. All equity from phase2_entry_prices.json quantities × last known prices.",
+        "data_quality_flag": "MONITORING_GAP — Aug 11 (Day 47) and Aug 12 (Day 48) artifacts missing. All prices carried from Aug 10 Finviz data.",
+        "days_to_prax_emerald": 19,
+        "days_to_q2_13f_deadline": 1,
+        "alerts_active": [
+            "MONITORING_GAP_AUG11_AUG12 — 2 days of price/news data missing",
+            "COGT_NEAR_THRESHOLD_RISK — was -4.77% Aug 10, unknown Aug 11-13",
+            "ALMS_LUMUS_SLE_BINARY_IMMINENT — could have triggered in gap",
+            "CMPS_CANACCORD_AUG12 — conference occurred during gap, outcome unknown",
+            "Q2_13F_DEADLINE_TOMORROW_AUG14 — Fairmount/DeepTrack/Logos file by Aug 14",
+            "PRAX_EMERALD_PHASE3_SEP1_19_DAYS",
+            "IC_GATE_OVERDUE_43_DAYS",
+            "H20D_GATE_OVERDUE_43_DAYS"
+        ],
+        "recommended_manual_actions": [
+            "1. Check ALMS price and news (LUMUS readout may have occurred Aug 11-12)",
+            "2. Check COGT price (may have crossed -5% threshold during gap)",
+            "3. Check CMPS news re: Canaccord conference Aug 12",
+            "4. Monitor EDGAR for Q2 13F early filings (deadline Aug 14 TOMORROW)",
+            "5. Check PRAX news for any EMERALD-related developments Aug 11-13"
+        ],
+        "next_key_dates": [
+            "2026-08-14: Q2 13F filing deadline (TOMORROW) — Fairmount/Deep Track/Logos Global",
+            "2026-09-01: PRAX EMERALD Phase 3 readout (19 days) — primary binary",
+            "2026-09-30: ALMS LUMUS readout window closes"
+        ],
+        "next_scheduled_monitoring": "2026-08-14 09:00 ET (Friday) — Q2 13F EDGAR deadline day"
+    },
+
+    "_data_integrity": {
+        "source": "Carried forward from Aug 10 Finviz snapshot",
+        "last_fetch_timestamp": "2026-08-10T09:35-09:37Z",
+        "aug13_fetch_timestamp": null,
+        "tickers_with_live_data": [],
+        "tickers_with_stale_data": ["COGT","DNTH","NRIX","URGN","ALMS","SYRE","RVMD","CMPS","SLDB","DRUG","STOK","PRAX","TRVI","ERAS","XENE","XBI"],
+        "monitoring_gap_days": ["2026-08-11", "2026-08-12"],
+        "equity_basis": "Quantities from production_data/phase2_entry_prices.json (unchanged since Jun 24 sourcing)"
+    }
+}
