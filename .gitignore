@@ -112,6 +112,9 @@ artifacts/monitoring/*
 !artifacts/monitoring/README.md
 !artifacts/monitoring/PHASE2_*.md
 !artifacts/monitoring/daily_*.json
+# Gap records for sessions that were never captured — the absence of a
+# daily_*.json is itself evidence and must be explained, not silently missing.
+!artifacts/monitoring/GAP_*.md
 # EES v2 Phase 3 shadow monitor — ledger and summaries are diagnostic-only, not committed
 !artifacts/shadow/
 artifacts/shadow/*
