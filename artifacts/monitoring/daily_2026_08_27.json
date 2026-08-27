@@ -1,0 +1,569 @@
+{
+    "date": "2026-08-27",
+    "monitoring_day": 57,
+    "timestamp": "2026-08-27T09:00:00.000000Z",
+    "phase": "Day 57 — PRE-MARKET snapshot (Aug 27 09:00 ET). Aug 26 session: THREE GAP FLAGS — ERAS +7.83% UPSIDE (analyst upgrades + FDA Fast Track confirmation), XENE +5.58% UPSIDE (Phase 3 X-TOLE2 data at EEC 2026; NDA Q3 2026 imminent), SYRE -12.81% DOWNSIDE (confirmed pipeline discontinuation SPY072 RA, close worse than pre-market -10.21%). XBI -0.42% Aug 26 (slight give-back from +3.00% Aug 25). Portfolio equity -$0.81 (-0.58%) on day vs XBI. Outperformance narrowed to +11.82pp (from +12.10pp Day 56). ALMS LUMUS binary still PENDING (~34 calendar days through Sep 30). Q2 13F 13 days past Aug 14 deadline — governance action needed.",
+    "data_integrity": {
+        "primary_source": "stockanalysis.com WebFetch (Aug 26, 2026 closing prices — fetched Aug 27 pre-market 09:00 ET)",
+        "price_date": "2026-08-26 close (4:00 PM EDT)",
+        "premarket_aug27": {
+            "SYRE": "$94.00 (+0.42%) — stabilizing post-SPY072 discontinuation",
+            "ERAS": "$19.20 (+0.26%) — flat after +7.83% session",
+            "XENE": "$64.27 (+0.75%) — continuing positive momentum",
+            "ALMS": "$23.99 (+1.57%) — positive drift; LUMUS binary still pending",
+            "note": "Pre-market sourced from stockanalysis.com main page (Aug 27 8-9 AM ET)"
+        },
+        "note": "Robinhood MCP unavailable Day 57 (consecutive). Yahoo Finance API blocked. Prices sourced from stockanalysis.com WebFetch for all 15 tickers and XBI. Aug 26 close data captured Aug 27 pre-market.",
+        "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged)",
+        "cash_basis": "Carried forward $99.87 from Jun 24 MCP sourcing (unchanged, no trading since)",
+        "data_quality": "AUG 26 CLOSE — confirmed 15/15 tickers + XBI. All prices from stockanalysis.com."
+    },
+    "account": {
+        "account_id": "Robinhood 802349084",
+        "equity_fetchable": false,
+        "equity_estimated_usd": 137.99,
+        "equity_note": "Computed from Aug 26 close prices x phase2_entry_prices.json quantities.",
+        "cash_carried": 99.87,
+        "buying_power_carried": null,
+        "total_estimated_account_value": 237.86,
+        "equity_delta_vs_day56": -0.81,
+        "equity_delta_pct_vs_day56": -0.58,
+        "equity_note_detail": "Day 56 equity $138.80 (Aug 25 close basis). Day 57 $137.99 (Aug 26 close basis). Portfolio lost -$0.81 / -0.58% on Aug 26. XBI also declined -0.42%. Session mixed: 2 upside gaps (ERAS +7.83%, XENE +5.58%), 1 confirmed downside gap (SYRE -12.81% pipeline discontinuation). 12/15 positions declined on day."
+    },
+    "benchmark": {
+        "xbi_entry_price": 133.62,
+        "xbi_aug25_close": 169.10,
+        "xbi_aug26_close": 168.39,
+        "xbi_aug26_day_chg_pct": -0.42,
+        "xbi_return_since_entry_pct": 26.02,
+        "xbi_note": "XBI Aug 26 close $168.39 (-0.42% on day). +26.02% since Jun 10 entry ($133.62). Slight pull-back from the +3.00% Aug 25 broad rally. Portfolio outperformance: +11.82pp (37.84% portfolio avg vs 26.02% XBI)."
+    },
+    "portfolio_overview": {
+        "total_positions": 15,
+        "positions_negative_vs_entry": 0,
+        "positions_positive_vs_entry": 15,
+        "positions_up_aug26": 3,
+        "positions_down_aug26": 12,
+        "avg_pnl_vs_entry_pct": 37.84,
+        "avg_pnl_vs_entry_pct_day56": 38.65,
+        "avg_pnl_delta_1day": -0.81,
+        "equity_usd": 137.99,
+        "cash_usd": 99.87,
+        "total_account_usd": 237.86,
+        "xbi_return_since_entry_pct": 26.02,
+        "outperformance_pp": 11.82,
+        "outperformance_pp_day56": 12.10,
+        "drawdown_threshold_pp": -2.0,
+        "drawdown_status": "CLEAR — +11.82pp vs XBI since Jun 10 inception. Outperformance NARROWED from +12.10pp Day 56. Still well above -2.0pp threshold.",
+        "gap_flags_aug26": 3,
+        "gap_flags_aug26_detail": "ERAS +7.83% UPSIDE (catalysts confirmed: analyst upgrades + FDA Fast Track), XENE +5.58% UPSIDE (Phase 3 data presentation EEC 2026), SYRE -12.81% DOWNSIDE (pipeline discontinuation SPY072 confirmed — already flagged pre-market Day 56)",
+        "gap_threshold_pct": 5.0,
+        "session_character_aug26": "MIXED. XBI -0.42% (give-back from +3.00% Aug 25). 12/15 positions declined. 3 gap flags: 2 upside (ERAS, XENE with confirmed catalysts), 1 downside (SYRE confirmed pipeline event). DRUG -3.60% resumed decline. PRAX +2.54% standout gainer. RVMD +1.92% continuing strength.",
+        "key_watch_aug27_open": "SYRE $94.00 pre-market (+0.42%) — stabilizing post-discontinuation. ERAS $19.20 (+0.26%) — post-gap consolidation. XENE $64.27 (+0.75%) — continuation. ALMS $23.99 (+1.57%) — pre-market drift up; LUMUS binary STILL PENDING."
+    },
+    "positions": [
+        {
+            "ticker": "NRIX",
+            "company": "Nurix Therapeutics, Inc.",
+            "entry_price": 15.46,
+            "quantity": 0.430232,
+            "aug25_close": 26.95,
+            "aug26_close": 26.71,
+            "day_chg_pct_aug26": -0.89,
+            "pnl_vs_entry_pct": 72.77,
+            "position_value_usd": 11.49,
+            "gap_flag": false,
+            "status": "MONITORING — TOP PERFORMER",
+            "note": "+72.77% vs entry. Aug 26 -0.89% (slight give-back). Roche $700M deal underpins fundamental thesis. Volume 551,875 (normal). Stable."
+        },
+        {
+            "ticker": "URGN",
+            "company": "UroGen Pharma Ltd.",
+            "entry_price": 28.02,
+            "quantity": 0.237681,
+            "aug25_close": 46.36,
+            "aug26_close": 45.94,
+            "day_chg_pct_aug26": -0.91,
+            "pnl_vs_entry_pct": 63.96,
+            "position_value_usd": 10.92,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+63.96% vs entry. Aug 26 -0.91% (mild decline). ZUSDURI commercial ramp ongoing. Volume 620,259. Stable."
+        },
+        {
+            "ticker": "DNTH",
+            "company": "Dianthus Therapeutics, Inc.",
+            "entry_price": 72.10,
+            "quantity": 0.092928,
+            "aug25_close": 112.11,
+            "aug26_close": 110.76,
+            "day_chg_pct_aug26": -1.20,
+            "pnl_vs_entry_pct": 53.62,
+            "position_value_usd": 10.29,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+53.62% vs entry. Aug 26 -1.20% (modest pullback). EMERGE Phase 3 ongoing. Volume 335,360 (below average). Stable."
+        },
+        {
+            "ticker": "PRAX",
+            "company": "Praxis Precision Medicines, Inc.",
+            "entry_price": 241.92,
+            "quantity": 0.027530,
+            "aug25_close": 368.02,
+            "aug26_close": 377.37,
+            "day_chg_pct_aug26": 2.54,
+            "pnl_vs_entry_pct": 56.00,
+            "position_value_usd": 10.39,
+            "gap_flag": false,
+            "status": "MONITORING — FDA PDUFA DEC 27 2026 — BREAKOUT TO NEW HIGH",
+            "note": "+56.00% vs entry. Aug 26 +2.54% ($377.37) — best session for PRAX in recent weeks; volume 480,526. Breaking out to new highs ahead of Dec 27 PDUFA for relutrigine (SCN2A/SCN8A DEEs). FDA posture clean (no AdCom, no safety concerns, no new study). Portfolio's 2nd largest dollar contributor.",
+            "catalyst": {
+                "event": "FDA PDUFA December 27, 2026",
+                "indication": "Relutrigine for SCN2A and SCN8A DEEs",
+                "days_to_pdufa": "~122 days",
+                "fda_posture": "POSITIVE — no AdCom, no safety/efficacy concerns"
+            }
+        },
+        {
+            "ticker": "RVMD",
+            "company": "Revolution Medicines, Inc.",
+            "entry_price": 143.76,
+            "quantity": 0.046465,
+            "aug25_close": 211.38,
+            "aug26_close": 215.44,
+            "day_chg_pct_aug26": 1.92,
+            "pnl_vs_entry_pct": 49.86,
+            "position_value_usd": 10.01,
+            "gap_flag": false,
+            "status": "MONITORING — POSITIVE MOMENTUM",
+            "note": "+49.86% vs entry. Aug 26 +1.92% on volume 3.52M (elevated — largest for RVMD in recent sessions). RAS-targeted oncology pipeline advancing. Strong relative strength 2 consecutive up days vs declining market. Pre-market XENE data presentation may be lifting sector sentiment."
+        },
+        {
+            "ticker": "SLDB",
+            "company": "Solid Biosciences Inc.",
+            "entry_price": 6.49,
+            "quantity": 1.028527,
+            "aug25_close": 9.89,
+            "aug26_close": 9.72,
+            "day_chg_pct_aug26": -1.72,
+            "pnl_vs_entry_pct": 49.77,
+            "position_value_usd": 10.00,
+            "gap_flag": false,
+            "status": "MONITORING — POST-GAP STABILIZING",
+            "note": "+49.77% vs entry. Aug 26 -1.72% ($9.72) — partial give-back from Aug 25 +7.97% gap. Volume 594,175 (normalizing). Pre-market was -4.04% ($9.49); actual close was $9.72 (better than pre-market). Net: Aug 25 gap not fully reversed. Still +50% above entry. Catalyst for Aug 25 gap remains unconfirmed — stock-specific move on top of XBI +3.00% sector rally. Monitor for news."
+        },
+        {
+            "ticker": "ERAS",
+            "company": "Erasca, Inc.",
+            "entry_price": 13.27,
+            "quantity": 0.503396,
+            "aug25_close": 17.76,
+            "aug26_close": 19.15,
+            "day_chg_pct_aug26": 7.83,
+            "aug27_premarket": 19.20,
+            "aug27_premarket_chg_pct": 0.26,
+            "pnl_vs_entry_pct": 44.31,
+            "position_value_usd": 9.64,
+            "gap_flag": true,
+            "gap_flag_direction": "UPSIDE",
+            "gap_flag_session": "AUG 26",
+            "status": "GAP_FLAG_UPSIDE_AUG26 — ANALYST_UPGRADES + FDA_FAST_TRACK",
+            "catalyst_confirmed": true,
+            "catalyst": {
+                "primary": "Multiple analyst price target increases on Aug 26",
+                "analyst_actions": [
+                    "JPMorgan: raised target to $33 (from $25)",
+                    "H.C. Wainwright: raised target to $22 (from $18)",
+                    "Guggenheim: raised target to $21 (from $20)",
+                    "BofA: raised target to $20 (from $18)"
+                ],
+                "secondary": "FDA Fast Track Designation for ERAS-0015 — metastatic pancreatic adenocarcinoma (announced ~Aug 23, 3 days prior)",
+                "clinical": "Encouraging Phase 1 activity across multiple tumor types including 2L+ KRAS G12X pancreatic cancer",
+                "consensus": "Strong Buy avg $23.50 (+22.72% upside from $19.15)",
+                "risk": "Class action lawsuits filed re prior ERAS-0015 disclosures — monitoring (clinical validation appears to be overriding market concern)",
+                "pre_market_aug27": "$19.20 (+0.26%) — post-gap consolidation, no continuation momentum"
+            },
+            "note": "GAP FLAG UPSIDE +7.83% Aug 26. CATALYST CONFIRMED: Multiple analyst upgrades driven by FDA Fast Track Designation for ERAS-0015. JPMorgan most aggressive at $33 target. Pre-market Aug 27 flat (+0.26%) — no continuation. Buffer vs entry expanded: +33.83% (Day 55) → +33.83% (Day 56, flat) → +44.31% (Day 57). Strong improvement in buffer. Monitor for class action developments and Phase 1 readout timing."
+        },
+        {
+            "ticker": "TRVI",
+            "company": "Travere Therapeutics, Inc.",
+            "entry_price": 13.43,
+            "quantity": 0.496649,
+            "aug25_close": 17.95,
+            "aug26_close": 17.92,
+            "day_chg_pct_aug26": -0.17,
+            "pnl_vs_entry_pct": 33.43,
+            "position_value_usd": 8.90,
+            "gap_flag": false,
+            "status": "MONITORING — STABLE",
+            "note": "+33.43% vs entry. Aug 26 -0.17% (essentially flat; volume 1.21M). OCEAN-1 Phase 3 IPF cough ongoing; OCEAN-2 Phase 3 launching Q3 2026. GSK camlipixant discontinuation makes TRVI sole leader in cough indications. Analyst upgrades from Q2 earnings still supportive ($40 RBC, $36 BMO, $30 Cantor). Stable."
+        },
+        {
+            "ticker": "CMPS",
+            "company": "COMPASS Pathways plc",
+            "entry_price": 11.30,
+            "quantity": 0.590265,
+            "aug25_close": 14.88,
+            "aug26_close": 14.61,
+            "day_chg_pct_aug26": -1.81,
+            "pnl_vs_entry_pct": 29.29,
+            "position_value_usd": 8.62,
+            "gap_flag": false,
+            "status": "MONITORING — POST-RALLY CONSOLIDATION",
+            "note": "+29.29% vs entry. Aug 26 -1.81% (consolidation after Aug 25 +4.79%). Volume 1.74M (elevated for CMPS). NDA rolling submission advancing — final filing Q4 2026; commercial launch H1 2027. Evercore Outperform $21; B. Riley $22; avg $23.75. $433M cash into 2028. Healthy buffer."
+        },
+        {
+            "ticker": "SYRE",
+            "company": "Spyre Therapeutics",
+            "entry_price": 76.10,
+            "quantity": 0.088041,
+            "aug25_close": 107.36,
+            "aug26_close": 93.61,
+            "day_chg_pct_aug26": -12.81,
+            "aug27_premarket": 94.00,
+            "aug27_premarket_chg_pct": 0.42,
+            "pnl_vs_entry_pct": 23.01,
+            "position_value_usd": 8.24,
+            "gap_flag": true,
+            "gap_flag_direction": "DOWNSIDE",
+            "gap_flag_session": "AUG 26 (pre-market flagged Day 56; close confirmed)",
+            "status": "GAP_FLAG_DOWNSIDE_AUG26 — PIPELINE_DISCONTINUATION_SPY072_CONFIRMED",
+            "catalyst": {
+                "event": "Pipeline discontinuation: SPY072 (RA standalone program STOPPED)",
+                "confirmation": "Close -12.81% ($93.61) confirmed and exceeded pre-market -10.21% ($96.40) flag from Day 56",
+                "analyst_downgrades": [
+                    "Wedbush: target lowered to $123 (from $130)",
+                    "BTIG: target lowered to $121 (from $132)",
+                    "Deutsche Bank: target lowered to $127 (from $135)"
+                ],
+                "consensus_remaining": "Strong Buy maintained. Avg 12-month target $119.71 (+27.89% upside from $93.61). Pipeline narrowing but SPY-007 (gut-selective TYK2) and SPY-002 programs remain.",
+                "pre_market_aug27": "$94.00 (+0.42%) — stabilizing; no further negative catalysts",
+                "pnl_at_close": "+23.01% vs $76.10 entry",
+                "buffer_vs_entry": "+$17.51/share (+23.01%) cushion remaining"
+            },
+            "note": "GAP FLAG DOWNSIDE CONFIRMED AUG 26 -12.81% ($93.61). Pre-market Day 56 flagged -10.21% ($96.40); actual close was worse (-12.81%). PIPELINE EVENT: SPY072 RA standalone development discontinued. Three analyst downgrades (Wedbush, BTIG, Deutsche Bank) but consensus remains constructive with avg target $119.71. Buffer vs entry reduced: +41.08% (Aug 25) → +23.01% (Aug 26 close). Pre-market Aug 27 stabilizing at $94.00 (+0.42%). Still +23.01% above entry — no emergency threshold approached. Pipeline narrowed but SPY-007 and SPY-002 remain. Operator should reassess monitoring thesis."
+        },
+        {
+            "ticker": "DRUG",
+            "company": "Bright Minds Biosciences Inc.",
+            "entry_price": 63.59,
+            "quantity": 0.105839,
+            "aug25_close": 79.49,
+            "aug26_close": 76.63,
+            "day_chg_pct_aug26": -3.60,
+            "pnl_vs_entry_pct": 20.51,
+            "position_value_usd": 8.11,
+            "gap_flag": false,
+            "status": "WATCH_ELEVATED — DECLINED 3.60% AFTER REVERSAL",
+            "note": "+20.51% vs entry. Aug 26 -3.60% ($76.63) on volume 70,645 (low float). Resumed decline after Aug 25 +3.19% one-day reversal. 4-session decline (Aug 20-21-24) → 1-day reversal (Aug 25) → new decline (Aug 26). Pattern suggests sellers remain in control. Buffer narrowing: +25.01% (Day 56/Aug 25) → +20.51% (Day 57/Aug 26). Piper Sandler $220 PT (Overweight). BMB-101 Phase 2 positive (absence seizures, DEEs); Phase 3 H2 2026. Monitor closely — if decline continues, buffer will approach watch threshold.",
+            "identity": "CONFIRMED — Bright Minds Biosciences Inc."
+        },
+        {
+            "ticker": "ALMS",
+            "company": "Alumis Inc.",
+            "entry_price": 20.37,
+            "quantity": 0.326013,
+            "aug25_close": 23.96,
+            "aug26_close": 23.62,
+            "day_chg_pct_aug26": -1.42,
+            "aug27_premarket": 23.99,
+            "aug27_premarket_chg_pct": 1.57,
+            "pnl_vs_entry_pct": 15.96,
+            "position_value_usd": 7.70,
+            "gap_flag": false,
+            "status": "ELEVATED_WATCH — LUMUS_BINARY_PENDING (Q3 2026 through Sep 30, ~34 days)",
+            "note": "+15.96% vs entry — LOWEST BUFFER in portfolio. Aug 26 -1.42% ($23.62). Pre-market Aug 27 +1.57% ($23.99) — recovering. LUMUS Phase 2b SLE binary readout STILL PENDING (not announced as of Aug 27 pre-market). Window: Q3 2026 through Sep 30 (~34 calendar days). ONWARD3 psoriasis data positive (54% PASI 100 at 48 weeks). Buffer evolution: +17.62% (Day 56) → +15.96% (Day 57). Slight buffer erosion — LOWEST in portfolio. Binary event remains highest single-position catalyst risk.",
+            "lumus_catalyst": {
+                "event": "LUMUS Phase 2b SLE topline readout — envudeucitinib (ESK-001)",
+                "readout_window": "Q3 2026 (through Sep 30 — ~34 calendar days remaining)",
+                "patients": 408,
+                "primary_endpoint": "BICLA response at Week 48",
+                "priority": "ELEVATED — Binary catalyst, ANY SESSION",
+                "current_buffer_pct": 15.96,
+                "buffer_trend": "ERODING — 17.62% (Day 56) → 15.96% (Day 57). Lowest buffer in portfolio.",
+                "lumus_readout_announced": false,
+                "pre_market_aug27": "+1.57% ($23.99) — recovering; no readout announcement"
+            }
+        },
+        {
+            "ticker": "COGT",
+            "company": "Cogent Biosciences, Inc.",
+            "entry_price": 31.35,
+            "quantity": 0.212789,
+            "aug25_close": 36.80,
+            "aug26_close": 36.72,
+            "day_chg_pct_aug26": -0.22,
+            "pnl_vs_entry_pct": 17.13,
+            "position_value_usd": 7.81,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+17.13% vs entry. Aug 26 -0.22% (flat; volume 1.06M). Bezginlastinib Phase 3 ongoing. Stable after the high-volume absorption pattern from June (Day 14-15). No near-term binary event flagged."
+        },
+        {
+            "ticker": "XENE",
+            "company": "Xenon Pharmaceuticals Inc.",
+            "entry_price": 51.95,
+            "quantity": 0.128578,
+            "aug25_close": 60.42,
+            "aug26_close": 63.79,
+            "day_chg_pct_aug26": 5.58,
+            "aug27_premarket": 64.27,
+            "aug27_premarket_chg_pct": 0.75,
+            "pnl_vs_entry_pct": 22.80,
+            "position_value_usd": 8.20,
+            "gap_flag": true,
+            "gap_flag_direction": "UPSIDE",
+            "gap_flag_session": "AUG 26",
+            "status": "GAP_FLAG_UPSIDE_AUG26 — PHASE3_DATA_PRESENTATION + NDA_IMMINENT",
+            "catalyst_confirmed": true,
+            "catalyst": {
+                "primary": "Phase 3 X-TOLE2 clinical data presentation announced at EEC 2026 (European Epilepsy Congress) — August 26",
+                "drug": "Azetukalner (XEN1101) for focal-onset seizures",
+                "nda_timeline": "Q3 2026 NDA submission expected imminently",
+                "commercial_launch": "Expected late 2027",
+                "ongoing_trials": "X-TOLE3 (focal onset seizures) and X-ACKT (primary generalized tonic-clonic seizures) enrolling",
+                "analyst_consensus": "Strong Buy — 20 analysts; 12-month target $81.30 (+27.45% upside)",
+                "cash_runway": "$747.5M financing (extended into 2029)",
+                "pre_market_aug27": "$64.27 (+0.75%) — continuation momentum"
+            },
+            "note": "GAP FLAG UPSIDE +5.58% Aug 26. CATALYST CONFIRMED: Phase 3 X-TOLE2 data presentation at EEC 2026. Azetukalner NDA filing Q3 2026 imminent. Pre-market Aug 27 +0.75% ($64.27) — continuing positive momentum (contrast with ERAS consolidation). Buffer expanded: +16.30% (Day 56/Aug 25 close basis) → +22.80% (Day 57/Aug 26 close). Strong improvement. NDA catalyst could provide further upside if filing confirmed in coming weeks."
+        },
+        {
+            "ticker": "STOK",
+            "company": "Stoke Therapeutics, Inc.",
+            "entry_price": 28.74,
+            "quantity": 0.231758,
+            "aug25_close": 33.46,
+            "aug26_close": 33.09,
+            "day_chg_pct_aug26": -1.11,
+            "pnl_vs_entry_pct": 15.13,
+            "position_value_usd": 7.67,
+            "gap_flag": false,
+            "status": "MONITORING — BUFFER_WATCH",
+            "note": "+15.13% vs entry — 2ND LOWEST BUFFER (above STOK: ALMS +15.96%). Aug 26 -1.11% ($33.09; volume 1.16M). Buffer erosion: +16.42% (Day 56) → +15.13% (Day 57). Monitoring as lower-buffer position. No near-term binary catalyst. Emergency threshold (-20% loss) not remotely approached."
+        }
+    ],
+    "gap_flags_summary": {
+        "aug26_session": {
+            "count": 3,
+            "flags": [
+                {
+                    "ticker": "ERAS",
+                    "day_pct_aug26": 7.83,
+                    "direction": "UPSIDE",
+                    "pnl_vs_entry": 44.31,
+                    "catalyst": "CONFIRMED — Multiple analyst upgrades (JPMorgan $33, HC Wainwright $22, Guggenheim $21, BofA $20) following FDA Fast Track Designation for ERAS-0015 (pancreatic adenocarcinoma, ~Aug 23). Volume 7.69M (very elevated).",
+                    "pre_market_aug27": "+0.26% ($19.20) — consolidating"
+                },
+                {
+                    "ticker": "XENE",
+                    "day_pct_aug26": 5.58,
+                    "direction": "UPSIDE",
+                    "pnl_vs_entry": 22.80,
+                    "catalyst": "CONFIRMED — Phase 3 X-TOLE2 data presentation at EEC 2026 (European Epilepsy Congress). Azetukalner NDA Q3 2026 filing imminent. Volume 1.30M (elevated).",
+                    "pre_market_aug27": "+0.75% ($64.27) — continuation momentum"
+                },
+                {
+                    "ticker": "SYRE",
+                    "day_pct_aug26": -12.81,
+                    "direction": "DOWNSIDE",
+                    "pnl_vs_entry": 23.01,
+                    "catalyst": "CONFIRMED — Pipeline discontinuation of SPY072 (RA standalone therapeutic stopped). Pre-market Day 56 flagged -10.21%; close was -12.81% (worse than pre-market). 3 analyst downgrades (Wedbush, BTIG, Deutsche Bank). Consensus remains Strong Buy avg $119.71.",
+                    "pre_market_aug27": "+0.42% ($94.00) — stabilizing, no new negatives",
+                    "severity": "HIGH — confirmed pipeline event, second flag (pre-market was Day 56 flag)",
+                    "position_still_profitable": true,
+                    "buffer_remaining_vs_entry": "+23.01% cushion remaining"
+                }
+            ],
+            "context": "Mixed session Aug 26. XBI -0.42% (give-back from +3.00% Aug 25). 12/15 positions declined. 2 upside gaps with confirmed catalysts (ERAS analyst upgrades, XENE Phase 3 data). 1 downside gap confirmed pipeline event (SYRE -12.81% close; pre-market was -10.21% — actual close worse)."
+        }
+    },
+    "governance_gates": {
+        "drawdown_gate": {
+            "status": "CLEAR",
+            "portfolio_avg_pnl_vs_entry_pct": 37.84,
+            "xbi_return_since_entry_pct": 26.02,
+            "outperformance_pp": 11.82,
+            "threshold_pp": -2.0,
+            "trend": "NARROWING — 12.10pp (Day 56) → 11.82pp (Day 57). Still well above threshold. XBI give-back (-0.42%) and portfolio decline (-0.58%) both slight.",
+            "detail": "Day 57 (Aug 26 close basis): +11.82pp outperformance vs XBI since Jun 10 entry. Gate CLEAR."
+        },
+        "ic_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 57,
+            "gate_was_due": "2026-07-01",
+            "last_measured": "2026-06-24",
+            "last_ic": 0.0432,
+            "hit_rate": 0.543,
+            "note": "57 days overdue. Operator freeze lift required. DEM candidate freeze + NO_MODEL_CHANGE window (SM-20260629-001, 0/20 LIVE windows). Forward validation continues to accumulate."
+        },
+        "h20d_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 57,
+            "gate_date": "2026-07-01",
+            "override_posture": "MAINTAINED (OPTION_B_OVERRIDE_2026_05_26)",
+            "note": "57 days overdue. Freeze lift → quarantine script → Q2 13F warm → cohort check → IC decomp."
+        },
+        "jaccard_gate": {
+            "status": "MAINTAINED",
+            "last_value": 0.875,
+            "last_measured": "2026-06-23",
+            "threshold": 0.40,
+            "note": "0.875 well above 0.40. Refresh pending freeze lift + Q2 13F processing."
+        },
+        "emergency_gate": {
+            "status": "CLEAR",
+            "detail": "All 15 positions above entry. Lowest buffers: STOK +15.13%, ALMS +15.96%, COGT +17.13%. SYRE reduced to +23.01% after pipeline discontinuation. No position near -20% loss threshold.",
+            "lowest_buffer_trend": "STOK and ALMS both eroding slightly. Monitor closely."
+        },
+        "positions_20pct_loss_gate": {
+            "status": "CLEAR",
+            "count": 0,
+            "lowest_pnl_name": "STOK",
+            "lowest_pnl_pct": 15.13,
+            "note": "All 15 positions positive. Lowest buffer STOK +15.13%. Gate CLEAR."
+        }
+    },
+    "catalyst_watch": {
+        "ALMS_LUMUS_BINARY": {
+            "ticker": "ALMS",
+            "event": "LUMUS Phase 2b SLE topline readout — envudeucitinib (ESK-001)",
+            "readout_window": "Q3 2026 (through Sep 30 — ~34 calendar days remaining)",
+            "patients": 408,
+            "primary_endpoint": "BICLA response at Week 48",
+            "priority": "ELEVATED — Binary catalyst, ANY SESSION — LOWEST BUFFER (+15.96%)",
+            "current_buffer_pct": 15.96,
+            "buffer_trend": "ERODING — 17.62% (Day 56) → 15.96% (Day 57). Now LOWEST in portfolio.",
+            "lumus_readout_announced": false,
+            "pre_market_aug27": "+1.57% ($23.99) — recovering; no readout announcement"
+        },
+        "ERAS_GAP_FLAG_UPSIDE": {
+            "ticker": "ERAS",
+            "event": "+7.83% Aug 26 — CONFIRMED: analyst upgrades + FDA Fast Track ERAS-0015",
+            "priority": "WATCH — CATALYST CONFIRMED — CONSOLIDATION EXPECTED",
+            "catalyst_confirmed": true,
+            "pre_market_aug27": "+0.26% ($19.20) — post-gap consolidation",
+            "note": "Analyst upgrades JPMorgan $33 (largest), HC Wainwright $22, Guggenheim $21, BofA $20. FDA Fast Track ERAS-0015 pancreatic cancer. Class action lawsuits remain monitoring risk but clinical validation taking precedence. Watch for Phase 1 multi-tumor expansion data timeline."
+        },
+        "XENE_GAP_FLAG_UPSIDE": {
+            "ticker": "XENE",
+            "event": "+5.58% Aug 26 — CONFIRMED: Phase 3 X-TOLE2 data at EEC 2026 + NDA imminent",
+            "priority": "POSITIVE_CATALYST — MONITOR CONTINUATION",
+            "catalyst_confirmed": true,
+            "pre_market_aug27": "+0.75% ($64.27) — continuation momentum",
+            "note": "Phase 3 X-TOLE2 data at EEC 2026 driving move. NDA filing Q3 2026 imminent. $747.5M cash into 2029. Pre-market continuation suggests market digesting as true positive, not reflexive. Watch for formal NDA submission announcement."
+        },
+        "SYRE_PIPELINE_DISCONTINUATION": {
+            "ticker": "SYRE",
+            "event": "SPY072 RA standalone discontinued — close -12.81% (worse than pre-market -10.21%)",
+            "priority": "RESOLVED_PARTIALLY — STABLE POST-DISCONTINUATION",
+            "close_aug26": 93.61,
+            "pnl_at_close": 23.01,
+            "pre_market_aug27": "+0.42% ($94.00)",
+            "analyst_targets_remaining": "Avg $119.71 (consensus Strong Buy). Wedbush $123, BTIG $121, Deutsche Bank $127.",
+            "note": "Pipeline event confirmed closed. SPY-007 (gut-selective TYK2) and SPY-002 remain active. Buffer reduced but still +23.01% vs entry. Stabilizing pre-market. Operator should update thesis — RA indication no longer addressable as standalone; combination therapy still possible. No further action needed unless new negative catalysts emerge."
+        },
+        "PRAX_PDUFA_DEC27": {
+            "ticker": "PRAX",
+            "event": "FDA PDUFA December 27, 2026 (relutrigine — SCN2A/SCN8A DEEs)",
+            "priority": "MONITORING — ~122 DAYS TO BINARY",
+            "current_pnl_pct": 56.00,
+            "breakout_aug26": "+2.54% to new high $377.37",
+            "fda_posture": "Clean — no safety concerns, no AdCom, no new study",
+            "note": "Breaking out to new highs. PRAX now 2nd largest dollar contributor. Long PDUFA runway provides time cushion. Monitor quarterly."
+        },
+        "SLDB_CATALYST_UNCONFIRMED": {
+            "ticker": "SLDB",
+            "event": "+7.97% Aug 25 gap — catalyst still unconfirmed",
+            "priority": "WATCH — STABILIZING",
+            "aug26_close": 9.72,
+            "aug26_pct": -1.72,
+            "note": "Post-gap giveback -1.72% Aug 26. Close $9.72 vs Aug 24 pre-gap close $9.16 (net gap held +6.1%). No catalyst confirmed. Monitor for SEC filing or clinical update."
+        },
+        "Q2_13F_PIPELINE": {
+            "event": "Q2 2026 13F-HR processing — Fairmount, Deep Track, Logos Global",
+            "priority": "GOVERNANCE — OPERATOR ACTION NEEDED",
+            "filing_deadline": "2026-08-14 (PASSED — 13 days ago as of Aug 27)",
+            "tracked_ciks": {
+                "Fairmount": "0001802528",
+                "DeepTrack": "0001856083",
+                "LogosGlobal": "0001792126"
+            },
+            "pipeline_status": "NOT INGESTED — 13 days past deadline",
+            "note": "Coinvest_score_z signal running on stale Q1 data. Action sequence: freeze lift → warm cache → quarantine check → IC decomp."
+        }
+    },
+    "escalation_flags": [
+        {
+            "id": "ALMS_LUMUS_BINARY_34DAYS_LOWEST_BUFFER",
+            "ticker": "ALMS",
+            "reason": "ALMS LUMUS Phase 2b SLE binary readout pending through Sep 30 (~34 days). Buffer ERODED to +15.96% — now LOWEST in portfolio. Pre-market Aug 27 +1.57% recovering but binary event remains highest single-position catalyst risk. No readout announced.",
+            "priority": "ELEVATED — LUMUS BINARY ANY SESSION — LOWEST BUFFER"
+        },
+        {
+            "id": "ERAS_GAP_FLAG_UPSIDE_AUG26_ANALYST_UPGRADES",
+            "ticker": "ERAS",
+            "reason": "ERAS +7.83% Aug 26 (gap flag). CATALYST CONFIRMED: analyst upgrades (JPMorgan $33, HC Wainwright $22, Guggenheim $21, BofA $20) following FDA Fast Track ERAS-0015. Volume 7.69M (very elevated). Pre-market flat +0.26%. Position now +44.31% vs entry (improved significantly from +33.83% Day 56).",
+            "priority": "INFORMATIONAL — POSITIVE CATALYST — OPERATOR REVIEW"
+        },
+        {
+            "id": "XENE_GAP_FLAG_UPSIDE_AUG26_PHASE3_DATA",
+            "ticker": "XENE",
+            "reason": "XENE +5.58% Aug 26 (gap flag). CATALYST CONFIRMED: Phase 3 X-TOLE2 data at EEC 2026. NDA Q3 2026 filing imminent. Pre-market Aug 27 +0.75% continuing. Buffer expanded from +16.30% to +22.80%. Watch for formal NDA submission announcement.",
+            "priority": "INFORMATIONAL — POSITIVE CATALYST — OPERATOR REVIEW"
+        },
+        {
+            "id": "SYRE_PIPELINE_CLOSE_WORSE_THAN_PREMARKET",
+            "ticker": "SYRE",
+            "reason": "SYRE close -12.81% ($93.61) was WORSE than pre-market -10.21% ($96.40) flag from Day 56. Pipeline discontinuation SPY072 confirmed. Buffer reduced: +41.08% → +23.01% vs entry. Stabilizing pre-market Aug 27 (+0.42%). Still +23.01% above entry. Operator should update monitoring thesis.",
+            "priority": "HIGH — CONFIRMED PIPELINE EVENT — PARTIALLY RESOLVED — OPERATOR AWARENESS"
+        },
+        {
+            "id": "Q2_13F_NOT_INGESTED_13DAYS",
+            "reason": "Q2 2026 13F filings 13 days past Aug 14 deadline. Production coinvest_score_z running on stale Q1 data. Operator freeze lift is gating step.",
+            "priority": "GOVERNANCE_ACTION_NEEDED"
+        },
+        {
+            "id": "DRUG_RESUMED_DECLINE",
+            "ticker": "DRUG",
+            "reason": "DRUG resumed decline -3.60% Aug 26 after single-day reversal +3.19% Aug 25. Pattern: 4-session decline → 1-day bounce → new decline. Buffer: +25.01% (Day 56) → +20.51% (Day 57). Volume thin (70,645). Monitor for further erosion.",
+            "priority": "WATCH — BUFFER ERODING"
+        },
+        {
+            "id": "IC_H20D_OVERDUE_57DAYS",
+            "reason": "IC gate and h20d gate both 57 days overdue (were due 2026-07-01). Operator freeze lift gating all downstream steps. DEM candidate freeze + NO_MODEL_CHANGE window (0/20 LIVE windows).",
+            "priority": "GOVERNANCE_OVERDUE"
+        }
+    ],
+    "monitoring_summary": {
+        "day": 57,
+        "date": "2026-08-27",
+        "total_equity_usd": 137.99,
+        "day_change_usd": -0.81,
+        "day_change_pct": -0.58,
+        "avg_pnl_vs_entry_pct": 37.84,
+        "xbi_return_since_entry_pct": 26.02,
+        "outperformance_pp": 11.82,
+        "gap_flags_aug26": 3,
+        "gate_status": {
+            "drawdown": "CLEAR",
+            "emergency": "CLEAR",
+            "ic": "OVERDUE (57d)",
+            "h20d": "OVERDUE (57d)",
+            "jaccard": "MAINTAINED"
+        },
+        "positions_above_entry": 15,
+        "positions_below_entry": 0,
+        "positions_up_today": 3,
+        "positions_down_today": 12,
+        "key_alerts": [
+            "ALMS LUMUS binary pending (~34 days) — LOWEST buffer +15.96%",
+            "ERAS +7.83% upside gap (analyst upgrades + FDA Fast Track CONFIRMED)",
+            "XENE +5.58% upside gap (Phase 3 data at EEC 2026 CONFIRMED)",
+            "SYRE -12.81% pipeline discontinuation CONFIRMED (close worse than pre-market; stabilizing)",
+            "DRUG resumed decline -3.60% (buffer eroding)",
+            "Q2 13F 13 days past deadline — governance action needed"
+        ]
+    }
+}
