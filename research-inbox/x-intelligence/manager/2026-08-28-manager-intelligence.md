@@ -12,8 +12,8 @@ source_class: informed interpretation
 confidence: low-medium (see per-item)
 confirming_monitor: SEC Filing Monitor (13F/13D/13G/Form 4)
 lead_time_estimate: none (post Q2 13F filing window; cross-manager synthesis is the new angle, not the underlying ownership facts)
-ladder_stage: x_post
-status: unverified
+ladder_stage: primary_source_found
+status: partially_verified
 ---
 
 ## Convergence
@@ -62,3 +62,15 @@ Carried from the prior three digests: $250M senior credit facility (initial $75M
 1. Reproduce QURE Q2 2026 13F lines for Avoro, RTW, OrbiMed, Vestal Point, Integral Health, and Braidwell against primary EDGAR; reconstruct the aggregate ~21.5%-of-float figure independently before treating it as established. Route QURE to watchlist-addition review.
 2. Confirm Palo Alto Investors' Q2 2026 13F-HR has actually posted (registry notes a late filing this season) and reproduce the ORKA share-count change against primary EDGAR.
 3. Continue monitoring Perceptive's Q2 13F equity line for AUTL exposure — Week 4 open, no equity confirmation either way; close out or escalate next run.
+
+## Verification (2026-08-31 Verification Queue)
+
+Decomposed and verified each claim independently:
+
+- **QURE / Avoro Capital** — CONFIRMED via primary EDGAR (13F-HR, CIK 0001633313, accession 0001104659-26-096427, period 2026-06-30): 6,727,777 sh QURE = $309.9M, 2.78% of an $11.14B/26-holding portfolio. Matches the aggregator-cited figure. Promoted x_post -> primary_source_found (single filing; not yet independent_confirmation).
+- **QURE / Braidwell LP** — CONFIRMED via primary EDGAR (13F-HR, CIK 0001920938, accession 0001420506-26-001823, period 2026-06-30): 301,652 sh QURE, confirmed NEW position (absent Q1 2026), $13.9M, 0.51% of a $2.7B/86-holding portfolio. Promoted x_post -> primary_source_found.
+- **QURE / Braidwell "new capital right after the FDA path cleared is the tell"** — NOT advanced; causal interpretation stays flagged as judgment, not evidence. Ladder stays x_post for this component.
+- **ORKA / Palo Alto Investors decreased** — CONFIRMED via primary EDGAR (13F-HR/A Amendment No. 2, CIK 0001306923, accession 0002073679-26-000102, period 2026-06-30, filed 2026-08-14/amended through 2026-08-19 — filing has posted): 33,546 sh ORKA vs 59,985 sh Q1 2026 (-44.1%), confirming the decrease and the fourth-manager divergence. Promoted x_post -> primary_source_found.
+- **QURE six-manager ~21.5%-of-float aggregate** — not independently reconstructed this run; carried forward.
+
+Net: 3 of 4 discrete claims promoted to primary_source_found via direct EDGAR confirmation; the causal-interpretation component correctly held at x_post as judgment.
