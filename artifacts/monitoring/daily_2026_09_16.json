@@ -1,8 +1,8 @@
 {
     "date": "2026-09-16",
     "monitoring_day": 71,
-    "timestamp": "2026-09-16T09:00:00.000000Z",
-    "phase": "Day 71 — PRE-MARKET snapshot (Sep 16 09:00 ET, Wednesday). Robinhood MCP still unavailable. Price basis remains Aug 27 close (NOW 12 TRADING SESSIONS STALE: Aug 28, Aug 31, Sep 1, Sep 2, Sep 3, Sep 4, Sep 8, Sep 9, Sep 10, Sep 11, Sep 14, Sep 15). SEP 14 REBALANCE TRIGGER FIRED (Day 69) — EXECUTION STATUS UNKNOWN. ALMS LUMUS binary ~14 CALENDAR DAYS (~11 trading sessions to Sep 30). XENE NDA ~14 days. IC/h20d gates 77 days overdue. Q2 13F 33 days past deadline.",
+    "timestamp": "2026-09-16T13:00:00.000000Z",
+    "phase": "Day 71 — PRE-MARKET snapshot (Sep 16 09:00 ET / 13:00Z, Wednesday). Robinhood MCP still unavailable. Price basis remains Aug 27 close (NOW 12 TRADING SESSIONS STALE: Aug 28, Aug 31, Sep 1, Sep 2, Sep 3, Sep 4, Sep 8, Sep 9, Sep 10, Sep 11, Sep 14, Sep 15). SEP 14 REBALANCE TRIGGER DATE ARRIVED (Day 69) — check and execution UNKNOWN (MCP unavailable). ALMS LUMUS binary ~14 CALENDAR DAYS (~11 trading sessions to Sep 30). XENE NDA ~14 days. IC/h20d gates 77 days overdue. Q2 13F 33 days past deadline.",
     "data_integrity": {
         "primary_source": "Carried forward from daily_2026_09_11.json (Day 68). Aug 27 close is last known price data.",
         "price_date": "2026-08-27 close (last available — NOW 12 TRADING SESSIONS STALE after Sep 16 open)",
@@ -27,7 +27,7 @@
         "buying_power_carried": null,
         "total_estimated_account_value": 237.91,
         "equity_note_detail": "No new price data since Aug 27 close. MCP unavailable. Estimate is minimum 12 sessions stale as of Sep 16 open.",
-        "sep14_rebalance_note": "Sep 14 Monday rebalance TRIGGER FIRED (Day 69) — agentic account rule requires equal-weight weekly rebalance. Execution status UNKNOWN without MCP. Quantities unchanged in this snapshot (Jun 24 basis)."
+        "sep14_rebalance_note": "Sep 14 Monday rebalance trigger date arrived (Day 69) — agentic account rule requires equal-weight weekly rebalance check at market open. Neither check execution nor trade execution can be confirmed without MCP. Quantities unchanged in this snapshot (Jun 24 basis)."
     },
     "benchmark": {
         "xbi_entry_price": 133.62,
@@ -54,8 +54,8 @@
         "day_71_notes": [
             "Sep 16 = Wednesday, Day 71 — 3rd trading day after Sep 14 rebalance trigger",
             "Robinhood MCP still unavailable — 12th consecutive stale carry from Aug 27",
-            "SEP 14 REBALANCE TRIGGER FIRED (Day 69, Monday) — execution status UNKNOWN. Agentic account 802349084 rebalance may or may not have executed.",
-            "Aug 31 rebalance check: STILL UNRESOLVED — now 3 rebalance cycles unresolved (Aug 31, Sep 7 [Labor Day holiday — no check], Sep 14)",
+            "SEP 14 REBALANCE TRIGGER DATE ARRIVED (Day 69, Monday) — rebalance check and trade execution status UNKNOWN (MCP unavailable). Agentic account 802349084 rebalance cannot be confirmed or denied.",
+            "Aug 31 rebalance check: STILL UNRESOLVED — 2 unresolved rebalance cycles: Aug 31 and Sep 14 (Sep 7 was Labor Day — no market, no check applies)",
             "ALMS LUMUS binary: ~14 calendar days remaining (Sep 30 deadline) — ~11 trading sessions",
             "XENE NDA filing: ~14 calendar days remaining (Sep 30 deadline) — ANY session could announce",
             "STOK lowest buffer: last known +13.40% (Aug 27) — 12 sessions of unknown movement — potential breach unchecked",
@@ -291,8 +291,8 @@
             "pnl_vs_entry_pct": 13.40,
             "position_value_usd": 7.55,
             "gap_flag": false,
-            "status": "LOWEST_BUFFER_ALERT — +13.40% AUG 27 BASIS (STALE — 12 SESSIONS) — POTENTIAL BREACH UNCHECKED",
-            "note": "+13.40% vs entry (Aug 27 basis — STALE 12 sessions). Buffer trend before data gap: +16.42% (Day 56) → +15.13% (Day 57) → +13.40% (Day 58 Aug 27). ~1.5-2pp erosion per session (last known trajectory). Actual Aug 28 through Sep 15 prices unknown. No near-term binary catalyst. At last known erosion rate, buffer could be near 0% or negative. GATE BREACH CANNOT BE CONFIRMED OR EXCLUDED WITHOUT LIVE PRICES."
+            "status": "LOWEST_BUFFER_ALERT — +13.40% AUG 27 BASIS (STALE — 12 SESSIONS) — BUFFER LIKELY NEGATIVE ON TRAJECTORY",
+            "note": "+13.40% vs entry (Aug 27 basis — STALE 12 sessions). Buffer trend before data gap: +16.42% (Day 56) → +15.13% (Day 57) → +13.40% (Day 58 Aug 27). ~1.5-2pp erosion per session (last known trajectory). At this rate over 12 sessions, buffer projects to approximately -4.6% to -10.6% vs entry — negative, but far from the -20% loss gate (requires 33.4pp total decline from entry). A large single-session move remains possible but is not supported by the prior trajectory. Confirm with live prices."
         }
     ],
     "gap_flags_summary": {
@@ -352,12 +352,12 @@
             "note": "All 15 positions positive (Aug 27 basis). Far from -20% loss threshold on Aug 27 basis. 12 sessions uncaptured — status unverifiable."
         },
         "monday_rebalance_gate": {
-            "status": "SEP 14 TRIGGER FIRED (Day 69, Monday). EXECUTION STATUS UNKNOWN. Sep 21 = next Monday trigger.",
+            "status": "SEP 14 TRIGGER DATE ARRIVED (Day 69, Monday) — check and execution UNKNOWN (MCP unavailable). Sep 21 = next Monday trigger.",
             "rule": "Rule 1: Monday market open = weekly rebalance check",
-            "note": "Sep 14 (Monday) weekly rebalance trigger HAS FIRED — but agentic account rebalance execution cannot be confirmed without Robinhood MCP. Aug 31 (Monday) rebalance check STILL UNRESOLVED. Sep 7 was Labor Day (holiday — no market). Three unresolved rebalance cycles: Aug 31, Sep 14. Sep 21 = next trigger in 5 trading sessions.",
+            "note": "Sep 14 (Monday) weekly rebalance trigger date arrived per schedule — but rebalance check and trade execution cannot be confirmed without Robinhood MCP. Aug 31 (Monday) rebalance check STILL UNRESOLVED. Sep 7 was Labor Day (holiday — no market, no check). Unresolved cycles: Aug 31 and Sep 14 only. Sep 21 = next trigger in 3 trading sessions (Sep 16, Sep 17, Sep 18 before Sep 21 open).",
             "aug31_unresolved": true,
             "sep14_fired_status_unknown": true,
-            "sep21_trigger_days_away": 5,
+            "sep21_trigger_days_away": 3,
             "urgency": "HIGH — Operator must confirm Sep 14 rebalance execution (MCP down). Next trigger Sep 21."
         }
     },
@@ -389,7 +389,7 @@
             "event": "Buffer erosion — no imminent binary catalyst",
             "priority": "WATCH — LOWEST BUFFER (last known +13.40%, 12 sessions stale)",
             "buffer_trend_last_known": "+16.42% (Day 56) → +15.13% (Day 57) → +13.40% (Day 58 Aug 27). 12 sessions unknown.",
-            "note": "At last known erosion rate, buffer could be near 0-7% or lower. Actual prices since Aug 27 unknown. Potential threshold breach unchecked. URGENT: restore price data."
+            "note": "At last known erosion rate (~1.5-2pp × 12 sessions), buffer projects to approximately -4.6% to -10.6% vs entry — negative but far from the -20% gate. Actual prices since Aug 27 unknown; a large single-session move could change this. URGENT: restore price data to confirm."
         },
         "SYRE_POST_DISCONTINUATION": {
             "ticker": "SYRE",
@@ -424,12 +424,12 @@
     "escalation_flags": [
         {
             "id": "SEP14_REBALANCE_FIRED_EXECUTION_UNKNOWN",
-            "reason": "SEP 14 (Monday) REBALANCE TRIGGER HAS FIRED — agentic account 802349084 rebalance check executed Monday Sep 14 per Rule 1. Execution status is UNKNOWN because Robinhood MCP unavailable. Aug 31 rebalance ALSO UNRESOLVED. Sep 21 is the next rebalance trigger (5 trading sessions away). OPERATOR MUST CONFIRM Sep 14 REBALANCE EXECUTION STATUS. Cannot determine if equal-weight rebalance was attempted/executed without live account access.",
+            "reason": "SEP 14 (Monday) REBALANCE TRIGGER DATE ARRIVED — per Rule 1, a rebalance check was due at market open Sep 14. However, neither check execution nor trade execution can be confirmed because Robinhood MCP is unavailable. This records the scheduled trigger date, not a confirmed execution. Aug 31 rebalance ALSO UNRESOLVED. Sep 21 is the next rebalance trigger (3 trading sessions away: Sep 16, Sep 17, Sep 18). OPERATOR MUST CONFIRM Sep 14 REBALANCE STATUS.",
             "priority": "OPERATOR_CONFIRMATION_NEEDED — HIGH"
         },
         {
             "id": "DATA_GAP_12_SESSIONS_MCP_DOWN",
-            "reason": "Price data STALE by 12 trading sessions (Aug 28 through Sep 15 all uncaptured). Robinhood MCP unavailable consecutive weeks. Yahoo Finance API blocked. All P&L, equity, and gate metrics reflect Aug 27 close basis. DATA INTEGRITY: CRITICAL. Sep 21 rebalance trigger in 5 sessions.",
+            "reason": "Price data STALE by 12 trading sessions (Aug 28 through Sep 15 all uncaptured). Robinhood MCP unavailable consecutive weeks. Yahoo Finance API blocked. All P&L, equity, and gate metrics reflect Aug 27 close basis. DATA INTEGRITY: CRITICAL. Sep 21 rebalance trigger in 3 sessions (Sep 16, Sep 17, Sep 18 before Sep 21 open).",
             "priority": "DATA_INTEGRITY — CRITICAL"
         },
         {
@@ -447,8 +447,8 @@
         {
             "id": "STOK_LOWEST_BUFFER_12SESSIONS_STALE",
             "ticker": "STOK",
-            "reason": "STOK lowest buffer in portfolio (last known +13.40%, Aug 27, 12 sessions stale). At last known erosion rate (~1.5-2pp/session), actual buffer could be near 0% or negative — meaning the -20% loss gate threshold may have been breached without detection. GATE BREACH STATUS UNKNOWN.",
-            "priority": "WATCH — POTENTIAL BUFFER DEPLETION — GATE BREACH STATUS UNKNOWN"
+            "reason": "STOK lowest buffer in portfolio (last known +13.40%, Aug 27, 12 sessions stale). At last known erosion rate (~1.5-2pp/session × 12 sessions = 18-24pp), buffer likely projects to approximately -4.6% to -10.6% vs entry — negative, but far below the -20% loss gate (which requires a 33.4pp total decline from entry). The trajectory does not support a -20% breach; however, a large single-session move during the 12 uncaptured sessions cannot be excluded. Confirm buffer with live prices.",
+            "priority": "WATCH — LIKELY NEGATIVE BUFFER ON TRAJECTORY (projects -4.6% to -10.6% vs entry) — -20% GATE BREACH NOT SUPPORTED BY EROSION RATE ALONE"
         },
         {
             "id": "Q2_13F_NOT_INGESTED_33DAYS",
@@ -493,7 +493,7 @@
             "Aug 31 rebalance check: STILL UNRESOLVED (Day 71)",
             "SYRE: 12 sessions post-SPY072 discontinuation — status unknown",
             "DRUG: buffer erosion trend last known — 12 sessions uncaptured",
-            "Sep 21 = next Monday rebalance trigger (5 trading sessions)"
+            "Sep 21 = next Monday rebalance trigger (3 trading sessions remaining: Sep 16, Sep 17, Sep 18 before Sep 21 open)"
         ],
         "positive_notes": [
             "All 15 positions still positive vs entry (Aug 27 basis — stale)",
@@ -510,7 +510,7 @@
         ],
         "operator_action_required": [
             "URGENT: Confirm Sep 14 rebalance execution status (Day 69, Monday) — account 802349084 may or may not have rebalanced",
-            "URGENT: Restore Robinhood MCP or alternative price data source — 12 sessions stale, Sep 21 rebalance trigger in 5 sessions",
+            "URGENT: Restore Robinhood MCP or alternative price data source — 12 sessions stale, Sep 21 rebalance trigger in 3 sessions (Sep 16, Sep 17, Sep 18 before Sep 21 open)",
             "URGENT: Resolve Aug 31 weekly rebalance check disposition — 3+ weeks unresolved",
             "GOVERNANCE: Operator freeze lift → h20d quarantine script → Q2 13F cache warm → IC decomp (sequential)",
             "CATALYST: ALMS LUMUS binary and XENE NDA both inside 14-day window to Sep 30 — monitor for announcements"
