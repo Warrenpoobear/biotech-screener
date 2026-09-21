@@ -1,8 +1,8 @@
 {
     "date": "2026-09-21",
     "monitoring_day": 74,
-    "timestamp": "2026-09-21T09:14:00.000000Z",
-    "phase": "Day 74 — PRE-MARKET snapshot (Sep 21 09:14 ET, Monday). Robinhood MCP still unavailable. Price basis remains Aug 27 close (NOW 17 TRADING SESSIONS STALE). MONITORING PERIOD OFFICIALLY ENDED 2026-06-30 (83 days ago). ALMS LUMUS binary ~9 CALENDAR DAYS (~6 trading sessions to Sep 30). XENE NDA ~9 days. SEP 14 REBALANCE OUTCOME UNKNOWN. TODAY IS MONDAY — ANOTHER REBALANCE TRIGGER (Rule 1). IC/h20d gates 82 days overdue. Q2 13F 38 days past deadline.",
+    "timestamp": "2026-09-21T13:14:00Z",
+    "phase": "Day 74 — PRE-MARKET snapshot (Sep 21 09:14 ET, Monday). Robinhood MCP still unavailable. Price basis remains Aug 27 close (NOW 16 TRADING SESSIONS STALE). MONITORING PERIOD OFFICIALLY ENDED 2026-06-30 (83 days ago). ALMS LUMUS binary ~9 CALENDAR DAYS (~6 trading sessions to Sep 30). XENE NDA ~9 days. SEP 14 REBALANCE OUTCOME UNKNOWN. TODAY IS MONDAY — ANOTHER REBALANCE TRIGGER (Rule 1). IC/h20d gates 82 days overdue. Q2 13F 38 days past deadline.",
     "schedule_status": {
         "period": "2026-06-11 through 2026-06-30 (ORIGINAL SCHEDULE)",
         "today": "2026-09-21",
@@ -11,12 +11,12 @@
     },
     "data_integrity": {
         "primary_source": "Carried forward from daily_2026_09_11.json (Day 68). Aug 27 close is last known price data.",
-        "price_date": "2026-08-27 close (last available — NOW 17 TRADING SESSIONS STALE after Sep 21 pre-market)",
-        "data_gap": "AUG 28 + AUG 31 + SEP 1–4 + SEP 7–11 + SEP 14–18 + SEP 21-pre — seventeen consecutive trading sessions without confirmed price data.",
+        "price_date": "2026-08-27 close (last available — NOW 16 TRADING SESSIONS STALE after Sep 21 pre-market)",
+        "data_gap": "AUG 28 + AUG 31 + SEP 1–4 + SEP 8–11 + SEP 14–18 + SEP 21-pre (16 sessions; Sep 7 Labor Day excluded) — sixteen consecutive trading sessions without confirmed price data.",
         "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged — no confirmed trades since Jun 24 rebalance)",
         "cash_basis": "Carried forward $99.87 from Jun 24 MCP sourcing (Sep 14 rebalance outcome unknown — actual cash may differ)",
         "mcp_status": "Robinhood MCP unavailable (consecutive weeks). Yahoo Finance API blocked. No live quotes sourced.",
-        "data_quality": "DEGRADED — Aug 27 close (last known). 17 trading sessions of price movement UNCAPTURED as of Sep 21 pre-market.",
+        "data_quality": "DEGRADED — Aug 27 close (last known). 16 trading sessions of price movement UNCAPTURED as of Sep 21 pre-market (Sep 7 Labor Day excluded).",
         "missed_monitoring_days": [
             "2026-09-14 (Day 69)",
             "2026-09-15 (Day 70)",
@@ -37,7 +37,7 @@
         "account_id": "Robinhood 802349084",
         "equity_fetchable": false,
         "equity_estimated_usd": 138.04,
-        "equity_note": "Carried from Aug 27 close basis. All 17 subsequent sessions unknown. Stale carry-forward estimate only.",
+        "equity_note": "Carried from Aug 27 close basis. All 16 subsequent sessions unknown (Sep 7 Labor Day excluded). Stale carry-forward estimate only.",
         "cash_carried": 99.87,
         "buying_power_carried": null,
         "total_estimated_account_value": 237.91,
@@ -61,17 +61,17 @@
         "xbi_return_since_entry_pct": 25.9,
         "outperformance_pp": 11.98,
         "drawdown_threshold_pp": -2.0,
-        "drawdown_status": "CLEAR (last measured basis Aug 27 close — STALE 17 sessions). +11.98pp vs XBI. Well above -2.0pp threshold.",
+        "drawdown_status": "CLEAR (last measured basis Aug 27 close — STALE 16 sessions). +11.98pp vs XBI. Well above -2.0pp threshold.",
         "gap_flags": 0,
         "gap_threshold_pct": 5.0,
-        "gap_check_note": "Gap check NOT EXECUTABLE — prices stale 17 trading sessions. All gap flags carry-forward only.",
+        "gap_check_note": "Gap check NOT EXECUTABLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded). All gap flags carry-forward only.",
         "day_74_notes": [
             "Sep 21 = Monday, Day 74 — WEEKLY REBALANCE TRIGGER (Rule 1). Robinhood MCP unavailable.",
-            "Price data stale 17 consecutive trading sessions since Aug 27 close.",
+            "Price data stale 16 consecutive trading sessions since Aug 27 close (Sep 7 Labor Day excluded).",
             "Sep 14 rebalance (Day 69): outcome UNKNOWN — no monitoring coverage Sep 12–20.",
-            "ALMS LUMUS Phase 2b SLE binary: ~9 calendar days (~6 trading sessions to Sep 30). APPROACHING BINARY WINDOW.",
+            "ALMS LUMUS Phase 2b SLE binary: ~9 calendar days (~7 trading sessions to Sep 30). APPROACHING BINARY WINDOW.",
             "XENE NDA azetukalner: ~9 calendar days to Sep 30 Q3 deadline.",
-            "STOK lowest buffer: last known +13.40% (Aug 27) — 17 sessions of unknown movement.",
+            "STOK lowest buffer: last known +13.40% (Aug 27) — 16 sessions of unknown movement.",
             "IC + h20d gates: 82 days overdue (due 2026-07-01). Freeze lift required.",
             "Q2 13F: 38 days past Aug 14 deadline. coinvest_score_z on stale Q1 data.",
             "MONITORING PERIOD ENDED 2026-06-30 (83 days ago). Routine firing past scheduled end."
@@ -88,9 +88,9 @@
             "pnl_vs_entry_pct": 73.87,
             "position_value_usd": 11.57,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+73.87% vs entry (Aug 27 basis — 17 sessions stale)."
+            "note": "+73.87% vs entry (Aug 27 basis — 16 sessions stale)."
         },
         {
             "ticker": "URGN",
@@ -102,9 +102,9 @@
             "pnl_vs_entry_pct": 62.38,
             "position_value_usd": 10.81,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+62.38% vs entry (Aug 27 basis — 17 sessions stale)."
+            "note": "+62.38% vs entry (Aug 27 basis — 16 sessions stale)."
         },
         {
             "ticker": "DNTH",
@@ -116,9 +116,9 @@
             "pnl_vs_entry_pct": 54.7,
             "position_value_usd": 10.37,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+54.70% vs entry (Aug 27 basis — 17 sessions stale)."
+            "note": "+54.70% vs entry (Aug 27 basis — 16 sessions stale)."
         },
         {
             "ticker": "SLDB",
@@ -130,9 +130,9 @@
             "pnl_vs_entry_pct": 56.09,
             "position_value_usd": 10.42,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+56.09% vs entry (Aug 27 basis — 17 sessions stale)."
+            "note": "+56.09% vs entry (Aug 27 basis — 16 sessions stale)."
         },
         {
             "ticker": "PRAX",
@@ -144,9 +144,9 @@
             "pnl_vs_entry_pct": 52.06,
             "position_value_usd": 10.13,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+52.06% vs entry (Aug 27 basis — 17 sessions stale). FDA PDUFA Dec 27 — 97 days. Clean FDA posture."
+            "note": "+52.06% vs entry (Aug 27 basis — 16 sessions stale). FDA PDUFA Dec 27 — 97 days. Clean FDA posture."
         },
         {
             "ticker": "RVMD",
@@ -158,9 +158,9 @@
             "pnl_vs_entry_pct": 53.83,
             "position_value_usd": 10.28,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+53.83% vs entry (Aug 27 basis — 17 sessions stale)."
+            "note": "+53.83% vs entry (Aug 27 basis — 16 sessions stale)."
         },
         {
             "ticker": "ERAS",
@@ -172,9 +172,9 @@
             "pnl_vs_entry_pct": 46.87,
             "position_value_usd": 9.81,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+46.87% vs entry (Aug 27 basis — 17 sessions stale)."
+            "note": "+46.87% vs entry (Aug 27 basis — 16 sessions stale)."
         },
         {
             "ticker": "TRVI",
@@ -186,9 +186,9 @@
             "pnl_vs_entry_pct": 33.73,
             "position_value_usd": 8.92,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+33.73% vs entry (Aug 27 basis — 17 sessions stale)."
+            "note": "+33.73% vs entry (Aug 27 basis — 16 sessions stale)."
         },
         {
             "ticker": "CMPS",
@@ -200,9 +200,9 @@
             "pnl_vs_entry_pct": 29.56,
             "position_value_usd": 8.64,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+29.56% vs entry (Aug 27 basis — 17 sessions stale)."
+            "note": "+29.56% vs entry (Aug 27 basis — 16 sessions stale)."
         },
         {
             "ticker": "SYRE",
@@ -214,9 +214,9 @@
             "pnl_vs_entry_pct": 23.02,
             "position_value_usd": 8.24,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+23.02% vs entry (Aug 27 basis — 17 sessions stale). SPY072 RA standalone discontinued Aug 26. Status post-discontinuation unknown (17 sessions stale)."
+            "note": "+23.02% vs entry (Aug 27 basis — 16 sessions stale). SPY072 RA standalone discontinued Aug 26. Status post-discontinuation unknown (16 sessions stale)."
         },
         {
             "ticker": "XENE",
@@ -228,13 +228,13 @@
             "pnl_vs_entry_pct": 19.21,
             "position_value_usd": 7.96,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+19.21% vs entry (Aug 27 basis — 17 sessions stale). NDA azetukalner Q3 deadline Sep 30 — 9 days. Positive catalyst risk."
+            "note": "+19.21% vs entry (Aug 27 basis — 16 sessions stale). NDA azetukalner Q3 deadline Sep 30 — 9 days. Positive catalyst risk."
         },
         {
             "ticker": "DRUG",
-            "company": "Bright Health / Bristol Myers",
+            "company": "Bright Minds Biosciences Inc.",
             "entry_price": 63.59,
             "quantity": 0.105839,
             "last_close": 74.54,
@@ -242,9 +242,9 @@
             "pnl_vs_entry_pct": 17.22,
             "position_value_usd": 7.89,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+17.22% vs entry (Aug 27 basis — 17 sessions stale). Buffer eroding trend last known. BMB-101 Ph3 H2 2026 key catalyst."
+            "note": "+17.22% vs entry (Aug 27 basis — 16 sessions stale). Buffer eroding trend last known. BMB-101 Ph3 H2 2026 key catalyst."
         },
         {
             "ticker": "COGT",
@@ -256,9 +256,9 @@
             "pnl_vs_entry_pct": 18.31,
             "position_value_usd": 7.89,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+18.31% vs entry (Aug 27 basis — 17 sessions stale)."
+            "note": "+18.31% vs entry (Aug 27 basis — 16 sessions stale)."
         },
         {
             "ticker": "ALMS",
@@ -270,9 +270,9 @@
             "pnl_vs_entry_pct": 13.94,
             "position_value_usd": 7.57,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+13.94% vs entry (Aug 27 basis — 17 sessions stale). LUMUS Phase 2b SLE binary Sep 30 — 9 days. APPROACHING CRITICAL WINDOW."
+            "note": "+13.94% vs entry (Aug 27 basis — 16 sessions stale). LUMUS Phase 2b SLE binary Sep 30 — 9 days. APPROACHING CRITICAL WINDOW."
         },
         {
             "ticker": "STOK",
@@ -284,9 +284,9 @@
             "pnl_vs_entry_pct": 13.4,
             "position_value_usd": 7.55,
             "gap_flag": false,
-            "gap_note": "Gap check NOT POSSIBLE — prices stale 17 trading sessions.",
+            "gap_note": "Gap check NOT POSSIBLE — prices stale 16 trading sessions (Sep 7 Labor Day excluded).",
             "status": "MONITORING",
-            "note": "+13.40% vs entry (Aug 27 basis — 17 sessions stale). LOWEST BUFFER — gate breach status UNKNOWN for 17 sessions."
+            "note": "+13.40% vs entry (Aug 27 basis — 16 sessions stale). LOWEST BUFFER — gate breach status UNKNOWN for 17 sessions."
         }
     ],
     "catalyst_watch": {
@@ -295,17 +295,17 @@
             "event": "LUMUS Phase 2b SLE trial results — binary readout",
             "deadline": "2026-09-30",
             "days_remaining_calendar": 9,
-            "trading_sessions_remaining": 6,
-            "priority": "ELEVATED — 9 days. Inside 10-day binary approach window. Rule 2: Flag for manual review if within 5 calendar days.",
+            "trading_sessions_remaining": 7,
+            "priority": "ELEVATED — 9 days. Inside 10-day binary approach window. Rule 2: Flag for manual review when within 5 calendar days.",
             "last_pnl_pct": 13.94,
-            "buffer_note": "Last known +13.94% (Aug 27) — eroding trend from Day 58. 17 sessions of additional movement uncaptured."
+            "buffer_note": "Last known +13.94% (Aug 27) — eroding trend from Day 58. 16 sessions of additional movement uncaptured (Sep 7 Labor Day excluded)."
         },
         "XENE_NDA_Q3": {
             "ticker": "XENE",
             "event": "NDA submission azetukalner (focal epilepsy) — Q3 2026 deadline",
             "deadline": "2026-09-30",
             "days_remaining_calendar": 9,
-            "trading_sessions_remaining": 6,
+            "trading_sessions_remaining": 7,
             "priority": "WATCH — 9 days. NDA announcement could occur any open session. Positive catalyst risk.",
             "last_pnl_pct": 19.21
         },
@@ -356,10 +356,14 @@
             "blocker": "Operator freeze lift required"
         },
         "jaccard": {
-            "status": "MAINTAINED",
-            "last_value": 0.875,
-            "last_measured": "2026-06-23",
-            "note": "Q2 13F not ingested — running on Q1 data. Refresh gated on freeze lift."
+            "status": "HOLD — NOT CLEARED",
+            "q1_55manager_jaccard": 0.463,
+            "q1_target": 0.7,
+            "q1_floor": 0.4,
+            "q1_verdict": "FAILS gate (0.463 < 0.70 target). Observation-only per PR #462.",
+            "q4_49manager_jaccard_NOT_FOR_CLEARANCE": 0.875,
+            "last_actual_measurement_source": "H20D_REEVAL_VERDICT_2026_07_04.md — 55-manager Q1 cohort test",
+            "note": "Q1 2026 55-manager cohort Jaccard = 0.463 (FAILS 0.70 gate; above 0.40 floor). HOLD/observation-only per PR #462. The 0.875 value is from Q4 2025 49-manager cohort and must NOT be used for gate clearance. Quarantine script not yet run against post-Q1-promotion snapshot. Gate clearance requires operator-run quarantine check."
         },
         "q2_13f": {
             "status": "NOT INGESTED",
@@ -394,7 +398,7 @@
         {
             "id": "ALMS_LUMUS_9DAYS_BINARY",
             "ticker": "ALMS",
-            "reason": "ALMS LUMUS Phase 2b SLE binary: ~9 calendar days remaining (~6 trading sessions, Sep 30 deadline). Last known buffer +13.94% (Aug 27, eroding trend). 17 sessions additional movement uncaptured. Approaching 5-day Rule 2 manual review window.",
+            "reason": "ALMS LUMUS Phase 2b SLE binary: ~9 calendar days remaining (~6 trading sessions, Sep 30 deadline). Last known buffer +13.94% (Aug 27, eroding trend). 16 sessions additional movement uncaptured. Approaching 5-day Rule 2 manual review window.",
             "priority": "ELEVATED — CATALYST APPROACHING"
         },
         {
@@ -411,7 +415,7 @@
         {
             "id": "STOK_GATE_BREACH_UNVERIFIABLE",
             "ticker": "STOK",
-            "reason": "STOK lowest buffer in portfolio (last known +13.40%, Aug 27, 17 sessions stale). Gate breach status unverifiable without live prices.",
+            "reason": "STOK lowest buffer in portfolio (last known +13.40%, Aug 27, 16 sessions stale). Gate breach status unverifiable without live prices.",
             "priority": "WATCH — GATE BREACH STATUS UNKNOWN"
         },
         {
@@ -436,18 +440,18 @@
         "weekday": "Monday",
         "market_status": "OPEN",
         "rebalance_trigger": "ACTIVE",
-        "price_basis": "2026-08-27 close (STALE — 17 trading sessions uncaptured)",
-        "data_quality": "DEGRADED — CRITICAL. Robinhood MCP unavailable. 17 sessions of unknown price movement.",
+        "price_basis": "2026-08-27 close (STALE — 16 trading sessions uncaptured; Sep 7 Labor Day excluded)",
+        "data_quality": "DEGRADED — CRITICAL. Robinhood MCP unavailable. 16 sessions of unknown price movement (Sep 7 Labor Day excluded).",
         "total_equity_usd_carried": 138.04,
         "avg_pnl_vs_entry_pct": 37.88,
         "xbi_return_since_entry_pct": 25.9,
         "outperformance_pp": 11.98,
         "gate_status": {
             "drawdown": "CLEAR (stale Aug 27 basis, +11.98pp — large buffer above -2.0pp gate)",
-            "emergency": "CLEAR (stale — all 15 positive on Aug 27 basis; STOK breach unverifiable for 17 sessions)",
+            "emergency": "CLEAR (stale — all 15 positive on Aug 27 basis; STOK breach unverifiable for 16 sessions)",
             "ic": "OVERDUE (82d since Jul 1 due date)",
             "h20d": "OVERDUE (82d since Jul 1 due date)",
-            "jaccard": "MAINTAINED (0.875, last measured Jun 23, Q2 13F not ingested)",
+            "jaccard": "HOLD — Q1 55-manager Jaccard 0.463 FAILS 0.70 gate; observation-only per PR #462. Quarantine script not yet run.",
             "monday_rebalance": "TRIGGERED TODAY (Sep 21). MCP UNAVAILABLE. OPERATOR ACTION REQUIRED."
         },
         "positions_above_entry": 15,
@@ -455,17 +459,18 @@
         "key_alerts": [
             "CRITICAL: Monday Sep 21 rebalance trigger — MCP unavailable, cannot execute without live prices",
             "CRITICAL: Sep 14 rebalance outcome UNKNOWN — no monitoring coverage Sep 12–20",
-            "DATA INTEGRITY CRITICAL: 17 consecutive trading sessions uncaptured — Robinhood MCP unavailable",
-            "ALMS LUMUS binary: ~9 days remaining (Sep 30) — approaching 5-day manual review window",
+            "DATA INTEGRITY CRITICAL: 16 consecutive trading sessions uncaptured (Sep 7 Labor Day excluded) — Robinhood MCP unavailable",
+            "ALMS LUMUS binary: ~9 days remaining (Sep 30) — 7 sessions, approaching 5-day manual review window",
             "XENE NDA: ~9 days to Sep 30 — announcement could occur any session",
-            "STOK: lowest buffer +13.40% last known — gate breach status unknown for 17 sessions",
+            "STOK: lowest buffer +13.40% last known — gate breach status unknown for 16 sessions",
             "Q2 13F: 38 days past Aug 14 deadline — governance action needed",
             "IC + h20d gates: 82 days overdue — freeze lift required",
+            "JACCARD GATE: Q1 55-manager Jaccard 0.463 FAILS 0.70 target — HOLD/observation-only posture",
             "MONITORING PERIOD ENDED Jun 30 — routine firing 83 days past scheduled end"
         ],
         "positive_notes": [
             "All 15 positions still positive vs entry (Aug 27 basis — stale)",
-            "Outperformance +11.98pp vs XBI — large cushion above -2.0pp drawdown gate (Aug 27 basis)",
+            "+11.98pp vs XBI — large cushion above -2.0pp drawdown gate (Aug 27 basis)",
             "NRIX top performer +73.87%; URGN +62.38%; SLDB +56.09%",
             "ERAS FDA Fast Track confirmed — positive thesis signal",
             "PRAX clean FDA posture; PDUFA Dec 27 — 97 days runway"
