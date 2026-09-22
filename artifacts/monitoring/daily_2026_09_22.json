@@ -1,11 +1,12 @@
 {
   "date": "2026-09-22",
-  "monitoring_day": "~77 (Days 69-77 missing: Sep 12-Sep 22 = 7 trading sessions uncaptured)",
+  "monitoring_day": 77,
+  "monitoring_day_note": "Days 69-77 missing (Sep 12-Sep 22 = 7 trading sessions uncaptured). Last captured: Day 68 (2026-09-11).",
   "timestamp": "2026-09-22T09:00:00.000000Z",
   "phase": "MONITORING GAP — Days 69-77 NOT CAPTURED. Last successful snapshot: Day 68 (2026-09-11). Scheduled routine fired today 2026-09-22 but is operating OUTSIDE original window (2026-06-11 to 2026-06-30). Multiple CRITICAL items require operator attention.",
   "gap_artifact": true,
   "gap_reason": "Pre-market routine did not fire Sep 12-Sep 21. Today (Sep 22) routine fired but Robinhood MCP tools remain unavailable. Live price data cannot be fetched. This artifact records known state and critical deadlines only.",
-  "data_as_of": "STALE — last known prices: 2026-08-27 close (Day 63). Price data now approximately 18 trading sessions stale as of Sep 22 open.",
+  "data_as_of": "STALE — last known prices: 2026-08-27 close (Day 63). Price data now approximately 17 trading sessions stale as of Sep 22 open.",
   "monitoring_window_status": {
     "configured_start": "2026-06-11",
     "configured_end": "2026-06-30",
@@ -16,29 +17,29 @@
   "account": {
     "account_id": "Robinhood 802349084",
     "equity_fetchable": false,
-    "equity_note": "Robinhood MCP unavailable. Last known account equity: $138.04 (Aug 27 close carry). Price data 18+ trading sessions stale. True current equity unknown.",
+    "equity_note": "Robinhood MCP unavailable. Last known account equity: $138.04 (Aug 27 close carry). Price data 17 trading sessions stale. True current equity unknown.",
     "cash_carried": 99.87,
     "buying_power_carried": null,
     "total_estimated_account_value_stale": 237.91,
-    "stale_trading_sessions": 18
+    "stale_trading_sessions": 17
   },
   "portfolio_overview": {
     "total_positions": 15,
     "last_known_avg_pnl_vs_entry_pct": 37.88,
     "last_known_xbi_return_pct": 25.9,
     "last_known_outperformance_pp": 11.98,
-    "data_basis": "Aug 27 close — 18 trading sessions stale as of Sep 22",
+    "data_basis": "Aug 27 close — 17 trading sessions stale as of Sep 22",
     "current_pnl_unknown": true,
     "gap_flags_last_known": 0,
-    "note": "Cannot verify current P&L, drawdown gate, or gap events. All values are Aug 27 carry-forward. Portfolio has not been price-refreshed in 18 sessions."
+    "note": "Cannot verify current P&L, drawdown gate, or gap events. All values are Aug 27 carry-forward. Portfolio has not been price-refreshed in 17 sessions."
   },
   "governance_gates": {
     "drawdown_gate": {
-      "status": "UNKNOWN — stale basis (Aug 27, 18 sessions stale)",
+      "status": "UNKNOWN — stale basis (Aug 27, 17 sessions stale)",
       "last_known_outperformance_pp": 11.98,
       "threshold_pp": -2.0,
       "last_known_status": "CLEAR",
-      "note": "Last measured +11.98pp outperformance vs XBI (Aug 27). Cannot verify current status. Buffer was large but market movement over 18 sessions is unknown."
+      "note": "Last measured +11.98pp outperformance vs XBI (Aug 27). Cannot verify current status. Buffer was large but market movement over 17 sessions is unknown."
     },
     "ic_gate": {
       "status": "OVERDUE",
@@ -72,7 +73,7 @@
       "last_known_lowest_pnl_ticker": "STOK",
       "last_known_lowest_pnl_pct": 13.4,
       "threshold_pct": -20.0,
-      "note": "Aug 27 basis: all 15 positions above entry. 18 sessions unknown. Emergency threshold (-20% vs entry) cannot be verified. STOK and ALMS had smallest buffers on Aug 27."
+      "note": "Aug 27 basis: all 15 positions above entry. 17 sessions unknown. Emergency threshold (-20% vs entry) cannot be verified. STOK and ALMS had smallest buffers on Aug 27."
     }
   },
   "critical_upcoming_catalysts": {
@@ -85,7 +86,7 @@
       "trading_days_remaining": 6,
       "last_known_pnl_vs_entry_pct": 13.94,
       "last_known_price_date": "2026-08-27",
-      "risk": "Binary event. Negative readout = material downside from last known price. Position may have moved significantly in 18 sessions.",
+      "risk": "Binary event. Negative readout = material downside from last known price. Position may have moved significantly in 17 sessions.",
       "urgency": "HIGH"
     },
     "XENE": {
@@ -94,7 +95,7 @@
       "approx_date": "~2026-09-30",
       "calendar_days_remaining": 8,
       "trading_days_remaining": 6,
-      "last_known_pnl_vs_entry_pct": 28.74,
+      "last_known_pnl_vs_entry_pct": 19.21,
       "last_known_price_date": "2026-08-27",
       "risk": "NDA timing uncertain — announcement could have already occurred in the Sep 12-22 gap.",
       "urgency": "HIGH"
@@ -111,7 +112,7 @@
     {
       "priority": 1,
       "action": "RESTORE LIVE PRICE DATA SOURCE",
-      "detail": "Robinhood MCP has been unavailable since Aug 27. 18+ trading sessions of price data missing. Cannot verify drawdown gate, gap events, or position health. Must restore before next rebalance or catalyst event.",
+      "detail": "Robinhood MCP has been unavailable since Aug 27. 17 trading sessions of price data missing. Cannot verify drawdown gate, gap events, or position health. Must restore before next rebalance or catalyst event.",
       "deadline": "IMMEDIATE"
     },
     {
@@ -124,7 +125,7 @@
       "priority": 3,
       "action": "RESOLVE THREE MISSED MONDAY REBALANCES",
       "detail": "Aug 31, Sep 14, and Sep 21 Monday rebalance checks are unresolved. Manually verify current equal-weight status in Robinhood account 802349084 and execute rebalance if needed.",
-      "deadline": "TODAY (Sep 22 is Monday)"
+      "deadline": "TODAY (Sep 22 is Tuesday)"
     },
     {
       "priority": 4,
@@ -146,21 +147,21 @@
     }
   ],
   "positions_last_known": {
-    "basis": "Aug 27 close — 18 trading sessions stale",
-    "COGT": {"pnl_pct": 37.62, "note": "Catalyst ~July 1 (PAST — outcome unknown to this artifact)"},
-    "DNTH": {"pnl_pct": 44.87, "note": "Catalyst Jun 30 fired. Outcome unknown from this artifact."},
-    "NRIX": {"pnl_pct": 52.14},
-    "URGN": {"pnl_pct": 34.81},
+    "basis": "Day 68 (2026-09-11) authoritative values — underlying prices from Aug 27 close, 17 trading sessions stale as of Sep 22",
+    "COGT": {"pnl_pct": 18.31, "note": "Catalyst ~July 1 (PAST — outcome unknown to this artifact)"},
+    "DNTH": {"pnl_pct": 54.70, "note": "Catalyst Jun 30 fired. Outcome unknown from this artifact."},
+    "NRIX": {"pnl_pct": 73.87},
+    "URGN": {"pnl_pct": 62.38},
     "ALMS": {"pnl_pct": 13.94, "note": "LUMUS binary ~Sep 30 — 8 days away. PRIORITY WATCH."},
-    "SYRE": {"pnl_pct": 27.65},
-    "RVMD": {"pnl_pct": 40.33},
-    "CMPS": {"pnl_pct": 23.18},
-    "SLDB": {"pnl_pct": 55.77},
+    "SYRE": {"pnl_pct": 23.02},
+    "RVMD": {"pnl_pct": 53.83},
+    "CMPS": {"pnl_pct": 29.56},
+    "SLDB": {"pnl_pct": 56.09},
     "DRUG": {"pnl_pct": 17.22},
-    "STOK": {"pnl_pct": 13.40, "note": "Lowest buffer Aug 27. 18 sessions movement unknown."},
-    "PRAX": {"pnl_pct": 40.89},
-    "TRVI": {"pnl_pct": 46.23},
-    "ERAS": {"pnl_pct": 33.11},
-    "XENE": {"pnl_pct": 28.74, "note": "NDA ~Sep 30 — 8 days away. PRIORITY WATCH."}
+    "STOK": {"pnl_pct": 13.40, "note": "Lowest buffer Aug 27. 17 sessions movement unknown."},
+    "PRAX": {"pnl_pct": 52.06},
+    "TRVI": {"pnl_pct": 33.73},
+    "ERAS": {"pnl_pct": 46.87},
+    "XENE": {"pnl_pct": 19.21, "note": "NDA ~Sep 30 — 8 days away. PRIORITY WATCH."}
   }
 }
