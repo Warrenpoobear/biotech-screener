@@ -851,3 +851,100 @@ class TestConstants:
     def test_min_product_name_length_is_reasonable(self):
         assert _MIN_PRODUCT_NAME_LENGTH >= 3
         assert _MIN_PRODUCT_NAME_LENGTH <= 6
+
+
+# ============================================================================
+# Null-valued Federal Register fields
+#
+# The API returns these keys present-but-null (~7% of notices carry
+# "dates": null). dict.get's default only applies to an absent key, so a None
+# reached the meeting-date regex and raised TypeError out of the whole
+# collection — one malformed notice discarded every good one and froze the
+# ADCOM cache silently for 9 days.
+# ============================================================================
+
+
+class TestFederalRegisterNullFields:
+
+    @patch("wake_robin_data_pipeline.collectors.fda_adcom_collector._get_session")
+    @patch("wake_robin_data_pipeline.collectors.fda_adcom_collector.time.sleep")
+    def test_null_dates_does_not_raise(self, mock_sleep, mock_get_session, product_map, as_of_date):
+        """A notice with "dates": null must be skipped, not crash the collection."""
+        session = _mock_session()
+        mock_get_session.return_value = session
+        session.get.return_value = _mock_response(
+            json_data={
+                "count": 1,
+                "total_pages": 1,
+                "results": [
+                    {
+                        "title": "Cellular, Tissue, and Gene Therapies Advisory Committee; Notice of Meeting",
+                        "dates": None,
+                        "publication_date": "2025-06-15",
+                        "html_url": "https://example.com/doc-null",
+                    }
+                ],
+            }
+        )
+
+        events = _collect_adcom_from_federal_register(product_map, as_of_date)
+
+        assert events == []
+
+    @patch("wake_robin_data_pipeline.collectors.fda_adcom_collector._get_session")
+    @patch("wake_robin_data_pipeline.collectors.fda_adcom_collector.time.sleep")
+    def test_null_dates_does_not_discard_sibling_events(self, mock_sleep, mock_get_session, product_map, as_of_date):
+        """The regression: one null-dates notice must not take valid ones down with it."""
+        session = _mock_session()
+        mock_get_session.return_value = session
+        session.get.return_value = _mock_response(
+            json_data={
+                "count": 2,
+                "total_pages": 1,
+                "results": [
+                    {
+                        "title": "Cellular, Tissue, and Gene Therapies Advisory Committee; Notice of Meeting",
+                        "dates": None,
+                        "publication_date": "2025-06-14",
+                        "html_url": "https://example.com/doc-null",
+                    },
+                    {
+                        "title": ("Oncologic Drugs Advisory Committee; NDA 215050 for Belantamab Mafodotin Injection"),
+                        "dates": "The meeting will be held on July 17, 2025, from 8 a.m.",
+                        "publication_date": "2025-06-15",
+                        "html_url": "https://example.com/doc-good",
+                    },
+                ],
+            }
+        )
+
+        events = _collect_adcom_from_federal_register(product_map, as_of_date)
+
+        assert len(events) == 1
+        assert events[0]["ticker"] == "GSK"
+        assert events[0]["event_date"] == "2025-07-17"
+
+    @patch("wake_robin_data_pipeline.collectors.fda_adcom_collector._get_session")
+    @patch("wake_robin_data_pipeline.collectors.fda_adcom_collector.time.sleep")
+    def test_null_title_and_publication_date_do_not_raise(self, mock_sleep, mock_get_session, product_map, as_of_date):
+        """title/publication_date are also coerced; a null in either must not raise."""
+        session = _mock_session()
+        mock_get_session.return_value = session
+        session.get.return_value = _mock_response(
+            json_data={
+                "count": 1,
+                "total_pages": 1,
+                "results": [
+                    {
+                        "title": None,
+                        "dates": "The meeting will be held on July 17, 2025, from 8 a.m.",
+                        "publication_date": None,
+                        "html_url": "https://example.com/doc-null-title",
+                    }
+                ],
+            }
+        )
+
+        events = _collect_adcom_from_federal_register(product_map, as_of_date)
+
+        assert isinstance(events, list)

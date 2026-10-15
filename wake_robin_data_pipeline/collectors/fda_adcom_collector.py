@@ -318,9 +318,14 @@ def _collect_adcom_from_federal_register(
             break
 
         for doc in results:
-            title = doc.get("title", "")
-            dates_str = doc.get("dates", "")
-            pub_date = doc.get("publication_date", "")
+            # `or ""` rather than a dict default: Federal Register returns these keys
+            # present but null (roughly 7% of notices carry "dates": null), and
+            # dict.get's default only applies when the key is absent. A None here
+            # raised TypeError out of the regex below and aborted the entire
+            # collection, silently freezing the ADCOM cache.
+            title = doc.get("title") or ""
+            dates_str = doc.get("dates") or ""
+            pub_date = doc.get("publication_date") or ""
 
             # Skip non-drug committees (tobacco, devices, veterinary, food)
             title_lower = title.lower()
@@ -688,9 +693,13 @@ def collect_fda_regulatory_notices(
                 break
 
             for doc in results:
-                title = doc.get("title", "")
-                pub_date = doc.get("publication_date", "")
-                doc_number = doc.get("document_number", "")
+                # `or ""` for the same reason as the ADCOM path above: these keys can
+                # arrive present-but-null. Latent here rather than active, but a null
+                # pub_date would raise on the `>` comparison and a null title in the
+                # regex scans below.
+                title = doc.get("title") or ""
+                pub_date = doc.get("publication_date") or ""
+                doc_number = doc.get("document_number") or ""
 
                 # PIT safety
                 if pub_date > end_date:
