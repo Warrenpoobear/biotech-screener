@@ -84,7 +84,7 @@ stage_short() {
 stage_pit_fin() {
     log "PIT financials incremental refresh (timeout 2400s)..."
     local rc=0
-    timeout 2400 $PYTHON tools/build_pit_financials.py --workers 3 2>&1 | tail -10 || rc=$?
+    timeout 2400 $PYTHON tools/build_pit_financials.py --max-age-days 7 2>&1 | tail -10 || rc=$?
     if [ $rc -eq 124 ]; then
         log "PIT financials TIMED OUT after 2400s — continuing with partial data"
     elif [ $rc -ne 0 ]; then
