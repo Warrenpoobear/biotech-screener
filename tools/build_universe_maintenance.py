@@ -6,6 +6,10 @@ SEC EDGAR CIK validity to flag names that may need attention: stale prices
 (possible delisting), missing from rankings (screening failure), names
 with no recent CTgov trials (dormant programs), and tickers with no CIK.
 
+Also cross-checks universe.json `status` against the corporate-actions registry
+and flags names that are dead there but still live here — the drift that keeps a
+delisted ticker in the daily price-fetch loop.
+
 Read-only — does not modify universe.json. Writes a maintenance report
 for human review.
 
@@ -147,11 +151,50 @@ def check_cik_coverage(universe: List[Dict]) -> List[str]:
     return [u["ticker"] for u in universe if not u.get("cik") and u.get("ticker")]
 
 
+def check_dead_not_retired(universe: List[Dict], as_of_date: str, registry: Any = None) -> Dict[str, str]:
+    """Find tickers dead in the corporate-actions registry but not retired in the universe.
+
+    The registry is the authority on acquisitions, delistings and bankruptcies, but
+    universe.json carries its own `status` field which is retired by operator action
+    (tools/maintain_universe.py retire). Nothing previously compared the two, so a
+    registered death could sit unreflected in the universe indefinitely — and because
+    refresh_prices() decides what to fetch from `status`, a dead name kept being
+    re-fetched every run and logging "possibly delisted" errors for a company that no
+    longer trades.
+
+    Returns {ticker: "<action>@<effective_date>"} for review. Read-only: retirement
+    stays an operator decision.
+    """
+    try:
+        from common.corporate_actions import death_date, is_dead, load_actions
+        from common.types import is_retired_status
+    except ImportError as exc:  # pragma: no cover - environment without the modules
+        logger.warning("Corporate-actions cross-check unavailable: %s", exc)
+        return {}
+
+    if registry is None:
+        registry = load_actions()
+    out: Dict[str, str] = {}
+    for u in universe:
+        ticker = u.get("ticker")
+        if not ticker or is_retired_status(u.get("status")):
+            continue
+        # PIT-safe: is_dead() only counts events effective on or before as_of_date,
+        # so a historical replay does not retire names that were alive at the time.
+        if is_dead(ticker, as_of_date, registry):
+            out[ticker] = death_date(ticker, registry) or "unknown"
+    return out
+
+
 def build_universe_maintenance(
     as_of_date: str,
     *,
     production_dir: Path = REPO_ROOT / "production_data",
-    snapshots_dir: Path = REPO_ROOT / "data" / "snapshots_pit",
+    # data/snapshots, not data/snapshots_pit: the latter stopped being written on
+    # 2026-06-10, so check_rankings_coverage() was comparing the live universe
+    # against a snapshot tree months out of date and flagging every name added
+    # since as "missing_from_rankings".
+    snapshots_dir: Path = REPO_ROOT / "data" / "snapshots",
     cache_dir: Path = REPO_ROOT / "cache" / "ctgov",
     price_csv: Path = REPO_ROOT / "production_data" / "price_history.csv",
 ) -> Dict[str, Any]:
@@ -167,6 +210,7 @@ def build_universe_maintenance(
     missing_rankings = check_rankings_coverage(snapshots_dir, universe_tickers, as_of_date)
     no_trials = check_trial_coverage(cache_dir, universe_tickers)
     no_cik = check_cik_coverage(universe)
+    dead_not_retired = check_dead_not_retired(universe, as_of_date)
 
     # Status counts
     no_status = [u["ticker"] for u in universe if not u.get("status") and u.get("ticker")]
@@ -183,6 +227,8 @@ def build_universe_maintenance(
         flags[t].append("no_cik")
     for t in no_status:
         flags[t].append("no_status_field")
+    for t, effective in dead_not_retired.items():
+        flags[t].append(f"dead_not_retired:{effective}")
 
     # Sort by number of flags
     flagged = sorted(flags.items(), key=lambda x: -len(x[1]))
@@ -202,7 +248,9 @@ def build_universe_maintenance(
             "no_ctgov_trials": len(no_trials),
             "no_cik": len(no_cik),
             "no_status": len(no_status),
+            "dead_not_retired": len(dead_not_retired),
         },
+        "dead_not_retired": dead_not_retired,
         "flagged_tickers": [{"ticker": t, "flags": f, "n_flags": len(f)} for t, f in flagged],
     }
 
@@ -241,7 +289,22 @@ def format_report_md(d: Dict[str, Any]) -> str:
     lines.append(f"- No CTgov trials: {s.get('no_ctgov_trials', 0)}")
     lines.append(f"- No SEC CIK: {s.get('no_cik', 0)}")
     lines.append(f"- No status field: {s.get('no_status', 0)}")
+    lines.append(f"- Dead in registry, not retired in universe: {s.get('dead_not_retired', 0)}")
     lines.append("")
+
+    dead = d.get("dead_not_retired", {})
+    if dead:
+        lines.append("## Dead in Corporate-Actions Registry, Not Retired in Universe")
+        lines.append("")
+        lines.append("These are acquired/delisted/bankrupt per `production_data/corporate_actions.json`")
+        lines.append("but still carry a live `status` in `universe.json`, so `refresh_prices()` keeps")
+        lines.append("fetching them every run. Retire each with:")
+        lines.append("")
+        lines.append("```")
+        for ticker in sorted(dead):
+            lines.append(f"python tools/maintain_universe.py retire {ticker}   # dead {dead[ticker]}")
+        lines.append("```")
+        lines.append("")
 
     flagged = d.get("flagged_tickers", [])
     if flagged:
