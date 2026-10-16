@@ -12,7 +12,7 @@ Usage:
     python tools/build_pit_financials.py                  # full universe
     python tools/build_pit_financials.py --ticker ALNY    # single ticker
     python tools/build_pit_financials.py --force           # re-download all
-    python tools/build_pit_financials.py --workers 3       # parallel workers (default 1)
+    python tools/build_pit_financials.py --max-age-days 7  # re-download files older than 7 days
 """
 
 import argparse
@@ -339,6 +339,22 @@ def save_pit_record(record: dict, output_dir: Path) -> Path:
     return out_path
 
 
+def is_fresh(path: Path, max_age_days: Optional[float], now: Optional[float] = None) -> bool:
+    """Return True if a cached PIT record should be reused instead of re-fetched.
+
+    With max_age_days=None any existing file counts as fresh (the historical
+    behaviour). Otherwise the file must also be younger than max_age_days, so a
+    scheduled refresh actually picks up newly filed 10-Qs/10-Ks. Facts carry
+    their SEC 'filed' date, so re-fetching never introduces look-ahead.
+    """
+    if not path.exists():
+        return False
+    if max_age_days is None:
+        return True
+    age_s = (time.time() if now is None else now) - path.stat().st_mtime
+    return age_s < max_age_days * 86400
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -346,6 +362,12 @@ def main():
     parser = argparse.ArgumentParser(description="Build PIT financial fact store from SEC EDGAR")
     parser.add_argument("--ticker", type=str, default=None, help="Process single ticker (default: full universe)")
     parser.add_argument("--force", action="store_true", help="Re-download even if cached")
+    parser.add_argument(
+        "--max-age-days",
+        type=float,
+        default=None,
+        help="Re-download tickers whose cached record is older than this many days (default: never)",
+    )
     parser.add_argument(
         "--output-dir", type=str, default=None, help="Output directory (default: production_data/pit_financials/)"
     )
@@ -389,9 +411,10 @@ def main():
     no_cik = 0
 
     for i, ticker in enumerate(tickers, 1):
-        # Skip if already exists (unless --force)
+        # Skip if already exists and fresh enough (unless --force)
         out_path = output_dir / f"{ticker}.json"
-        if not args.force and out_path.exists():
+        refetch = args.force or out_path.exists()
+        if not args.force and is_fresh(out_path, args.max_age_days):
             skipped += 1
             if i % 50 == 0 or i == total:
                 print(f"[{i}/{total}] {ticker} ... skipped (cached)")
@@ -405,7 +428,9 @@ def main():
             continue
 
         # Fetch and build
-        record = build_pit_record(ticker, cik, session, force=args.force)
+        # A stale record must bypass the raw companyfacts cache too, or the
+        # rebuild would just re-read the same old EDGAR response.
+        record = build_pit_record(ticker, cik, session, force=refetch)
         if record is None:
             logger.warning(f"[{i}/{total}] {ticker} ... EDGAR fetch failed")
             failed += 1
