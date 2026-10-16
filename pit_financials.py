@@ -19,7 +19,7 @@ Usage:
 
 import json
 import logging
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Optional
 
@@ -116,47 +116,133 @@ def _latest_n_facts(
     return deduped[:n]
 
 
-def _is_quarterly(fact: dict) -> bool:
-    """Heuristic: a fact is quarterly if it has a start date ~90 days before end,
-    or if the form is a 10-Q variant."""
-    form = (fact.get("form") or "").upper()
-    if form in QUARTERLY_FORMS:
-        return True
-    if form in ANNUAL_FORMS:
-        return False
-    # Heuristic from start/end dates
+def _duration_days(fact: dict) -> Optional[int]:
+    """Length of a duration fact's period in days, or None if start/end are unknown."""
     start = fact.get("start")
     end = fact.get("end")
-    if start and end:
-        try:
-            s = datetime.strptime(start, "%Y-%m-%d")
-            e = datetime.strptime(end, "%Y-%m-%d")
-            days = (e - s).days
-            # Quarterly: roughly 80-100 days; annual: roughly 350-370
-            return days < 200
-        except ValueError:
-            pass
-    return False
+    if not (start and end):
+        return None
+    try:
+        return (datetime.strptime(end, "%Y-%m-%d") - datetime.strptime(start, "%Y-%m-%d")).days
+    except ValueError:
+        return None
+
+
+def _is_quarterly(fact: dict) -> bool:
+    """A fact covers a single quarter (~3 months).
+
+    Uses the period length when start/end are known. The form type is only a
+    fallback: 10-Q cash-flow statements are year-to-date, so a 10-Q fact can
+    cover 6 or 9 months.
+    """
+    days = _duration_days(fact)
+    if days is not None:
+        return 60 <= days <= 120
+    form = (fact.get("form") or "").upper()
+    return form in QUARTERLY_FORMS
 
 
 def _is_annual(fact: dict) -> bool:
-    """Check if a fact covers an annual period."""
+    """A fact covers a full year. Period length first, form type as fallback."""
+    days = _duration_days(fact)
+    if days is not None:
+        return 330 <= days <= 400
     form = (fact.get("form") or "").upper()
-    if form in ANNUAL_FORMS:
-        return True
-    if form in QUARTERLY_FORMS:
-        return False
-    start = fact.get("start")
-    end = fact.get("end")
-    if start and end:
-        try:
-            s = datetime.strptime(start, "%Y-%m-%d")
-            e = datetime.strptime(end, "%Y-%m-%d")
-            days = (e - s).days
-            return days > 200
-        except ValueError:
-            pass
-    return False
+    return form in ANNUAL_FORMS
+
+
+def _dedup_by_period(facts: list[dict]) -> list[dict]:
+    """For each unique (start, end) period, keep only the latest-filed fact.
+
+    Duration facts can share an end date with different periods (3-month vs
+    year-to-date, or a prior-year comparative), so keying on end alone would
+    discard valid periods.
+    """
+    by_period: dict[tuple, dict] = {}
+    for f in facts:
+        if not f.get("end"):
+            continue
+        key = (f.get("start"), f["end"])
+        existing = by_period.get(key)
+        if existing is None or f.get("filed", "") > existing.get("filed", ""):
+            by_period[key] = f
+    return list(by_period.values())
+
+
+def _shift_year(date_str: str, years: int) -> Optional[str]:
+    try:
+        d = datetime.strptime(date_str, "%Y-%m-%d")
+    except ValueError:
+        return None
+    try:
+        return d.replace(year=d.year + years).strftime("%Y-%m-%d")
+    except ValueError:  # Feb 29
+        return d.replace(year=d.year + years, day=28).strftime("%Y-%m-%d")
+
+
+def _days_between(a: str, b: str) -> int:
+    return abs((datetime.strptime(a, "%Y-%m-%d") - datetime.strptime(b, "%Y-%m-%d")).days)
+
+
+def _find_period(facts: list[dict], start: str, end: str, tolerance_days: int = 7) -> Optional[dict]:
+    """Find a fact whose period matches (start, end) within a few days."""
+    for f in facts:
+        if f.get("start") and f.get("end"):
+            if _days_between(f["start"], start) <= tolerance_days and _days_between(f["end"], end) <= tolerance_days:
+                return f
+    return None
+
+
+def _ttm_from_periods(facts: list[dict]) -> Optional[float]:
+    """TTM from facts that carry start/end dates, or None if it cannot be derived.
+
+    Order of preference, all anchored on the most recent period end:
+      1. a full-year fact ending there;
+      2. four consecutive single-quarter facts ending there;
+      3. year-to-date (including a Q1 quarter) + prior full year - prior-year
+         year-to-date;
+      4. the longest period ending there, annualized by its length.
+    """
+    dated = [f for f in facts if _duration_days(f) is not None]
+    if not dated:
+        return None
+    latest_end = max(f["end"] for f in dated)
+    at_latest = [f for f in dated if f["end"] == latest_end]
+
+    annual = [f for f in at_latest if _is_annual(f)]
+    if annual:
+        return float(annual[0]["val"])
+
+    quarters = sorted((f for f in dated if _is_quarterly(f)), key=lambda f: f["end"], reverse=True)
+    if quarters and quarters[0]["end"] == latest_end:
+        chain = [quarters[0]]
+        for q in quarters[1:]:
+            if len(chain) == 4:
+                break
+            if 80 <= _days_between(chain[-1]["end"], q["end"]) <= 100:
+                chain.append(q)
+        if len(chain) == 4:
+            return sum(float(q["val"]) for q in chain)
+
+    # A Q1 fact is also year-to-date, so this applies to any sub-annual period.
+    ytd = max(at_latest, key=lambda f: _duration_days(f) or 0)
+    ytd_days = _duration_days(ytd) or 0
+    if 0 < ytd_days < 330:
+        prior_fy_end = (datetime.strptime(ytd["start"], "%Y-%m-%d") - timedelta(days=1)).strftime("%Y-%m-%d")
+        prior_fy_start = _shift_year(ytd["start"], -1)
+        prior_ytd_end = _shift_year(ytd["end"], -1)
+        if prior_fy_start and prior_ytd_end:
+            prior_fy = _find_period(dated, prior_fy_start, prior_fy_end)
+            prior_ytd = _find_period(dated, prior_fy_start, prior_ytd_end)
+            if prior_fy is not None and prior_ytd is not None and _is_annual(prior_fy):
+                return float(ytd["val"]) + float(prior_fy["val"]) - float(prior_ytd["val"])
+
+    longest = max(at_latest, key=lambda f: _duration_days(f) or 0)
+    days = _duration_days(longest)
+    if days:
+        # XBRL periods are inclusive of both start and end dates.
+        return float(longest["val"]) * 365.0 / (days + 1)
+    return None
 
 
 def _compute_ttm(
@@ -174,7 +260,19 @@ def _compute_ttm(
     2. If the most recent fact is quarterly (10-Q), sum the 4 most recent
        non-overlapping quarterly values.
     3. If we have fewer than 4 quarters, annualize what we have.
+
+    When facts carry start/end dates, _ttm_from_periods is used instead: 10-Q
+    cash-flow facts are year-to-date, so steps 2-3 above would mix 3/6/9-month
+    periods. Steps 1-3 remain the fallback for facts without period dates.
     """
+    pit_facts = _filter_facts_pit(facts, as_of_date)
+    if not pit_facts:
+        return None
+    if any(_duration_days(f) is not None for f in pit_facts):
+        ttm = _ttm_from_periods(_dedup_by_period(pit_facts))
+        if ttm is not None:
+            return ttm
+
     recent = _latest_n_facts(facts, as_of_date, n=8)
     if not recent:
         return None
