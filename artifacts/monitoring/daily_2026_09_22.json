@@ -1,0 +1,167 @@
+{
+  "date": "2026-09-22",
+  "monitoring_day": 77,
+  "monitoring_day_note": "Days 69-77 missing (Sep 12-Sep 22 = 7 trading sessions uncaptured). Last captured: Day 68 (2026-09-11).",
+  "timestamp": "2026-09-22T09:00:00.000000Z",
+  "phase": "MONITORING GAP — Days 69-77 NOT CAPTURED. Last successful snapshot: Day 68 (2026-09-11). Scheduled routine fired today 2026-09-22 but is operating OUTSIDE original window (2026-06-11 to 2026-06-30). Multiple CRITICAL items require operator attention.",
+  "gap_artifact": true,
+  "gap_reason": "Pre-market routine did not fire Sep 12-Sep 21. Today (Sep 22) routine fired but Robinhood MCP tools remain unavailable. Live price data cannot be fetched. This artifact records known state and critical deadlines only.",
+  "data_as_of": "STALE — last known prices: 2026-08-27 close (Day 63). Price data now approximately 17 trading sessions stale as of Sep 22 open.",
+  "monitoring_window_status": {
+    "configured_start": "2026-06-11",
+    "configured_end": "2026-06-30",
+    "today": "2026-09-22",
+    "days_past_window": 84,
+    "status": "RUNNING OUTSIDE CONFIGURED WINDOW — routine has continued firing after the June 30 end date. Operator should review whether to extend, terminate, or reconfigure the schedule."
+  },
+  "account": {
+    "account_id": "Robinhood 802349084",
+    "equity_fetchable": false,
+    "equity_note": "Robinhood MCP unavailable. Last known account equity: $138.04 (Aug 27 close carry). Price data 17 trading sessions stale. True current equity unknown.",
+    "cash_carried": 99.87,
+    "buying_power_carried": null,
+    "total_estimated_account_value_stale": 237.91,
+    "stale_trading_sessions": 17
+  },
+  "portfolio_overview": {
+    "total_positions": 15,
+    "last_known_avg_pnl_vs_entry_pct": 37.88,
+    "last_known_xbi_return_pct": 25.9,
+    "last_known_outperformance_pp": 11.98,
+    "data_basis": "Aug 27 close — 17 trading sessions stale as of Sep 22",
+    "current_pnl_unknown": true,
+    "gap_flags_last_known": 0,
+    "note": "Cannot verify current P&L, drawdown gate, or gap events. All values are Aug 27 carry-forward. Portfolio has not been price-refreshed in 17 sessions."
+  },
+  "governance_gates": {
+    "drawdown_gate": {
+      "status": "UNKNOWN — stale basis (Aug 27, 17 sessions stale)",
+      "last_known_outperformance_pp": 11.98,
+      "threshold_pp": -2.0,
+      "last_known_status": "CLEAR",
+      "note": "Last measured +11.98pp outperformance vs XBI (Aug 27). Cannot verify current status. Buffer was large but market movement over 17 sessions is unknown."
+    },
+    "ic_gate": {
+      "status": "OVERDUE",
+      "days_overdue": 83,
+      "gate_was_due": "2026-07-01",
+      "last_measured_ic": 0.0432,
+      "last_measured_date": "2026-06-24",
+      "note": "83 days overdue (Jul 1 to Sep 22). Operator freeze lift required per SM-20260629-001. DEM candidate freeze: NO_MODEL_CHANGE window 0/20 LIVE sessions completed."
+    },
+    "h20d_gate": {
+      "status": "OVERDUE",
+      "days_overdue": 83,
+      "gate_date": "2026-07-01",
+      "override_posture": "MAINTAINED (OPTION_B_OVERRIDE_2026_05_26)",
+      "note": "83 days overdue. Sequential gate: freeze lift → quarantine script → Q2 13F warm → cohort check → IC decomp. All deferred."
+    },
+    "q2_13f_gate": {
+      "status": "OVERDUE",
+      "filing_deadline": "2026-08-14",
+      "days_past_deadline": 39,
+      "note": "Q2 2026 13F filing deadline was Aug 14. 39 days past. Cache not warmed, cohort quarantine not run, IC decomposition not refreshed. Manager registry stale for Q2 holdings."
+    },
+    "monday_rebalance_gate": {
+      "status": "MULTIPLE UNRESOLVED",
+      "unresolved_mondays": ["2026-08-31", "2026-09-14", "2026-09-21"],
+      "note": "Three consecutive weekly rebalance checks unresolved. Aug 31, Sep 14, and Sep 21 Monday checks missed. Per AGENTIC_ACCOUNT_RULES.md Rule 1: weekly Monday equal-weight rebalance check required. Operator must manually verify or execute rebalance for all three dates.",
+      "urgency": "HIGH — account may be materially off equal-weight across 15 positions"
+    },
+    "emergency_gate": {
+      "status": "UNKNOWN (stale basis)",
+      "last_known_lowest_pnl_ticker": "STOK",
+      "last_known_lowest_pnl_pct": 13.4,
+      "threshold_pct": -20.0,
+      "note": "Aug 27 basis: all 15 positions above entry. 17 sessions unknown. Emergency threshold (-20% vs entry) cannot be verified. STOK and ALMS had smallest buffers on Aug 27."
+    }
+  },
+  "critical_upcoming_catalysts": {
+    "note": "As of Sep 22, these catalysts are approximately 8 calendar days away (~6 trading sessions)",
+    "ALMS": {
+      "ticker": "ALMS",
+      "event": "LUMUS trial binary readout",
+      "approx_date": "~2026-09-30",
+      "calendar_days_remaining": 8,
+      "trading_days_remaining": 6,
+      "last_known_pnl_vs_entry_pct": 13.94,
+      "last_known_price_date": "2026-08-27",
+      "risk": "Binary event. Negative readout = material downside from last known price. Position may have moved significantly in 17 sessions.",
+      "urgency": "HIGH"
+    },
+    "XENE": {
+      "ticker": "XENE",
+      "event": "NDA filing (could announce any session)",
+      "approx_date": "~2026-09-30",
+      "calendar_days_remaining": 8,
+      "trading_days_remaining": 6,
+      "last_known_pnl_vs_entry_pct": 19.21,
+      "last_known_price_date": "2026-08-27",
+      "risk": "NDA timing uncertain — announcement could have already occurred in the Sep 12-22 gap.",
+      "urgency": "HIGH"
+    }
+  },
+  "monitoring_gap_record": {
+    "last_successful_snapshot": "2026-09-11 (Day 68)",
+    "missing_trading_sessions": ["2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-21", "2026-09-22 (this artifact — prices unavailable)"],
+    "missing_count": 7,
+    "reason": "Routine scheduling gap Sep 12-21. Sep 22 routine fired but Robinhood MCP unavailable — prices cannot be fetched.",
+    "data_recovery": "Manual price lookup required. Operator should pull Sep 14-22 closing prices for all 15 tickers and XBI to reconstruct the gap."
+  },
+  "required_operator_actions": [
+    {
+      "priority": 1,
+      "action": "RESTORE LIVE PRICE DATA SOURCE",
+      "detail": "Robinhood MCP has been unavailable since Aug 27. 17 trading sessions of price data missing. Cannot verify drawdown gate, gap events, or position health. Must restore before next rebalance or catalyst event.",
+      "deadline": "IMMEDIATE"
+    },
+    {
+      "priority": 2,
+      "action": "VERIFY ALMS AND XENE CATALYST STATUS",
+      "detail": "ALMS LUMUS binary (~Sep 30) and XENE NDA (~Sep 30) are ~8 calendar days away. Check whether any announcements occurred in the Sep 12-22 gap. These are binary events with significant downside risk on negative outcomes.",
+      "deadline": "TODAY"
+    },
+    {
+      "priority": 3,
+      "action": "RESOLVE THREE MISSED MONDAY REBALANCES",
+      "detail": "Aug 31, Sep 14, and Sep 21 Monday rebalance checks are unresolved. Manually verify current equal-weight status in Robinhood account 802349084 and execute rebalance if needed.",
+      "deadline": "TODAY (Sep 22 is Tuesday)"
+    },
+    {
+      "priority": 4,
+      "action": "WARM Q2 2026 13F CACHE",
+      "detail": "Q2 13F deadline Aug 14 is 39 days past. Three tracked managers (Fairmount CIK 0001802528, Deep Track 0001856083, Logos Global 0001792126) have filed Q2 13F-HR. Cache not warmed. Cohort quarantine not run. IC decomposition stale.",
+      "deadline": "WITHIN WEEK"
+    },
+    {
+      "priority": 5,
+      "action": "IC + H20D GATE REVIEW (83 days overdue)",
+      "detail": "IC gate due 2026-07-01. Now 83 days overdue. Requires operator freeze lift per SM-20260629-001. DEM candidate freeze: 0/20 LIVE windows completed. Run: python3 scripts/research/checklist_v2_rerun.py after freeze lift.",
+      "deadline": "WITHIN WEEK (after price data restored)"
+    },
+    {
+      "priority": 6,
+      "action": "REVIEW MONITORING WINDOW SCHEDULE",
+      "detail": "Configured end date was 2026-06-30. Routine has continued firing through Sep 22 (84 days past configured end). Operator should confirm extended scope or terminate the schedule.",
+      "deadline": "THIS WEEK"
+    }
+  ],
+  "positions_last_known": {
+    "basis": "Day 68 (2026-09-11) authoritative values — underlying prices from Aug 27 close, 17 trading sessions stale as of Sep 22",
+    "COGT": {"pnl_pct": 18.31, "note": "Catalyst ~July 1 (PAST — outcome unknown to this artifact)"},
+    "DNTH": {"pnl_pct": 54.70, "note": "Catalyst Jun 30 fired. Outcome unknown from this artifact."},
+    "NRIX": {"pnl_pct": 73.87},
+    "URGN": {"pnl_pct": 62.38},
+    "ALMS": {"pnl_pct": 13.94, "note": "LUMUS binary ~Sep 30 — 8 days away. PRIORITY WATCH."},
+    "SYRE": {"pnl_pct": 23.02},
+    "RVMD": {"pnl_pct": 53.83},
+    "CMPS": {"pnl_pct": 29.56},
+    "SLDB": {"pnl_pct": 56.09},
+    "DRUG": {"pnl_pct": 17.22},
+    "STOK": {"pnl_pct": 13.40, "note": "Lowest buffer Aug 27. 17 sessions movement unknown."},
+    "PRAX": {"pnl_pct": 52.06},
+    "TRVI": {"pnl_pct": 33.73},
+    "ERAS": {"pnl_pct": 46.87},
+    "XENE": {"pnl_pct": 19.21, "note": "NDA ~Sep 30 — 8 days away. PRIORITY WATCH."}
+  }
+}
