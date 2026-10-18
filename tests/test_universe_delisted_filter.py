@@ -67,8 +67,10 @@ class TestUniverseJsonDelisted:
         total = len(data)
         delisted_count = sum(1 for e in data if isinstance(e, dict) and e.get("status") == "delisted")
         active_count = total - delisted_count
-        assert total == 357, f"Expected 357 total entries, got {total}"
-        assert delisted_count == 7, f"Expected 7 delisted entries, got {delisted_count}"
+        # 358 = 357 + LKFT (Galapagos renamed, added 2026-10-18). 8 delisted = the 7
+        # above + GLPG (kept as the pre-rename record; the company continues as LKFT).
+        assert total == 358, f"Expected 358 total entries, got {total}"
+        assert delisted_count == 8, f"Expected 8 delisted entries, got {delisted_count}"
         assert active_count == 350, f"Expected 350 active entries, got {active_count}"
 
     def test_delisted_tickers_not_in_active_set(self):
