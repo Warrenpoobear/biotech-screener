@@ -233,7 +233,7 @@
       "effective_date": "2026-02-27",
       "acquirer": "Novartis",
       "deal_price": null,
-      "notes": "Avidity Biosciences acquired by Novartis. Price series ends 2026-02-27. Removed from universe."
+      "notes": "Avidity Biosciences acquired by Novartis. Price series ends 2026-02-27. Removed from universe. NOTE: price_history rows under RNA after 2026-02-27 (~$12-17, vs ~$72.80 the day before) are not Avidity. The deal spun off Atrium Therapeutics (1 SpinCo share per 10 RNA); the vendor series under the old symbol is presumably that or another security - unverified, do not use."
     },
     {
       "ticker": "SRRK",
@@ -284,12 +284,12 @@
       "notes": "Centessa Pharmaceuticals acquired by Eli Lilly (via LDH XV Corp). Scheme of Arrangement effective 2026-06-24; ADSs delisted from Nasdaq. Consideration $38.00 cash/share plus up to $9.00 CVR. Frozen price series carries to 2026-06-29. Removed from universe."
     },
     {
-      "ticker": "BHVN",
+      "ticker": "CERE",
       "action": "acquisition",
       "effective_date": "2024-10-15",
       "acquirer": "AbbVie",
       "deal_price": 44.0,
-      "notes": "Cerevel Therapeutics acquired by AbbVie. CVR structure."
+      "notes": "Cerevel Therapeutics (CERE) acquired by AbbVie. CVR structure. Previously mis-keyed under BHVN (Biohaven, which still trades) \u2014 corrected 2026-10-18."
     },
     {
       "ticker": "ACLX",
@@ -418,18 +418,19 @@
     {
       "ticker": "DAWN",
       "action": "acquisition",
-      "effective_date": "2026-03-15",
-      "acquirer": "Unknown",
-      "deal_price": 21.35,
-      "notes": "Day One Biopharmaceuticals. Flat price suggests acquisition. Needs confirmation."
+      "effective_date": "2026-04-23",
+      "acquirer": "Servier",
+      "deal_price": 21.5,
+      "notes": "Day One Biopharmaceuticals acquired by Servier via tender offer at $21.50/share cash (~$2.5B). Announced 2026-03-06; tender completed 2026-04-23. Replaces placeholder record (acquirer Unknown, 2026-03-15, $21.35); verified 2026-10-18 against press releases / SEC filings.",
+      "announced_date": "2026-03-06"
     },
     {
       "ticker": "FOLD",
       "action": "acquisition",
-      "effective_date": "2026-03-01",
-      "acquirer": "Unknown",
-      "deal_price": 14.4,
-      "notes": "Amicus Therapeutics. Flat price suggests acquisition. Needs confirmation."
+      "effective_date": "2026-04-27",
+      "acquirer": "BioMarin",
+      "deal_price": 14.5,
+      "notes": "Amicus Therapeutics acquired by BioMarin at $14.50/share cash (~$4.8B). Announced December 2025; completed 2026-04-27. Replaces placeholder record (acquirer Unknown, 2026-03-01, $14.40); verified 2026-10-18 against press releases / SEC filings."
     },
     {
       "ticker": "APLS",
@@ -472,12 +473,12 @@
     },
     {
       "ticker": "APGE",
-      "action": "pending_acquisition",
+      "action": "acquisition",
       "announced_date": "2026-06-22",
-      "effective_date": null,
+      "effective_date": "2026-09-03",
       "acquirer": "AbbVie",
       "deal_price": 135.11,
-      "notes": "Apogee Therapeutics acquisition by AbbVie at $135.11/share cash (~$10.9B deal value). Announced 2026-06-22. APGE trading at ~$132.55 (1.9% arb discount to deal price). Gate from ranker/selector until acquisition closes; price series freezes at deal value at close."
+      "notes": "Apogee Therapeutics acquired by AbbVie at $135.11/share cash (~$10.9B). Announced 2026-06-22; completed 2026-09-03, stock ceased trading before the open that day; verified 2026-10-18 against press releases / SEC filings."
     },
     {
       "ticker": "CPRX",
@@ -503,6 +504,40 @@
       "announced_date": "2026-05-05",
       "effective_date": "2026-06-24",
       "notes": "Sangamo Therapeutics \u2014 three-stage event, registered as bankruptcy on the date the SGMO symbol stopped resolving. (1) Nasdaq delisting determination for continued failure of the $1.00 minimum bid price; trading suspended and moved to OTCQB 2026-05-05. (2) Hearings-panel appeal stayed delisting but not the trading suspension. (3) Voluntary Chapter 11 petition; common stock began trading on OTCID Basic 2026-06-24 under the NEW symbol SGMOQ. Frozen price series carries to 2026-07-01. Remove from universe. NOTE: effective_date 2026-06-24 chosen because that is when the SGMO ticker ceased to resolve, matching where our price feed dies; the Nasdaq venue change was 2026-05-05. A separate ticker_change SGMO->SGMOQ action was deliberately NOT added, to avoid resolve_ticker() redirecting fetches to a bankrupt sub-$0.10 OTCID listing. [registered 2026-08-05 \u2014 see CPRX note]"
+    },
+    {
+      "ticker": "CRNX",
+      "action": "acquisition",
+      "announced_date": "2026-07-06",
+      "effective_date": "2026-09-01",
+      "acquirer": "Vertex Pharmaceuticals",
+      "deal_price": 85.0,
+      "notes": "Crinetics Pharmaceuticals acquired by Vertex at $85.00/share cash (~$10.0B equity). Announced 2026-07-06; closed 2026-09-01; verified 2026-10-18 against press releases / SEC filings."
+    },
+    {
+      "ticker": "ATAI",
+      "action": "acquisition",
+      "effective_date": "2026-09-11",
+      "acquirer": "Eli Lilly",
+      "deal_price": 6.75,
+      "notes": "AtaiBeckley acquired by Eli Lilly at $6.75/share cash plus one CVR per share (up to ~$3.8B). Shareholders approved 2026-09-08; merger closed and Nasdaq delisted 2026-09-11. deal_price excludes the CVR; verified 2026-10-18 against press releases / SEC filings."
+    },
+    {
+      "ticker": "TBPH",
+      "action": "acquisition",
+      "announced_date": "2026-06-29",
+      "effective_date": "2026-09-23",
+      "acquirer": "Zymeworks",
+      "deal_price": 17.0,
+      "notes": "Theravance Biopharma acquired by Zymeworks at $17.00/share cash (~$929M). Announced 2026-06-29; completed 2026-09-23; verified 2026-10-18 against press releases / SEC filings."
+    },
+    {
+      "ticker": "LKFT",
+      "action": "ticker_change",
+      "effective_date": "2026-05-08",
+      "old_ticker": "GLPG",
+      "new_ticker": "LKFT",
+      "notes": "Galapagos NV renamed Lakefront Biotherapeutics NV (EGM 2026-04-28); Nasdaq symbol GLPG -> LKFT effective 2026-05-08. Same company, CIK 0001421876; verified 2026-10-18 against press releases / SEC filings."
     }
   ]
 }
