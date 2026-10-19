@@ -46,6 +46,28 @@ def registry():
     return load_actions()
 
 
+# APGE's registry record as it stood on 2026-08-05 (deal announced, not closed).
+# Frozen here because the live registry moved on: the deal closed 2026-09-03 and
+# the record became an ``acquisition`` on 2026-10-18. The loader behaviour under
+# test (null effective_date on a pending deal) must stay covered regardless.
+APGE_PENDING_2026_08_05 = {
+    "ticker": "APGE",
+    "action": "pending_acquisition",
+    "announced_date": "2026-06-22",
+    "effective_date": None,
+    "acquirer": "AbbVie",
+    "deal_price": 135.11,
+    "notes": "Apogee Therapeutics acquisition by AbbVie at $135.11/share cash.",
+}
+
+
+@pytest.fixture(scope="module")
+def pending_registry(tmp_path_factory):
+    path = tmp_path_factory.mktemp("ca") / "corporate_actions.json"
+    path.write_text(json.dumps({"_schema": "corporate_actions.v1", "actions": [APGE_PENDING_2026_08_05]}))
+    return load_actions(path)
+
+
 # --- defect 1: pending_acquisition is recognised, and does not crash ---------
 def test_pending_acquisition_is_a_known_action_type():
     assert "pending_acquisition" in ACTION_TYPES
@@ -58,9 +80,9 @@ def test_registry_loads_with_no_unknown_action_warnings(caplog):
     assert "Unknown action type" not in caplog.text
 
 
-def test_null_effective_date_falls_back_to_announced_date(registry):
+def test_null_effective_date_falls_back_to_announced_date(pending_registry):
     """THE crash regression. APGE has effective_date: null."""
-    acts = [a for a in registry.actions if a.ticker == "APGE"]
+    acts = [a for a in pending_registry.actions if a.ticker == "APGE"]
     assert acts, "APGE should now load"
     a = acts[0]
     assert a.action == "pending_acquisition"
@@ -68,10 +90,10 @@ def test_null_effective_date_falls_back_to_announced_date(registry):
     assert a.announced_date == "2026-06-22"
 
 
-def test_get_actions_does_not_raise_on_pending_entries(registry):
+def test_get_actions_does_not_raise_on_pending_entries(pending_registry):
     """None in effective_date would TypeError in the > comparison and the sort."""
-    assert get_actions("APGE", registry, as_of=AS_OF)  # must not raise
-    assert get_actions("APGE", registry) is not None
+    assert get_actions("APGE", pending_registry, as_of=AS_OF)  # must not raise
+    assert get_actions("APGE", pending_registry) is not None
 
 
 # --- pending is NOT dead ----------------------------------------------------
@@ -79,17 +101,17 @@ def test_pending_acquisition_is_not_a_dead_type():
     assert "pending_acquisition" not in DEAD_ACTION_TYPES
 
 
-def test_apge_still_trades(registry):
+def test_apge_still_trades(pending_registry):
     """An announced-but-unclosed deal still trades — must stay in the universe."""
-    assert is_dead("APGE", AS_OF, registry) is False
-    assert death_date("APGE", registry) is None
-    assert is_pending_deal("APGE", AS_OF, registry) is True
+    assert is_dead("APGE", AS_OF, pending_registry) is False
+    assert death_date("APGE", pending_registry) is None
+    assert is_pending_deal("APGE", AS_OF, pending_registry) is True
 
 
-def test_pending_deal_is_pit_gated_by_announcement(registry):
+def test_pending_deal_is_pit_gated_by_announcement(pending_registry):
     """No retroactive knowledge: invisible before the 2026-06-22 announcement."""
-    assert is_pending_deal("APGE", "2026-06-01", registry) is False
-    assert is_pending_deal("APGE", "2026-06-22", registry) is True
+    assert is_pending_deal("APGE", "2026-06-01", pending_registry) is False
+    assert is_pending_deal("APGE", "2026-06-22", pending_registry) is True
 
 
 # --- defect 2: the backfill --------------------------------------------------
