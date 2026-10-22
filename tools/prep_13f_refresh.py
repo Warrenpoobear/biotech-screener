@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """13F Refresh Readiness Check — tools/prep_13f_refresh.py
 
-Run before the Q1 2026 13F refresh window (target: May 13-15, 2026).
-Captures a pre-refresh baseline and verifies the ingest pipeline is ready.
+Run before a 13F refresh window. The target quarter is selected with --quarter
+and defaults to the most recently completed quarter; the SEC filing deadline is
+45 days after quarter end. Captures a pre-refresh baseline and verifies the
+ingest pipeline is ready.
 
 Checks:
   1. Most recent snapshot has valid institutional_summary_delta.json
-     with prior_date = 2025-12-31 (not yet refreshed to Q1 2026)
+     with prior_date = the quarter before the target (i.e. not yet refreshed)
   2. coinvest_score_z has healthy variance (sd > 0.10)
   3. PIT cache has entries within 3 days of today
   4. SEC EDGAR endpoint is reachable
@@ -20,8 +22,9 @@ Baseline artifact:
 
 Usage:
     source .env && python3 tools/prep_13f_refresh.py
-    python3 tools/prep_13f_refresh.py --date 2026-05-14  # specific snapshot
-    python3 tools/prep_13f_refresh.py --dry-run           # no artifact written
+    python3 tools/prep_13f_refresh.py --date 2026-05-14        # specific snapshot
+    python3 tools/prep_13f_refresh.py --quarter 2026-06-30     # specific quarter
+    python3 tools/prep_13f_refresh.py --dry-run                # no artifact written
 """
 
 from __future__ import annotations
@@ -40,6 +43,14 @@ from typing import Any, Dict, Optional, Tuple
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from common.date_utils import (  # noqa: E402
+    filing_deadline_13f,
+    latest_completed_quarter_end,
+    parse_quarter_end,
+    prior_quarter_end,
+    to_date_string,
+)
+
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 log = logging.getLogger(__name__)
 
@@ -49,7 +60,10 @@ PROD_INST_SUMMARY = PROJECT_ROOT / "production_data" / "institutional_summary.js
 MGR_REGISTRY = PROJECT_ROOT / "production_data" / "manager_registry.json"
 ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
 
-EDGAR_PROBE_URL = "https://efts.sec.gov/LATEST/search-index?q=%2213F%22&dateRange=custom&startdt=2026-05-01&enddt=2026-05-15&forms=13F-HR"
+EDGAR_PROBE_URL_TEMPLATE = (
+    "https://efts.sec.gov/LATEST/search-index?q=%2213F%22&dateRange=custom"
+    "&startdt={startdt}&enddt={enddt}&forms=13F-HR"
+)
 EDGAR_PROBE_TIMEOUT = 10
 
 # Thresholds
@@ -57,8 +71,15 @@ MIN_COINVEST_SD = 0.10
 MIN_SIGNAL_COVERAGE_PCT = 75.0
 MIN_MANAGERS_WITH_FILING = 30
 PIT_FRESHNESS_DAYS = 3
-EXPECTED_PRIOR_DATE_PRE_REFRESH = "2025-12-31"
-EXPECTED_PRIOR_DATE_POST_REFRESH = "2026-03-31"
+
+
+def edgar_probe_url(quarter: str) -> str:
+    """EDGAR full-text search URL covering the 13F filing window for a quarter.
+
+    The window runs from quarter end to the 45-day statutory deadline, so the probe
+    follows the target quarter instead of a fixed calendar range.
+    """
+    return EDGAR_PROBE_URL_TEMPLATE.format(startdt=quarter, enddt=to_date_string(filing_deadline_13f(quarter)))
 
 
 def _safe_float(v: Any) -> Optional[float]:
@@ -86,7 +107,7 @@ def _find_latest_snapshot(specific_date: Optional[str] = None) -> Optional[str]:
     return None
 
 
-def check_1_snapshot_baseline(snap_date: str) -> Tuple[bool, Dict[str, Any]]:
+def check_1_snapshot_baseline(snap_date: str, expected_prior_date: str) -> Tuple[bool, Dict[str, Any]]:
     """Verify the snapshot delta is present and prior_date is pre-refresh."""
     delta_path = SNAP_ROOT / snap_date / "institutional_summary_delta.json"
     if not delta_path.exists():
@@ -97,9 +118,10 @@ def check_1_snapshot_baseline(snap_date: str) -> Tuple[bool, Dict[str, Any]]:
     current_cache = delta.get("current_cache_as_of_date", "")
     tickers_in_current = delta.get("tickers_in_current", 0)
 
-    status = prior_date == EXPECTED_PRIOR_DATE_PRE_REFRESH
+    status = prior_date == expected_prior_date
     return status, {
         "snap_date": snap_date,
+        "expected_prior_date": expected_prior_date,
         "prior_date": prior_date,
         "current_cache_as_of_date": current_cache,
         "tickers_in_current": tickers_in_current,
@@ -165,11 +187,11 @@ def check_3_pit_cache_freshness() -> Tuple[bool, Dict[str, Any]]:
     }
 
 
-def check_4_edgar_reachable() -> Tuple[bool, Dict[str, Any]]:
-    """Probe SEC EDGAR for Q1 2026 13F filings (non-blocking warning only)."""
+def check_4_edgar_reachable(quarter: str) -> Tuple[bool, Dict[str, Any]]:
+    """Probe SEC EDGAR for the target quarter's 13F filings (non-blocking warning only)."""
     try:
         req = urllib.request.Request(
-            EDGAR_PROBE_URL,
+            edgar_probe_url(quarter),
             headers={"User-Agent": "biotech-screener-preflight admin@example.com"},
         )
         with urllib.request.urlopen(req, timeout=EDGAR_PROBE_TIMEOUT) as resp:
@@ -180,7 +202,8 @@ def check_4_edgar_reachable() -> Tuple[bool, Dict[str, Any]]:
             return reachable, {
                 "reachable": reachable,
                 "status_code": resp.status,
-                "q1_2026_hits_visible": has_hits,
+                "quarter": quarter,
+                "quarter_hits_visible": has_hits,
             }
     except Exception as exc:
         return False, {"reachable": False, "error": str(exc)[:120]}
@@ -244,10 +267,16 @@ def load_manager_registry() -> Dict[str, Any]:
     return json.loads(MGR_REGISTRY.read_text())
 
 
-def run(specific_date: Optional[str], dry_run: bool) -> int:
+def run(specific_date: Optional[str], dry_run: bool, quarter: Optional[str] = None) -> int:
     today = date.today().isoformat()
+    target_quarter = parse_quarter_end(quarter) if quarter else to_date_string(latest_completed_quarter_end())
+    expected_prior = to_date_string(prior_quarter_end(target_quarter))
+    deadline = to_date_string(filing_deadline_13f(target_quarter))
+
     print(f"\n{'='*60}")
     print(f"  13F REFRESH READINESS CHECK — {today}")
+    print(f"  Target quarter: {target_quarter} (filing deadline {deadline})")
+    print(f"  Expected pre-refresh prior_date: {expected_prior}")
     print(f"{'='*60}\n")
 
     # Locate baseline snapshot
@@ -258,16 +287,23 @@ def run(specific_date: Optional[str], dry_run: bool) -> int:
 
     log.info("Using snapshot: %s", snap)
 
-    results: Dict[str, Any] = {"as_of_date": today, "snap_date": snap, "checks": {}}
+    results: Dict[str, Any] = {
+        "as_of_date": today,
+        "snap_date": snap,
+        "target_quarter": target_quarter,
+        "expected_prior_date": expected_prior,
+        "filing_deadline": deadline,
+        "checks": {},
+    }
     all_pass = True
     warnings = []
 
     # Check 1 — snapshot baseline
-    ok, data = check_1_snapshot_baseline(snap)
+    ok, data = check_1_snapshot_baseline(snap, expected_prior)
     results["checks"]["snapshot_baseline"] = {"pass": ok, **data}
     status = "PASS" if ok else "WARN"
     if not ok:
-        warnings.append(f"prior_date={data.get('prior_date')} — expected {EXPECTED_PRIOR_DATE_PRE_REFRESH}")
+        warnings.append(f"prior_date={data.get('prior_date')} — expected {expected_prior}")
     print(f"[{status}] Check 1 — Snapshot baseline")
     print(f"       snap={snap}, prior_date={data.get('prior_date')}, tickers={data.get('tickers_in_current')}")
     if not ok:
@@ -296,12 +332,12 @@ def run(specific_date: Optional[str], dry_run: bool) -> int:
         print(f"       FAIL: PIT cache is {data.get('age_days')}d stale — run cron_data_refresh.sh sec_13f")
 
     # Check 4 — EDGAR reachability (warning only)
-    ok, data = check_4_edgar_reachable()
+    ok, data = check_4_edgar_reachable(target_quarter)
     results["checks"]["edgar_reachable"] = {"pass": ok, **data}
     status = "PASS" if ok else "WARN"
     print(f"\n[{status}] Check 4 — SEC EDGAR reachable (warning only)")
     if ok:
-        print(f"       EDGAR up, Q1 2026 13F-HR hits visible: {data.get('q1_2026_hits_visible')}")
+        print(f"       EDGAR up, {target_quarter} 13F-HR hits visible: {data.get('quarter_hits_visible')}")
     else:
         print(f"       WARN: {data.get('error', 'unreachable')} — EDGAR may be down or throttling")
         warnings.append("EDGAR probe failed — verify manually before refresh day")
@@ -363,9 +399,7 @@ def run(specific_date: Optional[str], dry_run: bool) -> int:
             print(f"  WARN: {w}")
     print("\n  Pre-refresh baseline (to use as --pre-date):")
     print(f"    --pre-date {snap}")
-    print(
-        f"\n  Post-refresh: run check_13f_cohort_quarantine.py once prior_date advances to {EXPECTED_PRIOR_DATE_POST_REFRESH}"
-    )
+    print(f"\n  Post-refresh: run check_13f_cohort_quarantine.py once prior_date advances to {target_quarter}")
     print(f"{'='*60}\n")
 
     if not dry_run:
@@ -382,9 +416,14 @@ def run(specific_date: Optional[str], dry_run: bool) -> int:
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("--date", default=None, help="Specific snapshot date YYYY-MM-DD (default: latest)")
+    p.add_argument(
+        "--quarter",
+        default=None,
+        help="Target quarter end YYYY-MM-DD (default: most recently completed quarter)",
+    )
     p.add_argument("--dry-run", action="store_true", help="Print results only; do not write artifact")
     args = p.parse_args(argv)
-    return run(args.date, args.dry_run)
+    return run(args.date, args.dry_run, args.quarter)
 
 
 if __name__ == "__main__":

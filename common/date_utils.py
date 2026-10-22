@@ -18,10 +18,13 @@ Usage:
     d = to_date_object("2024-01-15")  # Returns date(2024, 1, 15)
 """
 
-from datetime import date
+from datetime import date, timedelta
 from typing import Union
 
 DateLike = Union[str, date]
+
+# Calendar quarter ends as (month, day). 13F report_date always falls on one of these.
+QUARTER_ENDS = ((3, 31), (6, 30), (9, 30), (12, 31))
 
 
 def normalize_date(value: DateLike) -> date:
@@ -117,3 +120,90 @@ def validate_as_of_date(value: DateLike) -> None:
         normalize_date(value)
     except (ValueError, TypeError) as e:
         raise ValueError(f"Invalid as_of_date: {e}") from e
+
+
+def is_quarter_end(value: DateLike) -> bool:
+    """
+    Return True if value falls on a calendar quarter end.
+
+    Args:
+        value: Date to test
+
+    Returns:
+        True if the month/day is one of 03-31, 06-30, 09-30, 12-31
+    """
+    d = normalize_date(value)
+    return (d.month, d.day) in QUARTER_ENDS
+
+
+def parse_quarter_end(value: DateLike) -> str:
+    """
+    Validate that value is a calendar quarter end and return it as a string.
+
+    Args:
+        value: Date to validate
+
+    Returns:
+        ISO date string (YYYY-MM-DD)
+
+    Raises:
+        ValueError: If value is not a valid date or does not fall on a quarter end
+    """
+    d = normalize_date(value)
+    if not is_quarter_end(d):
+        expected = ", ".join(f"{m:02d}-{day:02d}" for m, day in QUARTER_ENDS)
+        raise ValueError(f"{to_date_string(d)} is not a quarter end (expected month-day one of: {expected})")
+    return to_date_string(d)
+
+
+def latest_completed_quarter_end(today: "date | None" = None) -> date:
+    """
+    Return the most recent calendar quarter end strictly before today.
+
+    A quarter is "completed" the day after it ends; this says nothing about
+    whether filings for it are available yet.
+
+    Args:
+        today: Reference date (defaults to date.today())
+
+    Returns:
+        The latest quarter-end date before today
+    """
+    today = today or date.today()
+    candidates = [date(today.year, m, day) for m, day in QUARTER_ENDS]
+    candidates.append(date(today.year - 1, 12, 31))
+    return max(d for d in candidates if d < today)
+
+
+def prior_quarter_end(value: DateLike) -> date:
+    """
+    Return the quarter end immediately preceding the given quarter end.
+
+    Args:
+        value: A quarter-end date
+
+    Returns:
+        The preceding quarter-end date
+
+    Raises:
+        ValueError: If value is not a quarter end
+    """
+    d = normalize_date(parse_quarter_end(value))
+    return latest_completed_quarter_end(d)
+
+
+def filing_deadline_13f(value: DateLike) -> date:
+    """
+    Return the SEC 13F filing deadline for a quarter: 45 days after quarter end.
+
+    Args:
+        value: A quarter-end date
+
+    Returns:
+        The filing deadline date
+
+    Raises:
+        ValueError: If value is not a quarter end
+    """
+    d = normalize_date(parse_quarter_end(value))
+    return d + timedelta(days=45)
