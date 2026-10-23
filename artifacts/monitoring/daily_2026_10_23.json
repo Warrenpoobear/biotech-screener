@@ -1,0 +1,376 @@
+{
+    "date": "2026-10-23",
+    "monitoring_day": 97,
+    "timestamp": "2026-10-23T13:07:03.000000Z",
+    "phase": "Day 97 — PRE-MARKET snapshot (Oct 23 09:07 ET, Friday). Robinhood MCP unavailable (ORGANIZATION ADMIN BLOCKED). Price basis remains Aug 27 close (NOW 40 TRADING SESSIONS STALE). CRITICAL: ALMS LUMUS Q3 deadline PASSED (Sep 30). XENE NDA Q3 deadline PASSED (Sep 30). Results of both unknown — no price data since Aug 27. FIVE UNRESOLVED REBALANCE CHECKS (Sep 14, Sep 21, Sep 28, Oct 5, Oct 12, Oct 19). Monitoring cron SKIPPED Sep 24 – Oct 22 (20 consecutive sessions). IC/h20d gates 114 days overdue. Q2 13F 70 days past deadline. Q3 13F cycle: period ended Sep 30, filing deadline ~Nov 14, 2026.",
+    "data_integrity": {
+        "primary_source": "Carried forward from daily_2026_09_23.json (Day 76). Aug 27 close is LAST known price data. Monitoring cron skipped Sep 24 – Oct 22 (20 sessions) — files missing from artifacts/monitoring/.",
+        "price_date": "2026-08-27 close (last available — NOW 40 TRADING SESSIONS STALE after Oct 23 open)",
+        "data_gap": "Aug 28 – Oct 23: FORTY consecutive trading sessions without confirmed price data.",
+        "monitoring_cron_gap": "daily_2026_09_23.json (Day 76) was the last file written. Sep 24, 25, 28-30, Oct 1-2, 5-9, 13-16, 19-22 monitoring files MISSING (20 sessions).",
+        "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged)",
+        "cash_basis": "Carried forward $99.87 from Jun 24 MCP sourcing (unchanged, no confirmed trading activity)",
+        "mcp_status": "Robinhood MCP unavailable — CONFIRMED ORGANIZATION ADMIN BLOCKED in this session. Tool not returned by ToolSearch. Yahoo Finance API blocked. No live quotes sourced.",
+        "data_quality": "DEGRADED — CRITICAL. Aug 27 close (last known). 40 trading sessions of price movement UNCAPTURED."
+    },
+    "market_status": {
+        "date": "2026-10-23",
+        "weekday": "Friday",
+        "status": "OPEN",
+        "note": "Oct 23 = Friday. Robinhood MCP unavailable — Oct 23 prices cannot be fetched. All portfolio data carried from Aug 27 basis. CRITICAL: Both Q3 catalyst deadlines (ALMS LUMUS, XENE NDA) have PASSED without captured price data."
+    },
+    "account": {
+        "account_id": "Robinhood 802349084",
+        "equity_fetchable": false,
+        "equity_estimated_usd": 138.04,
+        "equity_note": "Carried from Aug 27 close basis. Aug 28 through Oct 23 prices all unknown — 40 sessions stale. Portfolio could have moved substantially in either direction.",
+        "cash_carried": 99.87,
+        "buying_power_carried": null,
+        "total_estimated_account_value": 237.91,
+        "equity_note_detail": "No new price data since Aug 27 close. MCP unavailable (org admin blocked). Estimate is minimum 40 sessions stale as of Oct 23 open."
+    },
+    "benchmark": {
+        "xbi_entry_price": 133.62,
+        "xbi_last_close": 168.23,
+        "xbi_last_close_date": "2026-08-27",
+        "xbi_return_since_entry_pct": 25.90,
+        "xbi_note": "XBI last close $168.23 (Aug 27 basis — 40 trading sessions stale). +25.90% since Jun 10 entry ($133.62). Outperformance estimate: +11.98pp vs XBI — STALE 40 sessions."
+    },
+    "portfolio_overview": {
+        "total_positions": 15,
+        "positions_negative_vs_entry": "UNKNOWN (Aug 27 basis showed 0, but 40 sessions uncaptured)",
+        "positions_positive_vs_entry": "UNKNOWN (Aug 27 basis showed 15, but 40 sessions uncaptured)",
+        "avg_pnl_vs_entry_pct": "UNKNOWN (Aug 27 carry: +37.88% — STALE 40 sessions)",
+        "equity_usd": 138.04,
+        "cash_usd": 99.87,
+        "total_account_usd": 237.91,
+        "xbi_return_since_entry_pct": "UNKNOWN (Aug 27 carry: +25.90% — STALE 40 sessions)",
+        "outperformance_pp": "UNKNOWN (Aug 27 carry: +11.98pp — STALE 40 sessions)",
+        "drawdown_threshold_pp": -2.0,
+        "drawdown_status": "UNKNOWN — Cannot verify without live prices. Last measured Aug 27 (40 sessions ago): +11.98pp above -2.0pp threshold.",
+        "gap_flags": "UNKNOWN — 40 sessions uncaptured",
+        "gap_threshold_pct": 5.0,
+        "session_character_last": "Aug 27 close (LAST KNOWN — 40 sessions ago): 9/15 up, 6/15 down.",
+        "day_97_notes": [
+            "Oct 23 = Friday, Day 97 — Monitoring resumed after 20-session cron gap (Sep 24 – Oct 22 files all missing)",
+            "Robinhood MCP CONFIRMED unavailable — organization admin blocked (ToolSearch returned no match)",
+            "CATALYST DEADLINES PASSED: ALMS LUMUS Q3 (Sep 30) and XENE NDA Q3 (Sep 30) both past. Results unknown.",
+            "FIVE UNRESOLVED REBALANCE CHECKS: Sep 14, Sep 21, Sep 28, Oct 5, Oct 12, Oct 19 (6 missed Mondays)",
+            "PRAX FDA PDUFA Dec 27, 2026 — now ~65 days away. Approaching binary window.",
+            "IC + h20d gates: 114 days overdue (due 2026-07-01)",
+            "Q2 13F: 70 days past Aug 14 deadline",
+            "Q3 13F: Period ended Sep 30. Filing deadline ~Nov 14, 2026 (22 calendar days away).",
+            "STOK buffer breach status: COMPLETELY UNKNOWN over 40 sessions (last known +13.40% Aug 27, eroding)"
+        ]
+    },
+    "positions": [
+        {
+            "ticker": "NRIX", "company": "Nurix Therapeutics, Inc.", "entry_price": 15.46, "quantity": 0.430232,
+            "last_close": 26.88, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 73.87,
+            "position_value_usd": 11.57, "status": "STALE — +73.87% vs entry (Aug 27, 40 sessions stale)",
+            "note": "Top performer on last known basis. Roche $700M deal underpins thesis. 40 sessions movement unknown."
+        },
+        {
+            "ticker": "URGN", "company": "UroGen Pharma Ltd.", "entry_price": 28.02, "quantity": 0.237681,
+            "last_close": 45.50, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 62.38,
+            "position_value_usd": 10.81, "status": "STALE — +62.38% vs entry (Aug 27, 40 sessions stale)",
+            "note": "ZUSDURI commercial ramp ongoing. 40 sessions movement unknown."
+        },
+        {
+            "ticker": "DNTH", "company": "Dianthus Therapeutics, Inc.", "entry_price": 72.10, "quantity": 0.092928,
+            "last_close": 111.54, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 54.70,
+            "position_value_usd": 10.37, "status": "STALE — +54.70% vs entry (Aug 27, 40 sessions stale)",
+            "note": "EMERGE Phase 3 ongoing. 40 sessions movement unknown."
+        },
+        {
+            "ticker": "SLDB", "company": "Solid Biosciences Inc.", "entry_price": 6.49, "quantity": 1.028527,
+            "last_close": 10.13, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 56.09,
+            "position_value_usd": 10.42, "status": "STALE — +56.09% vs entry (Aug 27, 40 sessions stale)",
+            "note": "Aug 25 catalyst gap unconfirmed. 40 sessions uncaptured."
+        },
+        {
+            "ticker": "PRAX", "company": "Praxis Precision Medicines, Inc.", "entry_price": 241.92, "quantity": 0.027530,
+            "last_close": 367.85, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 52.06,
+            "position_value_usd": 10.13, "status": "WATCH — FDA PDUFA DEC 27 2026 (~65 DAYS from Oct 23)",
+            "note": "+52.06% vs entry (Aug 27 basis). FDA PDUFA Dec 27, 2026 (relutrigine, SCN2A/SCN8A DEEs) — ~65 calendar days remaining. No AdCom, no safety concerns. Binary window approaching.",
+            "catalyst": {
+                "event": "FDA PDUFA December 27, 2026",
+                "indication": "Relutrigine for SCN2A/SCN8A DEEs",
+                "days_to_pdufa": "~65 days (Oct 23 basis)",
+                "fda_posture": "POSITIVE — no AdCom, no safety/efficacy concerns",
+                "priority": "APPROACHING — upgrade from MONITORING to WATCH at ~65 days"
+            }
+        },
+        {
+            "ticker": "RVMD", "company": "Revolution Medicines, Inc.", "entry_price": 143.76, "quantity": 0.046465,
+            "last_close": 221.15, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 53.83,
+            "position_value_usd": 10.28, "status": "STALE — +53.83% vs entry (Aug 27, 40 sessions stale)",
+            "note": "RAS-targeted oncology momentum. 40 sessions movement unknown."
+        },
+        {
+            "ticker": "ERAS", "company": "Erasca, Inc.", "entry_price": 13.27, "quantity": 0.503396,
+            "last_close": 19.49, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 46.87,
+            "position_value_usd": 9.81, "status": "STALE — +46.87% vs entry (Aug 27, 40 sessions stale)",
+            "note": "Aug 26 +7.83% gap confirmed (analysts + FDA Fast Track ERAS-0015). 40 sessions movement unknown."
+        },
+        {
+            "ticker": "TRVI", "company": "Travere Therapeutics, Inc.", "entry_price": 13.43, "quantity": 0.496649,
+            "last_close": 17.96, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 33.73,
+            "position_value_usd": 8.92, "status": "STALE — +33.73% vs entry (Aug 27, 40 sessions stale)",
+            "note": "OCEAN-1 Phase 3 IPF cough ongoing. 40 sessions movement unknown."
+        },
+        {
+            "ticker": "CMPS", "company": "COMPASS Pathways plc", "entry_price": 11.30, "quantity": 0.590265,
+            "last_close": 14.64, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 29.56,
+            "position_value_usd": 8.64, "status": "STALE — +29.56% vs entry (Aug 27, 40 sessions stale)",
+            "note": "NDA rolling submission advancing — final filing Q4 2026. $433M cash into 2028. 40 sessions unknown."
+        },
+        {
+            "ticker": "SYRE", "company": "Spyre Therapeutics", "entry_price": 76.10, "quantity": 0.088041,
+            "last_close": 93.62, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 23.02,
+            "position_value_usd": 8.24, "status": "ELEVATED_WATCH — POST-SPY072 DISCONTINUATION — 40 SESSIONS UNCAPTURED",
+            "note": "+23.02% vs entry (Aug 27 basis). SPY072 RA standalone STOPPED Aug 26. Pre-market Aug 28 was -2.26% ($91.50 last known). 40 sessions of price movement unknown. Remaining pipeline: SPY-007, SPY-002."
+        },
+        {
+            "ticker": "XENE", "company": "Xenon Pharmaceuticals Inc.", "entry_price": 51.95, "quantity": 0.128578,
+            "last_close": 61.93, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 19.21,
+            "position_value_usd": 7.96, "status": "CRITICAL_WATCH — NDA Q3 DEADLINE PASSED (SEP 30) — RESULT UNKNOWN",
+            "note": "+19.21% vs entry (Aug 27 basis). NDA azetukalner filing was due Q3 2026 (Sep 30). Sep 30 has PASSED. If NDA was filed, positive gap move occurred in uncaptured window. Actual price since Aug 27 UNKNOWN.",
+            "catalyst": {
+                "nda_deadline": "Q3 2026 (Sep 30) — PASSED",
+                "nda_result": "UNKNOWN — 40 sessions uncaptured",
+                "note": "NDA filing announcement and any price impact occurred in uncaptured window (Aug 28 – Oct 23). Operator must check XENE current price and news to determine post-NDA state."
+            }
+        },
+        {
+            "ticker": "DRUG", "company": "Bright Minds Biosciences Inc.", "entry_price": 63.59, "quantity": 0.105839,
+            "last_close": 74.54, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 17.22,
+            "position_value_usd": 7.89, "status": "WATCH_ELEVATED — BUFFER ERODING (last known +17.22%, AUG 27 — 40 SESSIONS STALE)",
+            "note": "Buffer eroding pre-data-gap: +25.01% (Day 56) → +20.51% (Day 57) → +17.22% (Day 58 Aug 27). 40 sessions movement unknown. BMB-101 Phase 3 H2 2026 catalyst."
+        },
+        {
+            "ticker": "COGT", "company": "Cogent Biosciences, Inc.", "entry_price": 31.35, "quantity": 0.212789,
+            "last_close": 37.09, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 18.31,
+            "position_value_usd": 7.89, "status": "STALE — +18.31% vs entry (Aug 27, 40 sessions stale)",
+            "note": "Bezginlastinib Phase 3 ongoing. No near-term binary. 40 sessions movement unknown."
+        },
+        {
+            "ticker": "ALMS", "company": "Alumis Inc.", "entry_price": 20.37, "quantity": 0.326013,
+            "last_close": 23.21, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 13.94,
+            "position_value_usd": 7.57, "status": "CRITICAL_WATCH — LUMUS Q3 DEADLINE PASSED (SEP 30) — RESULT UNKNOWN",
+            "note": "+13.94% vs entry (Aug 27 basis — STALE 40 sessions). LUMUS Phase 2b SLE topline (envudeucitinib): Q3 2026 deadline PASSED (Sep 30). If readout announced: result and price impact UNKNOWN — 40 sessions uncaptured.",
+            "lumus_catalyst": {
+                "event": "LUMUS Phase 2b SLE topline — envudeucitinib (ESK-001)",
+                "deadline": "Q3 2026 (Sep 30) — PASSED",
+                "result": "UNKNOWN — readout may have occurred between Aug 28 and Oct 23",
+                "buffer_last_known": "+13.94% (Aug 27, eroding trend)",
+                "note": "Binary catalyst with lowest portfolio buffer: result and current price completely unknown over 40-session gap. If failed: potential breach of -20% gate. Operator must check immediately."
+            }
+        },
+        {
+            "ticker": "STOK", "company": "Stoke Therapeutics, Inc.", "entry_price": 28.74, "quantity": 0.231758,
+            "last_close": 32.59, "last_close_date": "2026-08-27", "pnl_vs_entry_pct": 13.40,
+            "position_value_usd": 7.55, "status": "LOWEST_BUFFER_ALERT — +13.40% AUG 27 BASIS (STALE — 40 SESSIONS) — GATE BREACH CANNOT BE CONFIRMED OR EXCLUDED",
+            "note": "+13.40% vs entry (Aug 27 basis — STALE 40 sessions). Pre-data-gap trend: +16.42% (Day 56) → +15.13% (Day 57) → +13.40% (Day 58 Aug 27). Lowest buffer in portfolio. At ~1.5-2pp erosion rate, 40 sessions of unmonitored price movement could represent significant loss — gate breach (-20% vs entry) status UNKNOWN."
+        }
+    ],
+    "governance_gates": {
+        "drawdown_gate": {
+            "status": "UNKNOWN — Aug 27 close basis (40 sessions stale). Last measured +11.98pp above -2.0pp threshold.",
+            "portfolio_avg_pnl_vs_entry_pct": "UNKNOWN (carry: +37.88% Aug 27)",
+            "xbi_return_since_entry_pct": "UNKNOWN (carry: +25.90% Aug 27)",
+            "outperformance_pp": "UNKNOWN (carry: +11.98pp Aug 27)",
+            "threshold_pp": -2.0,
+            "detail": "Actual drawdown vs XBI cannot be measured. MCP unavailable. 40 sessions of XBI and portfolio prices unknown."
+        },
+        "ic_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 114,
+            "gate_was_due": "2026-07-01",
+            "last_measured": "2026-06-24",
+            "last_ic": 0.0432,
+            "hit_rate": 0.543,
+            "note": "114 days overdue. Operator freeze lift required. DEM candidate freeze + NO_MODEL_CHANGE window (SM-20260629-001, 0/20 LIVE windows)."
+        },
+        "h20d_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 114,
+            "gate_date": "2026-07-01",
+            "override_posture": "MAINTAINED (OPTION_B_OVERRIDE_2026_05_26)",
+            "note": "114 days overdue. Sequential gate: freeze lift → quarantine script → Q2 13F warm → cohort check → IC decomp."
+        },
+        "jaccard_gate": {
+            "status": "MAINTAINED (STALE)",
+            "last_value": 0.875,
+            "last_measured": "2026-06-23",
+            "threshold": 0.40,
+            "note": "0.875 well above 0.40 threshold on last measurement. Refresh pending freeze lift + Q3 13F processing."
+        },
+        "emergency_gate": {
+            "status": "UNKNOWN — Aug 27 last known (40 sessions stale). ALMS + STOK had lowest buffers.",
+            "detail": "ALMS LUMUS binary result unknown (Q3 deadline passed Sep 30). STOK buffer erosion trajectory unknown over 40 sessions. Both were candidates for potential gate breach — actual status unverifiable."
+        },
+        "positions_20pct_loss_gate": {
+            "status": "UNKNOWN (STALE BASIS)",
+            "count": "UNKNOWN",
+            "lowest_pnl_name": "STOK (Aug 27 basis +13.40%) / ALMS (Aug 27 basis +13.94% — binary catalyst passed Sep 30 unknown result)",
+            "note": "All 15 positions positive on Aug 27 basis. Both STOK and ALMS had eroding buffers with binary catalyst risk since Aug 27. Actual status over 40 sessions completely unknown."
+        },
+        "monday_rebalance_gate": {
+            "status": "SIX UNRESOLVED REBALANCE CHECKS — Sep 14, Sep 21, Sep 28, Oct 5, Oct 12, Oct 19",
+            "rule": "Rule 1: Monday market open = weekly rebalance check",
+            "note": "Oct 23 = Friday. Next Monday = Oct 26 (rebalance trigger in 1 trading session). Six consecutive Monday rebalance checks unresolved. Operator must restore prices and document dispositions before Oct 26.",
+            "missed_mondays": ["Sep 14", "Sep 21", "Sep 28", "Oct 5", "Oct 12", "Oct 19"],
+            "next_rebalance_trigger": "Oct 26 (Monday) — 1 trading session away",
+            "urgency": "CRITICAL — Oct 26 rebalance approaching. Six prior rebalances unresolved."
+        }
+    },
+    "catalyst_watch": {
+        "ALMS_LUMUS_PASSED": {
+            "ticker": "ALMS",
+            "event": "LUMUS Phase 2b SLE topline readout — envudeucitinib (ESK-001)",
+            "deadline": "Q3 2026 (Sep 30) — PASSED 23 calendar days ago",
+            "result": "UNKNOWN — no price data to infer outcome",
+            "priority": "CRITICAL — OPERATOR MUST CHECK ALMS current price and news immediately",
+            "last_buffer": "+13.94% (Aug 27, eroding trend)",
+            "note": "Highest-priority unresolved catalyst. Binary with eroding buffer. Result occurred in 40-session data gap."
+        },
+        "XENE_NDA_PASSED": {
+            "ticker": "XENE",
+            "event": "NDA filing azetukalner — Q3 2026 deadline (Sep 30)",
+            "deadline": "Q3 2026 (Sep 30) — PASSED 23 calendar days ago",
+            "result": "UNKNOWN — NDA filing and any price impact in 40-session uncaptured window",
+            "priority": "CRITICAL — OPERATOR MUST CHECK XENE current price and NDA status",
+            "note": "X-TOLE2 data was confirmed positive (Aug 26). NDA filing expected positive catalyst — price impact unknown over 40 sessions."
+        },
+        "PRAX_PDUFA_APPROACHING": {
+            "ticker": "PRAX",
+            "event": "FDA PDUFA December 27, 2026 (relutrigine — SCN2A/SCN8A DEEs)",
+            "days_remaining": "~65 days (Oct 23 basis)",
+            "priority": "WATCH — entering 60-90 day pre-PDUFA monitoring window",
+            "current_pnl_pct_aug27": 52.06,
+            "note": "Clean FDA posture (no AdCom). Now approaching 2-month PDUFA window. Monitor monthly; upgrade to CRITICAL at ~30 days."
+        },
+        "STOK_LOWEST_BUFFER": {
+            "ticker": "STOK",
+            "event": "Buffer erosion — no imminent binary catalyst",
+            "priority": "WATCH — LOWEST BUFFER last known +13.40% Aug 27, 40 sessions stale",
+            "note": "At erosion trajectory, gate breach status COMPLETELY UNKNOWN over 40 sessions."
+        },
+        "SYRE_POST_DISCONTINUATION": {
+            "ticker": "SYRE",
+            "event": "SPY072 RA standalone discontinued Aug 26",
+            "priority": "WATCH — 40 SESSIONS POST-DISCONTINUATION UNCAPTURED",
+            "last_pnl_pct_aug27": 23.02,
+            "note": "40 sessions of post-discontinuation price movement unknown. Stabilization status unverifiable."
+        },
+        "Q3_13F_DEADLINE_APPROACHING": {
+            "event": "Q3 2026 13F-HR cycle — Fairmount, Deep Track, Logos Global",
+            "priority": "GOVERNANCE — Q3 PERIOD ENDED SEP 30. FILING DEADLINE ~NOV 14, 2026.",
+            "calendar_days_to_deadline": 22,
+            "note": "Q2 13F still not ingested (70 days past Aug 14 deadline). Q3 13F deadline in ~22 days. Both require freeze lift to process."
+        },
+        "Q2_13F_SEVERELY_OVERDUE": {
+            "event": "Q2 2026 13F-HR processing — 70 days past deadline",
+            "priority": "GOVERNANCE — OPERATOR ACTION NEEDED (PRECEDES Q3 13F DEADLINE)",
+            "filing_deadline": "2026-08-14 (PASSED — 70 days ago as of Oct 23)",
+            "note": "coinvest_score_z running on stale Q1 data. 70 days past deadline. Q3 deadline in 22 days."
+        },
+        "CMPS_NDA_Q4": {
+            "ticker": "CMPS",
+            "event": "NDA rolling submission — final filing Q4 2026",
+            "priority": "MONITOR — Q4 2026 (Oct–Dec)",
+            "note": "NDA rolling submission advancing. Q4 2026 = next 69 days. Monitor for filing announcement."
+        },
+        "OCT26_REBALANCE_TRIGGER": {
+            "event": "Weekly Monday rebalance check — Oct 26 (Mon)",
+            "priority": "CRITICAL — 1 TRADING SESSION AWAY — SIX PRIOR REBALANCE CHECKS UNRESOLVED",
+            "note": "Sep 14, Sep 21, Sep 28, Oct 5, Oct 12, Oct 19 rebalance checks all unresolved. Oct 26 is next. Operator must restore prices and document all prior dispositions before Oct 26 open."
+        }
+    },
+    "escalation_flags": [
+        {
+            "id": "ALMS_LUMUS_PASSED_RESULT_UNKNOWN",
+            "ticker": "ALMS",
+            "reason": "ALMS LUMUS Phase 2b SLE binary: Q3 deadline passed Sep 30 (23 calendar days ago). Result UNKNOWN — no price data since Aug 27. Last buffer was +13.94% (eroding trend). If data failed, potential -20% loss gate breach has gone undetected for 40 sessions. HIGHEST PRIORITY: check immediately.",
+            "priority": "CRITICAL"
+        },
+        {
+            "id": "XENE_NDA_PASSED_RESULT_UNKNOWN",
+            "ticker": "XENE",
+            "reason": "XENE NDA azetukalner: Q3 deadline passed Sep 30 (23 calendar days ago). Filing announcement and any price impact UNKNOWN — 40 sessions uncaptured.",
+            "priority": "CRITICAL"
+        },
+        {
+            "id": "SIX_REBALANCE_CHECKS_UNRESOLVED_OCT26_1DAY",
+            "reason": "Six Monday rebalance checks unresolved (Sep 14, Sep 21, Sep 28, Oct 5, Oct 12, Oct 19). Oct 26 rebalance trigger in 1 trading session. Operator MUST restore prices before Oct 26 open.",
+            "priority": "CRITICAL — OCT 26 REBALANCE IN 1 SESSION"
+        },
+        {
+            "id": "DATA_GAP_40_SESSIONS_MCP_ORG_BLOCKED",
+            "reason": "Price data stale 40 trading sessions (Aug 28 – Oct 23). Robinhood MCP confirmed BLOCKED by organization admin in this session (ToolSearch returned no match for 'robinhood portfolio equity'). This is not a transient failure — admin action required to unblock.",
+            "priority": "DATA_INTEGRITY — CRITICAL. ADMIN ACTION REQUIRED."
+        },
+        {
+            "id": "PRAX_PDUFA_65DAYS",
+            "ticker": "PRAX",
+            "reason": "PRAX FDA PDUFA Dec 27, 2026 now ~65 days away. Entering 2-month PDUFA monitoring window. Last known +52.06% (Aug 27 basis).",
+            "priority": "WATCH — UPGRADE"
+        },
+        {
+            "id": "STOK_GATE_BREACH_UNKNOWN_40SESSIONS",
+            "ticker": "STOK",
+            "reason": "STOK lowest buffer in portfolio (last known +13.40%, Aug 27, 40 sessions stale, eroding trend). -20% loss gate breach status COMPLETELY UNKNOWN over 40 sessions.",
+            "priority": "WATCH — POTENTIAL GATE BREACH UNDETECTED"
+        },
+        {
+            "id": "Q3_13F_DEADLINE_NOV14_22DAYS",
+            "reason": "Q3 2026 13F-HR deadline ~Nov 14 (22 calendar days). Q2 13F still not ingested (70 days past deadline). Both blocked by operator freeze lift.",
+            "priority": "GOVERNANCE — APPROACHING DEADLINE"
+        },
+        {
+            "id": "IC_H20D_OVERDUE_114DAYS",
+            "reason": "IC gate and h20d gate both 114 days overdue (were due 2026-07-01). Operator freeze lift gating all downstream steps. DEM candidate freeze + NO_MODEL_CHANGE window (0/20 LIVE windows).",
+            "priority": "GOVERNANCE_OVERDUE"
+        }
+    ],
+    "monitoring_summary": {
+        "day": 97,
+        "date": "2026-10-23",
+        "weekday": "Friday",
+        "market_status": "OPEN",
+        "price_basis": "2026-08-27 close (STALE — 40 trading sessions. Robinhood MCP org-admin blocked.)",
+        "data_quality": "DEGRADED — CRITICAL. Robinhood MCP org-admin blocked. 40 sessions stale. Monitoring cron skipped Sep 24 – Oct 22 (20 sessions).",
+        "total_equity_usd_carried": 138.04,
+        "avg_pnl_vs_entry_pct": "UNKNOWN (Aug 27 carry: +37.88%)",
+        "xbi_return_since_entry_pct": "UNKNOWN (Aug 27 carry: +25.90%)",
+        "outperformance_pp": "UNKNOWN (Aug 27 carry: +11.98pp)",
+        "gate_status": {
+            "drawdown": "UNKNOWN (40 sessions stale — last +11.98pp Aug 27)",
+            "emergency": "UNKNOWN (ALMS binary passed, STOK eroding — 40 sessions uncaptured)",
+            "ic": "OVERDUE (114d since Jul 1 due date)",
+            "h20d": "OVERDUE (114d since Jul 1 due date)",
+            "jaccard": "MAINTAINED (0.875, last measured Jun 23 — STALE)",
+            "monday_rebalance": "SIX UNRESOLVED (Sep 14, 21, 28, Oct 5, 12, 19) — Oct 26 trigger in 1 trading session"
+        },
+        "key_alerts": [
+            "CRITICAL: ALMS LUMUS Q3 binary deadline PASSED (Sep 30) — result unknown over 40-session data gap",
+            "CRITICAL: XENE NDA Q3 deadline PASSED (Sep 30) — filing result unknown over 40-session data gap",
+            "CRITICAL: Oct 26 Monday rebalance in 1 trading session — 6 prior rebalances unresolved",
+            "DATA: Robinhood MCP CONFIRMED org-admin blocked — admin action required to restore",
+            "DATA INTEGRITY CRITICAL: 40 consecutive trading sessions uncaptured",
+            "WATCH: PRAX PDUFA Dec 27 now ~65 days away — entering 2-month binary window",
+            "STOK: lowest buffer +13.40% last known — gate breach status completely unknown over 40 sessions",
+            "Q3 13F: deadline ~Nov 14 (22 days) — Q2 13F (70 days past deadline) and freeze lift both prerequisite",
+            "IC + h20d gates: 114 days overdue — freeze lift required"
+        ],
+        "operator_action_required": [
+            "IMMEDIATE: Check ALMS current price and LUMUS binary readout result — highest priority",
+            "IMMEDIATE: Check XENE current price and NDA filing status",
+            "BEFORE OCT 26: Restore Robinhood MCP (admin must unblock org setting) — 6 rebalances unresolved, 7th in 1 trading session",
+            "BEFORE NOV 14: Process Q2 13F cache (warm → quarantine check) and prepare for Q3 13F ingestion",
+            "GOVERNANCE: Operator freeze lift → h20d quarantine script → Q2/Q3 13F cache warm → IC decomp (sequential)"
+        ],
+        "monitoring_note": "Scheduled monitoring period was Jun 11 – Jun 30, 2026. Cron has continued firing past period end (now Day 97, Oct 23). With MCP org-blocked and 40 sessions of stale data, this routine is monitoring-in-name-only. Operator decision needed: retire this cron, restore MCP access, or replace with alternative data source."
+    }
+}
