@@ -630,7 +630,7 @@ class TestSchemaValidation:
         )
         prov = result["provenance"]
         assert prov["builder"] == "build_coinvest_features_from_13f.py"
-        assert prov["builder_version"] == "1.0.0"
+        assert prov["builder_version"] == "1.1.0"
         assert isinstance(prov["managers_used"], list)
         assert len(prov["managers_used"]) == 2
         assert isinstance(prov["change_summary"], dict)

@@ -255,10 +255,13 @@ def build_single_bundle(
                 # Build CIK -> tier/name maps from elite_managers
                 manager_tiers: Dict[str, int] = {}
                 manager_names: Dict[str, str] = {}
+                manager_groups: Dict[str, str] = {}
                 for m in get_all_managers():
                     padded = _pad_cik(m["cik"])
                     manager_tiers[padded] = m.get("tier", 0)
                     manager_names[padded] = m.get("short_name", m.get("name", padded))
+                    if m.get("firm_group"):
+                        manager_groups[padded] = m["firm_group"]
 
                 cusip_map = _load_cusip_map(_PROJECT_ROOT / "production_data" / "cusip_static_map.json")
 
@@ -269,6 +272,7 @@ def build_single_bundle(
                     manager_tiers=manager_tiers,
                     manager_names=manager_names,
                     cusip_map=cusip_map,
+                    manager_groups=manager_groups,
                 )
 
                 if coinv is not None:
