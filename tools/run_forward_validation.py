@@ -248,7 +248,16 @@ def forward_return_realized(fill: dict | None) -> bool:
     return bool(fill) and fill.get(_MANDATE_RETURN_KEY) is not None
 
 
-def capture_is_eligible_for_mandate(capture: dict, fill: dict | None) -> bool:
+def mandate_clock_epoch(candidate: dict) -> str | None:
+    """Out-of-sample clock start recorded in CANDIDATE.json, if any.
+
+    Set when an operator-authorized fix changes model inputs that the model
+    hash does not cover (e.g. the coinvest 13F rebuild of 2026-11-01).
+    """
+    return candidate.get("oos_clock_start") or None
+
+
+def capture_is_eligible_for_mandate(capture: dict, fill: dict | None, clock_epoch: str | None = None) -> bool:
     """Authoritative eligibility rule for SM-20260629-001.
 
     A capture counts toward the 20-window gate ONLY if it is a genuine, complete,
@@ -259,12 +268,15 @@ def capture_is_eligible_for_mandate(capture: dict, fill: dict | None) -> bool:
       * ``model_hash_match`` is True      — the frozen candidate, not drift
       * ``benchmark_available`` is True    — XBI present for excess-vs-benchmark
       * ``forward_return_realized(fill)``  — the 5d window has been observed
+      * ``date >= clock_epoch``           — after any authorized clock reset
 
     Legacy / pre-schema captures lack these fields, so ``.get`` returns falsy and
     they are correctly excluded. This rule lives in code (not prose) so the
     mandate counter cannot silently count replay data, drifted models, missing
     benchmarks, or unrealized windows.
     """
+    if clock_epoch is not None and (capture.get("date") or "") < clock_epoch:
+        return False
     return capture_is_live_and_clean(capture) and forward_return_realized(fill)
 
 
