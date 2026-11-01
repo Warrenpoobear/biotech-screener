@@ -57,7 +57,7 @@ Layer 4: External-Facing Documents (.docx exports)
 | Tier numbering | No single authority (W4) | -- | 3 incompatible systems across L1 governance docs |
 | IC measurement scope | `run_rank_ic_backtest.py` code (L0) | L0 | All pre-Spec-100 IC claims cited wrong field |
 | Cron schedule | `crontab -l` on production host | L0 | screener-ops skill (L2): says 5:30 PM; W5 notes inconsistency |
-| Manager registry count | `production_data/manager_registry.json` — count `elite_core` + `conditional` entries at runtime; **derive dynamically, never hardcode** | L0 | 2026-07-15: authoritative = **55 (49 elite_core + 6 conditional)**. A Jul 12 mis-correction briefly propagated **51 (45+6)** into global memory, `user.md`, and the `sec-edgar-mechanics` skill (L2) — all corrected. Note: Foresite Capital IV/V/VI = 3 CIK entries for one firm, so a by-firm tally is lower than the by-entry 55; count entries unless a spec says otherwise. |
+| Manager registry count | `production_data/manager_registry.json` — count `elite_core` + `conditional` entries at runtime; **derive dynamically, never hardcode** | L0 | 2026-11-01 (registry v4.0): authoritative active count = **36 (30 elite_core + 6 conditional)**, plus 26 in a new `retired` section that is excluded from coinvest; do not count retired managers as active. Foresite IV/V/VI and both Broadfin CIKs are now `retired` and carry `firm_group`; for coinvest, a `firm_group` counts as one holder. Source: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`. *History:* 2026-07-15 authoritative was 55 (49+6); a Jul 12 mis-correction briefly propagated 51 (45+6), which has since been corrected. |
 
 ---
 

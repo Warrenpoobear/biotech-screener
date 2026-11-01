@@ -8,10 +8,11 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-07-12  
+**Last updated:** 2026-11-01  
 **Update cadence:** weekly or upon governance-state change  
 **Authority:** operational status snapshot only; not architectural specification  
-**Staleness risk:** MEDIUM (reference `governance.md` for timeless process)
+**Staleness risk:** MEDIUM (reference `governance.md` for timeless process)  
+**2026-11-01 update scope:** only these sections were refreshed: Architecture Freeze Status, 13F Cycle Status, Governance Events, and the superseded Q1-promotion note in h20d. Sections with older dates (Forward Shadow & IC, h20d, Active Spec Status, Hermes Skills Hub) were not reviewed and keep their own as-of dates.
 
 ---
 
@@ -31,10 +32,11 @@ metadata:
 **MODEL BEHAVIOR REMAINS FROZEN. The 2026-06-24 "lift" was tooling-scoped only — do not read it as authorization to change the model.**
 
 - **INC-2026-06-20 scoped freeze — narrowly lifted 2026-06-24:** operator authorized the lift **solely to unblock Spec 100** (ranker IC tooling correction). Spec 100 is implemented (commit `2faa88e6`); that lift is spent.
-- **Currently binding (2026-07-12):**
-  - **DEM candidate freeze + NO_MODEL_CHANGE forward-validation window** — `docs/FORWARD_VALIDATION_PROTOCOL.md` §1 (RATIFIED 2026-06-28; mandate SM-20260629-001, 0/20 eligible LIVE windows). No ranker/selector/feature/eligibility/sizing/rebalance-policy/price-source change; any authorized bug fix resets the out-of-sample clock.
-  - **FROZEN (BLOCKED_LEVEL_0)** per `docs/model_documentation.md` (canonical; synced 2026-07-10) — model doc governs where this snapshot disagrees.
-- **Candidate identity:** `model_hash=827c35a9ed3ee6e1` / `hash_scheme=ast-v1` (legacy `a9983a67c6954813`; `registered=2026-06-26` unchanged) — `artifacts/forward_validation/CANDIDATE.json`.
+- **Currently binding (2026-11-01):**
+  - **DEM candidate freeze + NO_MODEL_CHANGE forward-validation window**, per `docs/FORWARD_VALIDATION_PROTOCOL.md` §1 (RATIFIED 2026-06-28; mandate SM-20260629-001). No ranker/selector/feature/eligibility/sizing/rebalance-policy/price-source change is permitted, and any authorized bug fix resets the out-of-sample clock.
+  - **Clock reset authorized 2026-11-01:** the operator approved the coinvest 13F integrity fix and roster change, so `oos_clock_start=2026-11-02` and the **mandate restarts at 0/20**. The 7 prior eligible windows (t = 1.64) stay as history but no longer count. Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`. If the PR merges after the 2026-11-02 production run, `oos_clock_start` moves to the first run that uses the merged code.
+  - **FROZEN (BLOCKED_LEVEL_0)** per `docs/MODEL_DOCUMENTATION.md` (canonical; synced 2026-11-01). Where this snapshot disagrees with the model doc, the model doc governs.
+- **Candidate identity:** `model_hash=827c35a9ed3ee6e1` / `hash_scheme=ast-v1` (legacy `a9983a67c6954813`; `registered=2026-06-26` unchanged; `oos_clock_start=2026-11-02`). Source: `artifacts/forward_validation/CANDIDATE.json`. The hash is unchanged by the 2026-11-01 reset because only inputs changed, not engine files.
 - `ranker_active_contract.py` (branch `hygiene/ranker-active-contract-2026-04-30`) remains deferred
 - All prior ranker IC claims based on `composite_score` remain non-authoritative; ranker IC = `final_score` per Spec 100, interpretation deferred pending governance battery
 
@@ -50,9 +52,19 @@ metadata:
 
 ---
 
-## 13F Cycle Status (Q1 2026 â€” COMPLETE)
+## 13F Cycle Status
 
-*Updated: 2026-05-16*
+*Updated: 2026-11-01*
+
+- **Q2 2026 (period 2026-06-30) is now promoted into coinvest through the 2026-11-01 authorized change.** Filings landed 2026-08-14, but production `coinvest_signals.json` stayed on Q1 (as_of 2026-05-22) until this change.
+  - The rebuilt file is as_of 2026-10-30, built with builder 1.1.0 (230-day staleness gate, `firm_group`, roster gate) and filing age recomputed at run time.
+  - Registry v4.0: `elite_core` = 30 operator-specified managers (was 49), 26 moved to `retired`, `conditional` (6) unchanged.
+  - The roster was chosen on trailing 3-year returns, so backtests over that window are selection-biased and must not be cited as evidence.
+  - Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`.
+- **Post-merge follow-up:** run `tools/check_13f_cohort_quarantine.py --pre-date 2026-10-30 --post-date <first post-merge snapshot>`, then a 5-day observation window.
+- **Next cycle (Q3 2026):** period ending 2026-09-30, filing deadline ~**2026-11-14**. Rebuilding `coinvest_signals.json` after the filings is a **manual, governed step**. The staleness gate stops silent carry-forward but does not trigger the rebuild.
+
+### Q1 2026 (historical record, updated 2026-05-16)
 
 - **All three tracked managers filed Q1 2026 13F-HR on deadline day (May 15, 2026)**
 - Accession numbers: Fairmount 0001104659-26-062419, Deep Track 0001856083-26-000003, Logos Global 0001172661-26-002196
@@ -69,7 +81,7 @@ metadata:
 
 **Post-filing action sequence**: (1) Warm 13F cache, (2) Run cohort quarantine, (3) Check collapse guards (coinvest_score_z SD), (4) Refresh IC decomposition, (5) 5-day observation window.
 
-**Next cycle (Q2 2026):** Period ending June 30, 2026. Filing deadline ~August 14, 2026. Monitor EDGAR starting ~August 11.
+*(The Q2 2026 "next cycle" note that was here is superseded. See the 2026-11-01 entries above.)*
 
 ---
 
@@ -92,7 +104,7 @@ metadata:
 
 - Override granted 2026-05-26 (OPTION_B_OVERRIDE_2026_05_26) despite failed 13F Jaccard (0.463).
 - Current metrics (2026-06-23): Filing coverage 100% ✓, signal coverage 85.22% ✓, Top-30 Jaccard 0.875 ✓. All observable metrics favorable.
-- Q1 2026 13F data not yet promoted to production (quarantine script deferred). Run after first post-promotion snapshot:
+- *(Superseded 2026-11-01: the memo shows production `coinvest_signals.json` ran on Q1 2026 holdings from June to October. It has now moved to Q2 2026. Use `--pre-date 2026-10-30` per the 13F section above.)* Original note: Q1 2026 13F data not yet promoted to production (quarantine script deferred). Run after first post-promotion snapshot:
   ```bash
   python3 tools/check_13f_cohort_quarantine.py \
       --pre-date <last-pre-promo> --post-date <first-post-promo>
@@ -157,6 +169,18 @@ metadata:
 - Governance label: Tooling/knowledge-layer expansion only. No model, ranker, selector, sizing, or alpha-promotion change.
 
 ---
+
+## Governance Events (2026-11-01)
+
+- **Coinvest 13F integrity fix + roster change; out-of-sample clock reset (2026-11-01, operator-authorized):** fixes four defects:
+  - D1: coinvest stuck on Q1 2026.
+  - D2: filing age frozen at 7 days.
+  - D3: no 13F staleness gate (Broadfin moved CIK; its old book persisted).
+  - D4: Foresite IV/V/VI triple-counted.
+
+  Changes: builder 1.1.0, `run_screen.py::_refresh_coinvest_filing_age`, registry v4.0 (30-manager `elite_core`), coinvest rebuilt from Q2 2026. Forward-validation `oos_clock_start=2026-11-02` and mandate SM-20260629-001 restarts at 0/20.
+
+  On 2026-10-30 control vs treatment, Top-30 overlap was 25/30. `model_hash 827c35a9ed3ee6e1` and ruleset `8887576e` are unchanged. Hash rotation is logged in `governance/HASH_ROTATIONS.md` (reviewer: operator; PR review pending). This does **not** unfreeze the model or clear any gate. Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`.
 
 ## Governance Events (2026-06-20 to 2026-06-24)
 
