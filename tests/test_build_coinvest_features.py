@@ -630,7 +630,7 @@ class TestSchemaValidation:
         )
         prov = result["provenance"]
         assert prov["builder"] == "build_coinvest_features_from_13f.py"
-        assert prov["builder_version"] == "1.1.0"
+        assert prov["builder_version"] == "1.2.0"
         assert isinstance(prov["managers_used"], list)
         assert len(prov["managers_used"]) == 2
         assert isinstance(prov["change_summary"], dict)
@@ -768,9 +768,15 @@ class TestEdgeCases:
 
 class TestCusipHelpers:
 
-    def test_resolve_ticker_prefers_embedded(self):
+    def test_resolve_ticker_prefers_static_map(self):
+        # CUSIP-first (2026-11-01): the cached ticker can be wrong
+        # (Organon was cached as ORIC), so the static map wins.
         h = _holding("AAAA", cusip="111111111")
-        assert _resolve_ticker(h, {"111111111": "BBBB"}) == "AAAA"
+        assert _resolve_ticker(h, {"111111111": "BBBB"}) == "BBBB"
+
+    def test_resolve_ticker_uses_embedded_when_unmapped(self):
+        h = _holding("AAAA", cusip="111111111")
+        assert _resolve_ticker(h, {}) == "AAAA"
 
     def test_resolve_ticker_cusip_fallback(self):
         h = _holding("", cusip="111111111")
