@@ -7,12 +7,6 @@
       "style": "concentrated_conviction"
     },
     {
-      "cik": "0001346824",
-      "name": "RA Capital Management",
-      "aum_b": 8.1,
-      "style": "clinical_probability_engine"
-    },
-    {
       "cik": "0001224962",
       "name": "Perceptive Advisors",
       "aum_b": 3.5,
@@ -25,64 +19,10 @@
       "style": "multi_strategy"
     },
     {
-      "cik": "0001822947",
-      "name": "Ally Bridge Group",
-      "aum_b": 2.5,
-      "style": "asia_biotech"
-    },
-    {
-      "cik": "0001425738",
-      "name": "Redmile Group",
-      "aum_b": 4.8,
-      "style": "growth_equity"
-    },
-    {
-      "cik": "0001055951",
-      "name": "Orbimed Advisors",
-      "aum_b": 17.2,
-      "style": "diversified_healthcare"
-    },
-    {
-      "cik": "0001776382",
-      "name": "Venbio Partners",
-      "aum_b": 2.3,
-      "style": "venture_crossover"
-    },
-    {
       "cik": "0001703031",
       "name": "Bain Capital Life Sciences",
       "aum_b": 5.5,
       "style": "private_equity_crossover"
-    },
-    {
-      "cik": "0001493215",
-      "name": "RTW Investments",
-      "aum_b": 3.2,
-      "style": "clinical_stage_specialists"
-    },
-    {
-      "cik": "0001232621",
-      "name": "Tang Capital Partners",
-      "aum_b": 2.8,
-      "style": "oncology_focused"
-    },
-    {
-      "cik": "0001569064",
-      "name": "Suvretta Capital Management",
-      "aum_b": 5.1,
-      "style": "healthcare_long_short"
-    },
-    {
-      "cik": "0001534261",
-      "name": "Casdin Capital",
-      "aum_b": 2.9,
-      "style": "genomics_focused"
-    },
-    {
-      "cik": "0001583977",
-      "name": "Cormorant Asset Management",
-      "aum_b": 3.9,
-      "style": "event_driven"
     },
     {
       "cik": "0001792126",
@@ -104,64 +44,10 @@
       "notes": "CIK updated 2026-04-13. Was 0001465837 (Boxer Capital LLC — shell, 1 holding). Migrated to Management LLC (CIK 0002018299) starting Q4 2024."
     },
     {
-      "cik": "0001587114",
-      "name": "EcoR1 Capital",
-      "aum_b": 2.1,
-      "style": "scientific_deep_dive"
-    },
-    {
-      "cik": "0001306923",
-      "name": "Palo Alto Investors",
-      "aum_b": 0.67,
-      "style": "physician_led_fundamental"
-    },
-    {
-      "cik": "0001274413",
-      "name": "Sectoral Asset Management",
-      "aum_b": 0.39,
-      "style": "garp_healthcare"
-    },
-    {
-      "cik": "0001281446",
-      "name": "Great Point Partners",
-      "aum_b": 1.46,
-      "style": "life_sciences_value"
-    },
-    {
-      "cik": "0001791827",
-      "name": "Avidity Partners Management",
-      "aum_b": 1.3,
-      "style": "healthcare_fundamental"
-    },
-    {
-      "cik": "0001744967",
-      "name": "Samsara BioCapital",
-      "aum_b": 1.86,
-      "style": "concentrated_life_sciences"
-    },
-    {
       "cik": "0001856083",
       "name": "Deep Track Capital",
       "aum_b": 5.2,
       "style": "fundamental_long_short"
-    },
-    {
-      "cik": "0001609251",
-      "name": "Krensavage Asset Management",
-      "aum_b": 0.3,
-      "style": "value_healthcare"
-    },
-    {
-      "cik": "0001582844",
-      "name": "Acuta Capital Partners",
-      "aum_b": 0.1,
-      "style": "biotech_value"
-    },
-    {
-      "cik": "0001595725",
-      "name": "Rock Springs Capital Management",
-      "aum_b": 3.3,
-      "style": "healthcare_fundamental"
     },
     {
       "cik": "0001595855",
@@ -170,48 +56,11 @@
       "style": "binary_catalyst_biotech"
     },
     {
-      "cik": "0001056807",
-      "name": "BVF Inc/IL",
-      "aum_b": 3.0,
-      "style": "biotech_specialist",
-      "notes": "CIK corrected 2026-04-13. Was 0001079114 (Greenlight Capital — wrong entity). Correct entity: BVF Inc/IL, Mark Lampert, pure biotech."
-    },
-    {
       "cik": "0001633313",
       "name": "Avoro Capital Advisors",
       "aum_b": 2.0,
       "style": "biotech_specialist",
       "notes": "CIK 0001633313 is Avoro Capital (formerly venBio Select Advisor). Was labeled Consonance Capital Management — different firm (Consonance CIK 0001544773, stopped filing Q3 2022). Avoro has 34 active biotech holdings, correct entity for this slot."
-    },
-    {
-      "cik": "0001577524",
-      "name": "Sarissa Capital Management",
-      "aum_b": 1.0,
-      "style": "biotech_activist"
-    },
-    {
-      "cik": "0001704132",
-      "name": "Foresite Capital IV",
-      "aum_b": 1.2,
-      "style": "biotech_crossover"
-    },
-    {
-      "cik": "0001792206",
-      "name": "Foresite Capital V",
-      "aum_b": 1.2,
-      "style": "biotech_crossover"
-    },
-    {
-      "cik": "0002013341",
-      "name": "Foresite Capital VI",
-      "aum_b": 1.1,
-      "style": "biotech_crossover"
-    },
-    {
-      "cik": "0001601692",
-      "name": "Broadfin Capital (Kotler)",
-      "aum_b": 1.5,
-      "style": "healthcare_event_driven"
     },
     {
       "cik": "0001727492",
@@ -226,13 +75,6 @@
       "aum_b": 4.0,
       "style": "healthcare_crossover",
       "notes": "Added 2026-04-13. Healthcare crossover, 47 holdings, 77% biotech concentration."
-    },
-    {
-      "cik": "0001389933",
-      "name": "DAFNA Capital Management",
-      "aum_b": 0.65,
-      "style": "biotech_long_short",
-      "notes": "Added 2026-04-15. Nathan Fischel (MD), est 1999. Long/short biotech+medtech. $430M 13F portfolio. Top: RVMD, XBI, STXS, ATRC, CYTK."
     },
     {
       "cik": "0001802528",
@@ -256,13 +98,6 @@
       "notes": "Added 2026-04-25. Jared Keller. 37 holdings / $1.57B reportable in Q4 2025 13F. Files 13F-HR since 2021-Q4 (filed 2022-02-14)."
     },
     {
-      "cik": "0001802630",
-      "name": "Soleus Capital Management",
-      "aum_b": 2.71,
-      "style": "healthcare_long_short",
-      "notes": "Added 2026-04-25. Guy Levy / Harold Schaaff. 95 holdings / $2.71B reportable in Q4 2025 13F. Files 13F-HR since 2019-Q4 (filed 2020-02-14, 26 quarters)."
-    },
-    {
       "cik": "0001892134",
       "name": "Frazier Life Sciences Management",
       "aum_b": 3.89,
@@ -284,13 +119,6 @@
       "notes": "Added 2026-05-22. 49 holdings / $3.5B reportable in Q1 2026 13F (filed 2026-05-15). Chen Yu; science-driven crossover; public + private life sciences."
     },
     {
-      "cik": "0001920938",
-      "name": "Braidwell LP",
-      "aum_b": 3.0,
-      "style": "biotech_long_short",
-      "notes": "Added 2026-05-22. 88 holdings / $3.0B reportable in Q1 2026 13F (filed 2026-05-15). Alex Karnal; long/short across biotech, pharma, medtech, diagnostics."
-    },
-    {
       "cik": "0001773206",
       "name": "Integral Health Asset Management",
       "aum_b": 1.89,
@@ -310,6 +138,69 @@
       "aum_b": 4.89,
       "style": "biotech_crossover",
       "notes": "Added 2026-05-22. 35 holdings / $4.89B reportable in Q1 2026 13F (filed 2026-05-15). Top Q1 2026 holdings: NUVL, RVMD, ACLX, GMAB, TARS."
+    },
+    {
+      "cik": "0001910456",
+      "name": "Lynx1 Capital Management",
+      "aum_b": 0.87,
+      "style": "biotech_specialist",
+      "notes": "Added 2026-11-01. Added via operator roster 2026-11-01 (ranked by trailing 3-yr annualised return). Q2 2026 13F: 27 positions / \\/usr/bin/bash.87B."
+    },
+    {
+      "cik": "0001831942",
+      "name": "Commodore Capital",
+      "aum_b": 1.68,
+      "style": "biotech_long_short",
+      "notes": "Added 2026-11-01. Added via operator roster 2026-11-01 (ranked by trailing 3-yr annualised return). Q2 2026 13F: 33 positions / \\.68B."
+    },
+    {
+      "cik": "0001615982",
+      "name": "Venrock Healthcare Capital Partners",
+      "aum_b": 3.3,
+      "style": "biotech_crossover",
+      "notes": "Added 2026-11-01. Added via operator roster 2026-11-01 (ranked by trailing 3-yr annualised return). 13F filer is Venrock Adviser, LLC (formerly VR Adviser). Q2 2026 13F: 33 positions / \\.30B."
+    },
+    {
+      "cik": "0001940272",
+      "name": "ADAR1 Capital Management",
+      "aum_b": 2.19,
+      "style": "biotech_long_short",
+      "notes": "Added 2026-11-01. Added via operator roster 2026-11-01 (ranked by trailing 3-yr annualised return). Q2 2026 13F: 277 entries / \\.19B."
+    },
+    {
+      "cik": "0001839435",
+      "name": "Octagon Capital Advisors",
+      "aum_b": 1.11,
+      "style": "healthcare_long_short",
+      "notes": "Added 2026-11-01. Added via operator roster 2026-11-01 (ranked by trailing 3-yr annualised return). Q2 2026 13F: 27 positions / \\.11B."
+    },
+    {
+      "cik": "0001569064",
+      "name": "Suvretta Capital Management",
+      "aum_b": 5.1,
+      "style": "healthcare_long_short",
+      "notes": "Kept on operator coinvest roster 2026-11-01 (operator addition)."
+    },
+    {
+      "cik": "0001056807",
+      "name": "BVF Inc/IL",
+      "aum_b": 3.0,
+      "style": "biotech_specialist",
+      "notes": "CIK corrected 2026-04-13. Was 0001079114 (Greenlight Capital — wrong entity). Correct entity: BVF Inc/IL, Mark Lampert, pure biotech. Kept on operator coinvest roster 2026-11-01 (operator addition)."
+    },
+    {
+      "cik": "0001389933",
+      "name": "DAFNA Capital Management",
+      "aum_b": 0.65,
+      "style": "biotech_long_short",
+      "notes": "Added 2026-04-15. Nathan Fischel (MD), est 1999. Long/short biotech+medtech. $430M 13F portfolio. Top: RVMD, XBI, STXS, ATRC, CYTK. Kept on operator coinvest roster 2026-11-01 (operator addition)."
+    },
+    {
+      "cik": "0001687078",
+      "name": "MPM BioImpact",
+      "aum_b": 1.64,
+      "style": "oncology_focused",
+      "notes": "Added 2026-11-01. Operator addition to coinvest roster 2026-11-01. Formerly BioImpact Capital LLC / MPM Oncology Impact Management LP. Q2 2026 13F: 37 positions / $1.64B."
     }
   ],
   "conditional": [
@@ -350,14 +241,260 @@
       "style": "quantitative"
     }
   ],
+  "retired": [
+    {
+      "cik": "0001346824",
+      "name": "RA Capital Management",
+      "aum_b": 8.1,
+      "style": "clinical_probability_engine",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001822947",
+      "name": "Ally Bridge Group",
+      "aum_b": 2.5,
+      "style": "asia_biotech",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001425738",
+      "name": "Redmile Group",
+      "aum_b": 4.8,
+      "style": "growth_equity",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001055951",
+      "name": "Orbimed Advisors",
+      "aum_b": 17.2,
+      "style": "diversified_healthcare",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001776382",
+      "name": "Venbio Partners",
+      "aum_b": 2.3,
+      "style": "venture_crossover",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001493215",
+      "name": "RTW Investments",
+      "aum_b": 3.2,
+      "style": "clinical_stage_specialists",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001232621",
+      "name": "Tang Capital Partners",
+      "aum_b": 2.8,
+      "style": "oncology_focused",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001534261",
+      "name": "Casdin Capital",
+      "aum_b": 2.9,
+      "style": "genomics_focused",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001583977",
+      "name": "Cormorant Asset Management",
+      "aum_b": 3.9,
+      "style": "event_driven",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001587114",
+      "name": "EcoR1 Capital",
+      "aum_b": 2.1,
+      "style": "scientific_deep_dive",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001306923",
+      "name": "Palo Alto Investors",
+      "aum_b": 0.67,
+      "style": "physician_led_fundamental",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001274413",
+      "name": "Sectoral Asset Management",
+      "aum_b": 0.39,
+      "style": "garp_healthcare",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001281446",
+      "name": "Great Point Partners",
+      "aum_b": 1.46,
+      "style": "life_sciences_value",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001791827",
+      "name": "Avidity Partners Management",
+      "aum_b": 1.3,
+      "style": "healthcare_fundamental",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001744967",
+      "name": "Samsara BioCapital",
+      "aum_b": 1.86,
+      "style": "concentrated_life_sciences",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001609251",
+      "name": "Krensavage Asset Management",
+      "aum_b": 0.3,
+      "style": "value_healthcare",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001582844",
+      "name": "Acuta Capital Partners",
+      "aum_b": 0.1,
+      "style": "biotech_value",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001595725",
+      "name": "Rock Springs Capital Management",
+      "aum_b": 3.3,
+      "style": "healthcare_fundamental",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001577524",
+      "name": "Sarissa Capital Management",
+      "aum_b": 1.0,
+      "style": "biotech_activist",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001704132",
+      "name": "Foresite Capital IV",
+      "aum_b": 1.2,
+      "style": "biotech_crossover",
+      "firm_group": "Foresite Capital",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001792206",
+      "name": "Foresite Capital V",
+      "aum_b": 1.2,
+      "style": "biotech_crossover",
+      "firm_group": "Foresite Capital",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0002013341",
+      "name": "Foresite Capital VI",
+      "aum_b": 1.1,
+      "style": "biotech_crossover",
+      "firm_group": "Foresite Capital",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001601692",
+      "name": "Broadfin Capital (Kotler)",
+      "aum_b": 1.5,
+      "style": "healthcare_event_driven",
+      "firm_group": "Broadfin Capital",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001802630",
+      "name": "Soleus Capital Management",
+      "aum_b": 2.71,
+      "style": "healthcare_long_short",
+      "notes": "Added 2026-04-25. Guy Levy / Harold Schaaff. 95 holdings / $2.71B reportable in Q4 2025 13F. Files 13F-HR since 2019-Q4 (filed 2020-02-14, 26 quarters).",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0001920938",
+      "name": "Braidwell LP",
+      "aum_b": 3.0,
+      "style": "biotech_long_short",
+      "notes": "Added 2026-05-22. 88 holdings / $3.0B reportable in Q1 2026 13F (filed 2026-05-15). Alex Karnal; long/short across biotech, pharma, medtech, diagnostics.",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    },
+    {
+      "cik": "0002110839",
+      "name": "Broadfin Holdings",
+      "aum_b": 1.5,
+      "style": "healthcare_event_driven",
+      "firm_group": "Broadfin Capital",
+      "notes": "Added 2026-11-01. Successor filer to Broadfin Capital (Kotler) CIK 0001601692: 13F-NT for Q4 2025, own 13F-HR from Q1 2026. firm_group Broadfin Capital.",
+      "retired_date": "2026-11-01",
+      "retired_from": "elite_core",
+      "retired_reason": "Not on operator coinvest roster of 2026-11-01 (30 managers; 26 ranked by trailing 3-yr annualised return plus 4 operator additions). Kept for historical reproducibility; excluded from coinvest."
+    }
+  ],
   "metadata": {
-    "version": "3.2",
-    "last_updated": "2026-05-22",
-    "total_elite_aum_b": 153.83,
+    "version": "4.0",
+    "last_updated": "2026-11-01",
+    "total_elite_aum_b": 93.73,
     "notes": [
       "Elite Core = primary signal source",
       "Conditional = secondary breadth signal",
-      "v2.5: Ghost Tree removed — t=-5.16 anti-signal across 454 obs / 12 quarters"
+      "v2.5: Ghost Tree removed — t=-5.16 anti-signal across 454 obs / 12 quarters",
+      "v3.3: firm_group added — filer CIKs of one firm count as one coinvest holder (Foresite IV/V/VI; Broadfin old+new CIK). Broadfin Holdings (CIK 0002110839) onboarded as successor filer.",
+      "v4.0 (2026-11-01): elite_core replaced by operator roster of 30 managers (5 new: Lynx1, Commodore, Venrock Healthcare, ADAR1, Octagon; Suvretta, BVF, DAFNA, MPM BioImpact added by operator). 26 prior elite managers moved to retired (excluded from coinvest). Conditional tier unchanged. Roster chosen on trailing 3-yr returns: backtests over that window are selection-biased; forward capture is the only clean evidence."
     ]
   }
 }
