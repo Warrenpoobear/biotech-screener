@@ -28,3 +28,20 @@ Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`
 - **Reason:** (1) coinvest had not been rebuilt since Q1 2026 and carried a frozen 7-day filing age; (2) no staleness gate on 13F filings (Broadfin moved CIK, old book persisted); (3) Foresite IV/V/VI counted as three holders; (4) operator replaced the elite roster (49 → 30 managers).
 - **Expected downstream impact:** top-30 composition changes (see memo for the 2026-10-30 control vs treatment comparison); every rankings.csv hash from 2026-11-02 differs from what the prior inputs would have produced; forward-validation mandate windows restart at 0/20.
 - **Reviewer:** operator (Darren Schulz) — authorized in session 2026-11-01; PR review pending.
+
+## 2026-11-01 (D5) — coinvest CUSIP-first ticker resolution
+
+Memo: `docs/governance/2026-11-01-coinvest-cusip-first-resolution.md`
+
+| Surface | Old hash (sha256[:16]) | New hash (sha256[:16]) |
+|---|---|---|
+| `production_data/coinvest_signals.json` | `f44bc5432fb51567` | `c03652d20cfacc2c` (as_of 2026-10-30, period 2026-06-30) |
+| `production_data/cusip_static_map.json` | `fce151f7d4995269` (352 entries) | `3785dd5d33b08a99` (399 entries) |
+| Candidate `model_hash` (ast-v1) | `827c35a9ed3ee6e1` | unchanged |
+| Ruleset | `8887576e` | unchanged |
+
+- **Effective date:** first production run on or after 2026-11-02. Same out-of-sample clock start as the D1–D4 entry above; no additional reset.
+- **Affected surface:** `_resolve_ticker` in the coinvest builder (1.1.0 → 1.2.0), the CUSIP static map, and coinvest_score_z via the rebuilt `coinvest_signals.json`.
+- **Reason:** the builder trusted the cache's live-lookup ticker. That ticker was blank for some universe names and wrong for some non-universe issuers (Organon → ORIC and others), and it changed from one warm to the next.
+- **Expected downstream impact:** 2026-10-30 Top-30 overlap 27/30 against the D1–D4 file. Every coinvest-derived output from 2026-11-02 differs.
+- **Reviewer:** operator (Darren Schulz) — authorized in session 2026-11-01; PR review pending.

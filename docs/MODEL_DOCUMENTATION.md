@@ -101,6 +101,11 @@ Prior claim retracted:
 
   Because `model_hash` covers engine files only, the input drift did not reset the clock.
 
+Addendum, same day (D5, CUSIP-first resolution; lands before the first counted run, so the same reset covers it):
+- **Defect:** the coinvest builder trusted the 13F cache's live-lookup ticker and used `cusip_static_map.json` only for blank tickers. That lookup left universe names blank, so DMRA, DFTX, VOR, PBLS, ENGN, STRO, KARD, IONS and NUVB got no or partial coinvest signal. It also tagged unrelated issuers with universe tickers (Organon → ORIC, IQVIA → IRWD, AmerisourceBergen → AMRX, Integer → INSM, Fox → FOLD), and the result changed from one warm to the next.
+- **Fix:** builder 1.2.0 resolves CUSIP-first (the map wins), normalises case and drops debt CUSIPs. The map gains 47 verified entries (OpenFIGI, or 13F implied price matching the period-end close): 32 universe names and 15 corrections for mis-tagged issuers. NewAmsterdam warrants (N62509117) are deliberately left unmapped.
+- **Impact on 2026-10-30:** 271 tickers with signal (was 256), Top-30 overlap 27/30 against the roster-only file (out: ABSI, PTGX, PVLA; in: ASND, BCRX, TNGX), coinvest_z SD 0.676. Memo: `docs/governance/2026-11-01-coinvest-cusip-first-resolution.md`.
+
 ---
 
 ## Recent Updates — 2026-07-10 (Forward-Validation Feed Hardening — PR #489)
