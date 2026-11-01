@@ -1509,6 +1509,27 @@ def _load_manager_registry(data_dir: Path = None) -> Dict[str, Dict]:
     return {}
 
 
+def _refresh_coinvest_filing_age(coinvest_signals: Dict[str, Any], as_of_date: str) -> None:
+    """Recompute filing age in a pre-built coinvest_signals.json as of this run.
+
+    The builder records days_since_latest_filing relative to its own build
+    date, so a file built once and reused would report a frozen age.  Entries
+    carrying latest_filed_at (builder >= 1.1.0) get their age and recency
+    state recomputed in place; legacy entries are left as built.
+    """
+    as_of = date.fromisoformat(as_of_date)
+    for sig in coinvest_signals.values():
+        filed_str = sig.get("latest_filed_at") if isinstance(sig, dict) else None
+        if not filed_str:
+            continue
+        try:
+            age = max(0, (as_of - date.fromisoformat(filed_str)).days)
+        except (ValueError, TypeError):
+            continue
+        sig["days_since_latest_filing"] = age
+        sig["coinvest_recency_state"] = "fresh" if age <= 90 else "stale"
+
+
 def _convert_holdings_to_coinvest(
     holdings_snapshots: Dict[str, Any],
     data_dir: Path = None,
@@ -10453,6 +10474,7 @@ def run_screening_pipeline(
                 }
             else:
                 raise ValueError(f"coinvest_signals.json must be a dict or list, got {type(_raw).__name__}")
+            _refresh_coinvest_filing_age(coinvest_signals, as_of_date)
         else:
             # Fallback: try loading holdings file and convert to coinvest format
             # Prefer holdings_detailed.json (dict format with conviction data) over holdings_snapshots.json (list format)

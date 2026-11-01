@@ -27,7 +27,7 @@ SUMMARY_PATH = ARTIFACTS / "WEEKLY_SUMMARY.md"
 CANDIDATE_FILE = ARTIFACTS / "CANDIDATE.json"
 
 sys.path.insert(0, str(REPO_ROOT))
-from tools.run_forward_validation import capture_is_eligible_for_mandate  # noqa: E402
+from tools.run_forward_validation import capture_is_eligible_for_mandate, mandate_clock_epoch  # noqa: E402
 
 
 def week_key(date_str: str) -> str:
@@ -86,7 +86,7 @@ def main() -> int:
         if xs5 is None:
             continue
         wk = week_key(date)
-        if capture_is_eligible_for_mandate(cap, fill):
+        if capture_is_eligible_for_mandate(cap, fill, clock_epoch=mandate_clock_epoch(candidate)):
             eligible_weeks.add(wk)
         if wk not in by_week:
             by_week[wk] = {
@@ -150,6 +150,7 @@ def main() -> int:
         f"**Model hash:** `{candidate.get('model_hash', 'unknown')}`  ",
         f"**Ruleset:** `{candidate.get('ruleset_hash', 'unknown')}`  ",
         f"**Candidate registered:** {candidate.get('registered', 'unknown')}  ",
+        f"**Out-of-sample clock start:** {mandate_clock_epoch(candidate) or 'registration'}  ",
         "**Test:** Equal-weight Top-30 by `actionable_rank` vs XBI (5-day non-overlapping windows)  ",
         "",
         "---",

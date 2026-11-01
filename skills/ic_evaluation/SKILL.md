@@ -287,6 +287,7 @@ Any IC research on expectation-gap features against historical snapshots must ve
 *Candidate `model_hash=827c35a9ed3ee6e1` (`ast-v1`; legacy `a9983a67c6954813`) / ruleset `8887576e`, registered 2026-06-26 (re-hashed 2026-07-10, same freeze).*
 
 - **Mandate progress: 0/20 eligible LIVE windows (code-enforced).** The 10 captures dated 2026-06-12 → 2026-06-26 are a one-time 2026-06-28 backfill (`fv_capture.v1`, legacy hash) and do not count. The production capture tail never ran live 2026-04-17 → 2026-07-10 (`set -e` swallowed it); repaired + deployed 2026-07-10 (PR #489). The clock starts at the first clean LIVE capture.
+- **Clock reset 2026-11-01 (operator-authorized):** the coinvest 13F integrity fix and roster change set `oos_clock_start=2026-11-02`, so the mandate is **0/20 from 2026-11-02**. The 7 eligible windows accrued before the reset (mean weekly excess +0.713%, t = 1.64) are kept as history and **do not count**. Do not cite them as mandate progress. `model_hash` is unchanged. Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`.
 - Live status source: `artifacts/forward_validation/LIVENESS_STATUS.json` (refresh via `tools/forward_validation_liveness_monitor.py`); windows: `artifacts/forward_validation/WEEKLY_SUMMARY.md`.
 - Status: OBSERVE / DEM thesis HOLD. Per `docs/FORWARD_VALIDATION_PROTOCOL.md`, clearing the gate only makes the candidate *eligible* for an operator promotion decision; promotion/unfreeze remain explicit operator actions.
 
@@ -295,7 +296,7 @@ Any IC research on expectation-gap features against historical snapshots must ve
 ## Governance Freeze Status (2026-07-10)
 
 - The May-era "architecture freeze through ~2026-05-26" is superseded. Current binding constraints: **DEM candidate freeze + NO_MODEL_CHANGE forward-validation window** (`docs/FORWARD_VALIDATION_PROTOCOL.md` §1) and **FROZEN (BLOCKED_LEVEL_0)** per `docs/model_documentation.md` (canonical). The 2026-06-24 operator lift was scoped to Spec-100 tooling only; no model-behavior change is authorized.
-- **13F Q1 2026: HOLD / observation-only.** 55-manager cohort Jaccard last measured 0.463 (FAIL vs 0.70); the 0.875 figure was the Q4/49-manager comparison and must not be cited as clearance. Authority: `artifacts/readiness/H20D_REEVAL_VERDICT_2026_07_04.md`.
+- **13F Q1 2026: HOLD / observation-only.** 55-manager cohort Jaccard last measured 0.463 (FAIL vs 0.70); the 0.875 figure was the Q4/49-manager comparison and must not be cited as clearance. Authority: `artifacts/readiness/H20D_REEVAL_VERDICT_2026_07_04.md`. *(Superseded 2026-11-01: coinvest now uses Q2 2026 13F with a 30-manager `elite_core` plus 6 conditional managers. The 49/55-manager cohort figures are historical. Next quarantine check: `--pre-date 2026-10-30 --post-date <first post-merge snapshot>`.)*
 - Any change to ranker, selector, eligibility, sizing, or the candidate registration resets the out-of-sample clock and requires explicit operator authorization.
 
 ## Session-end learning

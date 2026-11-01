@@ -23,7 +23,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 SCHEMA_VERSION = "coinvest_features.v1"
 
 # Conviction formula constants — replicate run_screen.py:802-809 exactly.
@@ -37,6 +37,13 @@ CHANGE_WEIGHTS: Dict[str, float] = {
 }
 CHANGE_THRESHOLD = 0.10
 RECENCY_FRESH_DAYS = 90
+
+# A manager's selected filing is dropped once its period_of_report is older
+# than this. The freshest legitimate filing can be ~137 days old just before
+# a 13F deadline (quarter + 45-day filing window); one late or missed quarter
+# adds ~92 days. Beyond that the filer has stopped (or moved CIK), and the PIT
+# cache would otherwise carry its last book forever.
+MAX_REPORT_AGE_DAYS = 230
 
 
 # ---------------------------------------------------------------------------
@@ -199,6 +206,7 @@ def _new_ticker_accum() -> Dict[str, Any]:
         "tier1_conviction_overlap": 0.0,
         "max_tier1_position_pct": 0.0,
         "days_since_latest_filing": None,
+        "latest_filed_at": None,
         "coinvest_recency_state": "stale",
         "coinvest_holders": [],
         "holder_tiers": {},
@@ -216,6 +224,8 @@ def build_coinvest_features(
     prior_cache_dir: Optional[Path] = None,
     no_prior: bool = False,
     nearest_prior_days: int = 0,
+    manager_groups: Optional[Dict[str, str]] = None,
+    max_report_age_days: Optional[int] = MAX_REPORT_AGE_DAYS,
 ) -> Optional[dict]:
     """Build coinvest features from PIT 13F cache.
 
@@ -237,6 +247,12 @@ def build_coinvest_features(
         Explicit prior-quarter cache directory (overrides scan).
     no_prior : bool
         If *True*, skip prior-quarter comparison entirely.
+    manager_groups : dict[str, str] | None
+        Padded CIK -> firm group name. Filer CIKs of one firm count as a
+        single holder, using only the group's latest period_of_report.
+    max_report_age_days : int | None
+        Drop managers whose period_of_report is older than this many days
+        before *as_of_date*. ``None`` disables the gate.
 
     Returns
     -------
@@ -325,9 +341,22 @@ def build_coinvest_features(
         "EXIT": 0,
     }
     unresolved_count = 0
+    manager_groups = manager_groups or {}
+    stale_excluded: List[dict] = []
+    not_in_roster: List[dict] = []
 
+    # -- Holder units: one per manager, or one per firm_group --------------
+    # A firm's filer CIKs (e.g. Foresite IV/V/VI, or an old and new CIK after
+    # a filer change) count once. Only members at the group's latest
+    # period_of_report contribute; their books are summed.
+    units: Dict[str, Dict[str, Any]] = {}
     for mgr_entry in selected_managers:
         cik = mgr_entry["manager_cik"]
+        # Roster gate: caches written before a roster change still list
+        # managers that have since been retired; manager_tiers is the roster.
+        if manager_tiers and cik not in manager_tiers:
+            not_in_roster.append({"cik": cik, "name": mgr_entry.get("manager_name", cik)})
+            continue
         json_path = mgr_entry.get(
             "manager_json_path",
             f"managers/{cik}.json",
@@ -342,6 +371,7 @@ def build_coinvest_features(
         )
         tier = manager_tiers.get(cik, 0)
         filed_at_str = mgr_data.get("filed_at") or mgr_entry.get("filed_at", "")
+        por_str = mgr_entry.get("period_of_report") or mgr_data.get("period_of_report", "")
 
         try:
             filed_at: Optional[date] = date.fromisoformat(filed_at_str) if filed_at_str else None
@@ -352,28 +382,82 @@ def build_coinvest_features(
         if filed_at and filed_at > as_of:
             continue
 
+        # Staleness gate: an abandoned filer's last book must not persist.
+        if max_report_age_days is not None and por_str:
+            try:
+                por_age = (as_of - date.fromisoformat(por_str)).days
+            except (ValueError, TypeError):
+                por_age = None
+            if por_age is not None and por_age > max_report_age_days:
+                stale_excluded.append(
+                    {"cik": cik, "name": short_name, "period_of_report": por_str, "filed_at": filed_at_str}
+                )
+                continue
+
         # Aggregate current holdings by resolved ticker.
         holdings_by_ticker: Dict[str, float] = {}
         total_value = 0.0
+        mgr_unresolved = 0
         for h in mgr_data.get("holdings", []):
             val = h.get("value_usd_thousands", 0) or 0
             total_value += val
             tk = _resolve_ticker(h, cusip_map, _ca_registry, as_of_date)
             if not tk:
-                unresolved_count += 1
+                mgr_unresolved += 1
                 continue
             holdings_by_ticker[tk] = holdings_by_ticker.get(tk, 0) + val
 
-        prior_tkr_vals = prior_holdings_by_mgr.get(cik, {})
+        group = manager_groups.get(cik)
+        key = group or cik
+        unit = units.get(key)
+        if unit is None or por_str > unit["period_of_report"]:
+            unit = {
+                "name": group or short_name,
+                "tier": tier,
+                "filed_at": filed_at,
+                "filed_at_str": filed_at_str,
+                "period_of_report": por_str,
+                "holdings": {},
+                "total_value": 0.0,
+                "prior": {},
+                "unresolved": 0,
+                "members": [],
+            }
+            units[key] = unit
+        elif por_str < unit["period_of_report"]:
+            continue  # superseded by a newer filing from the same firm
 
-        managers_used.append(
+        if TIER_WEIGHTS.get(tier, 0.2) > TIER_WEIGHTS.get(unit["tier"], 0.2):
+            unit["tier"] = tier
+        if filed_at and (unit["filed_at"] is None or filed_at > unit["filed_at"]):
+            unit["filed_at"] = filed_at
+            unit["filed_at_str"] = filed_at_str
+        for tk, val in holdings_by_ticker.items():
+            unit["holdings"][tk] = unit["holdings"].get(tk, 0) + val
+        for tk, val in prior_holdings_by_mgr.get(cik, {}).items():
+            unit["prior"][tk] = unit["prior"].get(tk, 0) + val
+        unit["total_value"] += total_value
+        unit["unresolved"] += mgr_unresolved
+        unit["members"].append(
             {
                 "cik": cik,
                 "name": short_name,
-                "period_of_report": mgr_entry.get("period_of_report", ""),
+                "firm_group": group or "",
+                "period_of_report": por_str,
                 "filed_at": filed_at_str,
             }
         )
+
+    for unit in units.values():
+        short_name = unit["name"]
+        tier = unit["tier"]
+        filed_at = unit["filed_at"]
+        filed_at_str = unit["filed_at_str"]
+        holdings_by_ticker = unit["holdings"]
+        total_value = unit["total_value"]
+        prior_tkr_vals = unit["prior"]
+        unresolved_count += unit["unresolved"]
+        managers_used.extend(unit["members"])
 
         # Union of current + prior tickers (to detect EXIT).
         all_tickers = set(holdings_by_ticker.keys())
@@ -457,6 +541,7 @@ def build_coinvest_features(
                 cur_min = td["days_since_latest_filing"]
                 if cur_min is None or days_since < cur_min:
                     td["days_since_latest_filing"] = days_since
+                    td["latest_filed_at"] = filed_at_str
 
     # -- Finalize per-ticker fields ----------------------------------------
     for td in ticker_data.values():
@@ -498,6 +583,9 @@ def build_coinvest_features(
             "unresolved_holdings": unresolved_count,
             "prior_available": prior_index is not None,
             "managers_used": managers_used,
+            "stale_managers_excluded": stale_excluded,
+            "managers_not_in_roster": not_in_roster,
+            "max_report_age_days": max_report_age_days,
             "change_summary": change_summary,
         },
     }
@@ -664,10 +752,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     # Build CIK -> tier / name maps from elite_managers.
     manager_tiers: Dict[str, int] = {}
     manager_names: Dict[str, str] = {}
+    manager_groups: Dict[str, str] = {}
     for m in get_all_managers():
         padded = _pad_cik(m["cik"])
         manager_tiers[padded] = m.get("tier", 0)
         manager_names[padded] = m.get("short_name", m.get("name", padded))
+        if m.get("firm_group"):
+            manager_groups[padded] = m["firm_group"]
 
     prior_dir = Path(args.prior_cache_dir) if args.prior_cache_dir else None
 
@@ -681,6 +772,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         prior_cache_dir=prior_dir,
         no_prior=args.no_prior,
         nearest_prior_days=args.nearest_prior_days,
+        manager_groups=manager_groups,
     )
 
     if result is None:

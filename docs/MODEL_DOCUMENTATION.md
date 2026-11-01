@@ -1,10 +1,11 @@
 # Wake Robin DEM — Model Documentation
 
 **Version:** 1.7.2 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
-**Last updated:** 2026-07-10 (forward-validation feed hardening — PR #489 merged & deployed to `main` @ `4d8623e5`: `set -e` wrapper fix, behavioral model-hash `ast-v1`, capture freshness gate + mandate quarantine schema, price-feed MultiIndex fix + `price_append_health` hard gate, liveness monitor; `CANDIDATE.json` re-registered to `827c35a9` [annotation-only equivalent to frozen `a9983a67`; freeze date 2026-06-26 unchanged]; **NO_MODEL_CHANGE**. Diagnostic perf as-of 7/9 [gross, research-only]: DEM Top-30 EW YTD +43.52% vs XBI +35.19%)
-**Prior update:** 2026-06-28 (IC health check — `score_rank_pct` mean_ic +0.049 HEALTHY, hit_rate 61.8%, N=34; regime monitor gate met 118/20 windows, avg XS +0.268%; EES advisory 5/30 flagged; **no production change**. Earlier same day: YTD backtest data integrity audit — corrected YTD DEM +38.52% vs XBI +27.43% (+11.09pp); weekly validation DEM +31.79% vs SPY +12.32%, Sharpe 2.49)
-**Earlier update:** 2026-06-25 (EES v3 raw_veto_core shadow gate MET; freeze-lift review memo prepared; `READY_FOR_OPERATOR_FREEZE_LIFT_REVIEW`; **no production change**)
+**Last updated:** 2026-11-01 (coinvest 13F integrity fix + operator roster change — **operator-authorized selector-input change with out-of-sample clock reset**: `coinvest_signals.json` rebuilt from Q2 2026 13F [was stuck on Q1 since 2026-05-22], builder 1.1.0 staleness gate / firm grouping / roster gate, run-time filing-age refresh, `manager_registry.json` v4.0 with 30-manager `elite_core`; forward-validation `oos_clock_start=2026-11-02`, mandate restarts at 0/20; `model_hash 827c35a9ed3ee6e1` and ruleset `8887576e` unchanged. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`)
+**Prior update:** 2026-07-10 (forward-validation feed hardening — PR #489 merged & deployed to `main` @ `4d8623e5`: `set -e` wrapper fix, behavioral model-hash `ast-v1`, capture freshness gate + mandate quarantine schema, price-feed MultiIndex fix + `price_append_health` hard gate, liveness monitor; `CANDIDATE.json` re-registered to `827c35a9` [annotation-only equivalent to frozen `a9983a67`; freeze date 2026-06-26 unchanged]; **NO_MODEL_CHANGE**. Diagnostic perf as-of 7/9 [gross, research-only]: DEM Top-30 EW YTD +43.52% vs XBI +35.19%)
+**Earlier update:** 2026-06-28 (IC health check — `score_rank_pct` mean_ic +0.049 HEALTHY, hit_rate 61.8%, N=34; regime monitor gate met 118/20 windows, avg XS +0.268%; EES advisory 5/30 flagged; **no production change**. Earlier same day: YTD backtest data integrity audit — corrected YTD DEM +38.52% vs XBI +27.43% (+11.09pp); weekly validation DEM +31.79% vs SPY +12.32%, Sharpe 2.49)
 **Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature, ordinal-only) + EW Top-30. **FROZEN** until governance gates clear.
+**Coinvest input (from 2026-11-02 production run):** Q2 2026 13F (`period_of_report=2026-06-30`, file as_of 2026-10-30), 30-manager `elite_core` roster (registry v4.0) + unchanged 6-manager `conditional` tier; forward-validation clock restarted 2026-11-02 (0/20).
 Deployed ranker artifact = **capped Family C live-pilot vector**, not identical to the trained `minimal_v2`
 weights. See `production_data/ranker_v2_model.json` → `provenance` block for the deployed vs trained delta.
 
@@ -12,6 +13,93 @@ weights. See `production_data/ranker_v2_model.json` → `provenance` block for t
 stale selector/ranker prose with the already-active v1.14.0 configuration. The
 selector, ranker_v2 weights, eligibility rules, decision rulesets, and EW Top-30
 construction remain frozen; this document does not authorize behavior changes.
+
+---
+
+## Recent Update — 2026-11-01 (Coinvest 13F Integrity Fix + Roster Change — Out-of-Sample Clock Reset)
+
+Classification: `DATA_INTEGRITY_FIX / SIGNAL_DEFINITION_CHANGE (13F manager roster) / OOS_CLOCK_RESET`. Tier 3 (selector input, production hash) with Tier 4 elements (roster = signal definition; Foresite grouping = methodology judgment). Source of truth: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`; hash rotation: `governance/HASH_ROTATIONS.md` (2026-11-01 entry).
+
+Summary:
+- Production `coinvest_signals.json` — the sole selector input (`coinvest_score_z` 100%) — had not been rebuilt since Q1 2026 (`as_of_date=2026-05-22`, `period_of_report=2026-03-31`) even though Q2 13Fs were filed 2026-08-14. Selection from June through October ran on Q1 holdings.
+- The stored filing age was frozen at build time (`days_since_latest_filing=7`), so the 90-day filing-age decay never applied: 5-month-old holdings were treated as fresh.
+- There was no staleness gate on 13F selection: Broadfin changed CIK and its Q4 2025 book (old CIK 0001601692) persisted at recency weight 0.7.
+- Foresite Capital IV/V/VI were counted as three independent holders (coinvest counted per filer CIK).
+- The operator authorized one combined fix with an out-of-sample clock reset, together with an operator-specified manager roster change.
+
+Governance verdict:
+- `SELECTOR_INPUT_CHANGE` (operator-authorized under `docs/FORWARD_VALIDATION_PROTOCOL.md` §1; resets the out-of-sample clock). This is **not** `NO_MODEL_CHANGE`: engine files and `model_hash` are untouched, but the selector's input signal and its manager roster changed.
+- Frozen status: candidate freeze and FROZEN (BLOCKED_LEVEL_0) remain in force. `model_hash=827c35a9ed3ee6e1` (ast-v1) and ruleset `8887576e` (v1.14.0) are unchanged. This change does not unfreeze the model or clear any gate.
+- Operator action required: PR review is still pending (per `HASH_ROTATIONS.md`). If the PR merges after the 2026-11-02 production run, move `oos_clock_start` to the first run that uses the merged code (memo §4).
+
+Evidence:
+- Memo §1 defects D1–D4; §3 control vs treatment on 2026-10-30 (same code, only `coinvest_signals.json` differs; control reproduces the production top 30 at 30/30).
+- Top-30 overlap 25/30. Leaves: ARGX, ASND, NBIX, SRRK, TARS. Enters: ABSI, BLTE, PVLA, TRAX, TRVI.
+- Filing age goes from 7 (frozen) to 77–78 days (from 2026-08-14). `coinvest_score_z` SD drops from 0.968 to 0.684, which still passes the collapse guard (> 0.10). Coverage goes from 81.9% to 76.8% (256/357 tickers with signal; was 279/338 at Q1). The SD drop comes from the 90-day half-life decay applying for the first time (≈0.55× at 77 days), not from a signal collapse.
+- Phase-2 health is FAIL in both arms. Control fails on `catalyst_7d_count_high` and `headwind_exposure`; treatment fails on `headwind_exposure` only.
+- Hashes (sha256[:16]): `coinvest_signals.json` goes from `05296939cf4d03c1` to `f44bc5432fb51567`; `manager_registry.json` goes from `60efdadc64db9a19` (v3.2) to `9cfea1d5236278c2` (v4.0).
+- `artifacts/forward_validation/CANDIDATE.json`: `oos_clock_start=2026-11-02` plus `oos_clock_reset_note`.
+
+Impact on alpha interpretation:
+- **Pre-reset forward evidence no longer counts toward the mandate.** The 7 mandate-eligible LIVE windows (mean weekly excess +0.713%, t = 1.64, not statistically significant) stay in `captures.jsonl` / `fills.jsonl` as recorded history but no longer count toward the 20/40/52-window gates. Mandate SM-20260629-001 restarts at **0/20** from 2026-11-02.
+- Those 7 windows were produced by a selector running on stale Q1 holdings with a mis-specified filing age. Read them as evidence about that stale configuration only, not about the corrected signal.
+- **Selection-bias caveat.** 26 of the 30 `elite_core` managers were chosen on trailing 3-year annualised return. Any backtest over that window is selection-biased and **must not be cited as evidence** for the new roster. No ablation was run (the operator chose ship-with-reset). Forward capture from `oos_clock_start` is the only clean evidence.
+- **Vintage boundary.** The regenerated pseudo-PIT snapshots for 2026-08-17 → 2026-10-13 (`data/snapshots_pit_gap_2026q3/`) used Q2 13F holdings while production used Q1. Comparisons across that boundary mix two coinvest vintages.
+- The fix improves PIT integrity and input freshness: filing age is now real, stale filers drop out, and one firm counts as one holder. It does not by itself make the model more predictive. Whether the corrected input or the new roster helps requires forward validation.
+
+What changed:
+- Builder `scripts/build_coinvest_features_from_13f.py` 1.0.0 → 1.1.0:
+  - `MAX_REPORT_AGE_DAYS = 230` staleness gate.
+  - `firm_group`: one holder per firm; only members at the group's latest period count; books are summed.
+  - Roster gate: off-roster cached managers are excluded.
+  - Emits `latest_filed_at` per ticker. Provenance lists `stale_managers_excluded` and `managers_not_in_roster`.
+- `run_screen.py::_refresh_coinvest_filing_age`: recomputes `days_since_latest_filing` and recency state from `latest_filed_at` at each run.
+- `production_data/manager_registry.json` v3.2 → v4.0:
+  - `elite_core` replaced by the operator roster of 30 managers.
+  - 26 prior elite managers moved to a new `retired` section. They are kept for reproducibility and excluded from coinvest. Examples: RA Capital, Redmile, RTW, EcoR1, Foresite IV/V/VI, Broadfin (both CIKs).
+  - Broadfin Holdings LLC (CIK 0002110839) registered as the successor filer, grouped with the old CIK, and placed in `retired` with it.
+  - `firm_group` set on Foresite IV/V/VI and on both Broadfin CIKs.
+  - `conditional` tier (6) unchanged. Elite roster count: 49 → 30.
+- `production_data/coinvest_signals.json` rebuilt as of 2026-10-30 from the Q2 2026 PIT cache.
+- Forward validation: `tools/run_forward_validation.py`, `tools/weekly_validation_summary.py`, and `CANDIDATE.json` now carry `oos_clock_start=2026-11-02`. This was needed because `model_hash` covers only ranker/selector/decision-engine files, so an input change would otherwise not reset the clock.
+
+What did not change:
+- Ranker: unchanged (`minimal_v2` capped Family C artifact; `model_hash` unchanged).
+- Selector: engine code and weights unchanged (`coinvest_score_z` 100%, `inst_delta_z` 0%). The input file and its manager roster changed (see above).
+- Scoring: `final_score` logic unchanged.
+- Eligibility: unchanged.
+- Sizing: EW Top-30 unchanged.
+- Production wiring: only the coinvest load path (filing-age refresh) changed. Ruleset `8887576e` stays pinned.
+- Trading/actionability: no change to rebalance policy. The top-30 composition will differ from 2026-11-02 because of the new inputs.
+
+Skill synchronization:
+- Skills reviewed: `skills/institutional_signal`, `skills/ic_evaluation`, `skills/selector_ranker`, `skills/validation`, `skills/screener_ops`, and their `docs/hermes_skills/` mirrors; `docs/hermes_skills/document-lineage.md`, `docs/hermes_skills/13f-validation-coordinator.md`; `.claude/rules/operational-state.md`.
+- Skills updated (dated 2026-11-01 notes; each `skills/` file and its `docs/hermes_skills/` mirror edited identically):
+  - `skills/institutional_signal/SKILL.md` + `docs/hermes_skills/institutional-signal.md`: `retired` tier row, roster note, production coinvest input/vintage note, Q2 promotion and Q3 next-cycle lines.
+  - `skills/ic_evaluation/SKILL.md` + `docs/hermes_skills/ic-evaluation.md`: clock-reset bullet; 49/55-cohort line marked superseded.
+  - `skills/selector_ranker/SKILL.md` + `docs/hermes_skills/selector-ranker.md`: Q1-quarantine clearance line marked superseded.
+  - `docs/hermes_skills/document-lineage.md`: manager registry count 55 → 36 active (30 + 6), plus 26 retired.
+  - `docs/hermes_skills/13f-validation-coordinator.md`: status note saying the 55-manager baseline is historical.
+  - `.claude/rules/operational-state.md`: freeze/mandate, 13F cycle, and governance events.
+- Skills not updated: `skills/validation`, `skills/screener_ops`, and `docs/hermes_skills/governance-spec-enforcement.md`, which only make historical references. `.claude/rules/research-backtest.md` (pre-existing historical B6 claims) was out of scope.
+- Reason: skill instructions synchronized so future agents do not cite the 49/55-manager cohort, the Q1 coinvest vintage, or the 7 pre-reset windows as current mandate progress.
+
+Open questions / next validation:
+- Run the 13F post-filing sequence after the first post-merge snapshot: `tools/check_13f_cohort_quarantine.py --pre-date 2026-10-30 --post-date <first post-merge>`, followed by a 5-day observation window.
+- The Q3 2026 13F deadline is ≈ 2026-11-14. Rebuilding `coinvest_signals.json` is still a manual, governed step; the staleness gate prevents silent carry-forward but does not trigger a rebuild.
+- `institutional_summary.py` (`inst_delta_z`, zeroed in selector) does not yet apply firm grouping or the roster gate.
+- PIT cache indexes list 56 filers against a 30-manager cohort (`coverage_pct` > 100%). This is cosmetic.
+
+Prior claim retracted:
+- Old claim (forward-validation capture record before 2026-11-01): mandate SM-20260629-001 had accrued 7 eligible LIVE windows toward the 20-window gate (mean weekly excess +0.713%, t = 1.64).
+- Corrected interpretation: those windows came from a selector fed by stale Q1 2026 holdings with a frozen 7-day filing age, a stale Broadfin book, and triple-counted Foresite. They are kept as history and do not count. The mandate is at 0/20 from 2026-11-02.
+- Root cause: four defects together:
+  - `coinvest_signals.json` was not rebuilt after the Q2 13F filings.
+  - Filing age was stored at build time instead of computed at run time.
+  - There was no 13F staleness gate.
+  - Holders were counted per filer CIK.
+
+  Because `model_hash` covers engine files only, the input drift did not reset the clock.
 
 ---
 
@@ -1017,7 +1105,8 @@ Core inputs loaded by `run_screen.py` every run:
 | `production_data/pit_financials/{TICKER}.json` | EDGAR XBRL facts with filing dates | 339 tickers, all historical filings | Daily rebuild | M2 (PIT mode) |
 | `production_data/ipo_dates.json` | First/last price dates per ticker | 355 tickers | From price_history.csv | PIT survivorship filter |
 | `production_data/institutional_summary.json` | Sponsorship holdings, delta signals | 29 managers, 58.2% coverage | Quarterly (~May 15 next) | momentum_delta_z sort signal |
-| `production_data/manager_registry.json` | Sponsorship manager metadata | ~100 managers | Quarterly | Sponsorship signal processing |
+| `production_data/manager_registry.json` | Sponsorship manager metadata | v4.0 (2026-11-01): 30 `elite_core` + 6 `conditional` active; 26 `retired` (excluded from coinvest) | Quarterly / governed roster change | Sponsorship signal processing |
+| `production_data/coinvest_signals.json` | Per-ticker coinvest features (sole selector input) | Q2 2026 13F, as_of 2026-10-30, 256/357 tickers with signal | Manual governed rebuild after each 13F cycle (`scripts/build_coinvest_features_from_13f.py` 1.1.0); filing age recomputed at run time | `coinvest_score_z` (selector 100%) |
 | `production_data/fda_designations.json` | Fast Track, Breakthrough, Orphan, Priority | 207 entries, 84 tickers | Manual | M4 regulatory scoring |
 | `production_data/regulatory_calendar_manual.json` | Hand-curated PDUFA/ADCOM dates | 20-50 events | Manual | M3 catalyst detection |
 | `production_data/adcom_outcomes.json` | FDA advisory committee voting history | 100+ decisions | Ad-hoc | M4 adcom vote scoring |

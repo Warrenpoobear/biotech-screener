@@ -56,6 +56,33 @@ def test_legacy_capture_without_schema_fields_ineligible():
     assert capture_is_eligible_for_mandate(legacy, GOOD_FILL) is False
 
 
+def test_capture_before_clock_epoch_ineligible():
+    # An operator-authorized fix resets the out-of-sample clock; earlier
+    # captures observed a different model and must not count.
+    cap = _capture(date="2026-10-30")
+    assert capture_is_eligible_for_mandate(cap, GOOD_FILL, clock_epoch="2026-11-02") is False
+
+
+def test_capture_on_or_after_clock_epoch_eligible():
+    assert capture_is_eligible_for_mandate(_capture(date="2026-11-02"), GOOD_FILL, clock_epoch="2026-11-02") is True
+    assert capture_is_eligible_for_mandate(_capture(date="2026-11-09"), GOOD_FILL, clock_epoch="2026-11-02") is True
+
+
+def test_no_clock_epoch_keeps_prior_rule():
+    assert capture_is_eligible_for_mandate(_capture(date="2026-07-01"), GOOD_FILL, clock_epoch=None) is True
+
+
+def test_clock_epoch_rejects_undated_capture():
+    assert capture_is_eligible_for_mandate(_capture(), GOOD_FILL, clock_epoch="2026-11-02") is False
+
+
+def test_mandate_clock_epoch_reads_candidate():
+    from tools.run_forward_validation import mandate_clock_epoch
+
+    assert mandate_clock_epoch({"oos_clock_start": "2026-11-02"}) == "2026-11-02"
+    assert mandate_clock_epoch({}) is None
+
+
 def test_forward_return_realized_helper():
     assert forward_return_realized({"xs_5d": 0.0}) is True
     assert forward_return_realized({"xs_5d": None}) is False

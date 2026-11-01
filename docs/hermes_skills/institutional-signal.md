@@ -69,6 +69,9 @@ SEC EDGAR 13F-HR filings
 | --- | --- | --- |
 | elite\_core | Highest-conviction biotech-focused managers | Full weight |
 | conditional | Broader institutional managers with biotech exposure | Reduced weight |
+| retired | Former managers kept for reproducibility (added v4.0, 2026-11-01) | Excluded from coinvest |
+
+Current roster note, 2026-11-01: registry v4.0 has 30 `elite_core` managers, specified by the operator (was 49). It also has 6 `conditional` and 26 `retired` managers. Firm CIKs that belong together (Foresite IV/V/VI, Broadfin old and new CIK) share a `firm_group` and count as one holder. 26 of the 30 elite managers were chosen on trailing 3-year return, so backtests over that window are selection-biased and must not be cited. Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`.
 
 ### Onboarding Flow
 
@@ -105,6 +108,14 @@ The production selector signal. Measures institutional co-investment conviction 
 2. Canonical summary: `production_data/institutional_summary.json`
 3. Delta computation: `institutional_summary_delta.json` (pre vs post refresh)
 4. Score: z-scored across eligible universe per snapshot
+
+Production input note, 2026-11-01: production `coinvest_score_z` comes from the pre-built `production_data/coinvest_signals.json`. That file is produced from the PIT cache by `scripts/build_coinvest_features_from_13f.py` 1.1.0. The builder applies three gates:
+
+- a 230-day `period_of_report` staleness gate;
+- `firm_group` holder grouping;
+- an active-roster gate.
+
+`run_screen.py` recomputes the filing age from `latest_filed_at` on every run. Current vintage: Q2 2026 (as\_of 2026-10-30). The rebuild after each 13F cycle is a **manual, governed step**: check the file's `period_of_report` before treating coinvest as current.
 
 ---
 
@@ -255,7 +266,8 @@ Also monitor BioPharm IQ Twitter ([https://twitter.com/BioPharmIQ](https://twitt
 - **Filing pattern**: All three filed on deadline day (May 15), consistent with Q1 2025 pattern (all three also filed May 15, 2025)
 - **CIKs**: Fairmount 0001802528, Deep Track 0001856083, Logos Global 0001792126
 - **Post-filing action sequence**: (1) Warm 13F cache, (2) Run cohort quarantine, (3) Check collapse guards (coinvest\_score\_z SD), (4) Refresh IC decomposition, (5) 5-day observation window before treating as production-grade
-- **Next cycle**: Q2 2026 (period ending June 30, 2026). Filing deadline \~August 14, 2026. Monitor EDGAR starting \~August 11.
+- **Q2 2026** (period ending June 30, 2026): filed 2026-08-14. Promoted into production coinvest only on 2026-11-01, through the operator-authorized fix with a clock reset (see memo above).
+- **Next cycle**: Q3 2026 (period ending September 30, 2026). Filing deadline \~2026-11-14. Rebuild `coinvest_signals.json` afterwards; this is a manual, governed step.
 - **SEC compliance**: SEC\_USER\_AGENT preflight check added (2026-05-13) for EDGAR fair-use policy
 
 ## Q1 2026 13F-HR Filing Summary (COMPLETE)
