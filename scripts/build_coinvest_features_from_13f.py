@@ -18,12 +18,13 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 SCHEMA_VERSION = "coinvest_features.v1"
 
 # Conviction formula constants — replicate run_screen.py:802-809 exactly.
@@ -44,6 +45,9 @@ RECENCY_FRESH_DAYS = 90
 # adds ~92 days. Beyond that the filer has stopped (or moved CIK), and the PIT
 # cache would otherwise carry its last book forever.
 MAX_REPORT_AGE_DAYS = 230
+
+# 13F debt lines (convertible notes) carry letters in the CUSIP issue number.
+_DEBT_CUSIP = re.compile(r"[0-9A-Z]{6}[A-Z]{2}[0-9]")
 
 
 # ---------------------------------------------------------------------------
@@ -72,16 +76,23 @@ def _resolve_ticker(
     ca_registry: Any = None,
     as_of: str = "",
 ) -> str:
-    """Resolve ticker from holding, with CUSIP fallback and rename resolution.
+    """Resolve ticker from holding, CUSIP-first, with rename resolution.
+
+    The static CUSIP map wins over the holding's cached ticker: the cache
+    warmer's live lookup both leaves universe names blank and tags unrelated
+    issuers with universe tickers (Organon -> ORIC). Debt CUSIPs (letters in
+    the issue number, e.g. ``45258DAB1``) never resolve to an equity ticker.
 
     If a corporate actions registry is provided, old ticker symbols (e.g.
     BGNE) are resolved to their current name (e.g. ONC) as of the given date.
     """
-    tk = (holding.get("ticker") or "").strip().upper()
-    if not tk:
-        cusip = (holding.get("cusip") or "").strip()
-        if cusip and cusip in cusip_map:
-            tk = cusip_map[cusip].upper()
+    cusip = (holding.get("cusip") or "").strip().upper()
+    if _DEBT_CUSIP.fullmatch(cusip):
+        return ""
+    if cusip in cusip_map:
+        tk = cusip_map[cusip].upper()
+    else:
+        tk = (holding.get("ticker") or "").strip().upper()
     if not tk:
         return ""
     # Rename resolution: map old tickers to current names (PIT-safe)

@@ -1,7 +1,7 @@
 {
   "schema_version": "coinvest_features.v1",
-  "version": "1.1.0",
-  "created_at": "2026-11-01T19:21:48Z",
+  "version": "1.2.0",
+  "created_at": "2026-11-01T21:27:31Z",
   "as_of_date": "2026-10-30",
   "cache_as_of_date": "2026-10-30",
   "period_of_report": "2026-06-30",
@@ -10,8 +10,8 @@
   "managers_total": 30,
   "managers_with_filing": 56,
   "tickers_in_universe": 357,
-  "tickers_with_signal": 256,
-  "signal_coverage_pct": 71.7,
+  "tickers_with_signal": 271,
+  "signal_coverage_pct": 75.9,
   "tickers": {
     "ABCL": {
       "tier1_count": 1,
@@ -215,6 +215,27 @@
         "Logos Global": "DECREASE",
         "Frazier Life Sciences": "INCREASE",
         "ADAR1 Capital": "NEW"
+      }
+    },
+    "ACIU": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.8832,
+      "tier1_conviction_overlap": 0.8832,
+      "max_tier1_position_pct": 1.21,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "BVF Inc/IL"
+      ],
+      "holder_tiers": {
+        "BVF Inc/IL": 1
+      },
+      "position_changes": {
+        "BVF Inc/IL": "DECREASE"
       }
     },
     "ACRS": {
@@ -575,30 +596,6 @@
         "ADAR1 Capital": "DECREASE",
         "Siren LLC": "HOLD",
         "Boxer Capital": "INCREASE"
-      }
-    },
-    "AMRX": {
-      "tier1_count": 2,
-      "sponsor_tier1_count": 2,
-      "sponsor_overlap_count": 2,
-      "coinvest_overlap_count": 2,
-      "conviction_overlap": 1.3122,
-      "tier1_conviction_overlap": 1.3122,
-      "max_tier1_position_pct": 0.34,
-      "days_since_latest_filing": 77,
-      "latest_filed_at": "2026-08-14",
-      "coinvest_recency_state": "fresh",
-      "coinvest_holders": [
-        "Suvretta Capital",
-        "Integral Health"
-      ],
-      "holder_tiers": {
-        "Suvretta Capital": 1,
-        "Integral Health": 1
-      },
-      "position_changes": {
-        "Suvretta Capital": "HOLD",
-        "Integral Health": "NEW"
       }
     },
     "ANAB": {
@@ -965,24 +962,45 @@
       }
     },
     "ASND": {
-      "tier1_count": 1,
-      "sponsor_tier1_count": 1,
-      "sponsor_overlap_count": 1,
-      "coinvest_overlap_count": 1,
-      "conviction_overlap": 1.5327,
-      "tier1_conviction_overlap": 1.5327,
-      "max_tier1_position_pct": 1.31,
+      "tier1_count": 8,
+      "sponsor_tier1_count": 8,
+      "sponsor_overlap_count": 8,
+      "coinvest_overlap_count": 8,
+      "conviction_overlap": 11.9622,
+      "tier1_conviction_overlap": 11.9622,
+      "max_tier1_position_pct": 12.24,
       "days_since_latest_filing": 77,
       "latest_filed_at": "2026-08-14",
       "coinvest_recency_state": "fresh",
       "coinvest_holders": [
-        "Frazier Life Sciences"
+        "Perceptive Advisors",
+        "DAFNA Capital",
+        "Avoro Capital",
+        "Affinity Asset",
+        "Integral Health",
+        "Frazier Life Sciences",
+        "ADAR1 Capital",
+        "Vestal Point"
       ],
       "holder_tiers": {
-        "Frazier Life Sciences": 1
+        "Perceptive Advisors": 1,
+        "DAFNA Capital": 1,
+        "Avoro Capital": 1,
+        "Affinity Asset": 1,
+        "Integral Health": 1,
+        "Frazier Life Sciences": 1,
+        "ADAR1 Capital": 1,
+        "Vestal Point": 1
       },
       "position_changes": {
-        "Frazier Life Sciences": "INCREASE"
+        "Perceptive Advisors": "DECREASE",
+        "DAFNA Capital": "INCREASE",
+        "Avoro Capital": "INCREASE",
+        "Affinity Asset": "HOLD",
+        "Integral Health": "DECREASE",
+        "Frazier Life Sciences": "INCREASE",
+        "ADAR1 Capital": "INCREASE",
+        "Vestal Point": "INCREASE"
       }
     },
     "AURA": {
@@ -1157,6 +1175,27 @@
         "Sofinnova Investments": "DECREASE",
         "Integral Health": "INCREASE",
         "Deep Track": "HOLD"
+      }
+    },
+    "AZN": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 1.8926,
+      "tier1_conviction_overlap": 1.8926,
+      "max_tier1_position_pct": 1.99,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Vestal Point"
+      ],
+      "holder_tiers": {
+        "Vestal Point": 1
+      },
+      "position_changes": {
+        "Vestal Point": "INCREASE"
       }
     },
     "BBIO": {
@@ -1603,6 +1642,27 @@
         "ADAR1 Capital": "NEW"
       }
     },
+    "CADL": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.5361,
+      "tier1_conviction_overlap": 0.5361,
+      "max_tier1_position_pct": 0.06,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Kynam Capital"
+      ],
+      "holder_tiers": {
+        "Kynam Capital": 1
+      },
+      "position_changes": {
+        "Kynam Capital": "HOLD"
+      }
+    },
     "CAPR": {
       "tier1_count": 4,
       "sponsor_tier1_count": 4,
@@ -2015,27 +2075,36 @@
       }
     },
     "CNTX": {
-      "tier1_count": 2,
-      "sponsor_tier1_count": 2,
-      "sponsor_overlap_count": 2,
-      "coinvest_overlap_count": 2,
-      "conviction_overlap": 0.8042,
-      "tier1_conviction_overlap": 0.8042,
-      "max_tier1_position_pct": 0.06,
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 2.0104,
+      "tier1_conviction_overlap": 2.0104,
+      "max_tier1_position_pct": 0.15,
       "days_since_latest_filing": 77,
       "latest_filed_at": "2026-08-14",
       "coinvest_recency_state": "fresh",
       "coinvest_holders": [
+        "MPM BioImpact",
+        "Octagon Capital",
         "TCG Crossover",
-        "Deep Track"
+        "Deep Track",
+        "ADAR1 Capital"
       ],
       "holder_tiers": {
+        "MPM BioImpact": 1,
+        "Octagon Capital": 1,
         "TCG Crossover": 1,
-        "Deep Track": 1
+        "Deep Track": 1,
+        "ADAR1 Capital": 1
       },
       "position_changes": {
+        "MPM BioImpact": "DECREASE",
+        "Octagon Capital": "DECREASE",
         "TCG Crossover": "DECREASE",
-        "Deep Track": "DECREASE"
+        "Deep Track": "DECREASE",
+        "ADAR1 Capital": "DECREASE"
       }
     },
     "COGT": {
@@ -2377,6 +2446,96 @@
         "Boxer Capital": "INCREASE"
       }
     },
+    "DFTX": {
+      "tier1_count": 9,
+      "sponsor_tier1_count": 9,
+      "sponsor_overlap_count": 9,
+      "coinvest_overlap_count": 9,
+      "conviction_overlap": 16.3788,
+      "tier1_conviction_overlap": 16.3788,
+      "max_tier1_position_pct": 12.47,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Sofinnova Investments",
+        "Avoro Capital",
+        "Integral Health",
+        "Logos Global",
+        "Commodore Capital",
+        "Octagon Capital",
+        "Deep Track",
+        "Siren LLC",
+        "Boxer Capital"
+      ],
+      "holder_tiers": {
+        "Sofinnova Investments": 1,
+        "Avoro Capital": 1,
+        "Integral Health": 1,
+        "Logos Global": 1,
+        "Commodore Capital": 1,
+        "Octagon Capital": 1,
+        "Deep Track": 1,
+        "Siren LLC": 1,
+        "Boxer Capital": 1
+      },
+      "position_changes": {
+        "Sofinnova Investments": "INCREASE",
+        "Avoro Capital": "INCREASE",
+        "Integral Health": "INCREASE",
+        "Logos Global": "NEW",
+        "Commodore Capital": "INCREASE",
+        "Octagon Capital": "INCREASE",
+        "Deep Track": "INCREASE",
+        "Siren LLC": "HOLD",
+        "Boxer Capital": "INCREASE"
+      }
+    },
+    "DMRA": {
+      "tier1_count": 9,
+      "sponsor_tier1_count": 9,
+      "sponsor_overlap_count": 9,
+      "coinvest_overlap_count": 9,
+      "conviction_overlap": 10.3001,
+      "tier1_conviction_overlap": 10.3001,
+      "max_tier1_position_pct": 14.98,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Perceptive Advisors",
+        "Venrock Healthcare",
+        "Avoro Capital",
+        "Affinity Asset",
+        "Fairmount Funds",
+        "Commodore Capital",
+        "ADAR1 Capital",
+        "Vestal Point",
+        "Siren LLC"
+      ],
+      "holder_tiers": {
+        "Perceptive Advisors": 1,
+        "Venrock Healthcare": 1,
+        "Avoro Capital": 1,
+        "Affinity Asset": 1,
+        "Fairmount Funds": 1,
+        "Commodore Capital": 1,
+        "ADAR1 Capital": 1,
+        "Vestal Point": 1,
+        "Siren LLC": 1
+      },
+      "position_changes": {
+        "Perceptive Advisors": "HOLD",
+        "Venrock Healthcare": "HOLD",
+        "Avoro Capital": "HOLD",
+        "Affinity Asset": "HOLD",
+        "Fairmount Funds": "HOLD",
+        "Commodore Capital": "HOLD",
+        "ADAR1 Capital": "HOLD",
+        "Vestal Point": "HOLD",
+        "Siren LLC": "HOLD"
+      }
+    },
     "DNLI": {
       "tier1_count": 6,
       "sponsor_tier1_count": 6,
@@ -2710,6 +2869,45 @@
         "Siren LLC": "HOLD"
       }
     },
+    "ENGN": {
+      "tier1_count": 7,
+      "sponsor_tier1_count": 7,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 3.3451,
+      "tier1_conviction_overlap": 3.3451,
+      "max_tier1_position_pct": 0.22,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Perceptive Advisors",
+        "DAFNA Capital",
+        "Affinity Asset",
+        "Kynam Capital",
+        "ADAR1 Capital",
+        "Vestal Point",
+        "Siren LLC"
+      ],
+      "holder_tiers": {
+        "Perceptive Advisors": 1,
+        "DAFNA Capital": 1,
+        "Affinity Asset": 1,
+        "Kynam Capital": 1,
+        "ADAR1 Capital": 1,
+        "Vestal Point": 1,
+        "Siren LLC": 1
+      },
+      "position_changes": {
+        "Perceptive Advisors": "DECREASE",
+        "DAFNA Capital": "DECREASE",
+        "Affinity Asset": "HOLD",
+        "Kynam Capital": "DECREASE",
+        "ADAR1 Capital": "INCREASE",
+        "Vestal Point": "DECREASE",
+        "Siren LLC": "HOLD"
+      }
+    },
     "ENTA": {
       "tier1_count": 3,
       "sponsor_tier1_count": 3,
@@ -3037,27 +3235,6 @@
         "Siren LLC": "HOLD"
       }
     },
-    "FOLD": {
-      "tier1_count": 1,
-      "sponsor_tier1_count": 1,
-      "sponsor_overlap_count": 1,
-      "coinvest_overlap_count": 1,
-      "conviction_overlap": 0.5333,
-      "tier1_conviction_overlap": 0.5333,
-      "max_tier1_position_pct": 0.01,
-      "days_since_latest_filing": 78,
-      "latest_filed_at": "2026-08-13",
-      "coinvest_recency_state": "fresh",
-      "coinvest_holders": [
-        "Siren LLC"
-      ],
-      "holder_tiers": {
-        "Siren LLC": 1
-      },
-      "position_changes": {
-        "Siren LLC": "HOLD"
-      }
-    },
     "FULC": {
       "tier1_count": 2,
       "sponsor_tier1_count": 2,
@@ -3080,6 +3257,36 @@
       "position_changes": {
         "Suvretta Capital": "DECREASE",
         "ADAR1 Capital": "INCREASE"
+      }
+    },
+    "GENB": {
+      "tier1_count": 4,
+      "sponsor_tier1_count": 4,
+      "sponsor_overlap_count": 4,
+      "coinvest_overlap_count": 4,
+      "conviction_overlap": 2.561,
+      "tier1_conviction_overlap": 2.561,
+      "max_tier1_position_pct": 0.33,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "Affinity Asset",
+        "Deep Track",
+        "Siren LLC"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "Affinity Asset": 1,
+        "Deep Track": 1,
+        "Siren LLC": 1
+      },
+      "position_changes": {
+        "Baker Bros": "INCREASE",
+        "Affinity Asset": "HOLD",
+        "Deep Track": "NEW",
+        "Siren LLC": "HOLD"
       }
     },
     "GERN": {
@@ -3703,6 +3910,27 @@
         "Baker Bros": "INCREASE"
       }
     },
+    "INDV": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.6756,
+      "tier1_conviction_overlap": 0.6756,
+      "max_tier1_position_pct": 0.71,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Deerfield Management"
+      ],
+      "holder_tiers": {
+        "Deerfield Management": 1
+      },
+      "position_changes": {
+        "Deerfield Management": "DECREASE"
+      }
+    },
     "INSM": {
       "tier1_count": 8,
       "sponsor_tier1_count": 8,
@@ -3859,27 +4087,6 @@
         "Siren LLC": "HOLD"
       }
     },
-    "IRWD": {
-      "tier1_count": 1,
-      "sponsor_tier1_count": 1,
-      "sponsor_overlap_count": 1,
-      "coinvest_overlap_count": 1,
-      "conviction_overlap": 0.6701,
-      "tier1_conviction_overlap": 0.6701,
-      "max_tier1_position_pct": 0.03,
-      "days_since_latest_filing": 77,
-      "latest_filed_at": "2026-08-14",
-      "coinvest_recency_state": "fresh",
-      "coinvest_holders": [
-        "Suvretta Capital"
-      ],
-      "holder_tiers": {
-        "Suvretta Capital": 1
-      },
-      "position_changes": {
-        "Suvretta Capital": "INCREASE"
-      }
-    },
     "IVVD": {
       "tier1_count": 5,
       "sponsor_tier1_count": 5,
@@ -4006,25 +4213,73 @@
         "Paradigm Biocapital": "NEW"
       }
     },
+    "KARD": {
+      "tier1_count": 6,
+      "sponsor_tier1_count": 6,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 5.8268,
+      "tier1_conviction_overlap": 5.8268,
+      "max_tier1_position_pct": 2.94,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Perceptive Advisors",
+        "DAFNA Capital",
+        "Suvretta Capital",
+        "Integral Health",
+        "Paradigm Biocapital",
+        "Deep Track"
+      ],
+      "holder_tiers": {
+        "Perceptive Advisors": 1,
+        "DAFNA Capital": 1,
+        "Suvretta Capital": 1,
+        "Integral Health": 1,
+        "Paradigm Biocapital": 1,
+        "Deep Track": 1
+      },
+      "position_changes": {
+        "Perceptive Advisors": "NEW",
+        "DAFNA Capital": "NEW",
+        "Suvretta Capital": "NEW",
+        "Integral Health": "NEW",
+        "Paradigm Biocapital": "NEW",
+        "Deep Track": "NEW"
+      }
+    },
     "KLRA": {
-      "tier1_count": 1,
-      "sponsor_tier1_count": 1,
-      "sponsor_overlap_count": 1,
-      "coinvest_overlap_count": 1,
-      "conviction_overlap": 2.6806,
-      "tier1_conviction_overlap": 2.6806,
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 6.1133,
+      "tier1_conviction_overlap": 6.1133,
       "max_tier1_position_pct": 29.58,
       "days_since_latest_filing": 77,
       "latest_filed_at": "2026-08-14",
       "coinvest_recency_state": "fresh",
       "coinvest_holders": [
-        "Bain Capital Life"
+        "Bain Capital Life",
+        "Deep Track",
+        "Frazier Life Sciences",
+        "Vestal Point",
+        "Siren LLC"
       ],
       "holder_tiers": {
-        "Bain Capital Life": 1
+        "Bain Capital Life": 1,
+        "Deep Track": 1,
+        "Frazier Life Sciences": 1,
+        "Vestal Point": 1,
+        "Siren LLC": 1
       },
       "position_changes": {
-        "Bain Capital Life": "NEW"
+        "Bain Capital Life": "NEW",
+        "Deep Track": "NEW",
+        "Frazier Life Sciences": "NEW",
+        "Vestal Point": "NEW",
+        "Siren LLC": "HOLD"
       }
     },
     "KNSA": {
@@ -4864,6 +5119,27 @@
         "Vestal Point": "INCREASE"
       }
     },
+    "NBP": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.5333,
+      "tier1_conviction_overlap": 0.5333,
+      "max_tier1_position_pct": 0.08,
+      "days_since_latest_filing": 78,
+      "latest_filed_at": "2026-08-13",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Siren LLC"
+      ],
+      "holder_tiers": {
+        "Siren LLC": 1
+      },
+      "position_changes": {
+        "Siren LLC": "HOLD"
+      }
+    },
     "NGNE": {
       "tier1_count": 3,
       "sponsor_tier1_count": 3,
@@ -5083,6 +5359,27 @@
         "ADAR1 Capital": "INCREASE"
       }
     },
+    "OABI": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.6701,
+      "tier1_conviction_overlap": 0.6701,
+      "max_tier1_position_pct": 0.11,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "ADAR1 Capital"
+      ],
+      "holder_tiers": {
+        "ADAR1 Capital": 1
+      },
+      "position_changes": {
+        "ADAR1 Capital": "INCREASE"
+      }
+    },
     "OBIO": {
       "tier1_count": 3,
       "sponsor_tier1_count": 3,
@@ -5242,13 +5539,40 @@
         "Affinity Asset": "HOLD"
       }
     },
+    "ONC": {
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 4.4273,
+      "tier1_conviction_overlap": 4.4273,
+      "max_tier1_position_pct": 12.57,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Baker Bros",
+        "ADAR1 Capital",
+        "Siren LLC"
+      ],
+      "holder_tiers": {
+        "Baker Bros": 1,
+        "ADAR1 Capital": 1,
+        "Siren LLC": 1
+      },
+      "position_changes": {
+        "Baker Bros": "HOLD",
+        "ADAR1 Capital": "HOLD",
+        "Siren LLC": "HOLD"
+      }
+    },
     "ORIC": {
-      "tier1_count": 7,
-      "sponsor_tier1_count": 7,
-      "sponsor_overlap_count": 7,
-      "coinvest_overlap_count": 7,
-      "conviction_overlap": 6.4009,
-      "tier1_conviction_overlap": 6.4009,
+      "tier1_count": 6,
+      "sponsor_tier1_count": 6,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 5.7308,
+      "tier1_conviction_overlap": 5.7308,
       "max_tier1_position_pct": 1.83,
       "days_since_latest_filing": 77,
       "latest_filed_at": "2026-08-14",
@@ -5258,7 +5582,6 @@
         "Vivo Capital",
         "MPM BioImpact",
         "Integral Health",
-        "ADAR1 Capital",
         "Siren LLC",
         "Boxer Capital"
       ],
@@ -5267,7 +5590,6 @@
         "Vivo Capital": 1,
         "MPM BioImpact": 1,
         "Integral Health": 1,
-        "ADAR1 Capital": 1,
         "Siren LLC": 1,
         "Boxer Capital": 1
       },
@@ -5276,7 +5598,6 @@
         "Vivo Capital": "DECREASE",
         "MPM BioImpact": "DECREASE",
         "Integral Health": "INCREASE",
-        "ADAR1 Capital": "INCREASE",
         "Siren LLC": "HOLD",
         "Boxer Capital": "INCREASE"
       }
@@ -5320,6 +5641,45 @@
         "Paradigm Biocapital": "INCREASE",
         "Deep Track": "INCREASE",
         "ADAR1 Capital": "INCREASE",
+        "Siren LLC": "HOLD"
+      }
+    },
+    "PBLS": {
+      "tier1_count": 7,
+      "sponsor_tier1_count": 7,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 7.3032,
+      "tier1_conviction_overlap": 7.3032,
+      "max_tier1_position_pct": 1.66,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Deerfield Management",
+        "Baker Bros",
+        "Venrock Healthcare",
+        "Logos Global",
+        "Frazier Life Sciences",
+        "Kynam Capital",
+        "Siren LLC"
+      ],
+      "holder_tiers": {
+        "Deerfield Management": 1,
+        "Baker Bros": 1,
+        "Venrock Healthcare": 1,
+        "Logos Global": 1,
+        "Frazier Life Sciences": 1,
+        "Kynam Capital": 1,
+        "Siren LLC": 1
+      },
+      "position_changes": {
+        "Deerfield Management": "NEW",
+        "Baker Bros": "NEW",
+        "Venrock Healthcare": "NEW",
+        "Logos Global": "NEW",
+        "Frazier Life Sciences": "NEW",
+        "Kynam Capital": "NEW",
         "Siren LLC": "HOLD"
       }
     },
@@ -6100,6 +6460,51 @@
         "Boxer Capital": "NEW"
       }
     },
+    "RNA": {
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 1.3041,
+      "tier1_conviction_overlap": 1.3041,
+      "max_tier1_position_pct": 0.33,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "DAFNA Capital",
+        "ADAR1 Capital"
+      ],
+      "holder_tiers": {
+        "DAFNA Capital": 1,
+        "ADAR1 Capital": 1
+      },
+      "position_changes": {
+        "DAFNA Capital": "NEW",
+        "ADAR1 Capital": "HOLD"
+      }
+    },
+    "RNAC": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 0.6701,
+      "tier1_conviction_overlap": 0.6701,
+      "max_tier1_position_pct": 0.05,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "ADAR1 Capital"
+      ],
+      "holder_tiers": {
+        "ADAR1 Capital": 1
+      },
+      "position_changes": {
+        "ADAR1 Capital": "NEW"
+      }
+    },
     "ROIV": {
       "tier1_count": 5,
       "sponsor_tier1_count": 5,
@@ -6838,6 +7243,39 @@
         "Siren LLC": "HOLD"
       }
     },
+    "STRO": {
+      "tier1_count": 5,
+      "sponsor_tier1_count": 5,
+      "sponsor_overlap_count": 5,
+      "coinvest_overlap_count": 5,
+      "conviction_overlap": 6.4132,
+      "tier1_conviction_overlap": 6.4132,
+      "max_tier1_position_pct": 1.76,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "BVF Inc/IL",
+        "Perceptive Advisors",
+        "Affinity Asset",
+        "Kynam Capital",
+        "ADAR1 Capital"
+      ],
+      "holder_tiers": {
+        "BVF Inc/IL": 1,
+        "Perceptive Advisors": 1,
+        "Affinity Asset": 1,
+        "Kynam Capital": 1,
+        "ADAR1 Capital": 1
+      },
+      "position_changes": {
+        "BVF Inc/IL": "INCREASE",
+        "Perceptive Advisors": "INCREASE",
+        "Affinity Asset": "HOLD",
+        "Kynam Capital": "INCREASE",
+        "ADAR1 Capital": "HOLD"
+      }
+    },
     "SUPN": {
       "tier1_count": 2,
       "sponsor_tier1_count": 2,
@@ -7121,23 +7559,26 @@
       }
     },
     "TEVA": {
-      "tier1_count": 1,
-      "sponsor_tier1_count": 1,
-      "sponsor_overlap_count": 1,
-      "coinvest_overlap_count": 1,
-      "conviction_overlap": 0.8797,
-      "tier1_conviction_overlap": 0.8797,
-      "max_tier1_position_pct": 0.43,
+      "tier1_count": 2,
+      "sponsor_tier1_count": 2,
+      "sponsor_overlap_count": 2,
+      "coinvest_overlap_count": 2,
+      "conviction_overlap": 1.6869,
+      "tier1_conviction_overlap": 1.6869,
+      "max_tier1_position_pct": 0.57,
       "days_since_latest_filing": 77,
       "latest_filed_at": "2026-08-14",
       "coinvest_recency_state": "fresh",
       "coinvest_holders": [
+        "Affinity Asset",
         "ADAR1 Capital"
       ],
       "holder_tiers": {
+        "Affinity Asset": 1,
         "ADAR1 Capital": 1
       },
       "position_changes": {
+        "Affinity Asset": "HOLD",
         "ADAR1 Capital": "INCREASE"
       }
     },
@@ -7247,12 +7688,12 @@
       }
     },
     "TRAX": {
-      "tier1_count": 5,
-      "sponsor_tier1_count": 5,
-      "sponsor_overlap_count": 5,
-      "coinvest_overlap_count": 5,
-      "conviction_overlap": 6.0212,
-      "tier1_conviction_overlap": 6.0212,
+      "tier1_count": 6,
+      "sponsor_tier1_count": 6,
+      "sponsor_overlap_count": 6,
+      "coinvest_overlap_count": 6,
+      "conviction_overlap": 6.3288,
+      "tier1_conviction_overlap": 6.3288,
       "max_tier1_position_pct": 1.85,
       "days_since_latest_filing": 77,
       "latest_filed_at": "2026-08-14",
@@ -7262,6 +7703,7 @@
         "Sofinnova Investments",
         "Affinity Asset",
         "TCG Crossover",
+        "ADAR1 Capital",
         "Vestal Point"
       ],
       "holder_tiers": {
@@ -7269,13 +7711,15 @@
         "Sofinnova Investments": 1,
         "Affinity Asset": 1,
         "TCG Crossover": 1,
+        "ADAR1 Capital": 1,
         "Vestal Point": 1
       },
       "position_changes": {
         "Opaleye Management": "NEW",
         "Sofinnova Investments": "NEW",
-        "Affinity Asset": "NEW",
+        "Affinity Asset": "HOLD",
         "TCG Crossover": "NEW",
+        "ADAR1 Capital": "NEW",
         "Vestal Point": "NEW"
       }
     },
@@ -7685,33 +8129,69 @@
       }
     },
     "VKTX": {
-      "tier1_count": 4,
-      "sponsor_tier1_count": 4,
-      "sponsor_overlap_count": 4,
-      "coinvest_overlap_count": 4,
-      "conviction_overlap": 5.3339,
-      "tier1_conviction_overlap": 5.3339,
-      "max_tier1_position_pct": 3.35,
+      "tier1_count": 3,
+      "sponsor_tier1_count": 3,
+      "sponsor_overlap_count": 3,
+      "coinvest_overlap_count": 3,
+      "conviction_overlap": 2.8817,
+      "tier1_conviction_overlap": 2.8817,
+      "max_tier1_position_pct": 1.02,
       "days_since_latest_filing": 77,
       "latest_filed_at": "2026-08-14",
       "coinvest_recency_state": "fresh",
       "coinvest_holders": [
-        "Deerfield Management",
         "DAFNA Capital",
         "ADAR1 Capital",
         "Vestal Point"
       ],
       "holder_tiers": {
-        "Deerfield Management": 1,
         "DAFNA Capital": 1,
         "ADAR1 Capital": 1,
         "Vestal Point": 1
       },
       "position_changes": {
-        "Deerfield Management": "INCREASE",
         "DAFNA Capital": "INCREASE",
         "ADAR1 Capital": "INCREASE",
         "Vestal Point": "DECREASE"
+      }
+    },
+    "VOR": {
+      "tier1_count": 7,
+      "sponsor_tier1_count": 7,
+      "sponsor_overlap_count": 7,
+      "coinvest_overlap_count": 7,
+      "conviction_overlap": 7.9882,
+      "tier1_conviction_overlap": 7.9882,
+      "max_tier1_position_pct": 2.51,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Venrock Healthcare",
+        "Caligan Partners",
+        "Logos Global",
+        "TCG Crossover",
+        "Paradigm Biocapital",
+        "Frazier Life Sciences",
+        "ADAR1 Capital"
+      ],
+      "holder_tiers": {
+        "Venrock Healthcare": 1,
+        "Caligan Partners": 1,
+        "Logos Global": 1,
+        "TCG Crossover": 1,
+        "Paradigm Biocapital": 1,
+        "Frazier Life Sciences": 1,
+        "ADAR1 Capital": 1
+      },
+      "position_changes": {
+        "Venrock Healthcare": "HOLD",
+        "Caligan Partners": "HOLD",
+        "Logos Global": "DECREASE",
+        "TCG Crossover": "HOLD",
+        "Paradigm Biocapital": "HOLD",
+        "Frazier Life Sciences": "HOLD",
+        "ADAR1 Capital": "NEW"
       }
     },
     "VRDN": {
@@ -7811,6 +8291,27 @@
         "Opaleye Management": "NEW",
         "Deep Track": "DECREASE",
         "ADAR1 Capital": "DECREASE"
+      }
+    },
+    "VTRS": {
+      "tier1_count": 1,
+      "sponsor_tier1_count": 1,
+      "sponsor_overlap_count": 1,
+      "coinvest_overlap_count": 1,
+      "conviction_overlap": 2.4521,
+      "tier1_conviction_overlap": 2.4521,
+      "max_tier1_position_pct": 3.35,
+      "days_since_latest_filing": 77,
+      "latest_filed_at": "2026-08-14",
+      "coinvest_recency_state": "fresh",
+      "coinvest_holders": [
+        "Deerfield Management"
+      ],
+      "holder_tiers": {
+        "Deerfield Management": 1
+      },
+      "position_changes": {
+        "Deerfield Management": "INCREASE"
       }
     },
     "VYGR": {
@@ -8056,10 +8557,10 @@
   },
   "provenance": {
     "builder": "build_coinvest_features_from_13f.py",
-    "builder_version": "1.1.0",
+    "builder_version": "1.2.0",
     "cache_schema_version": "sec_13f_pit_index.v1",
-    "cusip_map_entries": 352,
-    "unresolved_holdings": 611,
+    "cusip_map_entries": 399,
+    "unresolved_holdings": 539,
     "prior_available": true,
     "managers_used": [
       {
@@ -8382,11 +8883,11 @@
     ],
     "max_report_age_days": 230,
     "change_summary": {
-      "NEW": 130,
-      "INCREASE": 531,
-      "HOLD": 297,
-      "DECREASE": 186,
-      "EXIT": 235
+      "NEW": 149,
+      "INCREASE": 547,
+      "HOLD": 327,
+      "DECREASE": 198,
+      "EXIT": 233
     }
   }
 }

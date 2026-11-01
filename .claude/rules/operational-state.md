@@ -181,6 +181,7 @@ metadata:
   Changes: builder 1.1.0, `run_screen.py::_refresh_coinvest_filing_age`, registry v4.0 (30-manager `elite_core`), coinvest rebuilt from Q2 2026. Forward-validation `oos_clock_start=2026-11-02` and mandate SM-20260629-001 restarts at 0/20.
 
   On 2026-10-30 control vs treatment, Top-30 overlap was 25/30. `model_hash 827c35a9ed3ee6e1` and ruleset `8887576e` are unchanged. Hash rotation is logged in `governance/HASH_ROTATIONS.md` (reviewer: operator; PR review pending). This does **not** unfreeze the model or clear any gate. Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`.
+- **Coinvest CUSIP-first resolution (D5, 2026-11-01, operator-authorized, same reset):** builder 1.2.0 prefers `cusip_static_map.json` over the cache's live-lookup ticker. That lookup left DMRA, DFTX, VOR and others blank and mis-tagged Organon → ORIC, IQVIA → IRWD and others. The map gains 47 verified entries. coinvest is rebuilt (271/357 tickers); 2026-10-30 Top-30 overlap is 27/30 against the roster-only file. `oos_clock_start` is unchanged at 2026-11-02. Memo: `docs/governance/2026-11-01-coinvest-cusip-first-resolution.md`.
 
 ## Governance Events (2026-06-20 to 2026-06-24)
 
