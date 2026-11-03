@@ -10,6 +10,8 @@
     "source": "SEC_8K",
     "source_url": "https://www.sec.gov/Archives/edgar/data/1579428/000119312525337644/axsm-ex99_2.htm",
     "as_of_disclosed_at": "2025-12-31",
+    "status": "resolved",
+    "status_as_of": "2026-11-03",
     "notes": "FDA accepted sNDA for AXS-05 for Alzheimer's disease agitation with Priority Review. PDUFA target action date April 30, 2026. Verified from 8-K Exhibit 99.2 (accession 0001193125-25-337644)."
   },
   {
@@ -23,6 +25,8 @@
     "source": "SEC_8K",
     "source_url": "https://www.sec.gov/Archives/edgar/data/1831828/000119312526073421/vera-ex99_1.htm",
     "as_of_disclosed_at": "2026-02-26",
+    "status": "resolved",
+    "status_as_of": "2026-11-03",
     "notes": "FDA granted Priority Review to atacicept BLA for IgA nephropathy. PDUFA target action date July 7, 2026. Verified from Q4 2025 earnings 8-K Exhibit 99.1 (accession 0001193125-26-073421)."
   },
   {
@@ -36,6 +40,8 @@
     "source": "SEC_8K",
     "source_url": "https://www.sec.gov/Archives/edgar/data/899460/000119312525265810/mnkd-ex99_1.htm",
     "as_of_disclosed_at": "2025-11-05",
+    "status": "resolved",
+    "status_as_of": "2026-11-03",
     "notes": "FDA accepted sBLA for Afrezza in pediatric population. PDUFA date May 29, 2026. Verified from Q3 2025 earnings 8-K Exhibit 99.1 (accession 0001193125-25-265810)."
   },
   {
@@ -49,6 +55,8 @@
     "source": "SEC_8K",
     "source_url": "https://www.sec.gov/Archives/edgar/data/875045/000087504526000011/exhibit991-q42025pressrele.htm",
     "as_of_disclosed_at": "2026-02-06",
+    "status": "resolved",
+    "status_as_of": "2026-11-03",
     "notes": "LEQEMBI subcutaneous treatment initiation granted FDA Priority Review with PDUFA date May 24, 2026. Verified from Q4 2025 earnings 8-K press release (accession 0000875045-26-000011)."
   },
   {
@@ -62,6 +70,8 @@
     "source": "PRESS_RELEASE",
     "source_url": "https://investors.viridiantherapeutics.com/news/news-details/2025/Viridian-Therapeutics-Announces-BLA-Acceptance-and-Priority-Review-for-Veligrotug-for-the-Treatment-of-Thyroid-Eye-Disease/default.aspx",
     "as_of_disclosed_at": "2025-12-22",
+    "status": "resolved",
+    "status_as_of": "2026-11-03",
     "notes": "BLA accepted with Priority Review and Breakthrough Therapy designation. PDUFA June 30, 2026. Verified from Viridian press release 2025-12-22."
   },
   {
@@ -75,6 +85,8 @@
     "source": "PRESS_RELEASE",
     "source_url": "https://www.pharmaceutical-technology.com/news/fda-to-review-moderna-seasonal-flu-vaccine-mrna-1010/",
     "as_of_disclosed_at": "2026-02-05",
+    "status": "resolved",
+    "status_as_of": "2026-11-03",
     "notes": "FDA reversed prior RTF, agreed to two-pronged review: full approval ages 50-64, accelerated for 65+. PDUFA August 5, 2026. Verified from multiple news sources Feb 2026."
   },
   {
@@ -88,6 +100,7 @@
     "source": "SEC_8K",
     "source_url": "https://www.businesswire.com/news/home/20260129109846/en/Summit-Therapeutics-Announces-U.S.-FDA-Acceptance-of-Biologics-License-Application-BLA-Seeking-Approval-for-Ivonescimab-in-Combination-with-Chemotherapy-in-Treatment-of-Patients-with-EGFRm-NSCLC-Post-TKI-Therapy",
     "as_of_disclosed_at": "2026-01-29",
+    "status": "pending",
     "notes": "BLA accepted with Fast Track designation, based on Phase III HARMONi trial. PDUFA November 14, 2026. Verified from Summit press release 2026-01-29."
   },
   {
@@ -101,6 +114,8 @@
     "source": "MANUAL",
     "source_url": "",
     "as_of_disclosed_at": "2026-03-14",
+    "status": "resolved",
+    "status_as_of": "2026-11-03",
     "notes": "From CatalystAlert calendar. ARGX has multiple VYVGART line extensions under review. Exact PDUFA date needs company IR verification."
   },
   {
@@ -114,6 +129,8 @@
     "source": "COMPANY_IR",
     "source_url": "https://ir.arvinas.com/news-releases/news-release-details/arvinas-announces-fda-acceptance-new-drug-application",
     "as_of_disclosed_at": "2026-04-26",
+    "status": "resolved",
+    "status_as_of": "2026-11-03",
     "notes": "PDUFA action date 2026-06-05 per Arvinas IR FDA-acceptance announcement; corroborated by Q4 2025 corporate update. Stale 2026-05-10 was MED-confidence MANUAL/CatalystAlert; corrected via BPIQ audit pull on 2026-04-26."
   },
   {
@@ -127,6 +144,8 @@
     "source": "MANUAL",
     "source_url": "",
     "as_of_disclosed_at": "2026-03-14",
+    "status": "resolved",
+    "status_as_of": "2026-11-03",
     "notes": "From CatalystAlert calendar. Priority Review BLA. Exact date needs company IR verification."
   },
   {
@@ -140,6 +159,8 @@
     "source": "SEC_8K",
     "source_url": "",
     "as_of_disclosed_at": "2026-01-15",
+    "status": "resolved",
+    "status_as_of": "2026-11-03",
     "notes": "BLA accepted with Priority Review + Rare Pediatric Disease designation. PDUFA June 30, 2026."
   }
 ]
