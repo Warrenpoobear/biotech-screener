@@ -78,6 +78,10 @@ artifacts/forward_validation/*
 !artifacts/forward_validation/CANDIDATE.json
 !artifacts/forward_validation/*.jsonl
 !artifacts/forward_validation/*.md
+# Allow catalyst calendar HTML artifacts
+!artifacts/catalyst_calendars/
+artifacts/catalyst_calendars/*
+!artifacts/catalyst_calendars/*.html
 # Allow governance memos and summary reports (but not date-stamped one-offs)
 !artifacts/audit/
 artifacts/audit/*
