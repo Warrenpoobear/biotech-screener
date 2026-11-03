@@ -45,3 +45,19 @@ Memo: `docs/governance/2026-11-01-coinvest-cusip-first-resolution.md`
 - **Reason:** the builder trusted the cache's live-lookup ticker. That ticker was blank for some universe names and wrong for some non-universe issuers (Organon → ORIC and others), and it changed from one warm to the next.
 - **Expected downstream impact:** 2026-10-30 Top-30 overlap 27/30 against the D1–D4 file. Every coinvest-derived output from 2026-11-02 differs.
 - **Reviewer:** operator (Darren Schulz) — authorized in session 2026-11-01; PR review pending.
+
+## 2026-11-03 — curated PDUFA calendar refresh
+
+Memo: `docs/governance/2026-11-03-pdufa-calendar-refresh.md`
+
+| Surface | Old hash (sha256[:16]) | New hash (sha256[:16]) |
+|---|---|---|
+| `production_data/pdufa_dates.json` | `30c418f5e664965e` (11 entries, 1 upcoming) | `747216259674ef58` (43 entries) |
+| Candidate `model_hash` (ast-v1) | `827c35a9ed3ee6e1` | unchanged |
+| Ruleset | `8887576e` | unchanged |
+
+- **Effective date:** the first production run after merge. **Not yet decided**: merging lands inside the window that began at `oos_clock_start = 2026-11-02` (see memo §4).
+- **Affected surface:** catalyst / regulatory calendar inputs (`event_ledger.py`, regulatory-calendar gate, event-EV paths).
+- **Reason:** the curated calendar had not been edited since 2026-06-22. This adds 32 dates, each verified against its source SEC filing.
+- **Expected downstream impact:** on 2026-10-30, Top-30 overlap 29/30 (TVTX out, PVLA in) and headwind exposure 59.9% → 56.6%.
+- **Reviewer:** operator (Darren Schulz). PR open; merge pending.
