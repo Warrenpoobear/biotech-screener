@@ -1465,6 +1465,70 @@ def check_source_freshness(
     )
 
 
+CTGOV_CONTENT_MAX_AGE_DAYS = 7
+
+
+def check_ctgov_content_freshness(
+    trial_records_path: Path,
+    as_of_date: str,
+    max_age_days: int = CTGOV_CONTENT_MAX_AGE_DAYS,
+) -> GateResult:
+    """Age CT.gov by content, not by cache filename (blocking FAIL).
+
+    source_freshness dates CT.gov by the daily trial_records_<date>.json copy,
+    which warm_caches rewrites every day even when the source file is never
+    refreshed. This gate takes the newest last_update_posted on or before
+    as_of_date (later dates are ignored, so historical reruns stay PIT) and
+    FAILs when it is older than max_age_days.
+    """
+    name = "ctgov_content_freshness"
+    if not trial_records_path.exists():
+        return GateResult(name=name, status="FAIL", detail=f"{trial_records_path.name} not found")
+    try:
+        with open(trial_records_path, encoding="utf-8") as f:
+            records = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(name=name, status="FAIL", detail=f"Cannot read {trial_records_path.name}: {e}")
+
+    newest = None
+    for rec in records if isinstance(records, list) else []:
+        d = (rec.get("last_update_posted") or "")[:10] if isinstance(rec, dict) else ""
+        try:
+            datetime.strptime(d, "%Y-%m-%d")
+        except ValueError:
+            continue
+        if d <= as_of_date and (newest is None or d > newest):
+            newest = d
+    if newest is None:
+        return GateResult(
+            name=name,
+            status="FAIL",
+            detail=f"No last_update_posted on or before {as_of_date} in {trial_records_path.name}",
+            threshold=max_age_days,
+        )
+
+    age = (datetime.strptime(as_of_date, "%Y-%m-%d") - datetime.strptime(newest, "%Y-%m-%d")).days
+    value = {"newest_last_update_posted": newest, "age_days": age}
+    if age > max_age_days:
+        return GateResult(
+            name=name,
+            status="FAIL",
+            detail=(
+                f"{trial_records_path.name} newest last_update_posted={newest} is {age}d old (>{max_age_days}d) — "
+                "CT.gov source not refreshed; run collect_ctgov_data.py"
+            ),
+            value=value,
+            threshold=max_age_days,
+        )
+    return GateResult(
+        name=name,
+        status="PASS",
+        detail=f"newest last_update_posted={newest} ({age}d old)",
+        value=value,
+        threshold=max_age_days,
+    )
+
+
 def check_missing_reason_fraction(
     snapshot_date_dir: Path,
     max_frac: float,
@@ -5733,6 +5797,11 @@ def run_daily(
     )
     gate_results.append(freshness_gate)
     _logger.info(f"Source freshness gate: {freshness_gate.status} — {freshness_gate.detail}")
+
+    # --- Gate: CT.gov content freshness (blocking; newest trial update, not cache filename) ---
+    ctgov_content_gate = check_ctgov_content_freshness(data_dir / "trial_records.json", as_of_date)
+    gate_results.append(ctgov_content_gate)
+    _logger.info(f"CTGov content freshness gate: {ctgov_content_gate.status} — {ctgov_content_gate.detail}")
 
     # --- No-op detection (logging-only; never skips work) ---
     try:
