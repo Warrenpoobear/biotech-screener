@@ -98,47 +98,104 @@ def _remove_paths(data: Any, paths: set, prefix: str = "") -> Any:
 
 # ============================================================================
 # SESSION-SCOPED PIPELINE RUNS (shared across test_golden_baseline +
-# test_minimum_suite — avoids duplicate 18s pipeline invocations)
+# test_minimum_suite — avoids duplicate 18s pipeline invocations).
 #
-# All 3 runs launch concurrently via ThreadPoolExecutor (~19s instead of ~57s).
-# Each is an independent subprocess writing to its own temp dir; production_data/
-# is read-only shared input.
+# Per session: 3 subprocess runs launched concurrently via ThreadPoolExecutor.
+# Under pytest-xdist, each worker has its own session, so without coordination
+# every worker would re-run all 3 — e.g. 12 workers × 3 = 36 concurrent copies
+# of run_screen.py, enough to intermittently timeout the fixture setup.
+#
+# To fix that, the results are cached in the shared xdist tmp root
+# (tmp_path_factory.getbasetemp().parent) and gated by a filelock: only the
+# first worker to arrive runs the pipelines; others wait, then read the
+# cached outputs from disk.
 # ============================================================================
 
 
-@pytest.fixture(scope="session")
-def _parallel_pipeline_runs(tmp_path_factory):
-    """Run all 3 pipeline variants concurrently (~19s instead of ~57s)."""
-    from concurrent.futures import ThreadPoolExecutor
-
-    # Pre-create temp dirs on main thread (tmp_path_factory may not be thread-safe)
-    dirs = {
-        "main": tmp_path_factory.mktemp("pipeline_main"),
-        "determinism": tmp_path_factory.mktemp("pipeline_det"),
-        "historical": tmp_path_factory.mktemp("pipeline_hist"),
+def _make_run_dict(output_path, success, stdout, stderr):
+    """Read the pipeline output JSON and build the fixture result dict."""
+    with open(output_path, encoding="utf-8") as f:
+        data = json.load(f)
+    return {
+        "success": success,
+        "stdout": stdout,
+        "stderr": stderr,
+        "output_path": output_path,
+        "data": data,
     }
 
-    def _run_one(name, as_of_date):
-        output_path = dirs[name] / "output.json"
-        success, stdout, stderr = _run_pipeline(as_of_date, output_path)
-        assert success, f"Pipeline {name} run failed:\n{stderr}"
-        with open(output_path) as f:
-            data = json.load(f)
+
+@pytest.fixture(scope="session")
+def _parallel_pipeline_runs(tmp_path_factory, worker_id):
+    """Run pipelines once per session; share results across xdist workers."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    from filelock import FileLock
+
+    # Pick a cache dir that's shared across workers under xdist. Without xdist,
+    # worker_id == "master" and no coordination is needed, so use a plain mktemp.
+    if worker_id == "master":
+        cache_dir = tmp_path_factory.mktemp("pipeline_cache")
+    else:
+        cache_dir = tmp_path_factory.getbasetemp().parent / "_pipeline_cache"
+        cache_dir.mkdir(parents=True, exist_ok=True)
+
+    manifest_file = cache_dir / "manifest.json"
+    lock_file = cache_dir / "manifest.lock"
+
+    def _load_cached():
+        manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
         return {
-            "success": success,
-            "stdout": stdout,
-            "stderr": stderr,
-            "output_path": output_path,
-            "data": data,
+            name: _make_run_dict(
+                Path(entry["output_path"]),
+                entry["success"],
+                entry["stdout"],
+                entry["stderr"],
+            )
+            for name, entry in manifest.items()
         }
 
-    with ThreadPoolExecutor(max_workers=3) as pool:
-        futures = {
-            "main": pool.submit(_run_one, "main", PIPELINE_MAIN_DATE),
-            "determinism": pool.submit(_run_one, "determinism", PIPELINE_MAIN_DATE),
-            "historical": pool.submit(_run_one, "historical", PIPELINE_HISTORICAL_DATE),
+    # Fast path: another worker already built the cache.
+    if manifest_file.is_file():
+        try:
+            return _load_cached()
+        except Exception:
+            pass  # corrupt or mid-write — fall through to the locked rebuild
+
+    # Slow path: take the lock, recheck, then build if we own it.
+    with FileLock(str(lock_file), timeout=600):
+        if manifest_file.is_file():
+            return _load_cached()
+
+        def _run_one(name, as_of_date):
+            output_path = cache_dir / f"{name}_output.json"
+            success, stdout, stderr = _run_pipeline(as_of_date, output_path)
+            assert success, f"Pipeline {name} run failed:\n{stderr}"
+            return _make_run_dict(output_path, success, stdout, stderr)
+
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            futures = {
+                "main": pool.submit(_run_one, "main", PIPELINE_MAIN_DATE),
+                "determinism": pool.submit(_run_one, "determinism", PIPELINE_MAIN_DATE),
+                "historical": pool.submit(_run_one, "historical", PIPELINE_HISTORICAL_DATE),
+            }
+            runs = {k: f.result() for k, f in futures.items()}
+
+        # Write manifest atomically (write-then-rename) so readers never see a
+        # half-written file.
+        manifest = {
+            name: {
+                "success": r["success"],
+                "stdout": r["stdout"],
+                "stderr": r["stderr"],
+                "output_path": str(r["output_path"]),
+            }
+            for name, r in runs.items()
         }
-        return {k: f.result() for k, f in futures.items()}
+        tmp_manifest = manifest_file.with_suffix(".json.tmp")
+        tmp_manifest.write_text(json.dumps(manifest), encoding="utf-8")
+        tmp_manifest.replace(manifest_file)
+        return runs
 
 
 @pytest.fixture(scope="session")
