@@ -284,14 +284,6 @@
       "notes": "Centessa Pharmaceuticals acquired by Eli Lilly (via LDH XV Corp). Scheme of Arrangement effective 2026-06-24; ADSs delisted from Nasdaq. Consideration $38.00 cash/share plus up to $9.00 CVR. Frozen price series carries to 2026-06-29. Removed from universe."
     },
     {
-      "ticker": "BHVN",
-      "action": "acquisition",
-      "effective_date": "2024-10-15",
-      "acquirer": "AbbVie",
-      "deal_price": 44.0,
-      "notes": "Cerevel Therapeutics acquired by AbbVie. CVR structure."
-    },
-    {
       "ticker": "ACLX",
       "action": "acquisition",
       "effective_date": "2026-04-28",
@@ -472,12 +464,12 @@
     },
     {
       "ticker": "APGE",
-      "action": "pending_acquisition",
+      "action": "acquisition",
       "announced_date": "2026-06-22",
-      "effective_date": null,
+      "effective_date": "2026-09-02",
       "acquirer": "AbbVie",
       "deal_price": 135.11,
-      "notes": "Apogee Therapeutics acquisition by AbbVie at $135.11/share cash (~$10.9B deal value). Announced 2026-06-22. APGE trading at ~$132.55 (1.9% arb discount to deal price). Gate from ranker/selector until acquisition closes; price series freezes at deal value at close."
+      "notes": "Apogee Therapeutics acquisition by AbbVie at $135.11/share cash (~$10.9B deal value). Announced 2026-06-22. APGE trading at ~$132.55 (1.9% arb discount to deal price). Gate from ranker/selector until acquisition closes; price series freezes at deal value at close Acquisition completed 2026-09-02; last Sharadar SEP row 2026-09-03 (volume=0). [effective_date registered 2026-11-04]"
     },
     {
       "ticker": "CPRX",
