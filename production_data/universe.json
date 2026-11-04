@@ -4397,7 +4397,7 @@
     "name": "APGE",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
-    "status": "active",
+    "status": "excluded_acquired",
     "added_from_etf": true,
     "added_date": "2026-01-07",
     "etf_sources": [
@@ -8588,7 +8588,7 @@
     "name": "BHVN",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
-    "status": "excluded_acquired",
+    "status": "active",
     "added_from_etf": true,
     "added_date": "2026-01-07",
     "etf_sources": [
