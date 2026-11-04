@@ -629164,5 +629164,4059 @@
     "ctgov_date_precision_raw": "MONTH",
     "ctgov_date_type": "ESTIMATED",
     "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT00034151",
+    "title": "Safety and Efficacy of S-8184 in Second Line Treatment of Stage III or IV Ovarian Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Ovarian Cancer"
+    ],
+    "interventions": [
+      "S-8184 Paclitaxel Injectable Emulsion"
+    ],
+    "first_posted": "2002-04-24",
+    "start_date": "2002-03-01",
+    "primary_completion_date": "2007-09-01",
+    "completion_date": "2007-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2009-06-04",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2007-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT00034164",
+    "title": "Safety and Efficacy of S-8184 in Second Line Treatment of Relapsed Stage IIIB or IV Non Small Cell Lung Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Carcinoma, Non-Small-Cell Lung"
+    ],
+    "interventions": [
+      "S-8184 Paclitaxel Injectable Emulsion"
+    ],
+    "first_posted": "2002-04-24",
+    "start_date": "2002-04-01",
+    "primary_completion_date": "2007-09-01",
+    "completion_date": "2007-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2009-06-04",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2007-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT00034177",
+    "title": "Safety and Efficacy of S-8184 in Treatment of Locally Advanced, Metastatic, or Recurrent TCC of the Urothelium",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Urologic Neoplasms"
+    ],
+    "interventions": [
+      "S-8184 Paclitaxel Injectable Emulsion",
+      "Experimental Arm: TOCOSOL Paclitaxel"
+    ],
+    "first_posted": "2002-04-25",
+    "start_date": "2002-04-01",
+    "primary_completion_date": "2007-09-01",
+    "completion_date": "2007-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2009-06-04",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2007-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT00034190",
+    "title": "Safety and Efficacy of S-8184 in Second Line Treatment of Stage III or IV Colorectal Adenocarcinoma",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Colorectal Adenocarcinoma"
+    ],
+    "interventions": [
+      "S-8184 Paclitaxel Injectable Emulsion"
+    ],
+    "first_posted": "2002-04-25",
+    "start_date": "2002-03-01",
+    "primary_completion_date": "2007-09-01",
+    "completion_date": "2007-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2009-06-04",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2007-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT00077688",
+    "title": "TOCOSOL(TM) Paclitaxel in Metastatic or Locally Advanced Unresectable Transitional Cell Carcinoma of the Urothelium",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Bladder Neoplasms",
+      "Ureteral Neoplasms",
+      "Urethral Neoplasms",
+      "Carcinoma, Transitional Cell"
+    ],
+    "interventions": [
+      "TOCOSOL Paclitaxel"
+    ],
+    "first_posted": "2004-02-16",
+    "start_date": "2003-11-01",
+    "primary_completion_date": null,
+    "completion_date": "2007-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2009-06-04",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": null,
+    "ctgov_date_precision_raw": "UNKNOWN",
+    "ctgov_date_type": "UNKNOWN",
+    "ctgov_precision_normalized_candidate": "UNKNOWN"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT00096668",
+    "title": "Evaluation of Safety and Efficacy of TOCOSOL(R) Paclitaxel as Initial Treatment for Metastatic Breast Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Breast Cancer"
+    ],
+    "interventions": [
+      "TOCOSOL(R) Paclitaxel"
+    ],
+    "first_posted": "2004-11-15",
+    "start_date": "2004-10-01",
+    "primary_completion_date": "2007-09-01",
+    "completion_date": "2007-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2009-06-04",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2007-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT00138658",
+    "title": "A Study of OGX-011/Gemcitabine/Platinum-Based Regimen in Stage IIIB/IV Non-Small Cell Lung Cancer (NSCLC)",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Non-small Cell Lung Cancer"
+    ],
+    "interventions": [
+      "custirsen sodium"
+    ],
+    "first_posted": "2005-08-30",
+    "start_date": "2004-11-01",
+    "primary_completion_date": "2010-03-01",
+    "completion_date": "2010-03-01",
+    "results_first_posted": "2012-01-10",
+    "last_update_posted": "2012-02-06",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2010-03",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT00251095",
+    "title": "Comparison of Safety and Efficacy of TOCOSOL(R) Paclitaxel Versus Taxol(R) for Treatment of Metastatic Breast Cancer",
+    "status": "TERMINATED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Breast Neoplasm"
+    ],
+    "interventions": [
+      "Taxol",
+      "TOCOSOL Paclitaxel"
+    ],
+    "first_posted": "2005-11-09",
+    "start_date": "2005-09-01",
+    "primary_completion_date": "2007-09-01",
+    "completion_date": "2007-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2009-06-04",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2007-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT00327340",
+    "title": "Evaluation of Safety and Feasibility of OGX-011 in Combination With 2nd-line Chemotherapy in Patients With HRPC",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Prostate Cancer"
+    ],
+    "interventions": [
+      "custirsen (OGX-011)/mitoxantrone",
+      "custirsen (OGX-011)/docetaxel"
+    ],
+    "first_posted": "2006-05-18",
+    "start_date": "2006-07-01",
+    "primary_completion_date": "2010-10-01",
+    "completion_date": "2010-10-01",
+    "results_first_posted": "2012-08-29",
+    "last_update_posted": "2012-10-05",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2010-10",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT00385177",
+    "title": "Phase 1 Dose Escalation Study of SN2310 Injectable Emulsion in Patients With Advanced Solid Tumors",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Breast Neoplasms",
+      "Colorectal Neoplasms",
+      "Pancreatic Neoplasms",
+      "Pelvic Neoplasms",
+      "Lung Neoplasms"
+    ],
+    "interventions": [
+      "SN2310 Injectable Emulsion"
+    ],
+    "first_posted": "2006-10-06",
+    "start_date": "2006-09-01",
+    "primary_completion_date": "2008-12-01",
+    "completion_date": "2009-05-01",
+    "results_first_posted": null,
+    "last_update_posted": "2009-06-04",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2008-12",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT00487786",
+    "title": "Safety Study of an Antisense Product in Prostate, Ovarian, NSCL, Breast or Bladder Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Neoplasms"
+    ],
+    "interventions": [
+      "OGX-427",
+      "Docetaxel"
+    ],
+    "first_posted": "2007-06-19",
+    "start_date": "2007-06-01",
+    "primary_completion_date": "2011-06-01",
+    "completion_date": "2011-10-01",
+    "results_first_posted": null,
+    "last_update_posted": "2016-01-18",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2011-06",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01083615",
+    "title": "A Study Evaluating the Pain Palliation Benefit of Adding Custirsen to Docetaxel Retreatment or Cabazitaxel as Second Line Therapy in Men With Metastatic Castrate Resistant Prostate Cancer (mCRPC)",
+    "status": "TERMINATED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Castrate-Resistant Prostate Cancer",
+      "Hormone Refractory Prostate Cancer"
+    ],
+    "interventions": [
+      "custirsen sodium",
+      "isotonic, 0.9% sodium chloride",
+      "docetaxel",
+      "cabazitaxel",
+      "prednisone"
+    ],
+    "first_posted": "2010-03-10",
+    "start_date": "2010-03-01",
+    "primary_completion_date": "2013-03-01",
+    "completion_date": "2013-03-01",
+    "results_first_posted": null,
+    "last_update_posted": "2016-10-12",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2013-03",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01120470",
+    "title": "OGX-427 in Castration Resistant Prostate Cancer Patients",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Castration Resistant Prostate Cancer"
+    ],
+    "interventions": [
+      "OGX-427",
+      "Prednisone"
+    ],
+    "first_posted": "2010-05-11",
+    "start_date": "2010-09-01",
+    "primary_completion_date": "2012-10-01",
+    "completion_date": "2014-06-01",
+    "results_first_posted": null,
+    "last_update_posted": "2019-02-15",
+    "enrollment": null,
+    "sponsor": "British Columbia Cancer Agency",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2012-10",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01188187",
+    "title": "Comparison of Docetaxel/Prednisone to Docetaxel/Prednisone in Combination With OGX-011 in Men With Prostate Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Prostate Cancer"
+    ],
+    "interventions": [
+      "Custirsen",
+      "Docetaxel",
+      "Prednisone",
+      "Dexamethasone"
+    ],
+    "first_posted": "2010-08-25",
+    "start_date": "2010-11-01",
+    "primary_completion_date": "2014-02-01",
+    "completion_date": "2014-06-01",
+    "results_first_posted": null,
+    "last_update_posted": "2016-10-14",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2014-02",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01454089",
+    "title": "A Phase 2 Study Comparing Chemotherapy in Combination With OGX-427 or Placebo in Patients With Bladder Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Urologic Neoplasms",
+      "Metastatic Bladder Cancer",
+      "Urinary Tract Neoplasms"
+    ],
+    "interventions": [
+      "OGX-427 600 mg",
+      "OGX-427 1000 mg",
+      "Placebo",
+      "Gemcitabine",
+      "Cisplatin",
+      "Carboplatin"
+    ],
+    "first_posted": "2011-10-18",
+    "start_date": "2011-10-01",
+    "primary_completion_date": "2014-11-01",
+    "completion_date": "2014-11-01",
+    "results_first_posted": null,
+    "last_update_posted": "2016-10-07",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2014-11",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01497470",
+    "title": "A Clinical Study in Cancer Patients to Investigate the Potential Impact of Custirsen, on the Blood Levels of the Chemotherapeutic Drug, Paclitaxel, When Given Together as Part of a Treatment Regimen",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Cancer"
+    ],
+    "interventions": [
+      "Custirsen, paclitaxel and carboplatin"
+    ],
+    "first_posted": "2011-12-22",
+    "start_date": "2012-04-01",
+    "primary_completion_date": "2013-07-01",
+    "completion_date": "2013-10-01",
+    "results_first_posted": null,
+    "last_update_posted": "2016-10-10",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2013-07",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01578655",
+    "title": "Comparison of Cabazitaxel/Prednisone Alone or in Combination With Custirsen for 2nd Line Chemotherapy in Prostate Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Prostate Cancer"
+    ],
+    "interventions": [
+      "cabazitaxel",
+      "prednisone",
+      "custirsen sodium"
+    ],
+    "first_posted": "2012-04-17",
+    "start_date": "2012-08-01",
+    "primary_completion_date": "2016-07-01",
+    "completion_date": "2016-07-01",
+    "results_first_posted": null,
+    "last_update_posted": "2016-10-12",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2016-07",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01630733",
+    "title": "A Multinational, Randomized, Open-Label Study of Custirsen In Patients With Advanced or Metastatic (Stage IV) Non-Small Cell Lung Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Non-Small Cell Lung Cancer"
+    ],
+    "interventions": [
+      "Custirsen",
+      "Docetaxel"
+    ],
+    "first_posted": "2012-06-28",
+    "start_date": "2012-10-24",
+    "primary_completion_date": "2016-11-17",
+    "completion_date": "2016-11-17",
+    "results_first_posted": null,
+    "last_update_posted": "2026-04-15",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2016-11-17",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01681433",
+    "title": "OGX-427 in Metastatic Castrate-Resistant Prostate Cancer With Prostate-Specific Antigen Progression While Receiving Abiraterone",
+    "status": "TERMINATED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Prostate Cancer",
+      "Metastatic Castrate-Resistant Prostate Cancer",
+      "PSA"
+    ],
+    "interventions": [
+      "OGX-427",
+      "Abiraterone Acetate",
+      "Prednisone"
+    ],
+    "first_posted": "2012-09-10",
+    "start_date": "2012-12-01",
+    "primary_completion_date": "2017-06-21",
+    "completion_date": "2017-06-21",
+    "results_first_posted": "2018-10-18",
+    "last_update_posted": "2022-07-11",
+    "enrollment": null,
+    "sponsor": "Costantine Albany",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-06-21",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01780545",
+    "title": "Phase 2 Study of Docetaxel +/- OGX-427 in Patients With Relapsed or Refractory Metastatic Bladder Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Bladder Cancer",
+      "Urothelial Carcinoma"
+    ],
+    "interventions": [
+      "OGX-427",
+      "Docetaxel"
+    ],
+    "first_posted": "2013-01-31",
+    "start_date": "2013-04-01",
+    "primary_completion_date": "2017-10-01",
+    "completion_date": "2017-10-01",
+    "results_first_posted": "2017-11-14",
+    "last_update_posted": "2022-07-11",
+    "enrollment": null,
+    "sponsor": "Noah Hahn, M.D.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-10",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01829113",
+    "title": "Phase II Trial of Carboplatin and Pemetrexed +/- OGX-427 in Untreated Stage IV Non-Squamous-Non-Small-Cell Lung Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Non Squamous Non Small Cell Lung Cancer"
+    ],
+    "interventions": [
+      "OGX-427",
+      "Placebo"
+    ],
+    "first_posted": "2013-04-11",
+    "start_date": "2013-07-01",
+    "primary_completion_date": "2017-04-19",
+    "completion_date": "2017-04-19",
+    "results_first_posted": "2018-06-08",
+    "last_update_posted": "2018-06-08",
+    "enrollment": null,
+    "sponsor": "SCRI Development Innovations, LLC",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-04-19",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01844817",
+    "title": "Phase II Trial Of Gemcitabine Plus Nab-Paclitaxel +/- OGX-427 In Patients With Metastatic Pancreatic Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Pancreatic Cancer"
+    ],
+    "interventions": [
+      "OGX-427",
+      "Placebo"
+    ],
+    "first_posted": "2013-05-01",
+    "start_date": "2013-09-01",
+    "primary_completion_date": "2016-03-01",
+    "completion_date": "2016-03-01",
+    "results_first_posted": "2017-05-16",
+    "last_update_posted": "2017-05-16",
+    "enrollment": null,
+    "sponsor": "SCRI Development Innovations, LLC",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2016-03",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT01874561",
+    "title": "Thorough QT/QTc (Corrected QT Interval) Study to Evaluate the Effect of Custirsen on Cardiac Repolarization",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Cardiac Conduction and Repolarization"
+    ],
+    "interventions": [
+      "Custirsen",
+      "Placebo",
+      "Moxifloxacin"
+    ],
+    "first_posted": "2013-06-11",
+    "start_date": "2013-05-01",
+    "primary_completion_date": "2013-12-01",
+    "completion_date": "2014-01-01",
+    "results_first_posted": null,
+    "last_update_posted": "2016-10-10",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2013-12",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT02423590",
+    "title": "Study of Gemcitabine/Carboplatin First-line Chemotherapy +/- Apatorsen in Advanced Squamous Cell Lung Cancers",
+    "status": "UNKNOWN",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Squamous Cell Lung Cancer"
+    ],
+    "interventions": [
+      "Apatorsen (OGX-427)",
+      "Gemcitabine",
+      "Carboplatin"
+    ],
+    "first_posted": "2015-04-22",
+    "start_date": "2014-06-01",
+    "primary_completion_date": "2018-05-01",
+    "completion_date": "2018-06-01",
+    "results_first_posted": null,
+    "last_update_posted": "2017-08-22",
+    "enrollment": null,
+    "sponsor": "Queen Mary University of London",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2018-05",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT03268343",
+    "title": "A Study in Healthy Volunteers to Investigate the Effect of Food on the Bioavailability of Cytisine",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Smoking Cessation"
+    ],
+    "interventions": [
+      "Cytisine"
+    ],
+    "first_posted": "2017-08-31",
+    "start_date": "2017-08-08",
+    "primary_completion_date": "2017-08-26",
+    "completion_date": "2017-09-01",
+    "results_first_posted": "2019-02-07",
+    "last_update_posted": "2019-02-26",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-08-26",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT03303911",
+    "title": "A Pharmacokinetic and Pharmacodynamic Evaluation of Cytisine in Healthy Smokers",
+    "status": "TERMINATED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Smoking Cessation"
+    ],
+    "interventions": [
+      "Cytisine"
+    ],
+    "first_posted": "2017-10-06",
+    "start_date": "2017-10-06",
+    "primary_completion_date": "2018-10-05",
+    "completion_date": "2018-10-05",
+    "results_first_posted": "2019-10-21",
+    "last_update_posted": "2019-10-21",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2018-10-05",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT03509948",
+    "title": "A Study in Healthy Smokers to Investigate the Effect of Food on the Bioavailability of Cytisine in a New Formulation",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Smoking Cessation"
+    ],
+    "interventions": [
+      "cytisine"
+    ],
+    "first_posted": "2018-04-27",
+    "start_date": "2018-04-27",
+    "primary_completion_date": "2018-06-10",
+    "completion_date": "2018-06-12",
+    "results_first_posted": "2019-09-12",
+    "last_update_posted": "2019-09-24",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2018-06-10",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT03709823",
+    "title": "Trial of Cytisine in Adult Smokers",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Smoking Cessation"
+    ],
+    "interventions": [
+      "Cytisine",
+      "Placebo Comparator",
+      "Behavioral support"
+    ],
+    "first_posted": "2018-10-17",
+    "start_date": "2018-11-13",
+    "primary_completion_date": "2019-04-23",
+    "completion_date": "2019-04-23",
+    "results_first_posted": "2020-05-18",
+    "last_update_posted": "2020-05-18",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2019-04-23",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT03848208",
+    "title": "A Single Dose-escalation Study of Cytisine in Adult Smokers",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Smoking Cessation"
+    ],
+    "interventions": [
+      "cytisine",
+      "placebo"
+    ],
+    "first_posted": "2019-02-20",
+    "start_date": "2019-02-28",
+    "primary_completion_date": "2019-09-12",
+    "completion_date": "2019-09-12",
+    "results_first_posted": "2020-09-17",
+    "last_update_posted": "2020-09-17",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2019-09-12",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT04576949",
+    "title": "A Study of Cytisinicline for Smoking Cessation in Adult Smokers",
+    "status": "COMPLETED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Smoking Cessation"
+    ],
+    "interventions": [
+      "Cytisinicline",
+      "Placebo",
+      "Behavioral support"
+    ],
+    "first_posted": "2020-10-06",
+    "start_date": "2020-10-13",
+    "primary_completion_date": "2021-12-23",
+    "completion_date": "2021-12-23",
+    "results_first_posted": "2024-11-14",
+    "last_update_posted": "2026-01-15",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2021-12-23",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT05206370",
+    "title": "A Second Study of Cytisinicline for Smoking Cessation in Adult Smokers",
+    "status": "COMPLETED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Smoking Cessation"
+    ],
+    "interventions": [
+      "Cytisinicline",
+      "Placebo",
+      "Behavioral support"
+    ],
+    "first_posted": "2022-01-25",
+    "start_date": "2022-01-20",
+    "primary_completion_date": "2023-03-21",
+    "completion_date": "2023-03-21",
+    "results_first_posted": "2026-01-14",
+    "last_update_posted": "2026-01-14",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-03-21",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT05431387",
+    "title": "A Study of Cytisinicline for Vaping Cessation in Adult Smokers",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Vaping",
+      "E-Cig Use"
+    ],
+    "interventions": [
+      "cytisinicline",
+      "Placebo",
+      "Behavioral support"
+    ],
+    "first_posted": "2022-06-24",
+    "start_date": "2022-07-13",
+    "primary_completion_date": "2023-02-28",
+    "completion_date": "2023-02-28",
+    "results_first_posted": "2026-01-14",
+    "last_update_posted": "2026-01-14",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-02-28",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT05566288",
+    "title": "Study to Evaluate Electrocardiographic Effects of Therapeutic & Supratherapeutic Doses of Cytisinicline in Healthy Smokers",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Smoking Cessation"
+    ],
+    "interventions": [
+      "Cytisinicline",
+      "Placebo",
+      "Moxifloxacin"
+    ],
+    "first_posted": "2022-10-04",
+    "start_date": "2022-10-17",
+    "primary_completion_date": "2022-12-23",
+    "completion_date": "2022-12-23",
+    "results_first_posted": null,
+    "last_update_posted": "2023-05-18",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2022-12-23",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT05631938",
+    "title": "Study to Evaluate the Effect of Renal Impairment and Dialysis Treatment on the Pharmacokinetics of a Single 3 mg Cytisinicline Dose",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Renal Impairment"
+    ],
+    "interventions": [
+      "cytisinicline"
+    ],
+    "first_posted": "2022-11-30",
+    "start_date": "2023-01-10",
+    "primary_completion_date": "2023-09-04",
+    "completion_date": "2023-09-04",
+    "results_first_posted": null,
+    "last_update_posted": "2025-07-11",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-09-04",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT05981768",
+    "title": "Study to Evaluate Effect of Food on Bioavailability of Single 3 mg Tablet and Pharmacokinetics (PK) of Multiple 3 mg Doses in Healthy Adult Smokers",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Smoking Cessation"
+    ],
+    "interventions": [
+      "Cytisinicline"
+    ],
+    "first_posted": "2023-08-08",
+    "start_date": "2023-08-08",
+    "primary_completion_date": "2023-09-21",
+    "completion_date": "2023-09-21",
+    "results_first_posted": null,
+    "last_update_posted": "2023-10-18",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-09-21",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT06435221",
+    "title": "Safety Study of Cytisinicline in Adult Combustible and/or E-cigarette Smokers",
+    "status": "COMPLETED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Smoking Cessation",
+      "Vaping Cessation"
+    ],
+    "interventions": [
+      "Cytisinicline"
+    ],
+    "first_posted": "2024-05-30",
+    "start_date": "2024-05-28",
+    "primary_completion_date": "2025-09-29",
+    "completion_date": "2025-10-06",
+    "results_first_posted": null,
+    "last_update_posted": "2025-11-26",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2025-09-29",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "ACHV",
+    "nct_id": "NCT07392125",
+    "title": "Phase 3 Trial Evaluating the Efficacy and Safety of Cytisinicline for Vaping Cessation in Adults Using Nicotine-Containing E Cigarettes",
+    "status": "NOT_YET_RECRUITING",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Vaping Cessation"
+    ],
+    "interventions": [
+      "Cytisinicline",
+      "Placebo",
+      "Behavioral Support"
+    ],
+    "first_posted": "2026-02-06",
+    "start_date": "2026-05-15",
+    "primary_completion_date": "2026-11-15",
+    "completion_date": "2027-09-30",
+    "results_first_posted": null,
+    "last_update_posted": "2026-02-06",
+    "enrollment": null,
+    "sponsor": "Achieve Life Sciences",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2026-11-15",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AKTS",
+    "nct_id": "NCT07117643",
+    "title": "Ischemic Preconditioning - Perspectives of Use Vivio/in Vitro Studies",
+    "status": "ENROLLING_BY_INVITATION",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Sport Medicine",
+      "Sport",
+      "Physiological Adaptations",
+      "Sport Performance",
+      "Remote Ischemic Preconditioning",
+      "Ischemic Preconditioning"
+    ],
+    "interventions": [
+      "Ischemic Preconditioning"
+    ],
+    "first_posted": "2025-08-12",
+    "start_date": "2025-01-01",
+    "primary_completion_date": "2028-12-31",
+    "completion_date": "2029-01-01",
+    "results_first_posted": null,
+    "last_update_posted": "2025-08-12",
+    "enrollment": null,
+    "sponsor": "Gdansk University of Physical Education and Sport",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2028-12-31",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AKTS",
+    "nct_id": "NCT07020117",
+    "title": "A Study of [225Ac]Ac-AKY-1189 in Patients With Solid Tumors",
+    "status": "RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Urothelial Carcinoma Bladder",
+      "Triple Negative Breast Cancer (TNBC)",
+      "Hormone Receptor Positive Breast Adenocarcinoma",
+      "Non Small Cell Lung Cancer",
+      "Cervical Adenocarcinoma",
+      "Colorectal Adenocarcinoma",
+      "Head and Neck Cancer"
+    ],
+    "interventions": [
+      "[225Ac]Ac-AKY-1189 (therapeutic)",
+      "[64Cu]Cu-AKY-1189 (imaging)"
+    ],
+    "first_posted": "2025-06-13",
+    "start_date": "2025-08-22",
+    "primary_completion_date": "2027-12-01",
+    "completion_date": "2032-06-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-09-17",
+    "enrollment": null,
+    "sponsor": "Aktis Oncology, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2027-12",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AKTS",
+    "nct_id": "NCT07581184",
+    "title": "A Study of [225Ac]Ac-AKY-2519 in Patients With Metastatic Castration-Resistant Prostate Cancer",
+    "status": "RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Castration Resistant Metastatic Prostate Cancer",
+      "Prostate Cancer",
+      "mCRPC (Metastatic Castration-resistant Prostate Cancer)",
+      "mCRPC",
+      "B7H3"
+    ],
+    "interventions": [
+      "[225Ac]Ac-AKY-2519 (therapeutic)",
+      "[64Cu]Cu-AKY-2519 (imaging)"
+    ],
+    "first_posted": "2026-05-12",
+    "start_date": "2026-06-17",
+    "primary_completion_date": "2027-12-01",
+    "completion_date": "2032-06-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-11-02",
+    "enrollment": null,
+    "sponsor": "Aktis Oncology, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2027-12",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AKTS",
+    "nct_id": "NCT07887971",
+    "title": "A Study of [225Ac]Ac-AKY-2519 in Patients With B7-H3 Expressing Solid Tumors",
+    "status": "RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "NSCLC",
+      "NSCLC (Advanced Non-small Cell Lung Cancer)",
+      "ES-SCLC",
+      "Small Cell Lung Cancer Extensive Stage",
+      "B7H3",
+      "Prostate Cancer",
+      "HNSCC",
+      "mCRPC (Metastatic Castration-resistant Prostate Cancer)",
+      "Head Neck Cancer Squamous Cell Metastatic",
+      "ESCC or Esophageal Adenosquamous Carcinoma",
+      "CRC",
+      "CRC (Colorectal Cancer)"
+    ],
+    "interventions": [
+      "[225Ac]Ac-AKY-2519 (therapeutic)",
+      "[64Cu]Cu-AKY-2519 (imaging)"
+    ],
+    "first_posted": "2026-10-22",
+    "start_date": "2026-11-01",
+    "primary_completion_date": "2028-12-01",
+    "completion_date": "2033-12-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-11-02",
+    "enrollment": null,
+    "sponsor": "Aktis Oncology, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2028-12",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT01579526",
+    "title": "A Single Dose Study to Determine the Safety and Pharmacokinetics of FP01 Lozenges in Healthy Volunteers",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Healthy"
+    ],
+    "interventions": [
+      "FP01"
+    ],
+    "first_posted": "2012-04-18",
+    "start_date": "2012-04-01",
+    "primary_completion_date": "2012-04-01",
+    "completion_date": "2012-05-01",
+    "results_first_posted": null,
+    "last_update_posted": "2012-05-17",
+    "enrollment": null,
+    "sponsor": "Avalo Therapeutics, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2012-04",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT01597349",
+    "title": "Antitussive Effects of FP01 Lozenges in Subjects With Cough Due to Upper Respiratory Tract Infection",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Acute Cough"
+    ],
+    "interventions": [
+      "FP01"
+    ],
+    "first_posted": "2012-05-14",
+    "start_date": "2012-05-01",
+    "primary_completion_date": "2012-09-01",
+    "completion_date": "2012-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2014-02-28",
+    "enrollment": null,
+    "sponsor": "Avalo Therapeutics, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2012-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT01703923",
+    "title": "An Exploratory Study of FP01 Lozenges in Subjects With Chronic Refractory Cough",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Chronic Refractory Cough"
+    ],
+    "interventions": [
+      "FP01",
+      "placebo"
+    ],
+    "first_posted": "2012-10-11",
+    "start_date": "2012-11-01",
+    "primary_completion_date": "2013-09-01",
+    "completion_date": "2013-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2014-11-05",
+    "enrollment": null,
+    "sponsor": "Avalo Therapeutics, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2013-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT01941043",
+    "title": "A Randomized, Double-Blind, Placebo-Controlled, Sequential Parallel Study of CERC-301 in the Adjunctive Treatment of Subjects With Severe Depression and Recent Active Suicidal Ideation Despite Antidepressant Treatment",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Major Depressive Disorder"
+    ],
+    "interventions": [
+      "CERC-301",
+      "Placebo"
+    ],
+    "first_posted": "2013-09-13",
+    "start_date": "2013-11-01",
+    "primary_completion_date": "2014-09-01",
+    "completion_date": "2014-10-01",
+    "results_first_posted": null,
+    "last_update_posted": "2017-12-21",
+    "enrollment": null,
+    "sponsor": "Avalo Therapeutics, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2014-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT02286817",
+    "title": "Phase I Single Dose, Open-Label Pharmacokinetic Study and Single-Blind, Placebo-Controlled Dose Escalation Study of NFC-1 in Adolescents With Attention-Deficit Hyperactivity Disorder",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Attention-deficit Hyperactivity Disorder (ADHD)"
+    ],
+    "interventions": [
+      "NFC-1"
+    ],
+    "first_posted": "2014-11-10",
+    "start_date": "2015-01-01",
+    "primary_completion_date": "2015-05-01",
+    "completion_date": "2016-03-01",
+    "results_first_posted": null,
+    "last_update_posted": "2025-10-21",
+    "enrollment": null,
+    "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2015-05",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT02459236",
+    "title": "A Study of Intermittent Doses of CERC-301 in MDD",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Major Depressive Disorder"
+    ],
+    "interventions": [
+      "CERC-301",
+      "Placebo"
+    ],
+    "first_posted": "2015-06-02",
+    "start_date": "2015-06-01",
+    "primary_completion_date": "2016-09-01",
+    "completion_date": "2016-12-01",
+    "results_first_posted": null,
+    "last_update_posted": "2017-09-28",
+    "enrollment": null,
+    "sponsor": "Avalo Therapeutics, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2016-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT02468414",
+    "title": "TARGTEPO Treatment for Anemia in PD US Trial",
+    "status": "TERMINATED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Anemia of End Stage Renal Disease"
+    ],
+    "interventions": [
+      "MDGN201 TARGTEPO",
+      "MDGN201 TARGTEPO"
+    ],
+    "first_posted": "2015-06-10",
+    "start_date": "2015-06-01",
+    "primary_completion_date": "2016-05-01",
+    "completion_date": "2016-09-01",
+    "results_first_posted": "2017-07-13",
+    "last_update_posted": "2022-03-28",
+    "enrollment": null,
+    "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2016-05",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT02777931",
+    "title": "Efficacy and Safety of NFC-1 in Adolescents With Genetic Disorders Impacting mGluR and ADHD",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Attention Deficit Disorder With Hyperactivity"
+    ],
+    "interventions": [
+      "NFC-1",
+      "Placebo"
+    ],
+    "first_posted": "2016-05-19",
+    "start_date": "2016-06-01",
+    "primary_completion_date": "2017-02-10",
+    "completion_date": "2017-02-17",
+    "results_first_posted": "2018-03-29",
+    "last_update_posted": "2021-08-11",
+    "enrollment": null,
+    "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-02-10",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT02811211",
+    "title": "A Noninterventional Genotype/Phenotype Study of mGluR Mutations in Children and Adolescents With ADHD",
+    "status": "COMPLETED",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Attention Deficit Disorder With Hyperactivity"
+    ],
+    "interventions": [],
+    "first_posted": "2016-06-23",
+    "start_date": "2016-02-01",
+    "primary_completion_date": "2017-01-06",
+    "completion_date": "2017-01-06",
+    "results_first_posted": null,
+    "last_update_posted": "2021-07-06",
+    "enrollment": null,
+    "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-01-06",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT02895906",
+    "title": "Safety and Efficacy Study of NFC-1 in Subjects Aged 12-17 Years With 22q11.2DS & Associated Neuropsychiatric Conditions",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "22q11.2 Deletion Syndrome"
+    ],
+    "interventions": [
+      "NFC-1"
+    ],
+    "first_posted": "2016-09-12",
+    "start_date": "2016-11-28",
+    "primary_completion_date": "2017-04-13",
+    "completion_date": "2017-04-20",
+    "results_first_posted": null,
+    "last_update_posted": "2022-03-25",
+    "enrollment": null,
+    "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-04-13",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT03006367",
+    "title": "Pharmacokinetic and Tolerability Study of NFC-1 in Subjects Aged 6-17 Years With ADHD",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Attention Deficit Disorder With Hyperactivity"
+    ],
+    "interventions": [
+      "NFC-1 100 mg",
+      "NFC-1 200 mg",
+      "NFC-1 400 mg",
+      "NFC-1 800 mg"
+    ],
+    "first_posted": "2016-12-30",
+    "start_date": "2017-01-07",
+    "primary_completion_date": "2017-02-26",
+    "completion_date": "2017-03-06",
+    "results_first_posted": null,
+    "last_update_posted": "2021-07-06",
+    "enrollment": null,
+    "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-02-26",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT03169894",
+    "title": "Evaluation of the Safety, Tolerability, and Efficacy of MDGN-002 in Adults With Moderate to Severe Active Crohn's Disease or Ulcerative Colitis",
+    "status": "TERMINATED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Crohn Disease",
+      "Ulcerative Colitis"
+    ],
+    "interventions": [
+      "MDGN-002"
+    ],
+    "first_posted": "2017-05-30",
+    "start_date": "2017-07-14",
+    "primary_completion_date": "2021-09-14",
+    "completion_date": "2021-10-12",
+    "results_first_posted": "2024-02-26",
+    "last_update_posted": "2024-02-26",
+    "enrollment": null,
+    "sponsor": "Avalo Therapeutics, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2021-09-14",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT03233867",
+    "title": "A Non-interventional Study to Identify Children and Adolescents With ADHD and With or Without mGLuR Mutations",
+    "status": "COMPLETED",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Attention Deficit Hyperactivity Disorder"
+    ],
+    "interventions": [],
+    "first_posted": "2017-07-31",
+    "start_date": "2017-08-14",
+    "primary_completion_date": "2018-08-03",
+    "completion_date": "2018-08-03",
+    "results_first_posted": null,
+    "last_update_posted": "2021-07-06",
+    "enrollment": null,
+    "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2018-08-03",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT03265119",
+    "title": "PART A: Efficacy and Safety of AEVI-001 in Children and Adolescents With ADHD and With mGluR Mutations",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Attention Deficit Hyperactivity Disorder"
+    ],
+    "interventions": [
+      "AEVI-001",
+      "Placebo"
+    ],
+    "first_posted": "2017-08-29",
+    "start_date": "2017-08-28",
+    "primary_completion_date": "2018-09-24",
+    "completion_date": "2018-10-01",
+    "results_first_posted": "2019-07-16",
+    "last_update_posted": "2021-07-07",
+    "enrollment": null,
+    "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2018-09-24",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT03609619",
+    "title": "PART B: Efficacy and Safety of AEVI-001 in Children and Adolescents With ADHD and Without mGluR Mutations",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Attention Deficit Hyperactivity Disorder"
+    ],
+    "interventions": [
+      "AEVI-001",
+      "Placebo"
+    ],
+    "first_posted": "2018-08-01",
+    "start_date": "2018-08-17",
+    "primary_completion_date": "2018-11-23",
+    "completion_date": "2018-11-30",
+    "results_first_posted": "2019-07-16",
+    "last_update_posted": "2021-07-30",
+    "enrollment": null,
+    "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2018-11-23",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT04412057",
+    "title": "Clinical Trial to Evaluate CERC-002 in Adults With COVID-19 Pneumonia and Acute Lung Injury",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "COVID-19 Pneumonia",
+      "Acute Lung Injury",
+      "ARDS"
+    ],
+    "interventions": [
+      "CERC-002",
+      "Placebo"
+    ],
+    "first_posted": "2020-06-02",
+    "start_date": "2020-07-17",
+    "primary_completion_date": "2020-12-14",
+    "completion_date": "2021-01-19",
+    "results_first_posted": "2022-03-04",
+    "last_update_posted": "2022-03-24",
+    "enrollment": null,
+    "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2020-12-14",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT04671251",
+    "title": "Phase 1b Study of AEVI-007 in Subjects With Relapsed or Refractory Multiple Myeloma",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Multiple Myeloma"
+    ],
+    "interventions": [
+      "AEVI-007"
+    ],
+    "first_posted": "2020-12-17",
+    "start_date": "2020-12-15",
+    "primary_completion_date": "2022-03-30",
+    "completion_date": "2022-03-30",
+    "results_first_posted": null,
+    "last_update_posted": "2024-02-29",
+    "enrollment": null,
+    "sponsor": "Avalo Therapeutics, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2022-03-30",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT04994002",
+    "title": "A Pharmacokinetic, Pharmacodynamic, Safety and Tolerability Study of CERC-006 in Adults With Complex Lymphatic Malformations",
+    "status": "WITHDRAWN",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Lymphatic Malformation"
+    ],
+    "interventions": [
+      "CERC-006"
+    ],
+    "first_posted": "2021-08-06",
+    "start_date": "2021-09-03",
+    "primary_completion_date": "2022-06-01",
+    "completion_date": "2022-06-01",
+    "results_first_posted": null,
+    "last_update_posted": "2022-03-22",
+    "enrollment": null,
+    "sponsor": "Avalo Therapeutics, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2022-06",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT05288504",
+    "title": "A Study to Evaluate the Safety and Efficacy of AVTX-002 for the Treatment of Poorly Controlled Non-Eosinophilic Asthma.",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Non-Eosinophilic Asthma"
+    ],
+    "interventions": [
+      "AVTX-002",
+      "Placebo"
+    ],
+    "first_posted": "2022-03-21",
+    "start_date": "2022-02-24",
+    "primary_completion_date": "2023-05-11",
+    "completion_date": "2023-05-11",
+    "results_first_posted": "2024-09-05",
+    "last_update_posted": "2024-09-05",
+    "enrollment": null,
+    "sponsor": "Avalo Therapeutics, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-05-11",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "AVTX",
+    "nct_id": "NCT06603077",
+    "title": "A Study to Evaluate the Efficacy and Safety of AVTX-009 in Patients With Moderate to Severe Hidradenitis Suppurativa",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Hidradenitis Suppurativa"
+    ],
+    "interventions": [
+      "AVTX-009 Regimen 1",
+      "AVTX-009 Regimen 2",
+      "Placebo"
+    ],
+    "first_posted": "2024-09-19",
+    "start_date": "2024-09-16",
+    "primary_completion_date": "2026-02-23",
+    "completion_date": "2026-03-17",
+    "results_first_posted": null,
+    "last_update_posted": "2026-04-21",
+    "enrollment": null,
+    "sponsor": "Avalo Therapeutics, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2026-02-23",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "CBIO",
+    "nct_id": "NCT03978078",
+    "title": "A Clinicobiological Database in Metastatic Digestive Cancers",
+    "status": "RECRUITING",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Digestive System Neoplasm"
+    ],
+    "interventions": [
+      "Biological collection"
+    ],
+    "first_posted": "2019-06-06",
+    "start_date": "2016-09-12",
+    "primary_completion_date": "2026-09-01",
+    "completion_date": "2031-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2025-02-12",
+    "enrollment": null,
+    "sponsor": "Institut du Cancer de Montpellier - Val d'Aurelle",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2026-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "CBIO",
+    "nct_id": "NCT04498676",
+    "title": "50 Human Subject Repeat Insult Patch Test",
+    "status": "COMPLETED",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Erythema",
+      "Sensitisation"
+    ],
+    "interventions": [
+      "CB-0002B"
+    ],
+    "first_posted": "2020-08-04",
+    "start_date": "2017-01-18",
+    "primary_completion_date": "2017-02-08",
+    "completion_date": "2017-03-02",
+    "results_first_posted": null,
+    "last_update_posted": "2020-08-04",
+    "enrollment": null,
+    "sponsor": "CAGE Bio Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-02-08",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "CBIO",
+    "nct_id": "NCT07335497",
+    "title": "CR-001 in Adult Participants With Locally Advanced or Metastatic Solid Tumors",
+    "status": "RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Locally Advanced / Metastatic Solid Tumors"
+    ],
+    "interventions": [
+      "CR-001",
+      "Paclitaxel",
+      "trifluridine and tipiracil",
+      "Pemetrexed",
+      "Carboplatin",
+      "Oxaliplatin",
+      "Gemcitabin",
+      "Cisplatin",
+      "Capecitabine",
+      "FOLFOX"
+    ],
+    "first_posted": "2026-01-13",
+    "start_date": "2026-02-17",
+    "primary_completion_date": "2029-02-01",
+    "completion_date": "2029-02-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-10-20",
+    "enrollment": null,
+    "sponsor": "Crescent Biopharma, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2029-02",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "CBIO",
+    "nct_id": "NCT07909031",
+    "title": "CR-002 in Adult Participants With Locally Advanced or Metastatic Solid Tumors",
+    "status": "RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Head and Neck Squamous Cell Carcinoma (HNSCC) - Recurrent/Metastatic (R/M)",
+      "Gastric/GEJ",
+      "Biliary Tract Cancer (BTC)",
+      "Esophageal Squamous Cell Carcinoma (ESCC)",
+      "Ovarian Cancer",
+      "Endometrial Cancer",
+      "Cervical Cancer Metastatic",
+      "Non-small Cell Lung Cancer (NSCLC)"
+    ],
+    "interventions": [
+      "CR-002"
+    ],
+    "first_posted": "2026-11-02",
+    "start_date": "2026-10-21",
+    "primary_completion_date": "2028-10-01",
+    "completion_date": "2029-01-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-11-02",
+    "enrollment": null,
+    "sponsor": "Crescent Biopharma, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2028-10",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "COAG",
+    "nct_id": "NCT04398628",
+    "title": "ATHN Transcends: A Natural History Study of Non-Neoplastic Hematologic Disorders",
+    "status": "RECRUITING",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Hematologic Disorder",
+      "Bleeding Disorder",
+      "Connective Tissue Disorder",
+      "Hemophilia",
+      "Thrombosis",
+      "Von Willebrand Diseases",
+      "Thrombophilia",
+      "Rare Bleeding Disorder",
+      "Platelet Disorder",
+      "Factor IX Deficiency",
+      "Factor VIII Deficiency",
+      "Thalassemia",
+      "Sickle Cell Disease"
+    ],
+    "interventions": [],
+    "first_posted": "2020-05-21",
+    "start_date": "2020-09-30",
+    "primary_completion_date": "2035-06-01",
+    "completion_date": "2035-12-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-08-17",
+    "enrollment": null,
+    "sponsor": "American Thrombosis and Hemostasis Network",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2035-06",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "COAG",
+    "nct_id": "NCT05315232",
+    "title": "The Experiences of People Who Live With Glanzmanns Thrombasthenia.",
+    "status": "COMPLETED",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Glanzmann Thrombasthenia"
+    ],
+    "interventions": [
+      "survey and interview"
+    ],
+    "first_posted": "2022-04-07",
+    "start_date": "2022-04-27",
+    "primary_completion_date": "2023-04-27",
+    "completion_date": "2023-04-27",
+    "results_first_posted": null,
+    "last_update_posted": "2024-03-13",
+    "enrollment": null,
+    "sponsor": "Haemnet",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-04-27",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "COAG",
+    "nct_id": "NCT05607602",
+    "title": "Are Uterine Fibroids Pro-thrombotic?",
+    "status": "UNKNOWN",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Leiomyoma, Uterine",
+      "Thrombosis"
+    ],
+    "interventions": [
+      "Comparison of blood samples between the two groups"
+    ],
+    "first_posted": "2022-11-07",
+    "start_date": "2022-10-17",
+    "primary_completion_date": "2024-12-31",
+    "completion_date": "2024-12-31",
+    "results_first_posted": null,
+    "last_update_posted": "2024-06-11",
+    "enrollment": null,
+    "sponsor": "King's College Hospital NHS Trust",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2024-12-31",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "COAG",
+    "nct_id": "NCT06064643",
+    "title": "The Lived Experience of People With Von Willebrand Disease",
+    "status": "COMPLETED",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Von Willebrand Diseases"
+    ],
+    "interventions": [
+      "Online Survey",
+      "Qualitative Interview",
+      "Bleed Diary"
+    ],
+    "first_posted": "2023-10-03",
+    "start_date": "2023-12-08",
+    "primary_completion_date": "2025-06-30",
+    "completion_date": "2025-06-30",
+    "results_first_posted": null,
+    "last_update_posted": "2025-09-18",
+    "enrollment": null,
+    "sponsor": "Haemnet",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2025-06-30",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "COAG",
+    "nct_id": "NCT06211634",
+    "title": "A Phase 1/2 Study to Investigate Safety, Tolerability, Pharmacokinetics, Pharmacodynamics, and Efficacy of HMB-001 in Glanzmann Thrombasthenia",
+    "status": "ACTIVE_NOT_RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Glanzmann Thrombasthenia"
+    ],
+    "interventions": [
+      "HMB-001"
+    ],
+    "first_posted": "2024-01-18",
+    "start_date": "2022-12-13",
+    "primary_completion_date": "2027-08-01",
+    "completion_date": "2027-08-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-09-25",
+    "enrollment": null,
+    "sponsor": "Hemab ApS",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2027-08",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "COAG",
+    "nct_id": "NCT06610201",
+    "title": "A Study of Bleeding and Treatment in Participants With Von Willebrand Disease",
+    "status": "RECRUITING",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Von Willebrand Disease (VWD)",
+      "Von Willebrand Disease (VWD), Type 1",
+      "Von Willebrand Disease (VWD), Type 2",
+      "Von Willebrand Disease (VWD), Type 3",
+      "Von Willebrand Disease, Type 2A",
+      "Von Willebrand Disease, Type 2M",
+      "Von Willebrand Disease, Type 2N"
+    ],
+    "interventions": [
+      "Clinical outcomes of patients with VWD, Type 1",
+      "Clinical outcomes of patients with VWD, Type 2A, Type 2M, Type 2N, or Type 3"
+    ],
+    "first_posted": "2024-09-24",
+    "start_date": "2024-08-30",
+    "primary_completion_date": "2026-12-01",
+    "completion_date": "2026-12-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-04-21",
+    "enrollment": null,
+    "sponsor": "Hemab ApS",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2026-12",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "COAG",
+    "nct_id": "NCT06754852",
+    "title": "A Study Assessing HMB-002 in Participants With Von Willebrand Disease",
+    "status": "RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Von Willebrand Disease (VWD)",
+      "Von Willebrand Disease (VWD), Type 1",
+      "Von Willebrand Disease (VWD), Type 2",
+      "Von Willebrand Disease (VWD), Type 3"
+    ],
+    "interventions": [
+      "HMB-002 (Part A)",
+      "HMB-002 (Part B)",
+      "HMB-002 with Concomitant Factor Concentrate (Part C) (Not Applicable in US)"
+    ],
+    "first_posted": "2025-01-01",
+    "start_date": "2025-02-06",
+    "primary_completion_date": "2027-07-01",
+    "completion_date": "2027-07-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-06-30",
+    "enrollment": null,
+    "sponsor": "Hemab ApS",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2027-07",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "COAG",
+    "nct_id": "NCT07347249",
+    "title": "A Clinical Study to Assess Sutacimig in Participants With Congenital Factor VII Deficiency",
+    "status": "RECRUITING",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Congenital Factor VII Deficiency"
+    ],
+    "interventions": [
+      "Sutacimig",
+      "Sutacimig"
+    ],
+    "first_posted": "2026-01-16",
+    "start_date": "2026-03-11",
+    "primary_completion_date": "2027-11-01",
+    "completion_date": "2027-11-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-07-22",
+    "enrollment": null,
+    "sponsor": "Hemab ApS",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2027-11",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "COAG",
+    "nct_id": "NCT07798505",
+    "title": "A First-in-Human Study to Assess the Safety, Pharmacokinetics, and Pharmacodynamics of HMB-003 in Healthy Volunteers",
+    "status": "RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Healthy Adult Participants"
+    ],
+    "interventions": [
+      "HMB-003",
+      "Placebo"
+    ],
+    "first_posted": "2026-09-01",
+    "start_date": "2026-08-17",
+    "primary_completion_date": "2027-04-30",
+    "completion_date": "2027-04-30",
+    "results_first_posted": null,
+    "last_update_posted": "2026-09-10",
+    "enrollment": null,
+    "sponsor": "Hemab ApS",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2027-04-30",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "FTH",
+    "nct_id": "NCT01652274",
+    "title": "Level of Knowledge and Habitual Concepts of Turkish Parents on Child Passenger Safety",
+    "status": "COMPLETED",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Equipment Safety",
+      "Accidents, Traffic"
+    ],
+    "interventions": [],
+    "first_posted": "2012-07-30",
+    "start_date": "2012-06-01",
+    "primary_completion_date": "2012-08-01",
+    "completion_date": "2012-08-01",
+    "results_first_posted": null,
+    "last_update_posted": "2012-08-17",
+    "enrollment": null,
+    "sponsor": "Fatih University",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2012-08",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "FTH",
+    "nct_id": "NCT01865409",
+    "title": "Effect of Kangaroo Care on Heart Rate Variability",
+    "status": "UNKNOWN",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Immaturity",
+      "Oral Intolerance",
+      "Postnatal Adaptation"
+    ],
+    "interventions": [
+      "Kangaroo Care"
+    ],
+    "first_posted": "2013-05-30",
+    "start_date": "2013-06-01",
+    "primary_completion_date": "2014-09-01",
+    "completion_date": "2014-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2014-09-09",
+    "enrollment": null,
+    "sponsor": "Fatih University",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2014-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "FTH",
+    "nct_id": "NCT04479683",
+    "title": "COmparison Between Continued Inpatient Treatment Versus Day Patient Treatment in Early Onset Anorexia Nervosa",
+    "status": "ACTIVE_NOT_RECRUITING",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Early Onset Anorexia Nervosa"
+    ],
+    "interventions": [
+      "FTH then DH support",
+      "standard care"
+    ],
+    "first_posted": "2020-07-21",
+    "start_date": "2021-05-10",
+    "primary_completion_date": "2027-11-01",
+    "completion_date": "2027-11-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-10-07",
+    "enrollment": null,
+    "sponsor": "Assistance Publique - H\u00f4pitaux de Paris",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2027-11",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "FTH",
+    "nct_id": "NCT04974203",
+    "title": "Saliva-based COVID-19 DNA Aptamer Test",
+    "status": "UNKNOWN",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Covid19"
+    ],
+    "interventions": [
+      "AptameX"
+    ],
+    "first_posted": "2021-07-23",
+    "start_date": "2021-07-01",
+    "primary_completion_date": "2021-08-01",
+    "completion_date": "2021-08-01",
+    "results_first_posted": null,
+    "last_update_posted": "2021-07-23",
+    "enrollment": null,
+    "sponsor": "Achiko AG",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2021-08",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "FTH",
+    "nct_id": "NCT06463028",
+    "title": "Sapanisertib and Serabelisib (PIKTOR) With Paclitaxel and a Substudy With an Insulin-Suppressing Diet in Patients With Advanced/Recurrent Endometrial Cancer",
+    "status": "RECRUITING",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Endometrial Cancer"
+    ],
+    "interventions": [
+      "Sapanisertib",
+      "Serabelisib",
+      "Paclitaxel"
+    ],
+    "first_posted": "2024-06-17",
+    "start_date": "2024-12-12",
+    "primary_completion_date": "2028-09-01",
+    "completion_date": "2029-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2025-12-24",
+    "enrollment": null,
+    "sponsor": "Faeth Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2028-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "FTH",
+    "nct_id": "NCT07558733",
+    "title": "Sapanisertib and Serabelisib (PIKTOR) in Various Combinations in Patients With HR+/HER2- Advanced/Metastatic Breast Cancer",
+    "status": "RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "HR+ HER2- Breast Cancer"
+    ],
+    "interventions": [
+      "Serabelisib",
+      "Sapanisertib",
+      "Fulvestrant"
+    ],
+    "first_posted": "2026-04-30",
+    "start_date": "2026-04-22",
+    "primary_completion_date": "2029-05-01",
+    "completion_date": "2033-05-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-07-02",
+    "enrollment": null,
+    "sponsor": "Faeth Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2029-05",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "FTH",
+    "nct_id": "NCT07652190",
+    "title": "Comparison of Day Hospitalization Versus Full-Time Hospitalization in the Treatment of Severe Adolescent Obesity",
+    "status": "NOT_YET_RECRUITING",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Severe Adolescent Obesity",
+      "Adolescent Obesity",
+      "Pediatric Obesity"
+    ],
+    "interventions": [
+      "Day Hospital Multidisciplinary Care",
+      "Full-Time Inpatient Multidisciplinary Care"
+    ],
+    "first_posted": "2026-06-16",
+    "start_date": "2026-10-05",
+    "primary_completion_date": "2027-10-10",
+    "completion_date": "2027-11-10",
+    "results_first_posted": null,
+    "last_update_posted": "2026-06-16",
+    "enrollment": null,
+    "sponsor": "Fondation Sant\u00e9 des \u00c9tudiants de France",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2027-10-10",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "FTH",
+    "nct_id": "NCT05078775",
+    "title": "Medical Food for the Dietary Management of Advanced/Metastatic Pancreatic Cancer",
+    "status": "COMPLETED",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Metastatic Pancreatic Adenocarcinoma",
+      "Locally Advanced Unresectable Pancreatic Adenocarcinoma"
+    ],
+    "interventions": [
+      "NEAAR Medical Food"
+    ],
+    "first_posted": "2021-10-14",
+    "start_date": "2021-12-21",
+    "primary_completion_date": "2025-07-10",
+    "completion_date": "2025-07-10",
+    "results_first_posted": null,
+    "last_update_posted": "2025-07-18",
+    "enrollment": null,
+    "sponsor": "Faeth Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2025-07-10",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "FTH",
+    "nct_id": "NCT05183295",
+    "title": "Medical Food for the Dietary Management of Metastatic Colorectal Cancer",
+    "status": "WITHDRAWN",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Metastatic Colorectal Cancer"
+    ],
+    "interventions": [
+      "NEAAR Medical Food"
+    ],
+    "first_posted": "2022-01-10",
+    "start_date": "2022-04-27",
+    "primary_completion_date": "2023-03-27",
+    "completion_date": "2023-03-27",
+    "results_first_posted": null,
+    "last_update_posted": "2023-04-03",
+    "enrollment": null,
+    "sponsor": "Faeth Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-03-27",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "FTH",
+    "nct_id": "NCT05275673",
+    "title": "A Study of Sapanisertib in Relapsed/Refractory NFE2L2-Mutated and Wild-Type Squamous Non-Small Cell Lung Cancer",
+    "status": "TERMINATED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Non-Small Cell Lung Cancer",
+      "Squamous Non-small-cell Lung Cancer",
+      "Squamous Non-Small Cell Neoplasm of Lung",
+      "NFE2L2 Gene Mutation"
+    ],
+    "interventions": [
+      "sapanisertib"
+    ],
+    "first_posted": "2022-03-11",
+    "start_date": "2022-07-21",
+    "primary_completion_date": "2023-01-24",
+    "completion_date": "2023-01-24",
+    "results_first_posted": "2025-04-24",
+    "last_update_posted": "2025-04-24",
+    "enrollment": null,
+    "sponsor": "Faeth Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-01-24",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "FTH",
+    "nct_id": "NCT05300048",
+    "title": "Combination of Serabelisib and Insulin Suppressing Diet With or Without Nab-paclitaxel in Subjects With Advanced Solid Tumors With PIK3CA Mutations",
+    "status": "TERMINATED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Advanced Solid Tumor",
+      "PIK3CA Mutation",
+      "PTEN Loss of Function Mutation"
+    ],
+    "interventions": [
+      "Serabelisib",
+      "Insulin Suppressing Diet",
+      "Nab paclitaxel"
+    ],
+    "first_posted": "2022-03-29",
+    "start_date": "2022-04-22",
+    "primary_completion_date": "2025-04-30",
+    "completion_date": "2025-04-30",
+    "results_first_posted": null,
+    "last_update_posted": "2026-04-30",
+    "enrollment": null,
+    "sponsor": "Faeth Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2025-04-30",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "IMMX",
+    "nct_id": "NCT03382340",
+    "title": "IMX-110 in Patients With Advanced Solid Tumors",
+    "status": "UNKNOWN",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Solid Tumor, Adult",
+      "Advanced Solid Tumors",
+      "Pancreatic Cancer",
+      "Breast Cancer",
+      "Ovarian Cancer"
+    ],
+    "interventions": [
+      "Imx-110"
+    ],
+    "first_posted": "2017-12-22",
+    "start_date": "2018-02-15",
+    "primary_completion_date": "2023-10-31",
+    "completion_date": "2023-12-31",
+    "results_first_posted": null,
+    "last_update_posted": "2023-09-28",
+    "enrollment": null,
+    "sponsor": "Immix Biopharma Australia Pty Ltd",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-10-31",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "IMMX",
+    "nct_id": "NCT05840835",
+    "title": "Study of IMX-110 in Combination With Tislelizumab in Patients With Advanced Solid Tumors",
+    "status": "UNKNOWN",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Advanced Solid Tumor"
+    ],
+    "interventions": [
+      "IMX-110 combined with Tislelizumab"
+    ],
+    "first_posted": "2023-05-03",
+    "start_date": "2023-02-03",
+    "primary_completion_date": "2024-01-24",
+    "completion_date": "2024-01-24",
+    "results_first_posted": null,
+    "last_update_posted": "2023-08-08",
+    "enrollment": null,
+    "sponsor": "Immix Biopharma, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2024-01-24",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "IMMX",
+    "nct_id": "NCT06097832",
+    "title": "Study of NXC-201 CAR-T in Patients With Light Chain (AL) Amyloidosis",
+    "status": "ACTIVE_NOT_RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Light Chain (AL) Amyloidosis"
+    ],
+    "interventions": [
+      "NXC-201 CAR-T"
+    ],
+    "first_posted": "2023-10-24",
+    "start_date": "2024-06-05",
+    "primary_completion_date": "2026-12-01",
+    "completion_date": "2039-01-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-07-14",
+    "enrollment": null,
+    "sponsor": "Nexcella Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2026-12",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "IMMX",
+    "nct_id": "NCT07709715",
+    "title": "A Randomized Phase 3 Study to Evaluate the Efficacy and Safety of NXC-201 Compared With Daratumumab With Cyclophosphamide, Bortezomib and Dexamethasone (CyBorD) in Newly Diagnosed Systemic AL Amyloidosis",
+    "status": "NOT_YET_RECRUITING",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Light Chain (AL) Amyloidosis"
+    ],
+    "interventions": [
+      "NXC-201",
+      "Dara-CyBorD"
+    ],
+    "first_posted": "2026-07-16",
+    "start_date": "2027-01-01",
+    "primary_completion_date": "2028-12-01",
+    "completion_date": "2032-12-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-07-16",
+    "enrollment": null,
+    "sponsor": "Nexcella Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2028-12",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "MNPR",
+    "nct_id": "NCT04648020",
+    "title": "Clonidine HCl MBT vs. Placebo to Prevent Chemoradiotherapy-Induced Severe Oral Mucositis in Oropharyngeal Cancer.",
+    "status": "TERMINATED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Chemoradiotherapy-Induced Severe Oral Mucositis"
+    ],
+    "interventions": [
+      "Clonidine HCl Mucoadhesive Buccal Tablet",
+      "Placebo Mucoadhesive Buccal Tablet"
+    ],
+    "first_posted": "2020-12-01",
+    "start_date": "2021-02-11",
+    "primary_completion_date": "2023-05-14",
+    "completion_date": "2023-05-14",
+    "results_first_posted": null,
+    "last_update_posted": "2023-05-31",
+    "enrollment": null,
+    "sponsor": "Monopar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-05-14",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "MNPR",
+    "nct_id": "NCT05043649",
+    "title": "Camsirubicin + Pegfilgrastim to Determine MTD in ASTS",
+    "status": "TERMINATED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Advanced Soft-tissue Sarcoma"
+    ],
+    "interventions": [
+      "Camsirubicin"
+    ],
+    "first_posted": "2021-09-14",
+    "start_date": "2021-09-22",
+    "primary_completion_date": "2023-10-31",
+    "completion_date": "2024-05-13",
+    "results_first_posted": null,
+    "last_update_posted": "2024-05-16",
+    "enrollment": null,
+    "sponsor": "Monopar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-10-31",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "MNPR",
+    "nct_id": "NCT06337084",
+    "title": "Diagnostic Efficacy and Dosimetry of MNPR-101-DFO*-89Zr in Patients With Solid Tumors",
+    "status": "ACTIVE_NOT_RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Solid Tumor, Adult",
+      "Bladder Cancer",
+      "Urothelial Carcinoma",
+      "Triple-negative Breast Cancer",
+      "Lung Cancer",
+      "Colorectal Cancer",
+      "Gastric Cancer",
+      "Ovarian Cancer",
+      "Pancreatic Cancer"
+    ],
+    "interventions": [
+      "MNPR-101-DFO*-89Zr",
+      "PET/CT Diagnostic Imaging"
+    ],
+    "first_posted": "2024-03-29",
+    "start_date": "2024-05-30",
+    "primary_completion_date": "2026-12-01",
+    "completion_date": "2026-12-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-09-03",
+    "enrollment": null,
+    "sponsor": "Monopar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2026-12",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "MNPR",
+    "nct_id": "NCT06617169",
+    "title": "Dose-Escalation of MNPR-101-PCTA-177Lu in Solid Tumors",
+    "status": "ACTIVE_NOT_RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Solid Tumor, Adult",
+      "Bladder Cancer",
+      "Urothelial Carcinoma",
+      "Triple-negative Breast Cancer",
+      "Lung Cancer",
+      "Colorectal Cancer",
+      "Gastric Cancer",
+      "Ovarian Cancer",
+      "Pancreatic Cancer"
+    ],
+    "interventions": [
+      "MNPR-101-PCTA-177Lu"
+    ],
+    "first_posted": "2024-09-27",
+    "start_date": "2024-10-08",
+    "primary_completion_date": "2027-01-01",
+    "completion_date": "2027-02-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-09-03",
+    "enrollment": null,
+    "sponsor": "Monopar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2027-01",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "MNPR",
+    "nct_id": "NCT06980506",
+    "title": "MNPR-101-DFO*-89Zr Expanded Access Program (EAP) for Patients With Solid Tumor Cancer",
+    "status": "TEMPORARILY_NOT_AVAILABLE",
+    "phase": "N/A",
+    "study_type": "EXPANDED_ACCESS",
+    "conditions": [
+      "Cancer",
+      "Solid Tumor",
+      "Solid Tumor, Adult"
+    ],
+    "interventions": [
+      "MNPR-101-DFO*-89Zr"
+    ],
+    "first_posted": "2025-05-20",
+    "start_date": null,
+    "primary_completion_date": null,
+    "completion_date": null,
+    "results_first_posted": null,
+    "last_update_posted": "2026-09-04",
+    "enrollment": null,
+    "sponsor": "Monopar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": null,
+    "ctgov_date_precision_raw": "UNKNOWN",
+    "ctgov_date_type": "UNKNOWN",
+    "ctgov_precision_normalized_candidate": "UNKNOWN"
+  },
+  {
+    "ticker": "MNPR",
+    "nct_id": "NCT06980519",
+    "title": "MNPR-101-PCTA-177Lu Expanded Access Program (EAP) for Patients With Solid Tumor Cancer",
+    "status": "TEMPORARILY_NOT_AVAILABLE",
+    "phase": "N/A",
+    "study_type": "EXPANDED_ACCESS",
+    "conditions": [
+      "Cancer",
+      "Solid Tumor",
+      "Solid Tumor Cancer",
+      "Oncology",
+      "uPAR-positive Solid Tumor",
+      "Urokinase Plasminogen Activator Receptor-positive Solid Tumor"
+    ],
+    "interventions": [
+      "MNPR-101-PCTA-177Lu"
+    ],
+    "first_posted": "2025-05-20",
+    "start_date": null,
+    "primary_completion_date": null,
+    "completion_date": null,
+    "results_first_posted": null,
+    "last_update_posted": "2026-09-04",
+    "enrollment": null,
+    "sponsor": "Monopar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": null,
+    "ctgov_date_precision_raw": "UNKNOWN",
+    "ctgov_date_type": "UNKNOWN",
+    "ctgov_precision_normalized_candidate": "UNKNOWN"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT00600119",
+    "title": "A Phase 2, Double-Blind, Multiple-Dose Escalation Study to Evaluate NKTR-118 (Oral PEG-Naloxol) in Patients With Opioid-Induced Constipation (OIC)",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Opioid Induced Constipation (OIC)"
+    ],
+    "interventions": [
+      "placebo",
+      "NKTR-118"
+    ],
+    "first_posted": "2008-01-24",
+    "start_date": "2007-12-01",
+    "primary_completion_date": "2009-03-01",
+    "completion_date": "2009-04-01",
+    "results_first_posted": "2015-06-12",
+    "last_update_posted": "2015-06-12",
+    "enrollment": null,
+    "sponsor": "AstraZeneca",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2009-03",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT00802945",
+    "title": "Study to Evaluate the Safety and Efficacy of NKTR-102 in Patients With Metastatic or Locally Advanced Breast Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Tumor",
+      "Breast Cancer"
+    ],
+    "interventions": [
+      "NKTR-102",
+      "NKTR-102"
+    ],
+    "first_posted": "2008-12-05",
+    "start_date": "2008-10-01",
+    "primary_completion_date": "2011-10-01",
+    "completion_date": "2012-01-01",
+    "results_first_posted": "2018-07-09",
+    "last_update_posted": "2018-07-09",
+    "enrollment": null,
+    "sponsor": "Nektar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2011-10",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT01520896",
+    "title": "Study in Healthy Volunteers to Investigate the Effects of Ketoconazole on the Pharmacokinetics of NKTR-118",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Bioavailability",
+      "Healthy Volunteers",
+      "Drug- Drug Interactions"
+    ],
+    "interventions": [
+      "NKTR-118",
+      "Ketoconazole"
+    ],
+    "first_posted": "2012-01-30",
+    "start_date": "2012-02-01",
+    "primary_completion_date": "2012-04-01",
+    "completion_date": "2012-04-01",
+    "results_first_posted": null,
+    "last_update_posted": "2014-10-15",
+    "enrollment": null,
+    "sponsor": "AstraZeneca",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2012-04",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT01533155",
+    "title": "Study in Healthy Volunteers to Investigate the Effects of Quinidine on the Pharmacokinetics of NKTR-118",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Drug Induced Constipation"
+    ],
+    "interventions": [
+      "Nektar 118",
+      "Quinidine",
+      "Quinidine placebo",
+      "Morphine"
+    ],
+    "first_posted": "2012-02-15",
+    "start_date": "2012-03-01",
+    "primary_completion_date": "2012-09-01",
+    "completion_date": "2012-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2014-10-15",
+    "enrollment": null,
+    "sponsor": "AstraZeneca",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2012-09",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT01533870",
+    "title": "Study in Healthy Volunteers to Investigate the Effects of Rifampin on the Pharmacokinetics of NKTR-118",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Drug Induced Constipation"
+    ],
+    "interventions": [
+      "NKTR-118",
+      "Rifampin"
+    ],
+    "first_posted": "2012-02-15",
+    "start_date": "2012-03-01",
+    "primary_completion_date": "2012-05-01",
+    "completion_date": "2012-05-01",
+    "results_first_posted": null,
+    "last_update_posted": "2014-10-15",
+    "enrollment": null,
+    "sponsor": "AstraZeneca",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2012-05",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT01876446",
+    "title": "Pegylated Irinotecan NKTR 102 in Treating Patients With Relapsed Small Cell Lung Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Recurrent Small Cell Lung Carcinoma"
+    ],
+    "interventions": [
+      "Laboratory Biomarker Analysis",
+      "Pegylated Irinotecan",
+      "Pharmacological Study"
+    ],
+    "first_posted": "2013-06-12",
+    "start_date": "2013-08-29",
+    "primary_completion_date": "2017-07-18",
+    "completion_date": "2020-02-24",
+    "results_first_posted": "2019-09-06",
+    "last_update_posted": "2020-03-17",
+    "enrollment": null,
+    "sponsor": "Roswell Park Cancer Institute",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-07-18",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT01991678",
+    "title": "A Study in Cancer Patients With Hepatic Impairment to Evaluate the Pharmacokinetics and Safety of NKTR-102 (Etirinotecan Pegol)",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Advanced or Metastatic Solid Tumors in Patients With Hepatic Impairment"
+    ],
+    "interventions": [
+      "145 mg/m2 NKTR 102",
+      "120 mg/m2 NKTR 102",
+      "50 mg/m2 NKTR 102"
+    ],
+    "first_posted": "2013-11-25",
+    "start_date": "2013-11-01",
+    "primary_completion_date": "2017-05-01",
+    "completion_date": "2017-09-01",
+    "results_first_posted": null,
+    "last_update_posted": "2017-10-06",
+    "enrollment": null,
+    "sponsor": "Nektar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-05",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT02983045",
+    "title": "A Dose Escalation and Cohort Expansion Study of NKTR-214 in Combination With Nivolumab and Other Anti-Cancer Therapies in Patients With Select Advanced Solid Tumors",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Melanoma",
+      "Renal Cell Carcinoma",
+      "Non Small Cell Lung Cancer",
+      "Urothelial Carcinoma",
+      "Triple Negative Breast Cancer",
+      "HR+/HER2- Breast Cancer",
+      "Gastric Cancer"
+    ],
+    "interventions": [
+      "Dose Escalation Doublet: Combination of NKTR-214 + nivolumab",
+      "Dose Expansion Doublet: Combination of NKTR-214 + nivolumab",
+      "Schedule Finding Triplet: Combination of NKTR-214+ nivolumab+ ipilimumab",
+      "Dose Expansion Triplet: Combination of NKTR-214+ nivolumab+ ipilimumab"
+    ],
+    "first_posted": "2016-12-06",
+    "start_date": "2016-12-19",
+    "primary_completion_date": "2022-04-28",
+    "completion_date": "2022-04-28",
+    "results_first_posted": "2023-03-13",
+    "last_update_posted": "2023-03-13",
+    "enrollment": null,
+    "sponsor": "Nektar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2022-04-28",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT03435640",
+    "title": "REVEAL Study of NKTR-262 in Combination With NKTR-214 and Nivolumab in Patients With Locally Advanced / Metastatic Solid Tumor Malignancies",
+    "status": "TERMINATED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Melanoma",
+      "Merkel Cell Carcinoma",
+      "Triple Negative Breast Cancer",
+      "Head and Neck Squamous Cell Carcinoma",
+      "Renal Cell Carcinoma",
+      "Colorectal Cancer",
+      "Sarcoma"
+    ],
+    "interventions": [
+      "NKTR-262",
+      "bempegaldesleukin",
+      "nivolumab"
+    ],
+    "first_posted": "2018-02-19",
+    "start_date": "2018-03-15",
+    "primary_completion_date": "2022-05-09",
+    "completion_date": "2022-05-09",
+    "results_first_posted": "2023-03-08",
+    "last_update_posted": "2023-03-08",
+    "enrollment": null,
+    "sponsor": "Nektar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2022-05-09",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT03785925",
+    "title": "A Single-Arm Study of Bempegaldesleukin (NKTR-214) Plus Nivolumab in Cisplatin Ineligible Patients Who Have Locally Advanced or Metastatic Urothelial Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Urinary Bladder Neoplasm",
+      "Neoplasm Metastasis"
+    ],
+    "interventions": [
+      "Bempegaldesleukin",
+      "Nivolumab"
+    ],
+    "first_posted": "2018-12-24",
+    "start_date": "2019-04-29",
+    "primary_completion_date": "2022-02-09",
+    "completion_date": "2022-06-30",
+    "results_first_posted": "2023-03-28",
+    "last_update_posted": "2023-03-28",
+    "enrollment": null,
+    "sponsor": "Nektar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2022-02-09",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT04616196",
+    "title": "Study of NKTR 255 in Combination With Cetuximab in Solid Tumors",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Head and Neck Squamous Cell Carcinoma",
+      "Colorectal Cancer"
+    ],
+    "interventions": [
+      "NKTR-255",
+      "Cetuximab"
+    ],
+    "first_posted": "2020-11-04",
+    "start_date": "2020-10-30",
+    "primary_completion_date": "2023-03-30",
+    "completion_date": "2023-03-30",
+    "results_first_posted": "2025-06-08",
+    "last_update_posted": "2025-06-08",
+    "enrollment": null,
+    "sponsor": "Nektar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-03-30",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT04677179",
+    "title": "A Study of LY3471851 in Adult Participants With Moderately to Severely Active Ulcerative Colitis (UC)",
+    "status": "TERMINATED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Colitis, Ulcerative"
+    ],
+    "interventions": [
+      "LY3471851",
+      "Placebo"
+    ],
+    "first_posted": "2020-12-21",
+    "start_date": "2021-03-22",
+    "primary_completion_date": "2022-08-09",
+    "completion_date": "2022-08-09",
+    "results_first_posted": "2023-09-05",
+    "last_update_posted": "2023-09-05",
+    "enrollment": null,
+    "sponsor": "Nektar Therapeutics",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2022-08-09",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT05359211",
+    "title": "NKTR-255 in Combination With CAR-T Cell Therapy for the Treatment of Relapsed or Refractory Large B-cell Lymphoma",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Recurrent Diffuse Large B-Cell Lymphoma",
+      "Recurrent Diffuse Large B-Cell Lymphoma, Not Otherwise Specified",
+      "Recurrent Grade 3b Follicular Lymphoma",
+      "Recurrent Primary Mediastinal Large B-Cell Lymphoma",
+      "Refractory Diffuse Large B-Cell Lymphoma",
+      "Refractory Diffuse Large B-Cell Lymphoma, Not Otherwise Specified",
+      "Refractory Grade 3b Follicular Lymphoma",
+      "Refractory Primary Mediastinal Large B-Cell Lymphoma",
+      "Transformed Indolent B-Cell Non-Hodgkin Lymphoma to Diffuse Large B-Cell Lymphoma"
+    ],
+    "interventions": [
+      "Cyclophosphamide",
+      "Fludarabine",
+      "Lisocabtagene Maraleucel",
+      "Polymer-conjugated IL-15 Receptor Agonist NKTR-255",
+      "X-Ray Imaging",
+      "Echocardiography",
+      "Multigated Acquisition Scan",
+      "Bone Marrow Biopsy",
+      "Bone Marrow Aspiration",
+      "Lumbar Puncture",
+      "Computed Tomography",
+      "Positron Emission Tomography",
+      "Biospecimen Collection",
+      "Biopsy"
+    ],
+    "first_posted": "2022-05-03",
+    "start_date": "2022-12-08",
+    "primary_completion_date": "2025-09-04",
+    "completion_date": "2026-09-04",
+    "results_first_posted": null,
+    "last_update_posted": "2026-09-21",
+    "enrollment": null,
+    "sponsor": "Fred Hutchinson Cancer Center",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2025-09-04",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT05676749",
+    "title": "C-TIL051 in Non-Small Cell Lung Cancer",
+    "status": "TERMINATED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Metastatic Non Small Cell Lung Cancer"
+    ],
+    "interventions": [
+      "C-TIL051"
+    ],
+    "first_posted": "2023-01-09",
+    "start_date": "2024-02-29",
+    "primary_completion_date": "2025-12-30",
+    "completion_date": "2025-12-30",
+    "results_first_posted": null,
+    "last_update_posted": "2026-01-05",
+    "enrollment": null,
+    "sponsor": "AbelZeta Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2025-12-30",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "NKTR",
+    "nct_id": "NCT05926076",
+    "title": "COVID-19 Infection",
+    "status": "UNKNOWN",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "COVID-19",
+      "Renal Transplant Infection"
+    ],
+    "interventions": [
+      "Treatment plan"
+    ],
+    "first_posted": "2023-07-03",
+    "start_date": "2023-07-25",
+    "primary_completion_date": "2023-07-30",
+    "completion_date": "2023-07-30",
+    "results_first_posted": null,
+    "last_update_posted": "2023-07-03",
+    "enrollment": null,
+    "sponsor": "Tianjin First Central Hospital",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-07-30",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT00605007",
+    "title": "Study on COPD Corticosteroid-induced Hyperglycemia on Clinical Outcome in Patients With COPD",
+    "status": "COMPLETED",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "COPD"
+    ],
+    "interventions": [],
+    "first_posted": "2008-01-30",
+    "start_date": "2006-02-01",
+    "primary_completion_date": "2009-06-01",
+    "completion_date": "2009-12-01",
+    "results_first_posted": null,
+    "last_update_posted": "2013-11-21",
+    "enrollment": null,
+    "sponsor": "Emory University",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2009-06",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT00738114",
+    "title": "Diabetes in the Perioperative Period",
+    "status": "COMPLETED",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Hyperglycemia",
+      "Diabetes"
+    ],
+    "interventions": [],
+    "first_posted": "2008-08-20",
+    "start_date": "2008-08-01",
+    "primary_completion_date": "2009-12-01",
+    "completion_date": "2009-12-01",
+    "results_first_posted": null,
+    "last_update_posted": "2013-11-21",
+    "enrollment": null,
+    "sponsor": "Emory University",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2009-12",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT01390012",
+    "title": "Oral Versus Intravenous Dexamethasone",
+    "status": "COMPLETED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Pneumonia"
+    ],
+    "interventions": [
+      "Dexamethasone tablet 6 mg",
+      "Dexamethasone injection 4 mg"
+    ],
+    "first_posted": "2011-07-08",
+    "start_date": "2011-08-01",
+    "primary_completion_date": "2012-10-01",
+    "completion_date": "2012-10-01",
+    "results_first_posted": null,
+    "last_update_posted": "2014-01-15",
+    "enrollment": null,
+    "sponsor": "St. Antonius Hospital",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2012-10",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT02452229",
+    "title": "Review of Human Herpes Viruses in Burns",
+    "status": "COMPLETED",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Human Herpes Virus",
+      "Herpes Simplex Virus",
+      "Varicella-zoster Virus",
+      "Chickenpox",
+      "Cytomegalovirus",
+      "Burns"
+    ],
+    "interventions": [
+      "Review of the Literature for Human Herpes Virus infections"
+    ],
+    "first_posted": "2015-05-22",
+    "start_date": "2015-03-01",
+    "primary_completion_date": "2015-05-01",
+    "completion_date": null,
+    "results_first_posted": null,
+    "last_update_posted": "2015-05-22",
+    "enrollment": null,
+    "sponsor": "The University of Texas Medical Branch, Galveston",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2015-05",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT02996305",
+    "title": "A Study in Adults and Adolescents With Angelman Syndrome (STARS)",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Angelman Syndrome"
+    ],
+    "interventions": [
+      "OV101 Regimen 1",
+      "OV101 regimen 2",
+      "Placebo"
+    ],
+    "first_posted": "2016-12-19",
+    "start_date": "2016-01-01",
+    "primary_completion_date": "2018-06-07",
+    "completion_date": "2018-08-06",
+    "results_first_posted": "2022-03-31",
+    "last_update_posted": "2025-08-03",
+    "enrollment": null,
+    "sponsor": "Healx AI",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2018-06-07",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT03109756",
+    "title": "Single Dose Pharmacokinetic (PK) Study",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Angelman Syndrome",
+      "Fragile X Syndrome"
+    ],
+    "interventions": [
+      "OV101"
+    ],
+    "first_posted": "2017-04-12",
+    "start_date": "2017-04-03",
+    "primary_completion_date": "2017-11-28",
+    "completion_date": "2017-11-28",
+    "results_first_posted": null,
+    "last_update_posted": "2017-11-30",
+    "enrollment": null,
+    "sponsor": "Ovid Therapeutics Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-11-28",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT03472495",
+    "title": "Oral vs Intravenous Diltiazem for Rapid Atrial Fibrillation/Flutter Trial",
+    "status": "COMPLETED",
+    "phase": "PHASE4",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Atrial Fibrillation and Flutter"
+    ],
+    "interventions": [
+      "Diltiazem Oral Product",
+      "Diltiazem Injectable Product"
+    ],
+    "first_posted": "2018-03-21",
+    "start_date": "2018-06-01",
+    "primary_completion_date": "2021-03-21",
+    "completion_date": "2021-03-21",
+    "results_first_posted": "2023-03-01",
+    "last_update_posted": "2023-03-01",
+    "enrollment": null,
+    "sponsor": "Virginia Commonwealth University",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2021-03-21",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT03697161",
+    "title": "A Study of OV101 in Individuals With Fragile X Syndrome",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Fragile X Syndrome (FXS)"
+    ],
+    "interventions": [
+      "OV101 (gaboxadol)"
+    ],
+    "first_posted": "2018-10-05",
+    "start_date": "2018-09-17",
+    "primary_completion_date": "2020-02-03",
+    "completion_date": "2020-02-26",
+    "results_first_posted": "2024-01-23",
+    "last_update_posted": "2024-01-23",
+    "enrollment": null,
+    "sponsor": "Ovid Therapeutics Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2020-02-03",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT03882918",
+    "title": "An Open-Label Study to Evaluate the Long-Term Safety, Tolerability, and Efficacy of OV101 in Individuals With Angelman Syndrome",
+    "status": "TERMINATED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Angelman Syndrome"
+    ],
+    "interventions": [
+      "OV101"
+    ],
+    "first_posted": "2019-03-20",
+    "start_date": "2019-01-31",
+    "primary_completion_date": "2021-06-04",
+    "completion_date": "2021-06-30",
+    "results_first_posted": "2025-07-18",
+    "last_update_posted": "2025-07-18",
+    "enrollment": null,
+    "sponsor": "Healx AI",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2021-06-04",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT04106557",
+    "title": "A Study of OV101 in Individuals With Angelman Syndrome (AS)",
+    "status": "COMPLETED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Primary Disease or Condition Being Studied: Angelman Syndrome (AS)"
+    ],
+    "interventions": [
+      "Gaboxadol",
+      "Placebo"
+    ],
+    "first_posted": "2019-09-27",
+    "start_date": "2019-09-09",
+    "primary_completion_date": "2020-11-02",
+    "completion_date": "2020-11-02",
+    "results_first_posted": "2024-01-08",
+    "last_update_posted": "2024-01-08",
+    "enrollment": null,
+    "sponsor": "Ovid Therapeutics Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2020-11-02",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT04332237",
+    "title": "Meta-Analysis Accidental Hypothermia in Trauma",
+    "status": "COMPLETED",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Hypothermia",
+      "Trauma",
+      "Brain Injuries, Traumatic",
+      "Morality"
+    ],
+    "interventions": [],
+    "first_posted": "2020-04-02",
+    "start_date": "2019-08-12",
+    "primary_completion_date": "2020-01-21",
+    "completion_date": "2020-01-21",
+    "results_first_posted": null,
+    "last_update_posted": "2020-04-02",
+    "enrollment": null,
+    "sponsor": "Insel Gruppe AG, University Hospital Bern",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2020-01-21",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT04368351",
+    "title": "Bacteriotherapy in the Treatment of COVID-19",
+    "status": "UNKNOWN",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "COVID",
+      "Pneumonia",
+      "Diarrhea"
+    ],
+    "interventions": [
+      "SivoMixx (200 billion)",
+      "Azithromycin",
+      "hydroxychloroquine"
+    ],
+    "first_posted": "2020-04-29",
+    "start_date": "2020-03-01",
+    "primary_completion_date": "2020-06-30",
+    "completion_date": "2020-07-31",
+    "results_first_posted": null,
+    "last_update_posted": "2020-05-04",
+    "enrollment": null,
+    "sponsor": "University of Roma La Sapienza",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2020-06-30",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT04400799",
+    "title": "Enoxaparin for Primary Thromboprophylaxis in Ambulatory Patients With COVID-19",
+    "status": "TERMINATED",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "COVID-19",
+      "Pulmonary Embolism, Deep Vein Thrombosis"
+    ],
+    "interventions": [
+      "Enoxaparin 40Mg/0.4Ml Inj Syringe 0.4Ml"
+    ],
+    "first_posted": "2020-05-26",
+    "start_date": "2020-06-15",
+    "primary_completion_date": "2022-02-07",
+    "completion_date": "2022-04-12",
+    "results_first_posted": null,
+    "last_update_posted": "2022-05-25",
+    "enrollment": null,
+    "sponsor": "University of Zurich",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2022-02-07",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT04462211",
+    "title": "Constipation Bundle/Protocol and the Effect of Adherence in the Incidence of Constipation in Critically Ill Patients",
+    "status": "COMPLETED",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Constipation",
+      "Critical Illness",
+      "Constipation Drug Induced"
+    ],
+    "interventions": [
+      "Implementation of management pharmacological protocol of constipation",
+      "Implementation of bundle of prevention and non-pharmacological management"
+    ],
+    "first_posted": "2020-07-08",
+    "start_date": "2019-08-01",
+    "primary_completion_date": "2020-02-01",
+    "completion_date": "2020-03-01",
+    "results_first_posted": null,
+    "last_update_posted": "2021-06-08",
+    "enrollment": null,
+    "sponsor": "University of Chile",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2020-02-01",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT04481841",
+    "title": "Head Yuanshi Dian Therapy in Burning Mouth Syndrome",
+    "status": "UNKNOWN",
+    "phase": "EARLY_PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Burning Mouth Syndrome",
+      "Oral Mucosa Disease"
+    ],
+    "interventions": [
+      "oryzanol + vitamin B2 (riboflavin) + vitamin E"
+    ],
+    "first_posted": "2020-07-22",
+    "start_date": "2020-07-27",
+    "primary_completion_date": "2022-02-01",
+    "completion_date": "2022-05-01",
+    "results_first_posted": null,
+    "last_update_posted": "2021-07-19",
+    "enrollment": null,
+    "sponsor": "Second Affiliated Hospital, Zhejiang University, School of Medicine",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2022-02-01",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT04482465",
+    "title": "Omega 3 and Vitamin D Dosage in a Population With Moderate to High Risk of AMD",
+    "status": "COMPLETED",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Age-related Macular Degeneration",
+      "Vitamin D Deficiency"
+    ],
+    "interventions": [
+      "blood sample"
+    ],
+    "first_posted": "2020-07-22",
+    "start_date": "2017-04-20",
+    "primary_completion_date": "2017-10-05",
+    "completion_date": "2017-10-05",
+    "results_first_posted": null,
+    "last_update_posted": "2024-06-27",
+    "enrollment": null,
+    "sponsor": "Universitaire Ziekenhuizen KU Leuven",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2017-10-05",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT05870540",
+    "title": "BPL-003 Efficacy and Safety in Treatment Resistant Depression",
+    "status": "COMPLETED",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Treatment Resistant Depression"
+    ],
+    "interventions": [
+      "BPL-003",
+      "BPL-003"
+    ],
+    "first_posted": "2023-05-23",
+    "start_date": "2023-09-14",
+    "primary_completion_date": "2025-03-28",
+    "completion_date": "2025-07-03",
+    "results_first_posted": "2026-09-10",
+    "last_update_posted": "2026-09-10",
+    "enrollment": null,
+    "sponsor": "Beckley Psytech Limited",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2025-03-28",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT06054048",
+    "title": "Open Video System in Medicine (oVID)",
+    "status": "COMPLETED",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Cancer",
+      "Chronic Heart Failure",
+      "Chronic Obstructive Pulmonary Disease",
+      "Palliative Care"
+    ],
+    "interventions": [
+      "Telemedicine"
+    ],
+    "first_posted": "2023-09-26",
+    "start_date": "2019-02-01",
+    "primary_completion_date": "2021-10-30",
+    "completion_date": "2022-02-28",
+    "results_first_posted": null,
+    "last_update_posted": "2023-09-26",
+    "enrollment": null,
+    "sponsor": "University Hospital Muenster",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2021-10-30",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT06193668",
+    "title": "Overfeeding Induced Fat-tissue Stimulation",
+    "status": "RECRUITING",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Lipid-induced Insulin Resistance"
+    ],
+    "interventions": [
+      "High-fat overnutrition",
+      "Normocaloric macronutrient-balanced nutrition"
+    ],
+    "first_posted": "2024-01-05",
+    "start_date": "2024-01-31",
+    "primary_completion_date": "2025-12-31",
+    "completion_date": "2030-12-31",
+    "results_first_posted": null,
+    "last_update_posted": "2024-03-01",
+    "enrollment": null,
+    "sponsor": "German Diabetes Center",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2025-12-31",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT06553014",
+    "title": "Effectiveness of Endovascular Plug Embolization in Pelvic Congestion Syndrome",
+    "status": "COMPLETED",
+    "phase": "N/A",
+    "study_type": "OBSERVATIONAL",
+    "conditions": [
+      "Pain, Chronic"
+    ],
+    "interventions": [
+      "Endovascular Plug Embolization"
+    ],
+    "first_posted": "2024-08-14",
+    "start_date": "2024-07-01",
+    "primary_completion_date": "2024-09-01",
+    "completion_date": "2024-09-30",
+    "results_first_posted": null,
+    "last_update_posted": "2026-01-08",
+    "enrollment": null,
+    "sponsor": "Halil Ibrahim Altun",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2024-09-01",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT06809595",
+    "title": "A Phase 3 Trial of MM120 for Generalized Anxiety Disorder (Panorama)",
+    "status": "ACTIVE_NOT_RECRUITING",
+    "phase": "PHASE3",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Generalized Anxiety Disorder"
+    ],
+    "interventions": [
+      "Placebo",
+      "DT120"
+    ],
+    "first_posted": "2025-02-05",
+    "start_date": "2025-01-29",
+    "primary_completion_date": "2026-08-13",
+    "completion_date": "2027-05-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-09-04",
+    "enrollment": null,
+    "sponsor": "Definium Therapeutics US, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2026-08-13",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "OVID",
+    "nct_id": "NCT07361952",
+    "title": "Oral Versus Intravenous Fluid Therapy in the Emergency Department",
+    "status": "RECRUITING",
+    "phase": "NA",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Fluid Management"
+    ],
+    "interventions": [
+      "Oral fluids",
+      "Intravenous fluids"
+    ],
+    "first_posted": "2026-01-23",
+    "start_date": "2025-10-03",
+    "primary_completion_date": "2026-06-01",
+    "completion_date": "2026-07-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-01-23",
+    "enrollment": null,
+    "sponsor": "Esbjerg Hospital - University Hospital of Southern Denmark",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2026-06",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "STTK",
+    "nct_id": "NCT03894618",
+    "title": "SL-279252 (PD1-Fc-OX40L) in Subjects With Advanced Solid Tumors or Lymphomas",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Squamous Cell Carcinoma of the Head and Neck",
+      "Melanoma",
+      "Non Small Cell Lung Cancer",
+      "Urothelial Carcinoma",
+      "Gastric Adenocarcinoma",
+      "Gastroesophageal Junction Adenocarcinoma",
+      "Squamous Cell Carcinoma of the Anus",
+      "Squamous Cell Carcinoma of the Cervix",
+      "Squamous Cell Carcinoma of the Skin",
+      "Renal Cell Carcinoma",
+      "Hodgkin Lymphoma",
+      "Diffuse Large B Cell Lymphoma",
+      "Mismatch Repair Deficient or MSI-High Solid Tumors"
+    ],
+    "interventions": [
+      "SL-279252"
+    ],
+    "first_posted": "2019-03-28",
+    "start_date": "2019-03-26",
+    "primary_completion_date": "2023-05-04",
+    "completion_date": "2023-05-04",
+    "results_first_posted": "2025-03-14",
+    "last_update_posted": "2025-04-02",
+    "enrollment": null,
+    "sponsor": "Shattuck Labs, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-05-04",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "STTK",
+    "nct_id": "NCT04406623",
+    "title": "Phase 1 Study of SL-172154 (SIRP\u03b1-Fc-CD40L) in Subjects With Ovarian Cancer",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Ovarian Cancer",
+      "Fallopian Tube Cancer",
+      "Primary Peritoneal Carcinoma"
+    ],
+    "interventions": [
+      "SL-172154"
+    ],
+    "first_posted": "2020-05-28",
+    "start_date": "2020-06-29",
+    "primary_completion_date": "2023-02-02",
+    "completion_date": "2023-02-02",
+    "results_first_posted": "2025-01-30",
+    "last_update_posted": "2025-01-30",
+    "enrollment": null,
+    "sponsor": "Shattuck Labs, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2023-02-02",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "STTK",
+    "nct_id": "NCT04502888",
+    "title": "Ph1 Study of SL-172154 Administered Intratumorally in Subjects With Squamous Cell Carcinoma of the Head and Neck or Skin",
+    "status": "TERMINATED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Cutaneous Squamous Cell Carcinoma",
+      "Squamous Cell Carcinoma of Head and Neck"
+    ],
+    "interventions": [
+      "Drug: SL-172154"
+    ],
+    "first_posted": "2020-08-06",
+    "start_date": "2020-09-17",
+    "primary_completion_date": "2022-04-08",
+    "completion_date": "2022-04-08",
+    "results_first_posted": "2025-02-24",
+    "last_update_posted": "2025-02-24",
+    "enrollment": null,
+    "sponsor": "Shattuck Labs, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2022-04-08",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "STTK",
+    "nct_id": "NCT05275439",
+    "title": "Phase 1 Study of Shattuck Labs (SL)-172154 in Subjects With MDS or AML",
+    "status": "TERMINATED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Acute Myeloid Leukemia",
+      "Myelodysplastic Syndromes"
+    ],
+    "interventions": [
+      "SL-172154",
+      "Azacitidine (AZA)",
+      "Venetoclax"
+    ],
+    "first_posted": "2022-03-11",
+    "start_date": "2022-03-17",
+    "primary_completion_date": "2025-02-06",
+    "completion_date": "2025-02-06",
+    "results_first_posted": "2026-03-18",
+    "last_update_posted": "2026-03-18",
+    "enrollment": null,
+    "sponsor": "Shattuck Labs, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2025-02-06",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "STTK",
+    "nct_id": "NCT05483933",
+    "title": "Phase 1b Study of SL-172154 Administered With Combination Agent(s) in Subjects With Ovarian Cancers",
+    "status": "COMPLETED",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Platinum-resistant Ovarian Cancer",
+      "Fallopian Tube Cancer",
+      "Epithelial Ovarian Cancer",
+      "Ovarian Cancer",
+      "Platinum-Resistant Fallopian Tube Carcinoma",
+      "Platinum-Resistant Primary Peritoneal Carcinoma",
+      "Primary Peritoneal Carcinoma"
+    ],
+    "interventions": [
+      "Pegylated Liposomal Doxorubicin + SL-172154",
+      "Mirvetuximab + SL-172154"
+    ],
+    "first_posted": "2022-08-02",
+    "start_date": "2022-08-18",
+    "primary_completion_date": "2025-02-07",
+    "completion_date": "2025-02-07",
+    "results_first_posted": "2025-12-23",
+    "last_update_posted": "2025-12-23",
+    "enrollment": null,
+    "sponsor": "Shattuck Labs, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2025-02-07",
+    "ctgov_date_precision_raw": "DAY",
+    "ctgov_date_type": "ACTUAL",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "STTK",
+    "nct_id": "NCT07158437",
+    "title": "Phase 1 Study of SL-325 in Healthy Volunteers",
+    "status": "ACTIVE_NOT_RECRUITING",
+    "phase": "PHASE1",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Healthy Volunteers"
+    ],
+    "interventions": [
+      "SL-325",
+      "Placebo (Normal Saline)"
+    ],
+    "first_posted": "2025-09-05",
+    "start_date": "2025-09-18",
+    "primary_completion_date": "2026-07-01",
+    "completion_date": "2026-07-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-04-30",
+    "enrollment": null,
+    "sponsor": "Shattuck Labs, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2026-07",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
+  },
+  {
+    "ticker": "STTK",
+    "nct_id": "NCT07753850",
+    "title": "A Study of SL-325 in Crohn's Disease Patients",
+    "status": "RECRUITING",
+    "phase": "PHASE2",
+    "study_type": "INTERVENTIONAL",
+    "conditions": [
+      "Crohn's Disease"
+    ],
+    "interventions": [
+      "SL-325",
+      "Placebo"
+    ],
+    "first_posted": "2026-08-10",
+    "start_date": "2026-10-21",
+    "primary_completion_date": "2028-07-01",
+    "completion_date": "2030-06-01",
+    "results_first_posted": null,
+    "last_update_posted": "2026-11-03",
+    "enrollment": null,
+    "sponsor": "Shattuck Labs, Inc.",
+    "collected_at": "2026-11-04",
+    "ctgov_raw_date": "2028-07",
+    "ctgov_date_precision_raw": "MONTH",
+    "ctgov_date_type": "ESTIMATED",
+    "ctgov_precision_normalized_candidate": "MONTH"
   }
 ]
