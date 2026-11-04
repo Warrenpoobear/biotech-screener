@@ -5748,6 +5748,7 @@ def save_validation_snapshot(
     # --- Compute institutional summary + delta (for z-score, written as sidecar later) ---
     inst_summary = None
     inst_delta = None
+    prior_inst = None
     if decision_mode == "phase2":
         try:
             from institutional_summary import (
