@@ -462,8 +462,16 @@ class _FakeSharadarClient:
         self.exc = exc
         self.calls = []
 
-    def get_table_for_tickers(self, table, tickers, filters=None, fields=None, batch_size=100):
-        self.calls.append({"table": table, "tickers": list(tickers), "filters": dict(filters or {}), "fields": fields})
+    def fetch(self, table, *, tickers=None, filters=None, fields=None, date_range=None, **kw):
+        self.calls.append(
+            {
+                "table": table,
+                "tickers": list(tickers),
+                "filters": dict(filters or {}),
+                "fields": fields,
+                "date_range": date_range,
+            }
+        )
         if self.exc:
             raise self.exc
         return list(self.rows)
@@ -486,8 +494,9 @@ class TestSharadarFromApiDirect:
             {
                 "table": "SEP",
                 "tickers": ["VKTX"],
-                "filters": {"date.gte": "2026-11-01", "date.lte": "2026-11-03"},
+                "filters": {},
                 "fields": ["ticker", "date", "closeadj"],
+                "date_range": ("2026-11-01", "2026-11-03"),
             }
         ]
         assert provider.get_price("VKTX", "2026-11-03") == Decimal("26.090000")

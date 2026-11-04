@@ -182,11 +182,11 @@ class SharadarReturnsProvider:
 
             client = SharadarClient(api_key=api_key)
 
-        rows = client.get_table_for_tickers(
+        rows = client.fetch(
             "SEP",
-            tickers,
-            filters={"date.gte": start_date, "date.lte": end_date},
+            tickers=tickers,
             fields=["ticker", "date", "closeadj"],
+            date_range=(start_date, end_date),
         )
         for row in rows:
             ticker = str(row.get("ticker") or "").upper()

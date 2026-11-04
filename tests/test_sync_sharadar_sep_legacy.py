@@ -27,12 +27,16 @@ class _FakeClient:
         self.rows = rows
         self.calls = []
 
-    def get_table(self, table, filters=None, fields=None):
-        self.calls.append(("get_table", table, dict(filters or {}), fields))
-        return list(self.rows)
-
-    def get_table_for_tickers(self, table, tickers, filters=None, fields=None, batch_size=100):
-        self.calls.append(("get_table_for_tickers", table, dict(filters or {}), fields, list(tickers)))
+    def fetch(self, table, *, tickers=None, filters=None, fields=None, date_range=None, **kw):
+        self.calls.append(
+            {
+                "table": table,
+                "tickers": tickers,
+                "filters": dict(filters or {}),
+                "fields": fields,
+                "date_range": date_range,
+            }
+        )
         return list(self.rows)
 
 
@@ -57,12 +61,26 @@ def test_fetch_whole_market_window(mod):
     out = mod.fetch_sep_data("ignored", date_gte="2026-11-01", date_lte="2026-11-03", client=client)
     assert out == rows
     assert client.calls == [
-        ("get_table", "SEP", {"date.gte": "2026-11-01", "date.lte": "2026-11-03"}, ["ticker", "date", "closeadj"])
+        {
+            "table": "SEP",
+            "tickers": None,
+            "filters": {},
+            "fields": ["ticker", "date", "closeadj"],
+            "date_range": ("2026-11-01", "2026-11-03"),
+        }
     ]
+
+
+def test_open_ended_window_gets_explicit_bounds(mod):
+    client = _FakeClient([])
+    mod.fetch_sep_data("ignored", date_gte="2026-11-01", client=client)
+    start, end = client.calls[0]["date_range"]
+    assert start == "2026-11-01" and end >= "2026-11-01"
+    mod.fetch_sep_data("ignored", client=client)
+    assert client.calls[1]["date_range"][0] == mod.FULL_HISTORY_START
 
 
 def test_fetch_ticker_subset(mod):
     client = _FakeClient([])
     mod.fetch_sep_data("ignored", date_gte="2026-11-01", tickers=["VKTX", "AMGN"], client=client)
-    assert client.calls[0][0] == "get_table_for_tickers"
-    assert client.calls[0][4] == ["VKTX", "AMGN"]
+    assert client.calls[0]["tickers"] == ["VKTX", "AMGN"]

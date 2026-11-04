@@ -20,7 +20,7 @@ operator authorization and a parity check against the current sources first.
 
 | File | Role |
 |---|---|
-| `common/sharadar_client.py` | Client with retries, offset pagination and ticker batching. The key never goes on a URL. |
+| `common/sharadar_client.py` | Client with retries, ticker batching, and splitting of truncated requests (never pages with `offset`). The key never goes on a URL. |
 | `tools/sync_sharadar_shadow.py` | Mirrors universe tables into `cache/sharadar/` |
 | `backtest/sharadar_provider.py` | `SharadarReturnsProvider.from_api` now uses the direct client |
 | `sec_13f/scripts/sync_sharadar_sep.py` | Legacy SEP mirror, moved off Nasdaq Data Link |
@@ -62,17 +62,22 @@ Exit codes: `0` ok, `1` at least one table failed (the others still ran), `2` au
 
 ## Pitfalls (verified live 2026-11-04)
 
-1. **`count` does not reveal truncation.** A query with more than 10,000 rows returns `count=10000`,
-   so the vendor README's `len(data) < count` check never fires. The client treats a full page as
-   "maybe more" and pages on with `offset`.
-2. **The curated view is not point-in-time.** Sharadar re-stamps `lastupdated` on historical rows.
+1. **`count` does not reveal truncation, and `offset` paging loses rows.** A query with more than
+   10,000 rows returns `count=10000`, so the vendor README's `len(data) < count` check never fires.
+   Paging with `offset` is unreliable because row order isn't stable between pages. The first full
+   backfill (2026-11-04) repeated 107 rows and silently skipped others (VKTX lost a trading day).
+   The client never pages. A full page raises `SharadarTruncatedError`, and `fetch()` splits the
+   date range, then the ticker batch, until each request fits in one page.
+2. **Ticker limits:** a request takes at most 30 tickers and a `ticker` value of at most 200
+   characters. Beyond either, the API returns HTTP 400.
+3. **The curated view is not point-in-time.** Sharadar re-stamps `lastupdated` on historical rows.
    For example, as-reported VKTX SF1 rows from 2015 were re-stamped 2026-10-29. To build an as-of
    view, replay `raw/` slices up to the date using `manifest.jsonl` `fetched_at_utc`. That timestamp
    is each row's data_available_timestamp in this cache.
-3. **SF1 `date` is the SEC filing date (datekey).** For as-of work, use the `ARQ`/`ARY`/`ART`
+4. **SF1 `date` is the SEC filing date (datekey).** For as-of work, use the `ARQ`/`ARY`/`ART`
    dimensions joined on `date`. `MRQ`/`MRY`/`MRT` include restatements and are keyed to `reportperiod`
    (about two months of look-ahead).
-4. **Bad or missing keys still work for DJIA sample names** (e.g. AMGN). Test a key with a
+5. **Bad or missing keys still work for DJIA sample names** (e.g. AMGN). Test a key with a
    non-sample ticker such as VKTX: an invalid key returns `403 Exceeds free tier`.
-5. **DAILY `marketcap`/`ev` are in $ millions.**
-6. ACTIONS and SF3A have no `lastupdated` column, so they re-pull a trailing date window.
+6. **DAILY `marketcap`/`ev` are in $ millions.**
+7. ACTIONS and SF3A have no `lastupdated` column, so they re-pull a trailing date window.

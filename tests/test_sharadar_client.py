@@ -73,38 +73,97 @@ class TestAuth:
         assert FAKE_KEY not in repr(_client(FakeFetch([])))
 
 
-class TestPagination:
-    """Sharadar reports count == len(data) even when a page is truncated at
-    ``limit``, so a full page must be treated as 'maybe more'."""
+class FakeServer:
+    """Minimal Sharadar stand-in: filters by ticker / date.gte / date.lte and
+    truncates at ``limit`` exactly like the live API (count == len(data))."""
 
-    def test_full_page_triggers_next_offset(self):
-        fetch = FakeFetch(
-            [
-                (200, {"count": 3, "data": _rows(3, 0)}),
-                (200, {"count": 3, "data": _rows(3, 3)}),
-                (200, {"count": 1, "data": _rows(1, 6)}),
-            ]
-        )
-        rows = _client(fetch, page_limit=3).get_table("SEP", filters={"ticker": "VKTX"})
-        assert len(rows) == 7
-        assert [c["params"]["offset"] for c in fetch.calls] == [0, 3, 6]
-        assert all(c["params"]["limit"] == 3 for c in fetch.calls)
+    def __init__(self, rows):
+        self.rows = rows
+        self.calls: List[Dict[str, Any]] = []
 
-    def test_exactly_full_last_page_then_empty(self):
-        fetch = FakeFetch(
-            [
-                (200, {"count": 2, "data": _rows(2)}),
-                (200, {"count": 0, "data": []}),
-            ]
-        )
-        rows = _client(fetch, page_limit=2).get_table("SEP")
-        assert len(rows) == 2
-        assert len(fetch.calls) == 2
+    def __call__(self, url, params, headers, timeout):
+        self.calls.append(dict(params))
+        out = list(self.rows)
+        if "ticker" in params:
+            wanted = set(params["ticker"].split(","))
+            out = [r for r in out if r["ticker"] in wanted]
+        if "date.gte" in params:
+            out = [r for r in out if r["date"] >= params["date.gte"]]
+        if "date.lte" in params:
+            out = [r for r in out if r["date"] <= params["date.lte"]]
+        out = out[: int(params["limit"])]
+        return 200, json.dumps({"count": len(out), "data": out}).encode("utf-8")
 
-    def test_short_first_page_single_request(self):
+
+def _daily_rows(tickers, start_day=1, days=10):
+    return [{"ticker": t, "date": f"2026-01-{d:02d}"} for t in tickers for d in range(start_day, start_day + days)]
+
+
+class TestTruncation:
+    """Offset paging is unstable server-side (2026-11-04 backfill: 107 rows
+    duplicated AND a VKTX row skipped). Every request must fit in one page;
+    a full page means 'truncated' and the query is split, never offset-paged."""
+
+    def test_full_page_raises_truncated(self):
+        from common.sharadar_client import SharadarTruncatedError
+
+        fetch = FakeFetch([(200, {"count": 3, "data": _rows(3)})])
+        with pytest.raises(SharadarTruncatedError):
+            _client(fetch, page_limit=3).get_table("SEP", filters={"ticker": "VKTX"})
+
+    def test_never_sends_offset(self):
+        server = FakeServer(_daily_rows(["VKTX"], days=10))
+        _client(server, page_limit=4).fetch("SEP", tickers=["VKTX"], date_range=("2026-01-01", "2026-01-10"))
+        assert all("offset" not in c for c in server.calls)
+
+    def test_short_page_single_request(self):
         fetch = FakeFetch([(200, {"count": 1, "data": _rows(1)})])
         assert len(_client(fetch, page_limit=10).get_table("SEP")) == 1
         assert len(fetch.calls) == 1
+
+    def test_date_range_split_until_each_request_fits(self):
+        data = _daily_rows(["VKTX", "AMGN"], days=10)  # 20 rows
+        server = FakeServer(data)
+        rows = _client(server, page_limit=4).fetch(
+            "SEP", tickers=["VKTX", "AMGN"], date_range=("2026-01-01", "2026-01-10")
+        )
+        assert sorted((r["ticker"], r["date"]) for r in rows) == sorted((r["ticker"], r["date"]) for r in data)
+        assert len(rows) == len(data)  # no duplicates, nothing skipped
+
+    def test_single_day_overflow_splits_tickers(self):
+        data = _daily_rows(["A", "B", "C", "D", "E"], days=1)  # 5 rows on one day
+        server = FakeServer(data)
+        rows = _client(server, page_limit=2).fetch(
+            "SEP", tickers=["A", "B", "C", "D", "E"], date_range=("2026-01-01", "2026-01-01")
+        )
+        assert sorted(r["ticker"] for r in rows) == ["A", "B", "C", "D", "E"]
+
+    def test_unsplittable_overflow_raises(self):
+        from common.sharadar_client import SharadarTruncatedError
+
+        server = FakeServer([{"ticker": "VKTX", "date": "2026-01-01", "n": i} for i in range(5)])
+        with pytest.raises(SharadarTruncatedError):
+            _client(server, page_limit=2).fetch("SF1", tickers=["VKTX"], date_range=("2026-01-01", "2026-01-01"))
+
+    def test_no_date_range_overflow_splits_tickers(self):
+        data = [{"ticker": t, "date": "2026-01-01"} for t in "ABCD"]
+        server = FakeServer(data)
+        rows = _client(server, page_limit=2).fetch("TICKERS", tickers=list("ABCD"))
+        assert sorted(r["ticker"] for r in rows) == list("ABCD")
+
+    def test_date_range_combined_with_other_filters(self):
+        server = FakeServer(_daily_rows(["VKTX"], days=3))
+        _client(server).fetch(
+            "SEP", tickers=["VKTX"], filters={"lastupdated.gte": "2026-01-02"}, date_range=("2026-01-01", "2026-01-03")
+        )
+        c = server.calls[0]
+        assert (c["lastupdated.gte"], c["date.gte"], c["date.lte"]) == ("2026-01-02", "2026-01-01", "2026-01-03")
+
+    def test_whole_market_when_no_tickers(self):
+        server = FakeServer(_daily_rows(["A", "B"], days=2))
+        rows = _client(server, page_limit=3).fetch("SEP", date_range=("2026-01-01", "2026-01-02"))
+        assert len(rows) == 4
+        assert all("ticker" not in c for c in server.calls)
 
 
 class TestFiltersAndFields:

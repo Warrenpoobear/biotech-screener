@@ -136,12 +136,20 @@ def _load_json(path: Path, default: Any) -> Any:
 
 
 def _plan(
-    spec: TableSpec, tickers: Sequence[str], table_state: Optional[Dict[str, Any]], backfill_start: str
-) -> List[Tuple[str, List[str], Dict[str, str]]]:
-    """[(mode, tickers, filters)] for one table."""
+    spec: TableSpec,
+    tickers: Sequence[str],
+    table_state: Optional[Dict[str, Any]],
+    backfill_start: str,
+    end_date: str,
+) -> List[Tuple[str, List[str], Dict[str, str], Optional[Tuple[str, str]]]]:
+    """[(mode, tickers, filters, date_range)] for one table.
+
+    ``date_range`` is passed separately (not as ``date.gte`` filters) so the
+    client can split a truncated request along it.
+    """
     tickers = sorted(set(tickers))
     if spec.incremental_field is None:
-        return [("snapshot", tickers, {})]
+        return [("snapshot", tickers, {}, None)]
 
     known = set((table_state or {}).get("tickers", []))
     watermark = (table_state or {}).get("watermark")
@@ -150,12 +158,15 @@ def _plan(
     old = [t for t in tickers if t in known]
     new = [t for t in tickers if t not in known]
 
-    plan = []
+    plan: List[Tuple[str, List[str], Dict[str, str], Optional[Tuple[str, str]]]] = []
     if old:
         since = (pd.Timestamp(watermark) - pd.Timedelta(days=spec.overlap_days)).strftime("%Y-%m-%d")
-        plan.append(("incremental", old, {f"{spec.incremental_field}.gte": since}))
+        if spec.incremental_field == "date":
+            plan.append(("incremental", old, {}, (since, end_date)))
+        else:
+            plan.append(("incremental", old, {f"{spec.incremental_field}.gte": since}, (backfill_start, end_date)))
     if new:
-        plan.append(("backfill", new, {"date.gte": backfill_start}))
+        plan.append(("backfill", new, {}, (backfill_start, end_date)))
     return plan
 
 
@@ -243,16 +254,20 @@ def run_sync(
     state: Dict[str, Any] = _load_json(state_path, {})
     result = SyncResult(exit_code=0)
     fetched_at = _iso(now)
+    end_date = now.astimezone(timezone.utc).strftime("%Y-%m-%d")
 
     for table in tables:
         spec = TABLE_SPECS[table]
         tickers = list(BENCHMARK_TICKERS) if spec.ticker_source == "benchmarks" else list(universe_tickers)
-        plan = _plan(spec, tickers, state.get(table), backfill_start)
-        fetched: List[Tuple[str, List[str], Dict[str, str], List[Dict[str, Any]]]] = []
+        plan = _plan(spec, tickers, state.get(table), backfill_start, end_date)
+        fetched: List[Tuple[str, List[str], Dict[str, Any], List[Dict[str, Any]]]] = []
         try:
-            for mode, batch, filters in plan:
-                rows = client.get_table_for_tickers(table, batch, filters=filters)
-                fetched.append((mode, batch, filters, rows))
+            for mode, batch, filters, date_range in plan:
+                rows = client.fetch(table, tickers=batch, filters=filters, date_range=date_range)
+                recorded = dict(filters)
+                if date_range is not None:
+                    recorded["date.gte"], recorded["date.lte"] = date_range
+                fetched.append((mode, batch, recorded, rows))
         except SharadarAuthError as e:
             result.tables[table] = {"status": "auth_error", "error": str(e)}
             result.exit_code = 2

@@ -8,12 +8,16 @@ Key handling
     header — never on the query string, so it cannot leak into logs, error
     messages or cached URLs.
 
-Pagination
+Truncation (no offset paging)
     Sharadar reports ``count == len(data)`` even when a response is truncated
     at ``limit`` (verified live 2026-11-04: a >10k-row query returned
-    ``count=10000``). The vendor README's "compare len(data) to count" check
-    therefore never fires. This client treats a full page as "maybe more" and
-    requests the next ``offset`` until a short page arrives.
+    ``count=10000``), so the vendor README's "compare len(data) to count" check
+    never fires. Offset paging is NOT safe either: ordering is unstable across
+    pages, and a 2026-11-04 backfill both duplicated 107 rows and silently
+    skipped rows (VKTX lost a trading day). So every request must fit in a
+    single page: a full page raises ``SharadarTruncatedError``, and ``fetch``
+    recursively splits the date range (then the ticker batch) until each
+    piece fits.
 
 Governance
     Infrastructure only (Tier 2 ingestion plumbing). Nothing in the production
@@ -29,6 +33,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import date, timedelta
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 BASE_URL = "https://api.sharadar.com/v1.0"
@@ -50,6 +55,10 @@ class SharadarError(RuntimeError):
 
 class SharadarAuthError(SharadarError):
     """Missing key, invalid key, or request outside the subscription (401/403)."""
+
+
+class SharadarTruncatedError(SharadarError):
+    """A response filled the page limit, so rows may be missing."""
 
 
 def _urllib_fetch(url: str, params: Mapping[str, Any], headers: Mapping[str, str], timeout: float) -> Tuple[int, bytes]:
@@ -94,7 +103,7 @@ def _ticker_batches(tickers: Sequence[str], max_count: int, max_chars: int) -> L
 
 
 class SharadarClient:
-    """Thin, retrying, paginating client for ``GET /data/{table}``."""
+    """Thin, retrying client for ``GET /data/{table}``; splits instead of paging."""
 
     def __init__(
         self,
@@ -133,22 +142,46 @@ class SharadarClient:
         filters: Optional[Mapping[str, Any]] = None,
         fields: Optional[Sequence[str]] = None,
     ) -> List[Dict[str, Any]]:
-        """All rows of ``table`` matching ``filters`` (e.g. ``{"date.gte": ...}``)."""
-        base: Dict[str, Any] = {"format": "json"}
+        """One request. Raises ``SharadarTruncatedError`` if the page is full."""
+        params: Dict[str, Any] = {"format": "json"}
         if filters:
-            base.update(filters)
+            params.update(filters)
         if fields:
-            base["fields"] = ",".join(fields)
+            params["fields"] = ",".join(fields)
+        params["limit"] = self._page_limit
+        rows = self._request(table, params)
+        if len(rows) >= self._page_limit:
+            raise SharadarTruncatedError(f"{table}: response hit the {self._page_limit}-row limit; narrow the query")
+        return rows
 
+    def fetch(
+        self,
+        table: str,
+        *,
+        tickers: Optional[Iterable[str]] = None,
+        filters: Optional[Mapping[str, Any]] = None,
+        fields: Optional[Sequence[str]] = None,
+        date_range: Optional[Tuple[str, str]] = None,
+        date_field: str = "date",
+        batch_size: int = DEFAULT_TICKER_BATCH,
+    ) -> List[Dict[str, Any]]:
+        """All matching rows, split into single-page requests.
+
+        ``tickers=None`` queries the whole table. ``date_range`` is an
+        inclusive ``(start, end)`` on ``date_field``; it is the axis used to
+        split a truncated request. Without it (or once it is one day wide) the
+        ticker batch is halved instead.
+        """
+        if tickers is None:
+            batches: List[Optional[List[str]]] = [None]
+        else:
+            unique = sorted({t.strip().upper() for t in tickers if t and t.strip()})
+            max_count = max(1, min(batch_size, MAX_TICKERS_PER_REQUEST))
+            batches = list(_ticker_batches(unique, max_count, MAX_TICKER_PARAM_CHARS))
         rows: List[Dict[str, Any]] = []
-        offset = 0
-        while True:
-            params = dict(base, limit=self._page_limit, offset=offset)
-            page = self._request(table, params)
-            rows.extend(page)
-            if len(page) < self._page_limit:
-                return rows
-            offset += self._page_limit
+        for batch in batches:
+            rows.extend(self._fetch_split(table, batch, dict(filters or {}), fields, date_range, date_field))
+        return rows
 
     def get_table_for_tickers(
         self,
@@ -157,16 +190,47 @@ class SharadarClient:
         filters: Optional[Mapping[str, Any]] = None,
         fields: Optional[Sequence[str]] = None,
         batch_size: int = DEFAULT_TICKER_BATCH,
+        date_range: Optional[Tuple[str, str]] = None,
     ) -> List[Dict[str, Any]]:
-        """``get_table`` over ``tickers`` in comma-joined batches (sorted, deduped)."""
-        unique = sorted({t.strip().upper() for t in tickers if t and t.strip()})
-        rows: List[Dict[str, Any]] = []
-        max_count = max(1, min(batch_size, MAX_TICKERS_PER_REQUEST))
-        for batch in _ticker_batches(unique, max_count, MAX_TICKER_PARAM_CHARS):
-            batch_filters = dict(filters or {})
-            batch_filters["ticker"] = ",".join(batch)
-            rows.extend(self.get_table(table, filters=batch_filters, fields=fields))
-        return rows
+        """``fetch`` restricted to ``tickers`` (kept for existing callers)."""
+        return self.fetch(
+            table, tickers=list(tickers), filters=filters, fields=fields, date_range=date_range, batch_size=batch_size
+        )
+
+    def _fetch_split(
+        self,
+        table: str,
+        tickers: Optional[List[str]],
+        filters: Dict[str, Any],
+        fields: Optional[Sequence[str]],
+        date_range: Optional[Tuple[str, str]],
+        date_field: str,
+    ) -> List[Dict[str, Any]]:
+        params = dict(filters)
+        if tickers is not None:
+            if not tickers:
+                return []
+            params["ticker"] = ",".join(tickers)
+        if date_range is not None:
+            params[f"{date_field}.gte"], params[f"{date_field}.lte"] = date_range
+        try:
+            return self.get_table(table, filters=params, fields=fields)
+        except SharadarTruncatedError:
+            if date_range is not None:
+                start, end = date.fromisoformat(date_range[0]), date.fromisoformat(date_range[1])
+                if start < end:
+                    mid = start + (end - start) // 2
+                    left = (start.isoformat(), mid.isoformat())
+                    right = ((mid + timedelta(days=1)).isoformat(), end.isoformat())
+                    return self._fetch_split(table, tickers, filters, fields, left, date_field) + self._fetch_split(
+                        table, tickers, filters, fields, right, date_field
+                    )
+            if tickers is not None and len(tickers) > 1:
+                half = len(tickers) // 2
+                return self._fetch_split(table, tickers[:half], filters, fields, date_range, date_field) + (
+                    self._fetch_split(table, tickers[half:], filters, fields, date_range, date_field)
+                )
+            raise
 
     # ----------------------------------------------------------------- private
 

@@ -55,6 +55,7 @@ REPO_ROOT = PROJECT_ROOT.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 SEP_FIELDS = ["ticker", "date", "closeadj"]
+FULL_HISTORY_START = "1990-01-01"
 
 # Default overlap days for incremental sync (safety margin)
 DEFAULT_OVERLAP_DAYS = 5
@@ -149,17 +150,11 @@ def fetch_sep_data(
 
         client = SharadarClient(api_key=api_key)
 
-    filters: Dict[str, str] = {}
-    if date_gte:
-        filters["date.gte"] = date_gte
-    if date_lte:
-        filters["date.lte"] = date_lte
+    # Explicit bounds on both ends so the client can split truncated requests.
+    date_range = (date_gte or FULL_HISTORY_START, date_lte or date.today().isoformat())
 
     print("  Fetching SEP from api.sharadar.com...", end=" ", flush=True)
-    if tickers:
-        rows = client.get_table_for_tickers("SEP", tickers, filters=filters, fields=SEP_FIELDS)
-    else:
-        rows = client.get_table("SEP", filters=filters, fields=SEP_FIELDS)
+    rows = client.fetch("SEP", tickers=tickers or None, fields=SEP_FIELDS, date_range=date_range)
     print(f"{len(rows)} rows")
     return rows
 

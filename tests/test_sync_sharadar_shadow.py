@@ -25,16 +25,18 @@ T2 = datetime(2026, 11, 5, 12, 0, 0, tzinfo=timezone.utc)
 
 
 class FakeClient:
-    """Serves rows per table; records (table, tickers, filters) calls."""
+    """Serves rows per table; records (table, tickers, filters, date_range) calls."""
 
     def __init__(self, rows_by_table: Dict[str, List[Dict[str, Any]]], fail: Dict[str, Exception] = None):
         self.rows_by_table = rows_by_table
         self.fail = fail or {}
         self.calls: List[Dict[str, Any]] = []
 
-    def get_table_for_tickers(self, table, tickers, filters=None, fields=None, batch_size=100):
+    def fetch(self, table, *, tickers=None, filters=None, fields=None, date_range=None, **kw):
         tickers = sorted(set(tickers))
-        self.calls.append({"table": table, "tickers": tickers, "filters": dict(filters or {})})
+        self.calls.append(
+            {"table": table, "tickers": tickers, "filters": dict(filters or {}), "date_range": date_range}
+        )
         if table in self.fail:
             raise self.fail[table]
         return [dict(r) for r in self.rows_by_table.get(table, []) if r.get("ticker") in tickers]
@@ -85,7 +87,14 @@ class TestBackfillThenIncremental:
         client = FakeClient({"SEP": [_sep("VKTX", "2026-11-03", 26.09, "2026-11-03")]})
         result = _run(tmp_path, client)
         assert result.exit_code == 0
-        assert client.calls == [{"table": "SEP", "tickers": ["AMGN", "VKTX"], "filters": {"date.gte": "2010-01-01"}}]
+        assert client.calls == [
+            {
+                "table": "SEP",
+                "tickers": ["AMGN", "VKTX"],
+                "filters": {},
+                "date_range": ("2010-01-01", "2026-11-04"),
+            }
+        ]
         state = json.loads((tmp_path / "state.json").read_text())
         assert state["SEP"]["tickers"] == ["AMGN", "VKTX"]
         assert state["SEP"]["watermark"] == "2026-11-03"
@@ -97,16 +106,24 @@ class TestBackfillThenIncremental:
         _run(tmp_path, client, now=T2)
         overlap = sync.TABLE_SPECS["SEP"].overlap_days
         expected = (pd.Timestamp("2026-11-03") - pd.Timedelta(days=overlap)).strftime("%Y-%m-%d")
-        assert client.calls == [{"table": "SEP", "tickers": ["AMGN", "VKTX"], "filters": {"lastupdated.gte": expected}}]
+        assert client.calls == [
+            {
+                "table": "SEP",
+                "tickers": ["AMGN", "VKTX"],
+                "filters": {"lastupdated.gte": expected},
+                "date_range": ("2010-01-01", "2026-11-05"),
+            }
+        ]
 
     def test_new_universe_ticker_gets_its_own_backfill(self, tmp_path):
         client = FakeClient({"SEP": [_sep("VKTX", "2026-11-03", 26.09, "2026-11-03")]})
         _run(tmp_path, client, tickers=("VKTX",))
         client.calls.clear()
         _run(tmp_path, client, tickers=("VKTX", "ORIC"), now=T2)
-        by_tickers = {tuple(c["tickers"]): c["filters"] for c in client.calls}
-        assert by_tickers[("ORIC",)] == {"date.gte": "2010-01-01"}
-        assert "lastupdated.gte" in by_tickers[("VKTX",)]
+        by_tickers = {tuple(c["tickers"]): c for c in client.calls}
+        assert by_tickers[("ORIC",)]["filters"] == {}
+        assert by_tickers[("ORIC",)]["date_range"] == ("2010-01-01", "2026-11-05")
+        assert "lastupdated.gte" in by_tickers[("VKTX",)]["filters"]
         state = json.loads((tmp_path / "state.json").read_text())
         assert state["SEP"]["tickers"] == ["ORIC", "VKTX"]
 
@@ -118,7 +135,8 @@ class TestBackfillThenIncremental:
         _run(tmp_path, client, tables=("SF3A",), tickers=("VKTX",), now=T2)
         overlap = sync.TABLE_SPECS["SF3A"].overlap_days
         expected = (pd.Timestamp("2026-09-30") - pd.Timedelta(days=overlap)).strftime("%Y-%m-%d")
-        assert client.calls[0]["filters"] == {"date.gte": expected}
+        assert client.calls[0]["filters"] == {}
+        assert client.calls[0]["date_range"] == (expected, "2026-11-05")
 
     def test_snapshot_table_has_no_filters(self, tmp_path):
         rows = {
@@ -127,7 +145,7 @@ class TestBackfillThenIncremental:
         client = FakeClient(rows)
         _run(tmp_path, client, tables=("TICKERS",), tickers=("VKTX",))
         _run(tmp_path, client, tables=("TICKERS",), tickers=("VKTX",), now=T2)
-        assert [c["filters"] for c in client.calls] == [{}, {}]
+        assert [(c["filters"], c["date_range"]) for c in client.calls] == [({}, None), ({}, None)]
 
     def test_benchmark_table_uses_benchmark_tickers_not_universe(self, tmp_path):
         client = FakeClient({"SFP": [_sep("XBI", "2026-11-03", 154.97, "2026-11-03")]})
