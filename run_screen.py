@@ -4660,6 +4660,36 @@ def _finalize_priced_move(csv_rows: List[Dict[str, Any]]) -> None:
         )
 
 
+def _apply_inst_registry_transition_guard(
+    csv_rows: List[Dict[str, Any]],
+    inst_summary: Optional[Dict[str, Any]],
+    prior_inst: Optional[Dict[str, Any]],
+) -> bool:
+    """Detect a manager-registry transition and neutralize inst_delta_z.
+
+    When the current and prior institutional summaries cover different manager
+    counts, net_elite_holders_delta mixes real flow with roster additions and
+    removals (2026-11-03: 30 vs 49 managers, 189/298 tickers with net exits).
+    inst_delta_z is zeroed for the cycle; the raw inst_delta_* counts are kept
+    for audit. Returns True when a transition is detected.
+    """
+    if not (inst_summary and prior_inst):
+        return False
+    cur = inst_summary.get("elite_managers_with_filing", 0)
+    pri = prior_inst.get("elite_managers_with_filing", 0)
+    if cur == pri:
+        return False
+    logger.warning(
+        "Registry transition detected: current=%d managers, prior=%d managers. "
+        "inst_delta values are contaminated this cycle; zeroing inst_delta_z.",
+        cur,
+        pri,
+    )
+    for row in csv_rows:
+        row["inst_delta_z"] = 0.0
+    return True
+
+
 def save_validation_snapshot(
     snapshot_dir: Path,
     as_of_date: str,
@@ -5751,23 +5781,6 @@ def save_validation_snapshot(
         except Exception as e:
             logger.warning("Could not compute institutional summary/delta: %s", e)
 
-    # --- Registry transition detection ---
-    # When the manager registry changes (CIK corrections, additions, removals),
-    # inst_delta values are contaminated for one cycle because the "prior" and
-    # "current" institutional summaries used different manager sets.
-    _inst_registry_transition = False
-    if inst_summary and prior_inst:
-        _cur_mgr_count = inst_summary.get("elite_managers_with_filing", 0)
-        _pri_mgr_count = prior_inst.get("elite_managers_with_filing", 0)
-        if _cur_mgr_count != _pri_mgr_count:
-            _inst_registry_transition = True
-            logger.warning(
-                "Registry transition detected: current=%d managers, prior=%d managers. "
-                "inst_delta values may be contaminated this cycle.",
-                _cur_mgr_count,
-                _pri_mgr_count,
-            )
-
     # --- Institutional delta z-score: cross-sectional z of net_elite_holders_delta ---
     if inst_delta:
         _id_pairs = []  # [(index, value, has_signal)]
@@ -5828,6 +5841,14 @@ def save_validation_snapshot(
             )
         for _dr in csv_rows:
             _dr["inst_delta_z"] = 0.0
+
+    # --- Registry transition guard ---
+    # When the manager registry changes (CIK corrections, additions, removals),
+    # inst_delta values are contaminated for one cycle because the "prior" and
+    # "current" institutional summaries used different manager sets. Runs after
+    # the z-score so the model-facing inst_delta_z is neutralized, not just the
+    # diagnostics below.
+    _inst_registry_transition = _apply_inst_registry_transition_guard(csv_rows, inst_summary, prior_inst)
 
     # --- Institutional flow diagnostics: absolute vs relative signal ---
     # Detects names where absolute institutional flow is positive but
