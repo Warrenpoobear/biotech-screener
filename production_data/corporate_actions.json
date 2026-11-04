@@ -521,6 +521,15 @@
       "acquirer": "Unknown",
       "deal_price": 17.03,
       "notes": "Theravance Biopharma. Price frozen at $17.02-$17.05 from 2026-08-18; last Sharadar SEP row 2026-09-23 with volume spike to 10M (consistent with merger tender close). Removed from IBB between June and November 2026. Removed from universe. [registered 2026-11-04: effective_date inferred from last price_history row; acquirer and SEC 8-K completion acc pending verification]"
+    },
+    {
+      "ticker": "ATAI",
+      "action": "acquisition",
+      "announced_date": null,
+      "effective_date": "2026-09-11",
+      "acquirer": "Unknown",
+      "deal_price": 7.35,
+      "notes": "AtaiBeckley Inc. (formerly ATAI Life Sciences, merged with Beckley Psytech). Price frozen at $7.28-$7.39 from 2026-08-26; volume spike to 120M on 2026-09-08 (tender close); last Sharadar SEP row 2026-09-11 (volume=0, delisting at close). Removed from IBB between June and November 2026. Removed from universe. [registered 2026-11-04: effective_date inferred from last price_history row; acquirer and SEC 8-K completion acc pending verification]"
     }
   ]
 }
