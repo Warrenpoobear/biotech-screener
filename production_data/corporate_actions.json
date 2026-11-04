@@ -284,14 +284,6 @@
       "notes": "Centessa Pharmaceuticals acquired by Eli Lilly (via LDH XV Corp). Scheme of Arrangement effective 2026-06-24; ADSs delisted from Nasdaq. Consideration $38.00 cash/share plus up to $9.00 CVR. Frozen price series carries to 2026-06-29. Removed from universe."
     },
     {
-      "ticker": "BHVN",
-      "action": "acquisition",
-      "effective_date": "2024-10-15",
-      "acquirer": "AbbVie",
-      "deal_price": 44.0,
-      "notes": "Cerevel Therapeutics acquired by AbbVie. CVR structure."
-    },
-    {
       "ticker": "ACLX",
       "action": "acquisition",
       "effective_date": "2026-04-28",
@@ -471,15 +463,6 @@
       "notes": "Nuvalent acquired by GSK via tender offer at $124.00/share cash (~$10.6B deal value). Tender offer commenced 2026-06-24; completed 2026-07-15. Price series freezes at deal value; removed from universe. [action pending_acquisition->acquisition and effective_date 2026-07-15 set 2026-07-23 per Reliability Gate A2 remediation: verified vs SEC Form 25-NSE acc 0001354457-26-000673 + 8-K completion acc 0001193125-26-304126, both 2026-07-15]"
     },
     {
-      "ticker": "APGE",
-      "action": "pending_acquisition",
-      "announced_date": "2026-06-22",
-      "effective_date": null,
-      "acquirer": "AbbVie",
-      "deal_price": 135.11,
-      "notes": "Apogee Therapeutics acquisition by AbbVie at $135.11/share cash (~$10.9B deal value). Announced 2026-06-22. APGE trading at ~$132.55 (1.9% arb discount to deal price). Gate from ranker/selector until acquisition closes; price series freezes at deal value at close."
-    },
-    {
       "ticker": "CPRX",
       "action": "acquisition",
       "announced_date": "2026-05-07",
@@ -503,6 +486,15 @@
       "announced_date": "2026-05-05",
       "effective_date": "2026-06-24",
       "notes": "Sangamo Therapeutics \u2014 three-stage event, registered as bankruptcy on the date the SGMO symbol stopped resolving. (1) Nasdaq delisting determination for continued failure of the $1.00 minimum bid price; trading suspended and moved to OTCQB 2026-05-05. (2) Hearings-panel appeal stayed delisting but not the trading suspension. (3) Voluntary Chapter 11 petition; common stock began trading on OTCID Basic 2026-06-24 under the NEW symbol SGMOQ. Frozen price series carries to 2026-07-01. Remove from universe. NOTE: effective_date 2026-06-24 chosen because that is when the SGMO ticker ceased to resolve, matching where our price feed dies; the Nasdaq venue change was 2026-05-05. A separate ticker_change SGMO->SGMOQ action was deliberately NOT added, to avoid resolve_ticker() redirecting fetches to a bankrupt sub-$0.10 OTCID listing. [registered 2026-08-05 \u2014 see CPRX note]"
+    },
+    {
+      "ticker": "APGE",
+      "action": "acquisition",
+      "announced_date": "2026-06-22",
+      "effective_date": "2026-09-02",
+      "acquirer": "AbbVie",
+      "deal_price": 135.11,
+      "notes": "Apogee Therapeutics acquired by AbbVie at $135.11/share cash (~$10.9B deal value). Announced 2026-06-22; acquisition completed ~2026-09-02 (last Sharadar SEP row; price frozen at $135.07-$135.08). Removed from universe. [pending_acquisition entry promoted to acquisition 2026-11-04: effective_date inferred from last price_history row; SEC 8-K completion acc pending verification]"
     }
   ]
 }
