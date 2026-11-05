@@ -58,19 +58,42 @@ def test_registry_loads_with_no_unknown_action_warnings(caplog):
     assert "Unknown action type" not in caplog.text
 
 
-def test_null_effective_date_falls_back_to_announced_date(registry):
-    """THE crash regression. APGE has effective_date: null."""
-    acts = [a for a in registry.actions if a.ticker == "APGE"]
-    assert acts, "APGE should now load"
-    a = acts[0]
-    assert a.action == "pending_acquisition"
-    assert a.effective_date == "2026-06-22"  # announced_date, not None
-    assert a.announced_date == "2026-06-22"
+def test_null_effective_date_falls_back_to_announced_date(tmp_path):
+    """A pending deal with an explicit null effective_date must still load.
+
+    APGE itself closed on 2026-09-02. This fixture keeps the crash regression:
+    ``effective_date: null`` used to reach a string comparison and raise.
+    """
+    path = tmp_path / "actions.json"
+    path.write_text(
+        json.dumps(
+            {
+                "actions": [
+                    {
+                        "ticker": "PEND",
+                        "action": "pending_acquisition",
+                        "announced_date": "2026-06-22",
+                        "effective_date": None,
+                        "acquirer": "Example",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    loaded = load_actions(path)
+    acts = [a for a in loaded.actions if a.ticker == "PEND"]
+    assert len(acts) == 1
+    assert acts[0].action == "pending_acquisition"
+    assert acts[0].effective_date == "2026-06-22"
+    assert acts[0].announced_date == "2026-06-22"
+    assert get_actions("PEND", loaded, as_of="2026-08-01")
+    assert get_actions("PEND", loaded) is not None
 
 
-def test_get_actions_does_not_raise_on_pending_entries(registry):
-    """None in effective_date would TypeError in the > comparison and the sort."""
-    assert get_actions("APGE", registry, as_of=AS_OF)  # must not raise
+def test_get_actions_does_not_raise_on_closed_apge(registry):
+    """Reading the closed APGE deal must not raise."""
+    assert get_actions("APGE", registry, as_of="2026-11-04")
     assert get_actions("APGE", registry) is not None
 
 
@@ -79,17 +102,35 @@ def test_pending_acquisition_is_not_a_dead_type():
     assert "pending_acquisition" not in DEAD_ACTION_TYPES
 
 
-def test_apge_still_trades(registry):
-    """An announced-but-unclosed deal still trades — must stay in the universe."""
-    assert is_dead("APGE", AS_OF, registry) is False
-    assert death_date("APGE", registry) is None
-    assert is_pending_deal("APGE", AS_OF, registry) is True
+def test_apge_acquisition_closed(registry):
+    """AbbVie closed Apogee on 2026-09-02. It is dead after that date."""
+    assert is_dead("APGE", "2026-09-01", registry) is False
+    assert is_dead("APGE", "2026-09-02", registry) is True
+    assert death_date("APGE", registry) == "2026-09-02"
+    assert is_pending_deal("APGE", "2026-11-04", registry) is False
 
 
-def test_pending_deal_is_pit_gated_by_announcement(registry):
-    """No retroactive knowledge: invisible before the 2026-06-22 announcement."""
-    assert is_pending_deal("APGE", "2026-06-01", registry) is False
-    assert is_pending_deal("APGE", "2026-06-22", registry) is True
+def test_pending_deal_is_pit_gated_by_announcement(tmp_path):
+    """No retroactive knowledge: a pending deal is invisible before announcement."""
+    path = tmp_path / "actions.json"
+    path.write_text(
+        json.dumps(
+            {
+                "actions": [
+                    {
+                        "ticker": "PEND",
+                        "action": "pending_acquisition",
+                        "announced_date": "2026-06-22",
+                        "effective_date": None,
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    loaded = load_actions(path)
+    assert is_pending_deal("PEND", "2026-06-01", loaded) is False
+    assert is_pending_deal("PEND", "2026-06-22", loaded) is True
 
 
 # --- defect 2: the backfill --------------------------------------------------

@@ -134,7 +134,12 @@ from tools.check_market_snapshot_freshness import check_freshness as _check_snap
 from tools.check_market_snapshot_freshness import emit_diagnostic as _emit_snapshot_diagnostic
 from tools.compute_path_c_drawdown import compute_drawdown_vs_xbi
 
-# Spec 050 → v1.14.0: coinvest-only selector (inst_delta_z removed)
+# Spec 050 → v1.14.0: institutional block is coinvest-only (inst_delta_z weight 0).
+# The selector itself is not 100% coinvest. Live block weights below are the
+# production blend. The ruleset JSON field selector_config does not override
+# them; changing these numbers is a model change.
+# sort_anchor "selector_score" orders by final_score (selector cohort, then
+# the pairwise ranker). See decision_engine.compute_actionable_sort_key.
 # Validated on true PIT backtest: +2.34pp/mo net, t=2.60, 67 periods (bundle)
 # v1.14.0 change: inst_delta_z zeroed out from selector (2026-05-04)
 #   Reason: two-frame ALERT — ic_health_monitor mean_ic=-0.097 hit_rate=0.111
@@ -183,7 +188,7 @@ from common.types import is_retired_status
 from event_detector import SimpleMarketCalendar
 from event_ledger import REGULATORY_EVENT_TYPES, classify_catalyst_family
 from module_1_universe import compute_module_1_universe
-from module_2_financial_v2 import compute_module_2_financial
+from module_2_financial_v2 import compute_module_2_financial, market_cap_to_usd
 from module_3_catalyst import Module3Config, compute_module_3_catalyst
 from module_4_clinical_dev import compute_module_4_clinical_dev
 from module_5_composite_with_defensive import compute_module_5_composite_with_defensive
@@ -4616,8 +4621,12 @@ def _enrich_market_data_fields(
             if "close_price" not in _r or not _r.get("close_price"):
                 _r["close_price"] = _md.get("price", "")
             if "market_cap_mm" not in _r or not _r.get("market_cap_mm"):
-                _mcap = _md.get("market_cap")
-                _r["market_cap_mm"] = round(_mcap / 1e6, 1) if _mcap else ""
+                _mcap_usd = market_cap_to_usd(
+                    _md.get("market_cap"),
+                    _md.get("price"),
+                    _md.get("shares_outstanding"),
+                )
+                _r["market_cap_mm"] = round(float(_mcap_usd) / 1e6, 1) if _mcap_usd is not None else ""
 
 
 def _enrich_applicability_flags(csv_rows: List[Dict[str, Any]]) -> None:
@@ -5278,7 +5287,11 @@ def save_validation_snapshot(
         cq_pct_float = float(cq_pct) if cq_pct is not None else None
 
         _md = market_data_by_ticker.get(ticker, {}) if market_data_by_ticker else {}
-        _mkt_cap = _md.get("market_cap")
+        _mkt_cap = market_cap_to_usd(
+            _md.get("market_cap"),
+            _md.get("price"),
+            _md.get("shares_outstanding"),
+        )
 
         decision = compute_decision_fields(
             rec,
@@ -5618,8 +5631,12 @@ def save_validation_snapshot(
             # Get market cap for size residualization
             _tk = _cr.get("ticker", "")
             _md = market_data_by_ticker.get(_tk, {}) if market_data_by_ticker else {}
-            _mcap = _md.get("market_cap")
-            _log_mcap = math.log(float(_mcap)) if _mcap and float(_mcap) > 0 else None
+            _mcap = market_cap_to_usd(
+                _md.get("market_cap"),
+                _md.get("price"),
+                _md.get("shares_outstanding"),
+            )
+            _log_mcap = math.log(float(_mcap)) if _mcap is not None and _mcap > 0 else None
             _cz_pairs.append((_ci, _raw, _has, _log_mcap))
             csv_rows[_ci]["has_coinvest_signal"] = str(_has)
 
@@ -10277,7 +10294,7 @@ def run_screening_pipeline(
     # to reconstruct financial snapshots as they were known on as_of_date.
     _pit_fin_dir = data_dir / "pit_financials"
     if pit_mode != "off" and _pit_fin_dir.is_dir():
-        from pit_financials import pit_financial_snapshot
+        from pit_financials import pit_financial_snapshot, pit_store_covers_as_of
 
         # Parallel preload all PIT financial JSON files (replaces 341 serial opens)
         _pit_preload_t0 = __import__("time").time()
@@ -10306,14 +10323,25 @@ def run_screening_pipeline(
 
         _pit_overridden = 0
         _pit_fallback = 0
+        _pit_stale = 0
         _pit_total = len(_fin_by_ticker)
 
         for _ticker, _idx in _fin_by_ticker.items():
+            _raw_pit = _pit_preloaded_data.get(_ticker)
+            # An unrebuild store (newest filing months before as_of) must not
+            # replace the fresher static EDGAR pull. A store that contains
+            # filings after as_of still covers that date; the snapshot filters.
+            if not _raw_pit or not pit_store_covers_as_of(_raw_pit, as_of_date):
+                if _raw_pit:
+                    _pit_stale += 1
+                else:
+                    _pit_fallback += 1
+                continue
             _pit_snap = pit_financial_snapshot(
                 _ticker,
                 as_of_date,
                 _pit_fin_dir,
-                preloaded_data=_pit_preloaded_data.get(_ticker),
+                preloaded_data=_raw_pit,
             )
             if _pit_snap is not None:
                 financial_records[_idx] = _pit_snap
@@ -10321,10 +10349,14 @@ def run_screening_pipeline(
             else:
                 _pit_fallback += 1
 
-        logger.info(
+        _pit_msg = (
             f"  PIT financials: {_pit_overridden}/{_pit_total} tickers overridden, "
-            f"{_pit_fallback} fallback to static"
+            f"{_pit_stale} stale stores kept static, {_pit_fallback} fallback to static"
         )
+        if _pit_stale:
+            logger.warning(_pit_msg)
+        else:
+            logger.info(_pit_msg)
     elif pit_mode != "off":
         logger.debug("  PIT financials: pit_financials/ directory not found — using static financial_records.json")
     print(f"[timing] load financial: {__import__('time').time() - _t_load_financial:.2f}s", flush=True)
@@ -11336,8 +11368,10 @@ def run_screening_pipeline(
                                 ),
                                 "quarterly_burn": quarterly_burn,
                                 "next_catalyst_date": next_catalyst_date,
-                                "market_cap": (
-                                    Decimal(str(mkt_data.get("market_cap"))) if mkt_data.get("market_cap") else None
+                                "market_cap": market_cap_to_usd(
+                                    mkt_data.get("market_cap"),
+                                    mkt_data.get("price"),
+                                    mkt_data.get("shares_outstanding"),
                                 ),
                                 "avg_daily_volume_90d": (
                                     int(mkt_data.get("avg_volume_90d", 0)) if mkt_data.get("avg_volume_90d") else None

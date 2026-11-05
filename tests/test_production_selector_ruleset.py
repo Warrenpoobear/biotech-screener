@@ -74,3 +74,20 @@ class TestLiveSelectorConfig:
         weights = {s.name: s.weight for s in A4_SELECTOR_CONFIG.institutional_signals}
         assert weights["coinvest_score_z"] == pytest.approx(1.0)
         assert weights["inst_delta_z"] == pytest.approx(0.0)
+
+    def test_a4_block_weights_are_the_live_blend(self):
+        """Institutional signals are coinvest-only. The selector is not.
+
+        Catalyst, survivability, and market structure still enter the cohort.
+        final_score is then the pairwise ranker, not this blend.
+        """
+        from run_screen import A4_SELECTOR_CONFIG
+
+        blocks = {bw.name: bw.weight for bw in A4_SELECTOR_CONFIG.block_weights}
+        assert blocks == {
+            "clinical": pytest.approx(0.0),
+            "catalyst": pytest.approx(0.15),
+            "survivability": pytest.approx(0.10),
+            "institutional": pytest.approx(0.65),
+            "market_structure": pytest.approx(0.10),
+        }

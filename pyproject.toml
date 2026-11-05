@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biotech-screener"
-version = "0.1.0"
+version = "1.14.0"
 description = "Point-in-time safe biotech investment screening with clinical trials data"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -18,7 +18,27 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
 ]
-dependencies = []
+dependencies = [
+    "PyYAML==6.0.3",
+    "python-dotenv==1.2.2",
+    "cryptography==50.0.0",
+    "fastapi==0.141.1",
+    "uvicorn==0.52.1",
+    "jinja2==3.1.6",
+    "httpx==0.28.1",
+    "python-multipart==0.0.31",
+    "pandas==2.3.3",
+    "numpy==1.26.3",
+    "orjson==3.11.9",
+    "requests==2.34.2",
+    "scipy==1.11.4",
+    "langgraph==1.2.7",
+    "yfinance==1.5.1",
+    "beautifulsoup4==4.14.3",
+    "lxml==6.1.1",
+    "firecrawl-py==4.31.0",
+    "mcp==1.22.0",
+]
 
 [project.optional-dependencies]
 dev = [
