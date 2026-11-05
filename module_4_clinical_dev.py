@@ -10,7 +10,7 @@ Scores clinical programs on:
 - Trial design quality - 25 pts
 - Execution track record - 25 pts
 - Endpoint strength - 20 pts
-TOTAL: 120 pts (normalized to 0-100)
+TOTAL: 117 pts (normalized to 0-100). Execution tops out at 22, not 25.
 
 vNext changes:
 - Deterministic: no datetime.now(), proper date parsing
@@ -23,6 +23,7 @@ vNext changes:
 
 from __future__ import annotations
 
+import re
 from datetime import date, datetime
 from decimal import Decimal
 from typing import Any, Dict, List, Optional, Tuple
@@ -33,6 +34,10 @@ from common.score_utils import piecewise_lerp
 from common.types import Severity
 
 RULESET_VERSION = "1.0.2-VNEXT"
+
+# Execution score tops out at 22 (base 12 + completion 10), so the
+# attainable total is 117 rather than the old 120 label.
+CLINICAL_SCORE_DENOMINATOR = Decimal("117")
 
 # Recency thresholds (days)
 RECENCY_STALE_THRESHOLD = 730  # 2 years
@@ -308,12 +313,12 @@ def _score_design(trial: Dict[str, Any]) -> Decimal:
     primary_endpoint = (trial.get("primary_endpoint") or "").lower()
 
     for strong in STRONG_ENDPOINTS:
-        if strong in primary_endpoint:
+        if _endpoint_matches(primary_endpoint, strong):
             score += Decimal("4")
             break
     else:
         for weak in WEAK_ENDPOINTS:
-            if weak in primary_endpoint:
+            if _endpoint_matches(primary_endpoint, weak):
                 score -= Decimal("3")
                 break
 
@@ -342,6 +347,19 @@ def _score_execution(trials: List[Dict[str, Any]]) -> Decimal:
     return max(Decimal("0"), min(Decimal("25"), score))
 
 
+def _endpoint_matches(text: str, token: str) -> bool:
+    """Match a phrase, or a short abbreviation on a word boundary.
+
+    ``os`` must not match ``dose`` or ``exposure``. ``cr`` must not match
+    ``increase`` or ``creatinine``.
+    """
+    if not text or not token:
+        return False
+    if " " in token or len(token) > 3:
+        return token in text
+    return re.search(rf"\b{re.escape(token)}\b", text) is not None
+
+
 def _classify_endpoint(endpoint_text: str) -> str:
     """
     Classify endpoint as 'strong', 'weak', or 'neutral'.
@@ -351,12 +369,12 @@ def _classify_endpoint(endpoint_text: str) -> str:
 
     # Check strong first - if found, it wins
     for strong in STRONG_ENDPOINTS:
-        if strong in endpoint:
+        if _endpoint_matches(endpoint, strong):
             return "strong"
 
     # Only check weak if not strong
     for weak in WEAK_ENDPOINTS:
-        if weak in endpoint:
+        if _endpoint_matches(endpoint, weak):
             return "weak"
 
     return "neutral"
@@ -473,6 +491,15 @@ def compute_module_4_clinical_dev(
             ticker_pit_filtered[ticker] = ticker_pit_filtered.get(ticker, 0) + 1
             continue
 
+        # first_posted can be years before the current status, phase, and
+        # results. If the record was updated after the cutoff, those fields
+        # are not the historical record. Exclude rather than score them.
+        last_update = trial.get("last_update_posted")
+        if last_update and not is_pit_admissible(str(last_update), pit_cutoff):
+            total_pit_filtered += 1
+            ticker_pit_filtered[ticker] = ticker_pit_filtered.get(ticker, 0) + 1
+            continue
+
         nct_id = trial.get("nct_id", "")
         if not nct_id:
             continue
@@ -584,7 +611,7 @@ def compute_module_4_clinical_dev(
         execution_score = _score_execution(trials)
         endpoint_score = _score_endpoints(trials)
 
-        # Total (0-120, normalized to 0-100)
+        # Total (0-117, normalized to 0-100)
         total = (
             phase_score
             + phase_progress
@@ -596,7 +623,7 @@ def compute_module_4_clinical_dev(
             + endpoint_score
         )
 
-        normalized_score = (total / Decimal("120")) * Decimal("100")
+        normalized_score = (total / CLINICAL_SCORE_DENOMINATOR) * Decimal("100")
 
         # Flags and severity
         flags = []

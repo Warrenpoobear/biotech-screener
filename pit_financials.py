@@ -60,6 +60,56 @@ def _filter_facts_pit(
     return [f for f in facts if f.get("filed") and f["filed"] <= as_of_date]
 
 
+# A store whose newest filing is older than this, relative to as_of_date,
+# does not cover that date. One quarter plus typical 10-Q filing lag.
+# Override per run with run_screen.py --pit-max-gap-days or
+# PIT_FINANCIAL_MAX_GAP_DAYS. Documented in docs/validation/pit_guardrail.md.
+PIT_STORE_MAX_GAP_DAYS = 120
+
+
+def pit_store_max_filed(pit_data: Optional[dict]) -> Optional[str]:
+    """Latest ``filed`` date in a raw PIT financial JSON document."""
+    if not pit_data:
+        return None
+    latest = None
+    facts = pit_data.get("facts") or {}
+    if not isinstance(facts, dict):
+        return None
+    for series in facts.values():
+        if not isinstance(series, list):
+            continue
+        for fact in series:
+            filed = fact.get("filed") if isinstance(fact, dict) else None
+            if filed and (latest is None or str(filed) > latest):
+                latest = str(filed)[:10]
+    return latest
+
+
+def pit_store_covers_as_of(
+    pit_data: Optional[dict],
+    as_of_date: str,
+    max_gap_days: int = PIT_STORE_MAX_GAP_DAYS,
+) -> bool:
+    """True when this fact store can describe ``as_of_date``.
+
+    A file whose newest filing is after ``as_of_date`` still covers that date:
+    ``pit_financial_snapshot`` keeps only facts filed on or before it.
+    A file whose newest filing is more than ``max_gap_days`` before
+    ``as_of_date`` was not rebuilt and must not replace a fresher static record.
+    """
+    latest = pit_store_max_filed(pit_data)
+    if not latest:
+        return False
+    cutoff = str(as_of_date)[:10]
+    if latest >= cutoff:
+        return True
+    try:
+        gap = (datetime.strptime(cutoff, "%Y-%m-%d") - datetime.strptime(latest, "%Y-%m-%d")).days
+    except ValueError:
+        return False
+    return gap <= max_gap_days
+
+
 def _dedup_by_end_date(facts: list[dict]) -> list[dict]:
     """For each unique 'end' date, keep only the latest-filed fact.
 

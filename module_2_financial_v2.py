@@ -219,6 +219,66 @@ def _quantize_rate(value: Decimal) -> Decimal:
     return value.quantize(RATE_PRECISION, rounding=ROUND_HALF_UP)
 
 
+# Values at or above this are already US dollars. Smaller figures in the
+# production market file are millions (CRSP is 4849.1, about $4.85 billion).
+_MCAP_DOLLARS_FLOOR = Decimal("1000000")
+_MCAP_MILLION = Decimal("1000000")
+
+
+def market_cap_to_usd(value: Any, price: Any = None, shares: Any = None) -> Optional[Decimal]:
+    """Return market cap in dollars.
+
+    ``market_data.json`` stores most live names in millions and a minority of
+    rows in dollars. When price and shares are present they pick the unit.
+    Otherwise a value below $1,000,000 is treated as millions: no name in this
+    universe has a sub-$1M dollar cap, and no name is stored as more than
+    $1,000,000 million ($1 trillion).
+    """
+    dec = _to_decimal(value)
+    if dec is None or dec <= Decimal("0"):
+        return None
+
+    px = _to_decimal(price)
+    sh = _to_decimal(shares)
+    if px is not None and sh is not None and px > 0 and sh > 0:
+        implied = px * sh
+        if implied > 0:
+            as_millions = dec * _MCAP_MILLION
+            err_millions = abs(as_millions - implied) / implied
+            err_dollars = abs(dec - implied) / implied
+            tolerance = Decimal("0.35")
+            if err_millions <= tolerance and err_millions <= err_dollars:
+                return as_millions
+            if err_dollars <= tolerance:
+                return dec
+            return as_millions if err_millions < err_dollars else dec
+
+    if dec >= _MCAP_DOLLARS_FLOOR:
+        return dec
+    return dec * _MCAP_MILLION
+
+
+def _period_months(financial_data: Dict, date_field: str, months_field: str) -> int:
+    """Months covered by a duration fact.
+
+    An explicit ``*_period_months`` wins. A statement end date uses the
+    calendar-fiscal YTD convention (March=3, June=6, September=9, December=12).
+    With no date the fact is treated as a full year, which is what undated
+    annual fixtures and 10-K facts without a period tag mean.
+    """
+    explicit = financial_data.get(months_field)
+    if explicit is not None:
+        try:
+            months = int(explicit)
+        except (TypeError, ValueError):
+            months = 0
+        if months > 0:
+            return months
+    if financial_data.get(date_field):
+        return _ytd_months_from_date(financial_data.get(date_field))
+    return 12
+
+
 # ============================================================================
 # BURN RATE CALCULATION (HIERARCHICAL WITH PROVENANCE)
 # ============================================================================
@@ -391,16 +451,19 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
 
     effective_cfo = cfo if cfo is not None else cfo_ops
 
-    # Profitable company
-    if (effective_cfo is not None and effective_cfo > Decimal("0")) or (
-        net_income is not None and net_income > Decimal("0")
-    ):
+    # Cash from operations decides solvency. Positive net income with negative
+    # CFO is a milestone, a collaboration, or another non-cash item, not a
+    # company that has stopped burning cash. Net income is used only when no
+    # operating-cash-flow figure exists.
+    cfo_positive = effective_cfo is not None and effective_cfo > Decimal("0")
+    income_only = effective_cfo is None and net_income is not None and net_income > Decimal("0")
+    if cfo_positive or income_only:
         return BurnResult(
             monthly_burn=Decimal("0"),
             burn_source=BurnSource.PROFITABLE,
             burn_confidence=BurnConfidence.HIGH,
             burn_period="na",
-            raw_value=effective_cfo or net_income,
+            raw_value=effective_cfo if effective_cfo is not None else net_income,
             rejection_reasons={"all": "company_profitable"},
         )
 
@@ -464,15 +527,17 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
     else:
         rejection_reasons["CFO_YTD"] = "non_negative"
 
-    # === PRIORITY 3: CFO ANNUAL ===
+    # === PRIORITY 3: CFO FOR THE REPORTED PERIOD ===
     if effective_cfo is not None and effective_cfo < Decimal("0"):
-        # Annual CFO - divide by 12 months
-        monthly_burn = abs(effective_cfo) / Decimal("12")
+        # Undated facts stay on a 12-month assumption. A June or September
+        # period end is year-to-date for a calendar filer, not a full year.
+        cfo_months = _period_months(financial_data, "CFO_date", "CFO_period_months")
+        monthly_burn = abs(effective_cfo) / Decimal(str(cfo_months))
         return BurnResult(
             monthly_burn=_quantize_rate(monthly_burn),
             burn_source=BurnSource.CFO_ANNUAL,
             burn_confidence=BurnConfidence.HIGH,
-            burn_period="annual",
+            burn_period="annual" if cfo_months == 12 else f"period_{cfo_months}mo",
             raw_value=effective_cfo,
             rejection_reasons=rejection_reasons,
         )
@@ -524,12 +589,13 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
         rejection_reasons["FCF_quarterly"] = "non_negative"
 
     if effective_fcf is not None and effective_fcf < Decimal("0"):
-        monthly_burn = abs(effective_fcf) / Decimal("12")
+        fcf_months = _period_months(financial_data, "FCF_date", "FCF_period_months")
+        monthly_burn = abs(effective_fcf) / Decimal(str(fcf_months))
         return BurnResult(
             monthly_burn=_quantize_rate(monthly_burn),
             burn_source=BurnSource.FCF_ANNUAL,
             burn_confidence=BurnConfidence.HIGH,
-            burn_period="annual",
+            burn_period="annual" if fcf_months == 12 else f"period_{fcf_months}mo",
             raw_value=effective_fcf,
             rejection_reasons=rejection_reasons,
         )
@@ -618,22 +684,38 @@ def calculate_liquid_assets(financial_data: Dict) -> LiquidAssetsResult:
     if cash > Decimal("0"):
         components.append("Cash")
 
-    # Marketable securities (check multiple field names, first match wins)
+    # The collector already dedupes treasury tags into CashAndSecurities.
+    # Prefer that total. The non-current MarketableSecurities tag can be
+    # several times larger than the cash actually on hand.
+    reported_total = _to_decimal(financial_data.get("CashAndSecurities"))
+    if reported_total is not None and reported_total > Decimal("0"):
+        securities = reported_total - cash if reported_total > cash else Decimal("0")
+        return LiquidAssetsResult(
+            liquid_assets=reported_total,
+            cash=cash,
+            marketable_securities=securities,
+            components_used=["CashAndSecurities"],
+        )
+
+    # Otherwise take the largest investment tag, not the first one.
     mkt_sec = None
+    mkt_field = None
     for field in [
         "MarketableSecurities",
         "ShortTermInvestments",
         "AvailableForSaleSecurities",
         "AvailableForSaleDebtCurrent",
+        "DebtSecuritiesAvailableForSaleCurrent",
     ]:
         val = _to_decimal(financial_data.get(field))
-        if val is not None and val > Decimal("0"):
+        if val is not None and val > Decimal("0") and (mkt_sec is None or val > mkt_sec):
             mkt_sec = val
-            components.append(field)
-            break
+            mkt_field = field
 
     if mkt_sec is None:
         mkt_sec = Decimal("0")
+    elif mkt_field is not None:
+        components.append(mkt_field)
 
     liquid_assets = cash + mkt_sec
 
@@ -1365,6 +1447,43 @@ def run_module_2_v2(
 # ============================================================================
 
 
+_STATEMENT_DATE_FIELDS = ("Cash_date", "CFO_date", "NetIncome_date", "R&D_date", "CashAndSecurities_date")
+
+
+def _financial_record_admissible(rec: Dict, cutoff: str) -> bool:
+    """True when the record's dates are known and not after ``cutoff``."""
+    statement_dates = []
+    for field in _STATEMENT_DATE_FIELDS:
+        raw = rec.get(field)
+        if raw:
+            statement_dates.append(str(raw)[:10])
+    source = str(rec["source_date"])[:10] if rec.get("source_date") else None
+    if not statement_dates and not source:
+        return False
+    if statement_dates and max(statement_dates) > cutoff:
+        return False
+    if source and source > cutoff:
+        return False
+    return True
+
+
+def _market_record_from_row(rec: Dict) -> Dict[str, Any]:
+    """Market fields in dollars, with no fabricated price or volume."""
+    shares = rec.get("shares_outstanding") or rec.get("CommonStockSharesOutstanding") or rec.get("float_shares")
+    if rec.get("market_cap_mm") not in (None, ""):
+        mm = _to_decimal(rec.get("market_cap_mm"))
+        cap = mm * _MCAP_MILLION if mm is not None and mm > 0 else None
+    else:
+        cap = market_cap_to_usd(rec.get("market_cap"), rec.get("price"), shares)
+    volume = rec.get("avg_volume", rec.get("volume_avg_30d"))
+    return {
+        "ticker": rec.get("ticker"),
+        "market_cap": float(cap) if cap is not None else None,
+        "price": rec.get("price"),
+        "avg_volume": volume,
+    }
+
+
 def compute_module_2_financial(*args, **kwargs):
     """
     Backwards-compatible wrapper for v2.
@@ -1382,14 +1501,26 @@ def compute_module_2_financial(*args, **kwargs):
         market_data = kwargs.get("market_records", kwargs.get("market_data", []))
         as_of_date = kwargs.get("as_of_date")
 
-    # PIT filter: exclude financial records with source_date after as_of_date
+    # PIT filter. A missing date is not admissible. A statement end date after
+    # as_of_date is lookahead even when source_date was left blank.
     if as_of_date and financial_data:
         _cutoff = str(as_of_date)[:10]
-        financial_data = [
-            r for r in financial_data if not r.get("source_date") or str(r["source_date"])[:10] <= _cutoff
-        ]
-
-    if isinstance(universe, set):
+        _admissible = []
+        _rejected = set()
+        _kept = set()
+        for _rec in financial_data:
+            _ticker = _rec.get("ticker")
+            if _financial_record_admissible(_rec, _cutoff):
+                _admissible.append(_rec)
+                if _ticker:
+                    _kept.add(_ticker)
+            elif _ticker:
+                _rejected.add(_ticker)
+        financial_data = _admissible
+        if isinstance(universe, set):
+            universe = list(universe)
+        universe = [t for t in universe if t not in (_rejected - _kept)]
+    elif isinstance(universe, set):
         universe = list(universe)
 
     # Map legacy field names
@@ -1438,37 +1569,30 @@ def compute_module_2_financial(*args, **kwargs):
             "Revenue",
             "Debt",
             "shares_outstanding",
+            "shares_outstanding_prior",
+            "CommonStockSharesOutstanding",
             "NetIncome_date",
             "R&D_date",
             "Revenue_date",
             "OperatingExpenses_date",
+            "CFO_period_months",
+            "FCF_date",
+            "FCF_period_months",
+            "AvailableForSaleSecurities",
+            "AvailableForSaleDebtCurrent",
+            "DebtSecuritiesAvailableForSaleCurrent",
         ]:
             if field in rec:
                 fin_rec[field] = rec[field]
 
+        if "shares_outstanding" not in fin_rec and rec.get("CommonStockSharesOutstanding") not in (None, ""):
+            fin_rec["shares_outstanding"] = rec.get("CommonStockSharesOutstanding")
+
         mapped_financial.append(fin_rec)
+        mapped_market.append(_market_record_from_row(rec))
 
-        # Extract market data
-        mkt_rec = {"ticker": ticker}
-        if "market_cap_mm" in rec:
-            mkt_rec["market_cap"] = rec["market_cap_mm"] * 1e6
-        elif "market_cap" in rec:
-            mkt_rec["market_cap"] = rec["market_cap"]
-
-        mkt_rec["avg_volume"] = rec.get("avg_volume", rec.get("volume_avg_30d", 100000))
-        mkt_rec["price"] = rec.get("price", 10.0)
-
-        mapped_market.append(mkt_rec)
-
-    # Add separate market data
+    # Separate market rows overwrite the financial-row market fields per ticker.
     for rec in market_data:
-        mapped_market.append(
-            {
-                "ticker": rec.get("ticker"),
-                "market_cap": rec.get("market_cap"),
-                "price": rec.get("price"),
-                "avg_volume": rec.get("volume_avg_30d") or rec.get("avg_volume"),
-            }
-        )
+        mapped_market.append(_market_record_from_row(rec))
 
     return run_module_2_v2(universe, mapped_financial, mapped_market)

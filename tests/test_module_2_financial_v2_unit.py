@@ -748,6 +748,7 @@ class TestComputeModule2Financial:
                 "cash_mm": 100,  # Legacy: in millions
                 "burn_rate_mm": 10,  # Legacy: in millions
                 "market_cap_mm": 500,
+                "source_date": "2026-01-10",
             }
         ]
         universe = ["LEGACY"]

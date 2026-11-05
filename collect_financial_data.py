@@ -10,10 +10,15 @@ Usage:
 
 import argparse
 import json
+import logging
 import time
 from datetime import date, datetime
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List, Optional
+
+logger = logging.getLogger(__name__)
+
+_DURATION_NAMES = {"R&D", "NetIncome", "Revenue", "CFO", "OperatingExpenses", "InterestExpense", "COGS"}
 
 import requests
 
@@ -21,6 +26,57 @@ import requests
 # 540 days (18 months) to cover annual-only filers (e.g. 20-F foreign
 # private issuers) whose latest data can be 15+ months old at collection.
 MAX_DATA_AGE_DAYS = 540
+
+
+def _fact_duration_days(entry: Dict) -> Optional[int]:
+    """Inclusive period length. None when the fact has no start date."""
+    start, end = entry.get("start"), entry.get("end")
+    if not start or not end:
+        return None
+    try:
+        return (datetime.fromisoformat(str(end)[:10]) - datetime.fromisoformat(str(start)[:10])).days
+    except ValueError:
+        return None
+
+
+def _period_months_from_fact(entry: Dict) -> Optional[int]:
+    """Map an XBRL duration to 3, 6, 9, or 12 months."""
+    days = _fact_duration_days(entry)
+    if days is None:
+        return None
+    if days < 150:
+        return 3
+    if days < 240:
+        return 6
+    if days < 330:
+        return 9
+    return 12
+
+
+def _select_fresh_fact(values: List[Dict], prefer_longest: bool = False) -> Optional[Dict]:
+    """Latest fresh period end. Duration facts prefer the longest period at that end.
+
+    A 10-Q files a quarter and a year-to-date fact with the same ``end``.
+    Taking whichever row the API listed first mixes those two scales.
+    """
+    fresh = [entry for entry in values if is_data_fresh(entry.get("end"))]
+    if not fresh:
+        return None
+    latest_end = max((entry.get("end") or "") for entry in fresh)
+    at_end = [entry for entry in fresh if entry.get("end") == latest_end]
+    if prefer_longest:
+        dated = [entry for entry in at_end if _fact_duration_days(entry) is not None]
+        if dated:
+            return max(dated, key=lambda entry: _fact_duration_days(entry) or 0)
+    return at_end[0]
+
+
+def _store_fact(financial_data: Dict, friendly_name: str, entry: Dict) -> None:
+    financial_data[friendly_name] = entry.get("val")
+    financial_data[f"{friendly_name}_date"] = entry.get("end")
+    months = _period_months_from_fact(entry)
+    if months and friendly_name in _DURATION_NAMES:
+        financial_data[f"{friendly_name}_period_months"] = months
 
 
 def is_data_fresh(date_str: str, max_age_days: int = MAX_DATA_AGE_DAYS) -> bool:
@@ -192,36 +248,25 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
                     units = facts[gaap_key].get("units", {})
 
                     if "USD" in units:
-                        values = units["USD"]
-                        # Sort by date and find most recent FRESH value
-                        recent = sorted(values, key=lambda x: x.get("end", ""), reverse=True)
+                        chosen = _select_fresh_fact(
+                            units["USD"],
+                            prefer_longest=friendly_name in _DURATION_NAMES,
+                        )
+                        if chosen is not None:
+                            _store_fact(financial_data, friendly_name, chosen)
 
-                        for entry in recent:
-                            entry_date = entry.get("end")
-                            if is_data_fresh(entry_date):
-                                financial_data[friendly_name] = entry.get("val")
-                                financial_data[f"{friendly_name}_date"] = entry_date
-                                break
-                        # If no fresh data found, don't include (leave as None)
-
-            # Extract metrics with fallback (use most recent FRESH value across all tags)
+            # Extract metrics with fallback. Across tags, keep the latest end,
+            # and for duration facts the longest period at that end.
             for friendly_name, tag_list in metrics_with_fallback.items():
-                best_val, best_date = None, None
+                candidates = []
                 for gaap_key in tag_list:
                     if gaap_key in facts:
                         units = facts[gaap_key].get("units", {})
                         if "USD" in units:
-                            values = units["USD"]
-                            recent = sorted(values, key=lambda x: x.get("end", ""), reverse=True)
-                            for entry in recent:
-                                val, dt = entry.get("val"), entry.get("end")
-                                if is_data_fresh(dt):
-                                    if best_date is None or (dt and dt > best_date):
-                                        best_val, best_date = val, dt
-                                    break  # Found fresh value for this tag
-                if best_val is not None:
-                    financial_data[friendly_name] = best_val
-                    financial_data[f"{friendly_name}_date"] = best_date
+                            candidates.extend(units["USD"])
+                chosen = _select_fresh_fact(candidates, prefer_longest=friendly_name in _DURATION_NAMES)
+                if chosen is not None:
+                    _store_fact(financial_data, friendly_name, chosen)
 
             # --- IFRS fallback for foreign filers (AZN, SNY, ARGX, BNTX, etc.) ---
             # If us-gaap yielded very few fields, try ifrs-full tags for missing metrics.
@@ -380,6 +425,7 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
         return None
 
     except Exception:
+        logger.exception("EDGAR company-facts fetch failed for %s", ticker)
         return None
 
 
