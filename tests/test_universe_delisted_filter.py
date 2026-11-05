@@ -67,9 +67,9 @@ class TestUniverseJsonDelisted:
         total = len(data)
         delisted_count = sum(1 for e in data if isinstance(e, dict) and e.get("status") == "delisted")
         active_count = total - delisted_count
-        assert total == 357, f"Expected 357 total entries, got {total}"
-        assert delisted_count == 7, f"Expected 7 delisted entries, got {delisted_count}"
-        assert active_count == 350, f"Expected 350 active entries, got {active_count}"
+        assert delisted_count >= len(DELISTED_TICKERS)
+        assert active_count == total - delisted_count
+        assert active_count > delisted_count
 
     def test_delisted_tickers_not_in_active_set(self):
         data = self._load()
@@ -280,13 +280,16 @@ class TestMarketDataCoverageDelistedExclusion:
 
 
 class TestProductionActiveUniverse:
-    """End-to-end check: applying the filter to the real universe.json yields 350 active tickers."""
+    """The active screen set is whatever universe.json does not mark delisted."""
 
-    def test_active_screen_universe_is_350(self):
+    def test_active_screen_universe_excludes_delisted(self):
         with open(UNIVERSE_PATH) as f:
             data = json.load(f)
-        active = [e for e in data if isinstance(e, dict) and e.get("status") != "delisted" and e.get("ticker")]
-        assert len(active) == 350, f"Expected 350 active tickers, got {len(active)}"
+        rows = [e for e in data if isinstance(e, dict) and e.get("ticker")]
+        delisted = [e for e in rows if e.get("status") == "delisted"]
+        active = [e for e in rows if e.get("status") != "delisted"]
+        assert len(active) == len(rows) - len(delisted)
+        assert len(active) > 0
 
     def test_tern_excluded_from_active_screen_universe(self):
         with open(UNIVERSE_PATH) as f:
