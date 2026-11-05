@@ -73,7 +73,7 @@ jobs:
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --require-hashes -r requirements.lock
           pip install -e .
 
       # ── Hydrate inputs (market data + price CSV from replay bundle) ──

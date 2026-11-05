@@ -61,7 +61,9 @@ def _filter_facts_pit(
 
 
 # A store whose newest filing is older than this, relative to as_of_date,
-# does not cover that date. One quarter plus filing lag.
+# does not cover that date. One quarter plus typical 10-Q filing lag.
+# Override per run with run_screen.py --pit-max-gap-days or
+# PIT_FINANCIAL_MAX_GAP_DAYS. Documented in docs/validation/pit_guardrail.md.
 PIT_STORE_MAX_GAP_DAYS = 120
 
 

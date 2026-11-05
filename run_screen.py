@@ -9959,6 +9959,7 @@ def run_screening_pipeline(
     phase_scores_v2: bool = False,
     phase_scores_v3: bool = True,
     phase_scores_v1: bool = False,
+    pit_max_gap_days: int = 120,
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -10331,7 +10332,7 @@ def run_screening_pipeline(
             # An unrebuild store (newest filing months before as_of) must not
             # replace the fresher static EDGAR pull. A store that contains
             # filings after as_of still covers that date; the snapshot filters.
-            if not _raw_pit or not pit_store_covers_as_of(_raw_pit, as_of_date):
+            if not _raw_pit or not pit_store_covers_as_of(_raw_pit, as_of_date, max_gap_days=pit_max_gap_days):
                 if _raw_pit:
                     _pit_stale += 1
                 else:
@@ -10351,7 +10352,8 @@ def run_screening_pipeline(
 
         _pit_msg = (
             f"  PIT financials: {_pit_overridden}/{_pit_total} tickers overridden, "
-            f"{_pit_stale} stale stores kept static, {_pit_fallback} fallback to static"
+            f"{_pit_stale} stale stores kept static (gap>{pit_max_gap_days}d), "
+            f"{_pit_fallback} fallback to static"
         )
         if _pit_stale:
             logger.warning(_pit_msg)
@@ -13016,6 +13018,15 @@ Module 3 Catalyst Detection:
         "strict (default): fail if data is from the future. "
         "degrade: fall back to calendar-only catalysts with confidence downgrade.",
     )
+    parser.add_argument(
+        "--pit-max-gap-days",
+        type=int,
+        default=int(os.environ.get("PIT_FINANCIAL_MAX_GAP_DAYS", "120")),
+        help="Refuse a per-ticker PIT financial store whose newest SEC filing is more than "
+        "this many days before --as-of-date. The static financial_records.json is kept for "
+        "that name. Default 120 (one quarter plus filing lag). Override with "
+        "PIT_FINANCIAL_MAX_GAP_DAYS. See docs/validation/pit_guardrail.md.",
+    )
 
     # Module 5 calibrated weights
     parser.add_argument(
@@ -13374,6 +13385,7 @@ Module 3 Catalyst Detection:
             defensive_cache=args.defensive_cache,
             enable_position_sizing=getattr(args, "enable_position_sizing", False),
             pit_mode=args.pit_mode,
+            pit_max_gap_days=args.pit_max_gap_days,
             output_dir=args.output_dir if args.output_dir else args.data_dir,
             sec_8k_mode=("live" if args.sec_8k_live else "cache_only"),
             sec_multi_form_mode=args.sec_multi_form_mode,

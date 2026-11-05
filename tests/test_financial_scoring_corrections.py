@@ -212,3 +212,9 @@ def test_stale_pit_store_does_not_cover_a_later_as_of():
     assert pit_store_covers_as_of(store, "2026-05-01") is True
     assert pit_store_covers_as_of(store, "2026-11-04") is False
     assert pit_store_covers_as_of({"facts": {}}, "2026-11-04") is False
+
+
+def test_pit_gap_threshold_is_configurable():
+    store = {"facts": {"cash": [{"end": "2025-12-31", "filed": "2026-03-23", "val": 1}]}}
+    assert pit_store_covers_as_of(store, "2026-11-04", max_gap_days=120) is False
+    assert pit_store_covers_as_of(store, "2026-11-04", max_gap_days=400) is True
