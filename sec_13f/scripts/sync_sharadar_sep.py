@@ -8,8 +8,8 @@ REQUIREMENTS:
   pip install requests
 
 SETUP:
-  1. Set environment variable: NASDAQ_DATA_LINK_API_KEY=your_api_key
-  2. Or create: data/config/nasdaq_api_key.txt (one line, just the key)
+  1. Set environment variable: SHARADAR_API_KEY=your_api_key  (direct api.sharadar.com key)
+  2. Or create: data/config/sharadar_api_key.txt (one line, just the key)
 
 USAGE:
   python scripts/sync_sharadar_sep.py              # Incremental sync
@@ -37,8 +37,6 @@ import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 
 # Add project root to path
 SCRIPT_DIR = Path(__file__).parent
@@ -51,8 +49,13 @@ from backtest.data_readiness import SchemaValidationError, validate_and_load_csv
 # CONFIGURATION
 # ============================================================================
 
-# Nasdaq Data Link API endpoint for Sharadar SEP
-NASDAQ_API_BASE = "https://data.nasdaq.com/api/v3/datatables/SHARADAR/SEP"
+# Direct Sharadar API (api.sharadar.com) via common.sharadar_client.
+# NOTE: this is not Nasdaq Data Link; sharadar.com keys do not work there.
+REPO_ROOT = PROJECT_ROOT.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+SEP_FIELDS = ["ticker", "date", "closeadj"]
+FULL_HISTORY_START = "1990-01-01"
 
 # Default overlap days for incremental sync (safety margin)
 DEFAULT_OVERLAP_DAYS = 5
@@ -68,8 +71,8 @@ MANIFEST_FILE = CURATED_DIR / "ingest_manifest.json"
 CURATED_CSV = DATA_DIR / "sharadar_sep.csv"
 
 # API key locations (checked in order)
-API_KEY_ENV_VAR = "NASDAQ_DATA_LINK_API_KEY"
-API_KEY_FILE = CONFIG_DIR / "nasdaq_api_key.txt"
+API_KEY_ENV_VAR = "SHARADAR_API_KEY"  # pragma: allowlist secret (env var name)
+API_KEY_FILE = CONFIG_DIR / "sharadar_api_key.txt"
 
 
 # ============================================================================
@@ -78,7 +81,7 @@ API_KEY_FILE = CONFIG_DIR / "nasdaq_api_key.txt"
 
 
 def get_api_key() -> str:
-    """Get Nasdaq Data Link API key from environment or file."""
+    """Get the Sharadar API key from environment or file."""
     # Try environment variable first
     api_key = os.environ.get(API_KEY_ENV_VAR)
     if api_key:
@@ -92,7 +95,7 @@ def get_api_key() -> str:
                 return api_key
 
     raise ValueError(
-        "Nasdaq Data Link API key not found.\n"
+        "Sharadar API key not found.\n"
         f"Set environment variable: {API_KEY_ENV_VAR}\n"
         f"Or create file: {API_KEY_FILE}"
     )
@@ -125,7 +128,7 @@ def save_state(state: Dict[str, Any]) -> None:
 
 
 # ============================================================================
-# NASDAQ DATA LINK API
+# SHARADAR API
 # ============================================================================
 
 
@@ -134,81 +137,26 @@ def fetch_sep_data(
     date_gte: Optional[str] = None,
     date_lte: Optional[str] = None,
     tickers: Optional[List[str]] = None,
+    client: Any = None,
 ) -> List[Dict[str, Any]]:
     """
-    Fetch SEP data from Nasdaq Data Link API.
+    Fetch SEP rows (ticker, date, closeadj) from the direct Sharadar API.
 
-    Args:
-        api_key: Nasdaq Data Link API key
-        date_gte: Filter dates >= this (YYYY-MM-DD)
-        date_lte: Filter dates <= this (YYYY-MM-DD)
-        tickers: Optional list of tickers to filter
-
-    Returns:
-        List of row dictionaries
+    Pagination, retries and auth errors are handled by SharadarClient; a
+    401/403 raises SharadarAuthError rather than returning partial data.
     """
-    all_rows = []
-    cursor = None
-    page = 0
+    if client is None:
+        from common.sharadar_client import SharadarClient
 
-    while True:
-        # Build URL with parameters
-        params = [f"api_key={api_key}"]
+        client = SharadarClient(api_key=api_key)
 
-        if date_gte:
-            params.append(f"date.gte={date_gte}")
-        if date_lte:
-            params.append(f"date.lte={date_lte}")
-        if tickers:
-            params.append(f"ticker={','.join(tickers)}")
-        if cursor:
-            params.append(f"qopts.cursor_id={cursor}")
+    # Explicit bounds on both ends so the client can split truncated requests.
+    date_range = (date_gte or FULL_HISTORY_START, date_lte or date.today().isoformat())
 
-        # Select only needed columns
-        params.append("qopts.columns=ticker,date,closeadj")
-
-        url = f"{NASDAQ_API_BASE}.json?{'&'.join(params)}"
-
-        print(f"  Fetching page {page + 1}...", end=" ", flush=True)
-
-        try:
-            req = Request(url)
-            with urlopen(req, timeout=60) as response:
-                data = json.loads(response.read().decode("utf-8"))
-        except HTTPError as e:
-            if e.code == 429:
-                print("\n⚠ Rate limited. Wait and retry.")
-                raise
-            elif e.code == 401:
-                print("\n✗ Invalid API key")
-                raise ValueError("Invalid Nasdaq Data Link API key")
-            else:
-                print(f"\n✗ HTTP error: {e.code}")
-                raise
-        except URLError as e:
-            print(f"\n✗ Network error: {e.reason}")
-            raise
-
-        # Parse response
-        datatable = data.get("datatable", {})
-        columns = [c["name"] for c in datatable.get("columns", [])]
-        rows = datatable.get("data", [])
-
-        # Convert to dicts
-        for row in rows:
-            all_rows.append(dict(zip(columns, row)))
-
-        print(f"{len(rows)} rows")
-        page += 1
-
-        # Check for more pages
-        meta = data.get("meta", {})
-        cursor = meta.get("next_cursor_id")
-
-        if not cursor or not rows:
-            break
-
-    return all_rows
+    print("  Fetching SEP from api.sharadar.com...", end=" ", flush=True)
+    rows = client.fetch("SEP", tickers=tickers or None, fields=SEP_FIELDS, date_range=date_range)
+    print(f"{len(rows)} rows")
+    return rows
 
 
 # ============================================================================
