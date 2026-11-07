@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "purpose": "Display-only overrides for the rankings.csv development_stage column. Does NOT affect archetype, tier_commercial, stage_bucket, lead_program_phase, scoring, ranker, selector, eligibility, EES, Event EV, Module 5 cohorts, or QA gates. Audited each pipeline run via Spec 068.",
-  "as_of_date": "2026-04-28",
+  "as_of_date": "2026-11-07",
   "spec_reference": "specs/changes/spec_068_development_stage_external_cache_audit.md",
   "audit_reference": "artifacts/development_stage/stage_cache_audit_2026-04-28.{csv,md,json}",
   "entries": {
@@ -28,6 +28,24 @@
       "evidence": "Lorundrostat NDA submission per pdufa_dates_extracted.json (PDUFA pending). Internal source module_4_lead_phase reports phase_3 (stale).",
       "added_by": "spec_068_audit_2026-04-28",
       "review_by": "2026-07-28"
+    },
+    "INSM": {
+      "stage": "commercial",
+      "evidence": "Brensocatib (BRINSUPRI) FDA-approved 2025-08-12 for non-cystic fibrosis bronchiectasis (NDA 217673). Commercially launched in US, EU, UK, and Japan (MHLW approval Aug 2026, Japan launch Oct 2026). Q3 2026 global BRINSUPRI revenue grew 29% QoQ. Source: FDA approval letter; Insmed Q3 2026 earnings 2026-10-29. Internal source module_4_lead_phase reports phase_3 (stale — references pre-approval trial records).",
+      "added_by": "operator_review_2026-11-07",
+      "review_by": "2027-02-07"
+    },
+    "IMCR": {
+      "stage": "commercial",
+      "evidence": "KIMMTRAK (tebentafusp-tebn) FDA-approved for HLA-A*02:01+ metastatic uveal melanoma; launched in 30+ markets. Q3 2026 net sales $102M; YTD 2026 net sales $325M (+10% YoY). Source: Immunocore Q3 2026 earnings 2026-11-07. Internal source module_4_lead_phase reports phase_3 (stale — KIMMTRAK approval not reflected; active Phase 3 trials TEBE-AM and ATOM are expansion indications).",
+      "added_by": "operator_review_2026-11-07",
+      "review_by": "2027-02-07"
+    },
+    "ANRO": {
+      "stage": "phase_2",
+      "evidence": "Alto Neuroscience has no approved products. Stage classifier picked up two PHASE4/WITHDRAWN ClinicalTrials.gov trials (Duloxetine and Sertraline EEG studies, withdrawn 2023) that predate company formation — these are not Alto products. Lead program ALTO-207 (pramipexole + ondansetron) is in Phase 2b (PACE-1, NCT not on trial_records for this ticker), with topline data guided 2H 2027. Phase 3 initiation planned early 2027. Source: Alto Neuroscience Q2 2026 10-Q 2026-08-11; Sep 2026 corporate deck.",
+      "added_by": "operator_review_2026-11-07",
+      "review_by": "2027-02-07"
     }
   }
 }
