@@ -26,6 +26,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from common.types import is_retired_status  # noqa: E402  (needs PROJECT_ROOT on sys.path)
+
 logger = logging.getLogger("data_collection_health")
 
 SCHEMA_VERSION = "data_collection_health.v1"
@@ -233,7 +235,9 @@ def _check_market_data(snap_dir: Path, data_dir: Path, as_of_date: str, threshol
         flags.append("price_history.csv missing")
         status = "FAIL"
 
-    # Load universe tickers for coverage denominator
+    # Load universe tickers for coverage denominator. Retired statuses and
+    # synthetic tickers (_XBI_BENCHMARK_) are excluded, matching the
+    # production gate run_daily_production.check_market_data_coverage.
     universe_path = data_dir / "universe.json"
     universe_tickers: set = set()
     if universe_path.exists():
@@ -242,11 +246,15 @@ def _check_market_data(snap_dir: Path, data_dir: Path, as_of_date: str, threshol
         entries = uni if isinstance(uni, list) else uni.get("tickers", [])
         for entry in entries:
             if isinstance(entry, dict):
+                if is_retired_status(entry.get("status")):
+                    continue
                 t = entry.get("ticker", "")
-                if t:
-                    universe_tickers.add(t)
-            elif isinstance(entry, str) and entry:
-                universe_tickers.add(entry)
+            elif isinstance(entry, str):
+                t = entry
+            else:
+                continue
+            if t and not t.startswith("_"):
+                universe_tickers.add(t)
 
     # Coverage = universe tickers that have price data (intersection),
     # so it never exceeds 100%.

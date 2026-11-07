@@ -295,6 +295,21 @@ class TestSourceChecks:
         health = build_health(snap, data, "2026-03-17")
         assert health["sources"]["market_data"]["status"] == "FAIL"
 
+    def test_market_coverage_excludes_retired_and_synthetic(self, healthy_snapshot):
+        # 340 priced + 13 retired (acquired, no prices) + 1 sentinel: the
+        # denominator must match the production gate (check_market_data_coverage),
+        # which skips retired statuses and _-prefixed synthetic tickers.
+        snap, data = healthy_snapshot
+        _write_price_history(data, n_tickers=340)
+        entries = [{"ticker": f"T{i:04d}", "status": "active"} for i in range(340)]
+        entries += [{"ticker": f"R{i:04d}", "status": "retired"} for i in range(13)]
+        entries.append({"ticker": "_XBI_BENCHMARK_", "status": "benchmark"})
+        (data / "universe.json").write_text(json.dumps(entries), encoding="utf-8")
+        md = build_health(snap, data, "2026-03-17")["sources"]["market_data"]
+        assert md["universe_ticker_count"] == 340
+        assert md["price_coverage_pct"] == 100.0
+        assert md["status"] == "PASS"
+
     def test_cache_health_bad_fails(self, healthy_snapshot):
         snap, data = healthy_snapshot
         _write_cache_health(snap, overall="bad")
