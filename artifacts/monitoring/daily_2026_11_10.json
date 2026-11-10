@@ -1,0 +1,173 @@
+{
+    "date": "2026-11-10",
+    "monitoring_day": 110,
+    "timestamp": "2026-11-10T09:00:00.000000Z",
+    "phase": "Day 110 \u2014 PRE-MARKET snapshot (Nov 10 09:00 ET, Tuesday). EXTENDED MONITORING GAP: last file Sep 23 (Day 76), ~34 trading sessions unlogged. Robinhood MCP still unavailable. Price basis remains Aug 27 close (NOW ~52 TRADING SESSIONS STALE). ALMS LUMUS Sep 30 binary + XENE NDA Sep 30 deadline: BOTH PAST \u2014 outcomes unknown to monitor. Q2 13F governance promoted 2026-11-01. oos_clock_start=2026-11-02 (mandate 0/20). IC/h20d gates 132+ days overdue.",
+    "data_integrity": {
+        "primary_source": "Carried forward from daily_2026_09_23.json (Day 76). Aug 27 close is LAST confirmed price data.",
+        "price_date": "2026-08-27 close (LAST AVAILABLE \u2014 ~52 TRADING SESSIONS STALE as of Nov 10)",
+        "data_gap": "Aug 28 through Nov 10 \u2014 approximately 52 consecutive trading sessions without confirmed price data. Monitoring cron skipped Sep 24 through Nov 09 (34 sessions).",
+        "monitoring_cron_gap": "daily_2026_09_23.json (Day 76) was the last file written. Sep 24 through Nov 09 monitoring files MISSING (34 sessions).",
+        "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged)",
+        "cash_basis": "Carried forward 9.87 from Jun 24 MCP sourcing (no confirmed trading activity since)",
+        "mcp_status": "Robinhood MCP unavailable (needs-approval/blocked in automated run). No live quotes sourced.",
+        "data_quality": "DEGRADED \u2014 CRITICAL. Aug 27 close (last known). ~52 trading sessions of price movement UNCAPTURED. Many catalyst events have resolved during this gap \u2014 outcomes unknown to monitor."
+    },
+    "market_status": {
+        "date": "2026-11-10",
+        "weekday": "Tuesday",
+        "status": "OPEN",
+        "note": "Nov 10 = Tuesday. Robinhood MCP unavailable \u2014 Nov 10 prices cannot be fetched. All portfolio data carried from Aug 27 basis."
+    },
+    "account": {
+        "account_id": "Robinhood 802349084",
+        "equity_fetchable": false,
+        "equity_estimated_usd": 138.04,
+        "equity_note": "Carried from Aug 27 close basis. ~52 sessions of actual P&L movement uncaptured. Stale carry-forward estimate only.",
+        "cash_carried": 99.87,
+        "buying_power_carried": null,
+        "total_estimated_account_value": 237.91
+    },
+    "benchmark": {
+        "xbi_entry_price": 133.62,
+        "xbi_last_close": 168.23,
+        "xbi_last_close_date": "2026-08-27",
+        "xbi_return_since_entry_pct": 25.9,
+        "xbi_note": "XBI last close $168.23 (Aug 27 basis \u2014 ~52 trading sessions stale). +25.90% since Jun 10 entry ($133.62). Outperformance estimate: +11.98pp vs XBI \u2014 STALE ~52 sessions."
+    },
+    "portfolio_overview": {
+        "total_positions": 15,
+        "positions_negative_vs_entry": 0,
+        "positions_positive_vs_entry": 15,
+        "avg_pnl_vs_entry_pct": 37.88,
+        "equity_usd": 138.04,
+        "cash_usd": 99.87,
+        "total_account_usd": 237.91,
+        "xbi_return_since_entry_pct": 25.9,
+        "outperformance_pp": 11.98,
+        "drawdown_threshold_pp": -2.0,
+        "drawdown_status": "UNKNOWN (last measured Aug 27 close \u2014 STALE ~52 sessions). Last known +11.98pp vs XBI. ACTUAL VALUE UNKNOWN after 52 sessions.",
+        "notes": [
+            "Nov 10 = Day 110. Last file: Sep 23 (Day 76). ~34 sessions unlogged.",
+            "Robinhood MCP unavailable \u2014 price data not fetchable in automated run.",
+            "Price data stale ~52 trading sessions since Aug 27 close.",
+            "ALMS LUMUS Sep 30 binary deadline: PASSED. Outcome not captured by monitor.",
+            "XENE NDA Sep 30 deadline: PASSED. Outcome not captured by monitor.",
+            "Q2 13F governance PROMOTED 2026-11-01 (registry v4.0, 30-manager elite_core).",
+            "oos_clock_start=2026-11-02. Mandate SM-20260629-001 restarts at 0/20.",
+            "IC/h20d gates 132+ days overdue (were due Jul 1, now Nov 10 = +132 calendar days).",
+            "Multiple Monday rebalance triggers (Sep 28, Oct 5, 12, 19, 26, Nov 2, 9) all unresolved."
+        ]
+    },
+    "governance_gates": {
+        "drawdown": "UNKNOWN (Aug 27 basis was CLEAR at +11.98pp; actual value after 52 sessions unknown)",
+        "emergency_loss_per_position": "UNKNOWN (all 15 positive on Aug 27 basis; 52 sessions of movement untracked)",
+        "ic_gate": "OVERDUE 132+ days (due 2026-07-01, now 2026-11-10)",
+        "h20d_gate": "OVERDUE 132+ days (due 2026-07-01; Q2 13F promoted 2026-11-01 \u2014 quarantine script still required)",
+        "jaccard": "LAST KNOWN 0.875 (Jun 23 measurement \u2014 Q2 13F now promoted, remeasurement needed)",
+        "monday_rebalance": "MULTIPLE UNRESOLVED (Sep 28, Oct 5, 12, 19, 26, Nov 2, Nov 9 \u2014 7 rebalance triggers missed)",
+        "oos_clock": "0/20 (oos_clock_start=2026-11-02; mandate SM-20260629-001 restarted)",
+        "q2_13f": "PROMOTED 2026-11-01 (registry v4.0, builder 1.2.0 CUSIP-first, 30-manager elite_core)"
+    },
+    "catalyst_events_past_deadline": {
+        "ALMS": {
+            "event": "LUMUS Phase 2b SLE binary",
+            "deadline": "2026-09-30 (Q3 2026)",
+            "status": "DEADLINE PASSED \u2014 outcome not captured by monitor. Requires operator lookup."
+        },
+        "XENE": {
+            "event": "NDA azetukalner filing (Q3 2026)",
+            "deadline": "2026-09-30 (Q3 2026)",
+            "status": "DEADLINE PASSED \u2014 outcome not captured by monitor. Requires operator lookup."
+        },
+        "PRAX": {
+            "event": "PDUFA Dec 27, 2026",
+            "deadline": "2026-12-27",
+            "status": "UPCOMING \u2014 ~47 calendar days remaining."
+        }
+    },
+    "escalation_flags": [
+        {
+            "id": "EXTENDED_MONITORING_GAP_34SESSIONS",
+            "reason": "Monitoring cron skipped 34 consecutive trading sessions (Sep 24 through Nov 09). Last file: Sep 23 (Day 76). Multiple catalyst deadlines (ALMS Sep 30, XENE Sep 30), 7 Monday rebalance triggers, and 52 total sessions of price movement all unmonitored.",
+            "priority": "CRITICAL \u2014 OPERATIONAL GAP"
+        },
+        {
+            "id": "ALMS_LUMUS_BINARY_PAST_DEADLINE",
+            "ticker": "ALMS",
+            "reason": "ALMS LUMUS Phase 2b SLE binary deadline Sep 30 has passed. Outcome unknown to monitor. Last known buffer +13.94% (Aug 27). Binary readout could be highly positive or negative \u2014 position P&L impact unknown.",
+            "priority": "CRITICAL \u2014 VERIFY OUTCOME"
+        },
+        {
+            "id": "XENE_NDA_PAST_DEADLINE",
+            "ticker": "XENE",
+            "reason": "XENE NDA azetukalner Q3 2026 deadline (Sep 30) has passed. Outcome unknown to monitor. NDA filing confirmation or delay impact on price unknown.",
+            "priority": "HIGH \u2014 VERIFY OUTCOME"
+        },
+        {
+            "id": "MULTIPLE_REBALANCE_TRIGGERS_MISSED",
+            "reason": "Sep 28, Oct 5, Oct 12, Oct 19, Oct 26, Nov 2, Nov 9 rebalance triggers all unresolved (7 Monday rebalances since last file). Portfolio may have drifted significantly from equal-weight.",
+            "priority": "HIGH \u2014 OPERATOR ACTION REQUIRED"
+        },
+        {
+            "id": "IC_H20D_GATES_132DAYS_OVERDUE",
+            "reason": "IC gate and h20d gate both 132+ days overdue (due 2026-07-01). Q2 13F promoted 2026-11-01 \u2014 h20d quarantine script still required as next sequential gate step.",
+            "priority": "GOVERNANCE \u2014 OPERATOR ACTION REQUIRED"
+        },
+        {
+            "id": "OOS_CLOCK_RESTARTED_0_OF_20",
+            "reason": "oos_clock_start=2026-11-02 (mandate SM-20260629-001 restarted at 0/20 per 2026-11-01 governance memo). DEM candidate freeze remains in effect. No model/ranker/selector changes permitted.",
+            "priority": "GOVERNANCE \u2014 INFORMATION"
+        },
+        {
+            "id": "ROBINHOOD_MCP_UNAVAILABLE_AUTOMATED_RUN",
+            "reason": "Robinhood MCP tools (get_portfolio, get_equity_quotes, get_equity_positions) are blocked or require approval in automated runs. Live portfolio data cannot be fetched without operator authorization. This is likely the root cause of all monitoring gaps since Aug 27.",
+            "priority": "OPERATIONAL \u2014 ROOT CAUSE OF DATA GAPS"
+        }
+    ],
+    "monitoring_summary": {
+        "day": 110,
+        "date": "2026-11-10",
+        "weekday": "Tuesday",
+        "market_status": "OPEN",
+        "price_basis": "2026-08-27 close (STALE \u2014 ~52 trading sessions)",
+        "data_quality": "DEGRADED \u2014 CRITICAL. Robinhood MCP unavailable. ~52 sessions stale. Monitoring cron skipped Sep 24 through Nov 09.",
+        "total_equity_usd_carried": 138.04,
+        "avg_pnl_vs_entry_pct": 37.88,
+        "xbi_return_since_entry_pct": 25.9,
+        "outperformance_pp": 11.98,
+        "gate_status": {
+            "drawdown": "UNKNOWN (Aug 27 basis was CLEAR at +11.98pp)",
+            "emergency": "UNKNOWN (all 15 positive on Aug 27 basis \u2014 52 sessions untracked)",
+            "ic": "OVERDUE 132+ days",
+            "h20d": "OVERDUE 132+ days (Q2 13F promoted 2026-11-01; quarantine script next)",
+            "jaccard": "UNMEASURED since Q2 13F promotion",
+            "monday_rebalance": "7 UNRESOLVED (Sep 28 through Nov 9)",
+            "oos_clock": "0/20 (restarted 2026-11-02)"
+        },
+        "governance_positive": [
+            "Q2 13F promoted 2026-11-01 (registry v4.0, builder 1.2.0, 30-manager elite_core)",
+            "CUSIP-first resolution implemented (builder 1.2.0, 47-entry static map)",
+            "oos_clock_start=2026-11-02 formally set"
+        ],
+        "key_alerts": [
+            "CRITICAL: Monitoring cron skipped 34 sessions (Sep 24\u2013Nov 09) \u2014 operational gap",
+            "CRITICAL: ALMS LUMUS Sep 30 binary deadline PASSED \u2014 outcome unknown to monitor",
+            "HIGH: XENE NDA Sep 30 deadline PASSED \u2014 outcome unknown to monitor",
+            "HIGH: 7 Monday rebalance triggers missed (Sep 28 through Nov 9)",
+            "DATA INTEGRITY CRITICAL: ~52 consecutive trading sessions uncaptured",
+            "GOVERNANCE: IC + h20d gates 132+ days overdue (Q2 13F promoted \u2014 quarantine script needed)",
+            "GOVERNANCE: oos_clock restarted 0/20 (Nov 2 start, NO_MODEL_CHANGE mandate active)",
+            "POSITIVE: Q2 13F governance promoted 2026-11-01 \u2014 significant governance advancement"
+        ],
+        "operator_action_required": [
+            "IMMEDIATE: Look up ALMS LUMUS Phase 2b SLE binary result (Sep 30 deadline passed)",
+            "IMMEDIATE: Look up XENE NDA azetukalner filing status (Sep 30 deadline passed)",
+            "IMMEDIATE: Restore Robinhood MCP authorization for automated runs (root cause of all gaps)",
+            "BEFORE NEXT MONDAY: Assess 7 missed rebalance triggers (Sep 28, Oct 5, 12, 19, 26, Nov 2, 9)",
+            "GOVERNANCE: Run h20d quarantine script (Q2 13F now promoted) \u2014 next sequential gate",
+            "GOVERNANCE: Refresh Jaccard and IC decomposition post Q2-13F promotion",
+            "CONSIDER: Review whether this monitoring routine should be retired (original scope: Jun 11-30 2026, now running Day 110 on Nov 10 2026)"
+        ]
+    }
+}
