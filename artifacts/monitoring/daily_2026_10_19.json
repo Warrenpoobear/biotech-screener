@@ -1,0 +1,324 @@
+{
+  "date": "2026-10-19",
+  "monitoring_day": 95,
+  "timestamp": "2026-10-19T13:17:00.000000Z",
+  "phase": "Day 95 — PRE-MARKET snapshot (Oct 19 09:00 ET, Monday). Robinhood MCP UNAVAILABLE. Price basis remains Aug 27 close (NOW 36 TRADING SESSIONS STALE — Labor Day Sep 7 excluded). MONITORING DARK: Sep 24 through Oct 16 (18 weekday sessions missing). SCHEDULED MONITORING WINDOW ENDED 2026-06-30 — routine continues firing past its designed end date. ALMS LUMUS Phase 2b SLE topline (due Sep 30) should be resolved — status unknown. XENE NDA (due Sep 30) should be announced — status unknown. Sep 14, Sep 21, Sep 28, Oct 5, Oct 12 (Mon) rebalance checks ALL UNRESOLVED. IC/h20d gates 110 days overdue. Q2 13F 66 days past deadline.",
+  "critical_alerts": [
+    "MONITORING DARK: 18 weekday sessions (Sep 24 - Oct 16) missing from artifacts/monitoring/",
+    "ROBINHOOD MCP UNAVAILABLE: No live portfolio or quote data for 36+ trading sessions",
+    "PRICE DATA 36 TRADING SESSIONS STALE: Last known prices from Aug 27, 2026 close (Labor Day Sep 7 excluded)",
+    "MONITORING WINDOW EXPIRED: Scheduled period was 2026-06-11 through 2026-06-30 — routine firing 110 days past designed end",
+    "ALMS LUMUS BINARY UNRESOLVED: Sep 30 deadline passed — outcome unknown",
+    "XENE NDA UNRESOLVED: Sep 30 deadline passed — outcome unknown",
+    "5 UNRESOLVED REBALANCE CHECKS: Sep 14, Sep 21, Sep 28, Oct 5, Oct 12 (all Mondays)",
+    "IC/H20D GATES: 110 days overdue (gate due 2026-07-01)",
+    "Q2 13F CACHE: 66 days past Aug 14 filing deadline — not yet promoted to production"
+  ],
+  "data_integrity": {
+    "primary_source": "Carried forward from daily_2026_09_23.json (Day 76, Sep 23). Aug 27 close is LAST known price data.",
+    "price_date": "2026-08-27 close (last available — NOW 36 TRADING SESSIONS STALE after Oct 19 open; Labor Day Sep 7 excluded)",
+    "data_gap": "Aug 28 through Oct 19 open — 36 trading sessions without confirmed price data (excludes Labor Day Sep 7).",
+    "monitoring_cron_gap": "daily_2026_09_23.json (Day 76) was the last file written. Sep 24 through Oct 16 monitoring files MISSING (18 weekday sessions). Today's file (Oct 19) is this run.",
+    "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged — no confirmed trades since Jun 24 rebalance)",
+    "cash_basis": "Carried forward $99.87 from Jun 24 MCP sourcing (unchanged, no confirmed trading activity)",
+    "mcp_status": "Robinhood MCP unavailable (multiple months). No live quotes sourceable. Org admin settings may have blocked these tools.",
+    "data_quality": "CRITICALLY DEGRADED. 36 trading sessions of price movement UNCAPTURED (Labor Day Sep 7 excluded). Portfolio could have breached drawdown threshold at any point — no evidence either way."
+  },
+  "market_status": {
+    "date": "2026-10-19",
+    "weekday": "Monday",
+    "status": "OPEN",
+    "note": "Oct 19 = Monday. Q3 earnings season underway. Robinhood MCP unavailable. Oct 19 prices cannot be fetched."
+  },
+  "account": {
+    "account_id": "Robinhood 802349084",
+    "equity_fetchable": false,
+    "equity_estimated_usd": 138.04,
+    "equity_note": "Stale carry from Aug 27 close basis. Aug 28 through Oct 19 prices all unknown. 36 trading sessions of actual P&L movement uncaptured (Labor Day excluded). ESTIMATE UNRELIABLE.",
+    "cash_carried": 99.87,
+    "buying_power_carried": null,
+    "total_estimated_account_value": 237.91,
+    "equity_note_detail": "No new price data since Aug 27 close. MCP unavailable. Estimate is minimum 36 trading sessions stale as of Oct 19 open (Labor Day excluded). Actual account value unknown."
+  },
+  "benchmark": {
+    "xbi_entry_price": 133.62,
+    "xbi_last_close": 168.23,
+    "xbi_last_close_date": "2026-08-27",
+    "xbi_return_since_entry_pct": 25.9,
+    "xbi_note": "XBI last close $168.23 (Aug 27 basis — 36 trading sessions stale). +25.90% since Jun 10 entry ($133.62). Outperformance estimate: +11.98pp vs XBI — STALE 36 sessions. UNRELIABLE."
+  },
+  "portfolio_overview": {
+    "total_positions": 15,
+    "positions_negative_vs_entry": "UNKNOWN (stale 36 sessions)",
+    "positions_positive_vs_entry": "UNKNOWN (stale 36 sessions)",
+    "avg_pnl_vs_entry_pct_last_known": 37.88,
+    "avg_pnl_basis_date": "2026-08-27",
+    "equity_usd_stale": 138.04,
+    "cash_usd_carried": 99.87,
+    "total_account_usd_stale": 237.91,
+    "xbi_return_since_entry_pct_stale": 25.9,
+    "outperformance_pp_stale": 11.98,
+    "drawdown_threshold_pp": -2.0,
+    "drawdown_status": "UNKNOWN — last measured basis Aug 27 close (36 trading sessions stale). Was +11.98pp vs XBI then. Current status UNVERIFIABLE without live data.",
+    "gap_flags": "UNKNOWN — no price data",
+    "gap_threshold_pct": 5.0,
+    "day_95_notes": [
+      "Oct 19 = Monday, Day 95 — MONITORING DARK SINCE SEP 23 (18 weekday missed sessions Sep 24–Oct 16)",
+      "Robinhood MCP unavailable — 36th consecutive stale trading-day carry from Aug 27 (Labor Day excluded)",
+      "SCHEDULED MONITORING WINDOW ENDED JUN 30 — routine has run 95 days (65 past designed end)",
+      "ALMS LUMUS binary: Sep 30 passed — catalyst resolved or missed entirely",
+      "XENE NDA: Sep 30 passed — NDA filing outcome unknown",
+      "5 UNRESOLVED REBALANCE CHECKS: Sep 14, Sep 21, Sep 28, Oct 5, Oct 12 — all Mondays unexecuted/undocumented",
+      "Oct 19 = Monday REBALANCE TRIGGER DAY — cannot execute or verify without MCP",
+      "Q3 earnings season: biotech names may have material moves in earnings period",
+      "IC + h20d gates: 110 days overdue (due 2026-07-01)",
+      "Q2 13F: 66 days past Aug 14 filing deadline — Q3 13F cycle starts ~Nov 14 2026",
+      "OPERATOR ACTION REQUIRED: Either restore Robinhood MCP access or end monitoring routine"
+    ]
+  },
+  "positions": [
+    {
+      "ticker": "NRIX",
+      "company": "Nurix Therapeutics, Inc.",
+      "entry_price": 15.46,
+      "quantity": 0.430232,
+      "last_close": 26.88,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 73.87,
+      "position_value_usd_stale": 11.57,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE — last known TOP PERFORMER",
+      "note": "Last known +73.87% vs entry (Aug 27 basis — 37 sessions stale)."
+    },
+    {
+      "ticker": "URGN",
+      "company": "UroGen Pharma Ltd.",
+      "entry_price": 28.02,
+      "quantity": 0.237681,
+      "last_close": 45.50,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 62.38,
+      "position_value_usd_stale": 10.81,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE",
+      "note": "Last known +62.38% vs entry (Aug 27 basis — 37 sessions stale)."
+    },
+    {
+      "ticker": "DNTH",
+      "company": "Dianthus Therapeutics, Inc.",
+      "entry_price": 72.10,
+      "quantity": 0.092928,
+      "last_close": 111.54,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 54.70,
+      "position_value_usd_stale": 10.36,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE",
+      "note": "Last known +54.70% vs entry (Aug 27 basis — 37 sessions stale)."
+    },
+    {
+      "ticker": "SLDB",
+      "company": "Solid Biosciences Inc.",
+      "entry_price": 6.49,
+      "quantity": 1.028527,
+      "last_close": 10.13,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 56.09,
+      "position_value_usd_stale": 10.42,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE",
+      "note": "Last known +56.09% vs entry (Aug 27 basis — 37 sessions stale)."
+    },
+    {
+      "ticker": "PRAX",
+      "company": "Praxis Precision Medicine, Inc.",
+      "entry_price": 241.92,
+      "quantity": 0.027530,
+      "last_close": 367.85,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 52.06,
+      "position_value_usd_stale": 10.13,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE",
+      "note": "Last known +52.06% vs entry (Aug 27 basis — 37 sessions stale)."
+    },
+    {
+      "ticker": "RVMD",
+      "company": "Revolution Medicines, Inc.",
+      "entry_price": 143.76,
+      "quantity": 0.046465,
+      "last_close": 221.15,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 53.83,
+      "position_value_usd_stale": 10.28,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE",
+      "note": "Last known +53.83% vs entry (Aug 27 basis — 37 sessions stale)."
+    },
+    {
+      "ticker": "ERAS",
+      "company": "Erasca, Inc.",
+      "entry_price": 13.27,
+      "quantity": 0.503396,
+      "last_close": 19.49,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 46.87,
+      "position_value_usd_stale": 9.81,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE",
+      "note": "Last known +46.87% vs entry (Aug 27 basis — 37 sessions stale)."
+    },
+    {
+      "ticker": "TRVI",
+      "company": "Travere Therapeutics, Inc.",
+      "entry_price": 13.43,
+      "quantity": 0.496649,
+      "last_close": 17.96,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 33.73,
+      "position_value_usd_stale": 8.92,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE",
+      "note": "Last known +33.73% vs entry (Aug 27 basis — 37 sessions stale)."
+    },
+    {
+      "ticker": "CMPS",
+      "company": "COMPASS Pathways plc",
+      "entry_price": 11.30,
+      "quantity": 0.590265,
+      "last_close": 14.64,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 29.56,
+      "position_value_usd_stale": 8.64,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE",
+      "note": "Last known +29.56% vs entry (Aug 27 basis — 37 sessions stale)."
+    },
+    {
+      "ticker": "SYRE",
+      "company": "Spyre Therapeutics, Inc.",
+      "entry_price": 76.10,
+      "quantity": 0.088041,
+      "last_close": 93.62,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 23.02,
+      "position_value_usd_stale": 8.24,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE",
+      "note": "Last known +23.02% vs entry (Aug 27 basis — 37 sessions stale)."
+    },
+    {
+      "ticker": "XENE",
+      "company": "Xenon Pharmaceuticals Inc.",
+      "entry_price": 51.95,
+      "quantity": 0.128578,
+      "last_close": 61.93,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 19.21,
+      "position_value_usd_stale": 7.96,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE — NDA CATALYST WINDOW PASSED (Sep 30 deadline)",
+      "note": "Last known +19.21% vs entry (Aug 27 basis — 37 sessions stale). NDA filing expected ~Sep 30 — outcome unknown."
+    },
+    {
+      "ticker": "DRUG",
+      "company": "Bright Minds Biosciences Inc.",
+      "entry_price": 63.59,
+      "quantity": 0.105839,
+      "last_close": 74.54,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 17.22,
+      "position_value_usd_stale": 7.89,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE",
+      "note": "Last known +17.22% vs entry (Aug 27 basis — 37 sessions stale)."
+    },
+    {
+      "ticker": "COGT",
+      "company": "Cogent Biosciences, Inc.",
+      "entry_price": 31.35,
+      "quantity": 0.212789,
+      "last_close": 37.09,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 18.31,
+      "position_value_usd_stale": 7.89,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE",
+      "note": "Last known +18.31% vs entry (Aug 27 basis — 37 sessions stale). Fairmount trimmed COGT -38.9% in Q1 13F."
+    },
+    {
+      "ticker": "ALMS",
+      "company": "Alumis Inc.",
+      "entry_price": 20.37,
+      "quantity": 0.326013,
+      "last_close": 23.21,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 13.94,
+      "position_value_usd_stale": 7.57,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE — LUMUS PHASE 2B TOPLINE WINDOW PASSED (Sep 30 deadline)",
+      "note": "Last known +13.94% vs entry — SECOND LOWEST BUFFER on Aug 27 (+13.94% > STOK +13.40%). LUMUS Phase 2b SLE topline expected ~Sep 30 — outcome unknown. HIGH RISK of post-catalyst gap — cannot assess without live data."
+    },
+    {
+      "ticker": "STOK",
+      "company": "Stoke Therapeutics, Inc.",
+      "entry_price": 28.74,
+      "quantity": 0.231758,
+      "last_close": 32.59,
+      "last_close_date": "2026-08-27",
+      "pnl_vs_entry_pct_stale": 13.40,
+      "position_value_usd_stale": 7.55,
+      "gap_flag": "UNKNOWN",
+      "status": "STALE — LOWEST BUFFER",
+      "note": "Last known +13.40% vs entry — LOWEST BUFFER on Aug 27 (+13.40% < ALMS +13.94%). 36 trading sessions of unknown movement (Labor Day excluded) — potential drawdown breach unverifiable."
+    }
+  ],
+  "governance_gates": {
+    "drawdown_gate": {
+      "status": "UNVERIFIABLE",
+      "threshold_pp": -2.0,
+      "last_measured_outperformance_pp": 11.98,
+      "last_measured_date": "2026-08-27",
+      "note": "36 trading sessions stale (Labor Day excluded). Cannot confirm gate status. Was well clear (+11.98pp) on Aug 27 but unknown since."
+    },
+    "ic_gate": {
+      "status": "OVERDUE",
+      "due_date": "2026-07-01",
+      "days_overdue": 110,
+      "last_ic": 0.0432,
+      "last_ic_date": "2026-06-24",
+      "note": "Path C closed Jun 24. IC review overdue 110 days. Blocked by production freeze."
+    },
+    "jaccard_h20d_gate": {
+      "status": "OVERDUE",
+      "due_date": "2026-07-01",
+      "days_overdue": 110,
+      "note": "h20d re-eval gate overdue. Q1 13F quarantine script not yet run."
+    },
+    "emergency_gate": {
+      "status": "UNVERIFIABLE",
+      "note": "No live monitoring capability. Cannot assess emergency conditions."
+    },
+    "q2_13f_gate": {
+      "status": "NOT PROMOTED",
+      "filing_deadline": "2026-08-14",
+      "days_past_deadline": 66,
+      "note": "Q2 13F period ended Jun 30. Filing deadline Aug 14 passed. Cache not yet warmed for Q2 data."
+    },
+    "rebalance_checks": {
+      "status": "5 UNRESOLVED",
+      "unresolved_dates": ["2026-09-14", "2026-09-21", "2026-09-28", "2026-10-05", "2026-10-12"],
+      "today_trigger": "2026-10-19 = Monday — rebalance check day. CANNOT EXECUTE without Robinhood MCP.",
+      "note": "All Monday rebalance checks since Sep 14 unexecuted and undocumented."
+    }
+  },
+  "monitoring_meta": {
+    "designed_end_date": "2026-06-30",
+    "days_past_designed_end": 111,
+    "last_successful_snapshot": "2026-09-23",
+    "sessions_dark": 18,
+    "sessions_dark_span": "2026-09-24 through 2026-10-16 (18 weekday sessions) + 2026-10-19 (this run attempted, no live data)",
+    "mcp_tools_missing": ["get_portfolio", "get_equity_quotes", "get_equity_positions"],
+    "recommendation": "OPERATOR ACTION REQUIRED. Either: (1) restore Robinhood MCP access to enable live monitoring, or (2) formally end this monitoring routine. The scheduled window ended 2026-06-30 and live data has been unavailable since Aug 27 at latest."
+  }
+}
