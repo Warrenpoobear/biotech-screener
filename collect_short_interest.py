@@ -10,7 +10,15 @@ Fields collected:
 - short_interest_change_pct: Change from prior month
 - institutional_long_pct: Institutional ownership %
 - avg_daily_volume: Average daily trading volume
-- report_date: Date of short interest data
+- report_date: FINRA settlement date the short interest was measured on, taken from
+  Yahoo's dateShortInterest and rendered in UTC. None means the vintage is unknown
+  (Yahoo supplied no date, or the fetch returned nothing) and callers must not treat
+  such a record as current.
+
+Note: FINRA publishes short interest twice a month (settlement on the 15th and the
+last business day), so a report_date lagging the current date by up to ~3 weeks is
+normal cadence rather than a collection fault. Yahoo also stops refreshing individual
+symbols for extended periods; that is upstream staleness, not a bug here.
 
 Usage:
     python collect_short_interest.py
@@ -22,7 +30,7 @@ import argparse
 import json
 import sys
 import time
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -46,7 +54,7 @@ def get_short_interest_data(ticker: str) -> Optional[Dict[str, Any]]:
         - short_interest_change_pct: Change from prior month
         - institutional_long_pct: Institutional ownership %
         - avg_daily_volume: Average daily volume
-        - report_date: Date of short interest data (YYYY-MM-DD)
+        - report_date: FINRA settlement date (YYYY-MM-DD, UTC) or None if unknown
     """
     try:
         stock = yf.Ticker(ticker)
@@ -70,24 +78,35 @@ def get_short_interest_data(ticker: str) -> Optional[Dict[str, Any]]:
         if shares_short and shares_short_prior and shares_short_prior > 0:
             change_pct = round(((shares_short - shares_short_prior) / shares_short_prior) * 100, 1)
 
-        # Convert date from unix timestamp
+        # Convert date from unix timestamp.
+        #
+        # dateShortInterest is midnight UTC of the FINRA settlement date. Converting
+        # with a naive fromtimestamp() renders it in local time, so anywhere west of
+        # UTC it rolls back to the previous day: epoch 1785456000 is 2026-07-31 UTC
+        # but 2026-07-30 20:00 US/Eastern. FINRA settles on the 15th and the last
+        # business day of the month, so the naive form yields dates that are not
+        # settlement dates at all, and understates the vintage of a PIT field by a day.
         report_date = None
         if date_short_interest:
             try:
-                report_date = datetime.fromtimestamp(date_short_interest).strftime("%Y-%m-%d")
-            except (ValueError, OSError):
+                report_date = datetime.fromtimestamp(date_short_interest, tz=timezone.utc).strftime("%Y-%m-%d")
+            except (ValueError, OSError, TypeError):
                 pass
 
-        # Use today's date if no report date available
-        if not report_date:
-            report_date = date.today().isoformat()
+        # No today() fallback: report_date is the provenance field callers use to judge
+        # staleness. Stamping today onto data of unknown vintage makes arbitrarily old
+        # short interest look current and defeats the freshness checks downstream.
+        # None means "vintage unknown" and must be treated as such.
 
         return {
             "ticker": ticker,
-            "short_interest_pct": round(short_pct_float * 100, 1) if short_pct_float else None,
-            "days_to_cover": round(short_ratio, 1) if short_ratio else None,
+            # `is not None` rather than truthiness: a genuine 0.0 (no short interest,
+            # zero days to cover, no institutional holding) is falsy and would
+            # otherwise be recorded as missing data.
+            "short_interest_pct": round(short_pct_float * 100, 1) if short_pct_float is not None else None,
+            "days_to_cover": round(short_ratio, 1) if short_ratio is not None else None,
             "short_interest_change_pct": change_pct,
-            "institutional_long_pct": round(inst_pct * 100, 1) if inst_pct else None,
+            "institutional_long_pct": round(inst_pct * 100, 1) if inst_pct is not None else None,
             "avg_daily_volume": avg_volume,
             "report_date": report_date,
         }
@@ -200,12 +219,14 @@ def collect_short_interest(
             results.append(data)
             success_count += 1
             si_pct = data.get("short_interest_pct")
-            si_str = f"{si_pct:>5.1f}%" if si_pct else "  N/A"
+            si_str = f"{si_pct:>5.1f}%" if si_pct is not None else "  N/A"
             days = data.get("days_to_cover")
-            days_str = f"{days:>4.1f}d" if days else " N/A"
+            days_str = f"{days:>4.1f}d" if days is not None else " N/A"
             print(f"[{i+1:>3}/{len(tickers)}] {ticker:<6} ✅ SI: {si_str}  DTC: {days_str}")
         else:
-            # Create placeholder record
+            # Create placeholder record. report_date stays None: this record carries no
+            # data at all, and stamping today would make a total fetch failure read as
+            # a current observation to anything checking freshness.
             results.append(
                 {
                     "ticker": ticker,
@@ -214,7 +235,7 @@ def collect_short_interest(
                     "short_interest_change_pct": None,
                     "institutional_long_pct": None,
                     "avg_daily_volume": None,
-                    "report_date": date.today().isoformat(),
+                    "report_date": None,
                 }
             )
             error_count += 1
