@@ -86,7 +86,11 @@ def _resolve_alpaca_credentials() -> Optional[tuple]:
 
 
 def _resolve_api_key() -> Optional[str]:
-    """Return the configured Polygon/Massive key, or None."""
+    """Return the configured Polygon/Massive key, or None (None while Massive is disabled)."""
+    from common.options_history_massive import massive_enabled
+
+    if not massive_enabled():
+        return None
     return os.environ.get("MASSIVE_API_KEY") or os.environ.get("POLYGON_API_KEY") or None
 
 
