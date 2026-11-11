@@ -34,7 +34,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
@@ -48,7 +48,34 @@ SCHEMA_VERSION = "ic_dashboard.v1"
 SIGNALS = [
     ("score_rank_pct", False),  # (field, higher_is_better)
     ("inst_delta_z", True),
+    # Largest selector weight (coinvest-only selector, v1.14.0); was unmonitored.
+    ("coinvest_score_z", True),
 ]
+
+# Rows that carry a real reading for the signal. inst_delta_z is written as 0.0
+# when there is no delta (has_inst_delta=False) and is contaminated when the
+# manager registry changed between the two summaries (inst_delta_regime =
+# "transition"); counting those as observations biases IC toward zero.
+SIGNAL_ROW_FILTERS = {
+    "inst_delta_z": lambda row: row.get("has_inst_delta") == "True" and row.get("inst_delta_regime") != "transition",
+}
+
+# Below this many dates the mean IC is reported but no health verdict is given.
+# Daily snapshots with a 20-day forward horizon overlap heavily, so 8 dates is
+# still well under one independent observation per date.
+MIN_DATES_FOR_VERDICT = 8
+
+PROVENANCE_EXCLUSIONS = REPO_ROOT / "config" / "snapshot_provenance_exclusions.json"
+
+
+def _load_excluded_dates(path: Path = PROVENANCE_EXCLUSIONS) -> set:
+    """Snapshot dates that were regenerated after the fact (not live PIT runs)."""
+    try:
+        doc = json.loads(Path(path).read_text())
+        return {row["date"] for row in doc.get("snapshots", [])}
+    except Exception:
+        return set()
+
 
 # Removed signals (closed-lane or deprecated)
 # ("clinical_optionality_pct_dev", True),
@@ -78,12 +105,15 @@ def _is_promoted(name: str) -> bool:
     return len(name) == 10 and not name.startswith("_") and name != "state"
 
 
-def _find_prior_snapshots(snapshots_dir: Path, current_date: str, n: int) -> List[str]:
+def _find_prior_snapshots(snapshots_dir: Path, current_date: str, n: int, exclude: Optional[set] = None) -> List[str]:
     """Find the n most recent promoted snapshots before current_date."""
     if not snapshots_dir.exists():
         return []
+    exclude = exclude or set()
     candidates = sorted(
-        d.name for d in snapshots_dir.iterdir() if d.is_dir() and _is_promoted(d.name) and d.name < current_date
+        d.name
+        for d in snapshots_dir.iterdir()
+        if d.is_dir() and _is_promoted(d.name) and d.name < current_date and d.name not in exclude
     )
     return candidates[-n:] if len(candidates) >= n else candidates
 
@@ -93,9 +123,12 @@ def _load_signal_values(snap_dir: Path, signal_field: str) -> Dict[str, float]:
     path = snap_dir / "rankings.csv"
     if not path.exists():
         return {}
+    row_ok = SIGNAL_ROW_FILTERS.get(signal_field, lambda row: True)
     values = {}
     with open(path, encoding="utf-8") as f:
         for row in csv.DictReader(f):
+            if not row_ok(row):
+                continue
             ticker = row.get("ticker", "")
             val = _sf(row.get(signal_field, ""))
             if ticker and not math.isnan(val):
@@ -186,9 +219,25 @@ def build_ic_dashboard(
     artifacts_dir: Path = REPO_ROOT / "artifacts",
     lookback: int = DEFAULT_LOOKBACK,
     horizon: int = DEFAULT_HORIZON,
+    include_regenerated: bool = False,
+    exclusions_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
-    """Build rolling IC dashboard."""
-    prior_dates = _find_prior_snapshots(snapshots_dir, as_of_date, lookback)
+    """Build rolling IC dashboard.
+
+    Regenerated snapshots are skipped unless ``include_regenerated``. The list
+    in config/snapshot_provenance_exclusions.json describes the production
+    ``data/snapshots`` dir, so it is applied only to that dir unless
+    ``exclusions_path`` is given explicitly.
+    """
+    if include_regenerated:
+        excluded: set = set()
+    elif exclusions_path is not None:
+        excluded = _load_excluded_dates(exclusions_path)
+    elif Path(snapshots_dir).resolve() == (REPO_ROOT / "data" / "snapshots").resolve():
+        excluded = _load_excluded_dates()
+    else:
+        excluded = set()
+    prior_dates = _find_prior_snapshots(snapshots_dir, as_of_date, lookback, exclude=excluded)
 
     if len(prior_dates) < 3:
         return {"error": f"need >= 3 prior snapshots, found {len(prior_dates)}"}
@@ -231,8 +280,10 @@ def build_ic_dashboard(
             mean_ic = sum(ics) / len(ics)
             hit_rate = sum(1 for ic in ics if ic > 0) / len(ics)
 
-            # Health classification
-            if mean_ic >= IC_HEALTHY:
+            # Health classification (no verdict on too few dates)
+            if len(per_date_ics) < MIN_DATES_FOR_VERDICT:
+                health = "INSUFFICIENT_DATES"
+            elif mean_ic >= IC_HEALTHY:
                 health = "HEALTHY"
             elif mean_ic >= IC_WARN:
                 health = "WEAK"
@@ -278,6 +329,8 @@ def build_ic_dashboard(
         "date_range": [prior_dates[0], prior_dates[-1]] if prior_dates else [],
         "attention": attention,
         "signals": signal_results,
+        "excluded_regenerated_dates": len(excluded),
+        "min_dates_for_verdict": MIN_DATES_FOR_VERDICT,
         "thresholds": {
             "healthy": IC_HEALTHY,
             "warn": IC_WARN,
@@ -377,6 +430,11 @@ def main():
     parser.add_argument("--snapshots-dir", type=Path, default=REPO_ROOT / "data" / "snapshots")
     parser.add_argument("--price-csv", type=Path, default=REPO_ROOT / "production_data" / "price_history.csv")
     parser.add_argument("--artifacts-dir", type=Path, default=REPO_ROOT / "artifacts")
+    parser.add_argument(
+        "--include-regenerated",
+        action="store_true",
+        help="Also use snapshots listed in config/snapshot_provenance_exclusions.json",
+    )
     args = parser.parse_args()
     started = time.perf_counter()
 
@@ -387,6 +445,7 @@ def main():
         artifacts_dir=args.artifacts_dir,
         lookback=args.lookback,
         horizon=args.horizon,
+        include_regenerated=args.include_regenerated,
     )
 
     if "error" in result:
