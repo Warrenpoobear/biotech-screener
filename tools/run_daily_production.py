@@ -4441,6 +4441,11 @@ def check_market_data_staleness(
     )
 
 
+# Median market_cap below this means the file is in $ millions, not USD (a real
+# biotech universe median is hundreds of $M). See check_market_data_schema.
+MARKET_DATA_MIN_MEDIAN_CAP_USD = 10_000_000
+
+
 def check_market_data_schema(data_dir: Path) -> GateResult:
     """Validate market_data.json record structure.
 
@@ -4504,6 +4509,30 @@ def check_market_data_schema(data_dir: Path) -> GateResult:
             value=len(bad_records),
             threshold=0,
         )
+
+    # Units check: market_cap must be raw USD. A file written in $ millions
+    # (Sharadar DAILY units; 2026-11-04 refresh) passes every type check, yet
+    # run_screen divides by 1e6 again, shrinking every company ~1e6x and
+    # silently reshuffling size bands, liquidity and the actionable ranking.
+    caps = sorted(
+        rec["market_cap"]
+        for rec in records
+        if isinstance(rec, dict) and isinstance(rec.get("market_cap"), (int, float)) and rec["market_cap"] > 0
+    )
+    if caps:
+        median_cap = caps[len(caps) // 2]
+        if median_cap < MARKET_DATA_MIN_MEDIAN_CAP_USD:
+            mm_scale = sum(1 for c in caps if c < 1e6)
+            return GateResult(
+                name="market_data_schema",
+                status="FAIL",
+                detail=(
+                    f"market_cap looks like $ millions, not USD: median {median_cap:,.1f} "
+                    f"(< {MARKET_DATA_MIN_MEDIAN_CAP_USD:,.0f}); {mm_scale}/{len(caps)} records < 1e6"
+                ),
+                value=median_cap,
+                threshold=MARKET_DATA_MIN_MEDIAN_CAP_USD,
+            )
 
     return GateResult(
         name="market_data_schema",
