@@ -140,3 +140,37 @@ def test_momentum_does_not_double_adjust_already_adjusted_source(tmp_path):
     rs.compute_momentum_from_price_history(tmp_path / "price_history.csv", AS_OF, md)
     assert abs(md["AAA"]["return_60d"]) < 1e-9
     assert abs(md["AAA"]["return_120d"]) < 1e-9
+
+
+SUPN_DIV = {"ticker": "DDD", "action": "special_dividend", "effective_date": "2026-11-03", "amount": 8.13}
+
+
+def _div_series(drop: bool):
+    days = _bdays(date(2026, 4, 1), 160)
+    after = 28.15 if drop else 36.28
+    return [(d, 36.28 if d < date(2026, 11, 3) else after) for d in days if d <= date(2026, 11, 11)]
+
+
+def test_momentum_adjusts_visible_special_dividend(tmp_path):
+    _write_prices(tmp_path / "price_history.csv", {"DDD": _div_series(True), "XBI": _crash_series()})
+    _write_registry(tmp_path / "corporate_actions.json", [SUPN_DIV])
+    md = {"DDD": {}}
+    rs.compute_momentum_from_price_history(tmp_path / "price_history.csv", AS_OF, md)
+    assert abs(md["DDD"]["return_20d"]) < 1e-9
+
+
+def test_momentum_skips_dividend_not_visible(tmp_path):
+    """Dividend-adjusted source: no ex-date drop, so no adjustment."""
+    _write_prices(tmp_path / "price_history.csv", {"DDD": _div_series(False), "XBI": _crash_series()})
+    _write_registry(tmp_path / "corporate_actions.json", [SUPN_DIV])
+    md = {"DDD": {}}
+    rs.compute_momentum_from_price_history(tmp_path / "price_history.csv", AS_OF, md)
+    assert abs(md["DDD"]["return_20d"]) < 1e-9
+
+
+def test_registry_loads_special_dividend():
+    from common.corporate_actions import get_special_dividends, load_actions
+
+    reg = load_actions(REPO_ROOT / "production_data" / "corporate_actions.json")
+    divs = get_special_dividends("SUPN", reg)
+    assert [(a.effective_date, a.amount) for a in divs] == [("2026-11-03", 8.13)]

@@ -570,6 +570,13 @@
       "ratio": "1:8",
       "factor": 8.0,
       "notes": "Skye Bioscience 1-for-8 reverse split, market effective 2026-08-24 (yfinance). effective_date is DATA-ALIGNED to 2026-08-17: bars from 08-17 were backfilled after the split (already split-adjusted) and stitched onto unadjusted bars <=08-14 (0.5015 -> 3.32). Added 2026-11-11."
+    },
+    {
+      "ticker": "SUPN",
+      "action": "special_dividend",
+      "effective_date": "2026-11-03",
+      "amount": 8.13,
+      "notes": "Special cash dividend of $8.13/share, ex-date 2026-11-03 (yfinance dividend history; same day as the INDV->SUPN ticker change). price_history.csv shows 36.28 (11-02) -> 28.15 (11-03): the entire -22.4% is the dividend (36.28-8.13=28.15). Momentum treats it as a return unless adjusted. Added 2026-11-11."
     }
   ]
 }

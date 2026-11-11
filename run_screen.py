@@ -2027,8 +2027,8 @@ def _observed_registry_split_factor(
     registry: Any,
     tolerance: float = 2.0,
 ) -> float:
-    """Cumulative factor for registry splits in (from_date, to_date] that are
-    actually VISIBLE in this price series, else 1.0 per split.
+    """Cumulative factor for registry splits and special dividends in
+    (from_date, to_date] that are actually VISIBLE in this price series.
 
     A registry split is applied only when the series jumps across its
     effective date by roughly the registry factor (within ``tolerance`` x).
@@ -2054,6 +2054,22 @@ def _observed_registry_split_factor(
         observed = after / before
         if abs(math.log(observed) - math.log(a.factor)) <= math.log(tolerance):
             factor *= a.factor
+
+    # Special cash dividends: the ex-date drop is a distribution, not a return.
+    # Same visibility rule — applied only when the series drops by roughly the
+    # dividend (0.5x..1.5x), so a dividend-adjusted source is not adjusted twice.
+    from common.corporate_actions import get_special_dividends
+
+    for a in get_special_dividends(ticker, registry):
+        if not a.amount or not (f_iso < a.effective_date <= t_iso):
+            continue
+        before = next((p for d, p in prices_desc if d.isoformat() < a.effective_date), None)
+        after = next((p for d, p in reversed(prices_desc) if d.isoformat() >= a.effective_date), None)
+        if not before or not after or a.amount >= before:
+            continue
+        drop = before - after
+        if 0.5 * a.amount <= drop <= 1.5 * a.amount:
+            factor *= (before - a.amount) / before
     return factor
 
 
