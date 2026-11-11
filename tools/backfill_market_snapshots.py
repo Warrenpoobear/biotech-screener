@@ -293,8 +293,13 @@ def _fetch_fred_hy_oas_history(start: str, end: str) -> list:
         f"&file_type=json&api_key={api_key}"
     )
     req = urllib.request.Request(url, headers={"User-Agent": "WakeRobin-Market/1.0"})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        data = json.loads(resp.read())
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read())
+    except Exception as exc:
+        # The request URL carries the API key. Log the error type only.
+        log.warning("FRED HY OAS fetch failed (%s)", type(exc).__name__)
+        return []
     return [[o["date"], o["value"]] for o in data.get("observations", [])]
 
 
@@ -305,6 +310,29 @@ def _fetch_fred_hy_oas_history(start: str, end: str) -> list:
 
 def _staged_dates(root: Path) -> list[str]:
     return sorted(p.name for p in root.iterdir() if p.is_dir() and re.fullmatch(r"\d{4}-\d{2}-\d{2}", p.name))
+
+
+def _validated_dates(dates: list[str]) -> list[str]:
+    """Accept only real ISO dates. Reject path segments such as ``../outside``."""
+    clean = []
+    for raw in dates:
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw):
+            raise ValueError(f"date must be YYYY-MM-DD, got {raw!r}")
+        try:
+            date.fromisoformat(raw)
+        except ValueError as exc:
+            raise ValueError(f"date must be YYYY-MM-DD, got {raw!r}") from exc
+        clean.append(raw)
+    return sorted(clean)
+
+
+def _snapshot_output_path(staging_root: Path, as_of: str) -> Path:
+    """Return the snapshot path, which must stay inside staging_root."""
+    root = Path(staging_root).resolve()
+    out = (root / as_of / "market_snapshot.json").resolve()
+    if not out.is_relative_to(root):
+        raise ValueError(f"snapshot path escapes staging root: {as_of}")
+    return out
 
 
 def main() -> int:
@@ -319,7 +347,11 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="Build and validate, write nothing")
     args = parser.parse_args()
 
-    dates = sorted(args.dates) if args.dates else _staged_dates(args.staging_root)
+    try:
+        dates = _validated_dates(args.dates) if args.dates else _staged_dates(args.staging_root)
+    except ValueError as exc:
+        log.error("%s", exc)
+        return 1
     if not dates:
         log.error("No dates to backfill")
         return 1
@@ -363,11 +395,17 @@ def main() -> int:
         "inputs_sha256": hashlib.sha256(inputs_bytes).hexdigest(),
         "snapshots": {},
     }
+    project_root = PROJECT_ROOT.resolve()
+    staging_root = Path(args.staging_root).resolve()
     for d, snap in snapshots.items():
-        out = args.staging_root / d / "market_snapshot.json"
+        out = _snapshot_output_path(staging_root, d)
         out.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            rel = out.relative_to(project_root).as_posix()
+        except ValueError:
+            rel = out.relative_to(staging_root).as_posix()
         manifest["snapshots"][d] = {
-            "path": out.relative_to(PROJECT_ROOT).as_posix(),
+            "path": rel,
             "sha256": write_frozen(out, snap),
         }
         log.info(
