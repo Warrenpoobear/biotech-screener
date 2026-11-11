@@ -266,13 +266,14 @@ def build_single_bundle(
                 cusip_map = _load_cusip_map(_PROJECT_ROOT / "production_data" / "cusip_static_map.json")
 
                 coinv = build_coinvest_features(
-                    as_of_date=coinvest_source_date,
+                    as_of_date=as_of_date,
                     cache_root=cache_13f_root,
                     universe_tickers=universe_tickers,
                     manager_tiers=manager_tiers,
                     manager_names=manager_names,
                     cusip_map=cusip_map,
                     manager_groups=manager_groups,
+                    cache_dir=cache_date_dir,
                 )
 
                 if coinv is not None:
