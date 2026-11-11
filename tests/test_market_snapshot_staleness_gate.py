@@ -29,7 +29,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "tools"))
 
-from check_market_snapshot_freshness import _count_trading_days, check_freshness, emit_diagnostic
+from check_market_snapshot_freshness import _count_trading_days, check_freshness, count_present_feeds, emit_diagnostic
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -208,6 +208,15 @@ class TestCheckFreshness:
             p = _write_snap(snap, tmp)
             result = check_freshness(p, reference_date=date(2026, 6, 26))
         assert result["feeds"]["xbi"] == "failed"
+
+    def test_reconstructed_pit_feeds_count_as_present(self):
+        feeds = {
+            "vix": "pit",
+            "biotech_fund_flows": "pit_volume_proxy",
+            "spy": "failed",
+            "xbi": "live",
+        }
+        assert count_present_feeds(feeds) == 3
 
     def test_emit_diagnostic_does_not_raise(self):
         """emit_diagnostic must survive any result shape, including all-null."""

@@ -17,15 +17,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import math
 import re
 import sys
-from datetime import date, datetime, timezone
+from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 VERSION = "1.2.0"
 SCHEMA_VERSION = "coinvest_features.v1"
+
+log = logging.getLogger("build_coinvest_features_from_13f")
 
 # Conviction formula constants — replicate run_screen.py:802-809 exactly.
 TIER_WEIGHTS: Dict[int, float] = {1: 1.0, 2: 0.6, 3: 0.2, 0: 0.2}
@@ -62,6 +65,22 @@ def _load_json(path: Path) -> Optional[dict]:
             return json.load(f)
     except (OSError, json.JSONDecodeError, TypeError):
         return None
+
+
+def _manager_file(cache_dir: Path, relative: str) -> Optional[Path]:
+    """Resolve a manager JSON path that must stay inside cache_dir."""
+    if not relative:
+        return None
+    rel = Path(relative)
+    if rel.is_absolute() or ".." in rel.parts:
+        log.warning("skipping manager JSON outside cache dir: %s", relative)
+        return None
+    root = cache_dir.resolve()
+    candidate = (root / rel).resolve()
+    if not candidate.is_relative_to(root):
+        log.warning("skipping manager JSON outside cache dir: %s", relative)
+        return None
+    return candidate
 
 
 def _load_cusip_map(path: Path) -> Dict[str, str]:
@@ -142,12 +161,13 @@ def _get_prior_quarter_end(period_of_report: date) -> date:
 def _find_prior_cache_dir(
     cache_root: Path,
     current_por: str,
+    as_of_date: str,
 ) -> Optional[Path]:
     """Find cache dir whose dominant period_of_report matches the prior quarter.
 
-    Scans all date-dirs in *cache_root*, loading each ``index.json`` to check
-    the dominant ``period_of_report``.  Returns the first match (newest
-    as_of_date first) or ``None``.
+    Scans date-named directories on or before *as_of_date*, newest first.
+    A later directory that still carries the prior quarter must not supply
+    the position-change baseline.
     """
     try:
         target = _get_prior_quarter_end(date.fromisoformat(current_por))
@@ -159,7 +179,9 @@ def _find_prior_cache_dir(
         return None
 
     for d in sorted(cache_root.iterdir(), reverse=True):
-        if not d.is_dir():
+        if not d.is_dir() or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", d.name):
+            continue
+        if d.name > as_of_date:
             continue
         idx = _load_json(d / "index.json")
         if idx is None:
@@ -237,6 +259,7 @@ def build_coinvest_features(
     nearest_prior_days: int = 0,
     manager_groups: Optional[Dict[str, str]] = None,
     max_report_age_days: Optional[int] = MAX_REPORT_AGE_DAYS,
+    cache_dir: Optional[Path] = None,
 ) -> Optional[dict]:
     """Build coinvest features from PIT 13F cache.
 
@@ -264,6 +287,10 @@ def build_coinvest_features(
     max_report_age_days : int | None
         Drop managers whose period_of_report is older than this many days
         before *as_of_date*. ``None`` disables the gate.
+    cache_dir : Path | None
+        Read this cache directory instead of resolving one from *as_of_date*.
+        Filing age, staleness, and the future-filing cutoff still use
+        *as_of_date*. The directory must sit inside *cache_root*.
 
     Returns
     -------
@@ -272,14 +299,22 @@ def build_coinvest_features(
     """
     cusip_map = cusip_map or {}
 
-    # Resolve the current cache dir: exact-match for as_of_date, or the nearest
-    # prior cache within nearest_prior_days if the exact date has no cache.
-    # Backward-only — preserves PIT correctness.
-    from common.pit_cache import resolve_pit_cache_dir
+    # Resolve the current cache dir: an explicit directory, an exact match for
+    # as_of_date, or the nearest prior cache within nearest_prior_days.
+    # Backward-only — preserves PIT correctness. Age math always uses as_of_date.
+    if cache_dir is not None:
+        root = cache_root.resolve()
+        chosen = cache_dir.resolve()
+        if not chosen.is_relative_to(root):
+            log.warning("cache_dir is outside cache_root: %s", cache_dir)
+            return None
+        date_dir = chosen
+    else:
+        from common.pit_cache import resolve_pit_cache_dir
 
-    date_dir, _cache_src = resolve_pit_cache_dir(cache_root, as_of_date, nearest_prior_days)
-    if date_dir is None:
-        return None
+        date_dir, _cache_src = resolve_pit_cache_dir(cache_root, as_of_date, nearest_prior_days)
+        if date_dir is None:
+            return None
 
     # Corporate actions registry for ticker rename resolution
     try:
@@ -309,7 +344,7 @@ def build_coinvest_features(
         if prior_cache_dir is not None:
             prior_date_dir = prior_cache_dir
         else:
-            prior_date_dir = _find_prior_cache_dir(cache_root, current_por)
+            prior_date_dir = _find_prior_cache_dir(cache_root, current_por, as_of_date)
 
         if prior_date_dir is not None:
             prior_index = _load_json(prior_date_dir / "index.json")
@@ -328,7 +363,8 @@ def build_coinvest_features(
                 continue
             cik = m["manager_cik"]
             json_path = m.get("manager_json_path", f"managers/{cik}.json")
-            mgr_data = _load_json(prior_date_dir / json_path)
+            mgr_path = _manager_file(prior_date_dir, json_path)
+            mgr_data = _load_json(mgr_path) if mgr_path is not None else None
             if mgr_data is None:
                 continue
             tkr_vals: Dict[str, float] = {}
@@ -372,7 +408,8 @@ def build_coinvest_features(
             "manager_json_path",
             f"managers/{cik}.json",
         )
-        mgr_data = _load_json(date_dir / json_path)
+        mgr_path = _manager_file(date_dir, json_path)
+        mgr_data = _load_json(mgr_path) if mgr_path is not None else None
         if mgr_data is None:
             continue
 
@@ -572,7 +609,7 @@ def build_coinvest_features(
     output = {
         "schema_version": SCHEMA_VERSION,
         "version": VERSION,
-        "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "created_at": f"{as_of_date}T00:00:00Z",
         "as_of_date": as_of_date,
         "cache_as_of_date": index.get("as_of_date", as_of_date),
         "period_of_report": current_por or "",
