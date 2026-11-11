@@ -5748,14 +5748,10 @@ def save_validation_snapshot(
     # --- Compute institutional summary + delta (for z-score, written as sidecar later) ---
     inst_summary = None
     inst_delta = None
+    prior_inst = None
     if decision_mode == "phase2":
         try:
-            from institutional_summary import (
-                _find_prior_institutional_summary,
-                _get_filing_period,
-                build_institutional_summary,
-                compute_institutional_delta,
-            )
+            from institutional_summary import build_institutional_summary, resolve_cross_quarter_delta
 
             _uni_tickers = {r.get("ticker", "") for r in csv_rows if r.get("ticker")}
             # nearest_prior_days=95 lets non-quarter-end monthly regen dates
@@ -5766,18 +5762,15 @@ def save_validation_snapshot(
             # stale-source summaries as priors for cross-date delta.
             inst_summary = build_institutional_summary(as_of_date, _uni_tickers, nearest_prior_days=95)
             if inst_summary:
-                # Use cross-quarter comparison to get real filing-period deltas
+                # Use cross-quarter comparison to get real filing-period deltas.
+                # The filing period is resolved from the summary's actual source
+                # cache; a same-source prior yields no delta (has_inst_delta=False)
+                # instead of a column of fake zeros.
                 _cache_base = Path(__file__).resolve().parent / "data" / "caches" / "sec_13f" / "PIT"
-                _cur_filing = _get_filing_period(_cache_base, as_of_date)
-                prior_inst = _find_prior_institutional_summary(
-                    _prior_dir,
-                    as_of_date,
-                    cross_quarter=True,
-                    current_filing_period=_cur_filing,
-                    max_candidates=200,
+                prior_inst, inst_delta, _inst_delta_status = resolve_cross_quarter_delta(
+                    inst_summary, _prior_dir, as_of_date, _cache_base, max_candidates=200
                 )
-                if prior_inst:
-                    inst_delta = compute_institutional_delta(inst_summary, prior_inst)
+                logger.info("[INST] cross-quarter delta status: %s", _inst_delta_status)
         except Exception as e:
             logger.warning("Could not compute institutional summary/delta: %s", e)
 
