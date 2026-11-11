@@ -2001,6 +2001,24 @@ def _dead_tickers_as_of(data_dir: Path, as_of_date: str) -> Set[str]:
         return set()
 
 
+def _load_run_corporate_actions(data_dir: Path) -> Any:
+    """Load ``corporate_actions.json`` from the run's own data dir, or None.
+
+    Same source rule as ``_dead_tickers_as_of``: no fallback to the repo copy.
+    Fail-open: a missing or unreadable registry returns None (raw prices used).
+    """
+    _path = Path(data_dir) / "corporate_actions.json"
+    if not _path.exists():
+        return None
+    try:
+        from common.corporate_actions import load_actions
+
+        return load_actions(_path)
+    except Exception:  # pragma: no cover - fail-open
+        logger.warning("[momentum] could not load %s; momentum uses raw prices", _path)
+        return None
+
+
 def compute_momentum_from_price_history(
     price_history_path: Path, as_of_date: str, market_data_by_ticker: Dict[str, Dict], xbi_ticker: str = "XBI"
 ) -> int:
@@ -2130,6 +2148,8 @@ def compute_momentum_from_price_history(
     for ticker in prices_by_ticker:
         prices_by_ticker[ticker].sort(key=lambda x: x[0], reverse=True)
 
+    _momentum_registry = _load_run_corporate_actions(Path(price_history_path).parent)
+
     def get_return(ticker: str, days_back: int) -> Optional[float]:
         """Get return over specified trading days (approximate)."""
         if ticker not in prices_by_ticker:
@@ -2157,13 +2177,27 @@ def compute_momentum_from_price_history(
         target_date = current_date - timedelta(days=calendar_days_back)
 
         past_price = None
+        past_date = None
         for dt, price in prices:
             if dt <= target_date:
                 past_price = price
+                past_date = dt
                 break
 
         if past_price is None or past_price == 0:
             return None
+
+        # price_history.csv is unadjusted. Put the past close on the current
+        # close's share basis using registry-confirmed splits only, so a split
+        # inside the window is not scored as a return (IMMP's 1:20 reverse split
+        # on 2026-09-28 read as ~+800% momentum). Genuine crashes and rallies
+        # have no registry entry and are left as-is.
+        if _momentum_registry is not None:
+            from common.corporate_actions import cumulative_split_factor
+
+            past_price = past_price * cumulative_split_factor(
+                ticker, past_date.isoformat(), current_date.isoformat(), _momentum_registry
+            )
 
         return (current_price / past_price) - 1.0
 
