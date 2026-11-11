@@ -57,7 +57,7 @@ load_dotenv()
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from statistics import median, quantiles
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -1981,6 +1981,26 @@ ALERT-level staleness abort the run instead of logging.  Left off so this guard
 cannot change production behaviour on its own."""
 
 
+def _dead_tickers_as_of(data_dir: Path, as_of_date: str) -> Set[str]:
+    """Tickers dead (acquisition / delisted / bankruptcy) on or before as_of_date.
+
+    Reads ``corporate_actions.json`` from the run's own data dir only, so a run
+    checks against the registry it scores with (no fallback to the repo copy:
+    a data dir without a registry keeps the check unchanged). Fail-open: any
+    error returns an empty set.
+    """
+    _path = Path(data_dir) / "corporate_actions.json"
+    if not _path.exists():
+        return set()
+    try:
+        from common.corporate_actions import list_dead_tickers, load_actions
+
+        _registry = load_actions(_path)
+        return {str(t).upper() for t in list_dead_tickers(as_of_date, _registry)}
+    except Exception:  # pragma: no cover - fail-open
+        return set()
+
+
 def compute_momentum_from_price_history(
     price_history_path: Path, as_of_date: str, market_data_by_ticker: Dict[str, Dict], xbi_ticker: str = "XBI"
 ) -> int:
@@ -2053,11 +2073,21 @@ def compute_momentum_from_price_history(
     #
     # Scoped to market_data_by_ticker so delisted names still sitting in
     # price_history.csv (MRSN/CVAC at 211d, IBB, etc.) do not raise false alarms.
+    #
+    # Also excludes names that are dead (acquired / delisted / bankrupt) as of
+    # as_of_date per the corporate-actions registry: market_data.json keeps
+    # entries for retired tickers, which are never ranked. On 2026-11-11 the check
+    # logged an ERROR for CRNX, APGE, TBPH, RNA, BHVN and ATAI — all retired, none
+    # in rankings.csv — and under BIOTECH_STRICT_PRICE_STALENESS=1 it would have
+    # raised and aborted the run over them.
     if prices_by_ticker:
         _scored = {str(_t).upper() for _t in (market_data_by_ticker or {})}
+        _dead = _dead_tickers_as_of(Path(price_history_path).parent, as_of_date)
         _gaps = []
         for _tkr, _pts in prices_by_ticker.items():
             if _scored and _tkr not in _scored:
+                continue
+            if _tkr in _dead:
                 continue
             if not _pts:
                 continue
