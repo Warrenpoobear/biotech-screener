@@ -85,3 +85,23 @@ def test_live_day_unchanged(tmp_path):
     cur = _summary("2026-11-11", "2026-11-11", Q2)
     prior, delta, status = resolve_cross_quarter_delta(cur, snaps, "2026-11-11", cache)
     assert status == "ok" and prior["as_of_date"] == "2026-08-13"
+
+
+def test_filing_period_is_majority_not_first(tmp_path):
+    from institutional_summary import _get_filing_period
+
+    d = tmp_path / "2026-08-13"
+    d.mkdir()
+    mgrs = [{"period_of_report": "2026-06-30"}] + [{"period_of_report": "2026-03-31"}] * 3
+    (d / "index.json").write_text(json.dumps({"managers": mgrs}))
+    assert _get_filing_period(tmp_path, "2026-08-13") == "2026-03-31"
+
+
+def test_filing_period_tie_goes_to_later(tmp_path):
+    from institutional_summary import _get_filing_period
+
+    d = tmp_path / "2026-11-14"
+    d.mkdir()
+    mgrs = [{"period_of_report": "2026-06-30"}, {"period_of_report": "2026-09-30"}]
+    (d / "index.json").write_text(json.dumps({"managers": mgrs}))
+    assert _get_filing_period(tmp_path, "2026-11-14") == "2026-09-30"

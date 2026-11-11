@@ -620,18 +620,25 @@ def _find_prior_institutional_summary(
 
 
 def _get_filing_period(cache_base: Path, cache_date: str) -> str:
-    """Get the 13F filing period_of_report for a given cache date."""
+    """Get the 13F filing period_of_report for a given cache date.
+
+    Returns the period reported by the MOST managers in the cache (ties go to
+    the later period). A cache mixes quarters while filings arrive — e.g. the
+    2026-08-13 cache held 51 managers at 2026-03-31, 4 at 2026-06-30 and 1 at
+    2025-12-31 — so the first manager listed is not a reliable label.
+    """
+    from collections import Counter
+
     index_path = cache_base / cache_date / "index.json"
     if not index_path.exists():
         return ""
     idx = _load_json(index_path)
     if not idx:
         return ""
-    for mgr in idx.get("managers", []):
-        por = mgr.get("period_of_report", "")
-        if por:
-            return por
-    return ""
+    counts = Counter(m.get("period_of_report", "") for m in idx.get("managers", []) if m.get("period_of_report"))
+    if not counts:
+        return ""
+    return max(counts.items(), key=lambda kv: (kv[1], kv[0]))[0]
 
 
 def resolve_cross_quarter_delta(
