@@ -125,3 +125,18 @@ def test_registry_has_2026_reverse_splits():
         ("IMMP", "2026-09-28", 20.0),
     ]:
         assert row in got
+
+
+def test_momentum_does_not_double_adjust_already_adjusted_source(tmp_path):
+    """Sharadar SEP close / post-split yfinance history: no jump in the series.
+
+    The registry split must be skipped, not applied a second time.
+    """
+    days = _bdays(date(2026, 4, 1), 160)
+    adjusted = [(d, 5.0) for d in days if d <= date(2026, 11, 11)]
+    _write_prices(tmp_path / "price_history.csv", {"AAA": adjusted, "XBI": _crash_series()})
+    _write_registry(tmp_path / "corporate_actions.json", [REVERSE_SPLIT])
+    md = {"AAA": {}}
+    rs.compute_momentum_from_price_history(tmp_path / "price_history.csv", AS_OF, md)
+    assert abs(md["AAA"]["return_60d"]) < 1e-9
+    assert abs(md["AAA"]["return_120d"]) < 1e-9

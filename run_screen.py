@@ -2019,6 +2019,44 @@ def _load_run_corporate_actions(data_dir: Path) -> Any:
         return None
 
 
+def _observed_registry_split_factor(
+    ticker: str,
+    prices_desc: List[Tuple[Any, float]],
+    from_date: Any,
+    to_date: Any,
+    registry: Any,
+    tolerance: float = 2.0,
+) -> float:
+    """Cumulative factor for registry splits in (from_date, to_date] that are
+    actually VISIBLE in this price series, else 1.0 per split.
+
+    A registry split is applied only when the series jumps across its
+    effective date by roughly the registry factor (within ``tolerance`` x).
+    That makes the adjustment idempotent: on an already split-adjusted source
+    (yfinance history fetched after the split, or Sharadar SEP ``close``) the
+    jump is absent and the split is skipped instead of applied twice.
+
+    ``prices_desc`` is ``[(date, close), ...]`` sorted newest first.
+    """
+    import math
+
+    from common.corporate_actions import get_splits_only
+
+    factor = 1.0
+    f_iso, t_iso = from_date.isoformat(), to_date.isoformat()
+    for a in get_splits_only(ticker, registry):
+        if not a.factor or not (f_iso < a.effective_date <= t_iso):
+            continue
+        before = next((p for d, p in prices_desc if d.isoformat() < a.effective_date), None)
+        after = next((p for d, p in reversed(prices_desc) if d.isoformat() >= a.effective_date), None)
+        if not before or not after:
+            continue
+        observed = after / before
+        if abs(math.log(observed) - math.log(a.factor)) <= math.log(tolerance):
+            factor *= a.factor
+    return factor
+
+
 def compute_momentum_from_price_history(
     price_history_path: Path, as_of_date: str, market_data_by_ticker: Dict[str, Dict], xbi_ticker: str = "XBI"
 ) -> int:
@@ -2187,16 +2225,13 @@ def compute_momentum_from_price_history(
         if past_price is None or past_price == 0:
             return None
 
-        # price_history.csv is unadjusted. Put the past close on the current
-        # close's share basis using registry-confirmed splits only, so a split
-        # inside the window is not scored as a return (IMMP's 1:20 reverse split
-        # on 2026-09-28 read as ~+800% momentum). Genuine crashes and rallies
-        # have no registry entry and are left as-is.
+        # Put the past close on the current close's share basis for registry
+        # splits inside the window, so a split is not scored as a return
+        # (IMMP's 1:20 reverse split on 2026-09-28 read as ~+800% momentum).
+        # Genuine crashes and rallies have no registry entry and are left as-is.
         if _momentum_registry is not None:
-            from common.corporate_actions import cumulative_split_factor
-
-            past_price = past_price * cumulative_split_factor(
-                ticker, past_date.isoformat(), current_date.isoformat(), _momentum_registry
+            past_price = past_price * _observed_registry_split_factor(
+                ticker, prices, past_date, current_date, _momentum_registry
             )
 
         return (current_price / past_price) - 1.0
