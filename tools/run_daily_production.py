@@ -419,6 +419,14 @@ def _load_top_n_tickers_from_prior_snapshot(
         return None
 
 
+def sharadar_price_source_enabled() -> bool:
+    """Sharadar is the primary price source unless BIOTECH_PRICE_SOURCE=yfinance
+    or no SHARADAR_API_KEY is available (then yfinance alone, as before)."""
+    if os.environ.get("BIOTECH_PRICE_SOURCE", "sharadar").strip().lower() == "yfinance":
+        return False
+    return bool(os.environ.get("SHARADAR_API_KEY", "").strip())
+
+
 def refresh_prices(
     price_csv: Path,
     through_date: str,
@@ -466,11 +474,32 @@ def refresh_prices(
             if tickers and "XBI" not in tickers:
                 tickers.append("XBI")
 
+    # Sharadar first (official closes, upserts a trailing window so provisional
+    # values are revised), then yfinance appends whatever is still missing —
+    # e.g. today's bar if Sharadar has not published it yet, or tickers SEP/SFP
+    # do not cover. Roll back with BIOTECH_PRICE_SOURCE=yfinance.
+    sharadar_stats: Optional[Dict[str, Any]] = None
+    if sharadar_price_source_enabled():
+        from common.sharadar_prices import last_dates, refresh_prices_from_sharadar
+
+        _sh_tickers = list(tickers) if tickers else sorted(last_dates(price_csv))
+        if "XBI" not in _sh_tickers:
+            _sh_tickers.append("XBI")
+        sharadar_stats = refresh_prices_from_sharadar(price_csv, through_date, _sh_tickers)
+        _logger.info(
+            f"  Sharadar prices: {sharadar_stats.get('status')} — "
+            f"{sharadar_stats.get('n_revised', 0)} revised, {sharadar_stats.get('n_appended', 0)} appended, "
+            f"latest={sharadar_stats.get('latest_date')}, no-data={len(sharadar_stats.get('no_data_tickers') or [])}"
+            + (f" ({sharadar_stats.get('detail')})" if sharadar_stats.get("detail") else "")
+        )
+
     stats = extend_price_csv(
         csv_path=price_csv,
         through_date=through_date,
         tickers=tickers,
     )
+    if sharadar_stats is not None:
+        stats["sharadar"] = sharadar_stats
 
     # Compute XBI last date from the CSV
     xbi_last_date = _get_ticker_last_date(price_csv, "XBI")
@@ -5823,6 +5852,16 @@ def run_daily(
         )
         _emit_self_improvement_artifacts(_final_snap, manifest)
         return manifest
+
+    # --- Market caps from Sharadar DAILY (raw USD; DAILY reports $ millions) ---
+    if sharadar_price_source_enabled():
+        from common.sharadar_prices import update_market_caps_from_daily
+
+        _mc = update_market_caps_from_daily(data_dir / "market_data.json", as_of_date)
+        _logger.info(
+            f"Sharadar market caps: {_mc.get('status')} — {_mc.get('n_updated', 0)}/{_mc.get('n_records', '?')} updated"
+            + (f" ({_mc.get('detail')})" if _mc.get("detail") else "")
+        )
 
     # --- Pre-patch: update market_data.json prices from price_history.csv ---
     # price_history.csv refreshes daily via a different endpoint; market_data.json
