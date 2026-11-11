@@ -20,6 +20,7 @@ import requests
 # Single authority for CT.gov date granularity. Reused rather than
 # reimplemented so this collector and data_sources/ctgov_client.py cannot drift
 # apart on what "MONTH" means. See Spec 114.
+from common.atomic_io import atomic_write_json
 from data_sources.ctgov_client import date_provenance_shadow
 
 # =============================================================================
@@ -320,7 +321,17 @@ TICKER_TO_SPONSORS = {
     "SRZN": ["Surrozen"],
     "STOK": ["Stoke Therapeutics", "Stoke Therapeutics, Inc."],
     "STRO": ["Sutro Biopharma", "Sutro Biopharma, Inc."],
-    "SUPN": ["Supernus Pharmaceuticals", "Supernus Pharmaceuticals, Inc."],
+    # Indivior acquired Supernus Pharmaceuticals and renamed itself Supernus, Inc.;
+    # ticker INDV -> SUPN on 2026-11-03 (corporate_actions.json). The combined
+    # company sponsors both legacy pipelines.
+    "SUPN": [
+        "Supernus Pharmaceuticals",
+        "Supernus Pharmaceuticals, Inc.",
+        "Supernus, Inc.",
+        "Indivior",
+        "Indivior PLC",
+        "Indivior Inc.",
+    ],
     "SVRA": ["Savara", "Savara, Inc."],
     "SYRE": ["Spyre Therapeutics", "Spyre Therapeutics, Inc."],
     "TARA": ["Protara Therapeutics", "Protara Therapeutics, Inc."],
@@ -460,14 +471,28 @@ def _parse_study(study: dict, ticker: str) -> dict:
     return record
 
 
+# CT.gov API v2 sort applied before the per-query result cap (see _fetch_all_trials).
+_CTGOV_CAP_SORT = "StudyFirstPostDate:desc"
+_CAP_TIEBREAK_EXTRA = 100  # one extra page to settle ties on the boundary date
+
+
 def _fetch_all_trials(query_params: dict, ticker: str, max_retries: int = 3, max_results: int = 1000) -> List[Dict]:
     """Fetch all pages of trials for a given set of query params."""
     base_url = "https://clinicaltrials.gov/api/v2/studies"
     all_trials = []
     next_page_token = None
 
-    while len(all_trials) < max_results:
-        params = {**query_params, "format": "json", "pageSize": 100}
+    # Server-side sort so the cap keeps a DETERMINISTIC subset: the newest
+    # max_results trials by first-posted date. Without it CT.gov's page order is
+    # unstable, and for sponsors above the cap (AZN ~4.8k trials, AMGN, SNY,
+    # LAB, DNA, CAI ...) each run fetched a different arbitrary 1,000 — ~5.6k
+    # trial IDs "disappeared" and ~5.9k "appeared" per collection, flooding
+    # diff-based catalyst detection (2026-08-06 and 2026-11-11). NCTId is not a
+    # sortable field in API v2. One extra page is fetched so ties on the
+    # boundary date are resolved by the local (first_posted, nct_id) sort below.
+    fetch_limit = max_results + _CAP_TIEBREAK_EXTRA
+    while len(all_trials) < fetch_limit:
+        params = {**query_params, "format": "json", "pageSize": 100, "sort": _CTGOV_CAP_SORT}
         if next_page_token:
             params["pageToken"] = next_page_token
 
@@ -484,14 +509,14 @@ def _fetch_all_trials(query_params: dict, ticker: str, max_retries: int = 3, max
 
         time.sleep(0.2)
 
-    # Sort before truncating. CT.gov pagination order is not stable, so an
-    # unsorted cap hands back a different arbitrary subset on every run for any
-    # sponsor with more than max_results trials (AMGN, ABBV, AZN, GILD, SNY and
-    # 5 others sit exactly at the cap). That breaks the "identical inputs ->
-    # byte-identical outputs" rule and makes a golden replay baseline
-    # unreproducible for those names.
-    all_trials.sort(key=lambda t: t.get("nct_id") or "")
-    return all_trials[:max_results]
+    # Deterministic cap: newest first-posted first, NCT ID as tiebreak, then
+    # truncate. (Sorting alone was not enough: the loop used to stop at
+    # max_results, so WHICH trials were fetched was already arbitrary.) Output
+    # stays in nct_id order so files diff cleanly run to run.
+    all_trials.sort(key=lambda t: (t.get("first_posted") or "", t.get("nct_id") or ""), reverse=True)
+    kept = all_trials[:max_results]
+    kept.sort(key=lambda t: t.get("nct_id") or "")
+    return kept
 
 
 def get_trials_for_ticker(ticker: str, max_retries: int = 3, max_results: int = 1000) -> List[Dict]:
@@ -629,9 +654,9 @@ def collect_all_trials(universe_file: Path, output_file: Path, allow_coverage_dr
             print("⚠️  --allow-coverage-drop set; writing anyway.\n")
 
     # Save
-    output_file.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_file, "w") as f:
-        json.dump(all_trials, f, indent=2)
+    # Atomic replace: production_data/trial_records.json is hard-linked into
+    # staged PIT inputs; an in-place write would rewrite them (common/atomic_io.py).
+    atomic_write_json(output_file, all_trials, indent=2)
 
     # Summary
     print(f"\n{'='*80}")
