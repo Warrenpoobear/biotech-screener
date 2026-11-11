@@ -6618,9 +6618,12 @@ def save_validation_snapshot(
 
     try:
         from common.options_history_massive import _get_config as _massive_config
+        from common.options_history_massive import massive_enabled as _massive_enabled
 
         _mc = _massive_config()
-        if _mc.get("api_key"):
+        if not _massive_enabled():
+            _options_freshness["massive_status"] = "disabled"
+        elif _mc.get("api_key"):
             _options_freshness["massive_status"] = "ok"
             _options_freshness["massive_as_of"] = as_of_date
         else:
