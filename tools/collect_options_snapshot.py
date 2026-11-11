@@ -26,9 +26,17 @@ Writes dated snapshot to:
 Also writes/overwrites the rolling latest:
     production_data/options_snapshot_latest.json
 
+PIT guard:
+    tastytrade market metrics are CURRENT-state only. A snapshot is therefore
+    written only when ``as_of_date`` equals today's date in America/New_York.
+    Any other date (e.g. a ``--catch-up`` backfill) is refused: nothing is
+    fetched or written, and ``metadata.skipped`` is set. Without this guard,
+    live chains get labelled with an earlier as-of date (look-ahead); see
+    production_data/_QUARANTINED_2026-11-01_catchup_options/ and
+    _QUARANTINED_2026-11-11_late_fetch_options/.
+
 Usage:
     python3 tools/collect_options_snapshot.py
-    python3 tools/collect_options_snapshot.py --date 2026-06-28
     python3 tools/collect_options_snapshot.py --batch-size 100 --dry-run
 """
 
@@ -41,6 +49,7 @@ import math
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
@@ -283,7 +292,49 @@ def build_output(snapshot: dict, tickers: list[str], as_of_date: str) -> dict:
     }
 
 
-def run(as_of_date: str, batch_size: int, dry_run: bool, verbose: bool) -> dict:
+MARKET_TZ = ZoneInfo("America/New_York")
+
+
+def market_today() -> date:
+    """Today's date in the market time zone (not UTC, not the host's zone)."""
+    return datetime.now(MARKET_TZ).date()
+
+
+def skipped_output(as_of_date: str, today: date) -> dict:
+    """Result returned when the PIT guard refuses a non-current as_of_date."""
+    return {
+        "metadata": {
+            "skipped": True,
+            "skip_reason": "NON_CURRENT_AS_OF_DATE",
+            "as_of_date": as_of_date,
+            "market_today": today.isoformat(),
+            "source": "tastytrade_market_metrics",
+            "universe_count": 0,
+            "returned_count": 0,
+        },
+        "tickers": {},
+    }
+
+
+def run(
+    as_of_date: str,
+    batch_size: int,
+    dry_run: bool,
+    verbose: bool,
+    today: date | None = None,
+) -> dict:
+    today = today or market_today()
+    if as_of_date != today.isoformat():
+        # PIT guard: the source only serves current-state metrics, so any
+        # other label would be look-ahead (backfill) or a mislabel.
+        if verbose:
+            print(
+                f"REFUSED: as_of_date={as_of_date} != market today {today}; "
+                "tastytrade metrics are current-state only (no PIT history). "
+                "Nothing fetched or written."
+            )
+        return skipped_output(as_of_date, today)
+
     data_dir = REPO_ROOT / "production_data"
     universe_path = data_dir / "universe.json"
 
@@ -320,12 +371,19 @@ def run(as_of_date: str, batch_size: int, dry_run: bool, verbose: bool) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="Daily options IV snapshot — tastytrade")
-    parser.add_argument("--date", default=date.today().isoformat(), help="As-of date (YYYY-MM-DD)")
+    parser.add_argument(
+        "--date",
+        default=None,
+        help="As-of date (YYYY-MM-DD); must equal today in America/New_York (default)",
+    )
     parser.add_argument("--batch-size", type=int, default=200)
     parser.add_argument("--dry-run", action="store_true", help="Fetch but do not write files")
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args()
-    run(args.date, args.batch_size, args.dry_run, verbose=not args.quiet)
+    as_of = args.date or market_today().isoformat()
+    out = run(as_of, args.batch_size, args.dry_run, verbose=not args.quiet)
+    if out["metadata"].get("skipped"):
+        sys.exit(2)
 
 
 if __name__ == "__main__":

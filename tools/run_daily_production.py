@@ -5657,12 +5657,19 @@ def run_daily(
             verbose=False,
         )
         _opt_meta = _opt_result.get("metadata", {})
-        _logger.info(
-            f"Options snapshot → {_opt_meta.get('returned_count', 0)}/"
-            f"{_opt_meta.get('universe_count', 0)} fetched | "
-            f"liquid={_opt_meta.get('liquid_count', 0)} "
-            f"event_premium={_opt_meta.get('event_premium_detected', 0)}"
-        )
+        if _opt_meta.get("skipped"):
+            _logger.warning(
+                f"Options snapshot → SKIPPED ({_opt_meta.get('skip_reason')}): "
+                f"as_of={as_of_date} != market today {_opt_meta.get('market_today')}; "
+                "current-state source cannot serve a past date (PIT guard)"
+            )
+        else:
+            _logger.info(
+                f"Options snapshot → {_opt_meta.get('returned_count', 0)}/"
+                f"{_opt_meta.get('universe_count', 0)} fetched | "
+                f"liquid={_opt_meta.get('liquid_count', 0)} "
+                f"event_premium={_opt_meta.get('event_premium_detected', 0)}"
+            )
     except Exception as _opt_err:
         _logger.warning(f"Options snapshot failed (non-blocking): {_opt_err}")
 
