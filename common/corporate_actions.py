@@ -46,6 +46,7 @@ ACTION_TYPES = frozenset(
         "ticker_change",
         "spinoff",
         "bankruptcy",
+        "special_dividend",
     }
 )
 
@@ -77,6 +78,8 @@ class CorporateAction:
     # Rename fields
     old_ticker: Optional[str] = None
     new_ticker: Optional[str] = None
+    # Special dividend: cash per share; effective_date = ex-date
+    amount: Optional[float] = None
     # General
     notes: str = ""
 
@@ -152,6 +155,7 @@ def load_actions(path: Optional[Path] = None) -> CorporateActionRegistry:
                 announced_date=announced,
                 old_ticker=raw.get("old_ticker"),
                 new_ticker=raw.get("new_ticker"),
+                amount=raw.get("amount"),
                 notes=raw.get("notes", ""),
             )
         )
@@ -328,6 +332,16 @@ def cumulative_split_factor(
         if from_date < a.effective_date <= to_date and a.factor:
             factor *= a.factor
     return factor
+
+
+def get_special_dividends(
+    ticker: str,
+    registry: CorporateActionRegistry,
+    *,
+    as_of: Optional[str] = None,
+) -> List[CorporateAction]:
+    """Return special (non-recurring) cash dividends for a ticker."""
+    return [a for a in get_actions(ticker, registry, as_of=as_of) if a.action == "special_dividend"]
 
 
 def list_dead_tickers(
