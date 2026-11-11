@@ -465,11 +465,11 @@
     {
       "ticker": "APGE",
       "action": "acquisition",
-      "announced_date": "2026-06-22",
-      "effective_date": "2026-09-02",
+      "announced_date": "2026-06-18",
+      "effective_date": "2026-09-03",
       "acquirer": "AbbVie",
       "deal_price": 135.11,
-      "notes": "Apogee Therapeutics acquisition by AbbVie at $135.11/share cash (~$10.9B deal value). Announced 2026-06-22. APGE trading at ~$132.55 (1.9% arb discount to deal price). Gate from ranker/selector until acquisition closes; price series freezes at deal value at close Acquisition completed 2026-09-02; last Sharadar SEP row 2026-09-03 (volume=0). [effective_date registered 2026-11-04]"
+      "notes": "Apogee Therapeutics acquisition by AbbVie at $135.11/share cash (~$10.9B deal value). Announced 2026-06-22. APGE trading at ~$132.55 (1.9% arb discount to deal price). Gate from ranker/selector until acquisition closes; price series freezes at deal value at close Acquisition completed 2026-09-02; last Sharadar SEP row 2026-09-03 (volume=0). [effective_date registered 2026-11-04] [corrected 2026-11-11 from 8-K Item 2.01 https://www.sec.gov/Archives/edgar/data/1974640/000114036126035537/ef20081397_8k.htm: effective_date 2026-09-02 -> 2026-09-03: the 8-K states the merger closed on September 3, 2026 and 2026-09-02 was the last trading day; is_dead() applies from effective_date inclusive, so 09-02 dropped APGE on a day it still traded.]"
     },
     {
       "ticker": "CPRX",
@@ -499,20 +499,20 @@
     {
       "ticker": "CRNX",
       "action": "acquisition",
-      "announced_date": null,
+      "announced_date": "2026-07-06",
       "effective_date": "2026-09-01",
-      "acquirer": "Unknown",
-      "deal_price": 84.95,
-      "notes": "Crinetics Pharmaceuticals. Price frozen at $84.84-$84.95 from 2026-08-14; last Sharadar SEP row 2026-09-01 (volume=0, consistent with delisting at close). Removed from IBB/XBI between June and November 2026. Removed from universe. [registered 2026-11-04: effective_date inferred from last price_history row; acquirer and SEC 8-K completion acc pending verification]"
+      "acquirer": "Vertex Pharmaceuticals",
+      "deal_price": 85.0,
+      "notes": "Crinetics Pharmaceuticals. Price frozen at $84.84-$84.95 from 2026-08-14; last Sharadar SEP row 2026-09-01 (volume=0, consistent with delisting at close). Removed from IBB/XBI between June and November 2026. Removed from universe. [registered 2026-11-04: effective_date inferred from last price_history row; acquirer and SEC 8-K completion acc pending verification] [corrected 2026-11-11 from 8-K Item 2.01 https://www.sec.gov/Archives/edgar/data/1658247/000114036126035195/ef20081409_8k.htm: acquirer Unknown -> Vertex Pharmaceuticals; deal_price 84.95 (last close) -> 85.00 merger consideration per 8-K.]"
     },
     {
       "ticker": "TBPH",
       "action": "acquisition",
-      "announced_date": null,
+      "announced_date": "2026-06-28",
       "effective_date": "2026-09-23",
-      "acquirer": "Unknown",
-      "deal_price": 17.03,
-      "notes": "Theravance Biopharma. Price frozen at $17.02-$17.05 from 2026-08-18; last Sharadar SEP row 2026-09-23 with volume spike to 10M (consistent with merger tender close). Removed from IBB between June and November 2026. Removed from universe. [registered 2026-11-04: effective_date inferred from last price_history row; acquirer and SEC 8-K completion acc pending verification]"
+      "acquirer": "Zymeworks",
+      "deal_price": 17.0,
+      "notes": "Theravance Biopharma. Price frozen at $17.02-$17.05 from 2026-08-18; last Sharadar SEP row 2026-09-23 with volume spike to 10M (consistent with merger tender close). Removed from IBB between June and November 2026. Removed from universe. [registered 2026-11-04: effective_date inferred from last price_history row; acquirer and SEC 8-K completion acc pending verification] [corrected 2026-11-11 from 8-K Item 2.01 https://www.sec.gov/Archives/edgar/data/1583107/000110465926109979/tm2625984d1_8k.htm: acquirer Unknown -> Zymeworks; deal_price 17.03 (last close) -> 17.00 cash per 8-K, plus one contingent value right per share (not reflected in deal_price).]"
     },
     {
       "ticker": "ATAI",
@@ -522,6 +522,22 @@
       "acquirer": "Unknown",
       "deal_price": 7.35,
       "notes": "AtaiBeckley Inc. (formerly ATAI Life Sciences, merged with Beckley Psytech). Price frozen at $7.28-$7.39 from 2026-08-26; volume spike to 120M on 2026-09-08 (tender close); last Sharadar SEP row 2026-09-11 (volume=0, delisting at close). Removed from IBB between June and November 2026. Removed from universe. [registered 2026-11-04: effective_date inferred from last price_history row; acquirer and SEC 8-K completion acc pending verification]"
+    },
+    {
+      "ticker": "SUPN",
+      "action": "ticker_change",
+      "effective_date": "2026-11-03",
+      "old_ticker": "INDV",
+      "new_ticker": "SUPN",
+      "notes": "Indivior (CIK 0001625297) acquired Supernus Pharmaceuticals (old SUPN, CIK 0001356576) on 2026-11-02; each Supernus share -> 1.5401 Indivior shares. Combined company renamed Supernus, Inc. and began trading as SUPN in place of INDV on 2026-11-03. Ticker REUSE: pre-2026-11-03 SUPN prices were a different security (old Supernus) and are replaced by Indivior's history (matches yfinance's SUPN series). No 'acquisition' record for old Supernus because is_dead() keys on ticker and would kill the new SUPN. Source: https://www.sec.gov/Archives/edgar/data/1625297/000110465926121013/tm2628720d1_8k.htm"
+    },
+    {
+      "ticker": "SUPN",
+      "action": "reverse_split",
+      "effective_date": "2022-11-28",
+      "ratio": "1:7",
+      "factor": 6.72,
+      "notes": "Copy of INDV reverse split re-keyed to SUPN after INDV->SUPN ticker change (2026-11-03); split lookups are ticker-keyed. Original: Indivior; had prior forward split on 2022-11-23"
     }
   ]
 }
