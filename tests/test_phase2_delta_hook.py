@@ -269,3 +269,97 @@ class TestDeltaHookWiring:
         else:
             exit_code = 0
         assert exit_code == 0
+
+
+# ---------------------------------------------------------------------------
+# Test: production staging layout — prior lives in --prior-snapshot-dir
+# ---------------------------------------------------------------------------
+
+
+class TestDeltaPriorFromPromotedRoot:
+    """Production writes today's snapshot into a staging dir that holds no
+    earlier dates and passes the promoted history as --prior-snapshot-dir.
+    The delta must find its prior there instead of running single-snapshot."""
+
+    def _layout(self, tmp_path):
+        staging = tmp_path / "staging"
+        promoted = tmp_path / "snapshots"
+        _write_snapshot(promoted, "2026-02-05", "d4f1f8a8")
+        _write_snapshot(promoted, "2026-02-06", "d4f1f8a8")
+        current = _write_snapshot(staging, "2026-02-09")
+        return staging, promoted, current
+
+    def test_auto_prior_found_in_promoted_root(self, tmp_path):
+        from run_screen import _run_phase2_delta
+
+        staging, promoted, current = self._layout(tmp_path)
+        args = types.SimpleNamespace(delta_prior="auto", prior_snapshot_dir=str(promoted))
+        _run_phase2_delta(current, staging, args, MagicMock())
+
+        details = json.loads((current / "phase2_run_delta_details.json").read_text())
+        assert details["prior"]["date"] == "2026-02-06"
+
+    def test_explicit_prior_found_in_promoted_root(self, tmp_path):
+        from run_screen import _run_phase2_delta
+
+        staging, promoted, current = self._layout(tmp_path)
+        args = types.SimpleNamespace(delta_prior="2026-02-05", prior_snapshot_dir=str(promoted))
+        _run_phase2_delta(current, staging, args, MagicMock())
+
+        details = json.loads((current / "phase2_run_delta_details.json").read_text())
+        assert details["prior"]["date"] == "2026-02-05"
+
+    def test_without_prior_root_staging_stays_single_snapshot(self, tmp_path):
+        """Unchanged behaviour when no --prior-snapshot-dir is given."""
+        from run_screen import _run_phase2_delta
+
+        staging, _promoted, current = self._layout(tmp_path)
+        args = types.SimpleNamespace(delta_prior="auto")
+        _run_phase2_delta(current, staging, args, MagicMock())
+
+        details = json.loads((current / "phase2_run_delta_details.json").read_text())
+        assert details["prior"] is None
+
+    def test_promoted_root_never_returns_current_or_future(self, tmp_path):
+        from run_phase2_snapshot_delta import find_prior_snapshot
+
+        promoted = tmp_path / "snapshots"
+        _write_snapshot(promoted, "2026-02-06")
+        _write_snapshot(promoted, "2026-02-09")  # same date as current
+        _write_snapshot(promoted, "2026-02-10")  # future
+        assert find_prior_snapshot(promoted, "2026-02-09").name == "2026-02-06"
+        assert find_prior_snapshot(promoted, "2026-02-09", "2026-01-01") is None
+        assert find_prior_snapshot(tmp_path / "missing", "2026-02-09") is None
+
+
+# ---------------------------------------------------------------------------
+# Test: --strict verdicts are deferred, and errors never reuse exit 1/2
+# ---------------------------------------------------------------------------
+
+
+class TestStrictExitContract:
+    def test_worse_strict_exit_keeps_most_severe(self):
+        from run_screen import _worse_strict_exit
+
+        assert _worse_strict_exit(0, 2) == 2
+        assert _worse_strict_exit(2, 1) == 1
+        assert _worse_strict_exit(1, 2) == 1
+        assert _worse_strict_exit(1, 0) == 1
+        assert _worse_strict_exit(0, 0) == 0
+
+    def test_error_exit_codes_do_not_collide_with_strict_verdicts(self):
+        from run_screen import EXIT_INPUT_ERROR, EXIT_UNEXPECTED_ERROR
+
+        for code in (EXIT_INPUT_ERROR, EXIT_UNEXPECTED_ERROR):
+            assert code not in (0, 1, 2)
+
+    def test_main_has_no_early_strict_return(self):
+        """Strict WARN/FAIL must not return before the post-snapshot steps."""
+        import inspect
+
+        import run_screen
+
+        src = inspect.getsource(run_screen.main)
+        assert 'exiting 1")\n                            return 1' not in src
+        assert 'exiting 2")\n                            return 2' not in src
+        assert "return _strict_exit_code" in src

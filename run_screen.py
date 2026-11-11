@@ -12163,6 +12163,20 @@ def add_bootstrap_analysis(
     return results
 
 
+# Exit-code contract with tools/run_daily_production.py:
+#   0 = OK, 1 = --strict health/readiness FAIL, 2 = --strict health WARN.
+#   Any other code is a hard failure. Errors must NOT reuse 1 or 2: the wrapper
+#   promotes exit-1/2 runs as "completed with warnings".
+EXIT_INPUT_ERROR = 8  # ValueError / FileNotFoundError / JSONDecodeError
+EXIT_UNEXPECTED_ERROR = 7  # any other uncaught exception
+_STRICT_EXIT_SEVERITY = {0: 0, 2: 1, 1: 2}  # FAIL (1) outranks WARN (2)
+
+
+def _worse_strict_exit(current: int, new: int) -> int:
+    """Combine two --strict verdict exit codes, keeping the more severe."""
+    return new if _STRICT_EXIT_SEVERITY[new] > _STRICT_EXIT_SEVERITY[current] else current
+
+
 def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
     """Run Phase-2 delta report as a post-snapshot hook.
 
@@ -12176,6 +12190,7 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
         compute_delta,
         compute_health_gate,
         compute_single_snapshot_summary,
+        find_prior_snapshot,
         find_snapshots,
         generate_delta_csv,
         generate_details_json,
@@ -12210,9 +12225,20 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
     # args.delta_prior = None/"" would crash on .lower() below. Normalize here.
     delta_prior = getattr(args, "delta_prior", "auto") or "auto"
 
+    # Production writes the current snapshot into a per-run staging dir that
+    # holds no earlier dates; the promoted history is passed as
+    # --prior-snapshot-dir. Fall back to it whenever the staging dir has no
+    # prior (before this, every production delta ran in single-snapshot mode).
+    _prior_root = getattr(args, "prior_snapshot_dir", None)
+    _prior_root = Path(_prior_root) if _prior_root else None
+    if _prior_root is not None and _prior_root.resolve() == Path(snapshot_dir).resolve():
+        _prior_root = None
+
     # Resolve prior
     if delta_prior == "auto":
         _, prior_path = find_snapshots(snapshot_dir, current_date, None)
+        if prior_path is None and _prior_root is not None:
+            prior_path = find_prior_snapshot(_prior_root, current_date)
         # Silent auto-prior misses left no trail in 2026-04-24's delta report;
         # emit a candidate-by-candidate diagnostic whenever auto finds nothing.
         if prior_path is None:
@@ -12221,12 +12247,14 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
 
                 logger.warning(
                     "Phase-2 delta auto-prior returned None; diagnostics:\n%s",
-                    diagnose_missing_prior(snapshot_dir, current_date),
+                    diagnose_missing_prior(_prior_root or snapshot_dir, current_date),
                 )
             except Exception as _diag_exc:
                 logger.debug("Auto-prior diagnostic failed: %s", _diag_exc)
     elif delta_prior.lower() == "none":
         prior_path = None
+    elif _prior_root is not None and not (Path(snapshot_dir) / delta_prior).is_dir():
+        prior_path = find_prior_snapshot(_prior_root, current_date, delta_prior)
     else:
         _, prior_path = find_snapshots(snapshot_dir, current_date, delta_prior)
 
@@ -13399,6 +13427,11 @@ Module 3 Catalyst Detection:
 
         # Load decision ruleset and patch CLI-only manifest inputs before any
         # output is written, so failed guardrails cannot leave partial outputs.
+        # --strict verdicts are recorded here and returned at the END of main(),
+        # so post-snapshot steps (readiness, bioshort watch, policy shadow /
+        # candidate) still run on WARN/FAIL days. Returning early skipped them
+        # on every strict production run.
+        _strict_exit_code = 0
         de_ruleset = _load_decision_ruleset_for_cli(args)
         if args.decision_mode == "phase2" and args.inputs_manifest != "off":
             _rs_path = Path(args.ruleset) if args.ruleset else PHASE2_DEFAULT_RULESET_PATH
@@ -13549,10 +13582,10 @@ Module 3 Catalyst Detection:
                     if health is not None and getattr(args, "strict", False):
                         if health.status == "FAIL":
                             logger.error("--strict: Phase-2 health FAIL, exiting 1")
-                            return 1
-                        if health.status == "WARN":
+                            _strict_exit_code = _worse_strict_exit(_strict_exit_code, 1)
+                        elif health.status == "WARN":
                             logger.warning("--strict: Phase-2 health WARN, exiting 2")
-                            return 2
+                            _strict_exit_code = _worse_strict_exit(_strict_exit_code, 2)
 
                 # Weekly readiness scorecard — policy-controlled gate
                 try:
@@ -13602,7 +13635,7 @@ Module 3 Catalyst Detection:
                     # In --strict mode, HOLD blocks the screen run
                     if getattr(args, "strict", False) and _gate["gate_status"] == "FAIL":
                         logger.error("--strict: readiness HOLD, exiting 1")
-                        return 1
+                        _strict_exit_code = _worse_strict_exit(_strict_exit_code, 1)
                 except Exception as _exc:
                     logger.debug("Readiness scorecard skipped: %s", _exc)
 
@@ -13698,7 +13731,7 @@ Module 3 Catalyst Detection:
             except Exception as _pc_exc:
                 logger.debug("[POLICY_CANDIDATE] skipped: %s", _pc_exc)
 
-        return 0
+        return _strict_exit_code
 
     except (PathTraversalError, SymlinkError) as e:
         # SECURITY: Log security-related errors without exposing details
@@ -13719,7 +13752,7 @@ Module 3 Catalyst Detection:
         # Sanitize error message to avoid logging sensitive data
         error_msg = sanitize_for_logging(str(e), max_string_length=200)
         logger.error(f"ERROR: {error_msg}")
-        return 1
+        return EXIT_INPUT_ERROR
     except KeyboardInterrupt:
         logger.warning("Pipeline interrupted by user")
         return 130  # Standard exit code for SIGINT
@@ -13728,7 +13761,7 @@ Module 3 Catalyst Detection:
         error_type = type(e).__name__
         error_msg = sanitize_for_logging(str(e), max_string_length=200)
         logger.exception(f"UNEXPECTED ERROR ({error_type}): {error_msg}")
-        return 2
+        return EXIT_UNEXPECTED_ERROR
     finally:
         # Clean up replay bundle temp dir if it was created
         _tmp = locals().get("_replay_tmp_dir")
