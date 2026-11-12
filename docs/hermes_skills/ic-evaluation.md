@@ -303,6 +303,12 @@ Any IC research on expectation-gap features against historical snapshots must ve
 
 - **Mandate progress: 0/20 eligible LIVE windows (code-enforced).** The 10 captures dated 2026-06-12 → 2026-06-26 are a one-time 2026-06-28 backfill (`fv_capture.v1`, legacy hash) and do not count. The production capture tail never ran live 2026-04-17 → 2026-07-10 (`set -e` swallowed it); repaired + deployed 2026-07-10 (PR #489). The clock starts at the first clean LIVE capture.
 - **Clock reset 2026-11-01 (operator-authorized):** the coinvest 13F integrity fix and roster change set `oos_clock_start=2026-11-02`, so the mandate is **0/20 from 2026-11-02**. The 7 eligible windows accrued before the reset (mean weekly excess +0.713%, t = 1.64) are kept as history and **do not count**. Do not cite them as mandate progress. `model_hash` is unchanged. Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`.
+- **Clock reset 2026-11-12 (supersedes the 2026-11-02 start; operator-authorized 2026-11-04):** the CT.gov source refresh and `inst_delta_z` guard fixes (PR #614/#636) reset the clock again.
+  - `oos_clock_start` = the first production run using the merged code (expected 2026-11-12).
+  - Mandate SM-20260629-001 is **0/20** from that run. No capture dated before that run counts (on disk: 2026-11-03 → 2026-11-11).
+  - `CANDIDATE.json` reads 2026-11-02 until the operator updates it. Do not cite tool counts that include those two dates.
+  - `model_hash` is unchanged. Memo: `docs/governance/2026-11-04-missing-fields-clock-reset.md`. Canonical: `docs/MODEL_DOCUMENTATION.md`.
+- **`inst_delta_z` blank ≠ 0 (2026-11-12, PR #635/#636):** a missing or unusable delta (unknown filing period, same-source prior, manager-registry transition) is blank with `has_inst_delta="False"`. The IC dashboard skips it. Never impute 0 or count it as an observation. Older `inst_delta_z` IC readings may include neutral-zero dates and are contaminated.
 - Live status source: `artifacts/forward_validation/LIVENESS_STATUS.json` (refresh via `tools/forward_validation_liveness_monitor.py`); windows: `artifacts/forward_validation/WEEKLY_SUMMARY.md`.
 - Status: OBSERVE / DEM thesis HOLD. Per `docs/FORWARD_VALIDATION_PROTOCOL.md`, clearing the gate only makes the candidate *eligible* for an operator promotion decision; promotion/unfreeze remain explicit operator actions.
 

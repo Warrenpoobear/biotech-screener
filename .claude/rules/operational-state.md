@@ -8,10 +8,11 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-11-01  
+**Last updated:** 2026-11-12  
 **Update cadence:** weekly or upon governance-state change  
 **Authority:** operational status snapshot only; not architectural specification  
 **Staleness risk:** MEDIUM (reference `governance.md` for timeless process)  
+**2026-11-12 update scope:** only Architecture Freeze Status, Governance Events, and the `inst_delta_z` line under Forward Shadow & IC (corrected: the live ranker does not read it). Everything else keeps its own as-of date.  
 **2026-11-01 update scope:** only these sections were refreshed: Architecture Freeze Status, 13F Cycle Status, Governance Events, and the superseded Q1-promotion note in h20d. Sections with older dates (Forward Shadow & IC, h20d, Active Spec Status, Hermes Skills Hub) were not reviewed and keep their own as-of dates.
 
 ---
@@ -32,11 +33,15 @@ metadata:
 **MODEL BEHAVIOR REMAINS FROZEN. The 2026-06-24 "lift" was tooling-scoped only — do not read it as authorization to change the model.**
 
 - **INC-2026-06-20 scoped freeze — narrowly lifted 2026-06-24:** operator authorized the lift **solely to unblock Spec 100** (ranker IC tooling correction). Spec 100 is implemented (commit `2faa88e6`); that lift is spent.
-- **Currently binding (2026-11-01):**
+- **Currently binding (2026-11-12):**
   - **DEM candidate freeze + NO_MODEL_CHANGE forward-validation window**, per `docs/FORWARD_VALIDATION_PROTOCOL.md` §1 (RATIFIED 2026-06-28; mandate SM-20260629-001). No ranker/selector/feature/eligibility/sizing/rebalance-policy/price-source change is permitted, and any authorized bug fix resets the out-of-sample clock.
-  - **Clock reset authorized 2026-11-01:** the operator approved the coinvest 13F integrity fix and roster change, so `oos_clock_start=2026-11-02` and the **mandate restarts at 0/20**. The 7 prior eligible windows (t = 1.64) stay as history but no longer count. Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`. If the PR merges after the 2026-11-02 production run, `oos_clock_start` moves to the first run that uses the merged code.
-  - **FROZEN (BLOCKED_LEVEL_0)** per `docs/MODEL_DOCUMENTATION.md` (canonical; synced 2026-11-01). Where this snapshot disagrees with the model doc, the model doc governs.
-- **Candidate identity:** `model_hash=827c35a9ed3ee6e1` / `hash_scheme=ast-v1` (legacy `a9983a67c6954813`; `registered=2026-06-26` unchanged; `oos_clock_start=2026-11-02`). Source: `artifacts/forward_validation/CANDIDATE.json`. The hash is unchanged by the 2026-11-01 reset because only inputs changed, not engine files.
+  - **Clock reset 2026-11-12 (operator-authorized 2026-11-04; supersedes the 2026-11-02 start):** PR #614 (CT.gov source refresh + blocking `ctgov_content_freshness` gate) and PR #636 (`inst_delta_z` registry-transition guard writes blank) merged 2026-11-12.
+    - `oos_clock_start` = **pending: first post-merge production run (expected 2026-11-12)**. The **mandate restarts at 0/20**.
+    - All captures from 2026-11-02 up to the new start (on disk: 2026-11-03 → 2026-11-11; `WEEKLY_SUMMARY.md` shows 1 eligible under the stale epoch) and the 7 pre-2026-11-01 windows (t = 1.64) are history only.
+    - Memo: `docs/governance/2026-11-04-missing-fields-clock-reset.md`.
+  - **Price source:** Sharadar is primary with yfinance fallback (PR #622, merged 2026-11-11). The first in-pipeline run is expected 2026-11-12. There is no governance memo for this protocol §1 price-source change, so **operator acknowledgement is pending** (see the model doc 2026-11-12 entry).
+  - **FROZEN (BLOCKED_LEVEL_0)** per `docs/MODEL_DOCUMENTATION.md` (canonical; synced 2026-11-12). Where this snapshot disagrees with the model doc, the model doc governs.
+- **Candidate identity:** `model_hash=827c35a9ed3ee6e1` / `hash_scheme=ast-v1` (legacy `a9983a67c6954813`; `registered=2026-06-26` unchanged). Source: `artifacts/forward_validation/CANDIDATE.json`, which **still reads `oos_clock_start=2026-11-02` until the operator updates it** (memo §4 step 4). The hash is unchanged by both resets because only inputs and tooling changed, not engine files.
 - `ranker_active_contract.py` (branch `hygiene/ranker-active-contract-2026-04-30`) remains deferred
 - All prior ranker IC claims based on `composite_score` remain non-authoritative; ranker IC = `final_score` per Spec 100, interpretation deferred pending governance battery
 
@@ -95,7 +100,10 @@ metadata:
 - **IC checkpoint (Phase 2)**: Extended to 2026-07-01 (coincides with h20d re-eval gate). Next formal IC review: 2026-07-01. Early-review trigger: score_rank_pct mean_ic drops below 0.00 in any intervening daily snapshot.
 - **coinvest_score_z IC** (last measured 2026-05-13): Pooled mean IC = -0.031 (14 dates). Refresh pending freeze lift.
 - **Ranker IC**: UNMEASURED. Existing tools conflate composite_score with final_score (Spec 095). All prior ranker IC claims remain non-authoritative until Spec 100 reviewed.
-- **inst_delta_z**: zeroed in selector since 2026-05-04. Active in ranker (NW-t = +3.32). Reinstatement requires IC recovery evidence.
+- **inst_delta_z**: zeroed in selector since 2026-05-04.
+  - *(Corrected 2026-11-12: it is **not** in the live ranker. `minimal_v2` reads only `coinvest_score_z` + `financial_score`. The NW-t = +3.32 is a historical within-cohort audit figure.)*
+  - A missing delta, including on a registry transition, is blank with `has_inst_delta="False"`, not 0 (PR #635/#636). The IC panel skips it.
+  - Reinstatement requires IC recovery evidence.
 - **PIT/backtest research (2026-06-22)**: Autonomous PIT/backtest research quarantined (PR #379). Not accepted evidence. Do not cite for model decisions without explicit operator acceptance.
 
 ## h20d Re-Evaluation Gate
@@ -169,6 +177,20 @@ metadata:
 - Governance label: Tooling/knowledge-layer expansion only. No model, ranker, selector, sizing, or alpha-promotion change.
 
 ---
+
+## Governance Events (2026-11-12)
+
+- **Missing-field fixes and clock reset (PR #614 `8f821f92` + #636 `01c5bd0b`, merged 2026-11-12; operator-authorized 2026-11-04):**
+  - M2: `production_data/trial_records.json` had been frozen since about 2026-08-07. `cron_data_refresh.sh stage_ctgov` now runs `collect_ctgov_data.py`, and a new **blocking** gate `ctgov_content_freshness` FAILs when the newest `last_update_posted` is more than 7 days old.
+  - M3: `_apply_inst_registry_transition_guard` blanks `inst_delta_z` on a manager-count change. There is no ranking effect under the live ruleset.
+  - `oos_clock_start` = first post-merge run (pending; expected 2026-11-12). Mandate 0/20. No hash rotation.
+  - Memo: `docs/governance/2026-11-04-missing-fields-clock-reset.md`.
+  - The M2 ranking impact has not been measured; measure it on the first post-deploy run.
+- **Sharadar price + market-cap source (PR #622, merged 2026-11-11), with the market-cap unit fix (PR #621):**
+  - The commit message says this was operator-authorized, but there is **no memo or HASH_ROTATIONS entry**.
+  - Protocol §1 forbids price-source changes in the window without authorization and a reset. Operator acknowledgement is pending.
+  - The first in-pipeline run coincides with the #614 reset start.
+- **Ops (PR #633):** the watchdog's trapops recovery is now gated on today's `rankings.csv`, which removes the false MISSED/FAILED alarms. Tier 1, no reset.
 
 ## Governance Events (2026-11-01)
 

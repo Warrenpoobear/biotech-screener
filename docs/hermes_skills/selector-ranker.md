@@ -287,6 +287,10 @@ size_multiplier = max(0.40, 1.0 - 0.60 * ev_severity_score)
 - **Candidate identity:** `model_hash=827c35a9ed3ee6e1` (`ast-v1` behavioral fingerprint over `ranker_engine.py`/`selector_engine.py`/`decision_engine.py`); legacy raw-bytes `a9983a67c6954813`. Registered 2026-06-26 (unchanged); re-hashed 2026-07-10.
 - **Deployed ≠ trained:** `production_data/ranker_v2_model.json` is a 2-feature `pairwise_logistic` with `coinvest_score_z` capped to +0.02 (trained +0.0613) and `financial_score` −0.0533; see the artifact's `provenance` block. Any prose claiming a 5- or 6-feature production ranker is wrong.
 - **13F Q1 2026: HOLD / observation-only.** 55-manager Jaccard last measured 0.463 (FAIL vs 0.70); the 0.875 figure was Q4/49-manager. Authority: `artifacts/readiness/H20D_REEVAL_VERDICT_2026_07_04.md`; clearance requires `tools/check_13f_cohort_quarantine.py` against a post-Q1-promotion snapshot. *(Superseded 2026-11-01: the selector input `coinvest_signals.json` was rebuilt from Q2 2026 13F with a 30-manager `elite_core` (registry v4.0), and the out-of-sample clock was reset (`oos_clock_start=2026-11-02`, mandate 0/20). The next check is `--pre-date 2026-10-30 --post-date <first post-merge snapshot>`. Engine `model_hash` is unchanged. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`.)*
+- **Current model-status note, 2026-11-12:**
+  - The 2026-11-02 clock start is superseded. `oos_clock_start` is the first production run using the PR #614/#636 code (expected 2026-11-12), and the mandate is 0/20 from there (memo `docs/governance/2026-11-04-missing-fields-clock-reset.md`). `model_hash` and ruleset are unchanged; still FROZEN.
+  - The live `minimal_v2` ranker reads only `coinvest_score_z` + `financial_score`. It does **not** read `inst_delta_z`; only the legacy `minimal` feature set did. A blank `inst_delta_z` therefore has no ranking effect under ruleset `8887576e`.
+  - Canonical: `docs/MODEL_DOCUMENTATION.md`.
 
 ## Session-end learning
 

@@ -78,6 +78,11 @@ Always warm 8-K cache BEFORE running screen.
 
 Gate progress: **0/20 eligible LIVE windows (code-enforced)** — the 10 legacy captures (2026-06-12 → 2026-06-26) are a one-time backfill and do not count. 2026-09-30 = status checkpoint (not a deadline); ~mid-November 2026 = 20-window gate. For current status always read `docs/model_documentation.md` § "Recent Updates — 2026-07-10" and `artifacts/forward_validation/LIVENESS_STATUS.json` — do not trust counts cached in skills.
 
+Current model-status note, 2026-11-12:
+- The "mid-November 20-window gate" above is **superseded**. The clock was reset on 2026-11-01 and again on 2026-11-12. `oos_clock_start` is the first production run using the PR #614/#636 code (expected 2026-11-12), and the mandate restarts at 0/20. Read the newest "Recent Update" in `docs/MODEL_DOCUMENTATION.md`.
+- New **blocking** production gate `ctgov_content_freshness`: it FAILs if the newest `last_update_posted` in `production_data/trial_records.json` is more than 7 days old. The source file is refreshed by `tools/cron_data_refresh.sh ctgov` (`collect_ctgov_data.py`). A fresh `cache/ctgov/trial_records_<date>.json` filename does **not** prove fresh content.
+- Prices: Sharadar is primary, with yfinance fallback (PR #622; `BIOTECH_PRICE_SOURCE=yfinance` reverts). This price-source change still needs operator governance acknowledgement under `docs/FORWARD_VALIDATION_PROTOCOL.md` §1.
+
 **Governance:** NO_MODEL_CHANGE — the candidate is *observed*, not promoted. Clearing the 20-window gate only makes it *eligible* for an operator promotion decision; promotion/unfreeze remain explicit operator actions, and the §2 test is locked (not to be re-specified after data is seen).
 
 ---
