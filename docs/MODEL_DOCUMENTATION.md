@@ -1,11 +1,11 @@
 # Wake Robin DEM — Model Documentation
 
 **Version:** 1.7.2 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
-**Last updated:** 2026-11-01 (coinvest 13F integrity fix + operator roster change — **operator-authorized selector-input change with out-of-sample clock reset**: `coinvest_signals.json` rebuilt from Q2 2026 13F [was stuck on Q1 since 2026-05-22], builder 1.1.0 staleness gate / firm grouping / roster gate, run-time filing-age refresh, `manager_registry.json` v4.0 with 30-manager `elite_core`; forward-validation `oos_clock_start=2026-11-02`, mandate restarts at 0/20; `model_hash 827c35a9ed3ee6e1` and ruleset `8887576e` unchanged. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`)
-**Prior update:** 2026-07-10 (forward-validation feed hardening — PR #489 merged & deployed to `main` @ `4d8623e5`: `set -e` wrapper fix, behavioral model-hash `ast-v1`, capture freshness gate + mandate quarantine schema, price-feed MultiIndex fix + `price_append_health` hard gate, liveness monitor; `CANDIDATE.json` re-registered to `827c35a9` [annotation-only equivalent to frozen `a9983a67`; freeze date 2026-06-26 unchanged]; **NO_MODEL_CHANGE**. Diagnostic perf as-of 7/9 [gross, research-only]: DEM Top-30 EW YTD +43.52% vs XBI +35.19%)
-**Earlier update:** 2026-06-28 (IC health check — `score_rank_pct` mean_ic +0.049 HEALTHY, hit_rate 61.8%, N=34; regime monitor gate met 118/20 windows, avg XS +0.268%; EES advisory 5/30 flagged; **no production change**. Earlier same day: YTD backtest data integrity audit — corrected YTD DEM +38.52% vs XBI +27.43% (+11.09pp); weekly validation DEM +31.79% vs SPY +12.32%, Sharpe 2.49)
-**Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature, ordinal-only) + EW Top-30. **FROZEN** until governance gates clear.
-**Coinvest input (from 2026-11-02 production run):** Q2 2026 13F (`period_of_report=2026-06-30`, file as_of 2026-10-30), 30-manager `elite_core` roster (registry v4.0) + unchanged 6-manager `conditional` tier; forward-validation clock restarted 2026-11-02 (0/20).
+**Last updated:** 2026-11-12 (missing-field fixes, PR #614 + #636, **operator-authorized input change with a second out-of-sample clock reset**. CT.gov source refresh wired into cron, plus a new blocking `ctgov_content_freshness` gate. `production_data/trial_records.json` had been frozen since about 2026-08-07. `inst_delta_z` registry-transition guard writes blank, not 0. `oos_clock_start` = **pending: first post-merge production run (expected 2026-11-12)**. Mandate SM-20260629-001 restarts at 0/20, and every capture before the new start (2026-11-02 → 2026-11-11) no longer counts. Also documents the Sharadar price/market-cap source cutover (PR #622, first in-pipeline run expected 2026-11-12), which has **no governance memo** (see the 2026-11-12 entry). `model_hash 827c35a9ed3ee6e1` and ruleset `8887576e` are unchanged, with no hash rotation. See `docs/governance/2026-11-04-missing-fields-clock-reset.md`)
+**Prior update:** 2026-11-01 (coinvest 13F integrity fix + operator roster change; operator-authorized selector-input change with a clock reset. Q2 2026 13F rebuild, builder 1.1.0/1.2.0, registry v4.0 with a 30-manager `elite_core`, `oos_clock_start=2026-11-02` [now superseded]. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`)
+**Earlier update:** 2026-07-10 (forward-validation feed hardening, PR #489: `set -e` wrapper fix, behavioral model-hash `ast-v1`, capture freshness gate + mandate quarantine schema, price-feed fix + `price_append_health` hard gate, liveness monitor. `CANDIDATE.json` re-registered to `827c35a9`, annotation-only equivalent to `a9983a67`. **NO_MODEL_CHANGE**)
+**Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature: `coinvest_score_z` + `financial_score`; ordinal-only; does **not** read `inst_delta_z`) + EW Top-30. **FROZEN** until governance gates clear.
+**Coinvest input (from 2026-11-02 production run):** Q2 2026 13F (`period_of_report=2026-06-30`, file as_of 2026-10-30), 30-manager `elite_core` roster (registry v4.0) + unchanged 6-manager `conditional` tier. Forward-validation clock: the 2026-11-02 start was superseded on 2026-11-12. The new start is pending the first post-merge production run (0/20).
 Deployed ranker artifact = **capped Family C live-pilot vector**, not identical to the trained `minimal_v2`
 weights. See `production_data/ranker_v2_model.json` → `provenance` block for the deployed vs trained delta.
 
@@ -13,6 +13,148 @@ weights. See `production_data/ranker_v2_model.json` → `provenance` block for t
 stale selector/ranker prose with the already-active v1.14.0 configuration. The
 selector, ranker_v2 weights, eligibility rules, decision rulesets, and EW Top-30
 construction remain frozen; this document does not authorize behavior changes.
+
+---
+
+## Recent Update — 2026-11-12 (Missing-Field Fixes: CT.gov Source Refresh + Content Gate, `inst_delta_z` Blank Semantics — Out-of-Sample Clock Reset; Sharadar Price-Source Cutover)
+
+Classification: `DATA_INTEGRITY_FIX / NEW_BLOCKING_GATE / OOS_CLOCK_RESET`. Tier 3, the highest affected tier. Separately, `PRICE_SOURCE_CHANGE` (PR #622) is documented here as a **governance gap** (see below). Source of truth: `docs/governance/2026-11-04-missing-fields-clock-reset.md` (amended 2026-11-12). Merges: PR #614 (`8f821f92`, 2026-11-12), PR #636 (`01c5bd0b`, 2026-11-12), PR #635 (`d8e9af62`), PR #622 (`f666886d`, 2026-11-11), PR #621 (`9abd748e`, 2026-11-11).
+
+Summary:
+- **M2, CT.gov source never refreshed.** `production_data/trial_records.json` had not been refreshed since about 2026-08-07. Its newest `last_update_posted` was 2026-09-14 at memo time.
+  - `tools/cron_data_refresh.sh` `stage_ctgov` only ran `warm_caches`, which PIT-filtered the stale file into a new `cache/ctgov/trial_records_<date>.json` every day.
+  - Diff-based CT.gov catalyst events were therefore 0 every day since 2026-08-07.
+  - The existing `source_freshness` check passed because it ages the cache by filename date, not by content.
+  - Fix:
+    - `stage_ctgov` now runs `collect_ctgov_data.py` before `warm_caches`. It writes to a seeded temp copy and swaps it in on success; on failure it keeps the previous file.
+    - New **blocking** gate `ctgov_content_freshness` in `tools/run_daily_production.py` (`check_ctgov_content_freshness`, `CTGOV_CONTENT_MAX_AGE_DAYS = 7`). It FAILs when the newest `last_update_posted` on or before as_of is more than 7 days old. Later dates are ignored, so reruns stay PIT. A FAIL gate blocks snapshot promotion.
+- **M3, registry-transition guard.** On 2026-11-03 the current 13F summary had 30 managers against 49 in the prior (2026-08-13) summary, so `inst_delta_z` was contaminated: 189/298 tickers showed net exits.
+  - `_apply_inst_registry_transition_guard` in `run_screen.py` now clears `inst_delta_z` when the manager counts differ. Raw `inst_delta_*` counts are kept.
+  - PR #636 amended it to write `""` and set `has_inst_delta="False"`, instead of the 0.0 first merged in #614.
+- **PR #635, missing delta stays blank.** In `institutional_summary.py::resolve_cross_quarter_delta`:
+  - An empty 13F filing period now returns no signal (`unknown_filing_period`) instead of a cross-quarter delta of identically 0.
+  - A same-source prior also returns no signal (`same_source_cache`).
+  - `tools/build_ic_dashboard.py` skips dates with no measured `inst_delta_z`.
+  - #635 also drops renamed-away symbols (e.g. INDV) on the ticker-change date, and no longer treats a price gap as a split when the corporate-actions registry is absent.
+- **M1, health price-coverage denominator.** Superseded by `main` `8f6e7823` (2026-11-11) and resolved to main's version at merge. Health report only.
+- **M4, Massive (Polygon) options credentials.** Not fixed by #614 (memo §1). PR #631 (`3a0d5c03`) later turned the Massive API off unless `MASSIVE_ENABLED=1`. These are overlay-only fields with no scoring effect under the live ruleset.
+
+Governance verdict:
+- `INPUT_CHANGE + OOS_CLOCK_RESET`, operator-authorized in session 2026-11-04 under `docs/FORWARD_VALIDATION_PROTOCOL.md` §1 (memo header). This is **not** `NO_MODEL_CHANGE`: M2 changes clinical/catalyst inputs and adds a blocking production gate.
+- Frozen status: unchanged. The DEM candidate freeze, the NO_MODEL_CHANGE forward-validation window and **FROZEN (BLOCKED_LEVEL_0)** all remain in force. This update does not unfreeze the model, clear any gate or authorize promotion.
+- Identity: `model_hash=827c35a9ed3ee6e1` (ast-v1) and ruleset `8887576e` (v1.14.0) are unchanged. There is **no hash rotation**: `ranker_engine.py`, `selector_engine.py` and `decision_engine.py` are untouched, and `governance/HASH_ROTATIONS.md` has no 2026-11-04 entry, consistent with the memo.
+- **`oos_clock_start`: pending. It will be the first post-merge production run, expected 2026-11-12 (16:30 ET), which had not yet run when this was written.**
+  - `artifacts/forward_validation/CANDIDATE.json` **still reads `oos_clock_start=2026-11-02`** until the operator updates it (memo §4 step 4).
+  - Until then, `tools/weekly_validation_summary.py` applies the 2026-11-02 epoch, so tool output may still count pre-fix captures. The live checkout holds LIVE/PASS captures for 2026-11-03 → 2026-11-11, and `artifacts/forward_validation/WEEKLY_SUMMARY.md` currently shows **1** mandate-eligible window under the 2026-11-02 epoch. The memo (written 2026-11-04) names only 11-02/11-03, but every capture dated before the new start is pre-fix. None of them **count** toward SM-20260629-001 and must not be cited as mandate progress.
+  - Mandate SM-20260629-001 restarts at **0/20**.
+- Operator action required:
+  1. Set `CANDIDATE.json` `oos_clock_start` to the first post-merge run's date, with an `oos_clock_reset_note` citing the memo.
+  2. Make sure the CT.gov refresh has run before the 16:30 ET production run (`tools/cron_data_refresh.sh ctgov`, memo §4 step 3). When read at 10:44 ET on 2026-11-12, `production_data/trial_records.json` in both the worktree and the live checkout had newest `last_update_posted = 2026-11-03`, which is 9 days old. The new blocking gate would FAIL on that file.
+  3. Measure the M2 ranking impact on the first post-deploy run against the prior day. It was not measured before merge (memo §3).
+  4. Acknowledge the PR #622 price-source change under protocol §1 (governance gap below).
+
+Evidence:
+- Memo `docs/governance/2026-11-04-missing-fields-clock-reset.md` §1–§4. Commits `378a199d` (M2), `53ccc078` (M3), `0aa45895` (#636 amendment), `d8e9af62` (#635).
+- Code (verified in tree at `01c5bd0b`):
+  - `tools/cron_data_refresh.sh::stage_ctgov` (calls `collect_ctgov_data.py`, timeout 3000s).
+  - `tools/run_daily_production.py::check_ctgov_content_freshness`, wired after `source_freshness`.
+  - `run_screen.py::_apply_inst_registry_transition_guard` (writes `""`, `has_inst_delta="False"`).
+- Tests: `tests/test_ctgov_content_freshness_gate.py`, `tests/test_inst_registry_transition.py`.
+- The live checkout is at `01c5bd0b` (read-only check, 2026-11-12 10:44 ET).
+
+Impact on alpha interpretation:
+- **No new performance evidence.** This is an integrity and governance update. Pre-reset forward captures (the 7 pre-2026-11-01 windows and all captures from 2026-11-02 up to the new start) are history only.
+- **M2 is a PIT/input-freshness repair, not an alpha claim.**
+  - From about 2026-08-07 to 2026-11-11, every CT.gov-derived clinical/catalyst input was built from a frozen trial file. Read any catalyst or clinical diagnostic over that span as reflecting stale trial data.
+  - Fresh records can change eligibility, catalyst buckets and gates (memo §3). The size of the change is **not yet measured**.
+  - The new gate prevents a repeat of this kind of false freshness, where the filename date is current but the content is stale.
+- **M3/#636/#635: no ranking change under the live ruleset** (memo §3):
+  - `sort_anchor = selector_score`, the selector weight on `inst_delta_z` is 0, and the live `minimal_v2` ranker reads only `coinvest_score_z` and `financial_score`.
+  - Readers that do change are the non-blocking rebalance-plan artifact (Top-30 → Top-20 prune by `inst_delta_z`), shadow and IC trackers, and the Event EV expectation overlay.
+  - **IC caveat:** before #635/#636, dates with an unknown filing period, a same-source prior or a registry transition stored `inst_delta_z` as neutral 0.0, and the IC panel counted those as measurements. Historical `inst_delta_z` IC readings that include such dates are contaminated. The affected dates have not been enumerated. `inst_delta_z` stays diagnostic-only.
+- **Blank ≠ zero for `inst_delta_z`:** a blank `inst_delta_z` with `has_inst_delta="False"` means no measured delta. Never impute 0, and never count it as an IC observation.
+
+What changed:
+- `tools/cron_data_refresh.sh` (`stage_ctgov` source refresh), `tools/run_daily_production.py` (new blocking gate), `run_screen.py` (registry-transition guard, blank semantics), `institutional_summary.py` and `tools/build_ic_dashboard.py` (#635).
+- The out-of-sample clock start moves from 2026-11-02 to the first post-merge production run. This is pending and has not yet been recorded in `CANDIDATE.json`.
+
+What did not change:
+- Ranker: unchanged (`minimal_v2` capped Family C artifact, `coinvest_score_z` + `financial_score`; `model_hash` unchanged).
+- Selector: engine and weights unchanged (`coinvest_score_z` 100%, `inst_delta_z` 0%).
+- Scoring: `final_score` logic unchanged. Clinical/catalyst *inputs* change through fresh CT.gov data (M2).
+- Eligibility: rules unchanged. Outcomes may change through fresh trial data (unmeasured).
+- Sizing: EW Top-30 unchanged.
+- Production wiring: a new blocking gate (`ctgov_content_freshness`) and a CT.gov source-refresh step. Ruleset `8887576e` stays pinned.
+- Trading/actionability: no rebalance-policy change.
+
+**Price source: Sharadar primary, yfinance fallback (PR #622, `5ba10e1f`, merged `f666886d` 2026-11-11 13:37 ET). This is a governance gap.**
+- What it does:
+  - `tools/run_daily_production.py::sharadar_price_source_enabled()` is on by default when `SHARADAR_API_KEY` is set. `BIOTECH_PRICE_SOURCE=yfinance` or a missing key restores yfinance-only behaviour.
+  - `common/sharadar_prices.py` re-fetches a trailing 10-day window from SEP (SFP for ETFs including XBI) and upserts it into `production_data/price_history.csv`. yfinance appends only what is still missing.
+  - Convention: **split-adjusted, not dividend-adjusted** (SEP `close`).
+  - Market cap and EV come from Sharadar DAILY ×1e6.
+  - One-time cutover tool: `tools/sharadar_price_backfill.py` (dry run by default; `--apply` to write; rows before 2020-01-01 untouched).
+- Commit-message validation on 2026-11-11 data, not independently re-run here:
+  - 91.7% of split-adjusted closes since 2020 within 0.5% of yfinance.
+  - Large gaps in IRON/LENZ/LGND/ORKA (reverse-merger histories) and AZN, where yfinance carries a fake +100% day at the 2026-01-28 ADR change.
+  - Actionable Top-30 identical to the yfinance run (0/30 change).
+- Timing: the 2026-11-11 production run's `run_manifest.json` records commit `cd592c20`, which predates #621/#622. **2026-11-12 is therefore the first in-pipeline Sharadar run, the same run that starts the #614 clock.** Whether production has `SHARADAR_API_KEY` set, and whether the one-time backfill was `--apply`'d, is **not verified** (`price_history.csv` is untracked).
+- Related, PR #621 (`6d7643fe`):
+  - A 2026-11-04 manual Sharadar refresh (`b1c302a7`) wrote market caps in $ millions into `market_data.json`. That caused an 11/30 Top-30 churn in an isolated 2026-11-11 screen. The live file was restored before the 16:30 run.
+  - Fix: scale ×1e6, plus a new `check_market_data_schema` FAIL when the median `market_cap` is below $10M (`MARKET_DATA_MIN_MEDIAN_CAP_USD`).
+- **Gap:**
+  - `docs/FORWARD_VALIDATION_PROTOCOL.md` §1 lists "No price-source change" during the window unless a verified bug is identified and the operator explicitly authorizes it, which resets the clock.
+  - The #622 commit message states "Operator-authorized source change (2026-11-11) … forward-validation comparability across the cutover is accepted." However, there is **no governance memo** in `docs/governance/`, **no `HASH_ROTATIONS.md` entry**, and the 2026-11-04 memo does not mention it.
+  - Neither the protocol §1 table (`price_history_split_adj.csv`) nor `CANDIDATE.json` `price_source` (`production_data/price_history.csv (close, split-adjusted)`) records the vendor.
+  - In practice, the #614 reset start coincides with the first Sharadar run. So **if** `oos_clock_start` is set to 2026-11-12 or later, the new forward window is not split across the price-source cutover.
+  - This document does **not** record an authorization. **Operator acknowledgement is required**, for example a memo or an amendment to the 2026-11-04 memo, to put the #622 cutover under the same reset on the record.
+
+**Other input changes merged between 2026-11-02 and the new clock start.** These are identified from commit titles only and were not individually reviewed here. All of them land before the pending `oos_clock_start`, so by timing they fall inside the new window's starting configuration:
+- curated PDUFA calendar +32 dates (PR #593). Its `HASH_ROTATIONS.md` 2026-11-03 entry still says the effective date is "Not yet decided".
+- universe +11 XBI tickers (#605) and universe-status / corporate-action updates (#601–#604).
+- INDV→SUPN ticker change and PDUFA/8-K corrections (#618).
+- inst_delta same-source handling (#626).
+- split-registry momentum adjustment (#625).
+- SEC 8-K PDUFA mislabel fix (#630).
+
+The operator may want the reset record to name these explicitly.
+
+Ops tooling (no model effect): PR #633 (`9c730878`) gates the cron watchdog's trapops recovery on today's `rankings.csv`. Before the fix it produced about 50 false MISSED/FAILED pairs per weekday before the 16:30 run. Tier 1, no clock reset.
+
+Skill synchronization:
+- Skills reviewed:
+  - `skills/ic_evaluation`, `skills/selector_ranker`, `skills/screener_ops`, `skills/institutional_signal`, `skills/operational_health_baselines`, `skills/validation`, `skills/biotech-ic-council`.
+  - The `docs/hermes_skills/` mirrors.
+  - `.claude/rules/operational-state.md`, `.claude/rules/research-backtest.md`, `.claude/rules/production-pipeline.md`.
+  - User-level `~/.claude/skills/biotech-*`, read-only.
+- Skills updated (repo `skills/` sources only; dated 2026-11-12 notes):
+  - `skills/ic_evaluation/SKILL.md`: clock-reset bullet; blank `inst_delta_z` is skipped by the IC panel.
+  - `skills/selector_ranker/SKILL.md`: `oos_clock_start=2026-11-02` marked superseded; live ranker does not read `inst_delta_z`.
+  - `skills/screener_ops/SKILL.md`: the "mid-November 20-window gate" is superseded by the restart; new CT.gov content gate.
+  - `skills/institutional_signal/SKILL.md`: blank-vs-zero semantics for `inst_delta_z`.
+  - `skills/operational_health_baselines/SKILL.md`: CT.gov source-content freshness row (filename date alone is insufficient).
+  - `.claude/rules/operational-state.md`: freeze/clock status. Also removes the stale "inst_delta_z … Active in ranker (NW-t = +3.32)" line.
+- Not hand-edited: the `docs/hermes_skills/` mirrors are generated from `skills/` by `tools/sync_hermes_skills.py`. Run the sync to propagate.
+- Skills not updated: `skills/validation` and `skills/biotech-ic-council` (no stale clock/price/inst_delta facts), and `.claude/rules/research-backtest.md` (historical B6 claims, out of scope).
+- Reason: skill instructions synchronized so future agents do not:
+  - cite 2026-11-02 as the clock start;
+  - treat a fresh CT.gov cache filename as fresh content;
+  - treat a blank `inst_delta_z` as a neutral zero;
+  - repeat the claim that the live ranker uses `inst_delta_z`.
+
+Open questions / next validation:
+- Record the new `oos_clock_start` in `CANDIDATE.json` (operator).
+- First post-deploy run: measure the M2 Top-30 / eligibility / bucket change against the prior day. Confirm that `ctgov_content_freshness` PASSes and that the Sharadar refresh status is OK or PARTIAL.
+- **Risk:** `ctgov_content_freshness` is blocking. If CT.gov collection fails for more than 7 days, production stops promoting snapshots. The collector's coverage-regression guard (exit 2, keeps the previous file) is the most likely trigger (memo §4).
+- Operator acknowledgement of the #622 price-source change, and optionally of the other input changes listed above.
+- Still open from 2026-11-01: run the 13F post-filing quarantine check; the Q3 2026 13F deadline is about 2026-11-14 (manual, governed rebuild). RNA and GLPG universe follow-ups (memo §2).
+
+Prior claim retracted:
+- Old claim: "the pairwise ranker consumes `inst_delta_z`" (earlier session notes). The same claim appears in `.claude/rules/operational-state.md` as "inst_delta_z … Active in ranker (NW-t = +3.32)".
+- Corrected interpretation: the live `minimal_v2` ranker reads only `coinvest_score_z` and `financial_score`. `inst_delta_z` has 0% selector weight and no ranker weight. It is diagnostic and export only.
+- Root cause: the claim conflated the legacy `minimal` feature set and the historical within-cohort audit (NW-t = +3.32) with the deployed `minimal_v2` artifact (memo §3).
+- Old claim: `oos_clock_start=2026-11-02` (2026-11-01 entry below).
+- Corrected interpretation: superseded by the 2026-11-04 memo. The start is the first post-merge production run (expected 2026-11-12), and no capture dated before it counts (on disk: 2026-11-03 → 2026-11-11).
 
 ---
 
@@ -1342,9 +1484,10 @@ Daily production run (`tools/run_daily_production.py`, cron 5:30 PM ET):
 
 ```
 Step 1: Archive production inputs (SHA-256 manifest)
-Step 2: Refresh prices (Yahoo/Morningstar → price_history.csv)
-Step 3: Refresh market data (→ market_data.json)
-Step 4: Poll CTgov (→ cache/ctgov/trial_records_{date}.json)
+Step 2: Refresh prices (Sharadar SEP/SFP primary, yfinance fallback since PR #622 → price_history.csv; was Yahoo/Morningstar)
+Step 3: Refresh market data (→ market_data.json; market cap from Sharadar DAILY ×1e6 when enabled)
+Step 4: Poll CTgov (→ cache/ctgov/trial_records_{date}.json; source file production_data/trial_records.json
+        is refreshed by cron_data_refresh.sh stage_ctgov → collect_ctgov_data.py since PR #614)
 Step 5: Run full screen (run_screen.py → data/snapshots/{date}/)
         ├── 5a-5d: Modules 1-4
         ├── 5e: Module 5 composite
@@ -1965,8 +2108,8 @@ diagnosis: sleeve budgets were destroying alpha.
 | Category | Gates | Current Status |
 |----------|-------|---------------|
 | Core | ruleset, trading_day, inputs | PASS |
-| Data freshness | XBI staleness, market data, CTgov, sponsorship | PASS |
-| Schema | market_data, DE schema, sort contrib | PASS |
+| Data freshness | XBI staleness, market data, CTgov, sponsorship; `ctgov_content_freshness` (blocking, newest `last_update_posted` ≤ 7d; added 2026-11-12, PR #614) | PASS (as of the original table; new gate not yet run) |
+| Schema | market_data (FAIL if median `market_cap` < $10M, PR #621), DE schema, sort contrib | PASS |
 | Drift | top-20/60 overlap, Spearman, migrations | WARN (66.7% top-20) |
 | Risk | concentration, exposure, portfolio weights | PASS |
 | Forward eval | rolling IC | WARN (IC -0.021 < floor 0.02) |
@@ -2716,7 +2859,7 @@ insider stabilization closure before treating the May 14 production-spec block a
 
 The production model continues unchanged per alpha-freeze policy (2026-04-04):
 
-- **Selector (gate):** 0.65 × `coinvest_score_z` + 0.35 × `inst_delta_z`
+- **Selector (gate):** 0.65 × `coinvest_score_z` + 0.35 × `inst_delta_z` *(superseded by v1.14.0 on 2026-05-04: `coinvest_score_z` 100%, `inst_delta_z` 0%. See the header and the 2026-11-12 entry.)*
   - Gate-only function; does NOT rank survivors, only selects/excludes
 - **Ranker:** 2-feature pairwise (`financial_score_z`, `coinvest_score_z`)
   - Ordinal-only (no rank-weighting; ECE=0.19)
