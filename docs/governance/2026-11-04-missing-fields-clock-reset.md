@@ -23,7 +23,7 @@
 
 ## 2. Changes (branch `fix/missing-fields-2026-11-04`)
 
-1. `1da651eb` — M1: health denominator matches the production gate.
+1. `1da651eb` — M1: health denominator matches the production gate. *Superseded:* `main` fixed the same defect independently in `8f6e7823` (2026-11-11), which also excludes `benchmark`-status rows. The merge of `main` into this branch (2026-11-12) resolved `tools/build_data_collection_health.py` to `main`'s version.
 2. `378a199d` — M2:
    - `stage_ctgov` runs `collect_ctgov_data.py` before `warm_caches`. It writes to a seeded temp copy and swaps it in on success; on failure it keeps the previous file.
    - New blocking gate `ctgov_content_freshness`: FAIL when the newest `last_update_posted` on or before as_of is more than 7 days old.
