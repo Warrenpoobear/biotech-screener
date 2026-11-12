@@ -274,6 +274,7 @@ size_multiplier = max(0.40, 1.0 - 0.60 * ev_severity_score)
 - **Current model-status note, 2026-11-12:**
   - The 2026-11-02 clock start is superseded. `oos_clock_start` is the first production run using the PR #614/#636 code (expected 2026-11-12), and the mandate is 0/20 from there (memo `docs/governance/2026-11-04-missing-fields-clock-reset.md`). `model_hash` and ruleset are unchanged; still FROZEN.
   - The live `minimal_v2` ranker reads only `coinvest_score_z` + `financial_score`. It does **not** read `inst_delta_z`; only the legacy `minimal` feature set did. A blank `inst_delta_z` therefore has no ranking effect under ruleset `8887576e`.
+  - `financial_score` input fix (PR #649, merged 2026-11-12): operating cash flow, not net income, decides "profitable". Top-30 membership unchanged on 2026-11-11; KYMR rank 7 → 4. Ranker weights and sign untouched. The −0.0533 weight was fit on pre-correction inputs and has not been re-fit.
   - Canonical: `docs/MODEL_DOCUMENTATION.md`.
 
 ## Session-end learning
