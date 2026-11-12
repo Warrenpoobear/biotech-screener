@@ -46,6 +46,13 @@ RESTORED_TICKERS = [
     # 2026-11-12: term-search fallback returned 0 for Shattuck Labs (7 trials,
     # lead sponsor "Shattuck Labs, Inc."); the coverage guard blocked the refresh.
     "STTK",
+    # 2026-11-12: query.term now returns 0 for these symbols (two runs, no
+    # request failures); sponsor names verified to return exactly the trials
+    # already on file.
+    "ACHV",
+    "AVTX",
+    "IMMX",
+    "MNPR",
 ]
 
 
