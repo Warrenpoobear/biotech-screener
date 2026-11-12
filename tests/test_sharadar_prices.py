@@ -162,6 +162,18 @@ def test_daily_market_cap_millions_become_usd(tmp_path):
     assert rec["market_cap_source"] == "sharadar_daily"
 
 
+def test_daily_missing_marketcap_leaves_existing_cap(tmp_path):
+    """Ported from the retired scripts/refresh_from_sharadar.py tests: a DAILY row
+    with no marketcap/ev must not blank or rescale the existing raw-USD values."""
+    md = tmp_path / "market_data.json"
+    md.write_text(json.dumps([{"ticker": "X", "price": 5.0, "market_cap": 5e8, "enterprise_value": 4e8}]))
+    c = FakeClient({"DAILY": [{"ticker": "X", "date": "2026-11-10", "marketcap": None, "ev": None}]})
+    update_market_caps_from_daily(md, "2026-11-10", client=c)
+    rec = json.loads(md.read_text())[0]
+    assert rec["market_cap"] == 5e8
+    assert rec["enterprise_value"] == 4e8
+
+
 # --- wrapper switch --------------------------------------------------------------
 def test_wrapper_switch(monkeypatch):
     from run_daily_production import sharadar_price_source_enabled

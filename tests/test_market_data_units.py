@@ -1,6 +1,8 @@
 """market_data.json market_cap / enterprise_value must be raw USD.
 
-2026-11-04: scripts/refresh_from_sharadar.py copied Sharadar DAILY marketcap/ev
+2026-11-04: scripts/refresh_from_sharadar.py (retired 2026-11-12; the nightly path is
+common/sharadar_prices.update_market_caps_from_daily, tested in
+tests/test_sharadar_prices.py) copied Sharadar DAILY marketcap/ev
 (reported in $ MILLIONS) straight into market_cap/enterprise_value. Every type
 check passed, but run_screen computes market_cap_mm = market_cap / 1e6, so each
 company shrank ~1e6x. Size bands, liquidity and cost estimates collapsed and
@@ -10,7 +12,6 @@ Phase-2 health FAIL) until the file was restored.
 
 from __future__ import annotations
 
-import importlib.util
 import json
 import sys
 from pathlib import Path
@@ -20,15 +21,6 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "tools"))
 
 from run_daily_production import MARKET_DATA_MIN_MEDIAN_CAP_USD, check_market_data_schema  # noqa: E402
-
-
-def _load_sharadar():
-    spec = importlib.util.spec_from_file_location(
-        "refresh_from_sharadar", REPO / "scripts" / "refresh_from_sharadar.py"
-    )
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
 
 
 def _record(ticker: str, cap: float, ev: float = 0.0) -> dict:
@@ -44,22 +36,6 @@ def _record(ticker: str, cap: float, ev: float = 0.0) -> dict:
 def _write(tmp_path: Path, records: list) -> Path:
     (tmp_path / "market_data.json").write_text(json.dumps(records), encoding="utf-8")
     return tmp_path
-
-
-# --- producer ------------------------------------------------------------------
-def test_sharadar_daily_millions_are_scaled_to_usd():
-    mod = _load_sharadar()
-    rec = {"ticker": "ABVX"}
-    mod._apply_daily_fields(rec, {"marketcap": 7065.6, "ev": 6622.0})
-    assert rec["market_cap"] == 7_065_600_000.0
-    assert rec["enterprise_value"] == 6_622_000_000.0
-
-
-def test_sharadar_missing_fields_leave_record_untouched():
-    mod = _load_sharadar()
-    rec = {"ticker": "X", "market_cap": 5e8}
-    mod._apply_daily_fields(rec, {"marketcap": None})
-    assert rec == {"ticker": "X", "market_cap": 5e8}
 
 
 # --- gate ----------------------------------------------------------------------
