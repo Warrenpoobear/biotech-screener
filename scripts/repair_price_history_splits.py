@@ -15,6 +15,11 @@ missing or unreadable, nothing is adjusted: a price gap alone is not a split.
 The adjustment is cumulative: if a ticker has two splits, all prices
 before the first split are multiplied by both factors.
 
+Registry ``special_dividend`` entries are back-adjusted too (factor
+``(close_before - amount) / close_before`` on prices before the ex-date), but
+only when the raw series visibly drops by roughly the amount, mirroring
+``run_screen``'s momentum adjustment.
+
 CLI:
   python scripts/repair_price_history_splits.py \
     [--prices production_data/price_history.csv] \
@@ -193,6 +198,58 @@ def write_adjusted_csv(
     return len(rows)
 
 
+def apply_special_dividends(
+    raw_prices: Dict[str, Dict[date, Decimal]],
+    adjusted: Dict[str, Dict[date, Decimal]],
+    registry: Any,
+) -> List[Dict[str, Any]]:
+    """Back-adjust registry special cash dividends in place; return what was applied.
+
+    The ex-date drop of a special dividend is a distribution, not a return. For
+    each registry ``special_dividend`` the factor ``(close_before - amount) /
+    close_before`` (from RAW closes) multiplies every adjusted price strictly
+    before the ex-date. Same visibility rule as ``run_screen``: applied only when
+    the raw series drops by 0.5x..1.5x the amount across the ex-date, so a
+    dividend-adjusted source is never adjusted twice.
+    """
+    from common.corporate_actions import get_special_dividends
+
+    applied: List[Dict[str, Any]] = []
+    for ticker, raw in raw_prices.items():
+        if ticker not in adjusted:
+            continue
+        for a in get_special_dividends(ticker, registry):
+            try:
+                ex = date.fromisoformat(a.effective_date)
+                amount = Decimal(str(a.amount)) if a.amount else None
+            except (TypeError, ValueError, ArithmeticError):
+                continue
+            if not amount or amount <= 0:
+                continue
+            dates = sorted(raw)
+            before = next((raw[d] for d in reversed(dates) if d < ex), None)
+            after = next((raw[d] for d in dates if d >= ex), None)
+            if not before or not after or amount >= before:
+                continue
+            drop = before - after
+            if not (amount / 2 <= drop <= amount * Decimal("1.5")):
+                continue
+            factor = (before - amount) / before
+            adj = adjusted[ticker]
+            for d in adj:
+                if d < ex:
+                    adj[d] = adj[d] * factor
+            applied.append(
+                {
+                    "ticker": ticker,
+                    "ex_date": ex.isoformat(),
+                    "amount": float(amount),
+                    "factor": round(float(factor), 6),
+                }
+            )
+    return applied
+
+
 # ---------------------------------------------------------------------------
 # High-level orchestrator
 # ---------------------------------------------------------------------------
@@ -221,12 +278,14 @@ def repair_price_history(
     detected = detect_splits(prices, jump_threshold, drop_threshold)
     registry_path = registry_path or (Path(prices_path).parent / "corporate_actions.json")
     unconfirmed: Dict[str, List[Dict[str, Any]]] = {}
+    registry = None
     try:
         from common.corporate_actions import load_actions
 
         if not Path(registry_path).exists():
             raise FileNotFoundError(registry_path)
-        splits, unconfirmed = filter_confirmed_splits(detected, load_actions(Path(registry_path)))
+        registry = load_actions(Path(registry_path))
+        splits, unconfirmed = filter_confirmed_splits(detected, registry)
         mode = "registry_confirmed"
     except Exception as exc:
         # A gap is not evidence of a split. EYPT and ABOS crashes were
@@ -241,6 +300,7 @@ def repair_price_history(
 
     # Compute adjusted prices
     adjusted = compute_adjusted_prices(prices, splits)
+    dividends_applied = apply_special_dividends(prices, adjusted, registry) if registry is not None else []
 
     # Write output
     n_rows = write_adjusted_csv(adjusted, output_path)
@@ -266,6 +326,7 @@ def repair_price_history(
         },
         "rows_written": n_rows,
         "split_mode": mode,
+        "special_dividends_applied": dividends_applied,
         "unconfirmed_not_applied": {
             ticker: [{"date": e["date"].isoformat(), "pct_change": e["pct_change"]} for e in events]
             for ticker, events in unconfirmed.items()
@@ -325,6 +386,11 @@ def main() -> None:
                     f"  {ticker:6s}  {e['date']}  {e['flag_type']:14s}  "
                     f"factor={e['factor']:.4f}  ({e['pct_change']:+.2%})"
                 )
+
+    if result["special_dividends_applied"]:
+        print("\nSpecial dividends back-adjusted:")
+        for d in result["special_dividends_applied"]:
+            print(f"  {d['ticker']:6s}  ex {d['ex_date']}  ${d['amount']:.2f}  factor={d['factor']:.4f}")
 
 
 if __name__ == "__main__":
