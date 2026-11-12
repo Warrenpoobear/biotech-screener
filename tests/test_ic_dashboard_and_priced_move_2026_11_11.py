@@ -42,6 +42,67 @@ def test_min_dates_gate_constant():
     assert icd.MIN_DATES_FOR_VERDICT >= 8
 
 
+def _write_ranked_snapshots(root: Path, dates: list, n: int = 12) -> None:
+    for d in dates:
+        day = root / d
+        day.mkdir(parents=True)
+        with open(day / "rankings.csv", "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["ticker", "score_rank_pct", "inst_delta_z", "has_inst_delta", "coinvest_score_z"])
+            for i in range(n):
+                # score_rank_pct is higher_is_better=False, so a rising score
+                # against a falling return is a strongly negative IC.
+                w.writerow([f"T{i:02d}", i, "0.0", "False", i])
+
+
+def _write_prices(path: Path, dates: list, n: int = 12) -> None:
+    with open(path, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["ticker", "date", "close"])
+        for i in range(n):
+            for k, d in enumerate(dates):
+                # Next-day close rises with the ticker index, so the raw
+                # signal and the forward return move together. score_rank_pct
+                # is higher_is_better=False, which flips that into a negative IC.
+                w.writerow([f"T{i:02d}", d, 100 + k + (i + 1) * k])
+
+
+def test_min_dates_blocks_alert_and_is_configurable(tmp_path):
+    dates = ["2026-03-02", "2026-03-03", "2026-03-04", "2026-03-05", "2026-03-06"]
+    snaps = tmp_path / "snapshots"
+    _write_ranked_snapshots(snaps, dates)
+    prices = tmp_path / "prices.csv"
+    _write_prices(prices, dates + ["2026-03-09", "2026-03-10"])
+    gated = icd.build_ic_dashboard(
+        "2026-03-11",
+        snapshots_dir=snaps,
+        price_csv=prices,
+        artifacts_dir=tmp_path / "a",
+        lookback=10,
+        horizon=1,
+        min_dates_for_verdict=8,
+    )
+    assert gated["signals"]["score_rank_pct"]["health"] == "INSUFFICIENT_DATES"
+    assert gated["signals"]["score_rank_pct"]["n_dates"] < 8
+    assert gated["attention"] == "LOW"
+    assert "coinvest_score_z" in gated["signals"]
+    # The zero column is not a measured inst_delta, so it contributes no dates.
+    assert gated["signals"]["inst_delta_z"]["n_dates"] == 0
+    assert gated["signals"]["inst_delta_z"]["health"] == "NO_DATA"
+
+    alerted = icd.build_ic_dashboard(
+        "2026-03-11",
+        snapshots_dir=snaps,
+        price_csv=prices,
+        artifacts_dir=tmp_path / "b",
+        lookback=10,
+        horizon=1,
+        min_dates_for_verdict=2,
+    )
+    assert alerted["signals"]["score_rank_pct"]["health"] == "ALERT"
+    assert alerted["min_dates_for_verdict"] == 2
+
+
 def test_implausible_iv_move_is_dropped():
     out = compute_cheap_vol_score(26.78, 355, "CLINICAL", "phase 2", "oncology", {})
     assert out["cheap_vol_score"] is None and out["implied_move"] is None

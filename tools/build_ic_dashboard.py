@@ -6,7 +6,8 @@ forward returns. Persists a JSONL time series for trend analysis.
 
 Signals tracked:
   - score_rank_pct (composite)
-  - inst_delta_z (institutional delta)
+  - inst_delta_z (institutional delta; dates with no measured delta are skipped)
+  - coinvest_score_z (coinvest-only selector weight)
 
 Removed (Spec 111 2026-06-12):
   - clinical_optionality_pct_dev (deprecated: negative IC, poor hit rate)
@@ -221,6 +222,7 @@ def build_ic_dashboard(
     horizon: int = DEFAULT_HORIZON,
     include_regenerated: bool = False,
     exclusions_path: Optional[Path] = None,
+    min_dates_for_verdict: int = MIN_DATES_FOR_VERDICT,
 ) -> Dict[str, Any]:
     """Build rolling IC dashboard.
 
@@ -281,7 +283,7 @@ def build_ic_dashboard(
             hit_rate = sum(1 for ic in ics if ic > 0) / len(ics)
 
             # Health classification (no verdict on too few dates)
-            if len(per_date_ics) < MIN_DATES_FOR_VERDICT:
+            if len(per_date_ics) < min_dates_for_verdict:
                 health = "INSUFFICIENT_DATES"
             elif mean_ic >= IC_HEALTHY:
                 health = "HEALTHY"
@@ -330,7 +332,7 @@ def build_ic_dashboard(
         "attention": attention,
         "signals": signal_results,
         "excluded_regenerated_dates": len(excluded),
-        "min_dates_for_verdict": MIN_DATES_FOR_VERDICT,
+        "min_dates_for_verdict": min_dates_for_verdict,
         "thresholds": {
             "healthy": IC_HEALTHY,
             "warn": IC_WARN,
@@ -427,6 +429,17 @@ def main():
     parser.add_argument("--as-of-date", default=datetime.now(timezone.utc).strftime("%Y-%m-%d"))
     parser.add_argument("--lookback", type=int, default=DEFAULT_LOOKBACK)
     parser.add_argument("--horizon", type=int, default=DEFAULT_HORIZON)
+    parser.add_argument(
+        "--min-dates",
+        type=int,
+        default=MIN_DATES_FOR_VERDICT,
+        help=(
+            "Minimum number of dated IC observations before a signal can be "
+            f"HEALTHY/WEAK/WARN/ALERT (default: {MIN_DATES_FOR_VERDICT}). "
+            "Below this, health is INSUFFICIENT_DATES and does not raise an alert. "
+            "Distinct from the per-date ticker minimum inside compute_ic."
+        ),
+    )
     parser.add_argument("--snapshots-dir", type=Path, default=REPO_ROOT / "data" / "snapshots")
     parser.add_argument("--price-csv", type=Path, default=REPO_ROOT / "production_data" / "price_history.csv")
     parser.add_argument("--artifacts-dir", type=Path, default=REPO_ROOT / "artifacts")
@@ -446,6 +459,7 @@ def main():
         lookback=args.lookback,
         horizon=args.horizon,
         include_regenerated=args.include_regenerated,
+        min_dates_for_verdict=args.min_dates,
     )
 
     if "error" in result:

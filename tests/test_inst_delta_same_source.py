@@ -87,6 +87,15 @@ def test_live_day_unchanged(tmp_path):
     assert status == "ok" and prior["as_of_date"] == "2026-08-13"
 
 
+def test_unknown_filing_period_is_not_a_zero_delta(tmp_path):
+    """Different cache dates, neither index readable: do not emit a delta of zeros."""
+    snaps, cache = tmp_path / "snapshots", tmp_path / "caches"
+    _write_summary(snaps, _summary("2026-09-18", "2026-09-01", Q2))
+    cur = _summary("2026-09-22", "2026-09-02", Q2)
+    prior, delta, status = resolve_cross_quarter_delta(cur, snaps, "2026-09-22", cache)
+    assert (prior, delta, status) == (None, None, "unknown_filing_period")
+
+
 def test_filing_period_is_majority_not_first(tmp_path):
     from institutional_summary import _get_filing_period
 

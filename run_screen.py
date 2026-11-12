@@ -1993,10 +1993,12 @@ def _dead_tickers_as_of(data_dir: Path, as_of_date: str) -> Set[str]:
     if not _path.exists():
         return set()
     try:
-        from common.corporate_actions import list_dead_tickers, load_actions
+        from common.corporate_actions import list_dead_tickers, list_retired_symbols, load_actions
 
         _registry = load_actions(_path)
-        return {str(t).upper() for t in list_dead_tickers(as_of_date, _registry)}
+        dead = {str(t).upper() for t in list_dead_tickers(as_of_date, _registry)}
+        dead.update(str(t).upper() for t in list_retired_symbols(as_of_date, _registry))
+        return dead
     except Exception:  # pragma: no cover - fail-open
         return set()
 
@@ -4233,6 +4235,11 @@ _ALWAYS_NUMERIC_DEFAULTS = {
     "catalyst_decay_w": 0.0,
 }
 
+# inst_delta_z is only a number when a cross-quarter delta was actually
+# measured (has_inst_delta=True). Filling a missing delta with 0 makes a
+# neutral z-score and pulls IC toward zero.
+_MISSING_UNLESS_MEASURED = frozenset({"inst_delta_z"})
+
 # Signal presence flags — written as string booleans for CSV compatibility
 _SIGNAL_FLAG_DEFAULTS = {
     "has_coinvest_signal": "False",
@@ -4249,9 +4256,15 @@ def _ensure_defaults(csv_rows, defaults=_ALWAYS_NUMERIC_DEFAULTS):
     fall through the clinical_score_z_tier cohort logic.
     """
     for row in csv_rows:
+        measured_inst = str(row.get("has_inst_delta", "")).strip() == "True"
         for field, default in defaults.items():
             val = row.get(field)
-            if val is None or str(val).strip() == "" or str(val).strip().lower() == "nan":
+            missing = val is None or str(val).strip() == "" or str(val).strip().lower() == "nan"
+            if field in _MISSING_UNLESS_MEASURED and not measured_inst:
+                if missing:
+                    row[field] = ""
+                continue
+            if missing:
                 row[field] = default
         # Signal presence flags (string booleans, never overwrite if already set)
         for flag, flag_default in _SIGNAL_FLAG_DEFAULTS.items():
@@ -4760,10 +4773,15 @@ def _finalize_priced_move(csv_rows: List[Dict[str, Any]]) -> None:
             try:
                 _sp = float(_r["straddle_price"])
                 _pm = round(_sp * 100.0, 4)
+                # Sanity: priced_move_pct should be 1-200 percentage points.
+                # Above 500 the quote is not a usable move (junk IV stretched
+                # by a long-dated catalyst). Leave the field missing.
+                if _pm > 500.0:
+                    _n_suspicious += 1
+                    continue
                 _r["priced_move_pct"] = _pm
                 _n_set += 1
-                # Sanity: priced_move_pct should be 1-200 range (percentage points)
-                if _pm < 1.0 or _pm > 500.0:
+                if _pm < 1.0:
                     _n_suspicious += 1
             except (ValueError, TypeError):
                 pass
@@ -5915,22 +5933,28 @@ def save_validation_snapshot(
         else:
             _id_mean, _id_std = 0.0, 0.0
         for _di, _dv, _has_i in _id_pairs:
-            if _sparse_mode == "exclude_missing" and not _has_i:
-                csv_rows[_di]["inst_delta_z"] = 0.0
+            if not _has_i:
+                # Not in the delta: no measurement for this name.
+                csv_rows[_di]["inst_delta_z"] = ""
+                csv_rows[_di]["has_inst_delta"] = "False"
             elif _id_std > 0:
                 csv_rows[_di]["inst_delta_z"] = round((_dv - _id_mean) / _id_std, 4)
             else:
                 csv_rows[_di]["inst_delta_z"] = 0.0
     else:
         for _dr in csv_rows:
-            _dr.setdefault("inst_delta_z", 0.0)
+            # No cross-quarter delta this run. Leave the z blank so it is
+            # not a neutral zero in the ranker or the IC panel.
+            _dr["inst_delta_z"] = ""
+            _dr["has_inst_delta"] = "False"
             _dr.setdefault("inst_delta_net", 0)
             _dr.setdefault("inst_delta_new", 0)
             _dr.setdefault("inst_delta_exit", 0)
 
     # --- Institutional delta coverage guard ---
     # When too few tickers have nonzero net delta, the z-scores are driven by
-    # a handful of names — fragile signal.  Zero out z if coverage < threshold.
+    # a handful of names — fragile signal. Clear the z (leave it missing)
+    # rather than writing a neutral zero.
     _inst_nonzero_count = sum(1 for r in csv_rows if r.get("inst_delta_net", 0) != 0)
     _inst_nonzero_pct = round(100.0 * _inst_nonzero_count / len(csv_rows), 2) if csv_rows else 0.0
     for _dr in csv_rows:
@@ -5941,14 +5965,19 @@ def save_validation_snapshot(
             logger.warning(
                 "inst_delta_z coverage guard: only %.1f%% of tickers have "
                 "nonzero net delta (%d/%d) — below %.1f%% threshold; "
-                "zeroing all inst_delta_z values",
+                "clearing inst_delta_z (missing, not a neutral zero)",
                 _inst_nonzero_pct,
                 _inst_nonzero_count,
                 len(csv_rows),
                 _inst_min_pct,
             )
         for _dr in csv_rows:
-            _dr["inst_delta_z"] = 0.0
+            # A suppressed z is missing, not a measured zero. Writing 0.0
+            # here is what made inst_delta_z read exactly 0 on dates with
+            # no usable cross-quarter change.
+            if str(_dr.get("has_inst_delta", "")).strip() == "True":
+                _dr["inst_delta_z"] = ""
+                _dr["has_inst_delta"] = "False"
 
     # --- Registry transition guard ---
     # When the manager registry changes (CIK corrections, additions, removals),
@@ -5966,7 +5995,10 @@ def save_validation_snapshot(
         _net = _dr.get("inst_delta_net", 0)
         _new = _dr.get("inst_delta_new", 0)
         _exit = _dr.get("inst_delta_exit", 0)
-        _iz = float(_dr.get("inst_delta_z", 0))
+        try:
+            _iz = float(_dr.get("inst_delta_z"))
+        except (TypeError, ValueError):
+            _iz = None
 
         try:
             _net = int(_net)
@@ -5975,12 +6007,13 @@ def save_validation_snapshot(
         except (ValueError, TypeError):
             _net = _new = _exit = 0
 
-        # Absolute flow: net positive means more new entrants than exits
+        # Absolute flow: net positive means more new entrants than exits.
+        # A blank z is missing, so it is neither relatively high nor low.
         _abs_positive = _net > 0 or _new > _exit
         _abs_has_new = _new > 0
         _abs_negative = _net < 0 and _exit > _new
-        _z_negative = _iz < -0.3
-        _z_positive = _iz > 0.3
+        _z_negative = _iz is not None and _iz < -0.3
+        _z_positive = _iz is not None and _iz > 0.3
 
         # Registry transition guard
         _dr["inst_delta_regime"] = "transition" if _inst_registry_transition else "clean"
@@ -6012,7 +6045,7 @@ def save_validation_snapshot(
                 _reasons.append(
                     f"abs_flow_negative(net={_net},exit={_exit}) but z={_iz:+.2f} (relative outperformance)"
                 )
-            if abs(_iz) > 1.5:
+            if _iz is not None and abs(_iz) > 1.5:
                 _reasons.append(f"extreme_inst_delta_z={_iz:+.2f}")
             _dr["inst_flow_diagnostic"] = "; ".join(_reasons) if _reasons else ""
 

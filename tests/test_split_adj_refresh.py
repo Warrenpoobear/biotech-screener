@@ -15,6 +15,7 @@ be told about.
 from __future__ import annotations
 
 import csv
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -84,11 +85,32 @@ def test_pure_append_reports_no_retroactive_change(tmp_path):
     assert stats["last_date"] == "2026-06-25"
 
 
+def _write_split_registry(path: Path, effective_date: str = "2026-06-18") -> None:
+    path.write_text(
+        json.dumps(
+            {
+                "actions": [
+                    {
+                        "ticker": "AAA",
+                        "action": "forward_split",
+                        "effective_date": effective_date,
+                        "ratio": "10:1",
+                        "factor": 0.1,
+                    }
+                ]
+            }
+        )
+    )
+
+
 def test_split_in_the_gap_is_flagged_as_retroactive(tmp_path):
-    """A split inside the gap rewrites earlier prices — must NOT pass silently."""
+    """A registry-confirmed split inside the gap rewrites earlier prices."""
     raw_rows = _rows(split_on="2026-06-18")
     raw = tmp_path / "price_history.csv"
     _write_prices(raw, raw_rows)
+    # The incumbent is built from the pre-split truncation, so the registry
+    # does not rewrite it. The full refresh then confirms the 06-18 split.
+    _write_split_registry(tmp_path / "corporate_actions.json")
     adj = _seed_incumbent(tmp_path, raw_rows, "2026-06-15")
 
     stats = rdp.refresh_split_adjusted_prices(raw, adj, REPO)
@@ -98,6 +120,22 @@ def test_split_in_the_gap_is_flagged_as_retroactive(tmp_path):
     assert "AAA" in stats["retroactive_tickers"]
     # The corrected values are still installed — correctness wins, but loudly.
     assert stats["last_date"] == "2026-06-25"
+
+
+def test_unconfirmed_crash_does_not_rewrite_history(tmp_path):
+    """A price gap with no registry split is a crash, not a retroactive adjustment."""
+    raw_rows = _rows(split_on="2026-06-18")
+    raw = tmp_path / "price_history.csv"
+    _write_prices(raw, raw_rows)
+    adj = _seed_incumbent(tmp_path, raw_rows, "2026-06-15")
+
+    stats = rdp.refresh_split_adjusted_prices(raw, adj, REPO)
+
+    assert stats["status"] == "APPENDED"
+    assert stats["n_retroactive"] == 0
+    closes = {row["date"]: float(row["close"]) for row in csv.DictReader(open(adj)) if row["ticker"] == "AAA"}
+    assert closes["2026-06-15"] == 100.0
+    assert closes["2026-06-18"] == 10.0
 
 
 def test_refresh_is_idempotent(tmp_path):
