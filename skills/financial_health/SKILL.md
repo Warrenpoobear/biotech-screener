@@ -64,7 +64,13 @@ Use a hierarchical priority to select the best available burn rate proxy. Stop a
 runway_months = current_cash / abs(quarterly_burn) * 3
 ```
 
-If burn rate is zero or positive (cash-generating), `runway_months = 1200` (100 years, effectively infinite).
+If burn rate is zero or positive (cash-generating), Module 2 v2 (`module_2_financial_v2.py`) sets `runway_months = 999`.
+
+**Current model-status note, 2026-11-12 (PR #649):**
+- "Cash-generating" is decided by **operating cash flow**. Positive net income with negative operating cash flow is still a cash burner; net income is used only when no cash-flow figure exists.
+- Liquid assets use the collectors' deduped `CashAndSecurities` total when present, otherwise cash plus the **largest** investment tag.
+- The PIT financial store supplies **trailing-12-month** cash flow dated at the latest period end. Do not apply the YTD month table above to those values: a September-dated figure from the PIT store is 12 months, not 9. That mistake is why PR #611 was closed.
+- Canonical: `docs/MODEL_DOCUMENTATION.md`.
 
 ### Runway Severity Classification
 

@@ -16,6 +16,70 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
+## Recent Update — 2026-11-12 (Financial Score: Solvency by Operating Cash Flow, Deduped Cash Total — PR #649)
+
+Classification: `DATA_INTEGRITY_FIX / RANKER_INPUT_CHANGE`. Tier 3. Source of truth: `docs/governance/2026-11-12-financial-runway-solvency-fix.md`. Merge: PR #649 (`8b5fdd8c`, commit `f6d22e12`, merged 2026-11-12 14:25 ET); mirror PR WR-SW-Dev #67 (`af405495`).
+
+Summary:
+- **F1, false "profitable" classification.** `module_2_financial_v2.py::calculate_burn_rate_v2` returned `PROFITABLE` (monthly burn 0, runway 999 months) when net income was positive, even with negative operating cash flow. Operating cash flow now decides solvency; net income is used only when no cash-flow figure exists.
+- **F2, liquid assets.** `calculate_liquid_assets` now prefers the collectors' deduped `CashAndSecurities` total, and otherwise uses the largest investment tag instead of the first one found.
+- PR #610 and PR #611 (the earlier financial-score fixes) were **closed unmerged**. See "Prior claim retracted" below.
+
+Governance verdict:
+- `INPUT_CHANGE` to `financial_score`, one of the two features the live `minimal_v2` ranker reads. This is **not** `NO_MODEL_CHANGE`.
+- Authorization: operator, in session 2026-11-12 (instruction "merge #649"), under `docs/FORWARD_VALIDATION_PROTOCOL.md` §1.
+- Frozen status: unchanged. The DEM candidate freeze, the NO_MODEL_CHANGE forward-validation window and **FROZEN (BLOCKED_LEVEL_0)** all remain in force. This update does not unfreeze the model, clear any gate or authorize promotion.
+- Identity: `model_hash=827c35a9ed3ee6e1` and ruleset `8887576e` are unchanged. No hash rotation: the engine files are untouched.
+- Clock: merged and deployed **before** `oos_clock_start` was recorded, so it is intended to be part of the starting configuration of the window opened by the PR #614 reset (entry below), not a further reset. That holds only if `oos_clock_start` is set to 2026-11-12 or later.
+- Operator action required:
+  1. Record `oos_clock_start` in `artifacts/forward_validation/CANDIDATE.json` (still `2026-11-02` when this was written), with a reset note that also names PR #649.
+  2. Confirm on the first post-deploy snapshot that the Top-30 membership matches expectation (below).
+
+Evidence:
+- Isolated screens for as-of 2026-11-11 on copies of `production_data/`, main `69323d70` against the fix branch. Run without `--strict` and without a prior-snapshot directory. The main arm reproduced the production 2026-11-11 Top-30 exactly (30/30).
+- Results: 296 rows on both arms; Top-30 membership 30/30; Top-60 60/60; eligibility differences 0; sev3-gate failures 14 on both arms; names with a 999-month runway 97 → 83; Module 2 records changed 14 of 320.
+- F1 names with the largest change: KYMR 999 → 15.6 months, BDTX → 7.0, PGEN → 7.6, NMRA → 10.6. Rank moves inside the Top-30: KYMR 7 → 4, ORKA 21 → 19, SVRA 16 → 15, ORIC 4 → 5, SMMT 5 → 6, TRAX 6 → 7, ANNX 15 → 16, MDGL 19 → 21.
+- F2 changed no name on 2026-11-11 data.
+- Tests: `tests/test_financial_runway_and_cash_total.py` (10 tests; 6 fail on `69323d70`).
+- CI on PR #649: 40 failing tests, the same set as on main; lint and replay were already failing on main.
+- The live checkout was fast-forwarded to `8b5fdd8c` at about 14:28 ET on 2026-11-12, before the 16:30 ET production run. The scratch screen outputs were not retained.
+
+Impact on alpha interpretation:
+- **No new performance evidence.** This is a single-date input-integrity measurement.
+- It reduces one source of false signal: a name with a one-off accounting gain was scored as financially unconstrained. Because the ranker weight on `financial_score` is negative, the corrected (lower) score moves such a name **up**, as with KYMR.
+- The ranker's `financial_score` weight (−0.0533) was fit before PR #586 (trailing-12-month financials), PR #621 (market-cap units) and this fix corrected its inputs. Whether the negative sign still holds on corrected inputs is **not established** and requires a re-fit or explicit re-acceptance under Checklist v2.
+
+What changed:
+- `module_2_financial_v2.py` (`calculate_burn_rate_v2`, `calculate_liquid_assets`), the new test file and the governance memo.
+
+What did not change:
+- Ranker: unchanged (`minimal_v2` capped Family C artifact; weights and sign untouched).
+- Selector: unchanged (`coinvest_score_z` 100%).
+- Scoring: `final_score` logic unchanged. The `financial_score` *input* changes for names with positive net income and negative operating cash flow.
+- Eligibility: rules unchanged; no eligibility outcome changed on 2026-11-11.
+- Sizing: EW Top-30 unchanged.
+- Production wiring: unchanged. No new gate.
+- Trading/actionability: no rebalance-policy change.
+
+Skill synchronization:
+- Skills reviewed: `skills/financial_health`, `skills/selector_ranker`, `skills/validation`, `skills/screener_ops`, `.claude/rules/operational-state.md`.
+- Skills updated: `skills/financial_health/SKILL.md` (solvency rule, cash total, 999-month sentinel, trailing-12-month warning); `skills/selector_ranker/SKILL.md` (status note); `.claude/rules/operational-state.md` (governance event).
+- Skills not updated: `skills/validation`, `skills/screener_ops` (no stale financial-score facts). The `docs/hermes_skills/` mirrors are generated by `tools/sync_hermes_skills.py`; run the sync to propagate.
+- Reason: skill instructions synchronized so future agents do not treat positive net income as solvency, re-apply a year-to-date divisor to trailing-12-month cash flow, or revive PR #611 as written.
+
+Open questions / next validation:
+- Record `oos_clock_start` (operator).
+- 24 PIT financial stores lag their static records (memo §6 lists them). The refresh is the fix, not a staleness gate.
+- Re-fit or re-accept the ranker's `financial_score` weight on corrected inputs.
+- Items in PR #611 that were not carried over (memo §5) each need their own review.
+
+Prior claim retracted:
+- Old claim (PR #610 / #611 descriptions): a June- or September-dated operating cash flow is year-to-date and must be divided by 6 or 9 months; applying that fix changes the Top-30 to 14/30 overlap on 2026-11-04 data.
+- Corrected interpretation: since PR #586 the PIT financial store supplies trailing-12-month figures, so that divisor overstates burn 1.33x to 2x for 228 of 320 names. On current main it would change the Top-30 to 26/30 and remove 22 names from the rankings, including DNTH and STOK (ranks 1 and 2 on 2026-11-11). With that piece neutralised the rest of PR #611 leaves the Top-30 at 30/30.
+- Root cause: the PRs were measured against a main that predated the market-cap unit fix (PR #621), and the date rule did not account for the trailing-12-month store or for non-calendar fiscal years (IMMP's year ends 30 June).
+
+---
+
 ## Recent Update — 2026-11-12 (Missing-Field Fixes: CT.gov Source Refresh + Content Gate, `inst_delta_z` Blank Semantics — Out-of-Sample Clock Reset; Sharadar Price-Source Cutover)
 
 Classification: `DATA_INTEGRITY_FIX / NEW_BLOCKING_GATE / OOS_CLOCK_RESET`. Tier 3, the highest affected tier. Separately, `PRICE_SOURCE_CHANGE` (PR #622) is documented here as a **governance gap** (see below). Source of truth: `docs/governance/2026-11-04-missing-fields-clock-reset.md` (amended 2026-11-12). Merges: PR #614 (`8f821f92`, 2026-11-12), PR #636 (`01c5bd0b`, 2026-11-12), PR #635 (`d8e9af62`), PR #622 (`f666886d`, 2026-11-11), PR #621 (`9abd748e`, 2026-11-11).

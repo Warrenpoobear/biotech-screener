@@ -190,6 +190,12 @@ metadata:
   - The commit message says this was operator-authorized, but there is **no memo or HASH_ROTATIONS entry**.
   - Protocol §1 forbids price-source changes in the window without authorization and a reset. Operator acknowledgement is pending.
   - The first in-pipeline run coincides with the #614 reset start.
+- **Financial score fix (PR #649 `8b5fdd8c`, merged and deployed 2026-11-12 before the 16:30 ET run; operator-authorized in session):**
+  - Operating cash flow, not net income, decides whether a company is "profitable" in `module_2_financial_v2.py`; liquid assets prefer the deduped `CashAndSecurities` total.
+  - `financial_score` is a live ranker input, so this is an input change. On 2026-11-11 data the Top-30 membership is unchanged (30/30); KYMR moves from rank 7 to 4.
+  - It lands before `oos_clock_start` is recorded, so it is part of the new window's starting configuration if the start is 2026-11-12 or later. No hash rotation.
+  - PR #610 and #611 were closed unmerged: their year-to-date divisor double-scales the trailing-12-month PIT store.
+  - Memo: `docs/governance/2026-11-12-financial-runway-solvency-fix.md`.
 - **Ops (PR #633):** the watchdog's trapops recovery is now gated on today's `rankings.csv`, which removes the false MISSED/FAILED alarms. Tier 1, no reset.
 
 ## Governance Events (2026-11-01)

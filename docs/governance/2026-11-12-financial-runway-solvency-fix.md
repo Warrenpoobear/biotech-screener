@@ -1,9 +1,9 @@
 # Financial score: solvency by operating cash flow, deduped cash total — proposed bug fix
 
 **Date:** 2026-11-12
-**Status:** PROPOSED. Not merged. Merge needs operator authorization under protocol §1.
+**Status:** MERGED 2026-11-12 as PR #649 (`8b5fdd8c`); mirror WR-SW-Dev #67 (`af405495`). Deployed to the live checkout before the 16:30 ET production run.
 **Classification:** Tier 3. `module_2_financial_v2.py` produces `financial_score`, one of the two features the live `minimal_v2` ranker reads.
-**Authorization:** operator asked for this PR to be built in session 2026-11-12. Authorization to merge, and the clock decision in §4, are still open.
+**Authorization:** operator (Darren Schulz), in session 2026-11-12: asked for the PR to be built, then instructed "merge #649" so that the fix is part of the new window's starting configuration (§4). Recording `oos_clock_start` is still open.
 **Protocol:** `docs/FORWARD_VALIDATION_PROTOCOL.md` §1 — an authorized bug fix during the NO_MODEL_CHANGE window resets the out-of-sample clock.
 **Hash rotation:** none. `model_hash 827c35a9ed3ee6e1` covers `ranker_engine.py`, `selector_engine.py` and `decision_engine.py`, none of which change. Ruleset `8887576e` is unchanged.
 **Supersedes:** PR #610 and PR #611 (see §5).
