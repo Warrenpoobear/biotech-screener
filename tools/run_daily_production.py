@@ -356,11 +356,11 @@ MODE_DEFAULTS = {
     },
     "daily-production": {
         "price_refresh_scope": "full",
-        "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory",
+        "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory,pdufa_bio",
     },
     "full-refresh": {
         "price_refresh_scope": "full",
-        "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory,euctr,ctis,isrctn,merged_trials",
+        "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory,pdufa_bio,euctr,ctis,isrctn,merged_trials",
     },
     "research": {
         "price_refresh_scope": "top30",
@@ -5441,7 +5441,7 @@ def run_daily(
     price_cache_dir: Optional[Path] = None,
     fail_on_bad_cache: bool = False,
     skip_pit_warm: bool = False,
-    warm_sources: str = "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory",
+    warm_sources: str = "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory,pdufa_bio",
     warm_price_pit: bool = True,
     price_pit_backfill: bool = True,
     auto_refresh_market_data: bool = True,
