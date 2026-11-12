@@ -320,6 +320,7 @@ TICKER_TO_SPONSORS = {
     "SRRK": ["Scholar Rock"],
     "SRZN": ["Surrozen"],
     "STOK": ["Stoke Therapeutics", "Stoke Therapeutics, Inc."],
+    "STTK": ["Shattuck Labs", "Shattuck Labs, Inc."],
     "STRO": ["Sutro Biopharma", "Sutro Biopharma, Inc."],
     # Indivior acquired Supernus Pharmaceuticals and renamed itself Supernus, Inc.;
     # ticker INDV -> SUPN on 2026-11-03 (corporate_actions.json). The combined
