@@ -7,6 +7,12 @@ market_data.json falls back to cached data and close_price in snapshots
 goes stale. price_history.csv refreshes via a different endpoint and stays
 current. This tool copies the latest price_history close into market_data.json.
 
+It records the close's date in ``price_date`` (and ``price_source``) and never
+touches ``collected_at``: that field is when collect_market_data.py last fetched
+the row's full field set (avg_volume, beta, volatility_90d, short_percent, ...),
+and the market_data_staleness gate reads it. Re-stamping it here made
+months-old rows look fresh (2026-11-12).
+
 Usage:
     python3 tools/patch_market_data_prices.py
     python3 tools/patch_market_data_prices.py --as-of-date 2026-06-24
@@ -67,10 +73,13 @@ def main():
         if ticker in prices:
             price_date, new_price = prices[ticker]
             old_price = rec.get("price")
+            if not args.dry_run:
+                # Never write collected_at here; see module docstring.
+                rec["price_date"] = price_date
+                rec["price_source"] = "price_history"
             if old_price != new_price:
                 if not args.dry_run:
                     rec["price"] = new_price
-                    rec["collected_at"] = price_date
                 patched += 1
             else:
                 unchanged += 1
@@ -94,7 +103,7 @@ def main():
         os.unlink(tmp)
         raise
 
-    print(f"  Wrote {MARKET_DATA} (collected_at updated to price dates)")
+    print(f"  Wrote {MARKET_DATA} (price + price_date updated; collected_at unchanged)")
 
 
 if __name__ == "__main__":
