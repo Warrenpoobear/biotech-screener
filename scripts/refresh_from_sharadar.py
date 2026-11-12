@@ -9,10 +9,12 @@ Usage:
 
 Output:
     production_data/price_history.csv   -- appended/created with Sharadar SEP rows
-    production_data/market_data.json    -- price + collected_at fields updated
+    production_data/market_data.json    -- price, price_date, price_source, market_cap,
+                                           enterprise_value updated; collected_at untouched
 
-CCFT: all writes carry a collected_at timestamp equal to the last Sharadar lastupdated
-      date returned, never datetime.now() on its own.
+CCFT: every price write carries price_date = the Sharadar SEP row's own date, never
+      datetime.now(). collected_at stays the date of the last full collect_market_data.py
+      fetch, which the market_data_staleness gate reads.
 """
 
 import argparse
@@ -167,9 +169,14 @@ def _update_market_data(
     daily_by_ticker: dict[str, dict],
     sep_rows: list[dict],
     data_dir: Path,
-    collected_at: str,
 ) -> None:
-    """Update price + market cap fields in market_data.json."""
+    """Update price + market cap fields in market_data.json.
+
+    Records the SEP close's date in ``price_date`` (``price_source`` =
+    "sharadar_sep") and never touches ``collected_at``: that field is when
+    collect_market_data.py last fetched the row's full field set (avg_volume,
+    beta, volatility_90d, ...) and the market_data_staleness gate reads it.
+    """
     # Build latest price per ticker from SEP
     latest_price: dict[str, float] = {}
     for row in sep_rows:
@@ -187,7 +194,8 @@ def _update_market_data(
         t = rec.get("ticker", "")
         if t in latest_price:
             rec["price"] = latest_price[t]
-            rec["collected_at"] = collected_at
+            rec["price_date"] = latest_price[t + "_date"]
+            rec["price_source"] = "sharadar_sep"
             updated += 1
         daily = daily_by_ticker.get(t)
         if daily:
@@ -243,8 +251,6 @@ def main() -> None:
 
     # Collect latest date seen across all tickers
     latest_date = max((r["date"] for r in sep_rows), default=str(as_of))
-    # Use lastupdated from rows as CCFT collected_at
-    collected_at = max((r.get("lastupdated", r["date"]) for r in sep_rows), default=str(as_of))
 
     # Fetch DAILY for market cap / EV (only need recent rows)
     daily_start = str(as_of - timedelta(days=5))
@@ -257,8 +263,8 @@ def main() -> None:
 
     price_csv = args.data_dir / "price_history.csv"
     _write_price_history(sep_rows, price_csv)
-    _update_market_data(daily_by_ticker, sep_rows, args.data_dir, collected_at)
-    log.info("Done. collected_at=%s", collected_at)
+    _update_market_data(daily_by_ticker, sep_rows, args.data_dir)
+    log.info("Done. latest price date=%s", latest_date)
 
 
 if __name__ == "__main__":
