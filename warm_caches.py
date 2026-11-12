@@ -843,6 +843,26 @@ def warm_biopharmawatch(as_of_date: date, data_dir: Path, cache_dir: Path) -> tu
     return len(reg_records), len(adcom_records)
 
 
+def warm_pdufa_bio(as_of_date: date, data_dir: Path, cache_dir: Path) -> tuple[int, int]:
+    """Fetch pdufa.bio free FDA calendar. Returns (fda_regulatory_count, adcom_count).
+
+    No API key required. Short-circuits if BPW already populated cache for this date.
+    """
+    from wake_robin_data_pipeline.collectors.pdufa_bio_collector import (
+        collect_pdufa_bio_events,
+    )
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    reg_records, adcom_records = collect_pdufa_bio_events(
+        as_of_date=as_of_date,
+        cache_dir=cache_dir,
+        pdufa_dates_path=data_dir / "pdufa_dates.json",
+    )
+    return len(reg_records), len(adcom_records)
+
+
 def warm_ir_events(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
     """Fetch and cache IR events from company events pages. Returns count."""
     from wake_robin_data_pipeline.collectors.ir_events_collector import collect_ir_events
@@ -969,7 +989,7 @@ def main():
         type=str,
         default="fda_adcom,sec_8k,euctr,ctis,isrctn,merged_trials",
         help="Comma-separated sources to warm: fda_adcom,fda_regulatory,openfda,sec_8k,ctgov,sec_13f,"
-        "euctr,ctis,isrctn,merged_trials,event_ledger,price_pit "
+        "euctr,ctis,isrctn,merged_trials,event_ledger,price_pit,biopharmawatch,pdufa_bio "
         "(default: fda_adcom,sec_8k,euctr,ctis,isrctn,merged_trials)",
     )
     parser.add_argument(
@@ -1300,6 +1320,16 @@ def main():
         except Exception as e:
             logger.error(f"BiopharmaWatch warm failed: {e}")
 
+    pdufa_bio_reg_count = 0
+    pdufa_bio_adcom_count = 0
+    if "pdufa_bio" in sources:
+        fda_cache_dir = Path(args.fda_cache_dir)
+        fda_cache_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            pdufa_bio_reg_count, pdufa_bio_adcom_count = warm_pdufa_bio(as_of, data_dir, fda_cache_dir)
+        except Exception as e:
+            logger.error(f"pdufa.bio warm failed: {e}")
+
     # Write refresh diagnostics sidecar
     if refresh_results:
         cache_root = PROJECT_ROOT / "cache"
@@ -1351,6 +1381,8 @@ def main():
         parts.append(f"{press_release_count} press release events")
     if bpw_reg_count or bpw_adcom_count:
         parts.append(f"BPW: {bpw_reg_count} regulatory + {bpw_adcom_count} adcom")
+    if pdufa_bio_reg_count or pdufa_bio_adcom_count:
+        parts.append(f"pdufa.bio: {pdufa_bio_reg_count} regulatory + {pdufa_bio_adcom_count} adcom")
     logger.info(f"Cache warm complete: {', '.join(parts)}")
     return 0
 
