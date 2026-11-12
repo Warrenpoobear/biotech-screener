@@ -40,6 +40,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from common.atomic_io import atomic_write_text  # noqa: E402
+from common.sharadar_prices import PRICE_COLUMNS, to_bar  # noqa: E402
 
 # Sharadar DAILY reports marketcap and ev in MILLIONS of USD. market_data.json
 # stores raw USD (collect_market_data.py writes yfinance marketCap; run_screen
@@ -134,26 +135,22 @@ def _fetch_daily(tickers: list[str], latest_date: str, ctx: ssl.SSLContext, api_
 
 
 def _write_price_history(rows: list[dict], out_path: Path) -> str:
-    """Write SEP rows to price_history.csv. Returns the latest date written."""
-    # Sort for determinism
-    rows_sorted = sorted(rows, key=lambda r: (r["date"], r["ticker"]))
-    latest_date = rows_sorted[-1]["date"] if rows_sorted else ""
+    """Write SEP rows to price_history.csv. Returns the latest date written.
+
+    Uses the pipeline's convention (common.sharadar_prices.to_bar): SEP
+    ``close``, split-adjusted but NOT dividend-adjusted. ``closeadj`` would
+    rewrite every past dividend payer's history; dividends are back-adjusted
+    separately from the corporate-actions registry.
+    """
+    bars = [b for b in (to_bar(r) for r in rows) if b is not None]
+    bars.sort(key=lambda b: (b["date"], b["ticker"]))
+    latest_date = bars[-1]["date"] if bars else ""
     with open(out_path, "w", encoding="utf-8", newline="") as fh:
         writer = csv.writer(fh, quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
-        writer.writerow(["date", "ticker", "close", "open", "high", "low", "volume"])
-        for r in rows_sorted:
-            writer.writerow(
-                [
-                    r["date"],
-                    r["ticker"],
-                    r.get("closeadj") or r.get("close", ""),
-                    r.get("open", ""),
-                    r.get("high", ""),
-                    r.get("low", ""),
-                    r.get("volume", ""),
-                ]
-            )
-    log.info("Wrote %d rows to %s (latest: %s)", len(rows_sorted), out_path, latest_date)
+        writer.writerow(PRICE_COLUMNS)
+        for b in bars:
+            writer.writerow([b[c] for c in PRICE_COLUMNS])
+    log.info("Wrote %d rows to %s (latest: %s)", len(bars), out_path, latest_date)
     return latest_date
 
 
@@ -182,7 +179,7 @@ def _update_market_data(
     for row in sep_rows:
         t = row["ticker"]
         if t not in latest_price or row["date"] > latest_price.get(t + "_date", ""):
-            latest_price[t] = row.get("closeadj") or row.get("close")
+            latest_price[t] = row.get("close")  # split-adjusted, not closeadj (see _write_price_history)
             latest_price[t + "_date"] = row["date"]
 
     path = data_dir / "market_data.json"
