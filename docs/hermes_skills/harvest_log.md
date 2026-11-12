@@ -1001,3 +1001,70 @@ No confirmed session findings from the past 7 days; nearest relevant sessions ar
 ### New skills created: none
 
 ### No new findings: harvest_log.md only — no skill patches this run.
+
+## 2026-08-11
+
+### Git activity (7d window)
+
+- **biotech-screener**: ~90 commits since 2026-08-04, dominated by merges. Actionable non-housekeeping items:
+  - `e8a56c0a` fix(watchdog): a run that is not due yet is not a missed run (#566) — PIPELINE/GOVERNANCE. Watchdog fired on WSL2 boot (~09:00 ET), false-flagged absent same-day snapshot as "missed", manufactured a pre-market snapshot that then satisfied the real 16:30 run's idempotency check for the rest of the day. Root cause of three co-occurring gate warnings (pnl_attribution coverage 0.0%, market_data stale, drift_monitoring earnings-date coverage drop). Fixed with a `PROD_DUE_HHMM` scheduled-time guard. **Patched into `openclaw-cron-scheduler-debug` as Class O.**
+  - `01cde618` fix(gates): working_tree_clean was timing out — cheaper git, longer budget (#569) — GOVERNANCE/PIPELINE. `git status --porcelain -uall` too expensive on 4,251-file repo (22-32s); replaced with two narrower commands + raised budget 30s→120s. No new skill pattern (single-repo perf tuning, not a recurring class).
+  - `c6378427` fix(metadata): regulatory coverage counted two different populations (#573-adjacent) — PIPELINE. `regulatory_secondary_coverage_pct` numerator was universe-wide, denominator was eligible-only; inflated 18.0% vs corrected 13.8%. Author explicitly names this "same shape as #558" (portfolio_weights gate, 2026-08-06, `940a92ef`). Two confirmed instances of the same numerator/denominator-population-mismatch defect. **Patched into `openclaw-data-pipeline-debug` as new Class S**, citing both commits.
+  - `940a92ef` (2026-08-06, cited as prior instance for Class S) fix(gates): portfolio_weights reads the buy list, not the research list (#558) — same defect class as above, already in-window from prior harvest but now confirmed as a recurring pattern (2 instances).
+  - `d090713a` fix(monitoring): resolve prior snapshots from `_prior_dir`, not staging parent (#546) — already logged (Class R, `openclaw-data-pipeline-debug`) in a prior harvest cycle; no new action.
+  - `32a1b19a` fix(ev): exclude look-ahead pairs and future-dated HITs from calibration (#542) — already logged (Class Q); no new action.
+  - Remainder: `monitoring:`, `x-intelligence:`, `evidence(fv):`, `data:`, `docs(claude):`, `ci(mirror):`, tenancy feature work, dependency/CVE fixes — HOUSEKEEPING/PIPELINE routine, not actionable for skill patching this cycle.
+- **asset-allocation**: 1 commit — `489d900` docs(tracking): MODE A sync 2026-08-09 (598 passed, 0 ruff errors, no drift since 9407a50) — routine tracker sync, not actionable.
+
+### EES v3 veto monitor findings (run_findings.jsonl, 2026-07-28 → 2026-08-10, 10 entries)
+
+- All 10 runs: `script_exit: 0`, `gate_20d.met: true` (obs 59→67), `anomalies: []` — clean per anomaly-flag thresholds throughout.
+- `veto_alpha_20d` monotonically declining: 7.26 → 7.16 → 7.16 → 6.95 → 6.95 → 6.77 → 6.59 → 6.44 → 6.44 → 6.27 (pp). No single-day threshold breach fires because the decline is gradual — this is invisible to the automated findings file's anomaly-flag logic alone. Consistent with the trend flagged separately in the held-spec ledger (session `20260630_115648_426bd7` escalation, 2026-08-10): `raw_veto_core` gate MET 46 days with no operator ruling, "metrics trending down for a third consecutive print."
+- `n_vetoed` stable 6–9/day, no ZERO_VETOES/HIGH_VETO_COUNT/ALPHA_NEGATIVE/ALPHA_SPIKE fired.
+- **Patched into `ees-v3-veto-monitor` as new Class A** (findings-file self-learning section) — documents that point-in-time anomaly flags miss slow monotonic drift; recommends trend-printing alongside single-day values in future reports. Governance status (DIAGNOSTIC_ONLY/FREEZE_ACTIVE) unchanged.
+
+### Sessions reviewed: 0 new in-window
+
+No `session_search` queries were re-run this cycle (prior cycle's five prescribed queries — cron failure debug, ruleset/selector governance, asset-allocation phase tracker, hermes token cost, EES veto shadow monitor — already surfaced the relevant material now folded into this entry: the `openclaw-fleet-triage` token-bloat context and the 2026-06-30 EES `raw_veto_core` governance session). No new session material found beyond what's cited above.
+
+### Skill patches (3)
+
+1. `openclaw-cron-scheduler-debug` — added Class O (watchdog false-positive recovery before scheduled production time), citing commit `e8a56c0a` / PR #566.
+2. `openclaw-data-pipeline-debug` — added Class S (gate ratio built from two different populations), citing commits `940a92ef` (#558) and `c6378427`, both confirmed real instances with the same author-identified shape.
+3. `ees-v3-veto-monitor` — added Class A (veto alpha trend declining while gate stays MET, no anomaly flags raised), citing `run_findings.jsonl` entries 2026-07-28→2026-08-10.
+
+### New skills created: none
+
+3 findings patched into existing skills this cycle (below the 3+-unfitted-findings threshold for new-skill creation, and all three fit cleanly into existing skill scopes).
+
+### Docs sync
+
+- Synced updated `SKILL.md` → `docs/hermes_skills/openclaw-cron-scheduler-debug.md` and `docs/hermes_skills/openclaw-data-pipeline-debug.md` (overwritten with current full content, post-patch).
+- `ees-v3-veto-monitor` has no existing docs/hermes_skills mirror (data-science category skill, not previously synced) — not created this cycle; flagging for operator decision on whether data-science skills should also mirror into this directory.
+
+### Org-directive note (out of scope for this harvest, logged for traceability)
+
+A standing organization-level instruction ("Turn off auto-reload") was received in a prior session context. No auto-reload mechanism (dev server watch flag, cron auto-restart, file watcher) was identified in either tracked repo's config during this harvest's git/session review. This remains unresolved and is not part of the skill-harvester's scope — flagged here only so it is not lost, per the read-only/diagnose-first posture of this routine.
+
+## 2026-11-09
+### Git activity (past 7d)
+- biotech-screener: 0 commits
+- asset-allocation: 1 commit — `1f37ed7` docs(tracking): MODE A sync 2026-11-08 (598 passed, 0 ruff errors, no code drift since 9407a50; 5th unpushed tracker commit, idle 114d) — HOUSEKEEPING (skip, automated tracker sync, no model/pipeline change)
+### Sessions reviewed: 5
+- "biotech screener pipeline cron failure debug" — no results within past 7d (most recent match 2026-06-22)
+- "biotech screener ruleset selector signal governance" — no results within past 7d (most recent match 2026-06-22)
+- "asset allocation phase tracker" — no results within past 7d (most recent match 2026-06-22)
+- "hermes token cost skill" — no results within past 7d (most recent match 2026-05-24)
+- "ees veto shadow monitor raw_veto_core gate" — no results within past 7d (most recent match 2026-06-30)
+### EES v3 veto-monitor findings (2026-11-03 through 2026-11-09)
+- 5 runs, all script_exit=0, gate_20d met=true (obs=88) on every date, veto_alpha_20d=5.29 flat, n_vetoed range 7-10, anomalies=[] on every entry. No SCRIPT_ERROR, ZERO_VETOES, HIGH_VETO_COUNT, ALPHA_NEGATIVE, ALPHA_SPIKE, or GATE_NEWLY_MET instances (gate was already met prior to this window — not newly met).
+### Skill patches
+- none this run
+### New skills created: none
+### No new findings: No commits in biotech-screener; the single asset-allocation commit is automated housekeeping; no session activity within the 7-day window; EES monitor flat/clean with zero anomalies across all 5 runs. Nothing actionable to patch into openclaw-cron-scheduler-debug, openclaw-agent-scope-audit, openclaw-session-routing-debug, openclaw-data-pipeline-debug, aa-model-tracker, or ees-v3-veto-monitor.
+
+### Legibility gate
+External-legibility work this week: 0 commits/docs touching operator-facing surfaces (dashboards, memos, reports) in either repo.
+Internal-machinery work this week: 1 automated tracker-sync commit in asset-allocation (no code drift); 0 in biotech-screener.
+Ratio verdict: BALANCED
+Observation: Both repos were effectively idle this week (0 and 1 commits respectively) outside of one automated doc-sync commit.

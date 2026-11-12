@@ -452,3 +452,91 @@ class TestConstants:
         assert DELISTING_POLICY_CONSERVATIVE == "conservative"
         assert DELISTING_POLICY_PENALTY == "penalty"
         assert DELISTING_POLICY_LAST_PRICE == "last_price"
+
+
+class _FakeSharadarClient:
+    """Stands in for common.sharadar_client.SharadarClient (no live HTTP)."""
+
+    def __init__(self, rows=None, exc=None):
+        self.rows = rows or []
+        self.exc = exc
+        self.calls = []
+
+    def fetch(self, table, *, tickers=None, filters=None, fields=None, date_range=None, **kw):
+        self.calls.append(
+            {
+                "table": table,
+                "tickers": list(tickers),
+                "filters": dict(filters or {}),
+                "fields": fields,
+                "date_range": date_range,
+            }
+        )
+        if self.exc:
+            raise self.exc
+        return list(self.rows)
+
+
+class TestSharadarFromApiDirect:
+    """from_api uses the direct api.sharadar.com client, not Nasdaq Data Link."""
+
+    def test_queries_sep_with_date_window_and_fields(self):
+        client = _FakeSharadarClient(
+            rows=[
+                {"ticker": "VKTX", "date": "2026-11-03", "closeadj": 26.09},
+                {"ticker": "VKTX", "date": "2026-11-02", "closeadj": 26.83},
+            ]
+        )
+        provider = SharadarReturnsProvider.from_api(
+            tickers=["VKTX"], start_date="2026-11-01", end_date="2026-11-03", client=client
+        )
+        assert client.calls == [
+            {
+                "table": "SEP",
+                "tickers": ["VKTX"],
+                "filters": {},
+                "fields": ["ticker", "date", "closeadj"],
+                "date_range": ("2026-11-01", "2026-11-03"),
+            }
+        ]
+        assert provider.get_price("VKTX", "2026-11-03") == Decimal("26.090000")
+        assert provider.get_date_range("VKTX") == ("2026-11-02", "2026-11-03")
+
+    def test_auth_error_propagates_instead_of_silently_dropping(self):
+        from common.sharadar_client import SharadarAuthError
+
+        client = _FakeSharadarClient(exc=SharadarAuthError("SEP: HTTP 403: Exceeds free tier"))
+        with pytest.raises(SharadarAuthError):
+            SharadarReturnsProvider.from_api(
+                tickers=["VKTX"], start_date="2026-11-01", end_date="2026-11-03", client=client
+            )
+
+    def test_skips_rows_without_price(self):
+        client = _FakeSharadarClient(rows=[{"ticker": "VKTX", "date": "2026-11-03", "closeadj": None}])
+        provider = SharadarReturnsProvider.from_api(
+            tickers=["VKTX"], start_date="2026-11-01", end_date="2026-11-03", client=client
+        )
+        assert not provider.has_ticker("VKTX")
+
+    def test_cache_roundtrip(self, tmp_path):
+        client = _FakeSharadarClient(rows=[{"ticker": "VKTX", "date": "2026-11-03", "closeadj": 26.09}])
+        kw = dict(tickers=["VKTX"], start_date="2026-11-01", end_date="2026-11-03", cache_dir=tmp_path)
+        SharadarReturnsProvider.from_api(client=client, **kw)
+        cached = SharadarReturnsProvider.from_api(client=_FakeSharadarClient(exc=AssertionError("no fetch")), **kw)
+        assert cached.get_price("VKTX", "2026-11-03") == Decimal("26.090000")
+
+    def test_factory_api_key_optional(self, monkeypatch):
+        import backtest.sharadar_provider as sp
+
+        made = {}
+
+        def fake_from_api(cls=None, **kwargs):
+            made.update(kwargs)
+            return "provider"
+
+        monkeypatch.setattr(sp.SharadarReturnsProvider, "from_api", classmethod(lambda cls, **kw: fake_from_api(**kw)))
+        assert (
+            create_returns_provider("sharadar_api", tickers=["VKTX"], start_date="2026-01-01", end_date="2026-02-01")
+            == "provider"
+        )
+        assert made["api_key"] is None

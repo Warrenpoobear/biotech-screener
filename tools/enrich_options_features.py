@@ -700,24 +700,39 @@ def run(
     data_dir = REPO_ROOT / "production_data"
     snap_dir = REPO_ROOT / "data" / "snapshots"
 
-    # Load options snapshot
-    snap_path = data_dir / "options_snapshot_latest.json"
-    if not snap_path.exists():
-        dated = sorted(data_dir.glob("options_snapshot_2*.json"))
-        if not dated:
-            raise FileNotFoundError("No options snapshot found")
-        snap_path = dated[-1]
-    opt_snap = json.loads(snap_path.read_text())
+    # Load the options snapshot FOR as_of_date. "latest" is only valid when it
+    # is labelled with as_of_date; a catch-up run for a past date must not read
+    # a newer chain (look-ahead). Falls back to the dated file, else refuses.
+    opt_snap = None
+    snap_path = None
+    for cand in (data_dir / "options_snapshot_latest.json", data_dir / f"options_snapshot_{as_of_date}.json"):
+        if not cand.exists():
+            continue
+        data = json.loads(cand.read_text())
+        if data.get("metadata", {}).get("as_of_date") == as_of_date:
+            opt_snap, snap_path = data, cand
+            break
+    if opt_snap is None:
+        raise FileNotFoundError(
+            f"No options snapshot labelled {as_of_date} (latest/dated); refusing to enrich from another date"
+        )
     if verbose:
         print(f"Options snapshot: {snap_path.name}  ({len(opt_snap['tickers'])} tickers)")
 
-    # Load latest rankings
-    rk_paths = sorted(snap_dir.glob("*/rankings.csv"))
+    # Load the newest rankings ON OR BEFORE as_of_date (date-named dirs only).
+    # Production runs this before today's screen, so this is normally the prior
+    # day's rankings; a catch-up run must never see a later date's rankings.
+    import re as _re
+
+    _date_dir = _re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    rk_paths = sorted(
+        p for p in snap_dir.glob("*/rankings.csv") if _date_dir.match(p.parent.name) and p.parent.name <= as_of_date
+    )
     if not rk_paths:
-        raise FileNotFoundError("No rankings snapshots found")
+        raise FileNotFoundError(f"No rankings snapshot on or before {as_of_date}")
     rk_path = rk_paths[-1]
     rankings_df = pd.read_csv(rk_path)
-    snap_date = str(rk_path).split("snapshots/")[1].split("/")[0]
+    snap_date = rk_path.parent.name
     if verbose:
         print(f"Rankings: {snap_date}  ({len(rankings_df)} rows)")
 

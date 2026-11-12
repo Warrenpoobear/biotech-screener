@@ -52,12 +52,26 @@ _PREFIX_TRADES = "us_options_opra/trades_v1"
 SCHEMA_VERSION = "massive_options_cache.v1"
 
 
+def massive_enabled() -> bool:
+    """Massive (Polygon) API calls are OFF unless MASSIVE_ENABLED=1.
+
+    Dropped 2026-11-11: the subscription no longer covers live option chains
+    ("NOT_AUTHORIZED: You are not entitled to this data"), so every call failed
+    and blanked chain-derived fields. With the switch off, credentials in .env
+    are ignored and every consumer takes its existing no-credentials path.
+    The local PIT cache (data/caches/massive_options) is still readable and
+    must not be deleted — it cannot be re-fetched.
+    """
+    return os.environ.get("MASSIVE_ENABLED", "").strip().lower() in ("1", "true", "yes")
+
+
 def _get_config() -> Dict[str, Any]:
-    """Read configuration from environment variables."""
+    """Read configuration from environment variables (credentials blank when disabled)."""
+    on = massive_enabled()
     return {
-        "api_key": os.environ.get("MASSIVE_API_KEY", ""),
-        "s3_access_key_id": os.environ.get("MASSIVE_S3_ACCESS_KEY_ID", ""),
-        "s3_secret_access_key": os.environ.get("MASSIVE_S3_SECRET_ACCESS_KEY", ""),
+        "api_key": os.environ.get("MASSIVE_API_KEY", "") if on else "",
+        "s3_access_key_id": os.environ.get("MASSIVE_S3_ACCESS_KEY_ID", "") if on else "",
+        "s3_secret_access_key": os.environ.get("MASSIVE_S3_SECRET_ACCESS_KEY", "") if on else "",
         "cache_dir": os.environ.get(
             "MASSIVE_CACHE_DIR",
             str(_REPO_ROOT / "data" / "caches" / "massive_options"),

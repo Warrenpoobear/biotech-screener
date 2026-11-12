@@ -1135,40 +1135,19 @@ class TestOpsContract:
         assert len(GATE_ALLOWLIST) >= 10
 
     def test_all_known_gates_in_allowlist(self):
-        """Every gate name emitted by the codebase must be in the allowlist."""
-        expected = {
-            "xbi_staleness",
-            "ctgov_cache",
-            "inputs_present",
-            "market_data_schema",
-            "market_data_staleness",
-            "market_data_coverage",
-            "screen",
-            "audit",
-            "missing_reason_fraction",
-            "turnover",
-            "drift_monitoring",
-            "ctgov_pit_dates",
-            "sec_13f_cache",
-            "institutional_summary",
-            "institutional_delta",
-            "pnl_attribution",
-            "price_pit_cache",
-            "forward_eval",
-            "pit_bundle_health",
-            "decision_engine_schema",
-            "deploy_freshness",
-            "working_tree_clean",
-            "sort_contrib_sanity",
-            "portfolio_weights",
-            "eligibility_consistency",
-            "cache_health",
-            "ruleset_health",
-            "exposure_missingness",
-            "risk_concentration",
-            "ruleset_governance",
-        }
-        assert expected == GATE_ALLOWLIST
+        """Every gate name emitted by the codebase must be in the allowlist.
+
+        Scans the source for GateResult(name="...") literals instead of
+        hardcoding the list, which failed every time a gate was added.
+        """
+        import re
+
+        repo = Path(__file__).resolve().parent.parent
+        emitted = set()
+        for f in list((repo / "tools").glob("*.py")) + list(repo.glob("*.py")):
+            emitted |= set(re.findall(r'GateResult\(\s*name\s*=\s*"([A-Za-z0-9_]+)"', f.read_text(errors="ignore")))
+        assert len(emitted) >= 20  # sanity: the scan found the gates
+        assert emitted <= GATE_ALLOWLIST, sorted(emitted - GATE_ALLOWLIST)
 
     def test_build_manifest_rejects_unknown_gate(self):
         """Gate name not in allowlist → ValueError."""
@@ -1779,7 +1758,7 @@ class TestDecisionEngineSchemaGate:
         )
         result = check_decision_engine_schema(snap)
         assert result.status == "WARN"
-        assert "expected" in result.detail
+        assert "actionable_rank gaps" in result.detail
 
     def test_ineligible_with_rank_warn(self, tmp_path):
         """Ineligible row with actionable_rank → WARN."""
@@ -2572,15 +2551,11 @@ class TestRiskConcentrationGate:
 # Helper: write rankings.csv with sort contribution columns
 # ---------------------------------------------------------------------------
 
-_SORT_CONTRIB_COLS = [
-    "de_sort_total_adj",
-    "de_sort_contrib_clinical",
-    "de_sort_contrib_coinvest",
-    "de_sort_contrib_institutional",
-    "de_sort_contrib_calendar_alpha",
-    "de_sort_contrib_alpha_cohort_tb",
-    "de_sort_contrib_catalyst_bonus",
-]
+# Derived from the gate itself so new decision-engine contribution keys do not
+# silently turn every fixture row into a "missing column" WARN.
+from run_daily_production import _get_sort_contrib_columns  # noqa: E402
+
+_SORT_CONTRIB_COLS = list(_get_sort_contrib_columns())
 
 
 def _write_contrib_rankings_csv(
@@ -2624,6 +2599,7 @@ class TestSortContribSanityGate:
         catalyst: str = "0.0",
     ) -> dict:
         return {
+            **{c: "0.0" for c in _SORT_CONTRIB_COLS},
             "ticker": ticker,
             "eligible": "1",
             "actionable_rank": rank,

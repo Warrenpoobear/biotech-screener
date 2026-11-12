@@ -57,7 +57,7 @@ load_dotenv()
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from statistics import median, quantiles
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -1981,6 +1981,98 @@ ALERT-level staleness abort the run instead of logging.  Left off so this guard
 cannot change production behaviour on its own."""
 
 
+def _dead_tickers_as_of(data_dir: Path, as_of_date: str) -> Set[str]:
+    """Tickers dead (acquisition / delisted / bankruptcy) on or before as_of_date.
+
+    Reads ``corporate_actions.json`` from the run's own data dir only, so a run
+    checks against the registry it scores with (no fallback to the repo copy:
+    a data dir without a registry keeps the check unchanged). Fail-open: any
+    error returns an empty set.
+    """
+    _path = Path(data_dir) / "corporate_actions.json"
+    if not _path.exists():
+        return set()
+    try:
+        from common.corporate_actions import list_dead_tickers, load_actions
+
+        _registry = load_actions(_path)
+        return {str(t).upper() for t in list_dead_tickers(as_of_date, _registry)}
+    except Exception:  # pragma: no cover - fail-open
+        return set()
+
+
+def _load_run_corporate_actions(data_dir: Path) -> Any:
+    """Load ``corporate_actions.json`` from the run's own data dir, or None.
+
+    Same source rule as ``_dead_tickers_as_of``: no fallback to the repo copy.
+    Fail-open: a missing or unreadable registry returns None (raw prices used).
+    """
+    _path = Path(data_dir) / "corporate_actions.json"
+    if not _path.exists():
+        return None
+    try:
+        from common.corporate_actions import load_actions
+
+        return load_actions(_path)
+    except Exception:  # pragma: no cover - fail-open
+        logger.warning("[momentum] could not load %s; momentum uses raw prices", _path)
+        return None
+
+
+def _observed_registry_split_factor(
+    ticker: str,
+    prices_desc: List[Tuple[Any, float]],
+    from_date: Any,
+    to_date: Any,
+    registry: Any,
+    tolerance: float = 2.0,
+) -> float:
+    """Cumulative factor for registry splits and special dividends in
+    (from_date, to_date] that are actually VISIBLE in this price series.
+
+    A registry split is applied only when the series jumps across its
+    effective date by roughly the registry factor (within ``tolerance`` x).
+    That makes the adjustment idempotent: on an already split-adjusted source
+    (yfinance history fetched after the split, or Sharadar SEP ``close``) the
+    jump is absent and the split is skipped instead of applied twice.
+
+    ``prices_desc`` is ``[(date, close), ...]`` sorted newest first.
+    """
+    import math
+
+    from common.corporate_actions import get_splits_only
+
+    factor = 1.0
+    f_iso, t_iso = from_date.isoformat(), to_date.isoformat()
+    for a in get_splits_only(ticker, registry):
+        if not a.factor or not (f_iso < a.effective_date <= t_iso):
+            continue
+        before = next((p for d, p in prices_desc if d.isoformat() < a.effective_date), None)
+        after = next((p for d, p in reversed(prices_desc) if d.isoformat() >= a.effective_date), None)
+        if not before or not after:
+            continue
+        observed = after / before
+        if abs(math.log(observed) - math.log(a.factor)) <= math.log(tolerance):
+            factor *= a.factor
+
+    # Special cash dividends: the ex-date drop is a distribution, not a return.
+    # Same visibility rule — applied only when the series drops by roughly the
+    # dividend (0.5x..1.5x), so a dividend-adjusted source is not adjusted twice.
+    from common.corporate_actions import get_special_dividends
+
+    for a in get_special_dividends(ticker, registry):
+        if not a.amount or not (f_iso < a.effective_date <= t_iso):
+            continue
+        before = next((p for d, p in prices_desc if d.isoformat() < a.effective_date), None)
+        after = next((p for d, p in reversed(prices_desc) if d.isoformat() >= a.effective_date), None)
+        if not before or not after or a.amount >= before:
+            continue
+        drop = before - after
+        if 0.5 * a.amount <= drop <= 1.5 * a.amount:
+            factor *= (before - a.amount) / before
+    return factor
+
+
 def compute_momentum_from_price_history(
     price_history_path: Path, as_of_date: str, market_data_by_ticker: Dict[str, Dict], xbi_ticker: str = "XBI"
 ) -> int:
@@ -2053,11 +2145,21 @@ def compute_momentum_from_price_history(
     #
     # Scoped to market_data_by_ticker so delisted names still sitting in
     # price_history.csv (MRSN/CVAC at 211d, IBB, etc.) do not raise false alarms.
+    #
+    # Also excludes names that are dead (acquired / delisted / bankrupt) as of
+    # as_of_date per the corporate-actions registry: market_data.json keeps
+    # entries for retired tickers, which are never ranked. On 2026-11-11 the check
+    # logged an ERROR for CRNX, APGE, TBPH, RNA, BHVN and ATAI — all retired, none
+    # in rankings.csv — and under BIOTECH_STRICT_PRICE_STALENESS=1 it would have
+    # raised and aborted the run over them.
     if prices_by_ticker:
         _scored = {str(_t).upper() for _t in (market_data_by_ticker or {})}
+        _dead = _dead_tickers_as_of(Path(price_history_path).parent, as_of_date)
         _gaps = []
         for _tkr, _pts in prices_by_ticker.items():
             if _scored and _tkr not in _scored:
+                continue
+            if _tkr in _dead:
                 continue
             if not _pts:
                 continue
@@ -2100,6 +2202,8 @@ def compute_momentum_from_price_history(
     for ticker in prices_by_ticker:
         prices_by_ticker[ticker].sort(key=lambda x: x[0], reverse=True)
 
+    _momentum_registry = _load_run_corporate_actions(Path(price_history_path).parent)
+
     def get_return(ticker: str, days_back: int) -> Optional[float]:
         """Get return over specified trading days (approximate)."""
         if ticker not in prices_by_ticker:
@@ -2127,13 +2231,24 @@ def compute_momentum_from_price_history(
         target_date = current_date - timedelta(days=calendar_days_back)
 
         past_price = None
+        past_date = None
         for dt, price in prices:
             if dt <= target_date:
                 past_price = price
+                past_date = dt
                 break
 
         if past_price is None or past_price == 0:
             return None
+
+        # Put the past close on the current close's share basis for registry
+        # splits inside the window, so a split is not scored as a return
+        # (IMMP's 1:20 reverse split on 2026-09-28 read as ~+800% momentum).
+        # Genuine crashes and rallies have no registry entry and are left as-is.
+        if _momentum_registry is not None:
+            past_price = past_price * _observed_registry_split_factor(
+                ticker, prices, past_date, current_date, _momentum_registry
+            )
 
         return (current_price / past_price) - 1.0
 
@@ -5751,12 +5866,7 @@ def save_validation_snapshot(
     prior_inst = None
     if decision_mode == "phase2":
         try:
-            from institutional_summary import (
-                _find_prior_institutional_summary,
-                _get_filing_period,
-                build_institutional_summary,
-                compute_institutional_delta,
-            )
+            from institutional_summary import build_institutional_summary, resolve_cross_quarter_delta
 
             _uni_tickers = {r.get("ticker", "") for r in csv_rows if r.get("ticker")}
             # nearest_prior_days=95 lets non-quarter-end monthly regen dates
@@ -5767,18 +5877,15 @@ def save_validation_snapshot(
             # stale-source summaries as priors for cross-date delta.
             inst_summary = build_institutional_summary(as_of_date, _uni_tickers, nearest_prior_days=95)
             if inst_summary:
-                # Use cross-quarter comparison to get real filing-period deltas
+                # Use cross-quarter comparison to get real filing-period deltas.
+                # The filing period is resolved from the summary's actual source
+                # cache; a same-source prior yields no delta (has_inst_delta=False)
+                # instead of a column of fake zeros.
                 _cache_base = Path(__file__).resolve().parent / "data" / "caches" / "sec_13f" / "PIT"
-                _cur_filing = _get_filing_period(_cache_base, as_of_date)
-                prior_inst = _find_prior_institutional_summary(
-                    _prior_dir,
-                    as_of_date,
-                    cross_quarter=True,
-                    current_filing_period=_cur_filing,
-                    max_candidates=200,
+                prior_inst, inst_delta, _inst_delta_status = resolve_cross_quarter_delta(
+                    inst_summary, _prior_dir, as_of_date, _cache_base, max_candidates=200
                 )
-                if prior_inst:
-                    inst_delta = compute_institutional_delta(inst_summary, prior_inst)
+                logger.info("[INST] cross-quarter delta status: %s", _inst_delta_status)
         except Exception as e:
             logger.warning("Could not compute institutional summary/delta: %s", e)
 
@@ -6532,9 +6639,12 @@ def save_validation_snapshot(
 
     try:
         from common.options_history_massive import _get_config as _massive_config
+        from common.options_history_massive import massive_enabled as _massive_enabled
 
         _mc = _massive_config()
-        if _mc.get("api_key"):
+        if not _massive_enabled():
+            _options_freshness["massive_status"] = "disabled"
+        elif _mc.get("api_key"):
             _options_freshness["massive_status"] = "ok"
             _options_freshness["massive_as_of"] = as_of_date
         else:
@@ -12185,6 +12295,20 @@ def add_bootstrap_analysis(
     return results
 
 
+# Exit-code contract with tools/run_daily_production.py:
+#   0 = OK, 1 = --strict health/readiness FAIL, 2 = --strict health WARN.
+#   Any other code is a hard failure. Errors must NOT reuse 1 or 2: the wrapper
+#   promotes exit-1/2 runs as "completed with warnings".
+EXIT_INPUT_ERROR = 8  # ValueError / FileNotFoundError / JSONDecodeError
+EXIT_UNEXPECTED_ERROR = 7  # any other uncaught exception
+_STRICT_EXIT_SEVERITY = {0: 0, 2: 1, 1: 2}  # FAIL (1) outranks WARN (2)
+
+
+def _worse_strict_exit(current: int, new: int) -> int:
+    """Combine two --strict verdict exit codes, keeping the more severe."""
+    return new if _STRICT_EXIT_SEVERITY[new] > _STRICT_EXIT_SEVERITY[current] else current
+
+
 def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
     """Run Phase-2 delta report as a post-snapshot hook.
 
@@ -12198,6 +12322,7 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
         compute_delta,
         compute_health_gate,
         compute_single_snapshot_summary,
+        find_prior_snapshot,
         find_snapshots,
         generate_delta_csv,
         generate_details_json,
@@ -12232,9 +12357,20 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
     # args.delta_prior = None/"" would crash on .lower() below. Normalize here.
     delta_prior = getattr(args, "delta_prior", "auto") or "auto"
 
+    # Production writes the current snapshot into a per-run staging dir that
+    # holds no earlier dates; the promoted history is passed as
+    # --prior-snapshot-dir. Fall back to it whenever the staging dir has no
+    # prior (before this, every production delta ran in single-snapshot mode).
+    _prior_root = getattr(args, "prior_snapshot_dir", None)
+    _prior_root = Path(_prior_root) if _prior_root else None
+    if _prior_root is not None and _prior_root.resolve() == Path(snapshot_dir).resolve():
+        _prior_root = None
+
     # Resolve prior
     if delta_prior == "auto":
         _, prior_path = find_snapshots(snapshot_dir, current_date, None)
+        if prior_path is None and _prior_root is not None:
+            prior_path = find_prior_snapshot(_prior_root, current_date)
         # Silent auto-prior misses left no trail in 2026-04-24's delta report;
         # emit a candidate-by-candidate diagnostic whenever auto finds nothing.
         if prior_path is None:
@@ -12243,12 +12379,14 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
 
                 logger.warning(
                     "Phase-2 delta auto-prior returned None; diagnostics:\n%s",
-                    diagnose_missing_prior(snapshot_dir, current_date),
+                    diagnose_missing_prior(_prior_root or snapshot_dir, current_date),
                 )
             except Exception as _diag_exc:
                 logger.debug("Auto-prior diagnostic failed: %s", _diag_exc)
     elif delta_prior.lower() == "none":
         prior_path = None
+    elif _prior_root is not None and not (Path(snapshot_dir) / delta_prior).is_dir():
+        prior_path = find_prior_snapshot(_prior_root, current_date, delta_prior)
     else:
         _, prior_path = find_snapshots(snapshot_dir, current_date, delta_prior)
 
@@ -13421,6 +13559,11 @@ Module 3 Catalyst Detection:
 
         # Load decision ruleset and patch CLI-only manifest inputs before any
         # output is written, so failed guardrails cannot leave partial outputs.
+        # --strict verdicts are recorded here and returned at the END of main(),
+        # so post-snapshot steps (readiness, bioshort watch, policy shadow /
+        # candidate) still run on WARN/FAIL days. Returning early skipped them
+        # on every strict production run.
+        _strict_exit_code = 0
         de_ruleset = _load_decision_ruleset_for_cli(args)
         if args.decision_mode == "phase2" and args.inputs_manifest != "off":
             _rs_path = Path(args.ruleset) if args.ruleset else PHASE2_DEFAULT_RULESET_PATH
@@ -13571,10 +13714,10 @@ Module 3 Catalyst Detection:
                     if health is not None and getattr(args, "strict", False):
                         if health.status == "FAIL":
                             logger.error("--strict: Phase-2 health FAIL, exiting 1")
-                            return 1
-                        if health.status == "WARN":
+                            _strict_exit_code = _worse_strict_exit(_strict_exit_code, 1)
+                        elif health.status == "WARN":
                             logger.warning("--strict: Phase-2 health WARN, exiting 2")
-                            return 2
+                            _strict_exit_code = _worse_strict_exit(_strict_exit_code, 2)
 
                 # Weekly readiness scorecard — policy-controlled gate
                 try:
@@ -13624,7 +13767,7 @@ Module 3 Catalyst Detection:
                     # In --strict mode, HOLD blocks the screen run
                     if getattr(args, "strict", False) and _gate["gate_status"] == "FAIL":
                         logger.error("--strict: readiness HOLD, exiting 1")
-                        return 1
+                        _strict_exit_code = _worse_strict_exit(_strict_exit_code, 1)
                 except Exception as _exc:
                     logger.debug("Readiness scorecard skipped: %s", _exc)
 
@@ -13720,7 +13863,7 @@ Module 3 Catalyst Detection:
             except Exception as _pc_exc:
                 logger.debug("[POLICY_CANDIDATE] skipped: %s", _pc_exc)
 
-        return 0
+        return _strict_exit_code
 
     except (PathTraversalError, SymlinkError) as e:
         # SECURITY: Log security-related errors without exposing details
@@ -13741,7 +13884,7 @@ Module 3 Catalyst Detection:
         # Sanitize error message to avoid logging sensitive data
         error_msg = sanitize_for_logging(str(e), max_string_length=200)
         logger.error(f"ERROR: {error_msg}")
-        return 1
+        return EXIT_INPUT_ERROR
     except KeyboardInterrupt:
         logger.warning("Pipeline interrupted by user")
         return 130  # Standard exit code for SIGINT
@@ -13750,7 +13893,7 @@ Module 3 Catalyst Detection:
         error_type = type(e).__name__
         error_msg = sanitize_for_logging(str(e), max_string_length=200)
         logger.exception(f"UNEXPECTED ERROR ({error_type}): {error_msg}")
-        return 2
+        return EXIT_UNEXPECTED_ERROR
     finally:
         # Clean up replay bundle temp dir if it was created
         _tmp = locals().get("_replay_tmp_dir")

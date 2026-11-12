@@ -215,7 +215,7 @@ TIMING_PATTERNS = [
     ),
     # "NDA accepted...PDUFA date of April 3, 2026" / "BLA...PDUFA date of ..."
     (
-        r"(?:NDA|BLA|sNDA|sBLA)\s+.*?PDUFA\s+date\s+(?:of|is)\s+(\w+\s+\d{1,2},?\s+\d{4})",
+        r"(?:NDA|BLA|sNDA|sBLA)\s+(?:U\.S\.|Inc\.|Co\.|No\.|[^.]){0,120}?PDUFA\s+date\s+(?:of|is)\s+(\w+\s+\d{1,2},?\s+\d{4})",
         "FDA_PDUFA_DATE",
         "DAY",
         None,
@@ -267,34 +267,39 @@ TIMING_PATTERNS = [
     ),
     # ── NDA/BLA submission and resubmission (QUARTER / DAY) ──
     # "NDA resubmission accepted" / "BLA resubmitted" / "sNDA filed"
+    # Typed FDA_SUBMISSION (same REGULATORY family / T1 tier), NOT
+    # FDA_PDUFA_DATE: a submission is not an FDA action date. Gaps are bounded
+    # to one sentence; the unbounded .*? attached unrelated later dates at DAY
+    # precision (STOK "NDA submission in H2 2027" -> PDUFA 2026-10-29, the
+    # press-release date; DYN "BLA submission ... Q3 2027" -> 2026-06-30).
     (
-        r"(?:NDA|BLA|sNDA|sBLA)\s+(?:re)?(?:submission|submitted|filed|accepted)\s+.*?(Q[1-4]\s*\d{4})",
-        "FDA_PDUFA_DATE",
+        r"(?:NDA|BLA|sNDA|sBLA)\s+(?:re)?(?:submission|submitted|filed|accepted)\s+(?:U\.S\.|Inc\.|Co\.|No\.|[^.]){0,120}?(Q[1-4]\s*\d{4})",
+        "FDA_SUBMISSION",
         "QUARTER",
         None,
     ),
     (
-        r"(?:NDA|BLA|sNDA|sBLA)\s+(?:re)?(?:submission|submitted|filed|accepted)\s+.*?(\w+\s+\d{1,2},?\s+\d{4})",
-        "FDA_PDUFA_DATE",
+        r"(?:NDA|BLA|sNDA|sBLA)\s+(?:re)?(?:submission|submitted|filed|accepted)\s+(?:U\.S\.|Inc\.|Co\.|No\.|[^.]){0,120}?(\w+\s+\d{1,2},?\s+\d{4})",
+        "FDA_SUBMISSION",
         "DAY",
         None,
     ),
     # ── FDA meetings (Type A/B/C, mid-cycle, late-cycle) ──
     # "Type A meeting scheduled for March 2026" / "late-cycle meeting"
     (
-        r"Type\s+[ABC]\s+meeting\s+.*?(?:scheduled|set|planned)\s+.*?(\w+\s+\d{1,2},?\s+\d{4})",
+        r"Type\s+[ABC]\s+meeting\s+(?:U\.S\.|Inc\.|Co\.|No\.|[^.]){0,120}?(?:scheduled|set|planned)\s+(?:U\.S\.|Inc\.|Co\.|No\.|[^.]){0,120}?(\w+\s+\d{1,2},?\s+\d{4})",
         "FDA_PDUFA_DATE",
         "DAY",
         None,
     ),
     (
-        r"(?:mid[- ]?cycle|late[- ]?cycle)\s+(?:review|meeting)\s+.*?(\w+\s+\d{1,2},?\s+\d{4})",
+        r"(?:mid[- ]?cycle|late[- ]?cycle)\s+(?:review|meeting)\s+(?:U\.S\.|Inc\.|Co\.|No\.|[^.]){0,120}?(\w+\s+\d{1,2},?\s+\d{4})",
         "FDA_PDUFA_DATE",
         "DAY",
         None,
     ),
     (
-        r"(?:mid[- ]?cycle|late[- ]?cycle)\s+(?:review|meeting)\s+.*?(Q[1-4]\s*\d{4})",
+        r"(?:mid[- ]?cycle|late[- ]?cycle)\s+(?:review|meeting)\s+(?:U\.S\.|Inc\.|Co\.|No\.|[^.]){0,120}?(Q[1-4]\s*\d{4})",
         "FDA_PDUFA_DATE",
         "QUARTER",
         None,
@@ -302,7 +307,7 @@ TIMING_PATTERNS = [
     # ── Breakthrough / Priority / Accelerated designations with timeline ──
     # "granted Breakthrough Therapy Designation ... expects approval Q2 2026"
     (
-        r"(?:Breakthrough|Priority|Accelerated)\s+(?:Therapy\s+)?(?:Designation|Review)\s+.*?(?:expects?|anticipates?)\s+.*?(Q[1-4]\s*\d{4})",
+        r"(?:Breakthrough|Priority|Accelerated)\s+(?:Therapy\s+)?(?:Designation|Review)\s+(?:U\.S\.|Inc\.|Co\.|No\.|[^.]){0,120}?(?:expects?|anticipates?)\s+(?:U\.S\.|Inc\.|Co\.|No\.|[^.]){0,120}?(Q[1-4]\s*\d{4})",
         "FDA_PDUFA_DATE",
         "QUARTER",
         None,

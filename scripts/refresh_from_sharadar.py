@@ -14,12 +14,14 @@ Output:
 CCFT: all writes carry a collected_at timestamp equal to the last Sharadar lastupdated
       date returned, never datetime.now() on its own.
 """
+
 import argparse
 import csv
 import json
 import logging
 import os
 import ssl
+import sys
 import time
 import urllib.error
 import urllib.parse
@@ -32,6 +34,17 @@ log = logging.getLogger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = REPO_ROOT / "production_data"
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from common.atomic_io import atomic_write_text  # noqa: E402
+
+# Sharadar DAILY reports marketcap and ev in MILLIONS of USD. market_data.json
+# stores raw USD (collect_market_data.py writes yfinance marketCap; run_screen
+# computes market_cap_mm = market_cap / 1e6). Writing the $M value unscaled made
+# every company ~1e6x smaller (2026-11-04 refresh): size bands, liquidity and
+# cost estimates collapsed and the 2026-11-11 run churned 11/30 of the top-30.
+SHARADAR_DAILY_UNIT_USD = 1_000_000
 SHARADAR_BASE = "https://api.sharadar.com/v1.0/data"
 BATCH_SIZE = 20  # tickers per request; keeps URL short and responses fast
 RETRY_DELAYS = [2, 4, 8, 16]
@@ -60,9 +73,7 @@ def _get_table(table: str, ctx: ssl.SSLContext, api_key: str, **filters) -> list
             rows = body.get("data", [])
             count = body.get("count", 0)
             if len(rows) < count:
-                raise RuntimeError(
-                    f"{table}: got {len(rows)} of {count} rows — narrow the date range"
-                )
+                raise RuntimeError(f"{table}: got {len(rows)} of {count} rows — narrow the date range")
             return rows
         except urllib.error.HTTPError as e:
             if e.code in (429, 503) and attempt < len(RETRY_DELAYS):
@@ -85,27 +96,21 @@ def _load_universe(data_dir: Path) -> list[str]:
     return universe
 
 
-def _fetch_sep(
-    tickers: list[str], start_date: str, ctx: ssl.SSLContext, api_key: str
-) -> list[dict]:
+def _fetch_sep(tickers: list[str], start_date: str, ctx: ssl.SSLContext, api_key: str) -> list[dict]:
     """Fetch SEP (daily prices) in batches of BATCH_SIZE."""
     all_rows: list[dict] = []
     batches = [tickers[i : i + BATCH_SIZE] for i in range(0, len(tickers), BATCH_SIZE)]
     for idx, batch in enumerate(batches):
         ticker_str = ",".join(batch)
         log.info("SEP batch %d/%d: %s...", idx + 1, len(batches), ticker_str[:60])
-        rows = _get_table(
-            "SEP", ctx, api_key, ticker=ticker_str, **{"date.gte": start_date}
-        )
+        rows = _get_table("SEP", ctx, api_key, ticker=ticker_str, **{"date.gte": start_date})
         all_rows.extend(rows)
         if idx < len(batches) - 1:
             time.sleep(0.3)  # polite rate limiting
     return all_rows
 
 
-def _fetch_daily(
-    tickers: list[str], latest_date: str, ctx: ssl.SSLContext, api_key: str
-) -> dict[str, dict]:
+def _fetch_daily(tickers: list[str], latest_date: str, ctx: ssl.SSLContext, api_key: str) -> dict[str, dict]:
     """Fetch DAILY table (marketcap, ev) for the most recent date."""
     result: dict[str, dict] = {}
     batches = [tickers[i : i + BATCH_SIZE] for i in range(0, len(tickers), BATCH_SIZE)]
@@ -150,6 +155,14 @@ def _write_price_history(rows: list[dict], out_path: Path) -> str:
     return latest_date
 
 
+def _apply_daily_fields(rec: dict, daily: dict) -> None:
+    """Copy Sharadar DAILY marketcap/ev into a market_data record, in raw USD."""
+    if daily.get("marketcap") is not None:
+        rec["market_cap"] = float(daily["marketcap"]) * SHARADAR_DAILY_UNIT_USD
+    if daily.get("ev") is not None:
+        rec["enterprise_value"] = float(daily["ev"]) * SHARADAR_DAILY_UNIT_USD
+
+
 def _update_market_data(
     daily_by_ticker: dict[str, dict],
     sep_rows: list[dict],
@@ -178,14 +191,10 @@ def _update_market_data(
             updated += 1
         daily = daily_by_ticker.get(t)
         if daily:
-            if daily.get("marketcap") is not None:
-                rec["market_cap"] = daily["marketcap"]  # already in $M per Sharadar docs
-            if daily.get("ev") is not None:
-                rec["enterprise_value"] = daily["ev"]
+            _apply_daily_fields(rec, daily)
 
-    with open(path, "w", encoding="utf-8", newline="") as fh:
-        json.dump(records, fh, indent=2)
-        fh.write("\n")
+    # Atomic replace: market_data.json is hard-linked into staged PIT inputs.
+    atomic_write_text(path, json.dumps(records, indent=2) + "\n")
 
     log.info("Updated %d/%d tickers in market_data.json", updated, len(records))
 
@@ -235,9 +244,7 @@ def main() -> None:
     # Collect latest date seen across all tickers
     latest_date = max((r["date"] for r in sep_rows), default=str(as_of))
     # Use lastupdated from rows as CCFT collected_at
-    collected_at = max(
-        (r.get("lastupdated", r["date"]) for r in sep_rows), default=str(as_of)
-    )
+    collected_at = max((r.get("lastupdated", r["date"]) for r in sep_rows), default=str(as_of))
 
     # Fetch DAILY for market cap / EV (only need recent rows)
     daily_start = str(as_of - timedelta(days=5))

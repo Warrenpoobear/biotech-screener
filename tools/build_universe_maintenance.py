@@ -151,7 +151,10 @@ def build_universe_maintenance(
     as_of_date: str,
     *,
     production_dir: Path = REPO_ROOT / "production_data",
-    snapshots_dir: Path = REPO_ROOT / "data" / "snapshots_pit",
+    # Daily production snapshots. data/snapshots_pit is the bundle-REPLAY output
+    # dir (only fills on demand; last 2026-06-10), which made the daily report
+    # diff against a months-old roster (fixed n_flagged=78).
+    snapshots_dir: Path = REPO_ROOT / "data" / "snapshots",
     cache_dir: Path = REPO_ROOT / "cache" / "ctgov",
     price_csv: Path = REPO_ROOT / "production_data" / "price_history.csv",
 ) -> Dict[str, Any]:

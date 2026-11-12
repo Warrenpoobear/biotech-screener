@@ -9,7 +9,7 @@ import json
 import logging
 import math
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -620,15 +620,68 @@ def _find_prior_institutional_summary(
 
 
 def _get_filing_period(cache_base: Path, cache_date: str) -> str:
-    """Get the 13F filing period_of_report for a given cache date."""
+    """Get the 13F filing period_of_report for a given cache date.
+
+    Returns the period reported by the MOST managers in the cache (ties go to
+    the later period). A cache mixes quarters while filings arrive — e.g. the
+    2026-08-13 cache held 51 managers at 2026-03-31, 4 at 2026-06-30 and 1 at
+    2025-12-31 — so the first manager listed is not a reliable label.
+    """
+    from collections import Counter
+
     index_path = cache_base / cache_date / "index.json"
     if not index_path.exists():
         return ""
     idx = _load_json(index_path)
     if not idx:
         return ""
-    for mgr in idx.get("managers", []):
-        por = mgr.get("period_of_report", "")
-        if por:
-            return por
-    return ""
+    counts = Counter(m.get("period_of_report", "") for m in idx.get("managers", []) if m.get("period_of_report"))
+    if not counts:
+        return ""
+    return max(counts.items(), key=lambda kv: (kv[1], kv[0]))[0]
+
+
+def resolve_cross_quarter_delta(
+    inst_summary: Dict[str, Any],
+    snapshot_dir: Path,
+    as_of_date: str,
+    cache_base: Path,
+    *,
+    max_candidates: int = 200,
+) -> Tuple[Optional[Dict[str, Any]], Optional[Dict[str, Any]], str]:
+    """Pick the cross-quarter prior summary and compute the delta.
+
+    Returns ``(prior, delta, status)``. ``delta`` is None whenever no real
+    filing-period change can be measured, so callers report "no signal"
+    (``has_inst_delta=False``) instead of a run of fake zeros.
+
+    The filing period is looked up for the summary's ACTUAL source cache
+    (``cache_as_of_date``), not ``as_of_date``. When the day's 13F cache is
+    missing, the summary is built from an older cache via
+    ``nearest_prior_days``; looking up ``as_of_date`` then returned "" and
+    silently disabled the cross-quarter guard, so the prior was a summary of
+    the same cache and every net delta was 0 (2026-09-18..09-30, 10-08, 10-09).
+
+    status: "ok" | "no_prior" | "same_source_cache"
+    """
+    cur_cache = inst_summary.get("cache_as_of_date") or as_of_date
+    cur_filing = _get_filing_period(cache_base, cur_cache)
+    prior = _find_prior_institutional_summary(
+        snapshot_dir,
+        as_of_date,
+        cross_quarter=True,
+        current_filing_period=cur_filing,
+        max_candidates=max_candidates,
+    )
+    if prior is None:
+        return None, None, "no_prior"
+    if prior.get("cache_as_of_date", "") == cur_cache:
+        # Same source data on both sides: the delta is identically zero and
+        # carries no information. Report no signal rather than a measured 0.
+        logger.warning(
+            "[INST] Prior summary uses the same 13F cache (%s) as %s; no inst_delta signal this run",
+            cur_cache,
+            as_of_date,
+        )
+        return None, None, "same_source_cache"
+    return prior, compute_institutional_delta(inst_summary, prior), "ok"
