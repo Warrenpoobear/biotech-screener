@@ -1384,6 +1384,141 @@ disease_id = entry["disease_id"]
 
 ---
 
+### Class Q — EV calibration look-ahead leakage (future-dated HITs in calibration set)
+
+**Signature:** Event-EV calibration ingests HIT/outcome pairs whose resolution date is
+in the future relative to the calibration as-of date, or pairs where the "prior" and
+"outcome" observation windows overlap (look-ahead). This silently inflates calibration
+confidence — the model is being scored against information it could not have had yet.
+
+**Confirmed instance (2026-07-30, commit `32a1b19a`, PR #542, fixing #541):**
+`fix(ev): exclude look-ahead pairs and future-dated HITs from calibration`. Root cause:
+the calibration ingestion path did not filter out (a) HIT records whose event resolution
+date postdates the calibration as-of date, and (b) prior/outcome pairs with overlapping
+date windows. Both cases leak future information into the calibration fit.
+
+**Diagnostic chain:**
+
+```bash
+# 1. Confirm the fix landed and inspect the exclusion filter
+grep -n "look.ahead\|future.dated\|calibration.*exclude\|as_of.*date" tools/*calibration*.py \
+  tools/event_ev*.py 2>/dev/null | head -20
+
+# 2. Spot-check: any calibration input row where resolution_date > as_of_date should be zero
+python3 -c "
+import json, glob
+# adapt path to the actual calibration input artifact used
+for f in sorted(glob.glob('artifacts/calibration_evidence/*.json'))[-3:]:
+    d = json.load(open(f))
+    print(f, len(d) if isinstance(d, list) else 'n/a')
+"
+```
+
+**Pattern to catch:** Any calibration/backtest ingestion step that joins outcome data
+to prior predictions by ticker/event ID without an explicit `resolution_date <= as_of_date`
+guard (and a check that the prior/outcome windows don't overlap) is a look-ahead-leakage
+risk. This is a PIT (point-in-time) integrity class of bug, not a routing/scoring change —
+but it directly affects the *credibility* of any IC/calibration number quoted from that
+pipeline. Treat any pre-32a1b19a calibration print with suspicion until re-run post-fix.
+
+---
+
+### Class R — Monitoring snapshot resolved from staging parent instead of `_prior_dir`
+
+**Signature:** A monitoring/pre-market snapshot step reports "prior snapshot" data that
+doesn't match the actual most-recent completed snapshot — it resolves to a staging
+parent directory instead of the dedicated `_prior_dir` reference, so day-over-day deltas
+compare against the wrong baseline.
+
+**Confirmed instance (2026-08-03, commit `d090713a`, PR #546):**
+`fix(monitoring): resolve prior snapshots from _prior_dir, not staging parent`. Root
+cause: the prior-snapshot resolver walked up to the staging parent directory (which can
+contain in-flight/partial data) rather than reading the explicit `_prior_dir` pointer
+that the pipeline maintains for this purpose.
+
+**Diagnostic chain:**
+
+```bash
+# Check how the monitoring step resolves "prior" snapshot
+grep -n "_prior_dir\|staging.*parent\|prior_snapshot" tools/*monitoring*.py \
+  tools/*premarket*.py 2>/dev/null | head -20
+```
+
+**Pattern to catch:** Any "compare to prior" step that derives the prior reference via
+path-walking (`.parent`, `..`) rather than an explicit stored pointer (`_prior_dir` or
+equivalent) is at risk of picking up a staging/in-flight directory instead of the last
+completed one. Prefer explicit pointer files over relative path derivation for baseline
+resolution.
+
+---
+
+### Class S — Gate ratio built from two different populations (numerator/denominator mismatch)
+
+**Signature:** A coverage/health gate reports an implausible or permanently-off ratio
+(e.g. stuck WARN, or a suspiciously round/small percentage) where the field name claims
+"% of eligible/portfolio X" but the numerator was actually computed over a different,
+larger population (e.g. universe-wide) than the denominator (eligible-only or
+portfolio-only). The gate is internally self-consistent (no crash) so the defect persists
+silently across many runs.
+
+**Confirmed instance #1 (2026-08-06, commit `940a92ef`, PR #558):**
+`fix(gates): portfolio_weights reads the buy list, not the research list`. Gate summed
+`target_weight_pct` across every *eligible* row in rankings.csv (~180-190 rows) and
+expected ~100%, but that column only carries real weights for the top-30 (the research
+list is deliberately not renormalized after blanking non-portfolio names per
+run_screen.py:6386-6392 output contract). Result: gate WARNed on every single run
+(observed 16.27–16.47% across 5 consecutive snapshots), a permanently-yellow gate that
+carries zero information. Fix: read `portfolio_positions.csv` (the actual 30-name buy
+list, which does sum to ~100%) as authority; cross-check that rankings.csv weights
+exactly the portfolio set and never weights an ineligible name.
+
+**Confirmed instance #2 (2026-08-09, commit `c6378427`, same shape, explicitly
+cross-referenced by the author as "same shape as #558"):**
+`fix(metadata): regulatory coverage counted two different populations`.
+`regulatory_secondary_coverage_pct` divided a universe-wide numerator
+(`has_regulatory_upcoming_180d` flags counted across ALL csv_rows) by an eligible-only
+denominator (`_is_eligible(r)` count). Field was misleadingly named `n_eligible_flagged`
+despite including ineligible names. On 2026-08-07: 39 flagged / 217 eligible = 18.0%
+reported, but only 30 of the 39 flagged rows were actually eligible — true like-for-like
+ratio is 13.8%, a 4.2pp inflation. Fix: restrict numerator to eligible rows only, and
+additionally record both raw counts (`n_universe_flagged`, `n_eligible`) alongside the
+corrected `n_eligible_flagged` so the ratio is auditable from metadata without
+re-deriving from rankings.csv. Note: the fix did NOT change the gate's WARN verdict
+(corrected 13.8% still exceeds the 12.0% ceiling) — the author deliberately left the
+threshold-vs-signal question open rather than silently making a red light green.
+
+**Diagnostic chain:**
+
+```bash
+# 1. Find gate/ratio computations with two separately-filtered sums feeding one ratio
+grep -n "_eligible_count\s*=\|_n_.*flagged\s*=\|sum(1 for r in csv_rows" run_screen.py | head -30
+
+# 2. For any suspect ratio, check whether both the numerator filter and denominator
+#    filter apply the SAME predicate (e.g. both _is_eligible(r), or both unfiltered)
+#    A mismatch (one filtered, one not) is the Class S defect.
+
+# 3. Sanity-check historical values for a persistently-WARN or suspiciously-stable gate
+#    A gate that WARNs on literally every run (5+ consecutive) is a strong signal the
+#    threshold isn't miscalibrated — the ratio itself may be structurally wrong.
+```
+
+**Pattern to catch:** Any gate/metric named "% of X" or "coverage of X" must apply the
+SAME filter predicate to both the count-of-flagged (numerator) and count-of-total
+(denominator). If one side sums over `csv_rows` unconditionally and the other applies
+`_is_eligible(r)` (or any other filter), the ratio silently spans two populations. This
+is now a confirmed recurring pattern (2 instances, same author diagnosis both times) —
+worth a deliberate grep sweep of `run_screen.py`'s other coverage/gate ratios for the
+same shape before the next one surfaces independently.
+
+**Resolution template:** Record BOTH raw counts alongside the corrected ratio
+(`n_<x>_flagged` = eligible-filtered numerator, `n_universe_<x>_flagged` = unfiltered,
+`n_eligible` = denominator) so future audits don't need to re-derive from rankings.csv.
+Do not "fix" a resulting WARN by moving the threshold — treat the ratio correction and
+the threshold calibration as separate decisions (per author's explicit choice in
+instance #2 to leave the 12.0% ceiling question open).
+
+---
+
 ## Cross-skill diagnostic routing
 
 ```
