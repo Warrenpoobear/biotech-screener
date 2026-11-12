@@ -20,20 +20,32 @@ from run_screen import _apply_inst_registry_transition_guard  # noqa: E402
 
 def _rows():
     return [
-        {"ticker": "AAA", "inst_delta_z": -1.9161, "inst_delta_net": -3},
-        {"ticker": "BBB", "inst_delta_z": 3.1579, "inst_delta_net": 2},
+        {"ticker": "AAA", "inst_delta_z": -1.9161, "inst_delta_net": -3, "has_inst_delta": "True"},
+        {"ticker": "BBB", "inst_delta_z": 3.1579, "inst_delta_net": 2, "has_inst_delta": "True"},
     ]
 
 
-def test_transition_zeroes_inst_delta_z():
+def test_transition_blanks_inst_delta_z():
+    # A contaminated delta is missing, not a measured zero (#635 convention):
+    # a 0.0 would be counted as an observation by the IC panel.
     rows = _rows()
     transition = _apply_inst_registry_transition_guard(
         rows, {"elite_managers_with_filing": 30}, {"elite_managers_with_filing": 49}
     )
     assert transition is True
-    assert [r["inst_delta_z"] for r in rows] == [0.0, 0.0]
-    # Raw counts are kept for audit; only the model-facing z is neutralized.
+    assert [r["inst_delta_z"] for r in rows] == ["", ""]
+    assert [r["has_inst_delta"] for r in rows] == ["False", "False"]
+    # Raw counts are kept for audit; only the model-facing z is cleared.
     assert [r["inst_delta_net"] for r in rows] == [-3, 2]
+
+
+def test_transition_blank_survives_defaults():
+    from run_screen import _ensure_defaults
+
+    rows = _rows()
+    _apply_inst_registry_transition_guard(rows, {"elite_managers_with_filing": 30}, {"elite_managers_with_filing": 49})
+    _ensure_defaults(rows)
+    assert [r["inst_delta_z"] for r in rows] == ["", ""]
 
 
 def test_same_roster_size_leaves_values():
