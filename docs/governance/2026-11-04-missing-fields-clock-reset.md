@@ -27,7 +27,7 @@
 2. `378a199d` — M2:
    - `stage_ctgov` runs `collect_ctgov_data.py` before `warm_caches`. It writes to a seeded temp copy and swaps it in on success; on failure it keeps the previous file.
    - New blocking gate `ctgov_content_freshness`: FAIL when the newest `last_update_posted` on or before as_of is more than 7 days old.
-3. `53ccc078` — M3: `_apply_inst_registry_transition_guard` runs after the z-score and zeroes `inst_delta_z` when the manager counts differ. Raw `inst_delta_*` counts are kept.
+3. `53ccc078` — M3: `_apply_inst_registry_transition_guard` runs after the z-score and zeroes `inst_delta_z` when the manager counts differ. Raw `inst_delta_*` counts are kept. *Amended 2026-11-12:* after #635 made a missing `inst_delta_z` blank rather than a neutral 0, the guard was changed to write `""` and set `has_inst_delta = "False"`, so the IC panel does not count contaminated rows as measured zeros. No ranking change: the live ruleset does not read `inst_delta_z`.
 
 **Universe statuses.** The approved status updates were already on `origin/main` when this branch was cut:
 - APGE, CRNX, ATAI and TBPH are `excluded_acquired`.

@@ -4798,13 +4798,15 @@ def _apply_inst_registry_transition_guard(
     inst_summary: Optional[Dict[str, Any]],
     prior_inst: Optional[Dict[str, Any]],
 ) -> bool:
-    """Detect a manager-registry transition and neutralize inst_delta_z.
+    """Detect a manager-registry transition and clear inst_delta_z.
 
     When the current and prior institutional summaries cover different manager
     counts, net_elite_holders_delta mixes real flow with roster additions and
     removals (2026-11-03: 30 vs 49 managers, 189/298 tickers with net exits).
-    inst_delta_z is zeroed for the cycle; the raw inst_delta_* counts are kept
-    for audit. Returns True when a transition is detected.
+    inst_delta_z is left blank (missing, not a neutral zero, per the #635
+    convention) and has_inst_delta is set False for the cycle; the raw
+    inst_delta_* counts are kept for audit. Returns True when a transition is
+    detected.
     """
     if not (inst_summary and prior_inst):
         return False
@@ -4814,12 +4816,13 @@ def _apply_inst_registry_transition_guard(
         return False
     logger.warning(
         "Registry transition detected: current=%d managers, prior=%d managers. "
-        "inst_delta values are contaminated this cycle; zeroing inst_delta_z.",
+        "inst_delta values are contaminated this cycle; clearing inst_delta_z (missing, not a neutral zero).",
         cur,
         pri,
     )
     for row in csv_rows:
-        row["inst_delta_z"] = 0.0
+        row["inst_delta_z"] = ""
+        row["has_inst_delta"] = "False"
     return True
 
 
