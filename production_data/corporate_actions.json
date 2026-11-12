@@ -84,14 +84,6 @@
       "notes": "Gossamer Bio"
     },
     {
-      "ticker": "IMMP",
-      "action": "forward_split",
-      "effective_date": "2026-03-13",
-      "ratio": "5:1",
-      "factor": 0.193,
-      "notes": "Immutep"
-    },
-    {
       "ticker": "INDV",
       "action": "reverse_split",
       "effective_date": "2022-11-28",
