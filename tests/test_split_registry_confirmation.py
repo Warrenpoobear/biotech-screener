@@ -107,12 +107,14 @@ def test_repair_applies_confirmed_skips_unconfirmed(tmp_path):
     assert min(_adj_closes(out, "BBB")) == 0.45  # crash preserved
 
 
-def test_repair_without_registry_falls_back_to_heuristic(tmp_path):
+def test_repair_without_registry_does_not_treat_crash_as_split(tmp_path):
     _write_prices(tmp_path / "price_history.csv", {"BBB": _crash_series()})
     out = tmp_path / "adj.csv"
     summary = repair_price_history(tmp_path / "price_history.csv", out)
-    assert summary["split_mode"] == "heuristic_fallback"
-    assert set(summary["split_details"]) == {"BBB"}
+    assert summary["split_mode"] == "registry_missing"
+    assert summary["split_details"] == {}
+    assert set(summary["unconfirmed_not_applied"]) == {"BBB"}
+    assert min(_adj_closes(out, "BBB")) == 0.45
 
 
 def test_registry_has_2026_reverse_splits():

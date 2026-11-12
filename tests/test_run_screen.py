@@ -602,7 +602,7 @@ class TestSignalFlags:
         rows = [{"ticker": "AAA"}]
         _ensure_defaults(rows)
         assert rows[0]["coinvest_score_z"] == 0.0
-        assert rows[0]["inst_delta_z"] == 0.0
+        assert rows[0]["inst_delta_z"] == ""
         assert rows[0]["catalyst_decay_w"] == 0.0
 
     def test_has_catalyst_signal_from_mode(self):

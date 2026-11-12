@@ -10,7 +10,7 @@ ticker, within ``CONFIRM_WINDOW_DAYS``) are applied. Biotech names routinely
 move -75%/+300% in a day on trial readouts; unconfirmed jumps are real price
 moves and are reported, not adjusted (EYPT 2026-10-19 and ABOS 2026-10-30
 crashes were previously smoothed away as "forward splits"). If the registry is
-missing or unreadable, falls back to the legacy unconfirmed heuristic.
+missing or unreadable, nothing is adjusted: a price gap alone is not a split.
 
 The adjustment is cumulative: if a ticker has two splits, all prices
 before the first split are multiplied by both factors.
@@ -228,10 +228,13 @@ def repair_price_history(
             raise FileNotFoundError(registry_path)
         splits, unconfirmed = filter_confirmed_splits(detected, load_actions(Path(registry_path)))
         mode = "registry_confirmed"
-    except Exception as exc:  # fail-open to the legacy heuristic
-        print(f"WARNING: corporate-actions registry unavailable ({exc}); applying unconfirmed heuristic splits")
-        splits = detected
-        mode = "heuristic_fallback"
+    except Exception as exc:
+        # A gap is not evidence of a split. EYPT and ABOS crashes were
+        # adjusted when this path fell back to the price-gap heuristic.
+        print(f"WARNING: corporate-actions registry unavailable ({exc}); not adjusting any price gaps")
+        splits = {}
+        unconfirmed = detected
+        mode = "registry_missing"
 
     total_events = sum(len(events) for events in splits.values())
     tickers_affected = sorted(splits.keys())
