@@ -146,7 +146,7 @@ metadata:
 ### Active / Blocked
 | Spec | Title | Status | Blocker |
 |------|-------|--------|---------|
-| 094 | Selector-only comparator | RANKER_UNPROVEN | Blocked by scoped freeze |
+| 094 | Selector-only comparator | RANKER_UNPROVEN; forward capture added 2026-11-12 (`tools/selector_only_shadow.py`, capture-only; starts with the first daily run after deploy) | Needs 20 non-overlapping LIVE windows before any reading |
 | 095 | Evaluation scope (IC tooling gap) | CURRENT_TOOLS_CONFLATED | Blocks ranker IC claims |
 | 100 | Ranker IC tooling correction | Spec written, no impl | Blocked by scoped freeze |
 | 104 | Insider diagnostic stabilization | MEASURED | Isolation guard (R4a) |

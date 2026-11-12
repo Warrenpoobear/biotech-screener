@@ -78,6 +78,12 @@ artifacts/forward_validation/*
 !artifacts/forward_validation/CANDIDATE.json
 !artifacts/forward_validation/*.jsonl
 !artifacts/forward_validation/*.md
+# Selector-only shadow ledger (Spec 094): append-only evidence, same shape as
+# artifacts/forward_validation/ above. The directory un-ignore is load-bearing.
+!artifacts/selector_only_shadow/
+artifacts/selector_only_shadow/*
+!artifacts/selector_only_shadow/*.jsonl
+!artifacts/selector_only_shadow/*.md
 # Allow catalyst calendar HTML artifacts
 !artifacts/catalyst_calendars/
 artifacts/catalyst_calendars/*
