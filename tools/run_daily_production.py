@@ -97,6 +97,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset(
         "eligibility_consistency",
         "cache_health",
         "source_freshness",
+        "ctgov_content_freshness",
         "ruleset_health",
         "exposure_missingness",
         "risk_concentration",
