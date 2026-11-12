@@ -2077,8 +2077,12 @@ class TestOpsContractWithNewGates:
         assert "eligibility_consistency" in GATE_ALLOWLIST
 
     def test_allowlist_count_updated(self):
-        """Allowlist has 44 entries."""
-        assert len(GATE_ALLOWLIST) == 44
+        """Allowlist has 45 entries."""
+        assert len(GATE_ALLOWLIST) == 45
+
+    def test_ctgov_content_freshness_gate_is_allowlisted(self):
+        """The gate is appended on every run; an unlisted name makes build_run_manifest raise."""
+        assert "ctgov_content_freshness" in GATE_ALLOWLIST
 
     def test_new_gates_in_allowlist_v2(self):
         assert "exposure_missingness" in GATE_ALLOWLIST
