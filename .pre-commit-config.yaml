@@ -61,6 +61,7 @@ repos:
             production_data/.*|
             output/.*|
             artifacts/forward_validation/.*\.jsonl|
+            artifacts/selector_only_shadow/.*\.jsonl|
             .*\.csv|
             .*\.tar\.gz
           )$
