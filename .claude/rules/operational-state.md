@@ -96,6 +96,7 @@ metadata:
 
 - **Forward shadow**: accumulating since 2026-04-03. Enough calendar/trading time has elapsed for IC refresh; gated on explicit operator freeze lift.
 - **score_rank_pct IC** (weekly sweep 2026-06-24): mean_ic = **+0.0432**, hit_rate = 54.3%, N = 35 dates. Verdict: **HEALTHY**. This cleared the Path C IC gate and the Day-5 IC checkpoint.
+  - *(Corrected 2026-11-12: this figure has the wrong sign and measures the composite percentile, not the production order. The IC tools negated `score_rank_pct`, which is higher-is-better. Corrected readings for the same period: `score_rank_pct` −0.0201, `actionable_rank` +0.1534, `coinvest_score_z` +0.1478. See `docs/governance/2026-11-12-ic-dashboard-sign-correction.md`.)*
 - **Path C**: FORMALLY CLOSED 2026-06-24. IC gate met (mean_ic +0.0432 > +0.03). Catalyst-timing override policy remains in production weights; no reversion required. Transition to Path A durable gates.
 - **IC checkpoint (Phase 2)**: Extended to 2026-07-01 (coincides with h20d re-eval gate). Next formal IC review: 2026-07-01. Early-review trigger: score_rank_pct mean_ic drops below 0.00 in any intervening daily snapshot.
 - **coinvest_score_z IC** (last measured 2026-05-13): Pooled mean IC = -0.031 (14 dates). Refresh pending freeze lift.

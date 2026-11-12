@@ -16,6 +16,63 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
+## Recent Update — 2026-11-12 (IC Dashboard and Weekly Sweep: `score_rank_pct` Sign Inverted — Correction and Restatement)
+
+Classification: `MONITORING_TOOL_FIX / PRIOR_CLAIM_RETRACTED`. Tier 2 tooling. Source of truth: `docs/governance/2026-11-12-ic-dashboard-sign-correction.md`. Status when written: proposed on branch `fix/ic-dashboard-sign-and-scope`, not yet merged.
+
+Summary:
+- The IC dashboard (`tools/build_ic_dashboard.py`) and the weekly sweep (`scripts/shared_regime_check.py`) negated `score_rank_pct` before computing its IC. The percentile is higher-is-better, so every `score_rank_pct` IC they reported had the wrong sign. The defect dates from the tool's creation (2026-03-27).
+- The dashboard also measured only the composite percentile, not the production order, and read forward returns from the unadjusted `price_history.csv`.
+- Fix: correct the sign; add `actionable_rank` as a tracked signal; default to split-adjusted prices; add `recent_ic` and a `trend` flag.
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Monitoring tooling only. No clock effect.
+- Frozen status: unchanged. **FROZEN (BLOCKED_LEVEL_0)** remains in force.
+- Operator action required: decide whether to re-record the 2026-06-24 Path C IC-gate closure against the production-order reading (below).
+
+Evidence:
+- Spearman of `score_rank_pct` against `composite_rank` is −1.000 on six snapshot dates from 2026-02-27 to 2026-11-11.
+- Restated readings (corrected tool, 20-day horizon, split-adjusted prices; memo §3):
+  - As of 2026-06-24 (31 live dates): `score_rank_pct` −0.0201 (reported +0.0432); `actionable_rank` +0.1534, hit 90%; `coinvest_score_z` +0.1478.
+  - As of 2026-11-11 on the dates the production dashboard used (2026-08-18 → 10-14, all regenerated): `score_rank_pct` −0.1697 (reported +0.1764 HEALTHY); `actionable_rank` −0.2949.
+  - As of 2026-11-11 on live dates only (2026-06-02 → 08-13, 49 dates): `actionable_rank` +0.0318 with the last five dates averaging −0.2943 (`decaying`).
+- Tests: `tests/test_ic_dashboard_sign_and_scope.py` (8 tests; all fail on `688634cb`).
+
+Impact on alpha interpretation:
+- **No new performance evidence.** The windows overlap heavily and contain only a handful of independent observations.
+- The "primary signal HEALTHY" readings cited since March described the composite percentile with the sign reversed. They said nothing reliable about the production order.
+- On the production order, the corrected spring reading is positive and the August live readings are negative. The September and October readings rest on regenerated snapshots and are not point-in-time evidence.
+- With regenerated snapshots excluded, the newest live date with a realized 20-day return is 2026-08-13. The dashboard has no view of September onward until early December.
+
+What changed:
+- `tools/build_ic_dashboard.py`, `scripts/shared_regime_check.py`, two test files, the memo, `skills/ic_evaluation/SKILL.md` and two rules files.
+
+What did not change:
+- Ranker: unchanged.
+- Selector: unchanged.
+- Scoring: unchanged.
+- Eligibility: unchanged.
+- Sizing: unchanged.
+- Production wiring: the daily run still calls the dashboard; health thresholds are unchanged. The dashboard's `attention` can now be MEDIUM on a `decaying` trend.
+- Trading/actionability: unchanged.
+
+Skill synchronization:
+- Skills reviewed: `skills/ic_evaluation`, `skills/operational_health_baselines`, `skills/screener_ops`, `skills/validation`, `.claude/rules/operational-state.md`, `.claude/rules/research-backtest.md`, `agents/ic_health_monitor/SOUL.md`.
+- Skills updated: `skills/ic_evaluation/SKILL.md` and its generated mirror `docs/hermes_skills/ic-evaluation.md`; correction notes in the two rules files.
+- Skills not updated: `skills/operational_health_baselines`, `skills/screener_ops`, `skills/validation` (no `score_rank_pct` IC claims). `agents/ic_health_monitor/SOUL.md` has a stale load-bearing-signals list; left for a separate change.
+- Reason: skill instructions synchronized so future agents do not cite a pre-fix `score_rank_pct` IC, or treat the composite percentile as the production order.
+
+Open questions / next validation:
+- Path C closure record (operator).
+- Historical dashboard artifacts and `history.jsonl` rows are left as written and need the sign flipped when read.
+
+Prior claim retracted:
+- Old claim: "`score_rank_pct` IC HEALTHY: mean_ic = +0.0432, hit_rate = 54.3%, N = 35; cleared the Path C IC gate" (2026-06-24), and "score_rank_pct +0.1764 HEALTHY" (2026-11-11 dashboard).
+- Corrected interpretation: the sign was inverted. The composite percentile's IC was about −0.02 in the spring window and about −0.17 on the dates the 2026-11-11 dashboard used. The production order (`actionable_rank`) read +0.1534 in the spring window.
+- Root cause: `higher_is_better=False` was set for `score_rank_pct` when the dashboard was written and copied into the weekly sweep; no test pinned the direction against the real column convention.
+
+---
+
 ## Recent Update — 2026-11-12 (Financial Score: Solvency by Operating Cash Flow, Deduped Cash Total — PR #649)
 
 Classification: `DATA_INTEGRITY_FIX / RANKER_INPUT_CHANGE`. Tier 3. Source of truth: `docs/governance/2026-11-12-financial-runway-solvency-fix.md`. Merge: PR #649 (`8b5fdd8c`, commit `f6d22e12`, merged 2026-11-12 14:25 ET); mirror PR WR-SW-Dev #67 (`af405495`).

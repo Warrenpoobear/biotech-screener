@@ -35,6 +35,7 @@ under the Spec 055 statistical bar (FM, bootstrap, FDR, LOSO).
 9. **insider_exec and aact_execution downgraded.** Both 1/5 under Checklist v2. Shadow only.
 10. **Forward shadow accumulating daily** (7 arms in coinvest_shadow_tracker v2, wired into run_daily.py).
 11. **score_rank_pct IC HEALTHY as of 2026-06-24**: mean_ic = +0.0432, hit_rate = 54.3%, N = 35 dates. This cleared the Path C IC gate and Day-5 Phase 2 checkpoint. Next IC review: 2026-07-01.
+    *(Corrected 2026-11-12: this figure has the wrong sign and measures the composite percentile, not the production order. The IC tools negated `score_rank_pct`, which is higher-is-better. Corrected readings for the same period: `score_rank_pct` −0.0201, `actionable_rank` +0.1534, `coinvest_score_z` +0.1478. See `docs/governance/2026-11-12-ic-dashboard-sign-correction.md`.)*
 
 ---
 

@@ -50,7 +50,7 @@ def _write_ranked_snapshots(root: Path, dates: list, n: int = 12) -> None:
             w = csv.writer(f)
             w.writerow(["ticker", "score_rank_pct", "inst_delta_z", "has_inst_delta", "coinvest_score_z"])
             for i in range(n):
-                # score_rank_pct is higher_is_better=False, so a rising score
+                # score_rank_pct is higher_is_better=True, so a rising score
                 # against a falling return is a strongly negative IC.
                 w.writerow([f"T{i:02d}", i, "0.0", "False", i])
 
@@ -61,10 +61,10 @@ def _write_prices(path: Path, dates: list, n: int = 12) -> None:
         w.writerow(["ticker", "date", "close"])
         for i in range(n):
             for k, d in enumerate(dates):
-                # Next-day close rises with the ticker index, so the raw
-                # signal and the forward return move together. score_rank_pct
-                # is higher_is_better=False, which flips that into a negative IC.
-                w.writerow([f"T{i:02d}", d, 100 + k + (i + 1) * k])
+                # Next-day close falls with the ticker index, so the signal
+                # and the forward return move in opposite directions: a
+                # negative IC for score_rank_pct (higher_is_better=True).
+                w.writerow([f"T{i:02d}", d, 1000 + k - (i + 1) * k])
 
 
 def test_min_dates_blocks_alert_and_is_configurable(tmp_path):

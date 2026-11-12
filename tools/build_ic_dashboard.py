@@ -5,7 +5,8 @@ Computes trailing rolling Spearman IC for each sort signal against
 forward returns. Persists a JSONL time series for trend analysis.
 
 Signals tracked:
-  - score_rank_pct (composite)
+  - score_rank_pct (composite score percentile; higher is better)
+  - actionable_rank (the production order; rank 1 is best; ranked rows only)
   - inst_delta_z (institutional delta; dates with no measured delta are skipped)
   - coinvest_score_z (coinvest-only selector weight)
 
@@ -46,8 +47,14 @@ logger = logging.getLogger("ic_dashboard")
 SCHEMA_VERSION = "ic_dashboard.v1"
 
 # Signals to track
+# score_rank_pct is the percentile of composite_score: best rank -> highest
+# percentile (common/score_to_er.py::attach_rank_and_z). It was negated here
+# until 2026-11-12, which inverted every reported IC for it.
 SIGNALS = [
-    ("score_rank_pct", False),  # (field, higher_is_better)
+    ("score_rank_pct", True),  # (field, higher_is_better)
+    # The order production actually trades: selector cohort, then the pairwise
+    # ranker. Blank for ineligible rows, which are therefore not observations.
+    ("actionable_rank", False),
     ("inst_delta_z", True),
     # Largest selector weight (coinvest-only selector, v1.14.0); was unmonitored.
     ("coinvest_score_z", True),
@@ -86,6 +93,22 @@ def _load_excluded_dates(path: Path = PROVENANCE_EXCLUSIONS) -> set:
 
 DEFAULT_LOOKBACK = 12  # snapshots
 DEFAULT_HORIZON = 20  # trading days
+
+# Trend check: mean IC over the most recent dates. A healthy lookback mean can
+# hide a collapse at the end of the window.
+RECENT_WINDOW = 5
+
+
+def default_price_csv(production_dir: Optional[Path] = None) -> Path:
+    """Split-adjusted closes when present, else the raw history.
+
+    price_history.csv carries unadjusted reverse splits (a 1-for-N split reads
+    as a multi-thousand-percent day), which corrupts forward returns.
+    """
+    base = Path(production_dir) if production_dir is not None else REPO_ROOT / "production_data"
+    adjusted = base / "price_history_split_adj.csv"
+    return adjusted if adjusted.exists() else base / "price_history.csv"
+
 
 # Thresholds
 IC_HEALTHY = 0.03
@@ -216,7 +239,7 @@ def build_ic_dashboard(
     as_of_date: str,
     *,
     snapshots_dir: Path = REPO_ROOT / "data" / "snapshots",
-    price_csv: Path = REPO_ROOT / "production_data" / "price_history.csv",
+    price_csv: Optional[Path] = None,
     artifacts_dir: Path = REPO_ROOT / "artifacts",
     lookback: int = DEFAULT_LOOKBACK,
     horizon: int = DEFAULT_HORIZON,
@@ -231,6 +254,8 @@ def build_ic_dashboard(
     ``data/snapshots`` dir, so it is applied only to that dir unless
     ``exclusions_path`` is given explicitly.
     """
+    if price_csv is None:
+        price_csv = default_price_csv()
     if include_regenerated:
         excluded: set = set()
     elif exclusions_path is not None:
@@ -294,6 +319,15 @@ def build_ic_dashboard(
             else:
                 health = "ALERT"
 
+            # Trend: informational, never changes the health label.
+            if len(per_date_ics) < max(min_dates_for_verdict, RECENT_WINDOW):
+                recent_ic = None
+                trend = "insufficient_dates"
+            else:
+                recent = ics[-RECENT_WINDOW:]
+                recent_ic = round(sum(recent) / len(recent), 4)
+                trend = "decaying" if mean_ic >= IC_HEALTHY and recent_ic <= IC_WARN else "stable"
+
             signal_results[signal_field] = {
                 "mean_ic": round(mean_ic, 4),
                 "hit_rate": round(hit_rate, 4),
@@ -301,6 +335,8 @@ def build_ic_dashboard(
                 "health": health,
                 "per_date": per_date_ics,
                 "latest_ic": per_date_ics[-1]["ic"] if per_date_ics else None,
+                "recent_ic": recent_ic,
+                "trend": trend,
             }
         else:
             signal_results[signal_field] = {
@@ -310,13 +346,15 @@ def build_ic_dashboard(
                 "health": "NO_DATA",
                 "per_date": [],
                 "latest_ic": None,
+                "recent_ic": None,
+                "trend": "insufficient_dates",
             }
 
     # Overall attention
     healths = [r["health"] for r in signal_results.values()]
     if "ALERT" in healths:
         attention = "HIGH"
-    elif "WARN" in healths:
+    elif "WARN" in healths or any(r["trend"] == "decaying" for r in signal_results.values()):
         attention = "MEDIUM"
     else:
         attention = "LOW"
@@ -332,6 +370,8 @@ def build_ic_dashboard(
         "attention": attention,
         "signals": signal_results,
         "excluded_regenerated_dates": len(excluded),
+        "price_source": str(price_csv),
+        "recent_window": RECENT_WINDOW,
         "min_dates_for_verdict": min_dates_for_verdict,
         "thresholds": {
             "healthy": IC_HEALTHY,
@@ -395,14 +435,25 @@ def format_dashboard_md(d: Dict[str, Any]) -> str:
 
     lines.append("## Signal Health")
     lines.append("")
-    lines.append("| Signal | Mean IC | Hit Rate | Latest IC | Health | Dates |")
-    lines.append("|--------|---------|----------|-----------|--------|-------|")
+    lines.append("| Signal | Mean IC | Hit Rate | Latest IC | Recent IC | Trend | Health | Dates |")
+    lines.append("|--------|---------|----------|-----------|-----------|-------|--------|-------|")
 
     for sig_name, data in d.get("signals", {}).items():
         mean_ic = f"{data['mean_ic']:+.4f}" if data["mean_ic"] is not None else "n/a"
         hit_rate = f"{data['hit_rate']:.0%}" if data["hit_rate"] is not None else "n/a"
         latest = f"{data['latest_ic']:+.4f}" if data["latest_ic"] is not None else "n/a"
-        lines.append(f"| {sig_name} | {mean_ic} | {hit_rate} | {latest} | {data['health']} | {data['n_dates']} |")
+        recent = f"{data['recent_ic']:+.4f}" if data.get("recent_ic") is not None else "n/a"
+        trend = data.get("trend", "n/a")
+        lines.append(
+            f"| {sig_name} | {mean_ic} | {hit_rate} | {latest} | {recent} | {trend} | {data['health']} | {data['n_dates']} |"
+        )
+    lines.append("")
+    lines.append(
+        f"Recent IC is the mean of the last {d.get('recent_window', RECENT_WINDOW)} dates. Daily snapshots with a "
+        f"{d['horizon']}-day horizon overlap, so consecutive dates are not independent observations."
+    )
+    if d.get("price_source"):
+        lines.append(f"Price source: `{Path(d['price_source']).name}`")
     lines.append("")
 
     # Sparkline per signal
@@ -441,7 +492,12 @@ def main():
         ),
     )
     parser.add_argument("--snapshots-dir", type=Path, default=REPO_ROOT / "data" / "snapshots")
-    parser.add_argument("--price-csv", type=Path, default=REPO_ROOT / "production_data" / "price_history.csv")
+    parser.add_argument(
+        "--price-csv",
+        type=Path,
+        default=None,
+        help="Default: production_data/price_history_split_adj.csv, else price_history.csv",
+    )
     parser.add_argument("--artifacts-dir", type=Path, default=REPO_ROOT / "artifacts")
     parser.add_argument(
         "--include-regenerated",
