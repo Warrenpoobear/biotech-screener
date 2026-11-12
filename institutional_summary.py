@@ -673,9 +673,7 @@ def resolve_cross_quarter_delta(
         current_filing_period=cur_filing,
         max_candidates=max_candidates,
     )
-    if prior is None:
-        return None, None, "no_prior"
-    if prior.get("cache_as_of_date", "") == cur_cache:
+    if prior is not None and prior.get("cache_as_of_date", "") == cur_cache:
         # Same source data on both sides: the delta is identically zero and
         # carries no information. Report no signal rather than a measured 0.
         logger.warning(
@@ -684,4 +682,17 @@ def resolve_cross_quarter_delta(
             as_of_date,
         )
         return None, None, "same_source_cache"
+    # An empty filing period means the 13F index is missing. The cross-quarter
+    # guard is then skipped ("" is falsy), so a prior from a different cache
+    # date of the same unknown quarter is accepted and every net delta is 0.
+    # That 0 is not a measurement. Leave the signal missing.
+    if not cur_filing:
+        logger.warning(
+            "[INST] No 13F filing period for cache %s (as_of %s); no inst_delta signal this run",
+            cur_cache,
+            as_of_date,
+        )
+        return None, None, "unknown_filing_period"
+    if prior is None:
+        return None, None, "no_prior"
     return prior, compute_institutional_delta(inst_summary, prior), "ok"

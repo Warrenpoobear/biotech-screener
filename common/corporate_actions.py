@@ -241,6 +241,34 @@ def is_dead(
     return False
 
 
+def is_retired_symbol(
+    ticker: str,
+    as_of: str,
+    registry: CorporateActionRegistry,
+) -> bool:
+    """True when ``ticker`` was renamed away on or before ``as_of``.
+
+    The surviving symbol (``new_ticker``) is not retired. INDV stopped trading
+    when the combined company began trading as SUPN; a ticker_change recorded
+    on SUPN does not make ``is_dead("INDV")`` true, because death actions are
+    keyed by the action's own ticker.
+    """
+    symbol = (ticker or "").upper()
+    for action in registry._rename_map.get(symbol, []):
+        new = (action.new_ticker or "").upper()
+        if action.effective_date and action.effective_date <= as_of and new and new != symbol:
+            return True
+    return False
+
+
+def list_retired_symbols(
+    as_of: str,
+    registry: CorporateActionRegistry,
+) -> List[str]:
+    """Old symbols that have been renamed away as of ``as_of``."""
+    return sorted(symbol for symbol in registry._rename_map if is_retired_symbol(symbol, as_of, registry))
+
+
 def is_pending_deal(
     ticker: str,
     as_of: str,
