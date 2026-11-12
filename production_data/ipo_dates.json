@@ -1,206 +1,206 @@
 {
-  "generated_at": "2026-11-04T15:02:40.189364+00:00",
-  "source": "price_history.csv first-price-date proxy",
+  "generated_at": "2026-11-12T21:30:24.692115+00:00",
+  "source": "price_history.csv first-price-date proxy (merged: first dates only move earlier, last dates only move later)",
   "ticker_count": 373,
   "tickers": {
     "AARD": {
       "first_price_date": "2025-02-13",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "ABBV": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2013-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ABCL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-12-11",
+      "last_price_date": "2026-11-11"
     },
     "ABEO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ABOS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-01",
+      "last_price_date": "2026-11-11"
     },
     "ABSI": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-22",
+      "last_price_date": "2026-11-11"
     },
     "ABUS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ABVX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2023-10-20",
+      "last_price_date": "2026-11-11"
     },
     "ACAD": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ACHV": {
       "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-10"
     },
     "ACIU": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ACLX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-04-28"
+      "first_price_date": "2022-02-04",
+      "last_price_date": "2026-04-29"
     },
     "ACRS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ACRV": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2022-11-15",
+      "last_price_date": "2026-11-11"
     },
     "ADCT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-05-18",
+      "last_price_date": "2026-11-11"
     },
     "ADMA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ADPT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "AGIO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "AKBA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2014-03-20",
+      "last_price_date": "2026-11-11"
     },
     "AKTS": {
       "first_price_date": "2026-01-09",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "AKTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ALDX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ALGS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-10-16",
+      "last_price_date": "2026-11-11"
     },
     "ALKS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ALLO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ALMS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-06-28",
+      "last_price_date": "2026-11-11"
     },
     "ALNY": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ALT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ALVO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2022-06-16",
+      "last_price_date": "2026-11-11"
     },
     "AMGN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "AMLX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2022-01-07",
+      "last_price_date": "2026-11-11"
     },
     "AMPH": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "AMRX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ANAB": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ANIP": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ANNX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-07-24",
+      "last_price_date": "2026-11-11"
     },
     "ANRO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-02-02",
+      "last_price_date": "2026-11-11"
     },
     "APGE": {
-      "first_price_date": "2024-11-04",
+      "first_price_date": "2023-07-14",
       "last_price_date": "2026-09-02"
     },
     "APLS": {
-      "first_price_date": "2024-11-04",
+      "first_price_date": "2020-01-02",
       "last_price_date": "2026-05-15"
     },
     "AQST": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ARCT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ARDX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ARGX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ARQT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-31",
+      "last_price_date": "2026-11-11"
     },
     "ARTV": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-07-19",
+      "last_price_date": "2026-11-11"
     },
     "ARVN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ARWR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ASMB": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ASND": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ATAI": {
-      "first_price_date": "2024-11-04",
+      "first_price_date": "2021-06-18",
       "last_price_date": "2026-09-11"
     },
     "ATXS": {
@@ -208,1292 +208,1292 @@
       "last_price_date": "2026-01-23"
     },
     "AUPH": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "AURA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-10-29",
+      "last_price_date": "2026-11-11"
     },
     "AUTL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "AVBP": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-01-26",
+      "last_price_date": "2026-11-11"
     },
     "AVIR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-10-30",
+      "last_price_date": "2026-11-11"
     },
     "AVTR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "AVTX": {
       "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "AVXL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "AXSM": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "AZN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "BBIO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "BBOT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-02-09",
+      "last_price_date": "2026-11-11"
     },
     "BCAX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-09-13",
+      "last_price_date": "2026-11-11"
     },
     "BCRX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "BCYC": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "BDTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-31",
+      "last_price_date": "2026-11-11"
     },
     "BEAM": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-02-06",
+      "last_price_date": "2026-11-11"
     },
     "BHVN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2022-09-23",
+      "last_price_date": "2026-11-11"
     },
     "BIIB": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "BIOA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-09-26",
+      "last_price_date": "2026-11-11"
     },
     "BLTE": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2022-04-29",
+      "last_price_date": "2026-11-11"
     },
     "BMEA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-04-16",
+      "last_price_date": "2026-11-11"
     },
     "BMRN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "BNTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "BRKR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CABA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CADL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-27",
+      "last_price_date": "2026-11-11"
     },
     "CAI": {
       "first_price_date": "2025-06-18",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "CAPR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2007-02-13",
+      "last_price_date": "2026-11-11"
     },
     "CATX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CBIO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CCCC": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-10-02",
+      "last_price_date": "2026-11-11"
     },
     "CDNA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CDXS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CELC": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CERS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CGEM": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-01-08",
+      "last_price_date": "2026-11-11"
     },
     "CGON": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-01-25",
+      "last_price_date": "2026-11-11"
     },
     "CHRS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CLDX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CLLS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CLYM": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-08-10",
+      "last_price_date": "2026-11-11"
     },
     "CMPS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-09-18",
+      "last_price_date": "2026-11-11"
     },
     "CMPX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-04-05",
+      "last_price_date": "2026-11-11"
     },
     "CNTA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-06-23"
+      "first_price_date": "2021-05-28",
+      "last_price_date": "2026-06-29"
     },
     "CNTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-10-20",
+      "last_price_date": "2026-11-11"
     },
     "COAG": {
       "first_price_date": "2026-05-01",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "COGT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "COLL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CPRX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-07-15"
+      "first_price_date": "2006-11-08",
+      "last_price_date": "2026-07-21"
     },
     "CRBU": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-23",
+      "last_price_date": "2026-11-11"
     },
     "CRL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CRMD": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CRNX": {
-      "first_price_date": "2024-11-04",
+      "first_price_date": "2020-01-02",
       "last_price_date": "2026-09-01"
     },
     "CRSP": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CRVS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CSTL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CTKB": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-23",
+      "last_price_date": "2026-11-11"
     },
     "CTMX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "CTNM": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-04-05",
+      "last_price_date": "2026-11-11"
     },
     "CVAC": {
       "first_price_date": "2020-08-14",
       "last_price_date": "2026-01-06"
     },
     "CYTK": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "DAWN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-04-23"
+      "first_price_date": "2021-05-27",
+      "last_price_date": "2026-04-24"
     },
     "DFTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "DMRA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-10-29",
+      "last_price_date": "2026-11-11"
     },
     "DNA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-04-19",
+      "last_price_date": "2026-11-11"
     },
     "DNLI": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "DNTH": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "DRMA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-08-13",
+      "last_price_date": "2026-11-11"
     },
     "DRUG": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-03-22",
+      "last_price_date": "2026-11-11"
     },
     "DSGN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-03-29",
+      "last_price_date": "2026-11-11"
     },
     "DYN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-09-17",
+      "last_price_date": "2026-11-11"
     },
     "EBS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "EDIT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ELDN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ELVN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-03-12",
+      "last_price_date": "2026-11-11"
     },
     "ENGN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2022-02-01",
+      "last_price_date": "2026-11-11"
     },
     "ENTA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "EOLS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "EPRX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-04-05",
+      "last_price_date": "2026-11-11"
     },
     "ERAS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-16",
+      "last_price_date": "2026-11-11"
     },
     "ESPR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-07-13"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-07-15"
     },
     "ETON": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "EWTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-03-26",
+      "last_price_date": "2026-11-11"
     },
     "EXEL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "EYPT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "FATE": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "FDMT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-12-11",
+      "last_price_date": "2026-11-11"
     },
     "FHTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-10-23",
+      "last_price_date": "2026-11-11"
     },
     "FLGT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "FOLD": {
-      "first_price_date": "2024-11-04",
+      "first_price_date": "2020-01-02",
       "last_price_date": "2026-04-27"
     },
     "FTH": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-02-04",
+      "last_price_date": "2026-11-11"
     },
     "FTRE": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2023-06-16",
+      "last_price_date": "2026-11-11"
     },
     "FULC": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "GENB": {
       "first_price_date": "2026-02-27",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "GERN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "GH": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "GHRS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-06-25",
+      "last_price_date": "2026-11-11"
     },
     "GILD": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "GLPG": {
       "first_price_date": "2020-01-02",
       "last_price_date": "2026-06-26"
     },
     "GLUE": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-06-24",
+      "last_price_date": "2026-11-11"
     },
     "GMAB": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "GOSS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "GPCR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2023-02-03",
+      "last_price_date": "2026-11-11"
     },
     "GRAL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-06-12",
+      "last_price_date": "2026-11-11"
     },
     "GRFS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "HALO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "HOWL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-04-30",
+      "last_price_date": "2026-11-11"
     },
     "HRMY": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-08-19",
+      "last_price_date": "2026-11-11"
     },
     "HROW": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "HRTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "HUMA": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-12-01",
+      "last_price_date": "2026-11-11"
     },
     "IBB": {
       "first_price_date": "2025-04-03",
       "last_price_date": "2026-05-06"
     },
     "IBRX": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "IDYA": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "IKT": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-12-23",
+      "last_price_date": "2026-11-11"
     },
     "ILMN": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "IMCR": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-02-05",
+      "last_price_date": "2026-11-11"
     },
     "IMMP": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "IMMX": {
       "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "IMNM": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-10-02",
+      "last_price_date": "2026-11-11"
     },
     "IMRX": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-30",
+      "last_price_date": "2026-11-11"
     },
     "IMTX": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "IMVT": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "INBX": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-05-29",
+      "last_price_date": "2026-11-11"
     },
     "INCY": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "INDV": {
-      "first_price_date": "2024-11-05",
+      "first_price_date": "2020-01-02",
       "last_price_date": "2026-11-03"
     },
     "INSM": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "INVA": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "IONS": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "IOVA": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "IRON": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-08-12",
+      "last_price_date": "2026-11-11"
     },
     "IRWD": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "IVVD": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-08-06",
+      "last_price_date": "2026-11-11"
     },
     "JANX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-06-11",
+      "last_price_date": "2026-11-11"
     },
     "JAZZ": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "JBIO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-06-30",
+      "last_price_date": "2026-11-11"
     },
     "KALA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "KALV": {
-      "first_price_date": "2024-11-04",
+      "first_price_date": "2020-01-02",
       "last_price_date": "2026-06-12"
     },
     "KARD": {
       "first_price_date": "2026-06-18",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "KLRA": {
       "first_price_date": "2026-04-17",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "KMDA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "KNSA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "KOD": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "KROS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-04-08",
+      "last_price_date": "2026-11-11"
     },
     "KRYS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "KURA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "KYMR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-08-21",
+      "last_price_date": "2026-11-11"
     },
     "KYNB": {
       "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "KYTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-02-09",
+      "last_price_date": "2026-11-11"
     },
     "LAB": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "LBRX": {
       "first_price_date": "2025-09-11",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "LCTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "LEGN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-06-05",
+      "last_price_date": "2026-11-11"
     },
     "LENZ": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-06-25",
+      "last_price_date": "2026-11-11"
     },
     "LFCR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "LGND": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "LQDA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "LRMR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "LXEO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2023-11-03",
+      "last_price_date": "2026-11-11"
     },
     "LYEL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-06-17",
+      "last_price_date": "2026-11-11"
     },
     "MAZE": {
       "first_price_date": "2025-01-31",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "MBX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-09-13",
+      "last_price_date": "2026-11-11"
     },
     "MCRB": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "MDGL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "MDXG": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2008-02-12",
+      "last_price_date": "2026-11-11"
     },
     "MEDP": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "MENS": {
       "first_price_date": "2025-06-17",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "MESO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "MGTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "MIRM": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "MLTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-10-20",
+      "last_price_date": "2026-11-11"
     },
     "MLYS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2023-02-10",
+      "last_price_date": "2026-11-11"
     },
     "MNKD": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "MNPR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "MPLT": {
       "first_price_date": "2025-10-27",
       "last_price_date": "2026-06-26"
     },
     "MRNA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "MRSN": {
       "first_price_date": "2020-01-02",
       "last_price_date": "2026-01-06"
     },
     "MRVI": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-11-20",
+      "last_price_date": "2026-11-11"
     },
     "MYGN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "NAMS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-02-09",
+      "last_price_date": "2026-11-11"
     },
     "NAUT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-08-07",
+      "last_price_date": "2026-11-11"
     },
     "NBIX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "NBP": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-17",
+      "last_price_date": "2026-11-11"
     },
     "NGNE": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "NKTR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "NKTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-07-10",
+      "last_price_date": "2026-11-11"
     },
     "NMRA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2023-09-14",
+      "last_price_date": "2026-11-11"
     },
     "NRIX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-07-24",
+      "last_price_date": "2026-11-11"
     },
     "NTLA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "NTRA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "NUVB": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-08-26",
+      "last_price_date": "2026-11-11"
     },
     "NUVL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-07-15"
+      "first_price_date": "2021-07-29",
+      "last_price_date": "2026-07-21"
     },
     "NVAX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "NVCR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "OABI": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-09-30",
+      "last_price_date": "2026-11-11"
     },
     "OBIO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-08-04",
+      "last_price_date": "2026-11-11"
     },
     "OCGN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "OCS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-05-18",
+      "last_price_date": "2026-11-11"
     },
     "OCUL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "OLMA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-11-19",
+      "last_price_date": "2026-11-11"
     },
     "OMER": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ONC": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "OPCH": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "OPK": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ORIC": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-04-24",
+      "last_price_date": "2026-11-11"
     },
     "ORKA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "OVID": {
       "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "PACB": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PAHC": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PBLS": {
       "first_price_date": "2026-06-10",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "PBYI": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PCRX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PCVX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-06-12",
+      "last_price_date": "2026-11-11"
     },
     "PEPG": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2022-05-06",
+      "last_price_date": "2026-11-11"
     },
     "PGEN": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PHAT": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PHVS": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-02-05",
+      "last_price_date": "2026-11-11"
     },
     "PRAX": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-10-16",
+      "last_price_date": "2026-11-11"
     },
     "PRLD": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-09-25",
+      "last_price_date": "2026-11-11"
     },
     "PRME": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2022-10-20",
+      "last_price_date": "2026-11-11"
     },
     "PRQR": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PRTA": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PRVA": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-04-28",
+      "last_price_date": "2026-11-11"
     },
     "PSNL": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PTCT": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PTGX": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PVLA": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "PYXS": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-10-08",
+      "last_price_date": "2026-11-11"
     },
     "QSI": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-11-13",
+      "last_price_date": "2026-11-11"
     },
     "QTRX": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "QURE": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "RANI": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-30",
+      "last_price_date": "2026-11-11"
     },
     "RAPP": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-06-07",
+      "last_price_date": "2026-11-11"
     },
     "RARE": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "RCKT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "RCUS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "REGN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "REPL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "RGEN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "RGNX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "RIGL": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "RLAY": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-07-16",
+      "last_price_date": "2026-11-11"
     },
     "RNA": {
-      "first_price_date": "2026-02-27",
+      "first_price_date": "2020-06-12",
       "last_price_date": "2026-11-03"
     },
     "RNAC": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2016-06-22",
+      "last_price_date": "2026-11-11"
     },
     "ROIV": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-12-08",
+      "last_price_date": "2026-11-11"
     },
     "RPRX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-06-16",
+      "last_price_date": "2026-11-11"
     },
     "RVMD": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-02-13",
+      "last_price_date": "2026-11-11"
     },
     "RXRX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-04-16",
+      "last_price_date": "2026-11-11"
     },
     "RYTM": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "SABS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-02-09",
+      "last_price_date": "2026-11-11"
     },
     "SANA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-02-04",
+      "last_price_date": "2026-11-11"
     },
     "SEPN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-10-25",
+      "last_price_date": "2026-11-11"
     },
     "SERA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-15",
+      "last_price_date": "2026-11-11"
     },
     "SGMO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-05-04"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-07-01"
     },
     "SGMT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2023-07-14",
+      "last_price_date": "2026-11-11"
     },
     "SIGA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "SION": {
       "first_price_date": "2025-02-07",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "SKYE": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "SLDB": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "SLN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-09-08",
+      "last_price_date": "2026-11-11"
     },
     "SLS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2008-03-12",
+      "last_price_date": "2026-11-11"
     },
     "SMMT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "SNDX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "SNY": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "SPRY": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-12-04",
+      "last_price_date": "2026-11-11"
     },
     "SRPT": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "SRRK": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "SRZN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-01-11",
+      "last_price_date": "2026-11-11"
     },
     "STOK": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "STRO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "STTK": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-10-09",
+      "last_price_date": "2026-11-11"
     },
     "STVN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-16",
+      "last_price_date": "2026-11-11"
     },
     "SUPN": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "SVRA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "SYRE": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "TARA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "TARS": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-10-16",
+      "last_price_date": "2026-11-11"
     },
     "TBPH": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-09-23"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-09-25"
     },
     "TCRX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-16",
+      "last_price_date": "2026-11-11"
     },
     "TECH": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "TECX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "TEM": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-06-14",
+      "last_price_date": "2026-11-11"
     },
     "TENX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "TERN": {
       "first_price_date": "2021-02-05",
       "last_price_date": "2026-05-07"
     },
     "TEVA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "1982-02-16",
+      "last_price_date": "2026-11-11"
     },
     "TGTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "TKNO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-06-25",
+      "last_price_date": "2026-11-11"
     },
     "TNGX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-09-03",
+      "last_price_date": "2026-11-11"
     },
     "TNYA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-07-30",
+      "last_price_date": "2026-11-11"
     },
     "TRAX": {
-      "first_price_date": "2026-04-20",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2026-04-06",
+      "last_price_date": "2026-11-11"
     },
     "TRDA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-10-29",
+      "last_price_date": "2026-11-11"
     },
     "TRVI": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "TSHA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-09-24",
+      "last_price_date": "2026-11-11"
     },
     "TVTX": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "TWST": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "TXG": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "TYRA": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-09-15",
+      "last_price_date": "2026-11-11"
     },
     "UPB": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-10-11",
+      "last_price_date": "2026-11-11"
     },
     "URGN": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "UTHR": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "VCEL": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "VCYT": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "VERA": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-05-14",
+      "last_price_date": "2026-11-11"
     },
     "VIR": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "VKTX": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "VNDA": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "VOR": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2021-02-05",
+      "last_price_date": "2026-11-11"
     },
     "VRDN": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "VRTX": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "VSTM": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2012-01-27",
+      "last_price_date": "2026-11-11"
     },
     "VTRS": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "VYGR": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "WVE": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "XBI": {
       "first_price_date": "2020-01-02",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "XENE": {
-      "first_price_date": "2024-11-05",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "XERS": {
       "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "last_price_date": "2026-11-11"
     },
     "XNCR": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ZBIO": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2024-09-13",
+      "last_price_date": "2026-11-11"
     },
     "ZLAB": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ZVRA": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     },
     "ZYME": {
-      "first_price_date": "2024-11-04",
-      "last_price_date": "2026-11-03"
+      "first_price_date": "2020-01-02",
+      "last_price_date": "2026-11-11"
     }
   }
 }
