@@ -819,6 +819,50 @@ def _merge_calendar_sources(universe: list, data_dir: Path) -> list:
         return universe
 
 
+def warm_biopharmawatch(as_of_date: date, data_dir: Path, cache_dir: Path) -> tuple[int, int]:
+    """Fetch BiopharmaWatch FDA calendar. Returns (fda_regulatory_count, adcom_count).
+
+    Skips silently if BPW_API_KEY is not set; never hard-fails.
+    """
+    from wake_robin_data_pipeline.collectors.biopharmawatch_collector import (
+        collect_biopharmawatch_fda_events,
+    )
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    if not os.environ.get("BPW_API_KEY"):
+        logger.info("BPW_API_KEY not set — skipping biopharmawatch warm")
+        return 0, 0
+
+    reg_records, adcom_records = collect_biopharmawatch_fda_events(
+        as_of_date=as_of_date,
+        cache_dir=cache_dir,
+        pdufa_dates_path=data_dir / "pdufa_dates.json",
+    )
+    return len(reg_records), len(adcom_records)
+
+
+def warm_pdufa_bio(as_of_date: date, data_dir: Path, cache_dir: Path) -> tuple[int, int]:
+    """Fetch pdufa.bio free FDA calendar. Returns (fda_regulatory_count, adcom_count).
+
+    No API key required. Short-circuits if BPW already populated cache for this date.
+    """
+    from wake_robin_data_pipeline.collectors.pdufa_bio_collector import (
+        collect_pdufa_bio_events,
+    )
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    reg_records, adcom_records = collect_pdufa_bio_events(
+        as_of_date=as_of_date,
+        cache_dir=cache_dir,
+        pdufa_dates_path=data_dir / "pdufa_dates.json",
+    )
+    return len(reg_records), len(adcom_records)
+
+
 def warm_ir_events(as_of_date: date, data_dir: Path, cache_dir: Path) -> int:
     """Fetch and cache IR events from company events pages. Returns count."""
     from wake_robin_data_pipeline.collectors.ir_events_collector import collect_ir_events
@@ -945,7 +989,7 @@ def main():
         type=str,
         default="fda_adcom,sec_8k,euctr,ctis,isrctn,merged_trials",
         help="Comma-separated sources to warm: fda_adcom,fda_regulatory,openfda,sec_8k,ctgov,sec_13f,"
-        "euctr,ctis,isrctn,merged_trials,event_ledger,price_pit "
+        "euctr,ctis,isrctn,merged_trials,event_ledger,price_pit,biopharmawatch,pdufa_bio "
         "(default: fda_adcom,sec_8k,euctr,ctis,isrctn,merged_trials)",
     )
     parser.add_argument(
@@ -1266,6 +1310,26 @@ def main():
         except Exception as e:
             logger.error(f"Press release events warm failed: {e}")
 
+    bpw_reg_count = 0
+    bpw_adcom_count = 0
+    if "biopharmawatch" in sources:
+        fda_cache_dir = Path(args.fda_cache_dir)
+        fda_cache_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            bpw_reg_count, bpw_adcom_count = warm_biopharmawatch(as_of, data_dir, fda_cache_dir)
+        except Exception as e:
+            logger.error(f"BiopharmaWatch warm failed: {e}")
+
+    pdufa_bio_reg_count = 0
+    pdufa_bio_adcom_count = 0
+    if "pdufa_bio" in sources:
+        fda_cache_dir = Path(args.fda_cache_dir)
+        fda_cache_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            pdufa_bio_reg_count, pdufa_bio_adcom_count = warm_pdufa_bio(as_of, data_dir, fda_cache_dir)
+        except Exception as e:
+            logger.error(f"pdufa.bio warm failed: {e}")
+
     # Write refresh diagnostics sidecar
     if refresh_results:
         cache_root = PROJECT_ROOT / "cache"
@@ -1315,6 +1379,10 @@ def main():
         parts.append(f"{ir_events_count} IR events")
     if press_release_count:
         parts.append(f"{press_release_count} press release events")
+    if bpw_reg_count or bpw_adcom_count:
+        parts.append(f"BPW: {bpw_reg_count} regulatory + {bpw_adcom_count} adcom")
+    if pdufa_bio_reg_count or pdufa_bio_adcom_count:
+        parts.append(f"pdufa.bio: {pdufa_bio_reg_count} regulatory + {pdufa_bio_adcom_count} adcom")
     logger.info(f"Cache warm complete: {', '.join(parts)}")
     return 0
 
