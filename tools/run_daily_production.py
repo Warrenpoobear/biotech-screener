@@ -4467,7 +4467,7 @@ def check_market_data_staleness(
 ) -> GateResult:
     """Check that market_data.json is fresh relative to the screen date.
 
-    Reads the ``collected_at`` field from the first record and computes
+    Uses the OLDEST ``collected_at`` across all records and computes its
     calendar-day age against ``as_of_date``.  FAIL if age > max_age_days.
     """
     from datetime import date as _date
@@ -4491,7 +4491,6 @@ def check_market_data_staleness(
             detail=f"Cannot read market_data.json: {e}",
         )
 
-    # Find the most common collected_at date
     collected_dates = [r.get("collected_at") for r in records if isinstance(r, dict) and r.get("collected_at")]
     if not collected_dates:
         return GateResult(
@@ -4500,10 +4499,12 @@ def check_market_data_staleness(
             detail="No collected_at field found in market_data.json",
         )
 
-    collected_at = max(collected_dates)  # latest collection date
+    # Judge the file by its OLDEST row. max() let one fresh row (or the price
+    # patch re-stamping rows) mask months-old avg_volume/beta/volatility on the
+    # rest, so the collect_market_data.py auto-refresh never ran (2026-11-12).
     try:
-        collected = _date.fromisoformat(collected_at)
         as_of = _date.fromisoformat(as_of_date)
+        parsed = [_date.fromisoformat(str(d)[:10]) for d in collected_dates]
     except ValueError as e:
         return GateResult(
             name="market_data_staleness",
@@ -4511,14 +4512,18 @@ def check_market_data_staleness(
             detail=f"Bad date format: {e}",
         )
 
+    collected = min(parsed)
+    collected_at = collected.isoformat()
     age_days = (as_of - collected).days
+    n_stale = sum(1 for d in parsed if (as_of - d).days > max_age_days)
     if age_days > max_age_days:
         return GateResult(
             name="market_data_staleness",
             status="FAIL",
             detail=(
                 f"market_data.json is {age_days}d stale "
-                f"(collected={collected_at}, as_of={as_of_date}, max={max_age_days}d). "
+                f"(oldest collected={collected_at}, {n_stale}/{len(parsed)} rows older than "
+                f"{max_age_days}d, as_of={as_of_date}). "
                 "Run: python collect_market_data.py"
             ),
             value=age_days,
@@ -4528,7 +4533,7 @@ def check_market_data_staleness(
     return GateResult(
         name="market_data_staleness",
         status="PASS",
-        detail=f"market_data.json collected={collected_at}, age={age_days}d",
+        detail=f"market_data.json oldest collected={collected_at}, age={age_days}d",
         value=age_days,
         threshold=max_age_days,
     )
