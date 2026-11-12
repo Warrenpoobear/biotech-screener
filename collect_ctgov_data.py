@@ -39,6 +39,7 @@ TICKER_TO_SPONSORS = {
     "ABUS": ["Arbutus Biopharma", "Arbutus Biopharma Corporation"],
     "ABVX": ["Abivax", "Abivax SA"],
     "ACAD": ["ACADIA Pharmaceuticals", "ACADIA Pharmaceuticals Inc."],
+    "ACHV": ["Achieve Life Sciences"],
     "ACIU": ["AC Immune", "AC Immune SA"],
     "ACLX": ["Arcellx", "Arcellx, Inc."],
     "ACRS": ["Aclaris Therapeutics", "Aclaris Therapeutics, Inc."],
@@ -84,6 +85,7 @@ TICKER_TO_SPONSORS = {
     "AUTL": ["Autolus Therapeutics", "Autolus Therapeutics plc"],
     "AVBP": ["ArriVent BioPharma", "ArriVent BioPharma, Inc."],
     "AVIR": ["Atea Pharmaceuticals", "Atea Pharmaceuticals, Inc."],
+    "AVTX": ["Avalo Therapeutics"],
     "AVXL": ["Anavex Life Sciences", "Anavex Life Sciences Corp."],
     "AXSM": ["Axsome Therapeutics"],
     "AZN": ["Astrazeneca", "Astrazeneca PLC"],
@@ -187,6 +189,7 @@ TICKER_TO_SPONSORS = {
     "IDYA": ["IDEAYA Biosciences", "IDEAYA Biosciences, Inc."],
     "IKT": ["Inhibikase Therapeutics", "Inhibikase Therapeutics, Inc."],
     "IMCR": ["Immunocore"],
+    "IMMX": ["Immix Biopharma"],
     "IMMP": ["Immutep"],
     "IMRX": ["Immuneering", "Immuneering Corporation"],
     "IMTX": ["Immatics", "Immatics N.V."],
@@ -236,6 +239,7 @@ TICKER_TO_SPONSORS = {
     "MLTX": ["MoonLake Immunotherapeutics"],
     "MLYS": ["Mineralys Therapeutics", "Mineralys Therapeutics, Inc."],
     "MNKD": ["MannKind", "MannKind Corporation"],
+    "MNPR": ["Monopar Therapeutics"],
     "MNMD": ["Mind Medicine (MindMed)", "Mind Medicine (MindMed) Inc."],
     "MRK": ["Merck Sharp & Dohme LLC", "Merck Sharp & Dohme"],
     "MRNA": ["ModernaTX, Inc.", "Moderna"],
@@ -400,30 +404,36 @@ def _normalize_date(raw: str | None) -> str | None:
         return None
 
 
-def _fetch_trials_page(base_url: str, params: dict, max_retries: int = 3) -> tuple:
-    """Fetch a single page of trials. Returns (studies, next_page_token, success)."""
+class CtgovFetchError(RuntimeError):
+    """A CT.gov request failed after retries. Never the same as "no trials"."""
+
+
+# Statuses that are transient on CT.gov (rate limiting, edge/WAF throttling,
+# server errors). 2026-11-12: these came back mid-collection for random tickers
+# and were read as "0 trials".
+_RETRYABLE_STATUSES = {403, 408, 429, 500, 502, 503, 504}
+
+
+def _fetch_trials_page(base_url: str, params: dict, max_retries: int = 5) -> tuple:
+    """Fetch a single page of trials. Returns (studies, next_page_token, success).
+
+    success=False means the request failed after retries; callers must not treat
+    the empty study list as a real "no results".
+    """
     for attempt in range(max_retries):
         try:
             response = requests.get(base_url, params=params, timeout=30)
-
-            if response.status_code == 200:
-                data = response.json()
-                studies = data.get("studies", [])
-                next_token = data.get("nextPageToken")
-                return studies, next_token, True
-
-            elif response.status_code == 429:
-                wait_time = 5 * (attempt + 1)
-                time.sleep(wait_time)
-                continue
-            else:
-                return [], None, False
-
         except Exception:
-            if attempt < max_retries - 1:
-                time.sleep(2)
-                continue
+            response = None
+
+        if response is not None and response.status_code == 200:
+            data = response.json()
+            return data.get("studies", []), data.get("nextPageToken"), True
+
+        retryable = response is None or response.status_code in _RETRYABLE_STATUSES
+        if not retryable or attempt == max_retries - 1:
             return [], None, False
+        time.sleep(min(5 * (attempt + 1), 30))
 
     return [], None, False
 
@@ -497,7 +507,12 @@ def _fetch_all_trials(query_params: dict, ticker: str, max_retries: int = 3, max
         if next_page_token:
             params["pageToken"] = next_page_token
 
-        studies, next_page_token, success = _fetch_trials_page(base_url, params, max_retries)
+        studies, next_page_token, success = _fetch_trials_page(base_url, params)
+
+        if not success:
+            # A failed page is not the end of the results: raising keeps a
+            # transient error from reading as "0 trials" or a truncated list.
+            raise CtgovFetchError(f"{ticker}: CT.gov page fetch failed after retries ({query_params})")
 
         if not studies:
             break
@@ -505,7 +520,7 @@ def _fetch_all_trials(query_params: dict, ticker: str, max_retries: int = 3, max
         for study in studies:
             all_trials.append(_parse_study(study, ticker))
 
-        if not success or not next_page_token:
+        if not next_page_token:
             break
 
         time.sleep(0.2)
@@ -604,27 +619,9 @@ def collect_all_trials(universe_file: Path, output_file: Path, allow_coverage_dr
     print("COLLECTING TRIALS")
     print(f"{'='*80}\n")
 
-    for i, ticker in enumerate(tickers, 1):
-        print(f"[{i:3d}/{len(tickers)}] {ticker:6s}", end=" ", flush=True)
-
-        trials = get_trials_for_ticker(ticker)
-
-        if trials:
-            all_trials.extend(trials)
-            stats["with_trials"] += 1
-            stats["total_trials"] += len(trials)
-            print(f"✅ {len(trials):2d} trials")
-        else:
-            print("   No trials")
-
-        time.sleep(0.5)  # Be nice to API
-
-        if i % 50 == 0:
-            print(f"\n  Progress: {i}/{len(tickers)} ({i/len(tickers)*100:.1f}%)")
-            print(f"  Trials found: {stats['total_trials']}\n")
-
-    # Coverage guard: refuse to overwrite good data with a regressed fetch.
-    # Runs BEFORE the write, so a bad run leaves the previous cache intact.
+    # Previous output: used by the coverage guard and to carry forward tickers
+    # whose fetch failed (a failed request is not "no trials").
+    previous: List[Dict] = []
     if output_file.exists():
         try:
             with open(output_file) as f:
@@ -633,6 +630,60 @@ def collect_all_trials(universe_file: Path, output_file: Path, allow_coverage_dr
             print(f"\n⚠️  Could not read existing {output_file} for coverage check: {e}")
             previous = []
 
+    def _record(ticker: str, trials: List[Dict]) -> None:
+        if trials:
+            all_trials.extend(trials)
+            stats["with_trials"] += 1
+            stats["total_trials"] += len(trials)
+            print(f"✅ {len(trials):2d} trials")
+        else:
+            print("   No trials")
+
+    failed: List[str] = []
+    for i, ticker in enumerate(tickers, 1):
+        print(f"[{i:3d}/{len(tickers)}] {ticker:6s}", end=" ", flush=True)
+
+        try:
+            _record(ticker, get_trials_for_ticker(ticker))
+        except CtgovFetchError as e:
+            failed.append(ticker)
+            print(f"⚠️  fetch failed ({e}) — will retry")
+
+        time.sleep(0.5)  # Be nice to API
+
+        if i % 50 == 0:
+            print(f"\n  Progress: {i}/{len(tickers)} ({i/len(tickers)*100:.1f}%)")
+            print(f"  Trials found: {stats['total_trials']}\n")
+
+    # Second pass for tickers whose requests failed, after a pause.
+    still_failed: List[str] = []
+    if failed:
+        print(f"\nRetrying {len(failed)} ticker(s) whose fetch failed: {', '.join(failed)}")
+        time.sleep(30)
+        for ticker in failed:
+            print(f"[retry] {ticker:6s}", end=" ", flush=True)
+            try:
+                _record(ticker, get_trials_for_ticker(ticker))
+            except CtgovFetchError as e:
+                still_failed.append(ticker)
+                print(f"❌ fetch failed again ({e})")
+            time.sleep(2)
+
+    # Still failing: keep the previous records for those tickers, loudly. Their
+    # collected_at dates stay as they were, so the carry-forward is traceable.
+    if still_failed:
+        print(f"\n{'='*80}")
+        print(f"⚠️  FETCH FAILED for {len(still_failed)} ticker(s) after retry — carrying forward previous records")
+        print(f"{'='*80}")
+        for ticker in still_failed:
+            carried = [r for r in previous if r.get("ticker") == ticker]
+            all_trials.extend(carried)
+            print(f"  {ticker:6s} carried forward {len(carried)} previous trial(s)")
+        print(f"{'='*80}\n")
+
+    # Coverage guard: refuse to overwrite good data with a regressed fetch.
+    # Runs BEFORE the write, so a bad run leaves the previous cache intact.
+    if previous:
         regressions = detect_coverage_regressions(previous, all_trials)
         if regressions:
             lost = sum(regressions.values())
