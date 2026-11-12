@@ -137,11 +137,18 @@ The ONLY true out-of-sample evidence. Accumulates daily from production.
 | Evaluator | Score field | Scope | Overlap rule | Role |
 | --- | --- | --- | --- | --- |
 | Daily forward_eval gate (`tools/forward_eval_gate.py`) | negated `actionable_rank` | `eligible` (tradeable) rows | PIT dates ≥ ~horizon apart (28 cal days @ h20) | WARN-only evaluator-health tripwire; floor +0.02 |
-| IC dashboard (`tools/build_ic_dashboard.py`) | `score_rank_pct`, `inst_delta_z` | ranked universe | daily overlapping (60-date lookback) | selector signal-health monitoring |
+| IC dashboard (`tools/build_ic_dashboard.py`) | `score_rank_pct` (higher is better), negated `actionable_rank`, `coinvest_score_z`, `inst_delta_z` | ranked universe; `actionable_rank` on ranked rows only | daily overlapping (60-date lookback) | selector signal-health monitoring |
 | Spec 100 backtest (`run_rank_ic_backtest.py`) | `final_score` (default) | configurable | research-side | ranker IC / promotion research |
 | Forward-shadow mandate (SM-20260629-001) | Top-30 EW 5d excess vs XBI | frozen candidate basket | one window per ISO week | only evidence that can resolve DEM HOLD |
 
 A HEALTHY dashboard or PASS gate is **not** mandate progress; zero mandate windows is **zero evidence, not zero alpha**.
+
+**Current model-status note, 2026-11-12 (IC dashboard sign correction):**
+- Until 2026-11-12 the dashboard and `scripts/shared_regime_check.py` negated `score_rank_pct`. Every `score_rank_pct` IC in `artifacts/ic_dashboard/`, `history.jsonl` and the weekly sweep reports written before the fix has the **wrong sign**. Do not cite them without flipping it.
+- `score_rank_pct` is the composite percentile and is informational. For the production order, read `actionable_rank` in the dashboard.
+- Check `recent_ic` and `trend` as well as the mean: `decaying` means the mean is still healthy but the last 5 dates average at or below zero.
+- Forward returns must come from `price_history_split_adj.csv`. `price_history.csv` carries unadjusted reverse splits.
+- Memo: `docs/governance/2026-11-12-ic-dashboard-sign-correction.md`. Canonical: `docs/MODEL_DOCUMENTATION.md`.
 
 ### Arms
 
