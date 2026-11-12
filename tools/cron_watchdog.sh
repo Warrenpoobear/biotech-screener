@@ -102,7 +102,7 @@ if [ "$PROD_RAN" = false ]; then
     log "Running daily_production..."
     bash "$REPO/tools/cron_daily_production.sh" >> "$CRON_LOG" 2>&1
     log "daily_production done (exit $?)"
-elif [ "$PROD_RAN" = "skip" ]; then
+elif [ "$PROD_RAN" = "skip" ] || [ "$PROD_RAN" = "notdue" ]; then
     : # already logged above
 else
     log "Production already ran for $TODAY — skipping production recovery"
@@ -248,9 +248,14 @@ fi
 # The production pipeline writes trapops_daily_summary.json into the promoted
 # snapshot dir. If that file is missing, run trapops standalone to generate it.
 # Using artifact presence avoids false-negative from log touched by earlier run.
+# Only recover once today's snapshot has been promoted (rankings.csv exists):
+# before the 16:30 run there is no snapshot dir, so trapops_monitor cannot write
+# and every pre-close watchdog pass logged MISSED + FAILED (2026-11-12).
 TRAPOPS_LOG="$REPO/logs/trapops_cron.log"
 TRAPOPS_ARTIFACT="$REPO/data/snapshots/$TODAY/trapops_daily_summary.json"
-if [ ! -f "$TRAPOPS_ARTIFACT" ]; then
+if [ ! -f "$REPO/data/snapshots/$TODAY/rankings.csv" ]; then
+    log "Trapops: no promoted snapshot for $TODAY yet — nothing to recover"
+elif [ ! -f "$TRAPOPS_ARTIFACT" ]; then
     log "MISSED trapops artifact for $TODAY — recovering"
     (cd "$REPO" && $PYTHON "$REPO/tools/trapops_monitor.py" --snapshot-date "$TODAY" >> "$TRAPOPS_LOG" 2>&1) \
         && log "Trapops recovery OK — artifact written" \

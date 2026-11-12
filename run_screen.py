@@ -57,7 +57,7 @@ load_dotenv()
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from statistics import median, quantiles
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -1981,6 +1981,100 @@ ALERT-level staleness abort the run instead of logging.  Left off so this guard
 cannot change production behaviour on its own."""
 
 
+def _dead_tickers_as_of(data_dir: Path, as_of_date: str) -> Set[str]:
+    """Tickers dead (acquisition / delisted / bankruptcy) on or before as_of_date.
+
+    Reads ``corporate_actions.json`` from the run's own data dir only, so a run
+    checks against the registry it scores with (no fallback to the repo copy:
+    a data dir without a registry keeps the check unchanged). Fail-open: any
+    error returns an empty set.
+    """
+    _path = Path(data_dir) / "corporate_actions.json"
+    if not _path.exists():
+        return set()
+    try:
+        from common.corporate_actions import list_dead_tickers, list_retired_symbols, load_actions
+
+        _registry = load_actions(_path)
+        dead = {str(t).upper() for t in list_dead_tickers(as_of_date, _registry)}
+        dead.update(str(t).upper() for t in list_retired_symbols(as_of_date, _registry))
+        return dead
+    except Exception:  # pragma: no cover - fail-open
+        return set()
+
+
+def _load_run_corporate_actions(data_dir: Path) -> Any:
+    """Load ``corporate_actions.json`` from the run's own data dir, or None.
+
+    Same source rule as ``_dead_tickers_as_of``: no fallback to the repo copy.
+    Fail-open: a missing or unreadable registry returns None (raw prices used).
+    """
+    _path = Path(data_dir) / "corporate_actions.json"
+    if not _path.exists():
+        return None
+    try:
+        from common.corporate_actions import load_actions
+
+        return load_actions(_path)
+    except Exception:  # pragma: no cover - fail-open
+        logger.warning("[momentum] could not load %s; momentum uses raw prices", _path)
+        return None
+
+
+def _observed_registry_split_factor(
+    ticker: str,
+    prices_desc: List[Tuple[Any, float]],
+    from_date: Any,
+    to_date: Any,
+    registry: Any,
+    tolerance: float = 2.0,
+) -> float:
+    """Cumulative factor for registry splits and special dividends in
+    (from_date, to_date] that are actually VISIBLE in this price series.
+
+    A registry split is applied only when the series jumps across its
+    effective date by roughly the registry factor (within ``tolerance`` x).
+    That makes the adjustment idempotent: on an already split-adjusted source
+    (yfinance history fetched after the split, or Sharadar SEP ``close``) the
+    jump is absent and the split is skipped instead of applied twice.
+
+    ``prices_desc`` is ``[(date, close), ...]`` sorted newest first.
+    """
+    import math
+
+    from common.corporate_actions import get_splits_only
+
+    factor = 1.0
+    f_iso, t_iso = from_date.isoformat(), to_date.isoformat()
+    for a in get_splits_only(ticker, registry):
+        if not a.factor or not (f_iso < a.effective_date <= t_iso):
+            continue
+        before = next((p for d, p in prices_desc if d.isoformat() < a.effective_date), None)
+        after = next((p for d, p in reversed(prices_desc) if d.isoformat() >= a.effective_date), None)
+        if not before or not after:
+            continue
+        observed = after / before
+        if abs(math.log(observed) - math.log(a.factor)) <= math.log(tolerance):
+            factor *= a.factor
+
+    # Special cash dividends: the ex-date drop is a distribution, not a return.
+    # Same visibility rule — applied only when the series drops by roughly the
+    # dividend (0.5x..1.5x), so a dividend-adjusted source is not adjusted twice.
+    from common.corporate_actions import get_special_dividends
+
+    for a in get_special_dividends(ticker, registry):
+        if not a.amount or not (f_iso < a.effective_date <= t_iso):
+            continue
+        before = next((p for d, p in prices_desc if d.isoformat() < a.effective_date), None)
+        after = next((p for d, p in reversed(prices_desc) if d.isoformat() >= a.effective_date), None)
+        if not before or not after or a.amount >= before:
+            continue
+        drop = before - after
+        if 0.5 * a.amount <= drop <= 1.5 * a.amount:
+            factor *= (before - a.amount) / before
+    return factor
+
+
 def compute_momentum_from_price_history(
     price_history_path: Path, as_of_date: str, market_data_by_ticker: Dict[str, Dict], xbi_ticker: str = "XBI"
 ) -> int:
@@ -2053,11 +2147,21 @@ def compute_momentum_from_price_history(
     #
     # Scoped to market_data_by_ticker so delisted names still sitting in
     # price_history.csv (MRSN/CVAC at 211d, IBB, etc.) do not raise false alarms.
+    #
+    # Also excludes names that are dead (acquired / delisted / bankrupt) as of
+    # as_of_date per the corporate-actions registry: market_data.json keeps
+    # entries for retired tickers, which are never ranked. On 2026-11-11 the check
+    # logged an ERROR for CRNX, APGE, TBPH, RNA, BHVN and ATAI — all retired, none
+    # in rankings.csv — and under BIOTECH_STRICT_PRICE_STALENESS=1 it would have
+    # raised and aborted the run over them.
     if prices_by_ticker:
         _scored = {str(_t).upper() for _t in (market_data_by_ticker or {})}
+        _dead = _dead_tickers_as_of(Path(price_history_path).parent, as_of_date)
         _gaps = []
         for _tkr, _pts in prices_by_ticker.items():
             if _scored and _tkr not in _scored:
+                continue
+            if _tkr in _dead:
                 continue
             if not _pts:
                 continue
@@ -2100,6 +2204,8 @@ def compute_momentum_from_price_history(
     for ticker in prices_by_ticker:
         prices_by_ticker[ticker].sort(key=lambda x: x[0], reverse=True)
 
+    _momentum_registry = _load_run_corporate_actions(Path(price_history_path).parent)
+
     def get_return(ticker: str, days_back: int) -> Optional[float]:
         """Get return over specified trading days (approximate)."""
         if ticker not in prices_by_ticker:
@@ -2127,13 +2233,24 @@ def compute_momentum_from_price_history(
         target_date = current_date - timedelta(days=calendar_days_back)
 
         past_price = None
+        past_date = None
         for dt, price in prices:
             if dt <= target_date:
                 past_price = price
+                past_date = dt
                 break
 
         if past_price is None or past_price == 0:
             return None
+
+        # Put the past close on the current close's share basis for registry
+        # splits inside the window, so a split is not scored as a return
+        # (IMMP's 1:20 reverse split on 2026-09-28 read as ~+800% momentum).
+        # Genuine crashes and rallies have no registry entry and are left as-is.
+        if _momentum_registry is not None:
+            past_price = past_price * _observed_registry_split_factor(
+                ticker, prices, past_date, current_date, _momentum_registry
+            )
 
         return (current_price / past_price) - 1.0
 
@@ -4118,6 +4235,11 @@ _ALWAYS_NUMERIC_DEFAULTS = {
     "catalyst_decay_w": 0.0,
 }
 
+# inst_delta_z is only a number when a cross-quarter delta was actually
+# measured (has_inst_delta=True). Filling a missing delta with 0 makes a
+# neutral z-score and pulls IC toward zero.
+_MISSING_UNLESS_MEASURED = frozenset({"inst_delta_z"})
+
 # Signal presence flags — written as string booleans for CSV compatibility
 _SIGNAL_FLAG_DEFAULTS = {
     "has_coinvest_signal": "False",
@@ -4134,9 +4256,15 @@ def _ensure_defaults(csv_rows, defaults=_ALWAYS_NUMERIC_DEFAULTS):
     fall through the clinical_score_z_tier cohort logic.
     """
     for row in csv_rows:
+        measured_inst = str(row.get("has_inst_delta", "")).strip() == "True"
         for field, default in defaults.items():
             val = row.get(field)
-            if val is None or str(val).strip() == "" or str(val).strip().lower() == "nan":
+            missing = val is None or str(val).strip() == "" or str(val).strip().lower() == "nan"
+            if field in _MISSING_UNLESS_MEASURED and not measured_inst:
+                if missing:
+                    row[field] = ""
+                continue
+            if missing:
                 row[field] = default
         # Signal presence flags (string booleans, never overwrite if already set)
         for flag, flag_default in _SIGNAL_FLAG_DEFAULTS.items():
@@ -4645,10 +4773,15 @@ def _finalize_priced_move(csv_rows: List[Dict[str, Any]]) -> None:
             try:
                 _sp = float(_r["straddle_price"])
                 _pm = round(_sp * 100.0, 4)
+                # Sanity: priced_move_pct should be 1-200 percentage points.
+                # Above 500 the quote is not a usable move (junk IV stretched
+                # by a long-dated catalyst). Leave the field missing.
+                if _pm > 500.0:
+                    _n_suspicious += 1
+                    continue
                 _r["priced_move_pct"] = _pm
                 _n_set += 1
-                # Sanity: priced_move_pct should be 1-200 range (percentage points)
-                if _pm < 1.0 or _pm > 500.0:
+                if _pm < 1.0:
                     _n_suspicious += 1
             except (ValueError, TypeError):
                 pass
@@ -4658,6 +4791,39 @@ def _finalize_priced_move(csv_rows: List[Dict[str, Any]]) -> None:
             _n_suspicious,
             _n_set,
         )
+
+
+def _apply_inst_registry_transition_guard(
+    csv_rows: List[Dict[str, Any]],
+    inst_summary: Optional[Dict[str, Any]],
+    prior_inst: Optional[Dict[str, Any]],
+) -> bool:
+    """Detect a manager-registry transition and clear inst_delta_z.
+
+    When the current and prior institutional summaries cover different manager
+    counts, net_elite_holders_delta mixes real flow with roster additions and
+    removals (2026-11-03: 30 vs 49 managers, 189/298 tickers with net exits).
+    inst_delta_z is left blank (missing, not a neutral zero, per the #635
+    convention) and has_inst_delta is set False for the cycle; the raw
+    inst_delta_* counts are kept for audit. Returns True when a transition is
+    detected.
+    """
+    if not (inst_summary and prior_inst):
+        return False
+    cur = inst_summary.get("elite_managers_with_filing", 0)
+    pri = prior_inst.get("elite_managers_with_filing", 0)
+    if cur == pri:
+        return False
+    logger.warning(
+        "Registry transition detected: current=%d managers, prior=%d managers. "
+        "inst_delta values are contaminated this cycle; clearing inst_delta_z (missing, not a neutral zero).",
+        cur,
+        pri,
+    )
+    for row in csv_rows:
+        row["inst_delta_z"] = ""
+        row["has_inst_delta"] = "False"
+    return True
 
 
 def save_validation_snapshot(
@@ -5718,14 +5884,10 @@ def save_validation_snapshot(
     # --- Compute institutional summary + delta (for z-score, written as sidecar later) ---
     inst_summary = None
     inst_delta = None
+    prior_inst = None
     if decision_mode == "phase2":
         try:
-            from institutional_summary import (
-                _find_prior_institutional_summary,
-                _get_filing_period,
-                build_institutional_summary,
-                compute_institutional_delta,
-            )
+            from institutional_summary import build_institutional_summary, resolve_cross_quarter_delta
 
             _uni_tickers = {r.get("ticker", "") for r in csv_rows if r.get("ticker")}
             # nearest_prior_days=95 lets non-quarter-end monthly regen dates
@@ -5736,37 +5898,17 @@ def save_validation_snapshot(
             # stale-source summaries as priors for cross-date delta.
             inst_summary = build_institutional_summary(as_of_date, _uni_tickers, nearest_prior_days=95)
             if inst_summary:
-                # Use cross-quarter comparison to get real filing-period deltas
+                # Use cross-quarter comparison to get real filing-period deltas.
+                # The filing period is resolved from the summary's actual source
+                # cache; a same-source prior yields no delta (has_inst_delta=False)
+                # instead of a column of fake zeros.
                 _cache_base = Path(__file__).resolve().parent / "data" / "caches" / "sec_13f" / "PIT"
-                _cur_filing = _get_filing_period(_cache_base, as_of_date)
-                prior_inst = _find_prior_institutional_summary(
-                    _prior_dir,
-                    as_of_date,
-                    cross_quarter=True,
-                    current_filing_period=_cur_filing,
-                    max_candidates=200,
+                prior_inst, inst_delta, _inst_delta_status = resolve_cross_quarter_delta(
+                    inst_summary, _prior_dir, as_of_date, _cache_base, max_candidates=200
                 )
-                if prior_inst:
-                    inst_delta = compute_institutional_delta(inst_summary, prior_inst)
+                logger.info("[INST] cross-quarter delta status: %s", _inst_delta_status)
         except Exception as e:
             logger.warning("Could not compute institutional summary/delta: %s", e)
-
-    # --- Registry transition detection ---
-    # When the manager registry changes (CIK corrections, additions, removals),
-    # inst_delta values are contaminated for one cycle because the "prior" and
-    # "current" institutional summaries used different manager sets.
-    _inst_registry_transition = False
-    if inst_summary and prior_inst:
-        _cur_mgr_count = inst_summary.get("elite_managers_with_filing", 0)
-        _pri_mgr_count = prior_inst.get("elite_managers_with_filing", 0)
-        if _cur_mgr_count != _pri_mgr_count:
-            _inst_registry_transition = True
-            logger.warning(
-                "Registry transition detected: current=%d managers, prior=%d managers. "
-                "inst_delta values may be contaminated this cycle.",
-                _cur_mgr_count,
-                _pri_mgr_count,
-            )
 
     # --- Institutional delta z-score: cross-sectional z of net_elite_holders_delta ---
     if inst_delta:
@@ -5794,22 +5936,28 @@ def save_validation_snapshot(
         else:
             _id_mean, _id_std = 0.0, 0.0
         for _di, _dv, _has_i in _id_pairs:
-            if _sparse_mode == "exclude_missing" and not _has_i:
-                csv_rows[_di]["inst_delta_z"] = 0.0
+            if not _has_i:
+                # Not in the delta: no measurement for this name.
+                csv_rows[_di]["inst_delta_z"] = ""
+                csv_rows[_di]["has_inst_delta"] = "False"
             elif _id_std > 0:
                 csv_rows[_di]["inst_delta_z"] = round((_dv - _id_mean) / _id_std, 4)
             else:
                 csv_rows[_di]["inst_delta_z"] = 0.0
     else:
         for _dr in csv_rows:
-            _dr.setdefault("inst_delta_z", 0.0)
+            # No cross-quarter delta this run. Leave the z blank so it is
+            # not a neutral zero in the ranker or the IC panel.
+            _dr["inst_delta_z"] = ""
+            _dr["has_inst_delta"] = "False"
             _dr.setdefault("inst_delta_net", 0)
             _dr.setdefault("inst_delta_new", 0)
             _dr.setdefault("inst_delta_exit", 0)
 
     # --- Institutional delta coverage guard ---
     # When too few tickers have nonzero net delta, the z-scores are driven by
-    # a handful of names — fragile signal.  Zero out z if coverage < threshold.
+    # a handful of names — fragile signal. Clear the z (leave it missing)
+    # rather than writing a neutral zero.
     _inst_nonzero_count = sum(1 for r in csv_rows if r.get("inst_delta_net", 0) != 0)
     _inst_nonzero_pct = round(100.0 * _inst_nonzero_count / len(csv_rows), 2) if csv_rows else 0.0
     for _dr in csv_rows:
@@ -5820,14 +5968,27 @@ def save_validation_snapshot(
             logger.warning(
                 "inst_delta_z coverage guard: only %.1f%% of tickers have "
                 "nonzero net delta (%d/%d) — below %.1f%% threshold; "
-                "zeroing all inst_delta_z values",
+                "clearing inst_delta_z (missing, not a neutral zero)",
                 _inst_nonzero_pct,
                 _inst_nonzero_count,
                 len(csv_rows),
                 _inst_min_pct,
             )
         for _dr in csv_rows:
-            _dr["inst_delta_z"] = 0.0
+            # A suppressed z is missing, not a measured zero. Writing 0.0
+            # here is what made inst_delta_z read exactly 0 on dates with
+            # no usable cross-quarter change.
+            if str(_dr.get("has_inst_delta", "")).strip() == "True":
+                _dr["inst_delta_z"] = ""
+                _dr["has_inst_delta"] = "False"
+
+    # --- Registry transition guard ---
+    # When the manager registry changes (CIK corrections, additions, removals),
+    # inst_delta values are contaminated for one cycle because the "prior" and
+    # "current" institutional summaries used different manager sets. Runs after
+    # the z-score so the model-facing inst_delta_z is neutralized, not just the
+    # diagnostics below.
+    _inst_registry_transition = _apply_inst_registry_transition_guard(csv_rows, inst_summary, prior_inst)
 
     # --- Institutional flow diagnostics: absolute vs relative signal ---
     # Detects names where absolute institutional flow is positive but
@@ -5837,7 +5998,10 @@ def save_validation_snapshot(
         _net = _dr.get("inst_delta_net", 0)
         _new = _dr.get("inst_delta_new", 0)
         _exit = _dr.get("inst_delta_exit", 0)
-        _iz = float(_dr.get("inst_delta_z", 0))
+        try:
+            _iz = float(_dr.get("inst_delta_z"))
+        except (TypeError, ValueError):
+            _iz = None
 
         try:
             _net = int(_net)
@@ -5846,12 +6010,13 @@ def save_validation_snapshot(
         except (ValueError, TypeError):
             _net = _new = _exit = 0
 
-        # Absolute flow: net positive means more new entrants than exits
+        # Absolute flow: net positive means more new entrants than exits.
+        # A blank z is missing, so it is neither relatively high nor low.
         _abs_positive = _net > 0 or _new > _exit
         _abs_has_new = _new > 0
         _abs_negative = _net < 0 and _exit > _new
-        _z_negative = _iz < -0.3
-        _z_positive = _iz > 0.3
+        _z_negative = _iz is not None and _iz < -0.3
+        _z_positive = _iz is not None and _iz > 0.3
 
         # Registry transition guard
         _dr["inst_delta_regime"] = "transition" if _inst_registry_transition else "clean"
@@ -5883,7 +6048,7 @@ def save_validation_snapshot(
                 _reasons.append(
                     f"abs_flow_negative(net={_net},exit={_exit}) but z={_iz:+.2f} (relative outperformance)"
                 )
-            if abs(_iz) > 1.5:
+            if _iz is not None and abs(_iz) > 1.5:
                 _reasons.append(f"extreme_inst_delta_z={_iz:+.2f}")
             _dr["inst_flow_diagnostic"] = "; ".join(_reasons) if _reasons else ""
 
@@ -6510,9 +6675,12 @@ def save_validation_snapshot(
 
     try:
         from common.options_history_massive import _get_config as _massive_config
+        from common.options_history_massive import massive_enabled as _massive_enabled
 
         _mc = _massive_config()
-        if _mc.get("api_key"):
+        if not _massive_enabled():
+            _options_freshness["massive_status"] = "disabled"
+        elif _mc.get("api_key"):
             _options_freshness["massive_status"] = "ok"
             _options_freshness["massive_as_of"] = as_of_date
         else:
@@ -12163,6 +12331,20 @@ def add_bootstrap_analysis(
     return results
 
 
+# Exit-code contract with tools/run_daily_production.py:
+#   0 = OK, 1 = --strict health/readiness FAIL, 2 = --strict health WARN.
+#   Any other code is a hard failure. Errors must NOT reuse 1 or 2: the wrapper
+#   promotes exit-1/2 runs as "completed with warnings".
+EXIT_INPUT_ERROR = 8  # ValueError / FileNotFoundError / JSONDecodeError
+EXIT_UNEXPECTED_ERROR = 7  # any other uncaught exception
+_STRICT_EXIT_SEVERITY = {0: 0, 2: 1, 1: 2}  # FAIL (1) outranks WARN (2)
+
+
+def _worse_strict_exit(current: int, new: int) -> int:
+    """Combine two --strict verdict exit codes, keeping the more severe."""
+    return new if _STRICT_EXIT_SEVERITY[new] > _STRICT_EXIT_SEVERITY[current] else current
+
+
 def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
     """Run Phase-2 delta report as a post-snapshot hook.
 
@@ -12176,6 +12358,7 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
         compute_delta,
         compute_health_gate,
         compute_single_snapshot_summary,
+        find_prior_snapshot,
         find_snapshots,
         generate_delta_csv,
         generate_details_json,
@@ -12210,9 +12393,20 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
     # args.delta_prior = None/"" would crash on .lower() below. Normalize here.
     delta_prior = getattr(args, "delta_prior", "auto") or "auto"
 
+    # Production writes the current snapshot into a per-run staging dir that
+    # holds no earlier dates; the promoted history is passed as
+    # --prior-snapshot-dir. Fall back to it whenever the staging dir has no
+    # prior (before this, every production delta ran in single-snapshot mode).
+    _prior_root = getattr(args, "prior_snapshot_dir", None)
+    _prior_root = Path(_prior_root) if _prior_root else None
+    if _prior_root is not None and _prior_root.resolve() == Path(snapshot_dir).resolve():
+        _prior_root = None
+
     # Resolve prior
     if delta_prior == "auto":
         _, prior_path = find_snapshots(snapshot_dir, current_date, None)
+        if prior_path is None and _prior_root is not None:
+            prior_path = find_prior_snapshot(_prior_root, current_date)
         # Silent auto-prior misses left no trail in 2026-04-24's delta report;
         # emit a candidate-by-candidate diagnostic whenever auto finds nothing.
         if prior_path is None:
@@ -12221,12 +12415,14 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
 
                 logger.warning(
                     "Phase-2 delta auto-prior returned None; diagnostics:\n%s",
-                    diagnose_missing_prior(snapshot_dir, current_date),
+                    diagnose_missing_prior(_prior_root or snapshot_dir, current_date),
                 )
             except Exception as _diag_exc:
                 logger.debug("Auto-prior diagnostic failed: %s", _diag_exc)
     elif delta_prior.lower() == "none":
         prior_path = None
+    elif _prior_root is not None and not (Path(snapshot_dir) / delta_prior).is_dir():
+        prior_path = find_prior_snapshot(_prior_root, current_date, delta_prior)
     else:
         _, prior_path = find_snapshots(snapshot_dir, current_date, delta_prior)
 
@@ -13399,6 +13595,11 @@ Module 3 Catalyst Detection:
 
         # Load decision ruleset and patch CLI-only manifest inputs before any
         # output is written, so failed guardrails cannot leave partial outputs.
+        # --strict verdicts are recorded here and returned at the END of main(),
+        # so post-snapshot steps (readiness, bioshort watch, policy shadow /
+        # candidate) still run on WARN/FAIL days. Returning early skipped them
+        # on every strict production run.
+        _strict_exit_code = 0
         de_ruleset = _load_decision_ruleset_for_cli(args)
         if args.decision_mode == "phase2" and args.inputs_manifest != "off":
             _rs_path = Path(args.ruleset) if args.ruleset else PHASE2_DEFAULT_RULESET_PATH
@@ -13549,10 +13750,10 @@ Module 3 Catalyst Detection:
                     if health is not None and getattr(args, "strict", False):
                         if health.status == "FAIL":
                             logger.error("--strict: Phase-2 health FAIL, exiting 1")
-                            return 1
-                        if health.status == "WARN":
+                            _strict_exit_code = _worse_strict_exit(_strict_exit_code, 1)
+                        elif health.status == "WARN":
                             logger.warning("--strict: Phase-2 health WARN, exiting 2")
-                            return 2
+                            _strict_exit_code = _worse_strict_exit(_strict_exit_code, 2)
 
                 # Weekly readiness scorecard — policy-controlled gate
                 try:
@@ -13602,7 +13803,7 @@ Module 3 Catalyst Detection:
                     # In --strict mode, HOLD blocks the screen run
                     if getattr(args, "strict", False) and _gate["gate_status"] == "FAIL":
                         logger.error("--strict: readiness HOLD, exiting 1")
-                        return 1
+                        _strict_exit_code = _worse_strict_exit(_strict_exit_code, 1)
                 except Exception as _exc:
                     logger.debug("Readiness scorecard skipped: %s", _exc)
 
@@ -13698,7 +13899,7 @@ Module 3 Catalyst Detection:
             except Exception as _pc_exc:
                 logger.debug("[POLICY_CANDIDATE] skipped: %s", _pc_exc)
 
-        return 0
+        return _strict_exit_code
 
     except (PathTraversalError, SymlinkError) as e:
         # SECURITY: Log security-related errors without exposing details
@@ -13719,7 +13920,7 @@ Module 3 Catalyst Detection:
         # Sanitize error message to avoid logging sensitive data
         error_msg = sanitize_for_logging(str(e), max_string_length=200)
         logger.error(f"ERROR: {error_msg}")
-        return 1
+        return EXIT_INPUT_ERROR
     except KeyboardInterrupt:
         logger.warning("Pipeline interrupted by user")
         return 130  # Standard exit code for SIGINT
@@ -13728,7 +13929,7 @@ Module 3 Catalyst Detection:
         error_type = type(e).__name__
         error_msg = sanitize_for_logging(str(e), max_string_length=200)
         logger.exception(f"UNEXPECTED ERROR ({error_type}): {error_msg}")
-        return 2
+        return EXIT_UNEXPECTED_ERROR
     finally:
         # Clean up replay bundle temp dir if it was created
         _tmp = locals().get("_replay_tmp_dir")

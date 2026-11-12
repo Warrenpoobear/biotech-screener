@@ -1,0 +1,917 @@
+{
+  "_schema": "snapshot_provenance_exclusions.v1",
+  "_description": "Snapshots whose rankings.csv was written >=2 calendar days after the snapshot date (batch regenerations/backfills, not same-day live runs). Built with data available at regeneration time, so they are not point-in-time evidence. IC tooling excludes them by default. Evidence: rankings.csv mtime in the production checkout, captured 2026-11-11.",
+  "_generated_at": "2026-11-11",
+  "snapshots": [
+    {
+      "date": "2025-05-16",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 331
+    },
+    {
+      "date": "2025-05-23",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 324
+    },
+    {
+      "date": "2025-05-30",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 317
+    },
+    {
+      "date": "2025-06-06",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 310
+    },
+    {
+      "date": "2025-06-13",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 303
+    },
+    {
+      "date": "2025-06-20",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 296
+    },
+    {
+      "date": "2025-06-27",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 289
+    },
+    {
+      "date": "2025-06-30",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 286
+    },
+    {
+      "date": "2025-07-03",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 283
+    },
+    {
+      "date": "2025-07-11",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 275
+    },
+    {
+      "date": "2025-07-18",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 268
+    },
+    {
+      "date": "2025-07-25",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 261
+    },
+    {
+      "date": "2025-07-31",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 255
+    },
+    {
+      "date": "2025-08-01",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 254
+    },
+    {
+      "date": "2025-08-08",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 247
+    },
+    {
+      "date": "2025-08-15",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 240
+    },
+    {
+      "date": "2025-08-22",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 233
+    },
+    {
+      "date": "2025-08-29",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 226
+    },
+    {
+      "date": "2025-09-05",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 219
+    },
+    {
+      "date": "2025-09-12",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 212
+    },
+    {
+      "date": "2025-09-19",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 205
+    },
+    {
+      "date": "2025-09-26",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 198
+    },
+    {
+      "date": "2025-09-30",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 194
+    },
+    {
+      "date": "2025-10-03",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 191
+    },
+    {
+      "date": "2025-10-10",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 184
+    },
+    {
+      "date": "2025-10-17",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 177
+    },
+    {
+      "date": "2025-10-24",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 170
+    },
+    {
+      "date": "2025-10-31",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 163
+    },
+    {
+      "date": "2025-11-07",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 156
+    },
+    {
+      "date": "2025-11-14",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 149
+    },
+    {
+      "date": "2025-11-21",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 142
+    },
+    {
+      "date": "2025-11-28",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 135
+    },
+    {
+      "date": "2025-12-05",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 128
+    },
+    {
+      "date": "2025-12-12",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 121
+    },
+    {
+      "date": "2025-12-19",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 114
+    },
+    {
+      "date": "2025-12-26",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 107
+    },
+    {
+      "date": "2025-12-31",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 102
+    },
+    {
+      "date": "2026-01-02",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 100
+    },
+    {
+      "date": "2026-01-09",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 93
+    },
+    {
+      "date": "2026-01-15",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 87
+    },
+    {
+      "date": "2026-01-16",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 86
+    },
+    {
+      "date": "2026-01-19",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 83
+    },
+    {
+      "date": "2026-01-20",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 82
+    },
+    {
+      "date": "2026-01-21",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 81
+    },
+    {
+      "date": "2026-01-22",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 80
+    },
+    {
+      "date": "2026-01-23",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 79
+    },
+    {
+      "date": "2026-01-26",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 76
+    },
+    {
+      "date": "2026-01-27",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 75
+    },
+    {
+      "date": "2026-01-28",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 74
+    },
+    {
+      "date": "2026-01-29",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 73
+    },
+    {
+      "date": "2026-01-30",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 72
+    },
+    {
+      "date": "2026-02-02",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 69
+    },
+    {
+      "date": "2026-02-03",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 68
+    },
+    {
+      "date": "2026-02-04",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 67
+    },
+    {
+      "date": "2026-02-05",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 66
+    },
+    {
+      "date": "2026-02-06",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 65
+    },
+    {
+      "date": "2026-02-09",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 62
+    },
+    {
+      "date": "2026-02-10",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 61
+    },
+    {
+      "date": "2026-02-11",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 60
+    },
+    {
+      "date": "2026-02-12",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 59
+    },
+    {
+      "date": "2026-02-13",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 58
+    },
+    {
+      "date": "2026-02-16",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 55
+    },
+    {
+      "date": "2026-02-17",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 54
+    },
+    {
+      "date": "2026-02-18",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 53
+    },
+    {
+      "date": "2026-02-19",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 52
+    },
+    {
+      "date": "2026-02-20",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 51
+    },
+    {
+      "date": "2026-02-21",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 50
+    },
+    {
+      "date": "2026-02-24",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 47
+    },
+    {
+      "date": "2026-02-25",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 46
+    },
+    {
+      "date": "2026-02-26",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 45
+    },
+    {
+      "date": "2026-02-27",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 44
+    },
+    {
+      "date": "2026-02-28",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 43
+    },
+    {
+      "date": "2026-03-01",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 42
+    },
+    {
+      "date": "2026-03-02",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 41
+    },
+    {
+      "date": "2026-03-03",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 40
+    },
+    {
+      "date": "2026-03-04",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 39
+    },
+    {
+      "date": "2026-03-05",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 38
+    },
+    {
+      "date": "2026-03-06",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 37
+    },
+    {
+      "date": "2026-03-08",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 35
+    },
+    {
+      "date": "2026-03-09",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 34
+    },
+    {
+      "date": "2026-03-10",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 33
+    },
+    {
+      "date": "2026-03-12",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 31
+    },
+    {
+      "date": "2026-03-13",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 30
+    },
+    {
+      "date": "2026-03-14",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 29
+    },
+    {
+      "date": "2026-03-15",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 28
+    },
+    {
+      "date": "2026-03-16",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 27
+    },
+    {
+      "date": "2026-03-17",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 26
+    },
+    {
+      "date": "2026-03-18",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 25
+    },
+    {
+      "date": "2026-03-19",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 24
+    },
+    {
+      "date": "2026-03-20",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 23
+    },
+    {
+      "date": "2026-03-23",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 20
+    },
+    {
+      "date": "2026-03-24",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 19
+    },
+    {
+      "date": "2026-03-25",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 18
+    },
+    {
+      "date": "2026-03-26",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 17
+    },
+    {
+      "date": "2026-03-27",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 16
+    },
+    {
+      "date": "2026-03-28",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 15
+    },
+    {
+      "date": "2026-03-30",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 13
+    },
+    {
+      "date": "2026-03-31",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 12
+    },
+    {
+      "date": "2026-04-01",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 11
+    },
+    {
+      "date": "2026-04-02",
+      "rankings_written": "2026-04-12T19:17",
+      "lag_days": 10
+    },
+    {
+      "date": "2026-04-03",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 9
+    },
+    {
+      "date": "2026-04-06",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 6
+    },
+    {
+      "date": "2026-04-07",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 5
+    },
+    {
+      "date": "2026-04-08",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 4
+    },
+    {
+      "date": "2026-04-09",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 3
+    },
+    {
+      "date": "2026-04-10",
+      "rankings_written": "2026-04-12T08:34",
+      "lag_days": 2
+    },
+    {
+      "date": "2026-04-20",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 24
+    },
+    {
+      "date": "2026-04-21",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 23
+    },
+    {
+      "date": "2026-04-22",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 22
+    },
+    {
+      "date": "2026-04-23",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 21
+    },
+    {
+      "date": "2026-04-24",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 20
+    },
+    {
+      "date": "2026-04-25",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 19
+    },
+    {
+      "date": "2026-04-27",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 17
+    },
+    {
+      "date": "2026-04-28",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 16
+    },
+    {
+      "date": "2026-04-29",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 15
+    },
+    {
+      "date": "2026-04-30",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 14
+    },
+    {
+      "date": "2026-05-01",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 13
+    },
+    {
+      "date": "2026-05-04",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 10
+    },
+    {
+      "date": "2026-05-05",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 9
+    },
+    {
+      "date": "2026-05-06",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 8
+    },
+    {
+      "date": "2026-05-07",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 7
+    },
+    {
+      "date": "2026-05-08",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 6
+    },
+    {
+      "date": "2026-05-11",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 3
+    },
+    {
+      "date": "2026-05-12",
+      "rankings_written": "2026-05-14T15:06",
+      "lag_days": 2
+    },
+    {
+      "date": "2026-05-21",
+      "rankings_written": "2026-06-28T18:32",
+      "lag_days": 38
+    },
+    {
+      "date": "2026-05-22",
+      "rankings_written": "2026-06-28T18:32",
+      "lag_days": 37
+    },
+    {
+      "date": "2026-05-26",
+      "rankings_written": "2026-06-28T18:32",
+      "lag_days": 33
+    },
+    {
+      "date": "2026-06-03",
+      "rankings_written": "2026-06-28T18:32",
+      "lag_days": 25
+    },
+    {
+      "date": "2026-08-14",
+      "rankings_written": "2026-11-03T18:14",
+      "lag_days": 81
+    },
+    {
+      "date": "2026-08-17",
+      "rankings_written": "2026-11-03T18:16",
+      "lag_days": 78
+    },
+    {
+      "date": "2026-08-18",
+      "rankings_written": "2026-11-03T18:18",
+      "lag_days": 77
+    },
+    {
+      "date": "2026-08-19",
+      "rankings_written": "2026-11-03T18:21",
+      "lag_days": 76
+    },
+    {
+      "date": "2026-08-20",
+      "rankings_written": "2026-11-03T18:23",
+      "lag_days": 75
+    },
+    {
+      "date": "2026-08-21",
+      "rankings_written": "2026-11-03T18:25",
+      "lag_days": 74
+    },
+    {
+      "date": "2026-08-24",
+      "rankings_written": "2026-11-03T18:27",
+      "lag_days": 71
+    },
+    {
+      "date": "2026-08-25",
+      "rankings_written": "2026-11-03T18:30",
+      "lag_days": 70
+    },
+    {
+      "date": "2026-08-26",
+      "rankings_written": "2026-11-03T18:52",
+      "lag_days": 69
+    },
+    {
+      "date": "2026-08-27",
+      "rankings_written": "2026-11-03T18:55",
+      "lag_days": 68
+    },
+    {
+      "date": "2026-08-28",
+      "rankings_written": "2026-11-03T18:57",
+      "lag_days": 67
+    },
+    {
+      "date": "2026-08-31",
+      "rankings_written": "2026-11-03T18:59",
+      "lag_days": 64
+    },
+    {
+      "date": "2026-09-01",
+      "rankings_written": "2026-11-03T19:01",
+      "lag_days": 63
+    },
+    {
+      "date": "2026-09-02",
+      "rankings_written": "2026-11-03T19:03",
+      "lag_days": 62
+    },
+    {
+      "date": "2026-09-03",
+      "rankings_written": "2026-11-03T19:05",
+      "lag_days": 61
+    },
+    {
+      "date": "2026-09-04",
+      "rankings_written": "2026-11-03T19:07",
+      "lag_days": 60
+    },
+    {
+      "date": "2026-09-08",
+      "rankings_written": "2026-11-03T19:09",
+      "lag_days": 56
+    },
+    {
+      "date": "2026-09-09",
+      "rankings_written": "2026-11-03T19:11",
+      "lag_days": 55
+    },
+    {
+      "date": "2026-09-10",
+      "rankings_written": "2026-11-03T19:13",
+      "lag_days": 54
+    },
+    {
+      "date": "2026-09-11",
+      "rankings_written": "2026-11-03T19:15",
+      "lag_days": 53
+    },
+    {
+      "date": "2026-09-14",
+      "rankings_written": "2026-11-03T19:17",
+      "lag_days": 50
+    },
+    {
+      "date": "2026-09-15",
+      "rankings_written": "2026-11-03T19:19",
+      "lag_days": 49
+    },
+    {
+      "date": "2026-09-16",
+      "rankings_written": "2026-11-03T19:21",
+      "lag_days": 48
+    },
+    {
+      "date": "2026-09-17",
+      "rankings_written": "2026-11-03T19:23",
+      "lag_days": 47
+    },
+    {
+      "date": "2026-09-18",
+      "rankings_written": "2026-11-03T19:25",
+      "lag_days": 46
+    },
+    {
+      "date": "2026-09-21",
+      "rankings_written": "2026-11-03T19:27",
+      "lag_days": 43
+    },
+    {
+      "date": "2026-09-22",
+      "rankings_written": "2026-11-03T19:29",
+      "lag_days": 42
+    },
+    {
+      "date": "2026-09-23",
+      "rankings_written": "2026-11-03T19:31",
+      "lag_days": 41
+    },
+    {
+      "date": "2026-09-24",
+      "rankings_written": "2026-11-03T19:34",
+      "lag_days": 40
+    },
+    {
+      "date": "2026-09-25",
+      "rankings_written": "2026-11-03T19:36",
+      "lag_days": 39
+    },
+    {
+      "date": "2026-09-28",
+      "rankings_written": "2026-11-03T19:38",
+      "lag_days": 36
+    },
+    {
+      "date": "2026-09-29",
+      "rankings_written": "2026-11-03T19:40",
+      "lag_days": 35
+    },
+    {
+      "date": "2026-09-30",
+      "rankings_written": "2026-11-03T19:42",
+      "lag_days": 34
+    },
+    {
+      "date": "2026-10-01",
+      "rankings_written": "2026-11-03T19:44",
+      "lag_days": 33
+    },
+    {
+      "date": "2026-10-02",
+      "rankings_written": "2026-11-03T19:46",
+      "lag_days": 32
+    },
+    {
+      "date": "2026-10-05",
+      "rankings_written": "2026-11-03T19:48",
+      "lag_days": 29
+    },
+    {
+      "date": "2026-10-07",
+      "rankings_written": "2026-11-03T19:51",
+      "lag_days": 27
+    },
+    {
+      "date": "2026-10-08",
+      "rankings_written": "2026-11-03T19:53",
+      "lag_days": 26
+    },
+    {
+      "date": "2026-10-09",
+      "rankings_written": "2026-11-03T19:55",
+      "lag_days": 25
+    },
+    {
+      "date": "2026-10-12",
+      "rankings_written": "2026-11-03T19:57",
+      "lag_days": 22
+    },
+    {
+      "date": "2026-10-13",
+      "rankings_written": "2026-11-03T19:59",
+      "lag_days": 21
+    },
+    {
+      "date": "2026-10-14",
+      "rankings_written": "2026-11-03T20:01",
+      "lag_days": 20
+    },
+    {
+      "date": "2026-10-15",
+      "rankings_written": "2026-11-03T20:03",
+      "lag_days": 19
+    },
+    {
+      "date": "2026-10-16",
+      "rankings_written": "2026-11-03T20:05",
+      "lag_days": 18
+    },
+    {
+      "date": "2026-10-19",
+      "rankings_written": "2026-11-03T20:07",
+      "lag_days": 15
+    },
+    {
+      "date": "2026-10-20",
+      "rankings_written": "2026-11-03T20:09",
+      "lag_days": 14
+    },
+    {
+      "date": "2026-10-21",
+      "rankings_written": "2026-11-03T20:11",
+      "lag_days": 13
+    },
+    {
+      "date": "2026-10-22",
+      "rankings_written": "2026-11-03T20:13",
+      "lag_days": 12
+    },
+    {
+      "date": "2026-10-23",
+      "rankings_written": "2026-11-03T20:15",
+      "lag_days": 11
+    },
+    {
+      "date": "2026-10-26",
+      "rankings_written": "2026-11-03T20:17",
+      "lag_days": 8
+    },
+    {
+      "date": "2026-10-27",
+      "rankings_written": "2026-11-03T20:19",
+      "lag_days": 7
+    },
+    {
+      "date": "2026-10-28",
+      "rankings_written": "2026-11-03T20:21",
+      "lag_days": 6
+    },
+    {
+      "date": "2026-10-29",
+      "rankings_written": "2026-11-03T20:23",
+      "lag_days": 5
+    },
+    {
+      "date": "2026-10-30",
+      "rankings_written": "2026-11-03T20:25",
+      "lag_days": 4
+    }
+  ]
+}

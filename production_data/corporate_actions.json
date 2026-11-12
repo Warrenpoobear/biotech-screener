@@ -284,14 +284,6 @@
       "notes": "Centessa Pharmaceuticals acquired by Eli Lilly (via LDH XV Corp). Scheme of Arrangement effective 2026-06-24; ADSs delisted from Nasdaq. Consideration $38.00 cash/share plus up to $9.00 CVR. Frozen price series carries to 2026-06-29. Removed from universe."
     },
     {
-      "ticker": "BHVN",
-      "action": "acquisition",
-      "effective_date": "2024-10-15",
-      "acquirer": "AbbVie",
-      "deal_price": 44.0,
-      "notes": "Cerevel Therapeutics acquired by AbbVie. CVR structure."
-    },
-    {
       "ticker": "ACLX",
       "action": "acquisition",
       "effective_date": "2026-04-28",
@@ -472,12 +464,12 @@
     },
     {
       "ticker": "APGE",
-      "action": "pending_acquisition",
-      "announced_date": "2026-06-22",
-      "effective_date": null,
+      "action": "acquisition",
+      "announced_date": "2026-06-18",
+      "effective_date": "2026-09-03",
       "acquirer": "AbbVie",
       "deal_price": 135.11,
-      "notes": "Apogee Therapeutics acquisition by AbbVie at $135.11/share cash (~$10.9B deal value). Announced 2026-06-22. APGE trading at ~$132.55 (1.9% arb discount to deal price). Gate from ranker/selector until acquisition closes; price series freezes at deal value at close."
+      "notes": "Apogee Therapeutics acquisition by AbbVie at $135.11/share cash (~$10.9B deal value). Announced 2026-06-22. APGE trading at ~$132.55 (1.9% arb discount to deal price). Gate from ranker/selector until acquisition closes; price series freezes at deal value at close Acquisition completed 2026-09-02; last Sharadar SEP row 2026-09-03 (volume=0). [effective_date registered 2026-11-04] [corrected 2026-11-11 from 8-K Item 2.01 https://www.sec.gov/Archives/edgar/data/1974640/000114036126035537/ef20081397_8k.htm: effective_date 2026-09-02 -> 2026-09-03: the 8-K states the merger closed on September 3, 2026 and 2026-09-02 was the last trading day; is_dead() applies from effective_date inclusive, so 09-02 dropped APGE on a day it still traded.]"
     },
     {
       "ticker": "CPRX",
@@ -503,6 +495,88 @@
       "announced_date": "2026-05-05",
       "effective_date": "2026-06-24",
       "notes": "Sangamo Therapeutics \u2014 three-stage event, registered as bankruptcy on the date the SGMO symbol stopped resolving. (1) Nasdaq delisting determination for continued failure of the $1.00 minimum bid price; trading suspended and moved to OTCQB 2026-05-05. (2) Hearings-panel appeal stayed delisting but not the trading suspension. (3) Voluntary Chapter 11 petition; common stock began trading on OTCID Basic 2026-06-24 under the NEW symbol SGMOQ. Frozen price series carries to 2026-07-01. Remove from universe. NOTE: effective_date 2026-06-24 chosen because that is when the SGMO ticker ceased to resolve, matching where our price feed dies; the Nasdaq venue change was 2026-05-05. A separate ticker_change SGMO->SGMOQ action was deliberately NOT added, to avoid resolve_ticker() redirecting fetches to a bankrupt sub-$0.10 OTCID listing. [registered 2026-08-05 \u2014 see CPRX note]"
+    },
+    {
+      "ticker": "CRNX",
+      "action": "acquisition",
+      "announced_date": "2026-07-06",
+      "effective_date": "2026-09-01",
+      "acquirer": "Vertex Pharmaceuticals",
+      "deal_price": 85.0,
+      "notes": "Crinetics Pharmaceuticals. Price frozen at $84.84-$84.95 from 2026-08-14; last Sharadar SEP row 2026-09-01 (volume=0, consistent with delisting at close). Removed from IBB/XBI between June and November 2026. Removed from universe. [registered 2026-11-04: effective_date inferred from last price_history row; acquirer and SEC 8-K completion acc pending verification] [corrected 2026-11-11 from 8-K Item 2.01 https://www.sec.gov/Archives/edgar/data/1658247/000114036126035195/ef20081409_8k.htm: acquirer Unknown -> Vertex Pharmaceuticals; deal_price 84.95 (last close) -> 85.00 merger consideration per 8-K.]"
+    },
+    {
+      "ticker": "TBPH",
+      "action": "acquisition",
+      "announced_date": "2026-06-28",
+      "effective_date": "2026-09-23",
+      "acquirer": "Zymeworks",
+      "deal_price": 17.0,
+      "notes": "Theravance Biopharma. Price frozen at $17.02-$17.05 from 2026-08-18; last Sharadar SEP row 2026-09-23 with volume spike to 10M (consistent with merger tender close). Removed from IBB between June and November 2026. Removed from universe. [registered 2026-11-04: effective_date inferred from last price_history row; acquirer and SEC 8-K completion acc pending verification] [corrected 2026-11-11 from 8-K Item 2.01 https://www.sec.gov/Archives/edgar/data/1583107/000110465926109979/tm2625984d1_8k.htm: acquirer Unknown -> Zymeworks; deal_price 17.03 (last close) -> 17.00 cash per 8-K, plus one contingent value right per share (not reflected in deal_price).]"
+    },
+    {
+      "ticker": "ATAI",
+      "action": "acquisition",
+      "announced_date": null,
+      "effective_date": "2026-09-11",
+      "acquirer": "Unknown",
+      "deal_price": 7.35,
+      "notes": "AtaiBeckley Inc. (formerly ATAI Life Sciences, merged with Beckley Psytech). Price frozen at $7.28-$7.39 from 2026-08-26; volume spike to 120M on 2026-09-08 (tender close); last Sharadar SEP row 2026-09-11 (volume=0, delisting at close). Removed from IBB between June and November 2026. Removed from universe. [registered 2026-11-04: effective_date inferred from last price_history row; acquirer and SEC 8-K completion acc pending verification]"
+    },
+    {
+      "ticker": "SUPN",
+      "action": "ticker_change",
+      "effective_date": "2026-11-03",
+      "old_ticker": "INDV",
+      "new_ticker": "SUPN",
+      "notes": "Indivior (CIK 0001625297) acquired Supernus Pharmaceuticals (old SUPN, CIK 0001356576) on 2026-11-02; each Supernus share -> 1.5401 Indivior shares. Combined company renamed Supernus, Inc. and began trading as SUPN in place of INDV on 2026-11-03. Ticker REUSE: pre-2026-11-03 SUPN prices were a different security (old Supernus) and are replaced by Indivior's history (matches yfinance's SUPN series). No 'acquisition' record for old Supernus because is_dead() keys on ticker and would kill the new SUPN. Source: https://www.sec.gov/Archives/edgar/data/1625297/000110465926121013/tm2628720d1_8k.htm"
+    },
+    {
+      "ticker": "SUPN",
+      "action": "reverse_split",
+      "effective_date": "2022-11-28",
+      "ratio": "1:7",
+      "factor": 6.72,
+      "notes": "Copy of INDV reverse split re-keyed to SUPN after INDV->SUPN ticker change (2026-11-03); split lookups are ticker-keyed. Original: Indivior; had prior forward split on 2022-11-23"
+    },
+    {
+      "ticker": "GOSS",
+      "action": "reverse_split",
+      "effective_date": "2026-08-17",
+      "ratio": "1:80",
+      "factor": 80.0,
+      "notes": "Gossamer Bio 1-for-80 reverse split, market effective 2026-09-11 (8-K https://www.sec.gov/Archives/edgar/data/0001728117/000172811726000094/ex991revstockspliteffectiv.htm). effective_date is DATA-ALIGNED to 2026-08-17: bars from 08-17 were backfilled post-split (already adjusted) and stitched onto unadjusted bars <=08-14 (0.1542 -> 11.20). Added 2026-11-11."
+    },
+    {
+      "ticker": "IMMP",
+      "action": "reverse_split",
+      "effective_date": "2026-09-28",
+      "ratio": "1:20",
+      "factor": 20.0,
+      "notes": "Immutep ADS 1-for-20 reverse split, effective 2026-09-28 (yfinance split 0.05). price_history.csv: 0.26 (09-25) -> 4.71 (09-29). Unregistered split produced a fake momentum_score of 96.55. Added 2026-11-11."
+    },
+    {
+      "ticker": "KALA",
+      "action": "reverse_split",
+      "effective_date": "2026-05-08",
+      "ratio": "1:50",
+      "factor": 50.0,
+      "notes": "KALA BIO 1-for-50 reverse split. yfinance dates it 2026-05-11; price_history.csv shows the discontinuity on 2026-05-08 (0.083 -> 3.95, volume collapse), so effective_date is aligned to the data. Added 2026-11-11."
+    },
+    {
+      "ticker": "SKYE",
+      "action": "reverse_split",
+      "effective_date": "2026-08-17",
+      "ratio": "1:8",
+      "factor": 8.0,
+      "notes": "Skye Bioscience 1-for-8 reverse split, market effective 2026-08-24 (yfinance). effective_date is DATA-ALIGNED to 2026-08-17: bars from 08-17 were backfilled after the split (already split-adjusted) and stitched onto unadjusted bars <=08-14 (0.5015 -> 3.32). Added 2026-11-11."
+    },
+    {
+      "ticker": "SUPN",
+      "action": "special_dividend",
+      "effective_date": "2026-11-03",
+      "amount": 8.13,
+      "notes": "Special cash dividend of $8.13/share, ex-date 2026-11-03 (yfinance dividend history; same day as the INDV->SUPN ticker change). price_history.csv shows 36.28 (11-02) -> 28.15 (11-03): the entire -22.4% is the dividend (36.28-8.13=28.15). Momentum treats it as a return unless adjusted. Added 2026-11-11."
     }
   ]
 }

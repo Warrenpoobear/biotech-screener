@@ -5,6 +5,13 @@ Detects single-day price discontinuities (reverse/forward splits) and
 retroactively adjusts all *prior* prices by the split factor so that
 returns computed across the split boundary are continuous.
 
+Only discontinuities CONFIRMED by a split in ``corporate_actions.json`` (same
+ticker, within ``CONFIRM_WINDOW_DAYS``) are applied. Biotech names routinely
+move -75%/+300% in a day on trial readouts; unconfirmed jumps are real price
+moves and are reported, not adjusted (EYPT 2026-10-19 and ABOS 2026-10-30
+crashes were previously smoothed away as "forward splits"). If the registry is
+missing or unreadable, nothing is adjusted: a price gap alone is not a split.
+
 The adjustment is cumulative: if a ticker has two splits, all prices
 before the first split are multiplied by both factors.
 
@@ -32,6 +39,10 @@ from typing import Any, Dict, List, Tuple
 
 JUMP_THRESHOLD = 3.0  # +300% single-day → reverse split
 DROP_THRESHOLD = -0.75  # -75% single-day → forward split
+
+# A detected jump confirms against a registry split within this many calendar
+# days (vendor and registry dates can differ by a day or two).
+CONFIRM_WINDOW_DAYS = 5
 
 # Quantization for output prices (6 decimal places)
 PRICE_QUANT = Decimal("0.000001")
@@ -78,6 +89,34 @@ def detect_splits(
     for ticker in splits:
         splits[ticker].sort(key=lambda e: e["date"])
     return splits
+
+
+def filter_confirmed_splits(
+    splits: Dict[str, List[Dict[str, Any]]],
+    registry: Any,
+    window_days: int = CONFIRM_WINDOW_DAYS,
+) -> Tuple[Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]:
+    """Split detected events into (confirmed, unconfirmed) by the registry.
+
+    An event is confirmed when the registry has a forward/reverse split for the
+    same ticker whose effective_date is within ``window_days`` of the event.
+    Confirmed events keep their observed factor (unchanged legacy behaviour).
+    """
+    from common.corporate_actions import get_splits_only
+
+    confirmed: Dict[str, List[Dict[str, Any]]] = {}
+    unconfirmed: Dict[str, List[Dict[str, Any]]] = {}
+    for ticker, events in splits.items():
+        reg_dates = []
+        for a in get_splits_only(ticker, registry):
+            try:
+                reg_dates.append(date.fromisoformat(a.effective_date))
+            except (TypeError, ValueError):
+                continue
+        for e in events:
+            ok = any(abs((rd - e["date"]).days) <= window_days for rd in reg_dates)
+            (confirmed if ok else unconfirmed).setdefault(ticker, []).append(e)
+    return confirmed, unconfirmed
 
 
 def compute_adjusted_prices(
@@ -164,10 +203,12 @@ def repair_price_history(
     output_path: Path,
     jump_threshold: float = JUMP_THRESHOLD,
     drop_threshold: float = DROP_THRESHOLD,
+    registry_path: Path | None = None,
 ) -> Dict[str, Any]:
     """Full repair pipeline.
 
-    Returns summary dict with statistics.
+    ``registry_path`` defaults to ``corporate_actions.json`` next to the input
+    prices. Returns summary dict with statistics.
     """
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     from backtest.returns_provider import CSVReturnsProvider
@@ -176,8 +217,24 @@ def repair_price_history(
     provider = CSVReturnsProvider(prices_path, price_col="close")
     prices = provider._prices
 
-    # Detect splits
-    splits = detect_splits(prices, jump_threshold, drop_threshold)
+    # Detect candidate splits, then keep only registry-confirmed ones
+    detected = detect_splits(prices, jump_threshold, drop_threshold)
+    registry_path = registry_path or (Path(prices_path).parent / "corporate_actions.json")
+    unconfirmed: Dict[str, List[Dict[str, Any]]] = {}
+    try:
+        from common.corporate_actions import load_actions
+
+        if not Path(registry_path).exists():
+            raise FileNotFoundError(registry_path)
+        splits, unconfirmed = filter_confirmed_splits(detected, load_actions(Path(registry_path)))
+        mode = "registry_confirmed"
+    except Exception as exc:
+        # A gap is not evidence of a split. EYPT and ABOS crashes were
+        # adjusted when this path fell back to the price-gap heuristic.
+        print(f"WARNING: corporate-actions registry unavailable ({exc}); not adjusting any price gaps")
+        splits = {}
+        unconfirmed = detected
+        mode = "registry_missing"
 
     total_events = sum(len(events) for events in splits.values())
     tickers_affected = sorted(splits.keys())
@@ -208,6 +265,11 @@ def repair_price_history(
             for ticker, events in splits.items()
         },
         "rows_written": n_rows,
+        "split_mode": mode,
+        "unconfirmed_not_applied": {
+            ticker: [{"date": e["date"].isoformat(), "pct_change": e["pct_change"]} for e in events]
+            for ticker, events in unconfirmed.items()
+        },
     }
 
 

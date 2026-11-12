@@ -419,6 +419,14 @@ def _load_top_n_tickers_from_prior_snapshot(
         return None
 
 
+def sharadar_price_source_enabled() -> bool:
+    """Sharadar is the primary price source unless BIOTECH_PRICE_SOURCE=yfinance
+    or no SHARADAR_API_KEY is available (then yfinance alone, as before)."""
+    if os.environ.get("BIOTECH_PRICE_SOURCE", "sharadar").strip().lower() == "yfinance":
+        return False
+    return bool(os.environ.get("SHARADAR_API_KEY", "").strip())
+
+
 def refresh_prices(
     price_csv: Path,
     through_date: str,
@@ -466,11 +474,32 @@ def refresh_prices(
             if tickers and "XBI" not in tickers:
                 tickers.append("XBI")
 
+    # Sharadar first (official closes, upserts a trailing window so provisional
+    # values are revised), then yfinance appends whatever is still missing —
+    # e.g. today's bar if Sharadar has not published it yet, or tickers SEP/SFP
+    # do not cover. Roll back with BIOTECH_PRICE_SOURCE=yfinance.
+    sharadar_stats: Optional[Dict[str, Any]] = None
+    if sharadar_price_source_enabled():
+        from common.sharadar_prices import last_dates, refresh_prices_from_sharadar
+
+        _sh_tickers = list(tickers) if tickers else sorted(last_dates(price_csv))
+        if "XBI" not in _sh_tickers:
+            _sh_tickers.append("XBI")
+        sharadar_stats = refresh_prices_from_sharadar(price_csv, through_date, _sh_tickers)
+        _logger.info(
+            f"  Sharadar prices: {sharadar_stats.get('status')} — "
+            f"{sharadar_stats.get('n_revised', 0)} revised, {sharadar_stats.get('n_appended', 0)} appended, "
+            f"latest={sharadar_stats.get('latest_date')}, no-data={len(sharadar_stats.get('no_data_tickers') or [])}"
+            + (f" ({sharadar_stats.get('detail')})" if sharadar_stats.get("detail") else "")
+        )
+
     stats = extend_price_csv(
         csv_path=price_csv,
         through_date=through_date,
         tickers=tickers,
     )
+    if sharadar_stats is not None:
+        stats["sharadar"] = sharadar_stats
 
     # Compute XBI last date from the CSV
     xbi_last_date = _get_ticker_last_date(price_csv, "XBI")
@@ -1462,6 +1491,70 @@ def check_source_freshness(
         detail=f"All measured sources within TTL ({len(ages)} checked, {len(skipped)} skipped)",
         value={"ages": ages, "stale": [], "skipped": skipped},
         threshold=FRESHNESS_TTLS,
+    )
+
+
+CTGOV_CONTENT_MAX_AGE_DAYS = 7
+
+
+def check_ctgov_content_freshness(
+    trial_records_path: Path,
+    as_of_date: str,
+    max_age_days: int = CTGOV_CONTENT_MAX_AGE_DAYS,
+) -> GateResult:
+    """Age CT.gov by content, not by cache filename (blocking FAIL).
+
+    source_freshness dates CT.gov by the daily trial_records_<date>.json copy,
+    which warm_caches rewrites every day even when the source file is never
+    refreshed. This gate takes the newest last_update_posted on or before
+    as_of_date (later dates are ignored, so historical reruns stay PIT) and
+    FAILs when it is older than max_age_days.
+    """
+    name = "ctgov_content_freshness"
+    if not trial_records_path.exists():
+        return GateResult(name=name, status="FAIL", detail=f"{trial_records_path.name} not found")
+    try:
+        with open(trial_records_path, encoding="utf-8") as f:
+            records = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(name=name, status="FAIL", detail=f"Cannot read {trial_records_path.name}: {e}")
+
+    newest = None
+    for rec in records if isinstance(records, list) else []:
+        d = (rec.get("last_update_posted") or "")[:10] if isinstance(rec, dict) else ""
+        try:
+            datetime.strptime(d, "%Y-%m-%d")
+        except ValueError:
+            continue
+        if d <= as_of_date and (newest is None or d > newest):
+            newest = d
+    if newest is None:
+        return GateResult(
+            name=name,
+            status="FAIL",
+            detail=f"No last_update_posted on or before {as_of_date} in {trial_records_path.name}",
+            threshold=max_age_days,
+        )
+
+    age = (datetime.strptime(as_of_date, "%Y-%m-%d") - datetime.strptime(newest, "%Y-%m-%d")).days
+    value = {"newest_last_update_posted": newest, "age_days": age}
+    if age > max_age_days:
+        return GateResult(
+            name=name,
+            status="FAIL",
+            detail=(
+                f"{trial_records_path.name} newest last_update_posted={newest} is {age}d old (>{max_age_days}d) — "
+                "CT.gov source not refreshed; run collect_ctgov_data.py"
+            ),
+            value=value,
+            threshold=max_age_days,
+        )
+    return GateResult(
+        name=name,
+        status="PASS",
+        detail=f"newest last_update_posted={newest} ({age}d old)",
+        value=value,
+        threshold=max_age_days,
     )
 
 
@@ -4441,6 +4534,11 @@ def check_market_data_staleness(
     )
 
 
+# Median market_cap below this means the file is in $ millions, not USD (a real
+# biotech universe median is hundreds of $M). See check_market_data_schema.
+MARKET_DATA_MIN_MEDIAN_CAP_USD = 10_000_000
+
+
 def check_market_data_schema(data_dir: Path) -> GateResult:
     """Validate market_data.json record structure.
 
@@ -4504,6 +4602,30 @@ def check_market_data_schema(data_dir: Path) -> GateResult:
             value=len(bad_records),
             threshold=0,
         )
+
+    # Units check: market_cap must be raw USD. A file written in $ millions
+    # (Sharadar DAILY units; 2026-11-04 refresh) passes every type check, yet
+    # run_screen divides by 1e6 again, shrinking every company ~1e6x and
+    # silently reshuffling size bands, liquidity and the actionable ranking.
+    caps = sorted(
+        rec["market_cap"]
+        for rec in records
+        if isinstance(rec, dict) and isinstance(rec.get("market_cap"), (int, float)) and rec["market_cap"] > 0
+    )
+    if caps:
+        median_cap = caps[len(caps) // 2]
+        if median_cap < MARKET_DATA_MIN_MEDIAN_CAP_USD:
+            mm_scale = sum(1 for c in caps if c < 1e6)
+            return GateResult(
+                name="market_data_schema",
+                status="FAIL",
+                detail=(
+                    f"market_cap looks like $ millions, not USD: median {median_cap:,.1f} "
+                    f"(< {MARKET_DATA_MIN_MEDIAN_CAP_USD:,.0f}); {mm_scale}/{len(caps)} records < 1e6"
+                ),
+                value=median_cap,
+                threshold=MARKET_DATA_MIN_MEDIAN_CAP_USD,
+            )
 
     return GateResult(
         name="market_data_schema",
@@ -5599,12 +5721,19 @@ def run_daily(
             verbose=False,
         )
         _opt_meta = _opt_result.get("metadata", {})
-        _logger.info(
-            f"Options snapshot → {_opt_meta.get('returned_count', 0)}/"
-            f"{_opt_meta.get('universe_count', 0)} fetched | "
-            f"liquid={_opt_meta.get('liquid_count', 0)} "
-            f"event_premium={_opt_meta.get('event_premium_detected', 0)}"
-        )
+        if _opt_meta.get("skipped"):
+            _logger.warning(
+                f"Options snapshot → SKIPPED ({_opt_meta.get('skip_reason')}): "
+                f"as_of={as_of_date} != market today {_opt_meta.get('market_today')}; "
+                "current-state source cannot serve a past date (PIT guard)"
+            )
+        else:
+            _logger.info(
+                f"Options snapshot → {_opt_meta.get('returned_count', 0)}/"
+                f"{_opt_meta.get('universe_count', 0)} fetched | "
+                f"liquid={_opt_meta.get('liquid_count', 0)} "
+                f"event_premium={_opt_meta.get('event_premium_detected', 0)}"
+            )
     except Exception as _opt_err:
         _logger.warning(f"Options snapshot failed (non-blocking): {_opt_err}")
 
@@ -5734,6 +5863,11 @@ def run_daily(
     gate_results.append(freshness_gate)
     _logger.info(f"Source freshness gate: {freshness_gate.status} — {freshness_gate.detail}")
 
+    # --- Gate: CT.gov content freshness (blocking; newest trial update, not cache filename) ---
+    ctgov_content_gate = check_ctgov_content_freshness(data_dir / "trial_records.json", as_of_date)
+    gate_results.append(ctgov_content_gate)
+    _logger.info(f"CTGov content freshness gate: {ctgov_content_gate.status} — {ctgov_content_gate.detail}")
+
     # --- No-op detection (logging-only; never skips work) ---
     try:
         _noop = detect_no_material_input_change(
@@ -5794,6 +5928,16 @@ def run_daily(
         )
         _emit_self_improvement_artifacts(_final_snap, manifest)
         return manifest
+
+    # --- Market caps from Sharadar DAILY (raw USD; DAILY reports $ millions) ---
+    if sharadar_price_source_enabled():
+        from common.sharadar_prices import update_market_caps_from_daily
+
+        _mc = update_market_caps_from_daily(data_dir / "market_data.json", as_of_date)
+        _logger.info(
+            f"Sharadar market caps: {_mc.get('status')} — {_mc.get('n_updated', 0)}/{_mc.get('n_records', '?')} updated"
+            + (f" ({_mc.get('detail')})" if _mc.get("detail") else "")
+        )
 
     # --- Pre-patch: update market_data.json prices from price_history.csv ---
     # price_history.csv refreshes daily via a different endpoint; market_data.json

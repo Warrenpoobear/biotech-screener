@@ -130,8 +130,13 @@ def market_implied_cross_section(enrich_df: pd.DataFrame, price_df: pd.DataFrame
             results[f"fwd{fwd}d"] = {"status": "insufficient_forward_data", "snap_date": snap_date}
             continue
 
-        base = wide.loc[snap_dt] if snap_dt.strftime("%Y-%m-%d") in wide.index else None
-        fwd_close = wide.loc[target_dt] if target_dt.strftime("%Y-%m-%d") in wide.index else None
+        # price_df dates are "YYYY-MM-DD" strings, so the pivot index is string-typed:
+        # look up by the same string key used in the membership test. Indexing with
+        # the Timestamp raised KeyError on every run that had forward data.
+        snap_key = snap_dt.strftime("%Y-%m-%d")
+        target_key = target_dt.strftime("%Y-%m-%d")
+        base = wide.loc[snap_key] if snap_key in wide.index else None
+        fwd_close = wide.loc[target_key] if target_key in wide.index else None
         if base is None or fwd_close is None:
             results[f"fwd{fwd}d"] = {"status": "price_not_found", "snap_date": snap_date}
             continue

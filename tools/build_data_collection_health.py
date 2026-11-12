@@ -26,6 +26,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from common.types import is_retired_status  # noqa: E402
+
 logger = logging.getLogger("data_collection_health")
 
 SCHEMA_VERSION = "data_collection_health.v1"
@@ -243,9 +245,18 @@ def _check_market_data(snap_dir: Path, data_dir: Path, as_of_date: str, threshol
         for entry in entries:
             if isinstance(entry, dict):
                 t = entry.get("ticker", "")
-                if t:
+                # Retired (delisted/acquired) names never get new prices, and
+                # "_"-prefixed / benchmark rows are not securities: counting
+                # them in the denominator turned 14 retired names into a false
+                # price_coverage FAIL (94.4% on 2026-11-10).
+                if (
+                    t
+                    and not t.startswith("_")
+                    and not is_retired_status(entry.get("status"))
+                    and entry.get("status") != "benchmark"
+                ):
                     universe_tickers.add(t)
-            elif isinstance(entry, str) and entry:
+            elif isinstance(entry, str) and entry and not entry.startswith("_"):
                 universe_tickers.add(entry)
 
     # Coverage = universe tickers that have price data (intersection),

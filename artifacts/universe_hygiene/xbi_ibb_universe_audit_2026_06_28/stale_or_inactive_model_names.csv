@@ -2,6 +2,7 @@ ticker,company_name,status,exchange,sector,etf_sources,description,known_deliste
 APLS,"Apellis Pharmaceuticals, Inc.",delisted,,Healthcare,,,True,status=delisted,2026-05-15,2026-05-15,2026-05-15,True,True,DELISTED_OR_INACTIVE,2026-05-15
 GLPG,Lakefront Biotherapeutics NV,delisted,,Healthcare,,,True,status=delisted,2026-06-26,2026-06-26,2026-06-26,True,False,DELISTED_OR_INACTIVE,2026-06-26
 KALV,KalVista Pharmaceuticals Inc,delisted,,Healthcare,,,True,status=delisted,2026-06-12,2026-06-12,2026-06-12,True,True,DELISTED_OR_INACTIVE,2026-06-12
+SGMO,"Sangamo Therapeutics, Inc.",delisted,,Healthcare,,,True,status=delisted,2026-07-01,2026-07-01,2026-07-01,True,False,DELISTED_OR_INACTIVE,2026-07-01
 _XBI_BENCHMARK_,,benchmark,,,,,False,,,,,,,ACTIVE_BUT_STALE_PRICE,
 ACLX,,delisted,,Biotechnology,IBB,Added from ETF holdings (IBB),True,status=delisted,2026-04-29,2026-04-29,2026-04-29,True,True,DELISTED_OR_INACTIVE,2026-04-29
 DAWN,,delisted,,Biotechnology,IBB,Added from ETF holdings (IBB),True,status=delisted,2026-04-24,2026-04-24,2026-04-24,True,True,DELISTED_OR_INACTIVE,2026-04-24

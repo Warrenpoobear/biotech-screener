@@ -70,8 +70,10 @@ def _tasty_available() -> bool:
 
 
 def _massive_available() -> bool:
-    """Check if Massive API key is configured."""
-    return bool(os.environ.get("MASSIVE_API_KEY"))
+    """Check if Massive is enabled and its API key is configured."""
+    from common.options_history_massive import massive_enabled
+
+    return massive_enabled() and bool(os.environ.get("MASSIVE_API_KEY"))
 
 
 def select_options_source(preference: str) -> Tuple[str, str]:
