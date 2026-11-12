@@ -7008,6 +7008,27 @@ def run_daily(
         except Exception as _cs_err:
             _logger.warning(f"Coinvest shadow failed: {_cs_err}")
 
+        # --- Step 5k.11b2: Selector-only shadow capture (non-blocking, Spec 094) ---
+        # Records the production Top-30 next to the Top-30 the selector alone
+        # would hold. Capture-only: reads rankings.csv, writes its own ledger.
+        try:
+            from tools.selector_only_shadow import capture as _sos_capture
+            from tools.selector_only_shadow import summarize as _sos_summarize
+
+            _sos_result = _sos_capture(as_of_date)
+            if _sos_result.get("status") == "captured":
+                _sos_summarize()
+                _logger.info(
+                    f"Selector-only shadow → {_sos_result.get('capture_mode')}, "
+                    f"overlap={_sos_result.get('overlap')}/30"
+                )
+            else:
+                _logger.info(
+                    f"Selector-only shadow → {_sos_result.get('status')} ({_sos_result.get('reason', as_of_date)})"
+                )
+        except Exception as _sos_err:
+            _logger.warning(f"Selector-only shadow failed: {_sos_err}")
+
         # --- Step 5k.11c: Regime shadow (non-blocking, diagnostic) ---
         try:
             from tools.run_regime_shadow import run_regime_shadow
