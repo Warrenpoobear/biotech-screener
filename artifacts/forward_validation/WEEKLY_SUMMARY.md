@@ -1,10 +1,10 @@
 # DEM Top-30 EW — Weekly Forward Validation Summary
 
-**Updated:** 2026-11-11T21:52Z  
+**Updated:** 2026-11-12T22:00Z  
 **Model hash:** `827c35a9ed3ee6e1`  
 **Ruleset:** `8887576e`  
 **Candidate registered:** 2026-06-26  
-**Out-of-sample clock start:** 2026-11-02  
+**Out-of-sample clock start:** 2026-11-12  
 **Test:** Equal-weight Top-30 by `actionable_rank` vs XBI (5-day non-overlapping windows)  
 
 ---
@@ -14,7 +14,7 @@
 | Metric | Value |
 |--------|-------|
 | Non-overlapping 5d windows (all captured) | **12** |
-| **Mandate-eligible live windows** | **1** |
+| **Mandate-eligible live windows** | **0** |
 | Mean weekly excess (basket − XBI) | **+1.197%** |
 | Std weekly excess | 2.012% |
 | t-stat | **2.06** |
@@ -27,9 +27,9 @@
 
 ## Gate Progress (mandate-eligible windows only)
 
-- [1/20] Directional proof (XS>0, hit>50%)
-- [1/40] Strong evidence (t>1.5)
-- [1/52] Investable evidence (t near 2.0)
+- [0/20] Directional proof (XS>0, hit>50%)
+- [0/40] Strong evidence (t>1.5)
+- [0/52] Investable evidence (t near 2.0)
 
 ---
 
@@ -48,7 +48,7 @@
 | 2026-W42 | 2026-10-15 | LIVE | — | +3.42% | +1.24% | +2.18% | + | 92% | -1.58% | PASS |
 | 2026-W43 | 2026-10-19 | LIVE | — | +1.47% | +1.77% | -0.30% | - | 69% | -2.04% | PASS |
 | 2026-W44 | 2026-10-26 | LIVE | — | +2.08% | +1.05% | +1.03% | + | 88% | -2.38% | PASS |
-| 2026-W45 | 2026-11-03 | LIVE | ✓ | +6.26% | +0.06% | +6.21% | + | 98% | +1.14% | PASS |
+| 2026-W45 | 2026-11-03 | LIVE | — | +6.26% | +0.06% | +6.21% | + | 98% | +1.14% | PASS |
 
 ---
 

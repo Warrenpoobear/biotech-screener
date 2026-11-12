@@ -16,6 +16,61 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
+## Recent Update — 2026-11-12 (Out-of-Sample Clock Start Recorded; Path C IC-Gate Closure Re-Recorded)
+
+Classification: `GOVERNANCE_RECORD / OPERATOR_DECISION_RECORDED`. Tier 4 record. Source of truth: `docs/governance/2026-11-12-clock-start-and-path-c-re-record.md`.
+
+Summary:
+- `oos_clock_start` is **2026-11-12**, recorded in `artifacts/forward_validation/CANDIDATE.json`. It is the first production run on the merged code (manifest commit `2770e533`, result WARN, snapshot promoted, `ctgov_content_freshness` PASS). The 2026-11-02 start is superseded.
+- The 2026-06-24 Path C IC-gate closure is re-recorded against the production order: `actionable_rank` mean IC +0.1534 over 31 live dates. The original `score_rank_pct` +0.0432 citation is retracted.
+- The evening's forward-validation ledger rows and the first selector-only shadow row are committed.
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Records only.
+- Frozen status: unchanged. **FROZEN (BLOCKED_LEVEL_0)** remains in force.
+- Mandate SM-20260629-001 is at **0/20** from 2026-11-12. Any further authorized input or model fix resets the clock again.
+- Operator action required: none for this record. The 13F Q3 rebuild (deadline about 2026-11-14) remains a manual, governed step and would be an input change.
+
+Evidence:
+- Run: `data/snapshots/2026-11-12/run_manifest.json` (commit `2770e533`, 43 gates, non-PASS: audit, drift_monitoring, ruleset_health, regulatory_calendar, all WARN).
+- Forward-validation capture 2026-11-12: LIVE, quality PASS, model hash match.
+- First snapshot against 2026-11-11: Top-30 overlap 27/30. ORIC, SMMT and ANNX left on `deep_drawdown` after a market decline that day (XBI −3.3%); 15 names became ineligible on `deep_drawdown` and none became eligible. This is a price move, not an effect of the merged changes.
+- Path C re-record: corrected `tools/build_ic_dashboard.py`, as of 2026-06-24, 20-day horizon, split-adjusted prices, regenerated snapshots excluded.
+
+Impact on alpha interpretation:
+- **No new performance evidence.** The clock has one capture and no completed window.
+- The Path C re-record keeps a past gate decision but does not make it evidence of edge: the 31 dates overlap heavily and the gate was a threshold test.
+- The starting configuration now includes every input fix merged through 2026-11-12, so the window is not split across the Sharadar price-source cutover or the `financial_score` input fix.
+
+What changed:
+- `artifacts/forward_validation/CANDIDATE.json` (`oos_clock_start`, reset note, `prior_oos_clock_starts`), the regenerated `WEEKLY_SUMMARY.md`, appended ledger rows, the governance record and `.claude/rules/operational-state.md`.
+
+What did not change:
+- Ranker: unchanged.
+- Selector: unchanged.
+- Scoring: unchanged.
+- Eligibility: unchanged.
+- Sizing: unchanged.
+- Production wiring: unchanged.
+- Trading/actionability: unchanged.
+
+Skill synchronization:
+- Skills reviewed: `skills/ic_evaluation`, `skills/selector_ranker`, `skills/screener_ops`, `.claude/rules/operational-state.md`.
+- Skills updated: `.claude/rules/operational-state.md` (clock start, candidate source line, Path C line).
+- Skills not updated: `skills/ic_evaluation`, `skills/selector_ranker`, `skills/screener_ops` still describe the start as "the first production run using the PR #614/#636 code (expected 2026-11-12)", which is now the recorded date; no instruction in them becomes wrong.
+- Reason: rules synchronized so future agents read the recorded start and the re-recorded Path C basis.
+
+Open questions / next validation:
+- Commit the forward-validation and selector-only ledgers periodically; nothing does it automatically.
+- Four large one-day declines now visible in the split-adjusted history (ABOS, EYPT, SION, TENX) have no corporate-action registry entry and were not verified against an outside source. All four names were already ineligible.
+
+Prior claim retracted:
+- Old claim: "Path C IC gate met (`score_rank_pct` mean_ic +0.0432 > +0.03)" (2026-06-24).
+- Corrected interpretation: the gate is met on `actionable_rank` (+0.1534). The `score_rank_pct` figure had the wrong sign (corrected −0.0201) and measured the composite percentile.
+- Root cause: see the IC dashboard sign-correction entry below.
+
+---
+
 ## Recent Update — 2026-11-12 (IC Dashboard and Weekly Sweep: `score_rank_pct` Sign Inverted — Correction and Restatement)
 
 Classification: `MONITORING_TOOL_FIX / PRIOR_CLAIM_RETRACTED`. Tier 2 tooling. Source of truth: `docs/governance/2026-11-12-ic-dashboard-sign-correction.md`. Status when written: proposed on branch `fix/ic-dashboard-sign-and-scope`, not yet merged.
