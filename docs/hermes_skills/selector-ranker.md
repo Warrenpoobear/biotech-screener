@@ -20,6 +20,8 @@ description: >
 
 # Selector / Ranker / Construction Skill
 
+> **Deprecated 2026-11-13 (market-cap look-ahead).** Backtest figures in this file that come from regenerated historical snapshots are not evidence: historical runs read today's market cap, and `financial_score` divides cash and burn by it. With point-in-time market data the Top-30 shows +0.68 pt/period net of 50 bps (t = 1.47, 79 periods), `financial_score` has no measurable relation to next-period returns (monthly IC −0.001), and selector-only is ahead of the ranker by +0.62 pt/period (t = 1.64). Affected lines are marked below. The ranker is unchanged and the model remains frozen. Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+
 ## Purpose
 
 Reference for the production two-stage selector/ranker architecture and EW Top-30 construction. This is how the screener turns scored tickers into an actionable ranked portfolio.
@@ -76,8 +78,8 @@ Modules 1-5 (scoring)
 
 ### Selector Validation
 
-- Checklist v2 (2026-04-04): bootstrap +2.42pp/mo, 95% CI \[1.25%, 3.70%\], P(>0) = 99.99%
-- LOSO: ROBUST across all dimensions
+- Checklist v2 (2026-04-04): bootstrap +2.42pp/mo, 95% CI \[1.25%, 3.70%\], P(>0) = 99.99% *(Deprecated 2026-11-13: market-cap look-ahead.)*
+- LOSO: ROBUST across all dimensions *(Deprecated 2026-11-13: market-cap look-ahead.)*
 - Neither component survives standalone, but the bundle is real
 - Sort anchor: `selector_score`
 
@@ -112,12 +114,12 @@ Coinvest selects WHICH 30 names enter the portfolio. It captures institutional c
 
 - Weight: -0.0533 in `production_data/ranker_v2_model.json`
 - **Confirmed intentional**: stress-upside thesis (Spec 074, reconfirmed Spec 093 2026-05-13)
-- Classification: INTENTIONAL\_STRESS\_UPSIDE
+- Classification: INTENTIONAL\_STRESS\_UPSIDE *(Under question since 2026-11-13: the negative relation this explains was measured on history with market-cap look-ahead and is absent with point-in-time market cap.)*
 - Negative weight means financially safe names are penalized (more catalytic, less safe names preferred)
-- Evidence: correct higher\_is\_better=True encoding; six-diagnostic audit confirmed TRUE PENALTY in both bull (NW-t=-3.42) and bear (-3.38) regimes
+- Evidence: correct higher\_is\_better=True encoding; six-diagnostic audit confirmed TRUE PENALTY in both bull (NW-t=-3.42) and bear (-3.38) regimes *(Deprecated 2026-11-13: market-cap look-ahead.)*
 - Raw components: 50% runway + 30% dilution + 20% liquidity (all directional: higher = better health)
 - Rank-normalized within stage x size cohort (direction preserved)
-- t-statistic significant (-3.41), persists across cohorts and regimes
+- t-statistic significant (-3.41), persists across cohorts and regimes *(Deprecated 2026-11-13: market-cap look-ahead.)*
 
 ---
 
@@ -126,10 +128,12 @@ Coinvest selects WHICH 30 names enter the portfolio. It captures institutional c
 ### EW Top-30
 
 - Equal-weight, top 30 names by final\_score
-- K=30 validated by PIT sweep (stable K=25-35 plateau, net-of-cost peak)
+- K=30 validated by PIT sweep (stable K=25-35 plateau, net-of-cost peak) *(Deprecated 2026-11-13: market-cap look-ahead.)*
 - RW-EW delta = -0.09pp, t = -0.95 (rank-weighting does NOT help)
 
 ### Production Evidence
+
+*(Deprecated 2026-11-13: every figure in this subsection, including the regime table, was computed on history with market-cap look-ahead.)*
 
 - True PIT backtest (split-adjusted v2, 2026-06-27): **+3.33pp/mo hedged** (+3.20pp net-of-cost), t_nw=2.74, 66.7% hit rate, 69 monthly periods (Jun 2020 – Feb 2026)
 - Regime breakdown (all three regimes positive — prior "bull adverse" claim RETRACTED, was split artifact):

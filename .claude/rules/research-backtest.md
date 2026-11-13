@@ -12,7 +12,7 @@ metadata:
 
 # Research & Backtest Rules
 
-> **DEPRECATION — 2026-11-13 (DRAFT, pending operator sign-off).** Every figure in this file that was computed on a regenerated historical snapshot set (`data/snapshots_pit_v2` and earlier) carries market-cap look-ahead: historical runs read today's `market_data.json`, and `financial_score` divides cash and burn by that market cap. Affected items are marked *(Deprecated 2026-11-13)* below and listed under "Deprecated (do not cite)". With point-in-time market data the same model shows +0.68 pt/period net of 50 bps (t = 1.47, 79 periods), `financial_score` has no measurable relation to next-period returns, and selector-only is ahead of the ranker by +0.62 pt/period (t = 1.64). Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+> **DEPRECATION — 2026-11-13 (in force; operator sign-off 2026-11-13, PR #660).** Every figure in this file that was computed on a regenerated historical snapshot set (`data/snapshots_pit_v2` and earlier) carries market-cap look-ahead: historical runs read today's `market_data.json`, and `financial_score` divides cash and burn by that market cap. Affected items are marked *(Deprecated 2026-11-13)* below and listed under "Deprecated (do not cite)". With point-in-time market data the same model shows +0.68 pt/period net of 50 bps (t = 1.47, 79 periods), `financial_score` has no measurable relation to next-period returns, and selector-only is ahead of the ranker by +0.62 pt/period (t = 1.64). Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
 
 ---
 

@@ -1,5 +1,9 @@
 # Wake Robin DEM — Model Documentation
 
+> **Not the canonical model document.** `docs/MODEL_DOCUMENTATION.md` governs.
+>
+> **Deprecated 2026-11-13 (market-cap look-ahead).** The "+2.34pp/mo, t = 2.57" backtest, the Checklist v2 bundle result and the regime split and the K-sweep quoted in this file (including the "t=2.60" variants) were computed on history that read today's market cap on every past date. They are not evidence. With point-in-time market data the Top-30 shows +0.68 pt/period net of 50 bps (t = 1.47). Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+
 **Version:** 1.7.2 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
 **Last updated:** 2026-07-10 (forward-validation feed hardening — PR #489 merged & deployed to `main` @ `4d8623e5`: `set -e` wrapper fix, behavioral model-hash `ast-v1`, capture freshness gate + mandate quarantine schema, price-feed MultiIndex fix + `price_append_health` hard gate, liveness monitor; `CANDIDATE.json` re-registered to `827c35a9` [annotation-only equivalent to frozen `a9983a67`; freeze date 2026-06-26 unchanged]; **NO_MODEL_CHANGE**. Diagnostic perf as-of 7/9 [gross, research-only]: DEM Top-30 EW YTD +43.52% vs XBI +35.19%)
 **Prior update:** 2026-06-28 (IC health check — `score_rank_pct` mean_ic +0.049 HEALTHY, hit_rate 61.8%, N=34; regime monitor gate met 118/20 windows, avg XS +0.268%; EES advisory 5/30 flagged; **no production change**. Earlier same day: YTD backtest data integrity audit — corrected YTD DEM +38.52% vs XBI +27.43% (+11.09pp); weekly validation DEM +31.79% vs SPY +12.32%, Sharpe 2.49)
