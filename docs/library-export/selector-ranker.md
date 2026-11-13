@@ -1,5 +1,7 @@
 # Selector / Ranker / Construction Skill
 
+> **Deprecated 2026-11-13 (market-cap look-ahead).** The "+2.34pp/mo, t = 2.57" backtest, the Checklist v2 bundle result and the regime split quoted in this file were computed on history that read today's market cap on every past date. They are not evidence. With point-in-time market data the Top-30 shows +0.68 pt/period net of 50 bps (t = 1.47). Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+
 ## Purpose
 
 Reference for the production two-stage selector/ranker architecture and EW Top-30 construction. This is how the screener turns scored tickers into an actionable ranked portfolio.
@@ -42,7 +44,7 @@ Modules 1-5 (scoring)
 
 ### Selector Validation
 
-- Checklist v2 (2026-04-04): bootstrap +2.42pp/mo, 95% CI [1.25%, 3.70%], P(>0) = 99.99%
+- Checklist v2 (2026-04-04): bootstrap +2.42pp/mo, 95% CI [1.25%, 3.70%], P(>0) = 99.99% *(Deprecated 2026-11-13: market-cap look-ahead.)*
 - LOSO: ROBUST across all dimensions
 - Neither component survives standalone, but the bundle is real
 - Sort anchor: `selector_score`
@@ -100,8 +102,8 @@ Coinvest selects WHICH 30 names enter the portfolio. It captures institutional c
 
 ### Production Evidence
 
-- True PIT backtest: +2.34pp/mo net-of-cost, t = 2.57, 69% hit rate, 67 monthly periods (Jun 2020 - Apr 2026)
-- Bear/neutral alpha engine: Bear +3.37pp (75% hit), Neutral +6.23pp (93% hit), Bull -0.37pp (50% hit)
+- True PIT backtest: +2.34pp/mo net-of-cost, t = 2.57, 69% hit rate, 67 monthly periods (Jun 2020 - Apr 2026) *(Deprecated 2026-11-13: market-cap look-ahead.)*
+- Bear/neutral alpha engine: Bear +3.37pp (75% hit), Neutral +6.23pp (93% hit), Bull -0.37pp (50% hit) *(Deprecated 2026-11-13: market-cap look-ahead.)*
 - Regime caveat: expect bounded underperformance in strong bull markets
 
 ---

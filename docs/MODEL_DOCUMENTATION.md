@@ -16,7 +16,7 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
-## Recent Update — 2026-11-13 (Market-Cap Look-Ahead in Regenerated History; Backtest Claims Deprecated — DRAFT)
+## Recent Update — 2026-11-13 (Market-Cap Look-Ahead in Regenerated History; Backtest Claims Deprecated)
 
 Classification: `BACKTEST_CORRECTION / EVIDENCE_DEPRECATION`. Documentation only; the tooling fix is PR #659 (Tier 2). No model, ranker, selector, eligibility, sizing or production behavior changes. No clock effect.
 
@@ -37,7 +37,7 @@ Summary:
 
 Governance verdict:
 - `NO_MODEL_CHANGE`. Frozen status unchanged: **FROZEN (BLOCKED_LEVEL_0)**.
-- The "+2.34pp/mo net-of-cost, t=2.57" figure, the Checklist v2 bundle result, the pairwise feature audit, the K=30 sweep, the regime decomposition and the `minimal_v2` training evidence are deprecated, subject to operator sign-off on this PR. List and reasons: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+- The "+2.34pp/mo net-of-cost, t=2.57" figure, the Checklist v2 bundle result, the pairwise feature audit, the K=30 sweep, the regime decomposition and the `minimal_v2` training evidence are deprecated (operator sign-off 2026-11-13, PR #660). List and reasons: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
 - The ranker's weights were fitted on the contaminated history. This entry does not authorize a ranker change.
 
 Impact on alpha interpretation:

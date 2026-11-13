@@ -401,7 +401,7 @@ grep "inst_delta" artifacts/ic_dashboard/history.jsonl | tail -30
 # If only one frame → WATCH (wait for second frame to confirm or contradict)
 
 # 5. Check if degradation is component or bundle-level
-# B6 selector validates as BUNDLE (coinvest + inst_delta together, t=2.57, 67 periods)
+# B6 selector validated as a BUNDLE (coinvest + inst_delta together, t=2.57, 67 periods) -- DEPRECATED 2026-11-13: market-cap look-ahead in the history; see docs/governance/2026-11-13-market-cap-lookahead-deprecation.md
 # A component going negative does not automatically invalidate the bundle
 # Per CLAUDE.md: "Neither component survives standalone, but the bundle is real"
 ```

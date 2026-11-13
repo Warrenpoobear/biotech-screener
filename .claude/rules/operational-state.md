@@ -182,7 +182,7 @@ metadata:
 
 ## Governance Events (2026-11-13)
 
-- **Market-cap look-ahead found in every regenerated history; backtest claims deprecated (DRAFT, pending operator sign-off):**
+- **Market-cap look-ahead found in every regenerated history; backtest claims deprecated (in force; operator sign-off 2026-11-13, PR #660):**
   - Historical `run_screen.py --as-of-date` runs read today's `market_data.json`. `financial_score` divides cash and burn by that market cap, so on regenerated history it tracked later market-cap growth.
   - Same model, same inputs, point-in-time market data (`data/snapshots_pit_v4`, 79 periods, net 50 bps): Top-30 +0.68 pt/period, t = 1.47 (with today's market data: +1.64, t = 2.99). `financial_score` monthly IC −0.001 (was −0.067, t = −6.9). Selector-only minus current rule +0.62 pt/period, t = 1.64 (was −0.60).
   - The `minimal_v2` ranker's weights were fitted on the contaminated history. **No model change is made or authorized by this entry.** Any change to the ranker is a governed model change with a clock reset.

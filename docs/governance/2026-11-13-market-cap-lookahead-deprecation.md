@@ -1,6 +1,6 @@
 # Deprecation of backtest claims affected by market-cap look-ahead (2026-11-13)
 
-**Status:** DRAFT. Takes effect only when the operator merges this PR.
+**Status:** IN FORCE. Operator signed off by merging PR #660 on 2026-11-13.
 **Classification:** `BACKTEST_CORRECTION / EVIDENCE_DEPRECATION`. Documentation only.
 **Model effect:** none. No ranker, selector, eligibility, sizing, ruleset or production-run change. No out-of-sample clock effect. The model stays **FROZEN (BLOCKED_LEVEL_0)**.
 
@@ -49,7 +49,7 @@ Nothing is promoted in their place.
 
 ## Open decisions for the operator
 
-1. **Sign off on this deprecation** by merging, or mark which rows to keep.
+1. ~~Sign off on this deprecation.~~ Done 2026-11-13 (PR #660 merged).
 2. **Ranker.** The corrected history favours selector-only by +0.62 pt/period (t = 1.64), which is suggestive, not significant. The live selector-only shadow (PR #653) is accruing forward evidence. Removing or refitting the ranker is a governed model change with a clock reset and needs Checklist v2 on clean history.
 3. **`run_screen.py`.** Whether a historical run should refuse to read a `market_data.json` dated after `--as-of-date`. Tier 3, frozen file; not changed here.
 4. **Spec 093.** Reopen or annotate.
@@ -61,4 +61,4 @@ Nothing is promoted in their place.
 - `.claude/rules/external-intel.md`: one line in the developer profile.
 - `docs/MODEL_DOCUMENTATION.md`: Recent Update entry.
 
-Not done here: Hermes skill mirrors and `docs/hermes_skills/*` still quote the deprecated figures and need the usual sync after sign-off.
+Follow-up (2026-11-13): the selector-ranker skill, its Hermes mirror, `docs/library-export/*`, the root `model_documentation.md` and one Hermes debug skill were annotated. Left as written: ruleset descriptions in `production_data/decision_rulesets/manifest.json` (historical record of what each ruleset claimed when registered) and dated audit and spec artifacts.
