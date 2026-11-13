@@ -54,7 +54,6 @@ PRICE_FILES: Tuple[str, ...] = ("price_history.csv", "price_history_split_adj.cs
 PIT_DIR = "pit_financials"
 REGISTRY = "corporate_actions.json"
 AUDIT_LOG = "universe_audit_log.jsonl"
-PRODUCTION_LOCKS: Tuple[str, ...] = ("logs/.daily_production.lock", "logs/.daily_production_py.lock")
 
 _SYMBOL = re.compile(r"^[A-Z][A-Z0-9.]{0,9}$")
 
@@ -260,10 +259,11 @@ def apply_plan(writes: Dict[Path, str], renames: List[Tuple[Path, Path]]) -> Non
 
 
 def production_lock_held(repo_root: Path) -> Optional[str]:
-    for rel in PRODUCTION_LOCKS:
-        if (repo_root / rel).exists():
-            return rel
-    return None
+    """Lock held by a daily production run in progress, else None (a leftover lock file is not a run)."""
+    sys.path.insert(0, str(REPO_ROOT))
+    from common.production_lock import production_run_active
+
+    return production_run_active(repo_root)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -293,7 +293,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         return 0
     lock = production_lock_held(args.production_dir.resolve().parent)
     if lock:
-        print(f"REFUSED: daily production lock present ({lock}). Run this when no production job is running.")
+        print(f"REFUSED: a daily production run is in progress ({lock}). Run this when it has finished.")
         return 3
     apply_plan(writes, renames)
     print("Applied.")

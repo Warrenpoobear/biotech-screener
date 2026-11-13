@@ -474,12 +474,26 @@ def test_run_one_restores_live_state_written_by_the_screen(tmp_path, monkeypatch
     assert r["live_state_restored"] == ["data/state/blind_spot_streak.json"]
 
 
-def test_production_lock_detection(tmp_path):
+def test_leftover_production_lock_file_is_not_a_run(tmp_path):
     root = tmp_path / "repo"
     (root / "logs").mkdir(parents=True)
     assert regen.production_lock_held(root) is None
-    (root / "logs" / ".daily_production_py.lock").write_text("123")
-    assert regen.production_lock_held(root) == "logs/.daily_production_py.lock"
+    (root / "logs" / ".daily_production_py.lock").write_text("")  # flock-based; the file is never removed
+    assert regen.production_lock_held(root) is None
+
+
+def test_live_production_run_is_detected(tmp_path):
+    import subprocess
+
+    root = tmp_path / "repo"
+    (root / "logs").mkdir(parents=True)
+    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
+    try:
+        (root / "logs" / ".daily_production.lock").write_text(str(child.pid))
+        assert regen.production_lock_held(root) == "logs/.daily_production.lock"
+    finally:
+        child.kill()
+        child.wait()
 
 
 def test_archived_inputs_without_financial_records_are_not_used(tmp_path, monkeypatch):
