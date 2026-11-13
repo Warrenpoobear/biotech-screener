@@ -23,5 +23,13 @@
       "superseded_on": "2026-11-12",
       "memo": "docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md"
     }
-  ]
+  ],
+  "ranker_mode": "selector_only",
+  "pending_clock_reset": {
+    "authorized": "2026-11-13",
+    "reason": "Production order switched from the pairwise minimal_v2 ranker to selector-only (run_screen.py --ranker-mode default). model_hash is unchanged because the ranker dispatch is outside the hashed files; behavior is not.",
+    "takes_effect": "first daily production run on the merged code",
+    "action_required": "record the new oos_clock_start here after that run; captures from selector-only runs do not count toward SM-20260629-001 until it is recorded; the mandate restarts at 0/20",
+    "memo": "docs/governance/2026-11-13-selector-only-production-switch.md"
+  }
 }

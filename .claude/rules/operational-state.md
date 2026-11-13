@@ -22,7 +22,7 @@ metadata:
 
 - **ID**: `8887576e` (v1.14.0)
 - **File**: `production_data/decision_rulesets/v1.14.0_coinvest_only_selector.json`
-- **Key settings**: sort_anchor=selector_score, coinvest-only selector (coinvest_score_z 100%), pairwise_minimal ranker (ordinal-only), EW Top-30. inst_delta_z zeroed in selector 2026-05-04 (ALERT: mean_ic=-0.097, two-frame confirmed).
+- **Key settings**: sort_anchor=selector_score, coinvest-only selector (coinvest_score_z 100%), **selector-only order since 2026-11-13** (`--ranker-mode selector_only`; the pairwise_minimal ranker is a shadow), EW Top-30. inst_delta_z zeroed in selector 2026-05-04 (ALERT: mean_ic=-0.097, two-frame confirmed).
 - **Prior ruleset**: `2a3e79eb` (v1.13.0) â€” RETIRED 2026-05-04
 - **Pinned in**: `run_screen.py` AND `run_phase2_snapshot_delta.py` (must stay in sync)
 - **Manifest**: 36+ entries, no dup IDs
@@ -147,7 +147,7 @@ metadata:
 ### Active / Blocked
 | Spec | Title | Status | Blocker |
 |------|-------|--------|---------|
-| 094 | Selector-only comparator | RANKER_UNPROVEN; forward capture added 2026-11-12 (`tools/selector_only_shadow.py`, capture-only; starts with the first daily run after deploy) | Needs 20 non-overlapping LIVE windows before any reading |
+| 094 | Selector-only comparator | **Superseded in practice 2026-11-13: production is selector-only by operator decision; the ledger now records the ranker as the shadow.** Earlier status: RANKER_UNPROVEN; forward capture added 2026-11-12 (`tools/selector_only_shadow.py`, capture-only; starts with the first daily run after deploy) | Needs 20 non-overlapping LIVE windows before any reading |
 | 095 | Evaluation scope (IC tooling gap) | CURRENT_TOOLS_CONFLATED | Blocks ranker IC claims |
 | 100 | Ranker IC tooling correction | Spec written, no impl | Blocked by scoped freeze |
 | 104 | Insider diagnostic stabilization | MEASURED | Isolation guard (R4a) |
@@ -181,6 +181,13 @@ metadata:
 ---
 
 ## Governance Events (2026-11-13)
+
+- **Production order switched to selector-only (operator-authorized model change, 2026-11-13):**
+  - `run_screen.py --ranker-mode` default is now `selector_only`: `final_score = selector_score`, no ranker reorders the cohort. The pairwise `minimal_v2` ranker is still scored as a shadow. Rollback: `--ranker-mode pairwise_minimal`.
+  - Basis: the ranker's `financial_score` weight was fitted on history with market-cap look-ahead; selector order alone was ahead by +0.57 pt/period (t = 1.63) on `snapshots_pit_v5`. **Checklist v2 was not run; the difference is not significant.**
+  - On 2026-11-12 inputs the Top-30 overlap with the ranker order is 17/30.
+  - **Clock resets.** `oos_clock_start` is to be recorded after the first production run on the merged code; mandate SM-20260629-001 restarts at 0/20. `model_hash` is unchanged because the hash does not cover the dispatch in `run_screen.py` (`governance/HASH_ROTATIONS.md`).
+  - Memo: `docs/governance/2026-11-13-selector-only-production-switch.md`.
 
 - **Market-cap look-ahead found in every regenerated history; backtest claims deprecated (in force; operator sign-off 2026-11-13, PR #660):**
   - Historical `run_screen.py --as-of-date` runs read today's `market_data.json`. `financial_score` divides cash and burn by that market cap, so on regenerated history it tracked later market-cap growth.

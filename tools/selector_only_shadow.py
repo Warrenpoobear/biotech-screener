@@ -90,12 +90,23 @@ def build_baskets(rows: Iterable[Dict[str, str]], top_n: int = TOP_N) -> Dict[st
         rank = _num(row.get("actionable_rank"))
         if not ticker or _num(row.get("eligible")) != 1.0 or rank is None:
             continue
-        pool.append((ticker, rank, _num(row.get("selector_score"))))
+        pool.append((ticker, rank, _num(row.get("selector_score")), _num(row.get("ranker_v2_rank"))))
 
-    production = [t for t, _, _ in sorted(pool, key=lambda x: (x[1], x[0]))[:top_n]]
-    scored = [(t, s) for t, _, s in pool if s is not None]
+    production = [t for t, _, _, _ in sorted(pool, key=lambda x: (x[1], x[0]))[:top_n]]
+    scored = [(t, s) for t, _, s, _ in pool if s is not None]
     selector_only = [t for t, _ in sorted(scored, key=lambda x: (-x[1], x[0]))[:top_n]]
-    return {"production": production, "selector_only": selector_only}
+    baskets = {"production": production, "selector_only": selector_only}
+    # Pairwise-ranker order: the ranker's cohort by ranker_v2_rank, then everything else by
+    # selector_score. Recorded so the ranker's counterfactual keeps accruing after production
+    # moved to selector order (2026-11-13). Absent when the snapshot carries no ranker ranks.
+    cohort = [(t, r) for t, _, _, r in pool if r is not None]
+    if cohort:
+        in_cohort = {t for t, _ in cohort}
+        rest = [(t, s) for t, s in scored if t not in in_cohort]
+        ordered = [t for t, _ in sorted(cohort, key=lambda x: (x[1], x[0]))]
+        ordered += [t for t, _ in sorted(rest, key=lambda x: (-x[1], x[0]))]
+        baskets["ranker"] = ordered[:top_n]
+    return baskets
 
 
 def _read_rankings(path: Path) -> List[Dict[str, str]]:
@@ -162,6 +173,9 @@ def capture(
         "production": baskets["production"],
         "selector_only": baskets["selector_only"],
     }
+    if len(baskets.get("ranker", [])) == TOP_N:
+        row["ranker"] = baskets["ranker"]
+        row["ranker_overlap_with_selector_only"] = len(set(baskets["ranker"]) & set(baskets["selector_only"]))
     Path(out_dir).mkdir(parents=True, exist_ok=True)
     with open(Path(out_dir) / "captures.jsonl", "a", encoding="utf-8", newline="\n") as f:
         f.write(json.dumps(row, sort_keys=True) + "\n")
@@ -286,6 +300,7 @@ def summarize(
     for c in captures:
         tickers.update(c["production"])
         tickers.update(c["selector_only"])
+        tickers.update(c.get("ranker", []))
     prices = load_prices(price_csv, tickers, captures[0]["as_of_date"])
     calendar = sorted(prices.get(BENCHMARK, {}))
 
@@ -293,6 +308,7 @@ def summarize(
         mode_out: Dict[str, Any] = {}
         for h in horizons:
             windows = []
+            ranker_windows = []
             for c in captures:
                 if c["capture_mode"] != mode:
                     continue
@@ -313,6 +329,19 @@ def summarize(
                         "_diff": prod - sel,
                     }
                 )
+                if c.get("ranker"):
+                    rk, n_rk = _basket_return(c["ranker"], prices, calendar, c["as_of_date"], h)
+                    if rk is not None:
+                        ranker_windows.append(
+                            {
+                                "as_of_date": c["as_of_date"],
+                                "ranker_pct": round(rk * 100, 3),
+                                "selector_only_pct": round(sel * 100, 3),
+                                "diff_pct": round((rk - sel) * 100, 3),
+                                "n_priced": [n_rk, n_sel],
+                                "_diff": rk - sel,
+                            }
+                        )
             independent = _non_overlapping(windows, calendar, h)
             stats = _stats([w["_diff"] for w in independent])
             stats["n_matured_captures"] = len(windows)
@@ -322,6 +351,17 @@ def summarize(
             for w in windows:
                 w.pop("_diff", None)
             mode_out[f"h{h}d"] = {"stats": stats, "windows": independent}
+            # Ranker order minus selector-only. This is the comparison that stays informative
+            # once production itself is selector-only and the first diff is zero by construction.
+            rk_independent = _non_overlapping(ranker_windows, calendar, h)
+            rk_stats = _stats([w["_diff"] for w in rk_independent])
+            rk_stats["n_matured_captures"] = len(ranker_windows)
+            rk_stats["reading"] = (
+                "insufficient_windows" if rk_stats["n"] < MIN_WINDOWS_FOR_READING else "descriptive_only_see_t_stat"
+            )
+            for w in ranker_windows:
+                w.pop("_diff", None)
+            mode_out[f"h{h}d"]["ranker_minus_selector_only"] = {"stats": rk_stats, "windows": rk_independent}
         result["by_mode"][mode] = mode_out
 
     result["status"] = "ok"

@@ -22,8 +22,9 @@ Spec 050 (2026-04-03) replaced the old optionality-anchored selector with a two-
 selector/ranker architecture. Checklist v2 rerun (2026-04-04) revalidated the live stack
 under the Spec 055 statistical bar (FM, bootstrap, FDR, LOSO).
 
-> **Production mental model: coinvest selects (sole institutional signal as of v1.14.0), financial penalizes
-> "safe but less catalytic" names, and clinical is a weak/conditional feature under review.**
+> **Production mental model since 2026-11-13: coinvest selects and orders (selector-only; no ranker). The pairwise
+> ranker and its negative `financial_score` weight are a shadow record only. See `docs/governance/2026-11-13-selector-only-production-switch.md`.**
+> *(Before 2026-11-13: coinvest selects, financial penalizes "safe but less catalytic" names.)*
 > inst_delta_z zeroed in selector 2026-05-04 (ALERT two-frame confirmed; governance log filed).
 
 1. **B6 selector + pairwise_minimal ranker (ordinal-only) + EW Top-30 is production.** True PIT backtest: +2.34pp/mo net-of-cost, t=2.57, 69% hit rate, 67 monthly periods (Jun 2020 — Apr 2026). *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
@@ -74,7 +75,7 @@ under the Spec 055 statistical bar (FM, bootstrap, FDR, LOSO).
 
 ### Current evidence hierarchy
 1. **Forward shadow**: accumulating daily since 2026-04-03 — the only out-of-sample evidence
-2. **Point-in-time market data regeneration (2026-11-13, `data/snapshots_pit_v4`)**: Top-30 +0.68 pt/period net of 50 bps, t = 1.47 — pseudo-PIT, survivorship-biased, in-sample for the selector settings; research only
+2. **Point-in-time market data regenerations (2026-11-13)**: `data/snapshots_pit_v5` (Sharadar daily market cap, false splits removed) — pairwise-ranker rule +0.91 pt/period net of 50 bps (t = 1.96), selector-only +1.53 (t = 2.94), difference +0.57 (t = 1.63); `data/snapshots_pit_v4` (filing-based market cap) — +0.68 (t = 1.47). Pseudo-PIT, survivorship-biased, in-sample for the selector settings; research only
 3. **Checklist v2 rerun (2026-04-04)**, **True PIT backtest (Spec 050)**, **Pairwise feature audit (2026-04-04)** — DEPRECATED 2026-11-13 (market-cap look-ahead)
 4. **Old PIT benchmark (Spec 048)**: optionality selector underwater — SUPERSEDED by new selector
 
@@ -110,7 +111,7 @@ hours here unless genuinely new data or a structural model change creates a reas
 
 ## Current Promotion Story
 
-1. **Coinvest-only selector + pairwise_minimal ranker (ordinal-only) + EW Top-30 is production (v1.14.0).** B6 selector now coinvest_score_z 100% (inst_delta_z zeroed 2026-05-04, ALERT: mean_ic=-0.097 over 36 dates; reinstatement conditions in governance log). Original B6 bundle (coinvest 65% + inst_delta 35%) validated in true PIT backtest: +2.34pp/mo net-of-cost, t=2.57, 69% hit rate, 67 monthly periods. *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
+1. **Coinvest-only selector + selector-only order + EW Top-30 is production since 2026-11-13** (operator decision; Checklist v2 not run; `docs/governance/2026-11-13-selector-only-production-switch.md`). *Before that:* **Coinvest-only selector + pairwise_minimal ranker (ordinal-only) + EW Top-30 (v1.14.0).** B6 selector now coinvest_score_z 100% (inst_delta_z zeroed 2026-05-04, ALERT: mean_ic=-0.097 over 36 dates; reinstatement conditions in governance log). Original B6 bundle (coinvest 65% + inst_delta 35%) validated in true PIT backtest: +2.34pp/mo net-of-cost, t=2.57, 69% hit rate, 67 monthly periods. *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
 2. True PIT evidence: +2.34pp/mo net, t=2.57, 69% hit, beats XBI on return and risk. *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
 3. **B6 bundle passes Checklist v2**: bootstrap +2.42pp/mo, CI [1.25%, 3.70%], LOSO ROBUST. Bundle > parts. *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
 4. **Pairwise ordinal-only confirmed**: ECE=0.129. Do not rank-weight or confidence-size.

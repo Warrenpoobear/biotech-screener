@@ -116,6 +116,7 @@ from common.production_hardening import (  # Path security; File operations; Int
     validate_path_within_base,
     verify_integrity,
 )
+from common.ranker_mode import DEFAULT_RANKER_MODE, RANKER_MODES, apply_selector_only_ranking
 from decision_engine import ACTIONABLE_COLUMNS, DEFAULT_RULESET, SORT_CONTRIB_KEYS
 from decision_engine import VERSION as DE_VERSION
 from decision_engine import (
@@ -4341,7 +4342,7 @@ def _compute_config_fingerprint(
     alpha_schema_mode,
     ruleset_id,
     reliability_table,
-    ranker_mode="pairwise_minimal",
+    ranker_mode=DEFAULT_RANKER_MODE,
 ) -> str:
     """SHA256[:8] of deterministic config subset."""
     import hashlib
@@ -4844,7 +4845,7 @@ def save_validation_snapshot(
     phase_scores_version: str = "v3",
     force_overwrite: bool = False,
     regime_result: Optional[Dict[str, Any]] = None,
-    ranker_mode: str = "pairwise_minimal",
+    ranker_mode: str = DEFAULT_RANKER_MODE,
     data_dir: Optional[Path] = None,
 ) -> Optional[Path]:
     """
@@ -6256,7 +6257,18 @@ def save_validation_snapshot(
         # ------------------------------------------------------------------
         # Mode dispatch: wire production ranker into final_score
         # ------------------------------------------------------------------
-        if ranker_mode == "pairwise_minimal" and _rv2_ok:
+        if ranker_mode == "selector_only":
+            # --- PRODUCTION: selector order, no ranker ---
+            _n_v2_shadow = apply_selector_only_ranking(_eligible_for_selector, _rv2_by_ticker if _rv2_ok else None)
+            _shadow_clinical50 = {}
+            logger.info(
+                f"  Selector: {len(_sel_results)} scored | "
+                f"Ranker [PROD]: none (selector_only) | "
+                f"Ranker [SHADOW]: pairwise_minimal, {_n_v2_shadow} scored"
+                + ("" if _rv2_ok else " (model unavailable)")
+            )
+
+        elif ranker_mode == "pairwise_minimal" and _rv2_ok:
             # --- PRODUCTION: pairwise v2 ---
             # final_score = ranker_v2_score for cohort members;
             # non-cohort eligible get selector_score scaled down so they sort below cohort.
@@ -12761,11 +12773,12 @@ Module 3 Catalyst Detection:
     parser.add_argument(
         "--ranker-mode",
         type=str,
-        default="pairwise_minimal",
-        choices=["clinical_50", "pairwise_minimal"],
-        help="Production ranker: 'clinical_50' (bounded adjustment, legacy) or "
-        "'pairwise_minimal' (v2 pairwise logistic, Spec 051 winner). "
-        "Default: pairwise_minimal. Rollback: --ranker-mode clinical_50.",
+        default=DEFAULT_RANKER_MODE,
+        choices=list(RANKER_MODES),
+        help="Production ordering inside the eligible set: 'selector_only' (selector_score order, no "
+        "ranker; the pairwise ranker is still scored as a shadow), 'pairwise_minimal' (v2 pairwise "
+        "logistic reorders the top-60 selector cohort) or 'clinical_50' (bounded adjustment, legacy). "
+        "Default: selector_only (operator decision 2026-11-13). Rollback: --ranker-mode pairwise_minimal.",
     )
 
     parser.add_argument(
@@ -13705,7 +13718,7 @@ Module 3 Catalyst Detection:
                     else ("v2" if getattr(args, "phase_scores_v2", False) else "v3")
                 ),
                 force_overwrite=getattr(args, "force_overwrite", False),
-                ranker_mode=getattr(args, "ranker_mode", "pairwise_minimal"),
+                ranker_mode=getattr(args, "ranker_mode", DEFAULT_RANKER_MODE),
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")
