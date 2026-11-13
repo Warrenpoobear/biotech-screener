@@ -5,6 +5,20 @@ Runs run_screen.py for each monthly snapshot date with --pit-mode degrade,
 writing to data/snapshots_pit_v2/. Only runs dates not already present
 in the output directory (idempotent).
 
+Since 2026-11-13 three protections are on by default:
+
+* --pit-market-data: each date gets its own market_data.json built from prices and
+  SEC share counts available on that date (common/pit_market_data.py). Without it
+  run_screen.py reads today's market_data.json, so every historical date sees today's
+  market cap, price, volume and volatility. Histories generated before this date
+  (snapshots_pit_v2 and earlier) carry that look-ahead.
+* --isolate-side-outputs: Module 3 side outputs (catalyst_events, run_log,
+  ctgov_state) go to <out-dir>/_side_outputs/<date>/ instead of the data dir.
+* --protect-live-state: files a historical run would otherwise rewrite in the
+  checkout (data/state, the expression logs, readiness history, "latest" pointers)
+  are restored after each date, and the run refuses to start while a daily
+  production run holds its lock.
+
 Usage:
     python scripts/research/regenerate_pit_v2_snapshots.py
     python scripts/research/regenerate_pit_v2_snapshots.py --start 2023-01-01
@@ -30,6 +44,19 @@ BUNDLES_DIR = PROJECT_ROOT / "data" / "bundles" / "PIT"
 PIT_13F_CACHE = PROJECT_ROOT / "data" / "caches" / "sec_13f" / "PIT"
 STAGING_ROOT = PROJECT_ROOT / "data" / "staging" / "pit_regen"
 LOG_PATH = PROJECT_ROOT / "output" / "pit" / "regeneration_log.json"
+SIDE_OUTPUTS_DIRNAME = "_side_outputs"
+
+# Files and directories that run_screen.py rewrites relative to the checkout on every
+# run, including historical ones. A regeneration must leave them as it found them.
+PROTECTED_LIVE_STATE: tuple[str, ...] = (
+    "data/state",
+    "data/expression_decision_log.jsonl",
+    "data/expression_attribution_log.jsonl",
+    "artifacts/readiness/history.jsonl",
+    "artifacts/bioshort_watch/latest_status.json",
+    "artifacts/policy_shadow/tier_weighted/history.jsonl",
+)
+PRODUCTION_LOCKS: tuple[str, ...] = ("logs/.daily_production.lock", "logs/.daily_production_py.lock")
 
 # Minimum 13F manager coverage required to consider a date PIT-stageable.
 # Below this, the cache isn't representative enough to improve over the
@@ -69,8 +96,9 @@ def _resolve_data_dir(date_str: str) -> tuple[Path, str]:
     Returns (data_dir, source_tag).
     """
     archived = SNAPSHOTS_DIR / date_str / "inputs"
-    # Require at least universe.json to consider the archive usable
-    if archived.exists() and (archived / "universe.json").exists():
+    # The archive is usable only if run_screen.py's preflight would pass on it.
+    # Archives written from 2026-04-20 hold universe.json but no financial_records.json.
+    if archived.exists() and all((archived / name).exists() for name in ("universe.json", "financial_records.json")):
         return archived, "archived"
     return PROD_DATA, "current"
 
@@ -137,6 +165,129 @@ def _pit_13f_cache_coverage_at(cache_dir: Path) -> float | None:
 def _pit_13f_cache_coverage(date_str: str) -> float | None:
     """Return coverage_pct for an exact-match cache date, or None if missing."""
     return _pit_13f_cache_coverage_at(PIT_13F_CACHE / date_str)
+
+
+def production_lock_held(root: Path | None = None) -> str | None:
+    """Name of a daily-production lock file that currently exists, else None."""
+    base = root or PROJECT_ROOT
+    for rel in PRODUCTION_LOCKS:
+        if (base / rel).exists():
+            return rel
+    return None
+
+
+def _file_digest(path: Path) -> str:
+    import hashlib
+
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+class LiveStateGuard:
+    """Restore protected checkout files to their pre-run content.
+
+    On entry every protected file is copied aside. On exit a file whose content
+    changed is put back atomically, and a file that did not exist before is removed.
+    `restored` lists what had to be repaired.
+    """
+
+    def __init__(self, root: Path | None = None, protected: tuple[str, ...] = PROTECTED_LIVE_STATE):
+        self.root = root or PROJECT_ROOT
+        self.protected = protected
+        self.restored: list[str] = []
+        self._backup_dir: Path | None = None
+        self._before: dict[str, str] = {}
+
+    def _files(self) -> list[Path]:
+        out: list[Path] = []
+        for rel in self.protected:
+            target = self.root / rel
+            if target.is_dir():
+                out.extend(sorted(p for p in target.rglob("*") if p.is_file()))
+            elif target.is_file():
+                out.append(target)
+        return out
+
+    def __enter__(self) -> "LiveStateGuard":
+        import shutil
+        import tempfile
+
+        self._backup_dir = Path(tempfile.mkdtemp(prefix="pit_regen_live_state_"))
+        for path in self._files():
+            rel = str(path.relative_to(self.root))
+            dest = self._backup_dir / rel
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, dest)
+            self._before[rel] = _file_digest(path)
+        return self
+
+    def __exit__(self, *exc) -> None:
+        import os
+        import shutil
+
+        assert self._backup_dir is not None
+        try:
+            for path in self._files():
+                rel = str(path.relative_to(self.root))
+                if rel not in self._before:
+                    path.unlink()  # created by the historical run
+                    self.restored.append(rel)
+                elif _file_digest(path) != self._before[rel]:
+                    tmp = path.with_name(path.name + ".pit_regen_restore")
+                    shutil.copy2(self._backup_dir / rel, tmp)
+                    os.replace(tmp, path)
+                    self.restored.append(rel)
+            for rel in self._before:
+                path = self.root / rel
+                if not path.exists():  # deleted by the historical run
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(self._backup_dir / rel, path)
+                    self.restored.append(rel)
+        finally:
+            shutil.rmtree(self._backup_dir, ignore_errors=True)
+
+
+def _shadow_tree(src: Path, dst: Path) -> None:
+    """Hardlink `src` into `dst` (recursing into directories); never overwrites."""
+    import os
+    import shutil
+
+    if dst.exists() or dst.is_symlink():
+        return
+    if src.is_dir():
+        dst.mkdir(parents=True, exist_ok=True)
+        for child in src.iterdir():
+            _shadow_tree(child, dst / child.name)
+        return
+    try:
+        os.link(str(src), str(dst))
+    except OSError:
+        if src.is_file() and src.stat().st_size < 50 * 1024 * 1024:
+            shutil.copy2(str(src), str(dst))
+
+
+_MARKET_BUILDERS: dict[str, object] = {}
+
+
+def stage_pit_market_data(date_str: str, base_data_dir: Path) -> tuple[Path, dict]:
+    """Write a point-in-time market_data.json into this date's staging dir.
+
+    Built from the current production_data (prices, SEC share-count facts), never from
+    an archived per-date inputs dir: those hold no price history. Returns the staging
+    dir and the count of market-cap sources used.
+    """
+    sys.path.insert(0, str(PROJECT_ROOT))
+    from common.pit_market_data import PitMarketDataBuilder
+
+    key = str(PROD_DATA)
+    if key not in _MARKET_BUILDERS:
+        _MARKET_BUILDERS[key] = PitMarketDataBuilder(PROD_DATA)
+    staging = STAGING_ROOT / date_str
+    counts = _MARKET_BUILDERS[key].write(date_str, staging / "market_data.json")  # type: ignore[attr-defined]
+    return staging, counts
 
 
 def stage_data_dir_with_pit_institutional(
@@ -270,8 +421,19 @@ def run_one(
     out_dir: Path | None = None,
     force_overwrite: bool = False,
     allow_weekend: bool = False,
+    pit_market_data: bool = False,
+    isolate_side_outputs: bool = False,
+    protect_live_state: bool = False,
+    fresh_staging: bool = False,
 ) -> dict:
     """Run a regen for one date. Returns status dict.
+
+    `pit_market_data=True` stages a market_data.json built for this date, so the run
+    does not read today's market cap, price or volume. `isolate_side_outputs=True`
+    sends Module 3 side outputs to <out_dir>/_side_outputs/<date>/. With
+    `protect_live_state=True` the checkout files a historical run rewrites are
+    restored afterwards. `fresh_staging=True` removes this date's staging dir first,
+    so links to superseded input files are not reused. The CLI turns all four on.
 
     When `use_bundle=True` and a PIT bundle exists for the exact date, uses
     `scripts/run_screen_from_bundle.py` (Option A). Otherwise subprocesses
@@ -295,6 +457,27 @@ def run_one(
     data_dir, data_source = _resolve_data_dir(date_str)
     effective_out = out_dir or PIT_V2_DIR
     stage_result: str | None = None
+    base_data_dir = data_dir
+    market_cap_sources: dict | None = None
+
+    if fresh_staging and not use_bundle and (STAGING_ROOT / date_str).exists():
+        import shutil
+
+        shutil.rmtree(STAGING_ROOT / date_str)
+
+    # Point-in-time market data goes into the staging dir first; the shadowing below
+    # never overwrites an existing file, so it stays in place.
+    if pit_market_data and not use_bundle:
+        try:
+            _, market_cap_sources = stage_pit_market_data(date_str, base_data_dir)
+        except Exception as e:  # missing prices / market data: fail the date, do not fall back to today's file
+            return {
+                "date": date_str,
+                "status": "error",
+                "returncode": None,
+                "rankings_csv_exists": False,
+                "error_tail": [f"point-in-time market data could not be built: {e}"],
+            }
 
     # Option B-lite: stage a PIT-derived coinvest_signals.json over symlinks.
     if stage_pit_institutional and not use_bundle:
@@ -304,6 +487,14 @@ def run_one(
             data_dir = staged_dir
             # Phase 5: distinguish exact vs prior in the data_source label
             data_source = stage_tag  # "pit_13f_staged_exact" or "pit_13f_staged_prior"
+
+    if pit_market_data and not use_bundle and data_dir == base_data_dir:
+        # No PIT 13F overlay for this date: still run from the staging dir so the
+        # point-in-time market_data.json is the one run_screen.py reads.
+        staging = STAGING_ROOT / date_str
+        for item in base_data_dir.iterdir():
+            _shadow_tree(item, staging / item.name)
+        data_dir = staging
 
     institutional_source = _resolve_institutional_source(date_str, data_dir)
 
@@ -337,20 +528,31 @@ def run_one(
             "--diagnostics",
             "none",
         ]
+        if isolate_side_outputs:
+            side_dir = effective_out / SIDE_OUTPUTS_DIRNAME / date_str
+            side_dir.mkdir(parents=True, exist_ok=True)
+            cmd += ["--output-dir", str(side_dir)]
         if force_overwrite:
             cmd.append("--force-overwrite")
         if allow_weekend:
             cmd.append("--allow-weekend")
 
     t0 = time.time()
+    guard = LiveStateGuard() if protect_live_state else None
     try:
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=600,
-            cwd=str(PROJECT_ROOT),
-        )
+        if guard is not None:
+            guard.__enter__()
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=600,
+                cwd=str(PROJECT_ROOT),
+            )
+        finally:
+            if guard is not None:
+                guard.__exit__(None, None, None)
         elapsed = time.time() - t0
         stdout_tail = result.stdout.strip().split("\n")[-10:]
         stderr_tail = result.stderr.strip().split("\n")[-10:]
@@ -400,6 +602,13 @@ def run_one(
         }
         if stage_result:
             out["stage_result"] = stage_result
+        if market_cap_sources is not None:
+            out["market_data_source"] = "pit_market_data"
+            out["market_cap_sources"] = market_cap_sources
+        else:
+            out["market_data_source"] = "current_market_data_json"
+        if guard is not None:
+            out["live_state_restored"] = guard.restored
         return out
 
     except subprocess.TimeoutExpired:
@@ -479,6 +688,35 @@ def main():
         action="store_true",
         help="Pass --allow-weekend to run_screen.py for dates that fall on Saturday/Sunday.",
     )
+    parser.add_argument(
+        "--pit-market-data",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Build market_data.json for each date from prices and SEC share counts available on that "
+        "date (default ON). --no-pit-market-data reads today's market_data.json for every date, which "
+        "puts today's market cap, price and volume into the history.",
+    )
+    parser.add_argument(
+        "--isolate-side-outputs",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Send Module 3 side outputs (catalyst_events, run_log, ctgov_state) to "
+        "<out-dir>/_side_outputs/<date>/ instead of the data dir (default ON).",
+    )
+    parser.add_argument(
+        "--protect-live-state",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Restore data/state, the expression logs, readiness history and 'latest' pointers after "
+        "each date, and refuse to run while a daily production lock exists (default ON).",
+    )
+    parser.add_argument(
+        "--fresh-staging",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Remove each date's staging dir before staging, so hardlinks to superseded input files "
+        "are not reused (default ON).",
+    )
     args = parser.parse_args()
 
     effective_out = Path(args.out_dir) if args.out_dir else PIT_V2_DIR
@@ -518,6 +756,10 @@ def main():
     if args.allow_weekend:
         print("Allow weekend: ON")
 
+    print(f"Market data:   {'point-in-time per date' if args.pit_market_data else 'TODAY (look-ahead)'}")
+    print(f"Side outputs:  {'isolated under out dir' if args.isolate_side_outputs else 'data dir'}")
+    print(f"Live state:    {'protected' if args.protect_live_state else 'NOT protected'}")
+
     if args.max_dates > 0:
         todo = todo[: args.max_dates]
         print(f"Limited to:    {len(todo)}")
@@ -547,6 +789,14 @@ def main():
         if args.clean_partial and _snapshot_is_partial(date_str, effective_out):
             cleaned = _clean_partial_dir(date_str, effective_out)
 
+        if args.protect_live_state:
+            lock = production_lock_held()
+            if lock:
+                print(f"{prefix} {date_str} — STOPPED: daily production lock present ({lock}).")
+                results.append({"date": date_str, "status": "stopped_production_lock", "rankings_csv_exists": False})
+                n_err += 1
+                break
+
         print(f"{prefix} {date_str}{' [cleaned partial]' if cleaned else ''} ...", end=" ", flush=True)
         r = run_one(
             date_str,
@@ -555,6 +805,10 @@ def main():
             out_dir=effective_out,
             force_overwrite=args.force_overwrite,
             allow_weekend=args.allow_weekend,
+            pit_market_data=args.pit_market_data,
+            isolate_side_outputs=args.isolate_side_outputs,
+            protect_live_state=args.protect_live_state,
+            fresh_staging=args.fresh_staging,
         )
         r["cleaned_partial_dir"] = cleaned
         results.append(r)
@@ -566,7 +820,10 @@ def main():
             exe = r.get("exec_path", "?")
             stg = r.get("stage_result")
             stg_str = f", stage={stg}" if stg else ""
-            print(f"OK ({r['elapsed_s']}s, exec={exe}, data={src}, inst={inst}{stg_str})")
+            mkt = r.get("market_data_source", "?")
+            print(f"OK ({r['elapsed_s']}s, exec={exe}, data={src}, inst={inst}{stg_str}, market={mkt})")
+            if r.get("live_state_restored"):
+                print(f"    restored live state: {', '.join(r['live_state_restored'])}")
         else:
             n_err += 1
             label = r["status"].upper()
