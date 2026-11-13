@@ -4,84 +4,12 @@
   "_description": "Authoritative corporate action registry for the biotech screener universe. All dates are effective dates (the date the action took effect in the market). PIT safety: do not apply any action before its effective_date in historical contexts.",
   "actions": [
     {
-      "ticker": "ABVX",
-      "action": "reverse_split",
-      "effective_date": "2025-07-23",
-      "ratio": "1:7",
-      "factor": 6.86,
-      "notes": "Reverse split to maintain NASDAQ listing compliance"
-    },
-    {
-      "ticker": "ACRS",
-      "action": "forward_split",
-      "effective_date": "2023-11-13",
-      "ratio": "7:1",
-      "factor": 0.136,
-      "notes": ""
-    },
-    {
       "ticker": "AKTX",
       "action": "reverse_split",
       "effective_date": "2026-03-31",
       "ratio": "1:40",
       "factor": 42.56,
       "notes": "Extreme reverse split; near-delisting risk"
-    },
-    {
-      "ticker": "AMLX",
-      "action": "forward_split",
-      "effective_date": "2024-03-08",
-      "ratio": "6:1",
-      "factor": 0.177,
-      "notes": ""
-    },
-    {
-      "ticker": "BIOA",
-      "action": "forward_split",
-      "effective_date": "2024-12-09",
-      "ratio": "4:1",
-      "factor": 0.231,
-      "notes": ""
-    },
-    {
-      "ticker": "COGT",
-      "action": "reverse_split",
-      "effective_date": "2020-07-06",
-      "ratio": "1:5",
-      "factor": 4.94,
-      "notes": ""
-    },
-    {
-      "ticker": "DFTX",
-      "action": "reverse_split",
-      "effective_date": "2020-03-03",
-      "ratio": "1:5",
-      "factor": 4.6,
-      "notes": ""
-    },
-    {
-      "ticker": "DRUG",
-      "action": "reverse_split",
-      "effective_date": "2024-10-15",
-      "ratio": "1:15",
-      "factor": 15.46,
-      "notes": "Bright Minds Biosciences"
-    },
-    {
-      "ticker": "FGEN",
-      "action": "forward_split",
-      "effective_date": "2023-06-26",
-      "ratio": "6:1",
-      "factor": 0.169,
-      "notes": "FibroGen"
-    },
-    {
-      "ticker": "GOSS",
-      "action": "forward_split",
-      "effective_date": "2026-02-23",
-      "ratio": "5:1",
-      "factor": 0.199,
-      "notes": "Gossamer Bio"
     },
     {
       "ticker": "INDV",
@@ -92,52 +20,12 @@
       "notes": "Indivior; had prior forward split on 2022-11-23"
     },
     {
-      "ticker": "IVVD",
-      "action": "forward_split",
-      "effective_date": "2021-12-14",
-      "ratio": "5:1",
-      "factor": 0.212,
-      "notes": "Invivyd"
-    },
-    {
-      "ticker": "JBIO",
-      "action": "forward_split",
-      "effective_date": "2024-06-17",
-      "ratio": "15:1",
-      "factor": 0.067,
-      "notes": "First of two splits"
-    },
-    {
       "ticker": "JBIO",
       "action": "forward_split",
       "effective_date": "2025-04-29",
       "ratio": "9:1",
       "factor": 0.108,
       "notes": "Second split"
-    },
-    {
-      "ticker": "KALA",
-      "action": "forward_split",
-      "effective_date": "2025-09-29",
-      "ratio": "9:1",
-      "factor": 0.107,
-      "notes": "Kala Bio"
-    },
-    {
-      "ticker": "KOD",
-      "action": "forward_split",
-      "effective_date": "2022-02-23",
-      "ratio": "5:1",
-      "factor": 0.196,
-      "notes": "Kodiak Sciences"
-    },
-    {
-      "ticker": "LYRA",
-      "action": "forward_split",
-      "effective_date": "2024-05-06",
-      "ratio": "8:1",
-      "factor": 0.13,
-      "notes": "First of two splits"
     },
     {
       "ticker": "LYRA",
@@ -148,100 +36,12 @@
       "notes": "Second action (reverse)"
     },
     {
-      "ticker": "MCRB",
-      "action": "reverse_split",
-      "effective_date": "2020-08-10",
-      "ratio": "1:5",
-      "factor": 4.89,
-      "notes": "Seres Therapeutics"
-    },
-    {
-      "ticker": "MENS",
-      "action": "forward_split",
-      "effective_date": "2025-12-17",
-      "ratio": "5:1",
-      "factor": 0.19,
-      "notes": ""
-    },
-    {
-      "ticker": "MLTX",
-      "action": "forward_split",
-      "effective_date": "2025-09-29",
-      "ratio": "10:1",
-      "factor": 0.101,
-      "notes": "MoonLake Immunotherapeutics"
-    },
-    {
-      "ticker": "NMRA",
-      "action": "forward_split",
-      "effective_date": "2025-01-02",
-      "ratio": "5:1",
-      "factor": 0.186,
-      "notes": "Neumora Therapeutics"
-    },
-    {
-      "ticker": "ORKA",
-      "action": "reverse_split",
-      "effective_date": "2020-05-28",
-      "ratio": "1:5",
-      "factor": 4.86,
-      "notes": "Oruka Therapeutics"
-    },
-    {
-      "ticker": "PHVS",
-      "action": "reverse_split",
-      "effective_date": "2022-12-08",
-      "ratio": "1:5",
-      "factor": 4.57,
-      "notes": "Pharvaris"
-    },
-    {
-      "ticker": "PRAX",
-      "action": "forward_split",
-      "effective_date": "2022-06-06",
-      "ratio": "5:1",
-      "factor": 0.219,
-      "notes": "Praxis Precision Medicine"
-    },
-    {
-      "ticker": "PRQR",
-      "action": "forward_split",
-      "effective_date": "2022-02-11",
-      "ratio": "4:1",
-      "factor": 0.246,
-      "notes": "ProQR Therapeutics"
-    },
-    {
-      "ticker": "REPL",
-      "action": "forward_split",
-      "effective_date": "2025-07-22",
-      "ratio": "4:1",
-      "factor": 0.228,
-      "notes": "Replimune"
-    },
-    {
       "ticker": "RNA",
       "action": "acquisition",
       "effective_date": "2026-02-27",
       "acquirer": "Novartis",
       "deal_price": null,
       "notes": "Avidity Biosciences acquired by Novartis. Price series ends 2026-02-27. Removed from universe."
-    },
-    {
-      "ticker": "SRRK",
-      "action": "reverse_split",
-      "effective_date": "2024-10-07",
-      "ratio": "1:5",
-      "factor": 4.62,
-      "notes": "Scholar Rock"
-    },
-    {
-      "ticker": "SYRE",
-      "action": "reverse_split",
-      "effective_date": "2023-06-22",
-      "ratio": "1:4",
-      "factor": 4.3,
-      "notes": "Spyre Therapeutics"
     },
     {
       "ticker": "TECX",
@@ -258,14 +58,6 @@
       "ratio": "1:12",
       "factor": 11.5,
       "notes": "Second action (net effect ~1:1)"
-    },
-    {
-      "ticker": "VTYX",
-      "action": "forward_split",
-      "effective_date": "2023-11-07",
-      "ratio": "5:1",
-      "factor": 0.194,
-      "notes": "Ventyx Biosciences; later acquired"
     },
     {
       "ticker": "CNTA",
