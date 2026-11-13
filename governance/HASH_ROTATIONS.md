@@ -61,3 +61,22 @@ Memo: `docs/governance/2026-11-03-pdufa-calendar-refresh.md`
 - **Reason:** the curated calendar had not been edited since 2026-06-22. This adds 32 dates, each verified against its source SEC filing.
 - **Expected downstream impact:** on 2026-10-30, Top-30 overlap 29/30 (TVTX out, PVLA in) and headwind exposure 59.9% → 56.6%.
 - **Reviewer:** operator (Darren Schulz). PR open; merge pending.
+
+## 2026-11-13 — production order switched to selector-only (operator-authorized; behavior change WITHOUT a hash change)
+
+Memo: `docs/governance/2026-11-13-selector-only-production-switch.md`
+
+| Surface | Old | New |
+|---|---|---|
+| `run_screen.py --ranker-mode` default | `pairwise_minimal` | `selector_only` |
+| Candidate `model_hash` (ast-v1) | `827c35a9ed3ee6e1` | **unchanged** — the hash covers `ranker_engine.py`, `selector_engine.py`, `decision_engine.py`; the ranker dispatch is in `run_screen.py` |
+| `production_data/ranker_v2_model.json` | unchanged | unchanged (scored as a shadow only) |
+| Ruleset | `8887576e` | unchanged |
+
+- **Effective date:** first production run on the merged code; `oos_clock_start` to be recorded in `artifacts/forward_validation/CANDIDATE.json` after that run.
+- **Affected surface:** `final_score`, `actionable_rank`, `ranker_active` and every Top-30 from that run. On 2026-11-12 inputs the Top-30 overlap with the ranker order is 17/30.
+- **Reason:** the ranker's `financial_score` weight was fitted on history with market-cap look-ahead; with point-in-time market cap the selector order alone did better (+0.57 pt/period, t = 1.63, 79 periods). Checklist v2 was not run; operator decision.
+- **Expected downstream impact:** every `rankings.csv` hash differs from what the ranker would have produced; the forward-validation mandate restarts at 0/20; `ranker_shadow_comparison.json` reports `production_ranker=selector_only`, `shadow_ranker=pairwise_minimal`; the selector-only shadow ledger gains a `ranker` basket.
+- **Hash gap:** `model_hash_match` will keep passing across this change. Until the hash covers the dispatch, `CANDIDATE.json.ranker_mode` is the record of which order is the candidate.
+- **Reviewer:** operator — authorized in session 2026-11-13.
+

@@ -27,11 +27,13 @@ metadata:
 ```
 Modules 1-5 -> Decision Engine (gates, tiers, sizing)
            -> Selector Engine (B6: coinvest_score_z 100%, inst_delta_z zeroed 2026-05-04)
-           -> Ranker Engine (pairwise_minimal: 6 features, top-60 cohort, ordinal-only)
+           -> Order: selector_only since 2026-11-13 (final_score = selector_score; no ranker).
+              The pairwise_minimal ranker (top-60 cohort) is scored as a shadow only.
+              Rollback: --ranker-mode pairwise_minimal
            -> Sort by final_score -> EW Top-30 -> rankings.csv
 ```
 
-**Sort anchor:** `selector_score` (uses `final_score` = ranker_v2_score for cohort members)
+**Sort anchor:** `selector_score` (`final_score` = `selector_score` under `--ranker-mode selector_only`, the default since 2026-11-13; under `pairwise_minimal` it is ranker_v2_score for cohort members)
 All downstream consumers use `actionable_rank` (now driven by selector/ranker, not composite_rank).
 
 **Statistical QA:** `common/stats/` (6 modules), `scripts/research/checklist_v2_rerun.py`

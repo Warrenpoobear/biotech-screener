@@ -4,7 +4,9 @@ name: selector-ranker
 
 # Selector / Ranker / Construction Skill
 
-> **Deprecated 2026-11-13 (market-cap look-ahead).** Backtest figures in this file that come from regenerated historical snapshots are not evidence: historical runs read today's market cap, and `financial_score` divides cash and burn by it. With point-in-time market data the Top-30 shows +0.68 pt/period net of 50 bps (t = 1.47, 79 periods), `financial_score` has no measurable relation to next-period returns (monthly IC −0.001), and selector-only is ahead of the ranker by +0.62 pt/period (t = 1.64). Affected lines are marked below. The ranker is unchanged and the model remains frozen. Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+> **Production order is selector-only since 2026-11-13** (operator decision): `run_screen.py --ranker-mode selector_only` is the default, `final_score = selector_score`, and the pairwise ranker described below is scored as a shadow only. Rollback: `--ranker-mode pairwise_minimal`. Record: `docs/governance/2026-11-13-selector-only-production-switch.md`.
+>
+> **Deprecated 2026-11-13 (market-cap look-ahead).** Backtest figures in this file that come from regenerated historical snapshots are not evidence: historical runs read today's market cap, and `financial_score` divides cash and burn by it. With point-in-time market data the Top-30 shows +0.68 pt/period net of 50 bps (t = 1.47, 79 periods), `financial_score` has no measurable relation to next-period returns (monthly IC −0.001), and selector-only is ahead of the ranker by +0.62 pt/period (t = 1.64). Affected lines are marked below. The ranker code and model file are unchanged. Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
 
 ## Purpose
 

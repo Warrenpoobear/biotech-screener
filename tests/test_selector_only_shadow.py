@@ -188,3 +188,38 @@ def test_replay_rows_are_reported_separately(tmp_path):
 def test_summary_with_no_captures(tmp_path):
     result = sos.summarize(out_dir=tmp_path / "out", price_csv=tmp_path / "none.csv")
     assert result["status"] == "no_captures"
+
+
+# ---------------------------------------------------------------------------
+# 2026-11-13: production is selector-only; the ranker's basket is recorded as the shadow
+# ---------------------------------------------------------------------------
+
+
+def test_ranker_basket_is_cohort_by_ranker_rank_then_selector_order():
+    from tools.selector_only_shadow import build_baskets
+
+    rows = []
+    for i in range(1, 9):
+        rows.append(
+            {
+                "ticker": f"T{i}",
+                "eligible": "1",
+                "actionable_rank": str(i),  # production = selector order
+                "selector_score": str(1 - i / 10),
+                "ranker_v2_rank": str(5 - i) if i <= 4 else "",  # ranker reverses the top-4 cohort
+            }
+        )
+    baskets = build_baskets(rows, top_n=6)
+    assert baskets["production"] == ["T1", "T2", "T3", "T4", "T5", "T6"]
+    assert baskets["selector_only"] == baskets["production"]
+    assert baskets["ranker"] == ["T4", "T3", "T2", "T1", "T5", "T6"]
+
+
+def test_no_ranker_basket_when_the_snapshot_has_no_ranker_ranks():
+    from tools.selector_only_shadow import build_baskets
+
+    rows = [
+        {"ticker": f"T{i}", "eligible": "1", "actionable_rank": str(i), "selector_score": str(1 - i / 10)}
+        for i in range(1, 5)
+    ]
+    assert "ranker" not in build_baskets(rows, top_n=3)

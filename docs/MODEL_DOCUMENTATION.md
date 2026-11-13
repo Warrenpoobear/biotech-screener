@@ -4,7 +4,7 @@
 **Last updated:** 2026-11-12 (missing-field fixes, PR #614 + #636, **operator-authorized input change with a second out-of-sample clock reset**. CT.gov source refresh wired into cron, plus a new blocking `ctgov_content_freshness` gate. `production_data/trial_records.json` had been frozen since about 2026-08-07. `inst_delta_z` registry-transition guard writes blank, not 0. `oos_clock_start` = **pending: first post-merge production run (expected 2026-11-12)**. Mandate SM-20260629-001 restarts at 0/20, and every capture before the new start (2026-11-02 → 2026-11-11) no longer counts. Also documents the Sharadar price/market-cap source cutover (PR #622, first in-pipeline run expected 2026-11-12), which has **no governance memo** (see the 2026-11-12 entry). `model_hash 827c35a9ed3ee6e1` and ruleset `8887576e` are unchanged, with no hash rotation. See `docs/governance/2026-11-04-missing-fields-clock-reset.md`)
 **Prior update:** 2026-11-01 (coinvest 13F integrity fix + operator roster change; operator-authorized selector-input change with a clock reset. Q2 2026 13F rebuild, builder 1.1.0/1.2.0, registry v4.0 with a 30-manager `elite_core`, `oos_clock_start=2026-11-02` [now superseded]. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`)
 **Earlier update:** 2026-07-10 (forward-validation feed hardening, PR #489: `set -e` wrapper fix, behavioral model-hash `ast-v1`, capture freshness gate + mandate quarantine schema, price-feed fix + `price_append_health` hard gate, liveness monitor. `CANDIDATE.json` re-registered to `827c35a9`, annotation-only equivalent to `a9983a67`. **NO_MODEL_CHANGE**)
-**Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature: `coinvest_score_z` + `financial_score`; ordinal-only; does **not** read `inst_delta_z`) + EW Top-30. **FROZEN** until governance gates clear.
+**Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + **selector-only order** (`--ranker-mode selector_only`, operator decision 2026-11-13; the pairwise `minimal_v2` ranker is scored as a shadow and no longer orders the portfolio) + EW Top-30. Takes effect with the first production run on the merged code; out-of-sample clock resets. See the 2026-11-13 entry below and `docs/governance/2026-11-13-selector-only-production-switch.md`. *(Status before 2026-11-13: Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature: `coinvest_score_z` + `financial_score`; ordinal-only; does **not** read `inst_delta_z`) + EW Top-30. **FROZEN** until governance gates clear.)*
 **Coinvest input (from 2026-11-02 production run):** Q2 2026 13F (`period_of_report=2026-06-30`, file as_of 2026-10-30), 30-manager `elite_core` roster (registry v4.0) + unchanged 6-manager `conditional` tier. Forward-validation clock: the 2026-11-02 start was superseded on 2026-11-12. The new start is pending the first post-merge production run (0/20).
 Deployed ranker artifact = **capped Family C live-pilot vector**, not identical to the trained `minimal_v2`
 weights. See `production_data/ranker_v2_model.json` → `provenance` block for the deployed vs trained delta.
@@ -13,6 +13,39 @@ weights. See `production_data/ranker_v2_model.json` → `provenance` block for t
 stale selector/ranker prose with the already-active v1.14.0 configuration. The
 selector, ranker_v2 weights, eligibility rules, decision rulesets, and EW Top-30
 construction remain frozen; this document does not authorize behavior changes.
+
+---
+
+## Recent Update — 2026-11-13 (Production Order Switched to Selector-Only — Operator-Authorized Model Change)
+
+Classification: `OPERATOR_AUTHORIZED_MODEL_CHANGE`. Tier 3 code, Tier 4 decision. **Out-of-sample clock resets**; mandate SM-20260629-001 restarts at 0/20 from the first production run on the merged code.
+
+Summary:
+- `run_screen.py --ranker-mode` gains `selector_only`, now the default. `final_score = selector_score` for every eligible name; the pairwise `minimal_v2` ranker no longer reorders the top-60 cohort. Its scores are still written (`ranker_v2_score`, `ranker_v2_rank`) as a shadow record.
+- Unchanged: eligibility gates, the coinvest-only selector, ruleset `8887576e`, equal-weight Top-30, `decision_engine.py`, `selector_engine.py`, `ranker_engine.py`, `ranker_v2_pairwise.py`, `production_data/ranker_v2_model.json`.
+- Rollback: `--ranker-mode pairwise_minimal`.
+
+Why:
+- The ranker's negative `financial_score` weight was fitted on history with market-cap look-ahead (entry below).
+- On the corrected histories the selector order alone did better: +0.57 pt/period (t = 1.63) on `snapshots_pit_v5`, +0.62 (t = 1.64) on `snapshots_pit_v4`; 79 periods, Top-30, net 50 bps. Selector-only +1.53 pt/period (t = 2.94) against the current rule's +0.96 (t = 2.02) on v5.
+- `financial_score` monthly IC with point-in-time market cap: −0.013 (t = −1.3) across eligible names.
+
+Evidence standard:
+- **Checklist v2 was not run. The difference is not statistically significant.** This is an operator decision, not a promotion through the governed path.
+- The history is pseudo-PIT (survivorship-biased, in-sample for the selector settings).
+
+Effect on the ranking (2026-11-12 inputs, isolated copy):
+- New order equals `selector_score` descending for all 162 eligible names. Top-30 overlap with the ranker order 17/30.
+- Leave: ABSI, ASND, BLTE, DNLI, ERAS, KYMR, MDGL, PCVX, REPL, SLDB, TARS, TRAX, TVTX. Enter: AMLX, AURA, BCRX, CLDX, DFTX, DMRA, ELVN, EWTX, IDYA, IMCR, SGMT, TNGX, TSHA.
+- Matches the `selector_only` basket in the live shadow ledger for 2026-11-12 exactly.
+
+Governance:
+- Candidate `model_hash` stays `827c35a9ed3ee6e1`: the hash does not cover the ranker dispatch in `run_screen.py`. Logged in `governance/HASH_ROTATIONS.md` as a behavior change without a hash change; `CANDIDATE.json` carries `ranker_mode` and a `pending_clock_reset` block.
+- `oos_clock_start` is to be recorded after the first production run on the merged code.
+- Frozen status after the change: **FROZEN (BLOCKED_LEVEL_0)** applies to the new configuration.
+
+What changed:
+- `common/ranker_mode.py` (new), `run_screen.py`, `tools/selector_only_shadow.py` (records the ranker basket), tests, `artifacts/forward_validation/CANDIDATE.json`, `governance/HASH_ROTATIONS.md`, rules files, `docs/governance/2026-11-13-selector-only-production-switch.md`.
 
 ---
 
