@@ -96,7 +96,6 @@ KNOWN_CUSIP_MAPPINGS = {
     "21217B100": "CTNM",  # Contineum (9-char)
     "03940C100": "ACLX",  # Arcellx (9-char)
     "15102K100": "CELC",  # Celcuity (9-char)
-    "50157510": "KYMR",  # Kymera (9-char)
     "501575104": "KYMR",  # Kymera (9-char)
     "00370M103": "ABVX",  # Abivax (9-char)
     "670703107": "NUVL",  # Nuvalent (9-char)
@@ -180,14 +179,14 @@ KNOWN_CUSIP_MAPPINGS = {
     "464287622": "IONS",  # Ionis Pharmaceuticals
     "191098102": "KOD",  # Kodiak Sciences
     "46619B108": "JNPR",  # Juniper (placeholder)
-    "74587V107": "QTTB",  # Q32 Bio
+    "74587V107": "PBYI",  # Puma Biotechnology (13F issuer name: PUMA BIOTECHNOLOGY INC)
     "86881A200": "SUPN",  # Supernus Pharmaceuticals
     "37954A104": "GILD",  # Gilead Sciences
     "88160R101": "TSLA",  # Tesla (already have)
     "004644107": "ACHC",  # Acadia Healthcare
     "902973304": "UTHR",  # United Therapeutics
     "87612E106": "TARS",  # Tarsus Pharmaceuticals
-    "04621X108": "ASTH",  # Astellas/Astria
+    "04621X108": "AIZ",  # Assurant (13F issuer name: ASSURANT INC); not a biotech
     "29260X109": "ENTA",  # Enanta (primary)
     "92926F101": "WVE",  # Wave Life Sciences
     "92537Y105": "VERA",  # Vera Therapeutics
@@ -213,7 +212,6 @@ KNOWN_CUSIP_MAPPINGS = {
     "81533L109": "SEEL",  # Seelos Therapeutics
     "82489N103": "SIAB",  # SI-BONE
     "45338J108": "IVA",  # Inventiva
-    "74587V305": "QTTB",  # Q32 Bio (alt)
     "46266C204": "IRWD",  # Ironwood (alt)
     "06406J109": "KURA",  # Kura Oncology
     "58471A109": "MCRB",  # Seres Therapeutics
@@ -222,13 +220,11 @@ KNOWN_CUSIP_MAPPINGS = {
     "35137L105": "FOLD",  # Amicus Therapeutics
     "60770K108": "MRNA",  # Moderna (alt)
     "02154V103": "ALTM",  # Altimmune
-    "04621X108": "ATXS",  # Astria Therapeutics
     "92537N108": "VCEL",  # Vericel
     "92763M105": "VRTX",  # Vertex (alt)
     "40435L108": "HIMS",  # Hims & Hers Health
     "50189K103": "LGND",  # Ligand Pharmaceuticals
     "88688T100": "TMDX",  # TransMedics Group
-    "74587V107": "PTCT",  # PTC Therapeutics
     "893641100": "TSHA",  # Taysha Gene Therapies
     "02208R107": "ALPN",  # Alpine Immune Sciences
     # Sofinnova & additional manager CUSIPs
@@ -260,7 +256,6 @@ KNOWN_CUSIP_MAPPINGS = {
     "82488Y107": "SHEN",  # Shenandoah Tel
     "13123X508": "CALM",  # Cal-Maine Foods
     "45780R101": "INSP",  # Inspire Medical
-    "09061G101": "BIIB",  # Biogen (alt)
     "84611G104": "SPXC",  # SPX Corp
     "872589104": "TW",  # Tradeweb Markets
     "00912X302": "AIMD",  # Ainos
@@ -279,12 +274,8 @@ KNOWN_CUSIP_MAPPINGS = {
     "83422E204": "SLDB",  # Solid Biosciences
     "64125C109": "NBIX",  # Neurocrine Biosciences
     "925050106": "VRNA",  # Verona Pharma
-    "31573A105": "KYNB",  # Kyntra Bio (formerly FibroGen)
-    "74587V207": "QURE",  # uniQure (alt)
     "89214P109": "TSVT",  # 2seventy bio
-    "74587V305": "PTCT",  # PTC Therapeutics (alt2)
     "29414B104": "EOLS",  # Evolus
-    "86882H100": "SURF",  # Surface Oncology
     "53635D103": "LQDA",  # Liquidia (alt)
     "60783X104": "MLAB",  # Mesa Labs
     "03073E105": "AMRX",  # Amneal Pharmaceuticals
@@ -297,7 +288,6 @@ KNOWN_CUSIP_MAPPINGS = {
     "69007J106": "OTIC",  # Otonomy
     "74158J100": "PRGO",  # Perrigo
     "86882H209": "SURF",  # Surface Oncology (alt)
-    "04621X207": "ATXS",  # Astria (alt)
     "44107P104": "HZNP",  # Horizon Therapeutics
     "00508Y102": "ACAD",  # Acadia Pharmaceuticals
     "00287Y208": "ABBV",  # AbbVie (alt)
@@ -311,7 +301,6 @@ KNOWN_CUSIP_MAPPINGS = {
     "30233G308": "EYPT",  # EyePoint (alt)
     "004421403": "AAON",  # AAON
     "73754Y100": "POWI",  # Power Integrations
-    "74587V404": "PTCT",  # PTC (alt3)
     "57060D108": "MASI",  # Masimo (alt)
     # Additional unresolved CUSIPs from Perceptive
     "142152107": "CRIS",  # Caris Life Sciences
@@ -340,7 +329,6 @@ KNOWN_CUSIP_MAPPINGS = {
     "055477103": "BCAX",  # Bicara Therapeutics
     "82835W108": "SPRY",  # ARS Pharmaceuticals
     "37954A203": "GILD",  # Gilead (alt)
-    "460690100": "IONS",  # Ionis (alt2)
     "05377R201": "RNA",  # Avidity (alt2)
     "002824100": "ABT",  # Abbott Labs
     "00724F101": "ADBE",  # Adobe
@@ -349,7 +337,6 @@ KNOWN_CUSIP_MAPPINGS = {
     "98420N204": "XENE",  # Xenon (alt)
     "282559202": "ETNB",  # 89bio (alt)
     "46266C402": "IRWD",  # Ironwood (alt3)
-    "74587V503": "PTCT",  # PTC (alt4)
     "92243G207": "PCVX",  # Vaxcyte (alt)
     # Baker Bros holdings CUSIPs
     "07725L102": "BEONE",  # BeOne Medicines
@@ -375,14 +362,12 @@ KNOWN_CUSIP_MAPPINGS = {
     "50015M208": "KOD",  # Kodiak (alt)
     "86627T207": "SMMT",  # Summit (alt)
     # Additional elite manager biotech CUSIPs
-    "15102K100": "CELC",  # Celcuity (confirmed in universe check)
     "N5749R109": "MRUS",  # Merus (alt)
     "00973Y207": "AKRO",  # Akero (alt)
     "92556V205": "VKTX",  # Viking (alt)
     "05464T203": "AXSM",  # Axsome (alt)
     "04272N201": "AVBP",  # ArriVent (alt)
     "37045V209": "GERN",  # Geron (alt)
-    "74587V602": "PTCT",  # PTC (alt5)
     "86267D200": "SRRK",  # Scholar Rock (alt)
     # Confirmed CUSIP mappings from Baker/RA/Perceptive analysis
     "45258D105": "IMCR",  # Immunocore Holdings
@@ -457,10 +442,7 @@ KNOWN_CUSIP_MAPPINGS = {
     "82489T104": "SIGA",  # SIGA Technologies
     "871765106": "SWTX",  # SpringWorks Therapeutics
     "00773T109": "ADMA",  # ADMA Biologics
-    "92556V106": "VKTX",  # Viking Therapeutics
-    "45826H109": "INSM",  # Insmed
     "98956P102": "ZNTL",  # Zentalis
-    "29260X109": "ENTA",  # Enanta Pharmaceuticals
     "68622V106": "ORIC",  # ORIC Pharmaceuticals
     "75886F107": "REGN",  # Regeneron
     "05329W102": "AUTL",  # Autolus Therapeutics
@@ -472,7 +454,6 @@ KNOWN_CUSIP_MAPPINGS = {
     "17323P108": "CRSP",  # CRISPR Therapeutics
     "33767L109": "FATE",  # Fate Therapeutics
     "454140100": "IMTX",  # Immatics
-    "45826H109": "INSM",  # Insmed
     "49327M109": "KITE",  # Kite Pharma (acquired)
     "28106W103": "EDIT",  # Editas Medicine
     "92539P101": "VERV",  # Verve Therapeutics
@@ -492,7 +473,6 @@ KNOWN_CUSIP_MAPPINGS = {
     "02079K107": "GOOG",  # Alphabet Class C
     "02079K305": "GOOGL",  # Alphabet Class A
     "023135106": "AMZN",  # Amazon
-    "88160R101": "TSLA",  # Tesla
     "67066G104": "NVDA",  # NVIDIA
     "30303M102": "META",  # Meta
 }
