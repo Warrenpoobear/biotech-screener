@@ -75,9 +75,10 @@ class PriceData:
     adj: Dict[str, List[Tuple[str, float]]] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        for series in (self.raw, self.adj):
-            for rows in series.values():
-                rows.sort()
+        for raw_rows in self.raw.values():
+            raw_rows.sort()
+        for adj_rows in self.adj.values():
+            adj_rows.sort()
         self._raw_dates = {t: [r[0] for r in rows] for t, rows in self.raw.items()}
         self._adj_dates = {t: [r[0] for r in rows] for t, rows in self.adj.items()}
 
