@@ -16,6 +16,40 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
+## Recent Update — 2026-11-13 (Market-Cap Look-Ahead in Regenerated History; Backtest Claims Deprecated — DRAFT)
+
+Classification: `BACKTEST_CORRECTION / EVIDENCE_DEPRECATION`. Documentation only; the tooling fix is PR #659 (Tier 2). No model, ranker, selector, eligibility, sizing or production behavior changes. No clock effect.
+
+Summary:
+- Historical `run_screen.py --as-of-date` runs read today's `market_data.json`. Every regenerated snapshot set (`data/snapshots_pit_v2` and earlier) carries today's market cap on every past date. `financial_score` divides cash and burn by market cap, so on that history it tracked later market-cap growth, and the ranker weights it negatively.
+- Regenerating all 80 months with the current model and point-in-time market data (`data/snapshots_pit_v4`), Top-30 by `actionable_rank`, equal weight, 79 periods, JBIO excluded, split-adjusted prices, costs on actual turnover, XBI gross (+75.7%):
+
+| Segment | Periods | Net 50 bps cumulative | Mean period excess | t | Hit |
+|---|---:|---:|---:|---:|---:|
+| Full | 79 | +193.1% | +0.68 pt | +1.47 | 56% |
+| Historical (before 2024-10-01) | 56 | +49.9% | +0.54 pt | +0.89 | 55% |
+| Live-period convention (from 2024-10-01) | 22 | +97.8% | +1.03 pt | +1.62 | 55% |
+
+  Full period at other cost levels: net 25 bps +0.79 pt (t = +1.70), net 100 bps +0.46 pt (t = +0.99), gross +0.90 pt (t = +1.94). Maximum drawdown −44.9% (−23.7% relative to XBI) at net 50 bps. Mean one-way turnover 21%.
+- The same regeneration with today's market data gives +1.64 pt (t = +2.99). About 60% of that is look-ahead.
+- `financial_score` monthly IC across eligible names: −0.067 (t = −6.9) with today's market data, −0.001 (t = −0.1) point-in-time; inside the ranker cohort +0.021 (t = +1.1).
+- Selector-only Top-30 minus the current rule: −0.60 pt (t = −1.69) with today's market data, **+0.62 pt (t = +1.64)** point-in-time.
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Frozen status unchanged: **FROZEN (BLOCKED_LEVEL_0)**.
+- The "+2.34pp/mo net-of-cost, t=2.57" figure, the Checklist v2 bundle result, the pairwise feature audit, the K=30 sweep, the regime decomposition and the `minimal_v2` training evidence are deprecated, subject to operator sign-off on this PR. List and reasons: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+- The ranker's weights were fitted on the contaminated history. This entry does not authorize a ranker change.
+
+Impact on alpha interpretation:
+- The corrected history is pseudo-PIT: survivorship-biased, in-sample for the selector settings, and 20% of ticker-months still use today's share count. Its excess is not statistically significant.
+- The forward monitor remains the only out-of-sample evidence.
+- The earlier entry below ("+0.33 pt, t = +0.73" on `snapshots_pit_v2`) describes an older model vintage on look-ahead history and is superseded by this one.
+
+What changed:
+- `.claude/rules/research-backtest.md`, `.claude/rules/operational-state.md`, `.claude/rules/external-intel.md`, this file, and the deprecation note above.
+
+---
+
 ## Recent Update — 2026-11-13 (Selection Benchmark Script Corrected; Top-30 vs XBI Rerun on PIT-v2 Snapshots)
 
 Classification: `RESEARCH_TOOL_FIX / BACKTEST_CORRECTION`. Tier 2 research tooling. No model, ranker, selector, eligibility, sizing or production behavior changes. No clock effect.
