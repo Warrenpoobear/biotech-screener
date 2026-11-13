@@ -16,8 +16,8 @@ Since 2026-11-13 three protections are on by default:
   ctgov_state) go to <out-dir>/_side_outputs/<date>/ instead of the data dir.
 * --protect-live-state: files a historical run would otherwise rewrite in the
   checkout (data/state, the expression logs, readiness history, "latest" pointers)
-  are restored after each date, and the run refuses to start while a daily
-  production run holds its lock.
+  are restored after each date, and the run stops while a daily production run
+  is in progress.
 
 Usage:
     python scripts/research/regenerate_pit_v2_snapshots.py
@@ -56,7 +56,6 @@ PROTECTED_LIVE_STATE: tuple[str, ...] = (
     "artifacts/bioshort_watch/latest_status.json",
     "artifacts/policy_shadow/tier_weighted/history.jsonl",
 )
-PRODUCTION_LOCKS: tuple[str, ...] = ("logs/.daily_production.lock", "logs/.daily_production_py.lock")
 
 # Minimum 13F manager coverage required to consider a date PIT-stageable.
 # Below this, the cache isn't representative enough to improve over the
@@ -168,12 +167,15 @@ def _pit_13f_cache_coverage(date_str: str) -> float | None:
 
 
 def production_lock_held(root: Path | None = None) -> str | None:
-    """Name of a daily-production lock file that currently exists, else None."""
-    base = root or PROJECT_ROOT
-    for rel in PRODUCTION_LOCKS:
-        if (base / rel).exists():
-            return rel
-    return None
+    """Lock held by a daily production run in progress, else None.
+
+    The python lock file is flock-based and never removed, so its existence alone
+    says nothing; see common/production_lock.py.
+    """
+    sys.path.insert(0, str(PROJECT_ROOT))
+    from common.production_lock import production_run_active
+
+    return production_run_active(root or PROJECT_ROOT)
 
 
 def _file_digest(path: Path) -> str:
@@ -708,7 +710,7 @@ def main():
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Restore data/state, the expression logs, readiness history and 'latest' pointers after "
-        "each date, and refuse to run while a daily production lock exists (default ON).",
+        "each date, and stop while a daily production run is in progress (default ON).",
     )
     parser.add_argument(
         "--fresh-staging",
@@ -792,7 +794,7 @@ def main():
         if args.protect_live_state:
             lock = production_lock_held()
             if lock:
-                print(f"{prefix} {date_str} — STOPPED: daily production lock present ({lock}).")
+                print(f"{prefix} {date_str} — STOPPED: a daily production run is in progress ({lock}).")
                 results.append({"date": date_str, "status": "stopped_production_lock", "rankings_csv_exists": False})
                 n_err += 1
                 break

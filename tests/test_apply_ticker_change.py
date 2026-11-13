@@ -121,14 +121,32 @@ def test_unknown_old_symbol_is_refused(tmp_path):
         _plan(prod, old="NOPE")
 
 
-def test_apply_refuses_while_production_lock_exists(tmp_path, capsys):
+def test_apply_refuses_while_a_production_run_is_in_progress(tmp_path, capsys):
+    import subprocess
+    import sys
+
     prod = _make(tmp_path)
     (tmp_path / "logs").mkdir()
-    (tmp_path / "logs" / ".daily_production_py.lock").write_text("1")
+    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
+    try:
+        (tmp_path / "logs" / ".daily_production.lock").write_text(str(child.pid))
+        rc = main(["--old", "ACHV", "--new", "QUIT", "--effective-date", "2026-11-10", "--reason", REASON,
+                   "--production-dir", str(prod), "--apply"])  # fmt: skip
+    finally:
+        child.kill()
+        child.wait()
+    assert rc == 3 and "in progress" in capsys.readouterr().out
+    assert '"ACHV"' in (prod / "universe.json").read_text()
+
+
+def test_leftover_lock_file_does_not_block_apply(tmp_path, capsys):
+    prod = _make(tmp_path)
+    (tmp_path / "logs").mkdir()
+    (tmp_path / "logs" / ".daily_production_py.lock").write_text("")
     rc = main(["--old", "ACHV", "--new", "QUIT", "--effective-date", "2026-11-10", "--reason", REASON,
                "--production-dir", str(prod), "--apply"])  # fmt: skip
-    assert rc == 3 and "lock" in capsys.readouterr().out
-    assert '"ACHV"' in (prod / "universe.json").read_text()
+    assert rc == 0 and "Applied" in capsys.readouterr().out
+    assert '"QUIT"' in (prod / "universe.json").read_text()
 
 
 def test_second_run_is_refused_not_double_applied(tmp_path):
