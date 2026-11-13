@@ -16,6 +16,71 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
+## Recent Update — 2026-11-13 (Selection Benchmark Script Corrected; Top-30 vs XBI Rerun on PIT-v2 Snapshots)
+
+Classification: `RESEARCH_TOOL_FIX / BACKTEST_CORRECTION`. Tier 2 research tooling. No model, ranker, selector, eligibility, sizing or production behavior changes. No clock effect.
+
+Summary:
+- `scripts/research/build_selection_benchmark.py` summed period returns instead of compounding them, read the unadjusted `price_history.csv`, reported a 0% win rate whenever there was no constructed-shadow data, dropped any period whose snapshot date had no price row, and held unpriced names at a 0% return. All five are fixed (schema `selection_benchmark.v2`), and the report is now net of costs first with historical and live periods separated.
+- Separately fixed on 2026-11-12 (PR #655): `production_data/ipo_dates.json` had first dates truncated to November 2024, which made the script's survivorship filter hold one stock per period in 2020-21.
+- Rerun, Top-30 by `actionable_rank`, equal weight, `data/snapshots_pit_v2`, 2020-01-31 → 2026-06-26, 79 periods, JBIO excluded, split-adjusted prices, costs on actual turnover (mean 26.0% one-way per period), XBI gross:
+
+| Segment | Periods | Net 50 bps cumulative | XBI cumulative | Annualized excess | Mean period excess | t | Hit |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Full | 79 | +114.1% | +75.7% | +3.4 pt | +0.33 pt | +0.73 | 51% |
+| Historical (before 2024-10-01) | 56 | +23.2% | +11.3% | +2.3 pt | +0.24 pt | +0.41 | 52% |
+| Live-period convention (from 2024-10-01) | 22 | +73.5% | +60.7% | +6.3 pt | +0.50 pt | +0.69 | 45% |
+
+  Full period at other cost levels: net 25 bps +0.47 pt (t = +1.01), net 100 bps +0.07 pt (t = +0.16), gross +0.60 pt (t = +1.30). Maximum drawdown −55.4% (−21.3% relative to XBI) at net 50 bps.
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Research tooling and a backtest restatement.
+- Frozen status: unchanged. **FROZEN (BLOCKED_LEVEL_0)** remains in force.
+- Operator action required: decide whether the "+2.34pp/mo net-of-cost, t=2.57, 67 monthly periods" statements in `.claude/rules/research-backtest.md` (Current Operating Truths 1, Trust Buckets, Current Promotion Story 1-2) should be moved to "Deprecated". They were not edited here.
+
+Evidence:
+- `tests/test_build_selection_benchmark.py` (10 tests; all fail on `3eb05a29`).
+- Rerun command: `python3 scripts/research/build_selection_benchmark.py --pit-mode survivorship --top-n 30 --snapshot-dir data/snapshots_pit_v2`. Output `output/benchmarks/selection_only_top30_pseudo_pit_v2.json` is gitignored.
+- All 79 periods priced with 30 names; no period skipped.
+
+Impact on alpha interpretation:
+- On these snapshots the Top-30 is ahead of XBI, but the excess is **not statistically significant** at any cost level.
+- The result is pseudo-PIT, not true PIT, and carries two known biases:
+  - Survivorship: the price file holds 372 tickers and none stops trading before 2025, so names that failed or were acquired earlier are absent. This probably flatters the basket.
+  - Vintage: `snapshots_pit_v2` was generated with the pre-2026-11-01 manager roster and the financial inputs as they were before PR #586, #621 and #649. It is not the current model.
+- It is consistent with the "historical alpha collapsed" finding recorded after the PIT financial regeneration, and it does not support the earlier +2.34 pp/mo figure.
+- The forward monitor remains the only out-of-sample evidence.
+
+What changed:
+- `scripts/research/build_selection_benchmark.py`, `tests/test_build_selection_benchmark.py`, a note in `.claude/rules/research-backtest.md`.
+
+What did not change:
+- Ranker: unchanged.
+- Selector: unchanged.
+- Scoring: unchanged.
+- Eligibility: unchanged.
+- Sizing: unchanged.
+- Production wiring: unchanged. The script is research-only.
+- Trading/actionability: unchanged.
+
+Skill synchronization:
+- Skills reviewed: `.claude/rules/research-backtest.md`, `skills/validation`, `skills/ic_evaluation`.
+- Skills updated: `.claude/rules/research-backtest.md` (dated note under Canonical Benchmark Commands).
+- Skills not updated: `skills/validation`, `skills/ic_evaluation` (neither cites this script's output).
+- Reason: so future agents do not cite pre-fix output of this script, and see the restated figure next to the older claim.
+
+Open questions / next validation:
+- The disposition of the +2.34 pp/mo claim (operator).
+- A survivorship-free price history would be needed before any long-history conclusion.
+- `selection_benchmark.py`, `construction_v2_benchmark.py` and `ranker_evaluation_harness.py` were not audited for the same defects.
+
+Prior claim retracted:
+- Old claim: output of `build_selection_benchmark.py` before 2026-11-13 (for example the −57.7% cumulative excess it printed on 2026-11-12).
+- Corrected interpretation: that output combined additive returns, unadjusted prices and one-stock baskets. The figures above replace it.
+- Root cause: no test covered the script's return arithmetic or its behavior without constructed-shadow data.
+
+---
+
 ## Recent Update — 2026-11-12 (Out-of-Sample Clock Start Recorded; Path C IC-Gate Closure Re-Recorded)
 
 Classification: `GOVERNANCE_RECORD / OPERATOR_DECISION_RECORDED`. Tier 4 record. Source of truth: `docs/governance/2026-11-12-clock-start-and-path-c-re-record.md`.
