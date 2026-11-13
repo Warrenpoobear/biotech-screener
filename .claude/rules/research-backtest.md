@@ -12,6 +12,8 @@ metadata:
 
 # Research & Backtest Rules
 
+> **DEPRECATION — 2026-11-13 (DRAFT, pending operator sign-off).** Every figure in this file that was computed on a regenerated historical snapshot set (`data/snapshots_pit_v2` and earlier) carries market-cap look-ahead: historical runs read today's `market_data.json`, and `financial_score` divides cash and burn by that market cap. Affected items are marked *(Deprecated 2026-11-13)* below and listed under "Deprecated (do not cite)". With point-in-time market data the same model shows +0.68 pt/period net of 50 bps (t = 1.47, 79 periods), `financial_score` has no measurable relation to next-period returns, and selector-only is ahead of the ranker by +0.62 pt/period (t = 1.64). Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+
 ---
 
 ## Current Operating Truths
@@ -24,13 +26,13 @@ under the Spec 055 statistical bar (FM, bootstrap, FDR, LOSO).
 > "safe but less catalytic" names, and clinical is a weak/conditional feature under review.**
 > inst_delta_z zeroed in selector 2026-05-04 (ALERT two-frame confirmed; governance log filed).
 
-1. **B6 selector + pairwise_minimal ranker (ordinal-only) + EW Top-30 is production.** True PIT backtest: +2.34pp/mo net-of-cost, t=2.57, 69% hit rate, 67 monthly periods (Jun 2020 — Apr 2026).
-2. **B6 selector validated under Checklist v2.** Bootstrap: +2.42pp/mo, 95% CI [1.25%, 3.70%], P(>0)=99.99%. LOSO: ROBUST across all dimensions. Neither component survives standalone, but the bundle is real.
-3. **Selector and ranker learn different structure.** B6 selector runs coinvest_score_z at 100% weight (coinvest-only since v1.14.0; inst_delta_z zeroed 2026-05-04, ALERT: mean IC = -0.097 over 36 dates). Within top-30: inst_delta is the dominant positive discriminator (NW-t=+3.32), financial_score is a true negative penalty (NW-t=-3.41), coinvest washes out (+0.49). inst_delta_z excluded from ranker since Spec 051.
+1. **B6 selector + pairwise_minimal ranker (ordinal-only) + EW Top-30 is production.** True PIT backtest: +2.34pp/mo net-of-cost, t=2.57, 69% hit rate, 67 monthly periods (Jun 2020 — Apr 2026). *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
+2. **B6 selector validated under Checklist v2.** Bootstrap: +2.42pp/mo, 95% CI [1.25%, 3.70%], P(>0)=99.99%. LOSO: ROBUST across all dimensions. Neither component survives standalone, but the bundle is real. *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
+3. **Selector and ranker learn different structure.** B6 selector runs coinvest_score_z at 100% weight (coinvest-only since v1.14.0; inst_delta_z zeroed 2026-05-04, ALERT: mean IC = -0.097 over 36 dates). Within top-30: inst_delta is the dominant positive discriminator (NW-t=+3.32), financial_score is a true negative penalty (NW-t=-3.41), coinvest washes out (+0.49). inst_delta_z excluded from ranker since Spec 051. *(Deprecated 2026-11-13: the within-top-30 figures, including `financial_score` NW-t=-3.41, were measured on history with market-cap look-ahead. With point-in-time market data `financial_score` has a monthly IC of −0.001 across eligible names and +0.021 inside the ranker cohort.)*
 4. **Pairwise ranker is ordinal-only.** ECE=0.129 (POOR calibration). No rank-weighting, no confidence sizing. Equal-weight is the correct construction.
 5. **EW Top-30 is the correct construction.** RW-EW = -0.09pp, t=-0.95. Pairwise calibration confirms.
-6. **K=30 validated by sweep.** Net-of-cost peak at +2.34pp, stable K=25-35 plateau.
-7. **Bear/neutral alpha engine.** Bear: +3.37pp (75% hit), neutral: +6.23pp (93% hit), bull: -0.37pp (50% hit). Worst months are all bull regime.
+6. **K=30 validated by sweep.** Net-of-cost peak at +2.34pp, stable K=25-35 plateau. *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
+7. **Bear/neutral alpha engine.** Bear: +3.37pp (75% hit), neutral: +6.23pp (93% hit), bull: -0.37pp (50% hit). Worst months are all bull regime. *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
 8. **event_type_score is the only 5/5 Checklist v2 pass.** Use as overlay/diagnostic/sizer only — does NOT improve B6 bundle.
 9. **insider_exec and aact_execution downgraded.** Both 1/5 under Checklist v2. Shadow only.
 10. **Forward shadow accumulating daily** (7 arms in coinvest_shadow_tracker v2, wired into run_daily.py).
@@ -42,17 +44,23 @@ under the Spec 055 statistical bar (FM, bootstrap, FDR, LOSO).
 ## Trust Buckets
 
 ### Safe to use now (production-grade evidence)
-- **B6 selector + pairwise_minimal ranker (ordinal-only) + EW Top-30**: true PIT validated, t=2.57, 67 periods
-- **B6 bundle revalidated under Checklist v2** (2026-04-04): bootstrap CI [1.25%, 3.70%], LOSO ROBUST
 - **Pairwise ordinal-only policy**: ECE=0.129, no rank-weighting or confidence sizing
 - Selector engine (`selector_engine.py`), ranker engines (`ranker_engine.py`, `ranker_v2_pairwise.py`): 48+ tests
 - Statistical QA package (`common/stats/`): FM, bootstrap, FDR, LOSO, calibration — 36 tests
 - PIT validation audit framework, PIT financial regeneration infrastructure
-- K=30 validated by sweep (stable K=25-35 plateau)
 - Forward shadow tracker (7 arms, wired into daily cron)
 - event_type_score as overlay/diagnostic (5/5 Checklist v2 pass, but not selector weight)
 
 ### Deprecated (do not cite)
+- **Deprecated 2026-11-13 — market-cap look-ahead** (`docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`). Historical runs read today's `market_data.json`; everything below was computed on such history:
+  - "+2.34pp/mo net-of-cost, t=2.57, 69% hit, 67 monthly periods" (Spec 050 true PIT backtest)
+  - Checklist v2 bundle result: bootstrap +2.42pp/mo, CI [1.25%, 3.70%], LOSO ROBUST
+  - Pairwise feature audit: `financial_score` NW-t=-3.41, `inst_delta_z` NW-t=+3.32, coinvest +0.49
+  - K=30 sweep and the K=25-35 plateau
+  - Regime decomposition (bear +3.37pp, neutral +6.23pp, bull -0.37pp)
+  - The `minimal_v2` ranker's training evidence (its weights were fitted on the same history)
+  - Spec 093's reading of the negative `financial_score` sign as intentional stress upside
+  - Any other figure from `data/snapshots_pit_v2`, its backups and variants, or `data/snapshots_pit_gap_2026q3`
 - **All survivorship-only benchmark numbers** (+93.7pp, +110.5pp, etc.)
 - **Old optionality-anchored selector** — underwater on PIT data (-25pp cumulative)
 - **DEFAULT selector weights** (clinical 35%, catalyst 25%) — destructive as selector (-0.53pp)
@@ -65,11 +73,10 @@ under the Spec 055 statistical bar (FM, bootstrap, FDR, LOSO).
 - **Any ranker IC claim based on composite_score** (Spec 095, 2026-05-13) — measured the wrong score field, misattributed
 
 ### Current evidence hierarchy
-1. **Checklist v2 rerun (2026-04-04)**: B6 bundle bootstrap+LOSO validated — STRONGEST (for signals)
-2. **True PIT backtest (Spec 050)**: A4+ranker +2.34pp net, t=2.57 — STRONGEST (for portfolio)
-3. **Pairwise feature audit (2026-04-04)**: within-top-30 FM on ranker features — SUPPORTING
-4. **Forward shadow**: accumulating daily since 2026-04-03 — MONITORING
-5. **Old PIT benchmark (Spec 048)**: optionality selector underwater — SUPERSEDED by new selector
+1. **Forward shadow**: accumulating daily since 2026-04-03 — the only out-of-sample evidence
+2. **Point-in-time market data regeneration (2026-11-13, `data/snapshots_pit_v4`)**: Top-30 +0.68 pt/period net of 50 bps, t = 1.47 — pseudo-PIT, survivorship-biased, in-sample for the selector settings; research only
+3. **Checklist v2 rerun (2026-04-04)**, **True PIT backtest (Spec 050)**, **Pairwise feature audit (2026-04-04)** — DEPRECATED 2026-11-13 (market-cap look-ahead)
+4. **Old PIT benchmark (Spec 048)**: optionality selector underwater — SUPERSEDED by new selector
 
 ---
 
@@ -103,15 +110,15 @@ hours here unless genuinely new data or a structural model change creates a reas
 
 ## Current Promotion Story
 
-1. **Coinvest-only selector + pairwise_minimal ranker (ordinal-only) + EW Top-30 is production (v1.14.0).** B6 selector now coinvest_score_z 100% (inst_delta_z zeroed 2026-05-04, ALERT: mean_ic=-0.097 over 36 dates; reinstatement conditions in governance log). Original B6 bundle (coinvest 65% + inst_delta 35%) validated in true PIT backtest: +2.34pp/mo net-of-cost, t=2.57, 69% hit rate, 67 monthly periods.
-2. True PIT evidence: +2.34pp/mo net, t=2.57, 69% hit, beats XBI on return and risk.
-3. **B6 bundle passes Checklist v2**: bootstrap +2.42pp/mo, CI [1.25%, 3.70%], LOSO ROBUST. Bundle > parts.
+1. **Coinvest-only selector + pairwise_minimal ranker (ordinal-only) + EW Top-30 is production (v1.14.0).** B6 selector now coinvest_score_z 100% (inst_delta_z zeroed 2026-05-04, ALERT: mean_ic=-0.097 over 36 dates; reinstatement conditions in governance log). Original B6 bundle (coinvest 65% + inst_delta 35%) validated in true PIT backtest: +2.34pp/mo net-of-cost, t=2.57, 69% hit rate, 67 monthly periods. *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
+2. True PIT evidence: +2.34pp/mo net, t=2.57, 69% hit, beats XBI on return and risk. *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
+3. **B6 bundle passes Checklist v2**: bootstrap +2.42pp/mo, CI [1.25%, 3.70%], LOSO ROBUST. Bundle > parts. *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
 4. **Pairwise ordinal-only confirmed**: ECE=0.129. Do not rank-weight or confidence-size.
 5. **Within-cohort roles clear**: coinvest selects (sole institutional signal, v1.14.0), financial penalizes safe names. inst_delta_z zeroed in selector — reinstatement pending IC recovery.
 6. **event_type_score**: 5/5 Checklist v2 but overlay only — does not improve B6 bundle.
 7. **Forward shadow is the validation layer.** 7 arms accumulating daily. Evaluate after 30 trading days.
-8. **K=30 is validated** by PIT sweep (stable K=25-35 plateau, net-of-cost peak).
-9. **Regime caveat**: this is a bear/neutral alpha engine. Expect bounded underperformance in strong bull.
+8. **K=30 is validated** by PIT sweep (stable K=25-35 plateau, net-of-cost peak). *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
+9. **Regime caveat**: this is a bear/neutral alpha engine. Expect bounded underperformance in strong bull. *(Deprecated 2026-11-13: computed on history with market-cap look-ahead. See `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.)*
 10. The governance hold (Spec 048) **succeeded**: it prevented the old optionality selector from being institutionalized on contaminated data, which led to finding the better B6 selector.
 
 ---
@@ -128,7 +135,7 @@ hours here unless genuinely new data or a structural model change creates a reas
 
 ## Canonical Benchmark Commands
 
-*Note 2026-11-13:* `build_selection_benchmark.py` was corrected (schema `selection_benchmark.v2`): compounded returns, split-adjusted prices, net-of-cost first (50 bps one-way base; 25 and 100 also shown), historical and live periods reported separately. Output from before this date summed period returns, read unadjusted prices and reported a 0% win rate; do not cite it. Rerun on `data/snapshots_pit_v2` (2020-01-31 → 2026-06-26, 79 periods, Top-30, net 50 bps): +114.1% vs XBI +75.7%, mean period excess +0.33 pt, t = +0.73, hit 51%. That is consistent with "historical alpha collapsed" in `operational-state.md` and far below the +2.34 pp/mo, t = 2.57 figure cited above. `operational-state.md` records that pre-correction claims are deprecated after the PIT financial regeneration; whether the statements above move to "Deprecated" is an operator decision. See the 2026-11-13 entry in `docs/MODEL_DOCUMENTATION.md`.
+*Note 2026-11-13:* `build_selection_benchmark.py` was corrected (schema `selection_benchmark.v2`): compounded returns, split-adjusted prices, net-of-cost first (50 bps one-way base; 25 and 100 also shown), historical and live periods reported separately. Output from before this date summed period returns, read unadjusted prices and reported a 0% win rate; do not cite it. Rerun on `data/snapshots_pit_v2` (2020-01-31 → 2026-06-26, 79 periods, Top-30, net 50 bps): +114.1% vs XBI +75.7%, mean period excess +0.33 pt, t = +0.73, hit 51%. That is consistent with "historical alpha collapsed" in `operational-state.md` and far below the +2.34 pp/mo, t = 2.57 figure cited above. `operational-state.md` records that pre-correction claims are deprecated after the PIT financial regeneration; whether the statements above move to "Deprecated" is an operator decision. See the 2026-11-13 entry in `docs/MODEL_DOCUMENTATION.md`. *(Superseded later on 2026-11-13: `snapshots_pit_v2` itself carries market-cap look-ahead, so this +0.33 pt figure is not a clean reading either. See the deprecation banner at the top of this file.)*
 
 ```bash
 # Survivorship-cleaned selection benchmark (current baseline)
@@ -143,9 +150,10 @@ python3 scripts/research/ranker_evaluation_harness.py --signal inst_delta_z --pi
 # Construction v2 benchmark (all variants)
 python3 scripts/research/construction_v2_benchmark.py --pit-mode survivorship
 
-# PIT-financials snapshot regeneration (heavy lift, ~2h)
-python3 scripts/research/regenerate_pit_v2_snapshots.py
+# Snapshot regeneration (heavy lift, ~1h). NEVER in the production checkout: use an isolated copy.
+# From PR #659 it builds point-in-time market data per date by default.
+python3 scripts/research/regenerate_pit_v2_snapshots.py --stage-pit-institutional --clean-partial --out-dir data/snapshots_pit_v4
 
-# Run benchmarks on PIT-financial-corrected snapshots
-python3 scripts/research/build_selection_benchmark.py --pit-mode survivorship --top-n 20 --also-top30 --snapshot-dir data/snapshots_pit_v2
+# Run benchmarks on the point-in-time market data snapshots
+python3 scripts/research/build_selection_benchmark.py --pit-mode survivorship --top-n 30 --snapshot-dir data/snapshots_pit_v4
 ```

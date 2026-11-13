@@ -96,7 +96,7 @@ This system is maintained by an institutional SFO investment professional (CFA, 
 - **Institutional signal analysis (13F/13D/13G)** — coinvest_score_z pipeline tracking Fairmount Funds, Deep Track Capital, Logos Global Management via SEC EDGAR. PIT cache infrastructure, cohort quarantine, contamination window governance
 - **Statistical signal evaluation** — Spearman IC decomposition, Checklist v2 promotion battery (FM, bootstrap, FDR, LOSO, year stability), forward shadow monitoring, evidence hierarchy, dead-lane registry
 - **Catalyst & event-driven analysis** — 7+ event sources (ClinicalTrials.gov/AACT, SEC 8-K, FDA ADCOM, PDUFA, EMA), catalyst_decay_w, binary_quality_score, event_ev_p_hit, resolution tracking
-- **Decision engine & portfolio construction** — two-stage selector/ranker, B6 coinvest-only selector, pairwise minimal ranker, EW Top-30. Production: +2.34pp/mo net-of-cost, t=2.57
+- **Decision engine & portfolio construction** — two-stage selector/ranker, B6 coinvest-only selector, pairwise minimal ranker, EW Top-30. *(The earlier "+2.34pp/mo net-of-cost, t=2.57" figure was deprecated 2026-11-13: market-cap look-ahead in the historical snapshots.)*
 - **Biotech earnings signal classification** — SM/ACC/MR/CON/ID weekly post-mortem system with cumulative ledger
 
 ### Family Office & Institutional Modeling

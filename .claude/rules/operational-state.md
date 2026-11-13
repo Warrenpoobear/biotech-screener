@@ -8,10 +8,11 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-11-12  
+**Last updated:** 2026-11-13  
 **Update cadence:** weekly or upon governance-state change  
 **Authority:** operational status snapshot only; not architectural specification  
 **Staleness risk:** MEDIUM (reference `governance.md` for timeless process)  
+**2026-11-13 update scope:** only the new Governance Events (2026-11-13) section. Everything else keeps its own as-of date.  
 **2026-11-12 update scope:** only Architecture Freeze Status, Governance Events, and the `inst_delta_z` line under Forward Shadow & IC (corrected: the live ranker does not read it). Everything else keeps its own as-of date.  
 **2026-11-01 update scope:** only these sections were refreshed: Architecture Freeze Status, 13F Cycle Status, Governance Events, and the superseded Q1-promotion note in h20d. Sections with older dates (Forward Shadow & IC, h20d, Active Spec Status, Hermes Skills Hub) were not reviewed and keep their own as-of dates.
 
@@ -178,6 +179,16 @@ metadata:
 - Governance label: Tooling/knowledge-layer expansion only. No model, ranker, selector, sizing, or alpha-promotion change.
 
 ---
+
+## Governance Events (2026-11-13)
+
+- **Market-cap look-ahead found in every regenerated history; backtest claims deprecated (DRAFT, pending operator sign-off):**
+  - Historical `run_screen.py --as-of-date` runs read today's `market_data.json`. `financial_score` divides cash and burn by that market cap, so on regenerated history it tracked later market-cap growth.
+  - Same model, same inputs, point-in-time market data (`data/snapshots_pit_v4`, 79 periods, net 50 bps): Top-30 +0.68 pt/period, t = 1.47 (with today's market data: +1.64, t = 2.99). `financial_score` monthly IC −0.001 (was −0.067, t = −6.9). Selector-only minus current rule +0.62 pt/period, t = 1.64 (was −0.60).
+  - The `minimal_v2` ranker's weights were fitted on the contaminated history. **No model change is made or authorized by this entry.** Any change to the ranker is a governed model change with a clock reset.
+  - Tooling fix: PR #659 (`regenerate_pit_v2_snapshots.py` builds point-in-time market data and protects live state). Tier 2, no clock effect.
+  - Records: `docs/governance/2026-11-13-historical-run-market-data-lookahead.md` (PR #659) and `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+- **Heavy-Lift Jobs note above is superseded:** "PIT financial regeneration is COMPLETE" refers to `snapshots_pit_v2`, which carries the market-cap look-ahead.
 
 ## Governance Events (2026-11-12)
 
