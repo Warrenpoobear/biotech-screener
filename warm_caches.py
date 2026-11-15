@@ -824,9 +824,7 @@ def warm_biopharmawatch(as_of_date: date, data_dir: Path, cache_dir: Path) -> tu
 
     Skips silently if BPW_API_KEY is not set; never hard-fails.
     """
-    from wake_robin_data_pipeline.collectors.biopharmawatch_collector import (
-        collect_biopharmawatch_fda_events,
-    )
+    from wake_robin_data_pipeline.collectors.biopharmawatch_collector import collect_biopharmawatch_fda_events
 
     cache_dir = Path(cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)
@@ -848,9 +846,7 @@ def warm_pdufa_bio(as_of_date: date, data_dir: Path, cache_dir: Path) -> tuple[i
 
     No API key required. Short-circuits if BPW already populated cache for this date.
     """
-    from wake_robin_data_pipeline.collectors.pdufa_bio_collector import (
-        collect_pdufa_bio_events,
-    )
+    from wake_robin_data_pipeline.collectors.pdufa_bio_collector import collect_pdufa_bio_events
 
     cache_dir = Path(cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)

@@ -243,9 +243,7 @@ def collect_biopharmawatch_fda_events(
         try:
             reg_records = json.loads(reg_path.read_text(encoding="utf-8"))
             adcom_records = json.loads(adcom_path.read_text(encoding="utf-8"))
-            logger.info(
-                "BPW cache exists: fda_regulatory=%d adcom=%d", len(reg_records), len(adcom_records)
-            )
+            logger.info("BPW cache exists: fda_regulatory=%d adcom=%d", len(reg_records), len(adcom_records))
             return reg_records, adcom_records
         except (json.JSONDecodeError, OSError):
             pass  # re-fetch on corrupt cache
@@ -279,9 +277,7 @@ def collect_biopharmawatch_fda_events(
             adcom_records.append(record)
         else:
             # Dedup PDUFA records against curated pdufa_dates.json
-            if event_type == "PDUFA" and _is_pdufa_duplicate(
-                record["ticker"], record["event_date"], pdufa_dedup_set
-            ):
+            if event_type == "PDUFA" and _is_pdufa_duplicate(record["ticker"], record["event_date"], pdufa_dedup_set):
                 logger.debug(
                     "BPW PDUFA dedup: %s %s already in pdufa_dates.json — skipping",
                     record["ticker"],
@@ -307,6 +303,8 @@ def collect_biopharmawatch_fda_events(
     cache_dir.mkdir(parents=True, exist_ok=True)
     _atomic_write(reg_path, reg_records)
     _atomic_write(adcom_path, adcom_records)
-    logger.info("BPW cache written: %s (%d), %s (%d)", reg_path.name, len(reg_records), adcom_path.name, len(adcom_records))
+    logger.info(
+        "BPW cache written: %s (%d), %s (%d)", reg_path.name, len(reg_records), adcom_path.name, len(adcom_records)
+    )
 
     return reg_records, adcom_records

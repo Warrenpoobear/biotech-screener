@@ -19,10 +19,7 @@ from unittest.mock import patch
 
 import pytest
 
-from wake_robin_data_pipeline.collectors.pdufa_bio_collector import (
-    _map_record,
-    collect_pdufa_bio_events,
-)
+from wake_robin_data_pipeline.collectors.pdufa_bio_collector import _map_record, collect_pdufa_bio_events
 
 AS_OF = date(2026, 11, 12)
 
@@ -74,12 +71,14 @@ PDUFA_DATES_JSON = [
 
 def _mock_fetch(pdufa_records, adcom_records):
     """Patch _fetch_endpoint to return fixture records by endpoint path."""
+
     def side_effect(session, endpoint, params):
         if endpoint == "/pdufa":
             return pdufa_records
         if endpoint == "/adcomm":
             return adcom_records
         return []
+
     return patch(
         "wake_robin_data_pipeline.collectors.pdufa_bio_collector._fetch_endpoint",
         side_effect=side_effect,
@@ -89,6 +88,7 @@ def _mock_fetch(pdufa_records, adcom_records):
 # ---------------------------------------------------------------------------
 # Test 1: Unit — pdufa.bio record → cache record mapping
 # ---------------------------------------------------------------------------
+
 
 class TestMapRecord:
     def test_pdufa_mapping(self):
@@ -140,6 +140,7 @@ class TestMapRecord:
 # Test 2: Leakage gate
 # ---------------------------------------------------------------------------
 
+
 class TestLeakageGate:
     def test_future_updated_at_excluded(self):
         """Record with updated_at > as_of_date must be excluded."""
@@ -156,6 +157,7 @@ class TestLeakageGate:
 # ---------------------------------------------------------------------------
 # Test 3: Dedup against pdufa_dates.json
 # ---------------------------------------------------------------------------
+
 
 class TestDedup:
     def _make_fixture_files(self, tmpdir: Path):
@@ -217,6 +219,7 @@ class TestDedup:
 # ---------------------------------------------------------------------------
 # Test 4: Atomic write
 # ---------------------------------------------------------------------------
+
 
 class TestAtomicWrite:
     def test_correct_filenames_written(self):
@@ -299,13 +302,30 @@ class TestAtomicWrite:
 # Test 5: Cache-exists short-circuit (BPW already ran)
 # ---------------------------------------------------------------------------
 
+
 class TestCacheExistsShortCircuit:
     def test_returns_early_when_both_files_exist(self):
         """If fda_regulatory and adcom_calendar both exist, no fetch should occur."""
-        existing_reg = [{"ticker": "COGT", "event_type": "PDUFA", "event_date": "2026-11-30",
-                         "disclosed_at": "2026-09-15", "event_name": "existing", "tags": []}]
-        existing_adcom = [{"ticker": "EXEL", "event_type": "FDA_ADCOM", "event_date": "2026-12-04",
-                           "disclosed_at": "2026-11-01", "event_name": "existing adcom", "tags": []}]
+        existing_reg = [
+            {
+                "ticker": "COGT",
+                "event_type": "PDUFA",
+                "event_date": "2026-11-30",
+                "disclosed_at": "2026-09-15",
+                "event_name": "existing",
+                "tags": [],
+            }
+        ]
+        existing_adcom = [
+            {
+                "ticker": "EXEL",
+                "event_type": "FDA_ADCOM",
+                "event_date": "2026-12-04",
+                "disclosed_at": "2026-11-01",
+                "event_name": "existing adcom",
+                "tags": [],
+            }
+        ]
 
         with tempfile.TemporaryDirectory() as tmpdir:
             tmpdir = Path(tmpdir)
