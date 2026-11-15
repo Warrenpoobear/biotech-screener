@@ -70,3 +70,17 @@ The candidate `model_hash` (`ast-v1`) covers `ranker_engine.py`, `selector_engin
 4. **Checklist v2 on `snapshots_pit_v5`**, if the operator wants the decision backed after the fact.
 5. **Spec 094** (selector-only comparator) and **Spec 093** (`financial_score` sign) need their status updated by the operator.
 6. **Hermes skill mirrors** beyond `selector-ranker` still describe the pairwise ranker as production.
+
+## Addendum 2026-11-15 — the first run was blocked by the drift gate
+
+The 2026-11-13 daily run (16:30 ET, commit `2d234c93`) and its two retries produced a correct selector-only snapshot and then failed promotion on the blocking drift gate: top-20 overlap with the last promoted snapshot (2026-11-12, pairwise order) was 14.3% against a 30% floor. Top-60 overlap was 96.7% and rank correlation 0.95, and 19 of the top 20 match the 2026-11-12 names ranked by `selector_score`, so the drift is the order change and not a data fault. Every other gate passed or warned. This was foreseeable and was not handled in PR #665.
+
+Consequences:
+
+- **No 2026-11-13 snapshot was promoted and no forward-validation capture was taken.** A rerun on 2026-11-15 with `--skip-drift` also failed, on `hard_options_coverage`: the options source does not serve a past date (point-in-time guard). 2026-11-13 stays unpromoted and is not mandate evidence.
+- **The clock has not started.** `oos_clock_start` is to be recorded after the first promoted selector-only run, expected 2026-11-16.
+- Until one selector-only snapshot is promoted, every run is compared with 2026-11-12 and fails the same way.
+
+Fix (operator-authorized 2026-11-15): a dated override for the drift gate, `config/drift_gate_overrides.json`, read by `common/drift_override.py`. The entry `2026-11-13-selector-only-switch` applies only while the run is compared with the 2026-11-12 snapshot, only from 2026-11-16 to 2026-11-20, and only to the `top20_overlap_pct` and `mean_abs_rank_delta_top60` FAIL reasons. Top-60 overlap, rank correlation, tier and eligibility FAILs still block. A matched override turns the gate result into WARN and is written into the gate detail and `drift_report.json` (`override_applied`). It lapses by itself once a selector-only snapshot is promoted. This is gate tooling (no change to scoring, selection or order); it has no clock effect of its own.
+
+For future authorized order changes: add a dated entry to `config/drift_gate_overrides.json` in the same PR as the change.

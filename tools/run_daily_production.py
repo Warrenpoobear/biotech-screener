@@ -44,6 +44,7 @@ from dotenv import load_dotenv
 load_dotenv(REPO_ROOT / ".env")
 
 from archive_snapshot import get_git_info, sha256_file
+from common.drift_override import find_applicable_override, load_drift_overrides  # noqa: E402
 from common.types import is_retired_status  # noqa: E402  (needs REPO_ROOT on sys.path)
 
 # ---------------------------------------------------------------------------
@@ -2277,6 +2278,16 @@ def _write_drift_report_md(
         f"**Status**: {report['status']}",
         f"**Thresholds ID**: `{report['thresholds_id']}`",
         "",
+    ]
+    _ovr = report.get("override_applied")
+    if _ovr:
+        lines += [
+            f"**Operator override applied**: `{_ovr['id']}` ({_ovr['authorized_by']}). "
+            f"FAIL downgraded to WARN for: {'; '.join(report.get('fail_reasons', []))}. "
+            f"Reason: {_ovr['reason']} Memo: `{_ovr['memo']}`.",
+            "",
+        ]
+    lines += [
         "## Metrics",
         "",
         "| Metric | Value | Threshold | Status |",
@@ -2372,12 +2383,17 @@ def check_drift_monitoring(
     snapshot_dir: Path,
     as_of_date: str,
     thresholds: DriftThresholds,
+    overrides_path: Optional[Path] = None,
 ) -> GateResult:
     """Compare current snapshot vs most recent prior.
 
     WARN thresholds flag operational concerns. FAIL thresholds block
     snapshot promotion when extreme drift is detected (likely a data
     feed failure or pipeline bug).
+
+    A dated operator override (config/drift_gate_overrides.json, see
+    common/drift_override.py) downgrades FAIL to WARN when it is pinned to
+    this prior snapshot, covers this date and names every failing metric.
 
     Writes drift_report.json + drift_report.md as sidecar artifacts.
     """
@@ -2476,9 +2492,11 @@ def check_drift_monitoring(
             f"warn_near_miss_share_pct: {metrics['near_miss_share_pct']:.1f}% of top-30 within 25bps of K=30 cutoff > {thresholds.warn_near_miss_share_pct}%"
         )
 
-    if fail_reasons:
+    override = find_applicable_override(load_drift_overrides(overrides_path), as_of_date, prior.name, fail_reasons)
+
+    if fail_reasons and override is None:
         status = "FAIL"
-    elif warn_reasons:
+    elif fail_reasons or warn_reasons:
         status = "WARN"
     else:
         status = "PASS"
@@ -2494,6 +2512,7 @@ def check_drift_monitoring(
         "fail_reasons": fail_reasons,
         "warn_reasons": warn_reasons,
         "status": status,
+        "override_applied": override.to_json() if override is not None else None,
     }
 
     report_json_path = staging_date_dir / "drift_report.json"
@@ -2504,7 +2523,12 @@ def check_drift_monitoring(
     _write_drift_report_md(report, report_md_path)
 
     detail = f"vs {prior.name}: "
-    if fail_reasons:
+    if fail_reasons and override is not None:
+        detail += (
+            f"OPERATOR OVERRIDE {override.id} ({override.authorized_by}; {override.memo}) — "
+            "not blocked: " + "; ".join(fail_reasons)
+        )
+    elif fail_reasons:
         detail += "BLOCKED — " + "; ".join(fail_reasons)
     elif warn_reasons:
         detail += "; ".join(warn_reasons)
