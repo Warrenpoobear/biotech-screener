@@ -257,6 +257,36 @@ def mandate_clock_epoch(candidate: dict) -> str | None:
     return candidate.get("oos_clock_start") or None
 
 
+def snapshot_ranker_mode(snap_dir: Path) -> str | None:
+    """Production order mode the snapshot was built with (``metadata.json``), if recorded."""
+    path = snap_dir / "metadata.json"
+    if not path.exists():
+        return None
+    try:
+        value = json.loads(path.read_text()).get("ranker_mode")
+    except (json.JSONDecodeError, OSError):
+        return None
+    return value if isinstance(value, str) and value else None
+
+
+def check_ranker_mode(candidate: dict | None, snap_dir: Path) -> tuple[bool, str]:
+    """Does the snapshot's order mode match the one pinned in CANDIDATE.json?
+
+    ``model_hash`` covers the engine files but not the ``--ranker-mode`` dispatch in
+    ``run_screen.py``, so a switch between ``selector_only`` and ``pairwise_minimal``
+    leaves the hash unchanged while it changes the Top-30. A candidate that pins
+    ``ranker_mode`` therefore also requires the snapshot to record the same mode.
+    A candidate without the field (registered before 2026-11-13) pins nothing.
+    """
+    pinned = (candidate or {}).get("ranker_mode")
+    if not pinned:
+        return True, "candidate does not pin ranker_mode"
+    actual = snapshot_ranker_mode(snap_dir)
+    if actual is None:
+        return False, f"candidate pins ranker_mode={pinned} but the snapshot records none (metadata.json)"
+    return actual == pinned, f"snapshot={actual} candidate={pinned}"
+
+
 def capture_is_eligible_for_mandate(capture: dict, fill: dict | None, clock_epoch: str | None = None) -> bool:
     """Authoritative eligibility rule for SM-20260629-001.
 
@@ -266,6 +296,9 @@ def capture_is_eligible_for_mandate(capture: dict, fill: dict | None, clock_epoc
       * ``capture_mode == "LIVE"``      — not a replay/backfill
       * ``quality_status == "PASS"``     — no hard DQ failure
       * ``model_hash_match`` is True      — the frozen candidate, not drift
+      * ``ranker_mode_match`` is not False — the candidate's order mode (see
+        :func:`check_ranker_mode`); captures written before the field existed
+        carry no value and are not excluded by it
       * ``benchmark_available`` is True    — XBI present for excess-vs-benchmark
       * ``forward_return_realized(fill)``  — the 5d window has been observed
       * ``date >= clock_epoch``           — after any authorized clock reset
@@ -293,6 +326,7 @@ def capture_is_live_and_clean(capture: dict) -> bool:
         capture.get("capture_mode") == "LIVE"
         and capture.get("quality_status") == "PASS"
         and bool(capture.get("model_hash_match"))
+        and capture.get("ranker_mode_match") is not False
         and bool(capture.get("benchmark_available"))
     )
 
@@ -506,6 +540,10 @@ def run_dq_checks(
         checks.append(
             chk("model_hash_match", False, "CANDIDATE.json not found — run with --register-candidate first", hard=True)
         )
+
+    # 7b. Order mode matches candidate (the hash does not cover the ranker dispatch)
+    mode_ok, mode_detail = check_ranker_mode(candidate, snap_dir)
+    checks.append(chk("ranker_mode_match", mode_ok, mode_detail, hard=True))
 
     # 8. Snapshot freshness
     from datetime import date as ddate
@@ -775,6 +813,7 @@ def main() -> int:
         return next((c["pass"] for c in dq_checks if c["check"] == name), False)
 
     model_hash_match = _check_pass("model_hash_match")
+    ranker_mode_match = _check_pass("ranker_mode_match")
     benchmark_available = _check_pass("xbi_price_available")
 
     # --- Capture mode (LIVE only for a fresh, same-invocation production run) ---
@@ -788,7 +827,9 @@ def main() -> int:
 
     # Capture-time eligibility (the mandate counter additionally requires the 5d
     # forward return to be realized — see capture_is_eligible_for_mandate()).
-    eligible_at_capture = capture_mode == "LIVE" and quality == "PASS" and model_hash_match and benchmark_available
+    eligible_at_capture = (
+        capture_mode == "LIVE" and quality == "PASS" and model_hash_match and ranker_mode_match and benchmark_available
+    )
 
     # --- Prices ---
     effective_price_date = nearest_price_date_before(date)
@@ -812,6 +853,9 @@ def main() -> int:
         "candidate_model_hash": candidate.get("model_hash") if candidate else None,
         "quality_status": quality,
         "model_hash_match": model_hash_match,
+        "ranker_mode": snapshot_ranker_mode(snap_dir),
+        "candidate_ranker_mode": candidate.get("ranker_mode") if candidate else None,
+        "ranker_mode_match": ranker_mode_match,
         "benchmark_available": benchmark_available,
         "eligible_for_mandate": eligible_at_capture,
         # --- Existing fields ---

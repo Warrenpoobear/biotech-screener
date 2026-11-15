@@ -8,10 +8,11 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-11-13  
+**Last updated:** 2026-11-15  
 **Update cadence:** weekly or upon governance-state change  
 **Authority:** operational status snapshot only; not architectural specification  
 **Staleness risk:** MEDIUM (reference `governance.md` for timeless process)  
+**2026-11-15 update scope:** only the new Governance Events (2026-11-15) section.  
 **2026-11-13 update scope:** only the new Governance Events (2026-11-13) section. Everything else keeps its own as-of date.  
 **2026-11-12 update scope:** only Architecture Freeze Status, Governance Events, and the `inst_delta_z` line under Forward Shadow & IC (corrected: the live ranker does not read it). Everything else keeps its own as-of date.  
 **2026-11-01 update scope:** only these sections were refreshed: Architecture Freeze Status, 13F Cycle Status, Governance Events, and the superseded Q1-promotion note in h20d. Sections with older dates (Forward Shadow & IC, h20d, Active Spec Status, Hermes Skills Hub) were not reviewed and keep their own as-of dates.
@@ -179,6 +180,14 @@ metadata:
 - Governance label: Tooling/knowledge-layer expansion only. No model, ranker, selector, sizing, or alpha-promotion change.
 
 ---
+
+## Governance Events (2026-11-15)
+
+- **Selector-only clock has not started.** The 2026-11-13 runs failed promotion on the drift gate and no capture was taken. PR #666 added a dated drift override (`config/drift_gate_overrides.json`, valid 2026-11-16 to 2026-11-20 against the 2026-11-12 snapshot). `oos_clock_start` is to be recorded after the first promoted selector-only run, expected 2026-11-16.
+- **Recorded before the clock starts** (`docs/governance/2026-11-15-pre-clock-decisions.md`):
+  - A routine quarterly 13F refresh (same roster, same builder, same code) is **not** a clock reset. Q3 2026 filings are due 2026-11-16; `coinvest_signals.json` is still on Q2 holdings.
+  - The forward-validation capture now checks the snapshot's `ranker_mode` against `CANDIDATE.json` (hard check `ranker_mode_match`). No hash rotation.
+  - **Proposals awaiting operator numbers, not in force:** wider hard-exit thresholds for the agentic account (Rule 4), and a fail rule and a selector-only rollback rule for the forward test.
 
 ## Governance Events (2026-11-13)
 

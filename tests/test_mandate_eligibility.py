@@ -88,3 +88,20 @@ def test_forward_return_realized_helper():
     assert forward_return_realized({"xs_5d": None}) is False
     assert forward_return_realized({}) is False
     assert forward_return_realized(None) is False
+
+
+# --- Order mode is part of the candidate identity (2026-11-15) -----------------
+
+
+def test_ranker_mode_mismatch_not_eligible():
+    assert capture_is_eligible_for_mandate(_capture(ranker_mode_match=False), GOOD_FILL) is False
+
+
+def test_ranker_mode_match_eligible():
+    assert capture_is_eligible_for_mandate(_capture(ranker_mode_match=True), GOOD_FILL) is True
+
+
+def test_capture_without_ranker_mode_field_keeps_prior_behaviour():
+    # Captures written before the field existed carry no value; the field alone must not exclude them.
+    assert "ranker_mode_match" not in _capture()
+    assert capture_is_eligible_for_mandate(_capture(), GOOD_FILL) is True
