@@ -178,3 +178,80 @@ class TestOverrideFile:
         assert find_applicable_override(entries, "2026-11-16", "2026-11-12", friday) is not None
         assert find_applicable_override(entries, "2026-11-17", "2026-11-16", friday) is None
         assert find_applicable_override(entries, "2026-11-23", "2026-11-12", friday) is None
+
+
+# --- Turnover gate: same dated override, and "not measured" is a warning ----------
+
+from run_daily_production import check_turnover  # noqa: E402
+
+TURNOVER_ENTRY = {**ENTRY, "metrics": ["top20_overlap_pct", "name_turnover_pct"]}
+
+
+def _write_delta(snap: Path, turnover: float | None, prior: str | None = "2026-11-12", suppressed: bool = False):
+    snap.mkdir(parents=True, exist_ok=True)
+    lines = ["PHASE-2 RUN DELTA REPORT", f"Prior:     {prior} (ruleset 8887576e)" if prior else "Prior:     (none)"]
+    if suppressed:
+        lines.append("*** CHURN COMPARISONS: SUPPRESSED ***")
+    lines.append("1. PORTFOLIO TURNOVER")
+    if turnover is None:
+        lines.append("  Portfolio: 30 names (no prior for comparison)")
+    else:
+        lines.append(f"  Name turnover: {turnover}%")
+    (snap / "phase2_run_delta_report.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return snap
+
+
+class TestTurnoverGateOverride:
+    def test_high_turnover_blocks_without_override(self, tmp_path):
+        snap = _write_delta(tmp_path / "s", 43.3)
+        overrides = _write_overrides(tmp_path / "o.json", [])
+        gate = check_turnover(snap, 40.0, "2026-11-17", overrides_path=overrides)
+        assert gate.status == "FAIL"
+
+    def test_override_downgrades_to_warn(self, tmp_path):
+        snap = _write_delta(tmp_path / "s", 43.3)
+        overrides = _write_overrides(tmp_path / "o.json", [TURNOVER_ENTRY])
+        gate = check_turnover(snap, 40.0, "2026-11-17", overrides_path=overrides)
+        assert gate.status == "WARN"
+        assert "OPERATOR OVERRIDE test-order-switch" in gate.detail
+        assert gate.value == 43.3
+
+    def test_override_needs_the_turnover_metric(self, tmp_path):
+        snap = _write_delta(tmp_path / "s", 43.3)
+        overrides = _write_overrides(tmp_path / "o.json", [ENTRY])  # drift metrics only
+        assert check_turnover(snap, 40.0, "2026-11-17", overrides_path=overrides).status == "FAIL"
+
+    def test_override_lapses_with_a_new_baseline_or_outside_the_window(self, tmp_path):
+        overrides = _write_overrides(tmp_path / "o.json", [TURNOVER_ENTRY])
+        new_base = _write_delta(tmp_path / "a", 43.3, prior="2026-11-17")
+        assert check_turnover(new_base, 40.0, "2026-11-18", overrides_path=overrides).status == "FAIL"
+        late = _write_delta(tmp_path / "b", 43.3)
+        assert check_turnover(late, 40.0, "2026-11-23", overrides_path=overrides).status == "FAIL"
+
+    def test_without_as_of_date_nothing_is_overridden(self, tmp_path):
+        snap = _write_delta(tmp_path / "s", 43.3)
+        overrides = _write_overrides(tmp_path / "o.json", [TURNOVER_ENTRY])
+        assert check_turnover(snap, 40.0, overrides_path=overrides).status == "FAIL"
+
+    def test_normal_turnover_passes(self, tmp_path):
+        snap = _write_delta(tmp_path / "s", 10.0)
+        gate = check_turnover(snap, 40.0, "2026-11-17")
+        assert gate.status == "PASS" and gate.value == 10.0
+
+    def test_unmeasured_turnover_is_a_warning_not_a_pass(self, tmp_path):
+        suppressed = _write_delta(tmp_path / "a", None, prior=None, suppressed=True)
+        gate = check_turnover(suppressed, 40.0, "2026-11-16")
+        assert gate.status == "WARN"
+        assert "NOT measured" in gate.detail and "suppressed" in gate.detail
+        no_prior = _write_delta(tmp_path / "b", None, prior=None)
+        assert check_turnover(no_prior, 40.0, "2026-11-16").status == "WARN"
+
+    def test_missing_report_still_passes(self, tmp_path):
+        (tmp_path / "s").mkdir()
+        assert check_turnover(tmp_path / "s", 40.0, "2026-11-16").status == "PASS"
+
+    def test_committed_entry_covers_turnover_against_2026_11_12(self):
+        entries = load_drift_overrides()
+        reason = ["FAIL name_turnover_pct: 43.3% > 40.0%"]
+        assert find_applicable_override(entries, "2026-11-17", "2026-11-12", reason) is not None
+        assert find_applicable_override(entries, "2026-11-18", "2026-11-17", reason) is None

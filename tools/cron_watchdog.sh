@@ -81,6 +81,34 @@ if [ "$PROD_RAN" = false ]; then
     fi
 fi
 
+# A run that finished and was refused promotion by a gate is not a missed run.
+# Re-running it gives the same verdict unless the failure was transient, and
+# each attempt costs a full data refresh plus the pipeline. On 2026-11-13 the
+# drift gate failed three times in a row this way. Allow one retry per day
+# (WATCHDOG_MAX_GATE_FAILS total attempts, default 2), then stop and notify once.
+WATCHDOG_MAX_GATE_FAILS="${WATCHDOG_MAX_GATE_FAILS:-2}"
+if [ "$PROD_RAN" = false ]; then
+    DAILY_LOG="$REPO/logs/daily_production_${TODAY}.log"
+    GATE_FAILS=0
+    if [ -f "$DAILY_LOG" ]; then
+        GATE_FAILS=$(grep -ac "RESULT: FAIL — snapshot NOT promoted" "$DAILY_LOG" 2>/dev/null || true)
+        GATE_FAILS="${GATE_FAILS:-0}"
+    fi
+    if [ "$GATE_FAILS" -ge "$WATCHDOG_MAX_GATE_FAILS" ]; then
+        GATE_MARKER="$REPO/logs/.watchdog_gate_fail_${TODAY}"
+        if [ ! -f "$GATE_MARKER" ]; then
+            LAST_FAIL=$(grep -a "\[FAIL\]" "$DAILY_LOG" | tail -1 | sed 's/^.*\[FAIL\] //' | cut -c1-200)
+            log "GATE_FAIL: production for $TODAY ran ${GATE_FAILS}x and was refused promotion each time (${LAST_FAIL:-see $DAILY_LOG}) — not retrying; operator action needed"
+            $PYTHON "$REPO/tools/notify_cron_missed.py" \
+                --date "$TODAY" \
+                --reason "gate_fail_not_promoted" >> "$LOG" 2>&1 \
+                || log "notify_cron_missed failed (exit $?)"
+            : > "$GATE_MARKER"
+        fi
+        PROD_RAN=gatefail
+    fi
+fi
+
 if [ "$PROD_RAN" = false ]; then
     log "MISSED: No production run for $TODAY — triggering manual recovery"
 
@@ -102,7 +130,7 @@ if [ "$PROD_RAN" = false ]; then
     log "Running daily_production..."
     bash "$REPO/tools/cron_daily_production.sh" >> "$CRON_LOG" 2>&1
     log "daily_production done (exit $?)"
-elif [ "$PROD_RAN" = "skip" ] || [ "$PROD_RAN" = "notdue" ]; then
+elif [ "$PROD_RAN" = "skip" ] || [ "$PROD_RAN" = "notdue" ] || [ "$PROD_RAN" = "gatefail" ]; then
     : # already logged above
 else
     log "Production already ran for $TODAY — skipping production recovery"

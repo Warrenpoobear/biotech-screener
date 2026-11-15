@@ -1,13 +1,17 @@
 {
-  "_doc": "Operator-recorded, dated overrides for the blocking drift gate (drift_monitoring). Read by common/drift_override.py. An entry applies only when the run is compared against `prior_date`, the run date is inside valid_from..valid_through (at most 7 days), and every FAIL reason is one of `metrics`. A matched override downgrades FAIL to WARN and is recorded in drift_report.json. Malformed or over-broad entries are ignored. Remove an entry once it has lapsed.",
+  "_doc": "Operator-recorded, dated overrides for the blocking drift gate (drift_monitoring) and the turnover gate (metric name_turnover_pct). Read by common/drift_override.py. An entry applies only when the run is compared against `prior_date`, the run date is inside valid_from..valid_through (at most 7 days), and every FAIL reason is one of `metrics`. A matched override downgrades FAIL to WARN and is recorded in drift_report.json. Malformed or over-broad entries are ignored. Remove an entry once it has lapsed.",
   "overrides": [
     {
       "id": "2026-11-13-selector-only-switch",
       "prior_date": "2026-11-12",
       "valid_from": "2026-11-16",
       "valid_through": "2026-11-20",
-      "metrics": ["top20_overlap_pct", "mean_abs_rank_delta_top60"],
-      "reason": "Production order switched from the pairwise ranker to selector-only (PR #665). The last promoted snapshot (2026-11-12) is in the old order, so the first selector-only run fails top-20 overlap by design: 14.3% on 2026-11-13 against a 30% floor, with top-60 overlap 96.7% and rank correlation 0.95. The entry lapses when the first selector-only snapshot is promoted.",
+      "metrics": [
+        "top20_overlap_pct",
+        "mean_abs_rank_delta_top60",
+        "name_turnover_pct"
+      ],
+      "reason": "Production order switched from the pairwise ranker to selector-only (PR #665). The last promoted snapshot (2026-11-12) is in the old order, so the first selector-only run fails top-20 overlap by design: 14.3% on 2026-11-13 against a 30% floor, with top-60 overlap 96.7% and rank correlation 0.95. The entry lapses when the first selector-only snapshot is promoted. The turnover gate is covered for the same reason: its baseline is the newest earlier snapshot that is not cache-degraded, which stays 2026-11-12 until a clean selector-only snapshot is promoted, and 13 of 30 names differ (43.3% against a 40% limit).",
       "authorized_by": "operator, 2026-11-15",
       "memo": "docs/governance/2026-11-13-selector-only-production-switch.md"
     }

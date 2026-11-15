@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 from copy import deepcopy
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -182,6 +183,50 @@ def refresh_universe(
     return refreshed, report
 
 
+def status_changes(before: list[dict[str, Any]], after: list[dict[str, Any]]) -> list[dict[str, str]]:
+    """Tickers whose ``status`` differs between two universe lists, in ticker order."""
+    old = {_ticker(row): str(row.get("status", "active") or "active") for row in before if _ticker(row)}
+    changes = []
+    for row in after:
+        ticker = _ticker(row)
+        if not ticker or ticker not in old:
+            continue
+        new_status = str(row.get("status", "active") or "active")
+        if new_status != old[ticker]:
+            changes.append(
+                {
+                    "ticker": ticker,
+                    "prior_status": old[ticker],
+                    "new_status": new_status,
+                    "status_reason": str(row.get("status_reason") or ""),
+                }
+            )
+    return sorted(changes, key=lambda change: change["ticker"])
+
+
+def audit_lines(changes: list[dict[str, str]], as_of_date: str, operator: str, timestamp: str) -> list[str]:
+    """One ``universe_audit_log.jsonl`` line per status change (same shape as apply_ticker_change.py)."""
+    lines = []
+    for change in changes:
+        reason = f"coverage refresh as of {as_of_date}"
+        if change["status_reason"]:
+            reason += f": {change['status_reason']}"
+        lines.append(
+            json.dumps(
+                {
+                    "timestamp": timestamp,
+                    "action": "coverage_refresh",
+                    "ticker": change["ticker"],
+                    "prior_status": change["prior_status"],
+                    "new_status": change["new_status"],
+                    "reason": reason,
+                    "operator": operator,
+                }
+            )
+        )
+    return lines
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--as-of-date", required=True)
@@ -194,6 +239,13 @@ def main() -> int:
     )
     parser.add_argument("--apply", action="store_true", help="Write refreshed universe.json. Defaults to dry-run.")
     parser.add_argument("--report-path", type=Path, default=None, help="Optional path for refresh report JSON.")
+    parser.add_argument(
+        "--audit-log-path",
+        type=Path,
+        default=None,
+        help="Audit log appended on --apply (default: universe_audit_log.jsonl beside the universe file).",
+    )
+    parser.add_argument("--operator", default="operator", help="Name recorded in the audit log.")
     args = parser.parse_args()
 
     universe = json.loads(args.universe_path.read_text(encoding="utf-8"))
@@ -205,9 +257,20 @@ def main() -> int:
         finalize_collection=args.finalize_collection,
     )
 
+    changes = status_changes(universe, refreshed)
+    report["status_changes"] = changes
     report["dry_run"] = not args.apply
     if args.apply:
         args.universe_path.write_text(json.dumps(refreshed, indent=2) + "\n", encoding="utf-8")
+        if changes:
+            audit_path = args.audit_log_path or args.universe_path.with_name("universe_audit_log.jsonl")
+            stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            existing = audit_path.read_text(encoding="utf-8") if audit_path.exists() else ""
+            if existing and not existing.endswith("\n"):
+                existing += "\n"
+            new_lines = audit_lines(changes, args.as_of_date, args.operator, stamp)
+            audit_path.write_text(existing + "\n".join(new_lines) + "\n", encoding="utf-8")
+            report["audit_log_entries"] = len(new_lines)
     if args.report_path:
         args.report_path.parent.mkdir(parents=True, exist_ok=True)
         args.report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
