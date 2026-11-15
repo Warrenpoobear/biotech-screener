@@ -70,9 +70,11 @@ def _is_pdufa_duplicate(ticker: str, event_date: str, dedup_set: set, window_day
 def _get_session():
     try:
         from common.robustness import create_resilient_session
+
         return create_resilient_session()
     except ImportError:
         import requests
+
         return requests.Session()
 
 
@@ -239,7 +241,8 @@ def collect_pdufa_bio_events(
         if _is_pdufa_duplicate(record["ticker"], record["event_date"], pdufa_dedup_set):
             logger.debug(
                 "pdufa.bio PDUFA dedup: %s %s already in pdufa_dates.json",
-                record["ticker"], record["event_date"],
+                record["ticker"],
+                record["event_date"],
             )
             skipped += 1
             continue
@@ -258,7 +261,9 @@ def collect_pdufa_bio_events(
 
     logger.info(
         "pdufa.bio mapped: fda_regulatory=%d adcom=%d skipped=%d",
-        len(reg_records), len(adcom_records), skipped,
+        len(reg_records),
+        len(adcom_records),
+        skipped,
     )
 
     cache_dir.mkdir(parents=True, exist_ok=True)
@@ -266,7 +271,10 @@ def collect_pdufa_bio_events(
     _atomic_write(adcom_path, adcom_records)
     logger.info(
         "pdufa.bio cache written: %s (%d), %s (%d)",
-        reg_path.name, len(reg_records), adcom_path.name, len(adcom_records),
+        reg_path.name,
+        len(reg_records),
+        adcom_path.name,
+        len(adcom_records),
     )
 
     return reg_records, adcom_records

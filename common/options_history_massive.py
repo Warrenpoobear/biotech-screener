@@ -98,11 +98,14 @@ def _get_rest_client():
     """Lazy-init the Massive REST client."""
     global _rest_client
     if _rest_client is None:
-        from massive import RESTClient
-
+        # Check the configuration before importing the optional `massive` package: with
+        # Massive disabled (the default since 2026-11-11) the package may not be installed,
+        # and the caller should get the configuration error, not an import error.
         cfg = _get_config()
         if not cfg["api_key"]:
             raise EnvironmentError("MASSIVE_API_KEY is not set")
+        from massive import RESTClient
+
         _rest_client = RESTClient(api_key=cfg["api_key"])
     return _rest_client
 

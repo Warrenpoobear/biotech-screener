@@ -224,7 +224,7 @@ def extract_bundle(tgz_path: Path, workdir: Path) -> Path:
     Returns path to the extracted replay_bundle_v1/ directory.
     """
     with tarfile.open(str(tgz_path), "r:gz") as tar:
-        tar.extractall(path=str(workdir))
+        tar.extractall(path=str(workdir), filter="data")
 
     bundle_dir = workdir / "replay_bundle_v1"
     if not bundle_dir.is_dir():

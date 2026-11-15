@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -92,6 +93,11 @@ def _line_matches(line: str, job: dict[str, Any]) -> bool:
 def read_active_crontab_lines() -> tuple[str, list[str]]:
     """Return (availability, active_lines). availability: OPERATOR_HOST | UNAVAILABLE."""
     if shutil.which("crontab") is None:
+        return "UNAVAILABLE", []
+    # A CI runner has the crontab binary but is never the operator host. Without this it
+    # reports "no crontab for runner" as every fleet job missing. On the operator host an
+    # empty or missing crontab still counts as a failure.
+    if os.environ.get("GITHUB_ACTIONS") == "true" or os.environ.get("CI") == "true":
         return "UNAVAILABLE", []
     try:
         proc = subprocess.run(

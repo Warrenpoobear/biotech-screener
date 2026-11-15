@@ -85,6 +85,7 @@ PDUFA_DATES_JSON = [
 # Test 1: Unit — BPW record → cache record mapping
 # ---------------------------------------------------------------------------
 
+
 class TestMapBpwRecord:
     def test_pdufa_mapping(self):
         record = _map_bpw_record(PDUFA_RAW, AS_OF)
@@ -134,6 +135,7 @@ class TestMapBpwRecord:
 # Test 2: Leakage gate
 # ---------------------------------------------------------------------------
 
+
 class TestLeakageGate:
     def test_future_disclosed_at_excluded(self):
         """Record with announcedOn > as_of_date must be excluded."""
@@ -151,6 +153,7 @@ class TestLeakageGate:
 # ---------------------------------------------------------------------------
 # Test 3: Dedup against pdufa_dates.json
 # ---------------------------------------------------------------------------
+
 
 class TestDedup:
     def _make_fixture_files(self, tmpdir: Path):
@@ -176,7 +179,7 @@ class TestDedup:
                     as_of_date=AS_OF,
                     cache_dir=cache_dir,
                     pdufa_dates_path=pdufa_path,
-                    api_key="test-key",
+                    api_key="test-key",  # pragma: allowlist secret
                 )
 
         # COGT PDUFA should be deduped out
@@ -194,7 +197,7 @@ class TestDedup:
                     as_of_date=AS_OF,
                     cache_dir=cache_dir,
                     pdufa_dates_path=pdufa_path,
-                    api_key="test-key",
+                    api_key="test-key",  # pragma: allowlist secret
                 )
 
         assert any(r["ticker"] == "BBIO" for r in reg)
@@ -212,7 +215,7 @@ class TestDedup:
                     as_of_date=AS_OF,
                     cache_dir=cache_dir,
                     pdufa_dates_path=pdufa_path,
-                    api_key="test-key",
+                    api_key="test-key",  # pragma: allowlist secret
                 )
 
         # ADCOM goes to adcom_records, not reg_records, and is never deduped
@@ -222,6 +225,7 @@ class TestDedup:
 # ---------------------------------------------------------------------------
 # Test 4: Atomic write — correct filenames, valid JSON, deterministic sort
 # ---------------------------------------------------------------------------
+
 
 class TestAtomicWrite:
     def _mock_fetch(self, records):
@@ -242,7 +246,7 @@ class TestAtomicWrite:
                     as_of_date=AS_OF,
                     cache_dir=cache_dir,
                     pdufa_dates_path=pdufa_path,
-                    api_key="test-key",
+                    api_key="test-key",  # pragma: allowlist secret
                 )
 
             reg_path = cache_dir / f"fda_regulatory_{AS_OF.isoformat()}.json"
@@ -262,7 +266,7 @@ class TestAtomicWrite:
                     as_of_date=AS_OF,
                     cache_dir=cache_dir,
                     pdufa_dates_path=pdufa_path,
-                    api_key="test-key",
+                    api_key="test-key",  # pragma: allowlist secret
                 )
 
             reg_path = cache_dir / f"fda_regulatory_{AS_OF.isoformat()}.json"
@@ -289,7 +293,7 @@ class TestAtomicWrite:
                     as_of_date=AS_OF,
                     cache_dir=cache_dir,
                     pdufa_dates_path=pdufa_path,
-                    api_key="test-key",
+                    api_key="test-key",  # pragma: allowlist secret
                 )
 
         dates = [r["event_date"] for r in reg1]
@@ -307,7 +311,7 @@ class TestAtomicWrite:
                     as_of_date=AS_OF,
                     cache_dir=cache_dir,
                     pdufa_dates_path=pdufa_path,
-                    api_key="test-key",
+                    api_key="test-key",  # pragma: allowlist secret
                 )
 
         tmp_files = list(cache_dir.glob("*.tmp"))
@@ -317,6 +321,7 @@ class TestAtomicWrite:
 # ---------------------------------------------------------------------------
 # Test 5: Fallback — BPW_API_KEY absent → no write, no exception
 # ---------------------------------------------------------------------------
+
 
 class TestFallbackNoApiKey:
     def test_no_key_returns_empty_lists(self, monkeypatch):
