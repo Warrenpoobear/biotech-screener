@@ -361,6 +361,14 @@
       "effective_date": "2026-11-03",
       "amount": 8.13,
       "notes": "Special cash dividend of $8.13/share, ex-date 2026-11-03 (yfinance dividend history; same day as the INDV->SUPN ticker change). price_history.csv shows 36.28 (11-02) -> 28.15 (11-03): the entire -22.4% is the dividend (36.28-8.13=28.15). Momentum treats it as a return unless adjusted. Added 2026-11-11."
+    },
+    {
+      "ticker": "QUIT",
+      "action": "ticker_change",
+      "effective_date": "2026-11-10",
+      "old_ticker": "ACHV",
+      "new_ticker": "QUIT",
+      "notes": "ACHV to QUIT ticker change, Sharadar-confirmed"
     }
   ]
 }
