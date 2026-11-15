@@ -183,6 +183,11 @@ metadata:
 
 ## Governance Events (2026-11-15)
 
+- **`de_vol_60d` refreshed every run (operator-requested input fix, before the clock starts):** `run_screen.py` Step C was fill-if-missing, so 244 of 287 tickers carried a months-old `vol_60d` into the selector's market-structure block (about 3% of `selector_score`); historical snapshots carry the same frozen values.
+  - It is now overwrite-always, like beta and RSI.
+  - Measured impact: live Top-30 30/30 on 2026-11-12 (mean 29.0/30 over 30 days); 84-month backtest −0.01 pt/month (t −0.13).
+  - `model_hash` unchanged. If merged before the 2026-11-16 run, it is part of the selector-only starting configuration; otherwise the clock starts at the first promoted run on the merged code.
+  - Memo: `docs/governance/2026-11-15-vol-60d-refresh-pre-clock.md`.
 - **Selector-only clock has not started.** The 2026-11-13 runs failed promotion on the drift gate and no capture was taken. PR #666 added a dated drift override (`config/drift_gate_overrides.json`, valid 2026-11-16 to 2026-11-20 against the 2026-11-12 snapshot). `oos_clock_start` is to be recorded after the first promoted selector-only run, expected 2026-11-16.
 - **Recorded before the clock starts** (`docs/governance/2026-11-15-pre-clock-decisions.md`):
   - A routine quarterly 13F refresh (same roster, same builder, same code) is **not** a clock reset. Q3 2026 filings are due 2026-11-16; `coinvest_signals.json` is still on Q2 holdings.

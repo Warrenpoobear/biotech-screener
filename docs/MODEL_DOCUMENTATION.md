@@ -16,6 +16,20 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
+## Recent Update — 2026-11-15 (`de_vol_60d` Refreshed Every Run — Input Fix Before the Clock Starts)
+
+Status: operator-requested model-input fix, before `oos_clock_start` is recorded. No weight, signal, order, sizing or eligibility change. `model_hash` unchanged (`a9a430154568e242`).
+
+- **Defect:** `run_screen.py` Step C only filled a *missing* `vol_60d`, so stored values were never refreshed. `de_vol_60d` was identical on 2026-08-03 and 2026-11-12 for 244 of 287 tickers. In `data/snapshots_pit_v5` it is frozen across years (150 of 158 tickers identical from 2020-01 to 2022-01).
+- **Where it is used:** the selector's market-structure block (0.30 inside a 0.10 block, about 3% of `selector_score`); the decision engine's `high_vol` flag (size tier only, so no holdings effect under equal-weight Top-30); and the shadow ranker.
+- **Fix:** overwrite-always, like beta, alpha and RSI. A stored value is kept only when the series is too short to recompute.
+- **Impact:**
+  - Live, selector-only: 30/30 on 2026-11-12; over 30 days, mean 29.0/30 and min 28 (usually AMLX out).
+  - History, 84 months: Top-30 overlap 29.4/30; excess vs XBI moves by −0.01 pt/month (t −0.13).
+  - The market-structure block taken on its own should not be cited from the historical snapshots.
+- **Clock:** part of the selector-only window's starting configuration if merged before the 2026-11-16 run. Otherwise `oos_clock_start` is the first promoted run on the merged code.
+- Record: `docs/governance/2026-11-15-vol-60d-refresh-pre-clock.md`.
+
 ## Recent Update — 2026-11-15 (Selector-Only Clock Not Yet Started; Gate Overrides, Candidate Hash Widened, Account and Protocol Rules)
 
 Status: no change to scoring, selection, order, sizing or eligibility. Operator-authorized in session 2026-11-15.
