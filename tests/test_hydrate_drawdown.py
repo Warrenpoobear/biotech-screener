@@ -1001,7 +1001,12 @@ class TestRecentSplitDrawdown:
 
 
 class TestVol60dHydration:
-    """Step C: vol_60d filled from price_history when missing, else preserved."""
+    """Step C: vol_60d recomputed from price_history (overwrite_always, like beta/RSI).
+
+    Until 2026-11-15 an existing value was preserved, so 244 of 287 tickers carried a
+    months-old vol_60d into the selector's market-structure block. A stored value is now
+    kept only when the price series is too short to recompute.
+    """
 
     def _build(self, ticker, n=70):
         from datetime import date, timedelta
@@ -1025,11 +1030,45 @@ class TestVol60dHydration:
         v = recs["NOVOL"]["defensive_features"].get("vol_60d")
         assert v is not None and float(v) > 0.0
 
-    def test_preserves_existing_vol60d(self):
-        recs = {"HASVOL": {"ticker": "HASVOL", "defensive_features": {"vol_60d": "0.1234"}}}
+    def test_overwrites_stale_existing_vol60d(self):
+        """A stored (stale) value is replaced by the recomputed one, identical to a fresh fill."""
+        recs = {
+            "HASVOL": {"ticker": "HASVOL", "defensive_features": {"vol_60d": "0.1234"}},
+            "NOVOL": {"ticker": "NOVOL", "defensive_features": {}},
+        }
         with tempfile.TemporaryDirectory() as tmp:
             csv_path = Path(tmp) / "price_history.csv"
-            rows, last = self._build("HASVOL")
+            rows_a, last = self._build("HASVOL")
+            rows_b, _ = self._build("NOVOL")
+            _write_price_csv(csv_path, rows_a + rows_b)
+            _hydrate_beta_rsi(recs, csv_path, last)
+        got = recs["HASVOL"]["defensive_features"]["vol_60d"]
+        assert got != "0.1234"
+        assert got == recs["NOVOL"]["defensive_features"]["vol_60d"]
+
+    def test_keeps_existing_vol60d_when_series_too_short(self):
+        """No recomputation possible (fewer than 31 closes) -> the stored value stays."""
+        recs = {"SHORT": {"ticker": "SHORT", "defensive_features": {"vol_60d": "0.1234"}}}
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            rows, last = self._build("SHORT", n=20)
             _write_price_csv(csv_path, rows)
             _hydrate_beta_rsi(recs, csv_path, last)
-        assert recs["HASVOL"]["defensive_features"]["vol_60d"] == "0.1234"
+        assert recs["SHORT"]["defensive_features"]["vol_60d"] == "0.1234"
+
+    def test_vol60d_ignores_prices_after_as_of(self):
+        """Leakage guard: closes dated after as_of_date do not change vol_60d."""
+        out = []
+        for poison in (False, True):
+            recs = {"PIT": {"ticker": "PIT", "defensive_features": {}}}
+            with tempfile.TemporaryDirectory() as tmp:
+                csv_path = Path(tmp) / "price_history.csv"
+                rows, _ = self._build("PIT", n=90)
+                as_of = rows[69]["date"]
+                if poison:
+                    for r in rows[70:]:
+                        r["close"] = "1.0000"  # crash after as_of
+                _write_price_csv(csv_path, rows)
+                _hydrate_beta_rsi(recs, csv_path, as_of)
+            out.append(recs["PIT"]["defensive_features"]["vol_60d"])
+        assert out[0] == out[1]

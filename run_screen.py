@@ -3135,12 +3135,13 @@ def _hydrate_beta_rsi(
         hydrated += 1
 
     # ------------------------------------------------------------------
-    # Step C: vol_60d from price_history.csv (FILL-IF-MISSING)
+    # Step C: vol_60d from price_history.csv (overwrite_always, like beta/RSI)
     # Annualized daily-return volatility over the last 60 trading days.
-    # Unlike beta/rsi (overwrite_always), vol_60d is only filled when absent so
-    # we don't perturb the 272 tickers that already carry a value under the
-    # model freeze — this closes the coverage gap for tickers whose universe
-    # record lacked a defensive_features block (e.g. TEVA/CAPR/DNTH).
+    # Until 2026-11-15 this step only filled a missing value, so an existing
+    # universe-record value was kept indefinitely: 244 of 287 tickers carried a
+    # months-old vol_60d into the selector's market-structure block. A stored
+    # value now survives only when the series is too short to recompute.
+    # Record: docs/governance/2026-11-15-vol-60d-refresh-pre-clock.md
     # ------------------------------------------------------------------
     VOL_WINDOW = 60
     MIN_RETURNS_VOL = 30
@@ -3149,17 +3150,9 @@ def _hydrate_beta_rsi(
         if dfe is None:
             dfe = {}
             rec_by_ticker[ticker]["defensive_features"] = dfe
-        # Only fill when missing/invalid — respect existing values.
-        existing = dfe.get("vol_60d")
-        if existing not in (None, ""):
-            try:
-                float(existing)
-                continue  # already has a usable value
-            except (ValueError, TypeError):
-                pass  # invalid → recompute
         series = prices_by_ticker.get(ticker)
         if not series or len(series) < MIN_RETURNS_VOL + 1:
-            continue
+            continue  # cannot recompute: keep whatever value is stored
         closes = [p for _, p in series][-(VOL_WINDOW + 1) :]
         rets = [closes[i] / closes[i - 1] - 1.0 for i in range(1, len(closes))]
         if len(rets) < MIN_RETURNS_VOL:
