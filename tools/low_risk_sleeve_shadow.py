@@ -24,6 +24,11 @@ Risk measures (each uses only closes dated on or before the snapshot date):
 The sleeve score is the mean of the available percentile ranks (lower risk =
 higher score). A name needs ``vol_60d`` to be scored.
 
+Exclusion: a name whose 20-day annualised volatility is below ``PINNED_VOL_20D``
+(10%) is left out and listed in ``excluded_pinned``. Such a price is pinned near a
+pending cash-deal price (e.g. TECH, OPCH, PCRX on 2026-11-12) or the feed is stale;
+it would otherwise rank as the "safest" name while carrying deal-break risk.
+
 Evidence discipline (same as tools/selector_only_shadow.py):
   - A capture written on the snapshot date is ``LIVE``; anything written later
     is ``REPLAY`` and is reported separately, never as evidence.
@@ -69,6 +74,8 @@ MIN_PRICED = 25  # a basket with fewer priced names is not scored
 MIN_WINDOWS_FOR_READING = 20
 MAX_PRICE_LAG_DAYS = 5
 VOL_WINDOW, MIN_VOL_RETURNS = 60, 40
+PINNED_WINDOW = 20  # trading days
+PINNED_VOL_20D = 0.10  # annualised; below this the price is pinned (pending cash deal) or stale
 GAIN_WINDOW, MIN_GAIN_RETURNS = 21, 15
 BETA_WINDOW, MIN_BETA_RETURNS = 120, 80
 PRICE_LOOKBACK_DAYS = 200  # calendar days of history loaded for a capture
@@ -81,6 +88,7 @@ REPLAY = "REPLAY"
 
 METHOD = {
     "pool": "eligible names in rankings.csv, excluding production Top-30 (actionable_rank 1..30)",
+    "exclusion": f"20-day annualised volatility below {PINNED_VOL_20D:.0%} (price pinned near a deal price, or stale)",
     "measures": ["vol_60d", "max_gain_21d", "beta_120d"],
     "score": "mean of available percentile ranks, lower risk = higher score; vol_60d required",
     "basket": f"top {SLEEVE_N} by score, equal weight; ties break on ticker",
@@ -154,12 +162,14 @@ def _closes_upto(series: Dict[str, float], as_of: str, n: int) -> List[Tuple[str
 
 def risk_measures(series: Dict[str, float], xbi: Dict[str, float], as_of: str) -> Dict[str, Optional[float]]:
     """Point-in-time risk measures for one ticker. Uses no close dated after ``as_of``."""
-    out: Dict[str, Optional[float]] = {"vol_60d": None, "max_gain_21d": None, "beta_120d": None}
+    out: Dict[str, Optional[float]] = {"vol_60d": None, "vol_20d": None, "max_gain_21d": None, "beta_120d": None}
 
     pts = _closes_upto(series, as_of, VOL_WINDOW)
     logs = [math.log(b[1] / a[1]) for a, b in zip(pts, pts[1:])]
     if len(logs) >= MIN_VOL_RETURNS:
         out["vol_60d"] = statistics.pstdev(logs) * math.sqrt(252)
+    if len(logs) >= PINNED_WINDOW:
+        out["vol_20d"] = statistics.pstdev(logs[-PINNED_WINDOW:]) * math.sqrt(252)
 
     pts = _closes_upto(series, as_of, GAIN_WINDOW)
     simple = [b[1] / a[1] - 1 for a, b in zip(pts, pts[1:])]
@@ -214,13 +224,20 @@ def build_sleeve(rows: List[Dict[str, str]], prices: Dict[str, Dict[str, float]]
     held = set(production)
     xbi = prices.get(BENCHMARK, {})
     measures: Dict[str, Dict[str, Optional[float]]] = {}
+    pinned: List[str] = []
     for row in rows:
         ticker = (row.get("ticker") or "").strip()
         if not ticker or ticker in held or _num(row.get("eligible")) != 1.0:
             continue
         m = risk_measures(prices.get(ticker, {}), xbi, as_of)
-        if m["vol_60d"] is not None:
-            measures[ticker] = m
+        if m["vol_60d"] is None:
+            continue
+        # A price pinned near a pending cash-deal price (or a stale feed) reads as "safe";
+        # it is not a low-risk holding, so it is excluded and recorded.
+        if m["vol_20d"] is not None and m["vol_20d"] < PINNED_VOL_20D:
+            pinned.append(ticker)
+            continue
+        measures[ticker] = m
 
     # Lower risk = higher percentile: rank the negated measure.
     ranks = {k: _pct_ranks({t: -m[k] for t, m in measures.items() if m[k] is not None}) for k in METHOD["measures"]}
@@ -235,6 +252,7 @@ def build_sleeve(rows: List[Dict[str, str]], prices: Dict[str, Dict[str, float]]
         "sleeve": sleeve,
         "measures": {t: dict(measures[t], score=round(scores[t], 6)) for t in sleeve},
         "n_scored": len(scores),
+        "excluded_pinned": sorted(pinned),
         "price_asof": price_asof,
     }
 
@@ -303,6 +321,7 @@ def capture(
         "price_asof": price_asof,
         "method": METHOD,
         "n_scored": result["n_scored"],
+        "excluded_pinned": result["excluded_pinned"],
         "production": result["production"],
         "sleeve": result["sleeve"],
         "sleeve_measures": {t: _round_measures(m) for t, m in result["measures"].items()},
@@ -494,8 +513,9 @@ def format_summary_md(result: Dict[str, Any]) -> str:
         "# Low-risk sleeve shadow — forward record",
         "",
         "Sleeve = the 30 lowest-risk eligible names outside the production Top-30 (60-day volatility, "
-        "largest one-day gain over 21 days, 120-day beta to XBI), equal weight. Compared with XBI and the "
-        "production Top-30 on equal-weight forward returns, gross of costs. Non-overlapping windows only.",
+        "largest one-day gain over 21 days, 120-day beta to XBI), equal weight; names whose 20-day "
+        "volatility is below 10% (price pinned near a deal price, or stale) are excluded. Compared with XBI "
+        "and the production Top-30 on equal-weight forward returns, gross of costs. Non-overlapping windows only.",
         "",
         *PRE_REGISTRATION,
         "",

@@ -39,8 +39,8 @@ def _write_snapshot(root: Path, day: str, n: int = N, ineligible: int = 3) -> Pa
 
 
 def _amp(i: int) -> float:
-    """Daily swing for ticker i: higher index = calmer stock."""
-    return 0.05 / (1 + i / 10)
+    """Daily swing for ticker i: higher index = calmer stock (all above the pinned-price floor)."""
+    return 0.08 / (1 + i / 10)
 
 
 def _write_prices(path: Path, days: list, drift=lambda i: 0.0, last_day=None) -> None:
@@ -94,6 +94,24 @@ def test_basket_prefers_calm_names_and_excludes_production_top30(tmp_path):
     # Calmest eligible names are the highest indices.
     assert sleeve == [f"T{i:02d}" for i in range(N - 1, N - 1 - lrs.SLEEVE_N, -1)]
     assert not any(t.startswith("X") for t in sleeve)
+
+
+def test_price_pinned_names_are_excluded_and_recorded(tmp_path):
+    """A stock pinned near a cash deal price looks 'safe' but is not: 20-day vol below the floor excludes it."""
+    days = _days(200)
+    rankings = _write_snapshot(tmp_path / "snaps", days[-1])
+    prices_csv = tmp_path / "prices.csv"
+    _write_prices(prices_csv, days)
+    rows = lrs._read_rankings(rankings)
+    prices = lrs.load_prices(prices_csv, {r["ticker"] for r in rows} | {"XBI"})
+    pin = prices["T79"][days[-26]]
+    for d in days[-25:]:
+        prices["T79"][d] = pin  # flat for the last 25 sessions
+    result = lrs.build_sleeve(rows, prices, days[-1])
+    assert "T79" not in result["sleeve"]
+    assert result["excluded_pinned"] == ["T79"]
+    assert len(result["sleeve"]) == lrs.SLEEVE_N
+    assert lrs.risk_measures(prices["T79"], prices["XBI"], days[-1])["vol_20d"] < lrs.PINNED_VOL_20D
 
 
 def test_names_without_enough_history_are_not_eligible_for_the_sleeve(tmp_path):
