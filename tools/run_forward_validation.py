@@ -43,7 +43,18 @@ MODEL_FILES = [
     REPO_ROOT / "ranker_engine.py",
     REPO_ROOT / "selector_engine.py",
     REPO_ROOT / "decision_engine.py",
+    # ast-v2: the production order mode (default and the selector-only rule).
+    REPO_ROOT / "common" / "ranker_mode.py",
 ]
+
+# ast-v2: module-level assignments that set model behavior but live in a file too large
+# and too often edited to hash whole. Only the named assignment's AST is fingerprinted,
+# so unrelated edits to the file do not move the hash.
+MODEL_CONFIG_ASSIGNMENTS: dict[Path, tuple[str, ...]] = {
+    # The production selector's block weights and institutional signal weights.
+    REPO_ROOT
+    / "run_screen.py": ("A4_SELECTOR_CONFIG",),
+}
 
 
 # ---------------------------------------------------------------------------
@@ -61,7 +72,11 @@ def sha256_file(path: Path) -> str | None:
 
 # Behavioral fingerprint scheme. Bump this string whenever the normalization
 # rules below change (it is mixed into the hash so schemes never collide).
-HASH_SCHEME = "ast-v1"
+#   ast-v1 (2026-07-10): ranker_engine.py, selector_engine.py, decision_engine.py.
+#   ast-v2 (2026-11-15): adds common/ranker_mode.py and the A4_SELECTOR_CONFIG assignment
+#     in run_screen.py. Under ast-v1 the selector's weights and the order mode could change
+#     without the hash changing (the 2026-11-13 selector-only switch did exactly that).
+HASH_SCHEME = "ast-v2"
 
 
 class _BehaviorNeutralStripper(ast.NodeTransformer):
@@ -121,6 +136,39 @@ def _behavioral_fingerprint(path: Path) -> str:
     return ast.dump(tree, annotate_fields=True, include_attributes=False)
 
 
+def _assignment_fingerprint(path: Path, names: tuple[str, ...]) -> str:
+    """AST fingerprint of the module-level assignments to ``names`` in ``path``.
+
+    A name that is not assigned at module level contributes a ``MISSING`` marker, so
+    removing or renaming a covered assignment moves the hash instead of dropping out.
+    """
+    tree = ast.parse(path.read_bytes())
+    tree = _BehaviorNeutralStripper().visit(tree)
+    ast.fix_missing_locations(tree)
+    found: dict[str, list[str]] = {name: [] for name in names}
+    for node in tree.body:
+        if not isinstance(node, ast.Assign):
+            continue
+        for target in node.targets:
+            if isinstance(target, ast.Name) and target.id in found:
+                found[target.id].append(ast.dump(node.value, annotate_fields=True, include_attributes=False))
+    parts = []
+    for name in sorted(found):
+        parts.append(f"{name}=" + ("|".join(found[name]) if found[name] else "MISSING"))
+    return ";".join(parts)
+
+
+def compute_model_hash_ast_v1() -> str:
+    """The superseded ``ast-v1`` fingerprint (three engine files only). Audit use only."""
+    h = hashlib.sha256()
+    h.update(b"ast-v1")
+    for p in MODEL_FILES[:3]:
+        if p.exists():
+            h.update(p.name.encode())
+            h.update(_behavioral_fingerprint(p).encode())
+    return h.hexdigest()[:16]
+
+
 def compute_model_hash() -> str:
     """Behavioral fingerprint of the scoring-model files (``HASH_SCHEME``).
 
@@ -137,6 +185,10 @@ def compute_model_hash() -> str:
         if p.exists():
             h.update(p.name.encode())
             h.update(_behavioral_fingerprint(p).encode())
+    for p, names in MODEL_CONFIG_ASSIGNMENTS.items():
+        if p.exists():
+            h.update(f"config:{p.name}:".encode())
+            h.update(_assignment_fingerprint(p, names).encode())
     return h.hexdigest()[:16]
 
 

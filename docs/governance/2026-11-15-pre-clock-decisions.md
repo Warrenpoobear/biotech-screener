@@ -67,6 +67,14 @@ These are in-sample, survivorship-biased figures, and the account is a pilot. Ru
 
 Changing §4 of the protocol is a Tier 4 decision; the operator made it on 2026-11-15 with zero forward windows observed for the selector-only order. §4 now carries these rules, plus a read-out at 60 windows.
 
+## 5. The candidate hash covers the selector weights and the order mode (2026-11-15)
+
+Section 2 closed the order-mode gap in the capture. The hash itself still left the selector's block weights outside: `A4_SELECTOR_CONFIG` is defined in `run_screen.py`, which `ast-v1` does not read, so the weights could change with the hash unchanged.
+
+`HASH_SCHEME` is now `ast-v2`: the three engine files as before, plus `common/ranker_mode.py` whole and the `A4_SELECTOR_CONFIG` assignment in `run_screen.py` (only that assignment's AST, so unrelated edits to the file do not move the hash). The candidate is re-registered as `a9a430154568e242`; `827c35a9ed3ee6e1` is kept under `prior_model_hashes` and is still reproducible with `compute_model_hash_ast_v1()`. This is the same model with a wider fingerprint, not a new freeze. Rotation logged in `governance/HASH_ROTATIONS.md`.
+
+Still outside the hash: the rest of `run_screen.py`, including which config object is passed to the selector; the ruleset file (tracked as `ruleset_hash`); input data.
+
 ## Evidence these decisions rest on (scratch research, 2026-11-13 to 2026-11-15; not committed)
 
 - Selector-only against XBI, trailing periods through 2026-11-12: three months −15.6% against +2.9%; since 2020 +1.18 pt a month (t = 2.22).
