@@ -33,7 +33,13 @@ MAX_WINDOW_DAYS = 7
 # Metrics an entry is allowed to cover. Top-60 overlap, rank correlation and the
 # eligibility count are left out on purpose: an order change inside the eligible set
 # does not move them, so a FAIL there is a data problem and must keep blocking.
-OVERRIDABLE_METRICS = frozenset({"top20_overlap_pct", "mean_abs_rank_delta_top60", "tier_migration_count"})
+#
+# ``name_turnover_pct`` belongs to the separate ``turnover`` gate, which compares the Top-30
+# with its own baseline (the newest earlier snapshot that is not cache-degraded). The same
+# order change trips it, so an entry may cover it too.
+OVERRIDABLE_METRICS = frozenset(
+    {"top20_overlap_pct", "mean_abs_rank_delta_top60", "tier_migration_count", "name_turnover_pct"}
+)
 
 _REQUIRED_TEXT_FIELDS = ("id", "prior_date", "valid_from", "valid_through", "reason", "authorized_by", "memo")
 

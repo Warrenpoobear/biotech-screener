@@ -84,6 +84,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset(
         "drift_monitoring",
         "ctgov_pit_dates",
         "sec_13f_cache",
+        "sec_13f_refresh_pending",
         "institutional_summary",
         "institutional_delta",
         "pnl_attribution",
@@ -1910,8 +1911,20 @@ def check_risk_concentration(
 def check_turnover(
     snapshot_date_dir: Path,
     max_pct: float,
+    as_of_date: Optional[str] = None,
+    overrides_path: Optional[Path] = None,
 ) -> GateResult:
-    """Check name turnover from the delta report."""
+    """Check name turnover from the delta report.
+
+    A delta report without a turnover figure means the gate measured nothing
+    (the report had no prior, or churn comparisons were suppressed on a
+    cache-degraded run). That is reported as WARN, not PASS.
+
+    A FAIL is downgraded to WARN when a dated operator override
+    (config/drift_gate_overrides.json, see common/drift_override.py) is pinned
+    to the report's prior snapshot, covers ``as_of_date`` and names
+    ``name_turnover_pct``.
+    """
     delta_path = snapshot_date_dir / "phase2_run_delta_report.txt"
     if not delta_path.exists():
         return GateResult(
@@ -1926,17 +1939,44 @@ def check_turnover(
 
     match = re.search(r"Name turnover:\s+([\d.]+)%", text)
     if not match:
+        reason = "churn comparisons suppressed" if "CHURN COMPARISONS: SUPPRESSED" in text else "no turnover figure"
         return GateResult(
             name="turnover",
-            status="PASS",
-            detail="Could not parse turnover from delta report; skipped",
+            status="WARN",
+            detail=f"Turnover NOT measured: delta report has {reason}",
         )
 
     turnover = float(match.group(1))
-    status = "FAIL" if turnover > max_pct else "PASS"
+    if turnover <= max_pct:
+        return GateResult(
+            name="turnover",
+            status="PASS",
+            detail=f"Name turnover={turnover:.1f}%",
+            value=turnover,
+            threshold=max_pct,
+        )
+
+    fail_reason = f"FAIL name_turnover_pct: {turnover:.1f}% > {max_pct}%"
+    prior_match = re.search(r"^Prior:\s+(\d{4}-\d{2}-\d{2})", text, flags=re.MULTILINE)
+    override = None
+    if as_of_date and prior_match:
+        override = find_applicable_override(
+            load_drift_overrides(overrides_path), as_of_date, prior_match.group(1), [fail_reason]
+        )
+    if override is not None:
+        return GateResult(
+            name="turnover",
+            status="WARN",
+            detail=(
+                f"Name turnover={turnover:.1f}% vs {prior_match.group(1)} — OPERATOR OVERRIDE {override.id} "
+                f"({override.authorized_by}; {override.memo}) — not blocked: {fail_reason}"
+            ),
+            value=turnover,
+            threshold=max_pct,
+        )
     return GateResult(
         name="turnover",
-        status=status,
+        status="FAIL",
         detail=f"Name turnover={turnover:.1f}%",
         value=turnover,
         threshold=max_pct,
@@ -2845,6 +2885,68 @@ def check_sec_13f_cache(
         value=value,
         threshold=threshold,
     )
+
+
+def check_sec_13f_refresh_pending(
+    as_of_date: str,
+    *,
+    cache_base_dir: Optional[Path] = None,
+    coinvest_path: Optional[Path] = None,
+    warn_share: float = 0.5,
+) -> GateResult:
+    """WARN when most roster managers have filed a newer quarter than coinvest_signals.json uses.
+
+    Rebuilding ``coinvest_signals.json`` after a 13F deadline is a manual, governed
+    step. Nothing triggers it, and from June to October 2026 production ran on
+    Q1 holdings while Q2 filings sat in the cache. WARN-only — never FAIL.
+    """
+    name = "sec_13f_refresh_pending"
+    threshold = {"warn_share": warn_share}
+    base = cache_base_dir or (REPO_ROOT / "data" / "caches" / "sec_13f" / "PIT")
+    signals_path = coinvest_path or (REPO_ROOT / "production_data" / "coinvest_signals.json")
+
+    try:
+        with open(signals_path) as f:
+            signals = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(name=name, status="WARN", detail=f"Cannot read {signals_path.name}: {e}", threshold=threshold)
+    in_use = signals.get("period_of_report") if isinstance(signals, dict) else None
+    if not isinstance(in_use, str) or len(in_use) != 10:
+        return GateResult(
+            name=name,
+            status="WARN",
+            detail=f"{signals_path.name} records no period_of_report; cannot tell which quarter is in use",
+            threshold=threshold,
+        )
+
+    index_path = base / as_of_date / "index.json"
+    try:
+        with open(index_path) as f:
+            index = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        # The sec_13f_cache gate already reports a missing or unreadable index.
+        return GateResult(
+            name=name,
+            status="PASS",
+            detail=f"in use {in_use}; no readable 13F cache index for {as_of_date} (see sec_13f_cache)",
+            threshold=threshold,
+        )
+
+    filed = [m for m in index.get("managers", []) if m.get("selected") and isinstance(m.get("period_of_report"), str)]
+    newer = [m for m in filed if m["period_of_report"] > in_use]
+    share = len(newer) / len(filed) if filed else 0.0
+    value = {"period_in_use": in_use, "managers_with_newer_filing": len(newer), "managers_with_filing": len(filed)}
+    newest = max((m["period_of_report"] for m in newer), default=None)
+    detail = f"coinvest uses {in_use}; {len(newer)}/{len(filed)} managers have a newer filing"
+    if filed and share >= warn_share:
+        return GateResult(
+            name=name,
+            status="WARN",
+            detail=f"{detail} (period {newest}) — rebuild coinvest_signals.json (manual, governed step)",
+            value=value,
+            threshold=threshold,
+        )
+    return GateResult(name=name, status="PASS", detail=detail, value=value, threshold=threshold)
 
 
 # ---------------------------------------------------------------------------
@@ -6248,7 +6350,7 @@ def run_daily(
     gate_results.append(missing_gate)
     _logger.info(f"Missing-reason gate: {missing_gate.status} — {missing_gate.detail}")
 
-    turnover_gate = _safe_gate("turnover", check_turnover, staging_date_dir, config.turnover_max_pct)
+    turnover_gate = _safe_gate("turnover", check_turnover, staging_date_dir, config.turnover_max_pct, as_of_date)
     gate_results.append(turnover_gate)
     _logger.info(f"Turnover gate: {turnover_gate.status} — {turnover_gate.detail}")
 
@@ -6284,6 +6386,11 @@ def run_daily(
     )
     gate_results.append(sec_13f_gate)
     _logger.info(f"13F cache gate: {sec_13f_gate.status} — {sec_13f_gate.detail}")
+
+    # --- Gate: sec_13f_refresh_pending (WARN-only) ---
+    sec_13f_pending_gate = _safe_gate("sec_13f_refresh_pending", check_sec_13f_refresh_pending, as_of_date)
+    gate_results.append(sec_13f_pending_gate)
+    _logger.info(f"13F refresh pending gate: {sec_13f_pending_gate.status} — {sec_13f_pending_gate.detail}")
 
     # --- Gate: institutional_summary (WARN-only, post-screen) ---
     inst_gate = _safe_gate(

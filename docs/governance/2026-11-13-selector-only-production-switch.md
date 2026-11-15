@@ -84,3 +84,11 @@ Consequences:
 Fix (operator-authorized 2026-11-15): a dated override for the drift gate, `config/drift_gate_overrides.json`, read by `common/drift_override.py`. The entry `2026-11-13-selector-only-switch` applies only while the run is compared with the 2026-11-12 snapshot, only from 2026-11-16 to 2026-11-20, and only to the `top20_overlap_pct` and `mean_abs_rank_delta_top60` FAIL reasons. Top-60 overlap, rank correlation, tier and eligibility FAILs still block. A matched override turns the gate result into WARN and is written into the gate detail and `drift_report.json` (`override_applied`). It lapses by itself once a selector-only snapshot is promoted. This is gate tooling (no change to scoring, selection or order); it has no clock effect of its own.
 
 For future authorized order changes: add a dated entry to `config/drift_gate_overrides.json` in the same PR as the change.
+
+## Addendum 2026-11-15 (2) — the turnover gate is a second blocker
+
+The blocking `turnover` gate (Top-30 name turnover above 40%) would also have refused promotion. It did not on 2026-11-13 only because that run was cache-degraded: the CT.gov event count rose from 1,189 to 2,801 after the source refresh in PR #614, churn comparisons were suppressed, and the gate reported PASS without measuring anything.
+
+The gate's baseline is the newest earlier snapshot that is not cache-degraded. The 2026-11-16 run is expected to be degraded for the same reason (its prior count is still 1,189), so the gate skips again and that snapshot is promoted but cannot serve as a baseline. On 2026-11-17 the comparison is made against 2026-11-12: 13 of 30 names differ, 43.3% against the 40% limit, which would block every run from then on.
+
+Fix (same operator authorization, 2026-11-15): the existing override entry also names `name_turnover_pct`, and `check_turnover` honors it under the same conditions (pinned to the 2026-11-12 baseline, 2026-11-16 to 2026-11-20). A delta report with no turnover figure is now WARN ("not measured") instead of PASS.
