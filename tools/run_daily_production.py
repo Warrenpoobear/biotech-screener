@@ -7161,6 +7161,28 @@ def run_daily(
         except Exception as _sos_err:
             _logger.warning(f"Selector-only shadow failed: {_sos_err}")
 
+        # --- Step 5k.11b3: Low-risk sleeve shadow (non-blocking, research record) ---
+        # Records the 30 lowest-risk eligible names outside the Top-30 next to the
+        # production Top-30. Capture-only: reads rankings.csv and split-adjusted
+        # prices, writes its own ledger. No effect on rankings, gates or accounts.
+        try:
+            from tools.low_risk_sleeve_shadow import capture as _lrs_capture
+            from tools.low_risk_sleeve_shadow import summarize as _lrs_summarize
+
+            _lrs_result = _lrs_capture(as_of_date)
+            if _lrs_result.get("status") == "captured":
+                _lrs_summarize()
+                _logger.info(
+                    f"Low-risk sleeve shadow → {_lrs_result.get('capture_mode')}, "
+                    f"prices as of {_lrs_result.get('price_asof')}"
+                )
+            else:
+                _logger.info(
+                    f"Low-risk sleeve shadow → {_lrs_result.get('status')} ({_lrs_result.get('reason', as_of_date)})"
+                )
+        except Exception as _lrs_err:
+            _logger.warning(f"Low-risk sleeve shadow failed: {_lrs_err}")
+
         # --- Step 5k.11c: Regime shadow (non-blocking, diagnostic) ---
         try:
             from tools.run_regime_shadow import run_regime_shadow

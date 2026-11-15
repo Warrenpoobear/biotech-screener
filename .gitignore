@@ -84,6 +84,11 @@ artifacts/forward_validation/*
 artifacts/selector_only_shadow/*
 !artifacts/selector_only_shadow/*.jsonl
 !artifacts/selector_only_shadow/*.md
+# Low-risk sleeve shadow ledger: append-only research record, same shape as above.
+!artifacts/low_risk_sleeve_shadow/
+artifacts/low_risk_sleeve_shadow/*
+!artifacts/low_risk_sleeve_shadow/*.jsonl
+!artifacts/low_risk_sleeve_shadow/*.md
 # Allow catalyst calendar HTML artifacts
 !artifacts/catalyst_calendars/
 artifacts/catalyst_calendars/*
