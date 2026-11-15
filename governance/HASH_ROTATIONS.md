@@ -80,3 +80,22 @@ Memo: `docs/governance/2026-11-13-selector-only-production-switch.md`
 - **Hash gap:** `model_hash_match` will keep passing across this change. Until the hash covers the dispatch, `CANDIDATE.json.ranker_mode` is the record of which order is the candidate.
 - **Reviewer:** operator — authorized in session 2026-11-13.
 
+
+## 2026-11-15 — candidate `model_hash` scheme widened to `ast-v2` (operator-authorized; no behavior change)
+
+Memo: `docs/governance/2026-11-15-pre-clock-decisions.md` §5
+
+| Surface | Old | New |
+|---|---|---|
+| Candidate `model_hash` | `827c35a9ed3ee6e1` (`ast-v1`) | `a9a430154568e242` (`ast-v2`) |
+| Files fingerprinted whole | `ranker_engine.py`, `selector_engine.py`, `decision_engine.py` | the same three, plus `common/ranker_mode.py` |
+| Assignments fingerprinted | none | `A4_SELECTOR_CONFIG` in `run_screen.py` |
+| Ruleset | `8887576e` | unchanged |
+
+- **Effective date:** 2026-11-15, before `oos_clock_start` for the selector-only order is recorded.
+- **Affected surface:** `tools/run_forward_validation.py` (`compute_model_hash`, `HASH_SCHEME`) and `artifacts/forward_validation/CANDIDATE.json`. No scoring file changes.
+- **Reason:** under `ast-v1` the production selector's block weights (`A4_SELECTOR_CONFIG`, in `run_screen.py`) and the order mode (`common/ranker_mode.py`) were outside the hash. The 2026-11-13 switch to selector-only changed the Top-30 with the hash unchanged.
+- **Equivalence:** the three engine files are byte-identical; `compute_model_hash_ast_v1()` still returns `827c35a9ed3ee6e1`. The new value records the same model with a wider fingerprint. It is not a new freeze.
+- **Expected downstream impact:** captures from the first run on this code carry the new hash and match the re-registered candidate. Earlier captures keep `827c35a9ed3ee6e1`; they predate the selector-only clock start and are history only.
+- **Still outside the hash:** the rest of `run_screen.py` (including which config object is passed to the selector), the ruleset file (tracked separately as `ruleset_hash`), and input data.
+- **Reviewer:** operator — authorized in session 2026-11-15 ("do all fixes").

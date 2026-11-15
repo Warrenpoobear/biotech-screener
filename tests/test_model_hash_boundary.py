@@ -1,4 +1,4 @@
-"""Tests for the behavioral model-hash boundary (HASH_SCHEME = ast-v1).
+"""Tests for the behavioral model-hash boundary (HASH_SCHEME = ast-v1, widened to ast-v2 on 2026-11-15).
 
 Regression guard for the 2026-07-10 finding: the raw-bytes model hash flipped
 the frozen forward-validation candidate (a9983a67 -> a7a80e85) on a one-line
@@ -114,3 +114,71 @@ def test_bare_annotation_dropped_valued_annotation_preserved(monkeypatch, tmp_pa
     h5 = _hash_with_files(monkeypatch, tmp_path / "c", {"m.py": valued_5})
     h6 = _hash_with_files(monkeypatch, tmp_path / "d", {"m.py": valued_6})
     assert h5 != h6
+
+
+# --- ast-v2: selector config and order mode are inside the fingerprint (2026-11-15) ---
+
+import json  # noqa: E402
+
+RUN_SCREEN_STUB = """\
+import os
+
+A4_SELECTOR_CONFIG = SelectorConfig(
+    block_weights=(BlockWeight("institutional", {weight}), BlockWeight("catalyst", 0.15)),
+)
+
+OTHER_SETTING = {other}
+
+
+def unrelated():
+    return {other}
+"""
+
+
+def _hash_with_config(monkeypatch, tmp_path, weight, other=1, names=("A4_SELECTOR_CONFIG",)):
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    engine = tmp_path / "engine.py"
+    engine.write_text(BASE, encoding="utf-8")
+    run_screen = tmp_path / "run_screen.py"
+    run_screen.write_text(RUN_SCREEN_STUB.format(weight=weight, other=other), encoding="utf-8")
+    monkeypatch.setattr(m, "MODEL_FILES", [engine])
+    monkeypatch.setattr(m, "MODEL_CONFIG_ASSIGNMENTS", {run_screen: names})
+    return m.compute_model_hash()
+
+
+def test_selector_weight_change_moves_hash(monkeypatch, tmp_path):
+    assert _hash_with_config(monkeypatch, tmp_path / "a", 0.65) != _hash_with_config(monkeypatch, tmp_path / "b", 0.50)
+
+
+def test_unrelated_run_screen_edit_does_not_move_hash(monkeypatch, tmp_path):
+    h1 = _hash_with_config(monkeypatch, tmp_path / "a", 0.65, other=1)
+    h2 = _hash_with_config(monkeypatch, tmp_path / "b", 0.65, other=2)
+    assert h1 == h2
+
+
+def test_missing_covered_assignment_moves_hash(monkeypatch, tmp_path):
+    present = _hash_with_config(monkeypatch, tmp_path / "a", 0.65)
+    renamed = _hash_with_config(monkeypatch, tmp_path / "b", 0.65, names=("A5_SELECTOR_CONFIG",))
+    assert present != renamed
+    assert "MISSING" in m._assignment_fingerprint(tmp_path / "b" / "run_screen.py", ("A5_SELECTOR_CONFIG",))
+
+
+def test_real_repo_covers_selector_config_and_ranker_mode():
+    assert m.HASH_SCHEME == "ast-v2"
+    assert any(p.name == "ranker_mode.py" for p in m.MODEL_FILES)
+    (path,) = [p for p in m.MODEL_CONFIG_ASSIGNMENTS if p.name == "run_screen.py"]
+    fingerprint = m._assignment_fingerprint(path, m.MODEL_CONFIG_ASSIGNMENTS[path])
+    assert "MISSING" not in fingerprint and "institutional" in fingerprint
+
+
+def test_registered_candidate_matches_the_code():
+    """CANDIDATE.json must be re-registered in the same change that moves the hash."""
+    candidate = json.loads(m.CANDIDATE_FILE.read_text())
+    assert candidate["hash_scheme"] == m.HASH_SCHEME
+    assert candidate["model_hash"] == m.compute_model_hash()
+
+
+def test_ast_v1_value_is_still_reproducible():
+    candidate = json.loads(m.CANDIDATE_FILE.read_text())
+    prior = [h for h in candidate.get("prior_model_hashes", []) if h["hash_scheme"] == "ast-v1"]
+    assert prior and prior[0]["model_hash"] == m.compute_model_hash_ast_v1()

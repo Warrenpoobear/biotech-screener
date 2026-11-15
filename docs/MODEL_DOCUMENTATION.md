@@ -16,6 +16,18 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
+## Recent Update — 2026-11-15 (Selector-Only Clock Not Yet Started; Gate Overrides, Candidate Hash Widened, Account and Protocol Rules)
+
+Status: no change to scoring, selection, order, sizing or eligibility. Operator-authorized in session 2026-11-15.
+
+- **The selector-only clock has not started.** The 2026-11-13 runs produced a correct selector-only snapshot and were refused promotion by the drift gate (top-20 overlap 14.3% against a 30% floor versus the 2026-11-12 pairwise snapshot). No 2026-11-13 snapshot was promoted and no capture was taken. `oos_clock_start` is to be recorded after the first promoted selector-only run (expected 2026-11-16).
+- **Dated gate override** (`config/drift_gate_overrides.json`, `common/drift_override.py`; PR #666 and the turnover follow-up): one entry, pinned to the 2026-11-12 baseline and valid 2026-11-16 to 2026-11-20, lets the drift gate and the turnover gate report WARN for the order change. Top-60 overlap, rank correlation and eligibility failures still block.
+- **Candidate identity widened to `ast-v2`:** `model_hash` is now `a9a430154568e242` (was `827c35a9ed3ee6e1`, `ast-v1`). The fingerprint adds `common/ranker_mode.py` and the `A4_SELECTOR_CONFIG` assignment in `run_screen.py`. Same model, wider fingerprint: the three engine files are unchanged and the `ast-v1` value is still reproducible. Logged in `governance/HASH_ROTATIONS.md`. The capture also checks the snapshot's `ranker_mode` against `CANDIDATE.json` (PR #667).
+- **Rules recorded before the clock starts** (`docs/governance/2026-11-15-pre-clock-decisions.md`): a routine quarterly 13F refresh is not a clock reset; agentic-account Rule 4 is review at −10 pp and liquidation at −15 pp against XBI; `FORWARD_VALIDATION_PROTOCOL.md` §4 gains a fail rule, a 60-window read-out and a selector-only rollback rule.
+- **Universe:** ACHV → QUIT (effective 2026-11-10) and SRZN activated (PR #668).
+- **Research context (scratch, not evidence for promotion):** selector-only Top-30 against XBI since 2020, net of 50 bps, +1.18 pt a month (t = 2.22) through 2026-11-12, with −15.6% against +2.9% over the last three months. The August and September shortfall traces to the selector's concentration in co-investment (factor IC −0.13 and −0.50). Caps, diversifiers and decay variants do not beat the current selector. The current 30-manager roster sits at the 98th percentile of random 30-of-63 lists (+1.57 against an average +1.10 pt a month), and a point-in-time roster adds +0.12 pt (t = 0.48) over using all managers, so roughly +1.1 pt a month is the no-hindsight backtest expectation, before survivorship bias.
+- **Follow-ups:** Hermes skill mirrors and `docs/library-export/` still quote the `ast-v1` hash.
+
 ## Recent Update — 2026-11-13 (Production Order Switched to Selector-Only — Operator-Authorized Model Change)
 
 Classification: `OPERATOR_AUTHORIZED_MODEL_CHANGE`. Tier 3 code, Tier 4 decision. **Out-of-sample clock resets**; mandate SM-20260629-001 restarts at 0/20 from the first production run on the merged code.

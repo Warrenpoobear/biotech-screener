@@ -2,8 +2,16 @@
   "registered": "2026-06-26",
   "registered_at": "2026-06-28T14:53:26.269583+00:00",
   "rehashed_at": "2026-07-10T19:52:38.671168+00:00",
-  "model_hash": "827c35a9ed3ee6e1",
-  "hash_scheme": "ast-v1",
+  "model_hash": "a9a430154568e242",
+  "hash_scheme": "ast-v2",
+  "prior_model_hashes": [
+    {
+      "model_hash": "827c35a9ed3ee6e1",
+      "hash_scheme": "ast-v1",
+      "superseded_on": "2026-11-15",
+      "note": "Same model, wider fingerprint. ast-v2 adds common/ranker_mode.py and the A4_SELECTOR_CONFIG assignment in run_screen.py. The three engine files are unchanged and compute_model_hash_ast_v1() still returns this value. See governance/HASH_ROTATIONS.md (2026-11-15)."
+    }
+  ],
   "legacy_model_hash": "a9983a67c6954813",
   "legacy_hash_scheme": "raw-bytes",
   "equivalence_note": "a7a80e85 (legacy raw-bytes) proven annotation-only-equivalent to the frozen candidate a9983a67; adopted behavioral hash 827c35a9ed3ee6e1 records the SAME behavioral identity, not a new freeze. See docs/governance/2026-07-10-dem-candidate-hash-equivalence.md.",
@@ -31,5 +39,6 @@
     "takes_effect": "first daily production run on the merged code",
     "action_required": "record the new oos_clock_start here after that run; captures from selector-only runs do not count toward SM-20260629-001 until it is recorded; the mandate restarts at 0/20",
     "memo": "docs/governance/2026-11-13-selector-only-production-switch.md"
-  }
+  },
+  "rehashed_at_ast_v2": "2026-11-15"
 }
