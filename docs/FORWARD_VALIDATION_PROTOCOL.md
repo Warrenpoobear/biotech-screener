@@ -84,6 +84,17 @@ This test is fixed as of ratification (2026-06-28). It is not to be re-specified
 | Drawdown guard | no excess-return drawdown vs XBI worse than the worst observed YTD (≈ −2.4%/wk cluster, May 26 → Jun 8) without documented cause | A worse cluster triggers REVIEW_REQUIRED |
 | Adversarial | control-basket excess (Section 6) must be materially below candidate excess | Guards against "any 30 biotech names" beta capture |
 
+**Fail and rollback rules (added 2026-11-15, before the selector-only clock start; operator decision, `docs/governance/2026-11-15-pre-clock-decisions.md` §4).** The gates above define passing only. These define failing. They add to the §2 test and do not re-specify it.
+
+| Rule | Threshold | Meaning |
+|------|-----------|---------|
+| Fail | at a checkpoint of 20, 40 or 60 completed windows: weekly mean XS < 0 AND t ≤ −1.65 | STOP_AND_REVIEW: the operator reviews the model before any further capital is committed |
+| Not yet significant | fewer than 60 completed windows and neither the fail rule nor the directional gate is met | Keep accruing. This is not evidence against the model: with an edge near the no-hindsight backtest estimate (about +0.25 pt a week against a weekly standard deviation near 2.3 pt) the chance of clearing t ≥ 1.65 at 20 windows is roughly one in eight |
+| Read-out | 60 completed windows without clearing the directional gate | Treated as evidence against the model; operator decision on continuing |
+| Selector-only rollback | after at least 20 completed windows: selector-only minus the shadow `pairwise_minimal` basket has paired weekly t ≤ −1.65 (`tools/selector_only_shadow.py` ledger) | Operator reviews reverting to `--ranker-mode pairwise_minimal`. A smaller gap is noise at this sample size |
+
+None of these acts automatically. Each is a trigger for an operator decision.
+
 Clearing the confirmation gate does **not** promote the model. It makes the model *eligible* for an operator promotion decision. Promotion, unfreeze, and gate-clearance remain explicit operator actions.
 
 **Estimated confirmation-eligibility date:** ~2026-10-31 (≈ 20 forward weeks from the v1.4 lock), consistent with the gate noted in the full-history validation report.
@@ -189,6 +200,7 @@ Current honest verdict: **"The model is behaving as if it has real cross-section
 |------|--------|----|------|
 | 2026-06-28 | DRAFT created | Town assistant (GitHub API) | Pre-registration authored; merged via PR #428 |
 | 2026-06-28 | **RATIFIED** | Operator (Darren) | Test specification locked. The §2 primary test must not be re-specified after forward data is seen. |
+| 2026-11-15 | §4 amended | Operator | Fail, read-out and selector-only rollback rules added before `oos_clock_start` for the selector-only order is recorded (0 windows observed). The §2 test and the existing pass gates are unchanged. Memo: `docs/governance/2026-11-15-pre-clock-decisions.md`. |
 
 ### Deferred — NOT yet authorized
 

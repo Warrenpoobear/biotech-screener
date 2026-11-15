@@ -187,7 +187,7 @@ metadata:
 - **Recorded before the clock starts** (`docs/governance/2026-11-15-pre-clock-decisions.md`):
   - A routine quarterly 13F refresh (same roster, same builder, same code) is **not** a clock reset. Q3 2026 filings are due 2026-11-16; `coinvest_signals.json` is still on Q2 holdings.
   - The forward-validation capture now checks the snapshot's `ranker_mode` against `CANDIDATE.json` (hard check `ranker_mode_match`). No hash rotation.
-  - **Proposals awaiting operator numbers, not in force:** wider hard-exit thresholds for the agentic account (Rule 4), and a fail rule and a selector-only rollback rule for the forward test.
+  - **Adopted by the operator the same day (in force):** agentic-account Rule 4 is now review at −10 pp and liquidation at −15 pp against XBI (was −2 / −5); `FORWARD_VALIDATION_PROTOCOL.md` §4 gains a fail rule (mean weekly excess < 0 with t ≤ −1.65 at 20, 40 or 60 windows), a read-out at 60 windows and a selector-only rollback rule (paired t ≤ −1.65 against the shadow ranker basket after 20 windows).
 
 ## Governance Events (2026-11-13)
 

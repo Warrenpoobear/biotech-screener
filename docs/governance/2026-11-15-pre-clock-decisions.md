@@ -1,6 +1,6 @@
 # Decisions recorded before the selector-only clock starts (2026-11-15)
 
-**Status:** sections 1 and 2 are decided (operator instruction, 2026-11-15). Sections 3 and 4 are **proposals that need operator numbers**; nothing in them is in force.
+**Status:** all four sections are decided (operator instruction, 2026-11-15). Sections 3 and 4 were written as proposals and **adopted as proposed by the operator later the same day**; they are in force through `production_data/AGENTIC_ACCOUNT_RULES.md` Rule 4 and `docs/FORWARD_VALIDATION_PROTOCOL.md` §4.
 
 **Why now:** `oos_clock_start` for the selector-only order has not been recorded. It is expected to be 2026-11-16, after the first promoted selector-only run (see the addendum in `2026-11-13-selector-only-production-switch.md`). Anything decided after the clock starts either resets it or gets argued with the results in view.
 
@@ -33,7 +33,7 @@ The candidate `model_hash` covers `ranker_engine.py`, `selector_engine.py` and `
 
 Checked on real data: the 2026-11-13 staged selector-only snapshot matches the candidate; the 2026-11-12 pairwise snapshot does not. The hash scheme itself is unchanged, so there is no hash rotation.
 
-## 3. Proposal — hard-exit thresholds for the agentic account (needs operator numbers)
+## 3. Hard-exit thresholds for the agentic account (adopted 2026-11-15)
 
 `production_data/AGENTIC_ACCOUNT_RULES.md` Rule 4 liquidates the account at −2 pp against XBI. On the selector-only history (`snapshots_pit_v5` plus live month-ends, 84 months, net of 50 bps), monthly excess return has a mean of +1.14 pt and a standard deviation of 4.83 pt. Measured at month-ends from every possible entry month:
 
@@ -45,27 +45,27 @@ Checked on real data: the 2026-11-13 staged selector-only snapshot matches the c
 
 So the current trigger fires in about half of all 12-month holding periods through ordinary variation. In this history the six months after a first touch of −2 pp averaged +8.1 pp of excess return and were positive 89% of the time (36 cases), so the rule sold ahead of recoveries. Daily observation would touch each level more often than these month-end figures.
 
-Proposed replacement, for the operator to confirm or change:
+Replacement, adopted by the operator as proposed:
 
 | Trigger (per-lot, XBI-anchored, as measured today) | Action |
 |---|---|
 | ≤ −10 pp | Review: no new buys until the operator has looked at it |
 | ≤ −15 pp | Full liquidation to cash |
 
-These are in-sample, survivorship-biased figures, and the account is a pilot. The alternative is to keep −2 pp and treat it as a "stop the pilot" switch that is expected to fire. Rule 4 is **not edited** by this record.
+These are in-sample, survivorship-biased figures, and the account is a pilot. Rule 4 now carries these levels. The former "liquidate immediately, no delay" band (−5 pp) is removed: liquidation at −15 pp follows operator confirmation.
 
-## 4. Proposal — what counts as failure for the forward test (needs operator numbers)
+## 4. What counts as failure for the forward test (adopted 2026-11-15)
 
 `docs/FORWARD_VALIDATION_PROTOCOL.md` §4 already fixes the pass side: at least 20 non-overlapping weekly windows, directional gate t ≥ 1.65 (one-tailed), confirmation |t| ≥ 1.96. Two things are missing.
 
-**There is no fail rule.** If the true edge is the no-hindsight backtest estimate (about +1.1 pt a month, roughly +0.25 pt a week against a weekly standard deviation near 2.3 pt), the expected t-statistic after 20 windows is about 0.5 and the chance of clearing 1.65 is roughly one in eight. "Not passed at 20" will be the usual outcome even if the model works, so it cannot be the failure signal. Proposed:
+**There is no fail rule.** If the true edge is the no-hindsight backtest estimate (about +1.1 pt a month, roughly +0.25 pt a week against a weekly standard deviation near 2.3 pt), the expected t-statistic after 20 windows is about 0.5 and the chance of clearing 1.65 is roughly one in eight. "Not passed at 20" will be the usual outcome even if the model works, so it cannot be the failure signal. Adopted:
 
 - Stop and review if, at any checkpoint of 20, 40 or 60 windows, mean weekly excess is negative with t ≤ −1.65.
 - Otherwise keep accruing to 60 windows before reading "not significant" as evidence against the model.
 
-**There is no rollback rule for selector-only against the shadow ranker.** The shadow ledger (`tools/selector_only_shadow.py`) records both baskets. Proposed: revert to `pairwise_minimal` only if, after at least 20 windows, selector-only trails the ranker basket with t ≤ −1.65 on the paired weekly difference. A smaller gap is noise at this sample size.
+**There is no rollback rule for selector-only against the shadow ranker.** The shadow ledger (`tools/selector_only_shadow.py`) records both baskets. Adopted: review reverting to `pairwise_minimal` only if, after at least 20 windows, selector-only trails the ranker basket with t ≤ −1.65 on the paired weekly difference. A smaller gap is noise at this sample size.
 
-Changing §4 of the protocol is a Tier 4 decision. The protocol is **not edited** by this record.
+Changing §4 of the protocol is a Tier 4 decision; the operator made it on 2026-11-15 with zero forward windows observed for the selector-only order. §4 now carries these rules, plus a read-out at 60 windows.
 
 ## Evidence these decisions rest on (scratch research, 2026-11-13 to 2026-11-15; not committed)
 
@@ -74,4 +74,4 @@ Changing §4 of the protocol is a Tier 4 decision. The protocol is **not edited*
 - Caps, diversifiers and filing-age decay variants: none beats the current selector.
 - Manager roster: the current 30 are at the 98th percentile of random 30-of-63 lists (+1.57 against an average +1.10 pt a month); a point-in-time roster picked on trailing 36-month returns adds +0.12 pt (t = 0.48) over using all managers.
 
-All of it is pseudo point-in-time, survivorship-biased and in-sample for the selector settings. It is context for the proposals, not evidence for promotion.
+All of it is pseudo point-in-time, survivorship-biased and in-sample for the selector settings. It is context for these decisions, not evidence for promotion.
