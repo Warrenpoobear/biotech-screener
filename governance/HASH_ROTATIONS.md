@@ -99,3 +99,19 @@ Memo: `docs/governance/2026-11-15-pre-clock-decisions.md` §5
 - **Expected downstream impact:** captures from the first run on this code carry the new hash and match the re-registered candidate. Earlier captures keep `827c35a9ed3ee6e1`; they predate the selector-only clock start and are history only.
 - **Still outside the hash:** the rest of `run_screen.py` (including which config object is passed to the selector), the ruleset file (tracked separately as `ruleset_hash`), and input data.
 - **Reviewer:** operator — authorized in session 2026-11-15 ("do all fixes").
+
+## 2026-11-15 — curated regulatory calendar refresh (operator-authorized)
+
+Memo: `docs/governance/2026-11-15-regulatory-calendar-refresh.md`
+
+| Surface | Old hash (sha256[:16]) | New hash (sha256[:16]) |
+|---|---|---|
+| `production_data/pdufa_dates.json` | `97881a3c775f56b6` (57 entries) | `0c27ab5dc48bf4a7` (59 entries) |
+| Candidate `model_hash` (ast-v2) | unchanged | unchanged |
+| Ruleset | `8887576e` | unchanged |
+
+- **Effective date:** the first production run after merge; intended before `oos_clock_start` for the selector-only order is recorded.
+- **Affected surface:** catalyst / regulatory calendar inputs (`event_ledger.py`, regulatory-calendar gate, catalyst block of the selector).
+- **Reason:** outcomes since the 2026-11-03 refresh (SMMT CRL; NUVB and IBRX approved early), a superseded EXEL date, a partner duplicate (ANAB), four missing dates (AQST ×2, UTHR, CELC), and missing indications.
+- **Expected downstream impact:** not measured with a full screen. Catalyst timing changes for SMMT, CYTK, TEVA, NUVB, IBRX, EXEL, ANAB, AQST, UTHR and CELC.
+- **Reviewer:** operator — authorized in session 2026-11-15.
