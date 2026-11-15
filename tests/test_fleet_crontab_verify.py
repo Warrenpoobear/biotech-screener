@@ -74,3 +74,12 @@ def test_main_writes_artifact(verify_mod, tmp_path, monkeypatch):
     payload = json.loads(out.read_text(encoding="utf-8"))
     assert payload["schema"] == "fleet_crontab_verify.v1"
     assert payload["overall"] == "SKIP"
+
+
+def test_ci_runner_is_not_the_operator_host(monkeypatch):
+    """A CI runner has `crontab` but no fleet crontab; the live check must SKIP there."""
+    import tools.fleet_crontab_verify as mod
+
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    assert mod.read_active_crontab_lines() == ("UNAVAILABLE", [])
+    assert mod.verify_crontab()["overall"] == "SKIP"
