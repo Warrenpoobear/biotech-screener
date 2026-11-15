@@ -67,7 +67,7 @@ Always warm 8-K cache BEFORE running screen.
 
 ### Forward Validation Protocol — daily truth-card (hardened 2026-07-10, PR #489)
 
-`docs/FORWARD_VALIDATION_PROTOCOL.md` (RATIFIED 2026-06-28) pre-registers a daily "truth card" plus weekly/monthly summaries for the frozen DEM Top-30 candidate (v1.4 / ruleset `8887576e`; candidate `model_hash=827c35a9ed3ee6e1`, `hash_scheme=ast-v1`; legacy `a9983a67c6954813`; registered 2026-06-26 unchanged).
+`docs/FORWARD_VALIDATION_PROTOCOL.md` (RATIFIED 2026-06-28) pre-registers a daily "truth card" plus weekly/monthly summaries for the frozen DEM Top-30 candidate (v1.4 / ruleset `8887576e`; candidate `model_hash=a9a430154568e242`, `hash_scheme=ast-v2` (since 2026-11-15; prior `ast-v1` `827c35a9ed3ee6e1`); legacy `a9983a67c6954813`; registered 2026-06-26 unchanged).
 
 **WIRED and hardened.** Originally wired `a90297f8` (2026-06-28), but the capture tail never actually ran in production 2026-04-17 → 2026-07-10 (`set -euo pipefail` aborted it on the pipeline's WARN exit 2); repaired + deployed 2026-07-10 (PR #489, `4d8623e5`). Current behavior:
 - `tools/run_forward_validation.py` — immutable daily truth-card capture (top-30 EW by `actionable_rank`), model-hash check vs `CANDIDATE.json`, 8-point DQ gate, adversarial seeds (1000-bootstrap + bottom-30) — invoked by the wrapper **only on pipeline exit 0/2** with a freshness/provenance gate; every capture is LIVE or REPLAY (`fv_capture.v2`); only LIVE + quality-PASS + hash-match + benchmark + realized 5d excess counts toward mandate SM-20260629-001

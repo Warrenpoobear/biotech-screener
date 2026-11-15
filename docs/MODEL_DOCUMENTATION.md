@@ -108,7 +108,7 @@ Status: no change to scoring, selection, order, sizing or eligibility. Operator-
 - **Rules recorded before the clock starts** (`docs/governance/2026-11-15-pre-clock-decisions.md`): a routine quarterly 13F refresh is not a clock reset; agentic-account Rule 4 is review at −10 pp and liquidation at −15 pp against XBI; `FORWARD_VALIDATION_PROTOCOL.md` §4 gains a fail rule, a 60-window read-out and a selector-only rollback rule.
 - **Universe:** ACHV → QUIT (effective 2026-11-10) and SRZN activated (PR #668).
 - **Research context (scratch, not evidence for promotion):** selector-only Top-30 against XBI since 2020, net of 50 bps, +1.18 pt a month (t = 2.22) through 2026-11-12, with −15.6% against +2.9% over the last three months. The August and September shortfall traces to the selector's concentration in co-investment (factor IC −0.13 and −0.50). Caps, diversifiers and decay variants do not beat the current selector. The current 30-manager roster sits at the 98th percentile of random 30-of-63 lists (+1.57 against an average +1.10 pt a month), and a point-in-time roster adds +0.12 pt (t = 0.48) over using all managers, so roughly +1.1 pt a month is the no-hindsight backtest expectation, before survivorship bias.
-- **Follow-ups:** Hermes skill mirrors and `docs/library-export/` still quote the `ast-v1` hash.
+- **Follow-ups:** ~~Hermes skill mirrors and `docs/library-export/` still quote the `ast-v1` hash.~~ Resolved 2026-11-15: skills, mirrors and library export now quote `a9a430154568e242` (`ast-v2`), with the prior hash kept for reference.
 
 ## Recent Update — 2026-11-13 (Production Order Switched to Selector-Only — Operator-Authorized Model Change)
 
