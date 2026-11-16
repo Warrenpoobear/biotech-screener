@@ -48,8 +48,29 @@ Method: `run_screen.py` for 2026-11-13 on a copy of today's production inputs, r
 
 Of the 8 names whose cash went down, all move from a stale balance sheet (2018–2025) to the current one.
 
+## Historical backtest impact (research note, added 2026-11-16; operator-accepted for this record)
+
+Research only. It changes nothing in production and is not forward evidence.
+
+- **Method:** `data/snapshots_pit_v6` (built 2026-11-15) was rerun with the same staged inputs and the fixed store, giving `snapshots_pit_v7`.
+  - The staged store files are byte-identical to the pre-fix production store.
+  - Between v6's build commit (`dfd7f46d`) and this fix, the only scoring-code change is `pit_financials.py`, so the comparison isolates the fix.
+  - 80 of 80 dates regenerated without error.
+- **Measure:** Top-30 by `actionable_rank`, equal weight, held to the next snapshot date. Split-adjusted closes, gross of costs. Monthly, 79 periods, 2020-01 → 2026-06.
+
+| | Top-30 minus XBI, per period | t | Cumulative (XBI +75.7%) |
+|---|---|---|---|
+| Pre-fix store (v6) | +1.62 pt | 3.19 | +471% |
+| Fixed store (v7) | +1.37 pt | 2.67 | +362% |
+| Paired v7 − v6 | −0.25 pt | −1.12 | |
+
+- Mean Top-30 overlap is 27.3/30, and 75 of 79 periods change at least one name.
+- By year, v7 − v6: 2020 −0.74, 2021 +0.11, 2022 −1.29, 2023 −0.68, 2024 +0.45, 2025 +0.61, 2026 (7 periods) −0.20.
+- Most often added: CYTK (36 periods), REPL, AXSM, ACRS, VRDN, SYRE. Most often dropped: CLDX, RARE, MIRM, BIIB, VKTX.
+- **Reading:** results computed on pre-fix regenerated history are mildly flattered by the cash understatement. The difference is not significant, and the conclusion that the Top-30 led XBI on this history is unchanged.
+- **Same caveats as every regenerated history:** pseudo-PIT, survivorship-biased, and in-sample for the selector settings.
+
 ## Not done
 
-- No historical backtest of the change.
 - The static `financial_data.json` collector has the same tag gap for some names (GRAL). It is only a fallback when the PIT store is present, so it is not fixed here.
 - The universe-maintenance report still flags delisted/acquired names as stale; cosmetic.
