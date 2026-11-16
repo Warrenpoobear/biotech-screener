@@ -16,6 +16,31 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
+## Recent Update — 2026-11-16 (Selector-Only Out-of-Sample Clock Start Recorded)
+
+Classification: `GOVERNANCE_RECORD / OPERATOR_DECISION_RECORDED`. Tier 4 record. Source of truth: `docs/governance/2026-11-16-selector-only-clock-start.md`.
+
+Summary:
+- `oos_clock_start` is **2026-11-16**, recorded in `artifacts/forward_validation/CANDIDATE.json`. It is the first promoted production run on the selector-only code (manifest commit `ae5ceb81`, result WARN). The 2026-11-12 start is superseded; the 2026-11-13 runs failed promotion on the drift gate and took no capture.
+- The starting configuration includes the PIT cash/securities fix (PR #682) and the `de_vol_60d` refresh (PR #676), both merged before the run.
+- The evening's forward-validation, selector-only shadow and low-risk sleeve ledger rows are committed.
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Records only. `model_hash a9a430154568e242` (`ast-v2`) unchanged.
+- Frozen status: unchanged. **FROZEN (BLOCKED_LEVEL_0)** remains in force.
+- Mandate SM-20260629-001 is at **0/20** from 2026-11-16. The protocol §4 fail rule and the selector-only rollback rule run from this start. Any further authorized input or model fix resets the clock again.
+- The partial Q3 2026 13F refresh (PR #690; 16 of 30 managers on Q3) is in the starting configuration. Operator action pending: the second refresh once the remaining 14 managers have filed (routine, not a reset).
+
+Evidence:
+- Run: `data/snapshots/2026-11-16/run_manifest.json` (44 gates; 39 PASS, 5 WARN (turnover and drift_monitoring under the dated override, ruleset_health, and two non-blocking checks)).
+- Forward-validation capture 2026-11-16: LIVE, quality PASS, model hash `a9a430154568e242` match, `ranker_mode=selector_only`, eligible for the mandate.
+- Top-30 against the PR #682 prediction: all five in, as predicted for PR #682: COGT #2, VRDN #7, SYRE #12, DNTH #16, CYTK #28. The PR #690 changes also landed as predicted: ERAS #14, TARS #17, VOR #19, DSGN #22, SRZN #24 in; DMRA, AMLX, IMCR, AURA, SGMT out (ranks 34-63).
+
+Impact on alpha interpretation:
+- **No new performance evidence.** The clock has one capture and no completed window.
+
+---
+
 ## Recent Update — 2026-11-15 (Research History v6; Low-Risk Sleeve Shadow; Weekend Signal Research — Context Only)
 
 Status: documentation of a rebuilt research history, a capture-only shadow, and scratch research. **No change to scoring, selection, order, sizing or eligibility.** Every performance figure below is in-sample, pseudo point-in-time and survivorship-biased. It is research context, **not evidence for promotion**; the forward record remains the only out-of-sample evidence.
