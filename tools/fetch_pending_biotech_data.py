@@ -20,6 +20,22 @@ from collect_financial_data import get_cik_from_ticker, get_company_facts  # noq
 from tools.refresh_eligible_biotech_universe import refresh_universe  # noqa: E402
 
 
+def _json_safe(obj: Any) -> Any:
+    """Replace NaN/inf floats with None, recursively (yfinance can return NaN closes)."""
+    if isinstance(obj, float):
+        return obj if obj == obj and obj not in (float("inf"), float("-inf")) else None
+    if isinstance(obj, dict):
+        return {k: _json_safe(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_json_safe(v) for v in obj]
+    return obj
+
+
+def dumps_universe_json(obj: Any) -> str:
+    """Strict JSON for files run_screen loads with orjson, which rejects NaN."""
+    return json.dumps(_json_safe(obj), indent=2, allow_nan=False) + "\n"
+
+
 def _ticker(row: dict[str, Any]) -> str:
     return str(row.get("ticker") or "").strip().upper()
 
@@ -328,8 +344,8 @@ def main() -> int:
 
     report["dry_run"] = not args.apply
     if args.apply:
-        args.universe_path.write_text(json.dumps(refreshed_universe, indent=2) + "\n", encoding="utf-8")
-        args.trial_records_path.write_text(json.dumps(merged_trials, indent=2) + "\n", encoding="utf-8")
+        args.universe_path.write_text(dumps_universe_json(refreshed_universe), encoding="utf-8")
+        args.trial_records_path.write_text(dumps_universe_json(merged_trials), encoding="utf-8")
     args.report_path.parent.mkdir(parents=True, exist_ok=True)
     args.report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2, sort_keys=True))

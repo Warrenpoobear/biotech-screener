@@ -117,3 +117,21 @@ def test_fetch_pending_data_uses_company_name_trial_fallback():
     assert refreshed[0]["status"] == "active"
     assert len(merged_trials) == 1
     assert report["trial_success"] == ["FALL"]
+
+
+def test_universe_write_never_emits_nan():
+    """2026-11-16: yfinance returned NaN as KALA's last close; the file then held `"price": NaN`,
+    which orjson (run_screen's loader) rejects, so the daily screen could not start."""
+    import math
+
+    import orjson
+
+    from tools.fetch_pending_biotech_data import dumps_universe_json
+
+    rows = [{"ticker": "KALA", "market_data": {"price": float("nan"), "market_cap": 2684364, "x": [math.inf]}}]
+    text = dumps_universe_json(rows)
+    assert "NaN" not in text and "Infinity" not in text
+    loaded = orjson.loads(text)
+    assert loaded[0]["market_data"]["price"] is None
+    assert loaded[0]["market_data"]["market_cap"] == 2684364
+    assert loaded[0]["market_data"]["x"] == [None]

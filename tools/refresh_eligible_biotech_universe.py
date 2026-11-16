@@ -18,6 +18,21 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 GENERIC_COMPANY_NAMES = {"healthcare", "biotechnology", "biotech", "unknown"}
 
 
+def _json_safe(obj):
+    """Replace NaN/inf floats with None, recursively."""
+    if isinstance(obj, float):
+        return obj if obj == obj and obj not in (float("inf"), float("-inf")) else None
+    if isinstance(obj, dict):
+        return {k: _json_safe(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_json_safe(v) for v in obj]
+    return obj
+
+
+def _dumps_strict(obj) -> str:
+    return json.dumps(_json_safe(obj), indent=2, allow_nan=False) + "\n"
+
+
 def _ticker(row: dict[str, Any]) -> str:
     return str(row.get("ticker") or "").strip().upper()
 
@@ -261,7 +276,8 @@ def main() -> int:
     report["status_changes"] = changes
     report["dry_run"] = not args.apply
     if args.apply:
-        args.universe_path.write_text(json.dumps(refreshed, indent=2) + "\n", encoding="utf-8")
+        # NaN-safe: run_screen loads universe.json with orjson, which rejects NaN.
+        args.universe_path.write_text(_dumps_strict(refreshed), encoding="utf-8")
         if changes:
             audit_path = args.audit_log_path or args.universe_path.with_name("universe_audit_log.jsonl")
             stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")

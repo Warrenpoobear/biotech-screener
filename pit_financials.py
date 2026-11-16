@@ -99,6 +99,67 @@ def _latest_fact(
     return deduped[0]
 
 
+# Preference on a shared balance-sheet date; mirrors tools/build_pit_financials.CASH_TAGS.
+# Legacy untagged facts (old builder: one tag only) rank first.
+_CASH_TAG_RANK = {
+    "": 0,
+    "CashAndCashEquivalentsAtCarryingValue": 1,
+    "CashAndCashEquivalents": 1,  # IFRS (ifrs-full) equivalent; outranks the narrower IFRS "Cash" line
+    "Cash": 2,
+    "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents": 3,
+}
+
+
+def _latest_cash(facts: Optional[list[dict]], as_of_date: str) -> tuple[Optional[float], Optional[str]]:
+    """Cash on the latest balance-sheet date known on as_of_date, across all cash tags.
+
+    On that date the preferred tag wins (plain cash before cash incl. restricted);
+    within a tag the latest-filed fact wins (amendments).
+    """
+    pit = [f for f in _filter_facts_pit(facts or [], as_of_date) if f.get("end") and f.get("val") is not None]
+    if not pit:
+        return None, None
+    end = max(f["end"] for f in pit)
+    on_end = [f for f in pit if f["end"] == end]
+    best = min(
+        on_end, key=lambda f: (_CASH_TAG_RANK.get(f.get("tag", ""), 9), f.get("tag", ""), _neg(f.get("filed", "")))
+    )
+    return float(best["val"]), end
+
+
+def _neg(s: str) -> tuple:
+    """Sort key that orders ISO date strings descending inside an ascending min()."""
+    return tuple(-ord(c) for c in s)
+
+
+def _current_investments(
+    facts: Optional[list[dict]],
+    as_of_date: str,
+    cash_end: Optional[str],
+) -> tuple[Optional[float], Optional[str]]:
+    """Current marketable securities on the same balance sheet as cash.
+
+    Facts may come from several XBRL tags (each carrying "tag"; legacy files have
+    one untagged series). Only facts filed on or before as_of_date with
+    end == cash_end are used, so a stale tag is never stacked on current cash.
+    Per tag the latest-filed value wins (amendments); across tags the MAX is
+    taken, because different tags usually describe the same portfolio.
+    """
+    if not facts or not cash_end:
+        return None, None
+    best_by_tag: dict[str, dict] = {}
+    for f in _filter_facts_pit(facts, as_of_date):
+        if f.get("end") != cash_end or f.get("val") is None:
+            continue
+        tag = f.get("tag", "")
+        cur = best_by_tag.get(tag)
+        if cur is None or f.get("filed", "") > cur.get("filed", ""):
+            best_by_tag[tag] = f
+    if not best_by_tag:
+        return None, None
+    return max(float(f["val"]) for f in best_by_tag.values()), cash_end
+
+
 def _latest_n_facts(
     facts: list[dict],
     as_of_date: str,
@@ -349,8 +410,8 @@ def pit_financial_snapshot(
         return _compute_ttm(field_facts, as_of_date)
 
     # --- Balance sheet (instant) ---
-    cash, cash_date = _get_instant("cash")
-    short_term_inv, sti_date = _get_instant("short_term_investments")
+    cash, cash_date = _latest_cash(facts.get("cash"), as_of_date)
+    short_term_inv, sti_date = _current_investments(facts.get("short_term_investments"), as_of_date, cash_date)
     assets, assets_date = _get_instant("assets")
     liabilities, liab_date = _get_instant("liabilities")
     equity, equity_date = _get_instant("stockholders_equity")
