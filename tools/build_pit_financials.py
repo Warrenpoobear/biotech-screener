@@ -65,6 +65,8 @@ XBRL_TAGS = [
         True,
     ),
     ("long_term_debt", "LongTermDebt", ["LongTermDebtNoncurrent", "ConvertibleDebt"], "USD", True),
+    # short_term_investments is collected from EVERY tag in CURRENT_INVESTMENT_TAGS
+    # (see extract_all_facts); the primary/fallback pair here is only the legacy order.
     (
         "short_term_investments",
         "MarketableSecuritiesCurrent",
@@ -94,6 +96,31 @@ XBRL_TAGS = [
         "USD",
         False,
     ),
+]
+
+# Current investment portfolio tags. Filers use different tags for the same treasury
+# portfolio, and many switched tags over time, so ALL are kept (each fact carries its
+# "tag"); pit_financials takes the max across tags on the cash balance-sheet date,
+# matching the static collector's no-double-count rule. Non-current securities are
+# deliberately excluded, as in collect_financial_data.py.
+CURRENT_INVESTMENT_TAGS = [
+    "MarketableSecuritiesCurrent",
+    "ShortTermInvestments",
+    "AvailableForSaleSecuritiesCurrent",
+    "MarketableSecurities",
+    "AvailableForSaleSecuritiesDebtSecuritiesCurrent",
+    "DebtSecuritiesAvailableForSaleExcludingAccruedInterestCurrent",
+    "HeldToMaturitySecuritiesCurrent",
+]
+
+# Cash tags in preference order. Filers switch tags (e.g. ARWR, BIIB, GILD now report
+# only cash incl. restricted cash), so ALL are kept with their "tag"; pit_financials
+# uses the latest balance-sheet date and, on that date, the first tag in this order
+# (same fallback order as collect_financial_data.py: plain cash, then incl. restricted).
+CASH_TAGS = [
+    "CashAndCashEquivalentsAtCarryingValue",
+    "Cash",
+    "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
 ]
 
 # IFRS fallback mappings: ifrs_tag -> same normalized name
@@ -238,6 +265,22 @@ def extract_all_facts(facts_data: dict) -> dict[str, list[dict]]:
     result: dict[str, list[dict]] = {}
 
     for normalized_name, primary_tag, fallbacks, unit_type, _is_instant in XBRL_TAGS:
+        if normalized_name in ("short_term_investments", "cash"):
+            # Union of every tag (first-found would let a stale tag shadow the one the
+            # filer uses today, e.g. CYTK's AFS debt securities, ARWR's cash).
+            facts = []
+            for tag in CURRENT_INVESTMENT_TAGS if normalized_name == "short_term_investments" else CASH_TAGS:
+                facts.extend(dict(f, tag=tag) for f in extract_facts_for_tag(facts_data, tag, unit_type, "us-gaap"))
+            if not facts:
+                for ifrs_tag in IFRS_TAGS[normalized_name]:
+                    facts.extend(
+                        dict(f, tag=ifrs_tag)
+                        for f in extract_facts_for_tag(facts_data, ifrs_tag, unit_type, "ifrs-full")
+                    )
+            if facts:
+                result[normalized_name] = facts
+            continue
+
         # Try us-gaap namespace first
         facts = extract_facts_for_tag(facts_data, primary_tag, unit_type, "us-gaap")
         if not facts:

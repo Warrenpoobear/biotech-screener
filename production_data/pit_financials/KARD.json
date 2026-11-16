@@ -9,21 +9,56 @@
         "val": 90121000,
         "filed": "2026-08-11",
         "form": "10-Q",
-        "accn": "0001193125-26-343418"
+        "accn": "0001193125-26-343418",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2025-12-31",
         "val": 108989000,
         "filed": "2026-08-11",
         "form": "10-Q",
-        "accn": "0001193125-26-343418"
+        "accn": "0001193125-26-343418",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2026-06-30",
         "val": 384005000,
         "filed": "2026-08-11",
         "form": "10-Q",
-        "accn": "0001193125-26-343418"
+        "accn": "0001193125-26-343418",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
+      },
+      {
+        "end": "2024-12-31",
+        "val": 49815000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343418",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2025-06-30",
+        "val": 90661000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343418",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 109529000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343418",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 384545000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343418",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
       }
     ],
     "assets": [
@@ -262,6 +297,24 @@
         "form": "10-Q",
         "accn": "0001193125-26-343418",
         "start": "2026-01-01"
+      }
+    ],
+    "short_term_investments": [
+      {
+        "end": "2025-12-31",
+        "val": 226496000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343418",
+        "tag": "AvailableForSaleSecuritiesDebtSecuritiesCurrent"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 213590000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343418",
+        "tag": "AvailableForSaleSecuritiesDebtSecuritiesCurrent"
       }
     ]
   }
