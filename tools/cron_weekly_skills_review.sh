@@ -2,8 +2,8 @@
 # Weekly self-improvement loop review — operator host (WSL).
 # Advisory only. Does not modify skills or production behavior unless gates are set.
 #
-# Suggested crontab (Friday 19:30 ET):
-#   30 19 * * 5 cd /mnt/c/Projects/biotech_screener/biotech-screener && bash tools/cron_weekly_skills_review.sh >> logs/weekly_skills_review.log 2>&1
+# Suggested crontab (Friday 17:55 ET; WSL is often asleep after ~19:00):
+#   55 17 * * 5 cd /mnt/c/Projects/biotech_screener/biotech-screener && bash tools/cron_weekly_skills_review.sh >> logs/weekly_skills_review.log 2>&1
 
 set -euo pipefail
 

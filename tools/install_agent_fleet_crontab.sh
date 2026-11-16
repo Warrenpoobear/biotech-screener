@@ -25,8 +25,8 @@ cat <<EOF
 0,30 11-15 * * 1-5 ${REPO_ROOT}/tools/cron_intraday_mover.sh poll >> ${REPO_ROOT}/logs/intraday_mover.log 2>&1
 15 16 * * 1-5 ${REPO_ROOT}/tools/cron_intraday_mover.sh digest >> ${REPO_ROOT}/logs/intraday_mover.log 2>&1
 
-# Weekly self-learning digest (Friday 19:30 ET)
-30 19 * * 5 cd ${REPO_ROOT} && bash tools/cron_weekly_skills_review.sh >> logs/weekly_skills_review.log 2>&1
+# Weekly self-learning digest (Friday 17:55 ET — WSL is often asleep after ~19:00)
+55 17 * * 5 cd ${REPO_ROOT} && bash tools/cron_weekly_skills_review.sh >> logs/weekly_skills_review.log 2>&1
 
 # Data auditor (weekdays 17:30 ET — after production; matches cron_data_auditor.sh)
 30 17 * * 1-5 cd ${REPO_ROOT} && bash tools/cron_data_auditor.sh --daily-only >> logs/data_auditor.log 2>&1
@@ -43,7 +43,7 @@ cat <<EOF
 
 # Production watchdog (reboot + weekday safety net for missed cron)
 @reboot ${REPO_ROOT}/tools/cron_watchdog.sh >> ${REPO_ROOT}/logs/watchdog.log 2>&1
-30 12 * * 1-5 ${REPO_ROOT}/tools/cron_watchdog.sh >> ${REPO_ROOT}/logs/watchdog.log 2>&1
+*/30 * * * 1-5 ${REPO_ROOT}/tools/cron_watchdog.sh >> ${REPO_ROOT}/logs/watchdog.log 2>&1
 
 # Operator one-shot triage: python3 tools/fleet_ops_status.py --write
 # Wiring audit: python3 tools/fleet_completion_audit.py --write
