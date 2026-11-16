@@ -62,7 +62,10 @@ filterwarnings = [
 ]
 
 [tool.coverage.run]
-source = ["common", "tools", "scripts"]
+# Whole repo, so the model itself (run_screen.py, selector_engine.py, decision_engine.py,
+# ranker_v2_pairwise.py, module_*.py at the repo root) is measured. Finished one-off
+# studies and non-Python-product trees are omitted so the number tracks maintained code.
+source = ["."]
 parallel = true
 concurrency = ["multiprocessing"]
 omit = [
@@ -70,6 +73,16 @@ omit = [
     "*_test.py",
     "test_*.py",
     "setup.py",
+    "conftest.py",
+    "scripts/research/*",
+    "research/*",
+    "research-inbox/*",
+    "patches/*",
+    "frontend/*",
+    "web/*",
+    "node_modules/*",
+    ".claude/*",
+    ".hermes/*",
 ]
 
 [tool.coverage.report]
@@ -80,6 +93,9 @@ exclude_lines = [
 ]
 show_missing = true
 fail_under = 50
+# Dirs without __init__.py (scripts/, agents/, ...) are otherwise skipped when
+# looking for never-imported files, which would flatter the total.
+include_namespace_packages = true
 
 [tool.black]
 line-length = 120
