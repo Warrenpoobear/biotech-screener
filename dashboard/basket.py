@@ -30,6 +30,7 @@ import hmac
 import json
 import os
 import sqlite3
+import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from decimal import ROUND_DOWN, Decimal, InvalidOperation
@@ -232,15 +233,31 @@ class ExecutionLedger:
     );
     """
 
+    # Bounded retry for first-time setup (see __init__).
+    _INIT_DEADLINE_S = 30.0
+
     def __init__(self, path: Path | str) -> None:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        con = self._connect()
-        try:
-            con.executescript(self._SCHEMA)
-            con.commit()
-        finally:
-            con.close()
+        # Switching a fresh database to WAL needs an exclusive lock, and SQLite can return
+        # SQLITE_BUSY at once (no busy-handler wait) when several connections open the new
+        # file together. The schema is idempotent, so retry the whole setup until a deadline.
+        deadline = time.monotonic() + self._INIT_DEADLINE_S
+        delay = 0.005
+        while True:
+            try:
+                con = self._connect()
+                try:
+                    con.executescript(self._SCHEMA)
+                    con.commit()
+                finally:
+                    con.close()
+                return
+            except sqlite3.OperationalError as exc:
+                if "locked" not in str(exc) or time.monotonic() >= deadline:
+                    raise
+                time.sleep(delay)
+                delay = min(delay * 2, 0.25)
 
     def _connect(self) -> sqlite3.Connection:
         # timeout covers the brief writer lock; isolation_level=None keeps the INSERT its
