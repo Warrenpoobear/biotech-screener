@@ -1,10 +1,10 @@
 # DEM Top-30 EW — Weekly Forward Validation Summary
 
-**Updated:** 2026-11-12T22:00Z  
-**Model hash:** `827c35a9ed3ee6e1`  
+**Updated:** 2026-11-16T22:42Z  
+**Model hash:** `a9a430154568e242`  
 **Ruleset:** `8887576e`  
 **Candidate registered:** 2026-06-26  
-**Out-of-sample clock start:** 2026-11-12  
+**Out-of-sample clock start:** 2026-11-16  
 **Test:** Equal-weight Top-30 by `actionable_rank` vs XBI (5-day non-overlapping windows)  
 
 ---
@@ -13,15 +13,15 @@
 
 | Metric | Value |
 |--------|-------|
-| Non-overlapping 5d windows (all captured) | **12** |
+| Non-overlapping 5d windows (all captured) | **13** |
 | **Mandate-eligible live windows** | **0** |
-| Mean weekly excess (basket − XBI) | **+1.197%** |
-| Std weekly excess | 2.012% |
-| t-stat | **2.06** |
-| Hit rate (excess > 0) | **75%** |
-| Cumulative excess | **+14.37%** |
-| Cumulative basket | +52.00% |
-| Cumulative XBI | +37.63% |
+| Mean weekly excess (basket − XBI) | **+1.142%** |
+| Std weekly excess | 1.936% |
+| t-stat | **2.13** |
+| Hit rate (excess > 0) | **77%** |
+| Cumulative excess | **+14.85%** |
+| Cumulative basket | +45.46% |
+| Cumulative XBI | +30.61% |
 
 > Statistics above are **descriptive over all captured windows (incl. replay)** and are not mandate evidence. The mandate gate below counts only mandate-eligible live windows (capture_mode=LIVE, quality=PASS, model_hash_match, benchmark_available, 5d return realized).
 
@@ -49,6 +49,7 @@
 | 2026-W43 | 2026-10-19 | LIVE | — | +1.47% | +1.77% | -0.30% | - | 69% | -2.04% | PASS |
 | 2026-W44 | 2026-10-26 | LIVE | — | +2.08% | +1.05% | +1.03% | + | 88% | -2.38% | PASS |
 | 2026-W45 | 2026-11-03 | LIVE | — | +6.26% | +0.06% | +6.21% | + | 98% | +1.14% | PASS |
+| 2026-W46 | 2026-11-09 | LIVE | — | -6.54% | -7.02% | +0.48% | + | 76% | -8.28% | PASS |
 
 ---
 
@@ -60,15 +61,15 @@ B30 = equal-weight bottom-30 basket **raw return** over the same window (not an 
 | Control | Current average |
 |---------|----------------|
 | Bootstrap percentile (avg) | 79% |
-| Bottom-30 avg excess vs XBI | -1.97% |
-| Bottom-30 avg raw return | +1.17% |
+| Bottom-30 avg excess vs XBI | -1.91% |
+| Bottom-30 avg raw return | +0.44% |
 
 ---
 
 ## Interpretation Notes
 
-- 12 independent weekly 5d periods. One-tailed 95% threshold: ~1.65. Two-tailed 95%: 1.96.
-  t=2.06 — two-tailed 95% cleared. Operator review of investability gate required.
+- 13 independent weekly 5d periods. One-tailed 95% threshold: ~1.65. Two-tailed 95%: 1.96.
+  t=2.13 — two-tailed 95% cleared. Operator review of investability gate required.
 
 - Do not promote EES, expectation-gap, or options-layer signals based on this record.
 - Do not reinterpret historical evidence as forward evidence.

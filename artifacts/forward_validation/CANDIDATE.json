@@ -22,23 +22,32 @@
   "price_source": "production_data/price_history.csv (close, split-adjusted)",
   "xbi_source": "production_data/price_history.csv (close, split-adjusted, ticker=XBI)",
   "protocol": "docs/FORWARD_VALIDATION_PROTOCOL.md",
-  "oos_clock_start": "2026-11-12",
-  "oos_clock_reset_note": "Operator-recorded 2026-11-12 (reset authorized 2026-11-04; supersedes the 2026-11-02 start). The clock starts with the first production run on the merged code, 2026-11-12 (run manifest commit 2770e533): CT.gov source refresh + blocking ctgov_content_freshness gate (PR #614), inst_delta_z blank semantics (PR #635/#636), financial_score solvency/cash-total fix (PR #649), and the Sharadar-primary price source (PR #622), whose first in-pipeline run is the same run. model_hash unchanged (inputs and tooling, not engine files). Captures dated before oos_clock_start do not count toward SM-20260629-001; the mandate restarts at 0/20. See docs/governance/2026-11-04-missing-fields-clock-reset.md, docs/governance/2026-11-12-financial-runway-solvency-fix.md and docs/governance/2026-11-12-clock-start-and-path-c-re-record.md.",
+  "oos_clock_start": "2026-11-16",
+  "oos_clock_reset_note": "Operator-recorded 2026-11-16 (selector-only order authorized 2026-11-13; supersedes the 2026-11-12 start). The clock starts with the first promoted production run on the selector-only code, 2026-11-16 (run manifest commit ae5ceb81); the 2026-11-13 runs failed promotion on the drift gate and took no capture. Starting configuration includes the PIT cash/securities fix (PR #682) and the de_vol_60d refresh (PR #676), both merged before the run. model_hash unchanged (ast-v2). Captures dated before oos_clock_start do not count toward SM-20260629-001; the mandate restarts at 0/20. See docs/governance/2026-11-13-selector-only-production-switch.md and docs/governance/2026-11-16-selector-only-clock-start.md.",
   "status": "active",
   "prior_oos_clock_starts": [
     {
       "oos_clock_start": "2026-11-02",
       "superseded_on": "2026-11-12",
       "memo": "docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md"
+    },
+    {
+      "oos_clock_start": "2026-11-12",
+      "superseded_on": "2026-11-16",
+      "memo": "docs/governance/2026-11-12-clock-start-and-path-c-re-record.md"
     }
   ],
   "ranker_mode": "selector_only",
-  "pending_clock_reset": {
-    "authorized": "2026-11-13",
-    "reason": "Production order switched from the pairwise minimal_v2 ranker to selector-only (run_screen.py --ranker-mode default). model_hash is unchanged because the ranker dispatch is outside the hashed files; behavior is not.",
-    "takes_effect": "first daily production run on the merged code",
-    "action_required": "record the new oos_clock_start here after that run; captures from selector-only runs do not count toward SM-20260629-001 until it is recorded; the mandate restarts at 0/20",
-    "memo": "docs/governance/2026-11-13-selector-only-production-switch.md"
-  },
-  "rehashed_at_ast_v2": "2026-11-15"
+  "rehashed_at_ast_v2": "2026-11-15",
+  "resolved_clock_resets": [
+    {
+      "authorized": "2026-11-13",
+      "reason": "Production order switched from the pairwise minimal_v2 ranker to selector-only (run_screen.py --ranker-mode default). model_hash is unchanged because the ranker dispatch is outside the hashed files; behavior is not.",
+      "takes_effect": "first daily production run on the merged code",
+      "action_required": "record the new oos_clock_start here after that run; captures from selector-only runs do not count toward SM-20260629-001 until it is recorded; the mandate restarts at 0/20",
+      "memo": "docs/governance/2026-11-13-selector-only-production-switch.md",
+      "resolved_on": "2026-11-16",
+      "oos_clock_start": "2026-11-16"
+    }
+  ]
 }

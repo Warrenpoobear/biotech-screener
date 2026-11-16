@@ -8,7 +8,8 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-11-15  
+**Last updated:** 2026-11-16  
+**2026-11-16 update scope:** only the new Governance Events (2026-11-16) section.  
 **Update cadence:** weekly or upon governance-state change  
 **Authority:** operational status snapshot only; not architectural specification  
 **Staleness risk:** MEDIUM (reference `governance.md` for timeless process)  
@@ -180,6 +181,11 @@ metadata:
 - Governance label: Tooling/knowledge-layer expansion only. No model, ranker, selector, sizing, or alpha-promotion change.
 
 ---
+
+## Governance Events (2026-11-16)
+
+- **Selector-only out-of-sample clock started (records only):** `oos_clock_start` = **2026-11-16**, the first promoted selector-only run (manifest commit `ae5ceb81`). Supersedes the 2026-11-12 start; mandate SM-20260629-001 restarts at 0/20. Starting configuration includes PR #682 (PIT cash/securities fix) and PR #676 (`de_vol_60d`). `model_hash a9a430154568e242` unchanged. Memo: `docs/governance/2026-11-16-selector-only-clock-start.md`.
+- **The 2026-11-15 "Selector-only clock has not started" item below is superseded by this entry.**
 
 ## Governance Events (2026-11-15)
 
