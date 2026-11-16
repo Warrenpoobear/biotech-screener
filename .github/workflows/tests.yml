@@ -148,11 +148,11 @@ jobs:
             --override-ini="addopts=" \
             -m "not slow" \
             --ignore=tests/integration \
-            --cov=common --cov=tools --cov=scripts \
+            --cov=. \
             --cov-report=term-missing:skip-covered \
             --cov-report=html:coverage-html \
             --cov-report=xml:coverage.xml \
-            --cov-fail-under=36  # floor at measured 36.70% (2026-11-15); raise as tests are added
+            --cov-fail-under=50  # measured 50.35% on 2026-11-16 (repo-wide scope, research omitted); raise as tests are added
 
       - name: Coverage summary
         if: always()
