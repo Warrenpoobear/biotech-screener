@@ -184,7 +184,7 @@ class TestConcurrentExecutionIsSerialised:
 
         winners, losers = [], []
         lock = threading.Lock()
-        barrier = threading.Barrier(n_threads)
+        barrier = threading.Barrier(n_threads, timeout=30)
 
         def attempt(i):
             led = ExecutionLedger(path)  # separate connection, as a separate worker would
@@ -222,7 +222,7 @@ class TestConcurrentExecutionIsSerialised:
         path = tmp_path / "exec.db"
         results = []
         lock = threading.Lock()
-        barrier = threading.Barrier(8)
+        barrier = threading.Barrier(8, timeout=30)
 
         def attempt(uid):
             led = ExecutionLedger(path)
@@ -241,6 +241,35 @@ class TestConcurrentExecutionIsSerialised:
         for t in threads:
             t.join(timeout=30)
         assert len(results) == 8, "distinct tenants must not contend with each other"
+
+    def test_concurrent_first_construction_never_raises_locked(self, tmp_path):
+        """Many processes/threads may open a fresh ledger at once (first request after deploy).
+
+        Switching a new database to WAL takes an exclusive lock and SQLite can return
+        SQLITE_BUSY at once instead of waiting, so a bare open raised
+        "database is locked" about 1 in 350 times with 16 threads; a thread that dies
+        before the race barrier also hung the other tests forever.
+        """
+        import threading
+
+        errors = []
+        lock = threading.Lock()
+        for trial in range(150):
+            path = tmp_path / f"exec{trial}.db"
+
+            def build():
+                try:
+                    ExecutionLedger(path)
+                except Exception as exc:  # pragma: no cover - the failure being tested for
+                    with lock:
+                        errors.append(repr(exc))
+
+            threads = [threading.Thread(target=build) for _ in range(16)]
+            for t in threads:
+                t.start()
+            for t in threads:
+                t.join(timeout=60)
+        assert errors == []
 
 
 class TestCredentialRedaction:
