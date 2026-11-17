@@ -32,7 +32,8 @@ Together with the yardstick changes this requires (§5, §6), adopted as **one**
 | Exclusions | Names with 20-day annualised volatility < 10% (price pinned near a pending cash-deal price, or stale feed) — as in the existing shadow tool |
 | Split | 50% / 50% of account value |
 | Reconstitution | Monthly, at the first rebalance after month-end, from that day's promoted snapshot (both halves) |
-| Reweighting | Weekly (Monday), back to equal weight within each half and 50/50 between halves — the account's existing weekly practice (supported for the Top-30: +0.14 pt/month after costs, t 2.69; untested for the sleeve) |
+| Reweighting | Weekly (Monday), back to equal weight within each half and 50/50 between halves — the account's existing weekly practice (Top-30: +0.14 pt/month after costs, t 2.69; sleeve: +0.04, t 1.32 — optional for the sleeve, kept for one simple rule) |
+| Industry cap (optional guardrail) | At most 15 of the 30 sleeve names from one industry (point-in-time `industry` field). Binds in about 2% of months historically and changes nothing; it only guards against a future pile-up. Operator choice (§9, decision 6) |
 | Overlap | None by construction (the sleeve excludes the Top-30) |
 
 This is the `vol_beta` variant registered as a capture-only shadow on 2026-11-16 (`tools/low_risk_sleeve_shadow.py`, ledger `artifacts/low_risk_sleeve_shadow_vol_beta/`), chosen **before** the 2026-11-17 measure search. The three-measure base sleeve (adds `max_gain_21d`) is not proposed: `max_gain_21d` was the weakest measure in both halves of the 2026-11-17 search.
@@ -53,6 +54,36 @@ This is the `vol_beta` variant registered as a capture-only shadow on 2026-11-16
 - By year against XBI: 2020 −27.4 pt, 2021 +22.1, 2022 +17.3, 2023 +13.2, 2024 +8.8, 2025 +22.8, 2026 to date −2.3. The cost is strong rallies (2020).
 - 2026: year to date +21.7% (Top-30 alone +10.7%, XBI +19.6%); last three months −3.3% (Top-30 alone −21.9%).
 - 2024–2026 only (after the measures were fixed in the 2026-11-17 search's selection period): Sharpe 1.40, alpha +1.10 pt/month (t 1.95).
+
+### 4a. Weight between the halves
+
+Same 82 months, blends of the two halves:
+
+| Sleeve share | Ann. return | Sharpe | Max drawdown | Beta | Alpha/month (t) | Worst stretch vs XBI | Worst 12 months vs XBI | 12-month periods behind XBI |
+|---|---|---|---|---|---|---|---|---|
+| 0% (Top-30 only) | 18.4% | 0.70 | −50% | 1.00 | +0.72 (1.45) | −24% | −14% | 26% |
+| 25% | 19.9% | 0.84 | −38% | 0.84 | +0.89 (2.21) | −16% | −9% | 21% |
+| **50% (proposed)** | **21.1%** | **1.03** | **−25%** | **0.67** | **+1.06 (3.10)** | **−15%** | **−11%** | **13%** |
+| 75% | 21.7% | 1.24 | −15% | 0.51 | +1.23 (3.61) | −17% | −28% | 20% |
+| 100% (sleeve only) | 21.9% | 1.39 | −11% | 0.34 | +1.40 (3.57) | −29% | −49% | 23% |
+
+Mean excess over XBI is the same at every split (+0.70 to +0.72 pt/month). 50/50 has the smallest XBI-relative risk of any split; more sleeve improves absolute and beta-adjusted figures but widens the XBI-relative risk sharply (the 100% sleeve trailed XBI by 49 pt over 12 months in the 2020 rally) and drops the coinvest model entirely. 50/50 is proposed because Rule 4 and the mandate are XBI-anchored; choosing 75% or 100% from this table would be choosing with hindsight.
+
+### 4b. Sleeve design checks (2026-11-17)
+
+Each design choice was varied one at a time on the same data and costs, with the selection period (March 2020 – 2023) kept separate from 2024–2026 where a choice was searched. The proposed specification came out best or tied on every dimension:
+
+| Dimension | Tested | Result | Specification |
+|---|---|---|---|
+| Risk measures | 8 measures alone and in equal-weight pairs | Beta is the key ingredient; volatility + beta beats the three-measure base sleeve (alpha +1.40 vs +1.10 pt/month); `max_gain_21d` is the weakest measure in both periods; the selection-period winner did worse than volatility + beta in 2024–26 | 60-day volatility + 120-day beta, equal weight |
+| Lookback windows | 6 volatility × 3 beta windows (18 cells) | All 18 have alpha t 2.9–3.8; the rank correlation between selection-period and test-period Sharpe across cells is −0.03 (picking a "best" window is noise); 252-day beta slightly weaker | 60 / 120 days (on the plateau; 2024–26 Sharpe 1.83) |
+| Number of names | 10, 15, 20, 25, 30, 40, 50 | Smooth plateau from 25 to 40; 30 has the best Sharpe (1.39), lowest drawdown (−11%) and turnover; 20 names trail 30 by −0.29 pt/month (t −1.61), 6 of 7 years | 30 |
+| Weighting | Equal, inverse volatility, inverse variance (10% cap) | Equal is best; inverse volatility −0.09 pt/month, inverse variance −0.17, both worse in 6 of 7 years, with more turnover and concentration | Equal weight |
+| Market cap | Sleeve built within small (<$2B), mid ($2–10B), large (≥$10B) | Small caps earn most (+1.37 pt/month vs XBI) with twice the drawdown and a weaker 2024–26; mid caps weakest; large caps stabilise; the all-cap mix has the best Sharpe and lowest drawdown | All caps (no restriction) |
+| Rebalance frequency | Monthly, every two weeks, weekly | Weekly +0.04 pt/month (t 1.32), all in the first half of the sample | Monthly reconstitution; weekly reweighting optional |
+| Industry caps | None, 15, 10, 8 per industry | Uncapped sleeve averages 12 biotechnology, 8 specialty/generic, 6 large drug makers; cap 15 binds in 2% of months (no effect); cap 10 no gain; cap 8 −0.15 pt/month and drawdown −17% | None (15 as optional guardrail) |
+
+The edge comes from preferring low-volatility, low-beta names at all, not from fine-tuning; further tuning would be fitting noise. Scripts are in the 2026-11-17 session scratchpad (`lowvol_opt.py`, `volbeta_windows.py`, `volbeta_n.py`, `volbeta_weights.py`, `volbeta_capbuckets.py`, `volbeta_freq.py`, `volbeta_sectorcap.py`, `sleeve_vs_mix.py`).
 
 **Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and `vol_beta` shadows started 2026-11-16/17).
 
@@ -101,5 +132,6 @@ Rollback: publish Top-30-only targets again (one flag), revert Rule 4 to the XBI
 | 3 | Weekly reweighting of both halves vs monthly-only | Weekly (current practice) |
 | 4 | Mandate amendments in §6 | Adopt |
 | 5 | Six-month no-change window | Adopt |
+| 6 | Optional industry cap of 15 names in the sleeve | Optional — no historical effect; adopt only as a guardrail |
 
 Approval record: _(operator, date, decisions)_
