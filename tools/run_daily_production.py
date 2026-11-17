@@ -7197,6 +7197,21 @@ def run_daily(
         except Exception as _lrsv_err:
             _logger.warning(f"Low-risk sleeve shadow (vol_beta) failed: {_lrsv_err}")
 
+        # Third variant (vol_beta drawn from the full eligible universe, standalone), own ledger.
+        try:
+            from tools.low_risk_sleeve_shadow import capture as _lrs_capture
+            from tools.low_risk_sleeve_shadow import summarize as _lrs_summarize
+
+            _lrsf_result = _lrs_capture(as_of_date, variant="vol_beta_full")
+            if _lrsf_result.get("status") == "captured":
+                _lrs_summarize(variant="vol_beta_full")
+            _logger.info(
+                "Low-risk sleeve shadow (vol_beta_full) → "
+                f"{_lrsf_result.get('capture_mode') or _lrsf_result.get('status')}"
+            )
+        except Exception as _lrsf_err:
+            _logger.warning(f"Low-risk sleeve shadow (vol_beta_full) failed: {_lrsf_err}")
+
         # --- Step 5k.11c: Regime shadow (non-blocking, diagnostic) ---
         try:
             from tools.run_regime_shadow import run_regime_shadow
