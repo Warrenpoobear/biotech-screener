@@ -1,11 +1,12 @@
 # Wake Robin DEM — Model Documentation
 
 **Version:** 1.7.2 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
-**Last updated:** 2026-11-15 (weekend of governance and research work; **no change to scoring, selection, order, sizing or eligibility except the operator-requested `de_vol_60d` input fix, PR #676, which lands before `oos_clock_start`**. Selector-only clock not yet started: dated drift override, `ast-v2` candidate hash `a9a430154568e242`, `ranker_mode` capture check, account Rule 4 at −10/−15 pp, protocol §4 fail and rollback rules. Low-risk sleeve shadow (PR #674, capture-only). Research history `data/snapshots_pit_v6` = v5 inputs + current code; backtests unchanged. Weekend signal research recorded as context only. See the 2026-11-15 entries below)
+**Last updated:** 2026-11-17 (out-of-sample clock start recorded at 2026-11-17, PR #701; `snapshots_pit_v9` history rebuild written into `data/snapshots`, PR #698; research record — v9 backtests, roster range, portfolio construction and a 20-signal screen, **no model change**; ops fixes PRs #699, #700, #702. See the 2026-11-17 entries below)
+**Update before that:** 2026-11-15 (weekend of governance and research work; **no change to scoring, selection, order, sizing or eligibility except the operator-requested `de_vol_60d` input fix, PR #676, which lands before `oos_clock_start`**. Selector-only clock not yet started: dated drift override, `ast-v2` candidate hash `a9a430154568e242`, `ranker_mode` capture check, account Rule 4 at −10/−15 pp, protocol §4 fail and rollback rules. Low-risk sleeve shadow (PR #674, capture-only). Research history `data/snapshots_pit_v6` = v5 inputs + current code; backtests unchanged. Weekend signal research recorded as context only. See the 2026-11-15 entries below)
 **Prior update:** 2026-11-12/13 (missing-field fixes PR #614 + #636 with a clock reset; Sharadar price source PR #622 without a memo; market-cap look-ahead found in regenerated history and backtest claims deprecated, PR #660; production order switched to selector-only, PR #665. See the 2026-11-12 and 2026-11-13 entries)
 **Earlier update:** 2026-11-01 (coinvest 13F integrity fix + operator roster change; selector-input change with a clock reset. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`)
 **Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + **selector-only order** (`--ranker-mode selector_only`, operator decision 2026-11-13; the pairwise `minimal_v2` ranker is scored as a shadow and no longer orders the portfolio) + EW Top-30. Takes effect with the first production run on the merged code; out-of-sample clock resets. See the 2026-11-13 entry below and `docs/governance/2026-11-13-selector-only-production-switch.md`. *(Status before 2026-11-13: Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature: `coinvest_score_z` + `financial_score`; ordinal-only; does **not** read `inst_delta_z`) + EW Top-30. **FROZEN** until governance gates clear.)*
-**Coinvest input (from 2026-11-02 production run):** Q2 2026 13F (`period_of_report=2026-06-30`, file as_of 2026-10-30), 30-manager `elite_core` roster (registry v4.0) + unchanged 6-manager `conditional` tier. Forward-validation clock: the 2026-11-02 start was superseded on 2026-11-12. The new start is pending the first post-merge production run (0/20).
+**Coinvest input (from 2026-11-02 production run):** Q2 2026 13F (`period_of_report=2026-06-30`, file as_of 2026-10-30), 30-manager `elite_core` roster (registry v4.0) + unchanged 6-manager `conditional` tier. Forward-validation clock: `oos_clock_start` = **2026-11-17** (first promoted run on the PR #696 code; recorded in `CANDIDATE.json` by PR #701; mandate SM-20260629-001 at 0/20). Superseded starts: 2026-11-02, 2026-11-12, 2026-11-16. Q3 2026 13F holdings are in coinvest from the 2026-11-17 run (PRs #690/#692).
 Deployed ranker artifact = **capped Family C live-pilot vector**, not identical to the trained `minimal_v2`
 weights. See `production_data/ranker_v2_model.json` → `provenance` block for the deployed vs trained delta.
 
@@ -15,6 +16,56 @@ selector, ranker_v2 weights, eligibility rules, decision rulesets, and EW Top-30
 construction remain frozen; this document does not authorize behavior changes.
 
 ---
+
+## Recent Update — 2026-11-17 (Clock Start Recorded; v9 History Rebuild in `data/snapshots`; Universe and CI Fixes)
+
+Classification: `GOVERNANCE_RECORD / DATA_HYGIENE / NO_MODEL_CHANGE`. Operator-authorized in session 2026-11-17.
+
+- **Out-of-sample clock (PR #701):** `oos_clock_start` = **2026-11-17**, the first promoted run on the PR #696 code (manifest commit `fd731536`, WARN, 40 PASS / 4 WARN, LIVE capture quality PASS). Supersedes 2026-11-16; mandate SM-20260629-001 at 0/20. Memo `docs/governance/2026-11-17-oos-clock-start.md`.
+- **History rebuild `snapshots_pit_v9` (85 month-ends, 2020-01-31 → 2026-11-16; code `fd731536`, roster v4, selector-only):**
+  - 13F coinvest built from filings available on each date (per-date cache, amendment fix #692), not the nearest quarter-end cache.
+  - Point-in-time market data and financials (filed ≤ as-of date); verified per date: no 13F, price or financial input dated after the snapshot.
+  - CT.gov: per-date trial caches carried records as captured months later (25–45% of records updated after the as-of date, 2020–2025). Status and results are rolled back by date; phase and date revisions cannot be recovered without version history (approximation, labelled in each `_provenance_v9.json`). Five missing per-date caches were filled.
+  - On operator instruction ("replace all 21") the 21 dates in `data/snapshots` from 2025-05-30 to 2026-11-16 were replaced with v9; the previous directories (including the live 2026-07-31 and 2026-11-16) are in `data/snapshots_backup_pre_v9_2026-11-17/`, and all 21 are in `config/snapshot_provenance_exclusions.json` (PR #698). The full set is in `data/snapshots_pit_v9`. Forward-validation captures store baskets inline, so the ledger is unaffected.
+  - **Known remaining bias:** the history contains only names that survived to 2025; acquired and delisted names are missing before their exit. A survivorship rebuild is pending (needs Sharadar delisted prices). The 2026-11-15 approximation put the effect at +0.20 pt/month (t 0.51) in favour of including them.
+- **Universe (PR #699):** the weekly refresh's fetch step ignored `config/universe_coverage_exemptions.json` and demoted RPRX, ILMN and STVN; fixed, and the three entries restored to their #696 state.
+- **Universe audit (PR #700):** the XBI/IBB audit used IBB holdings pinned to 2026-06-26 by a hard-coded URL date for five months; holdings older than 10 days are now refused, and a downloaded iShares CSV can be supplied.
+- **CI (PR #702):** the `replay` regression check had failed on every run since at least 2026-06-10 because its golden rankings were made by February code; regenerated from the same input bundle with current code, so a red check again means a ranking change.
+- **Shadows (PR #697, capture-only):** Top-20, 50/50 Top-20 + low-risk sleeve, and ranks 1–10 vs 11–30, counted only from captures after 2026-11-17; no reading below 20 LIVE windows.
+
+## Recent Update — 2026-11-17 (Research Record: v9 Backtests, Roster Range, Portfolio Construction, Signal Screen — No Model Change)
+
+Classification: `RESEARCH_RECORD / NO_MODEL_CHANGE`. In-sample, survivor-only history; recorded at operator request as context. None of this changes scoring, order, size or eligibility, and none of it is out-of-sample evidence.
+
+**Production model on v9** (monthly equal-weight Top-30 by `selector_score`, per-trade costs at $1M ≈ 25 bp per trade):
+
+| Window | Top-30 | XBI |
+|---|---|---|
+| Since 2020-01 (84 months) | +165% (+0.7 pt/month vs XBI, t 1.38) | +65% |
+| 5 years | +96% (t 1.60) | +17.5% |
+| 1 year | +43% | +30% |
+| Year to date | +10.7% | +19.6% |
+| 3 months (Aug–Oct 2026) | −21.9% | −0.8% |
+
+- **Roster hindsight on matching v9 data** (roster v4 vs v3.2, identical otherwise): Top-30 +0.68 vs +0.30 pt/month, difference +0.38 (t 1.12). On v9 most of v4's lead falls before its Nov 2023 selection window, but that period still benefits from choosing managers on later results. **Honest range for the Top-30 edge: about +0.3 to +0.7 pt/month vs XBI, not significant.** Supersedes the v7/v8 figures in the 2026-11-16 entry for v9 purposes.
+- **Portfolio size:** no reliable optimum. Top-20 minus Top-30 +0.38 pt/month (t 1.47) after a size sweep; rank buckets are not monotone (ranks 11–20 strongest, 1–10 no better than 21–30). Not a basis for a change.
+- **Low-risk sleeve and mixes** (82 months, same costs):
+
+| Portfolio | Ann. return | Sharpe | Max drawdown | Beta | CAPM alpha/month (t) |
+|---|---|---|---|---|---|
+| Top-30 | 18.4% | 0.70 | −50% | ≈1.0 | ≈ +0.7 (≈1.4) |
+| Low-risk sleeve | 19.3% | 1.24 | −12% | 0.38 | +1.2 (3.2) |
+| 50/50 Top-30 + sleeve | 19.9% | 0.97 | −25% | 0.69 | +0.96 (2.85) |
+| 50/50 Top-20 + sleeve | 22.3% | 1.09 | −22% | 0.67 | +1.15 (3.32) |
+| XBI | 9.8% | 0.49 | −57% | 1.0 | — |
+
+  The sleeve trails XBI in rallies (worst relative stretch −34%); the 50/50 mixes keep the XBI-relative drawdown near −13%. In-sample; tracked forward by the PR #697 shadows.
+- **Costs:** at $1M, ≈ 26 bp per trade (half-spread by market cap + square-root impact); the flat 50 bp × one-way turnover used in backtests is equivalent. Impact dominates above about $20M (≈ 67 bp per trade).
+- **Rejected or not adoptable (pre-registered bar t > 3 for new signals):**
+  - 13F rebuild on 56 specialist managers: count, conviction-weighted and new-position-weighted all trail production (new positions −2.06 pt/month at Top-20, t −3.75); crowding caps and z-caps rejected again; recent manager adds negative.
+  - Event and alternative signals, none adoptable: initial specialist 13D/13G (+5.6% over 3 months, t 2.9, median negative, roster-dependent, unstable by year); specialist Form 4 trades; specialist-led financings (effect is look-ahead); post-move drift; financing overhang; FDA decision drift; takeover likelihood (survivorship blocks a proper test); exclusivity cliffs; insider selling clusters; specialist exits; XBI rebalance flows; licensing deals; large-cap or XBI as the second half of a mix.
+  - Regime timing between Top-30 and sleeve: trend and volatility rules do not beat a static 50/50; a funding-window rule is the best (+0.35 pt/month vs 50/50, t 0.9) — shadow candidate only.
+- **Reading:** the selector is effectively a single coinvest factor (selector IC vs coinvest IC correlation 0.94). Stock-selection add-ons tested so far do not improve it; diversification at the portfolio level does, in-sample. Forward evidence decides.
 
 ## Recent Update — 2026-11-17 (Coinvest CUSIP Mappings + RPRX, ILMN, STVN Added — Input Change, Clock Reset)
 
