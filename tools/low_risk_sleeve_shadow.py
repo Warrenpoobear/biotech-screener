@@ -126,6 +126,53 @@ PRE_REGISTRATION_VOL_BETA = [
     "- Nothing here changes the model or the account.",
 ]
 
+# Third and fourth readings (added 2026-11-17): the production Top-20 (first 20 names of the captured,
+# rank-ordered production Top-30) and a 50/50 mix of that Top-20 with the sleeve. No new capture: both
+# are derived from fields every capture already records. Only captures dated after the registration
+# date count, so nothing seen before registration is evidence.
+TOP20_N = 20
+MIN_PRICED_TOP20 = 17  # same ~85% coverage floor as MIN_PRICED for 30 names
+TOP20_REGISTERED = "2026-11-17"
+
+PRE_REGISTRATION_TOP20 = [
+    f"Pre-registered {TOP20_REGISTERED}. Readings `top20` (production Top-20 = actionable_rank 1..20) and "
+    "`combo20` (50/50 Top-20 + sleeve), derived from the existing captures. Only captures dated after "
+    f"{TOP20_REGISTERED} count.",
+    "- Why: on the v9 rebuild (82-84 months, in-sample, $1M per-trade costs) Top-20 minus Top-30 was "
+    "+0.40 pt/month (t 1.53) and the 50/50 Top-20 + sleeve had Sharpe 1.09 vs 0.97 for 50/50 Top-30, "
+    "CAPM alpha +1.16 pt/month (t 3.33), beta 0.67. Top-20 was chosen after a size sweep (5..100) and its "
+    "edge came from ranks 11-20 alone (ranks 1-10 were no better than 21-30), so the backtest is not evidence.",
+    "- Primary readings: Top-20 minus Top-30 (paired) on non-overlapping 21-trading-day windows; 50/50 Top-20 "
+    "Sharpe against 50/50 Top-30 and Top-30, and its CAPM alpha against XBI.",
+    "- Secondary: the same on non-overlapping 5-day windows; 50/50 Top-20 minus 50/50 Top-30 (paired).",
+    f"- No reading below {MIN_WINDOWS_FOR_READING} non-overlapping LIVE windows at a horizon. "
+    "Gross of costs, like the other readings here.",
+    "- Nothing here changes the model, the portfolio size or the account. Adopting either is a governed "
+    "model change with an out-of-sample clock reset.",
+]
+
+# Fifth reading (added 2026-11-17): production ranks 1-10 against ranks 11-30, paired, at longer horizons.
+# Same source (the captured rank-ordered Top-30) and the same registration cutoff as the Top-20 readings.
+RANK_SPLIT_HORIZONS = (21, 63, 126, 252)  # ~1, 3, 6, 12 months
+MIN_PRICED_TOP10 = 8
+
+PRE_REGISTRATION_RANK_SPLIT = [
+    f"Pre-registered {TOP20_REGISTERED}. Reading `rank_split`: production ranks 1-10 minus ranks 11-30, "
+    "equal weight, paired, from the existing captures. Only captures dated after "
+    f"{TOP20_REGISTERED} count.",
+    "- Hypothesis: the most crowded top picks (ranks 1-10: median 9 tier-1 managers, highest 12-month "
+    "run-up) trail ranks 11-30, and the gap grows with holding period.",
+    "- Why: on the v9 rebuild (in-sample, gross) ranks 1-10 minus ranks 11-30 was -0.4 / -1.9 / -3.5 / "
+    "-9.6% at 1 / 3 / 6 / 12 months (12-month Newey-West t -1.3; negative in both halves and 4 of 6 start "
+    "years, but the 1-6 month sign flips between halves). Crowding variants of the selector did not beat "
+    "the current model, so this is watched, not acted on.",
+    "- Primary reading: the 252- and 126-trading-day differences on non-overlapping windows. Secondary: "
+    "63 and 21 days. The 252-day reading needs about 20 years of LIVE captures to reach "
+    f"{MIN_WINDOWS_FOR_READING} windows, so read its sign and size at each annual review instead, alongside "
+    "the shorter horizons, and treat it as descriptive.",
+    "- Nothing here changes the model or the account.",
+]
+
 VARIANTS: Dict[str, Dict[str, Any]] = {
     "base": {"schema": SCHEMA_VERSION, "method": METHOD, "out_dir": OUT_DIR, "pre_registration": PRE_REGISTRATION},
     "vol_beta": {
@@ -444,6 +491,103 @@ def _sharpe(xs: List[float]) -> Optional[float]:
     return round(sum(xs) / len(xs) / sd, 3) if sd > 0 else None
 
 
+def _top20_block(captures, mode, prices, calendar, h) -> Dict[str, Any]:
+    """Top-20 and 50/50 Top-20 + sleeve readings, from captures dated after TOP20_REGISTERED only."""
+    windows = []
+    for c in captures:
+        d = c["as_of_date"]
+        if c["capture_mode"] != mode or d <= TOP20_REGISTERED:
+            continue
+        top20 = c["production"][:TOP20_N]
+        rets = [r for r in (_forward_return(prices.get(t, {}), calendar, d, h) for t in top20) if r is not None]
+        t20 = sum(rets) / len(rets) if len(rets) >= MIN_PRICED_TOP20 else None
+        sl, _ = _basket_return(c["sleeve"], prices, calendar, d, h)
+        pr, _ = _basket_return(c["production"], prices, calendar, d, h)
+        bx = _forward_return(prices.get(BENCHMARK, {}), calendar, d, h)
+        if None in (t20, sl, pr, bx):
+            continue
+        windows.append(
+            {
+                "as_of_date": d,
+                "top20_pct": round(t20 * 100, 3),
+                "production_pct": round(pr * 100, 3),
+                "sleeve_pct": round(sl * 100, 3),
+                "combo20_pct": round((t20 + sl) / 2 * 100, 3),
+                "combo_pct": round((pr + sl) / 2 * 100, 3),
+                "xbi_pct": round(bx * 100, 3),
+                "n_priced_top20": len(rets),
+                "_r": (t20, pr, sl, bx),
+            }
+        )
+    ind = _non_overlapping(windows, calendar, h)
+    t20 = [w["_r"][0] for w in ind]
+    pr = [w["_r"][1] for w in ind]
+    sl = [w["_r"][2] for w in ind]
+    bx = [w["_r"][3] for w in ind]
+    c20 = [(a + b) / 2 for a, b in zip(t20, sl)]
+    c30 = [(a + b) / 2 for a, b in zip(pr, sl)]
+    stats = {
+        "top20_minus_production": _series_stats([a - b for a, b in zip(t20, pr)]),
+        "top20_minus_xbi": _series_stats([a - b for a, b in zip(t20, bx)]),
+        "combo20_minus_xbi": _series_stats([a - b for a, b in zip(c20, bx)]),
+        "combo20_minus_combo": _series_stats([a - b for a, b in zip(c20, c30)]),
+        "combo20_capm": _capm(c20, bx),
+        "sharpe_per_window": {
+            "top20": _sharpe(t20),
+            "production": _sharpe(pr),
+            "combo20": _sharpe(c20),
+            "combo": _sharpe(c30),
+            "xbi": _sharpe(bx),
+        },
+        "registered": TOP20_REGISTERED,
+        "n_matured_captures": len(windows),
+    }
+    for w in windows:
+        w.pop("_r", None)
+    return {"stats": stats, "windows": ind}
+
+
+def _rank_split_block(captures, mode, prices, calendar, h) -> Dict[str, Any]:
+    """Ranks 1-10 minus ranks 11-30 of the captured production order, captures after TOP20_REGISTERED only."""
+    windows = []
+    for c in captures:
+        d = c["as_of_date"]
+        if c["capture_mode"] != mode or d <= TOP20_REGISTERED:
+            continue
+        legs = []
+        for names, floor in ((c["production"][:10], MIN_PRICED_TOP10), (c["production"][10:30], MIN_PRICED_TOP20)):
+            rets = [r for r in (_forward_return(prices.get(t, {}), calendar, d, h) for t in names) if r is not None]
+            legs.append(sum(rets) / len(rets) if len(rets) >= floor else None)
+        bx = _forward_return(prices.get(BENCHMARK, {}), calendar, d, h)
+        if None in legs or bx is None:
+            continue
+        top10, rest = legs
+        windows.append(
+            {
+                "as_of_date": d,
+                "top10_pct": round(top10 * 100, 3),
+                "ranks11_30_pct": round(rest * 100, 3),
+                "top10_minus_ranks11_30_pct": round((top10 - rest) * 100, 3),
+                "xbi_pct": round(bx * 100, 3),
+                "_r": (top10, rest, bx),
+            }
+        )
+    ind = _non_overlapping(windows, calendar, h)
+    t10 = [w["_r"][0] for w in ind]
+    rest = [w["_r"][1] for w in ind]
+    bx = [w["_r"][2] for w in ind]
+    stats = {
+        "top10_minus_ranks11_30": _series_stats([a - b for a, b in zip(t10, rest)]),
+        "top10_minus_xbi": _series_stats([a - b for a, b in zip(t10, bx)]),
+        "ranks11_30_minus_xbi": _series_stats([a - b for a, b in zip(rest, bx)]),
+        "registered": TOP20_REGISTERED,
+        "n_matured_captures": len(windows),
+    }
+    for w in windows:
+        w.pop("_r", None)
+    return {"stats": stats, "windows": ind}
+
+
 def summarize(
     *,
     out_dir: Optional[Path] = None,
@@ -462,6 +606,9 @@ def summarize(
         "price_source": price_csv.name,
         "method": spec["method"],
         "pre_registration": spec["pre_registration"],
+        "top20_pre_registration": PRE_REGISTRATION_TOP20,
+        "rank_split_pre_registration": PRE_REGISTRATION_RANK_SPLIT,
+        "rank_split": {},
         "n_captures": {m: sum(1 for c in captures if c["capture_mode"] == m) for m in (LIVE, REPLAY)},
         "min_windows_for_reading": MIN_WINDOWS_FOR_READING,
         "by_mode": {},
@@ -528,8 +675,15 @@ def summarize(
             }
             for w in windows:
                 w.pop("_r", None)
-            mode_out[f"h{h}d"] = {"stats": stats, "windows": ind}
+            mode_out[f"h{h}d"] = {
+                "stats": stats,
+                "windows": ind,
+                "top20": _top20_block(captures, mode, prices, calendar, h),
+            }
         result["by_mode"][mode] = mode_out
+        result["rank_split"][mode] = {
+            f"h{h}d": _rank_split_block(captures, mode, prices, calendar, h) for h in RANK_SPLIT_HORIZONS
+        }
     result["status"] = "ok"
     return _write_summary(result, out_dir) if write else result
 
@@ -560,6 +714,10 @@ def format_summary_md(result: Dict[str, Any]) -> str:
         "",
         *result.get("pre_registration", PRE_REGISTRATION),
         "",
+        *result.get("top20_pre_registration", []),
+        "",
+        *result.get("rank_split_pre_registration", []),
+        "",
         f"Captures: {result['n_captures'].get(LIVE, 0)} live, {result['n_captures'].get(REPLAY, 0)} replay. "
         f"Price source: `{result['price_source']}`. **Only LIVE captures are evidence.**",
         "",
@@ -588,6 +746,32 @@ def format_summary_md(result: Dict[str, Any]) -> str:
                 f"{_fmt(s['corr_sleeve_vs_production_excess'], '+.2f')} | {s['sleeve_minus_xbi']['reading']} |"
             )
         lines.append("")
+        lines += [
+            f"### {mode} — Top-20 and 50/50 Top-20 + sleeve (captures after {TOP20_REGISTERED} only)",
+            "",
+            "| Horizon | Windows | Top-20 − Top-30 | t | Top-20 − XBI | 50/50 Top-20 − XBI | 50/50 Top-20 − 50/50 Top-30 | t | "
+            "50/50 Top-20 alpha | t | Beta | Sharpe Top-20 / Top-30 / 50/50 Top-20 / 50/50 Top-30 / XBI | Reading |",
+            "|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+        ]
+        for key, data in block.items():
+            t = data.get("top20")
+            if not t:
+                continue
+            s = t["stats"]
+            a, sh = s["combo20_capm"], s["sharpe_per_window"]
+            sharpe = " / ".join(_fmt(sh[k], ".2f") for k in ("top20", "production", "combo20", "combo", "xbi"))
+            lines.append(
+                f"| {key[1:]} | {s['top20_minus_production']['n']} | "
+                f"{_fmt(s['top20_minus_production']['mean_pct'], '+.2f', ' pts')} | "
+                f"{_fmt(s['top20_minus_production']['t_stat'], '+.2f')} | "
+                f"{_fmt(s['top20_minus_xbi']['mean_pct'], '+.2f', ' pts')} | "
+                f"{_fmt(s['combo20_minus_xbi']['mean_pct'], '+.2f', ' pts')} | "
+                f"{_fmt(s['combo20_minus_combo']['mean_pct'], '+.2f', ' pts')} | "
+                f"{_fmt(s['combo20_minus_combo']['t_stat'], '+.2f')} | {_fmt(a['alpha_pct'], '+.2f', ' pts')} | "
+                f"{_fmt(a['alpha_t'], '+.2f')} | {_fmt(a['beta'], '.2f')} | {sharpe} | "
+                f"{s['top20_minus_production']['reading']} |"
+            )
+        lines.append("")
         for key, data in block.items():
             if not data["windows"]:
                 continue
@@ -603,6 +787,25 @@ def format_summary_md(result: Dict[str, Any]) -> str:
                     f"{w['combo_pct']:+.2f}% | {w['xbi_pct']:+.2f}% |"
                 )
             lines.append("")
+    for mode in (LIVE, REPLAY):
+        block = result.get("rank_split", {}).get(mode)
+        if not block:
+            continue
+        lines += [
+            f"## {mode} — Ranks 1-10 vs 11-30 (captures after {TOP20_REGISTERED} only)",
+            "",
+            "| Horizon | Windows | Ranks 1-10 − 11-30 | t | Ranks 1-10 − XBI | Ranks 11-30 − XBI | Reading |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for key, data in block.items():
+            s = data["stats"]
+            d = s["top10_minus_ranks11_30"]
+            lines.append(
+                f"| {key[1:]} | {d['n']} | {_fmt(d['mean_pct'], '+.2f', ' pts')} | {_fmt(d['t_stat'], '+.2f')} | "
+                f"{_fmt(s['top10_minus_xbi']['mean_pct'], '+.2f', ' pts')} | "
+                f"{_fmt(s['ranks11_30_minus_xbi']['mean_pct'], '+.2f', ' pts')} | {d['reading']} |"
+            )
+        lines.append("")
     return "\n".join(lines) + "\n"
 
 

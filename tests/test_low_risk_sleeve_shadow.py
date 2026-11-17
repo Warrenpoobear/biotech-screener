@@ -242,3 +242,101 @@ def test_vol_beta_capture_writes_its_own_ledger(tmp_path):
     assert s["schema"] == lrs.VARIANTS["vol_beta"]["schema"]
     md = lrs.format_summary_md(s)
     assert "vol_beta" in md
+
+
+# ── Top-20 and 50/50 Top-20 + sleeve readings (pre-registered 2026-11-17) ──
+
+
+def _captures_with_top_drift(tmp_path, monkeypatch, registered_idx=None):
+    """T00..T19 drift up, T20..T29 drift down: Top-20 should beat the Top-30."""
+    days = _days(260)
+    snaps, out, prices_csv = tmp_path / "snaps", tmp_path / "out", tmp_path / "prices.csv"
+    _write_prices(prices_csv, days, drift=lambda i: 0.003 if i < 20 else (-0.006 if i < 30 else 0.0))
+    for k in range(150, 200, 5):
+        _write_snapshot(snaps, days[k])
+        lrs.capture(days[k], snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=days[k])
+    if registered_idx is not None:
+        monkeypatch.setattr(lrs, "TOP20_REGISTERED", days[registered_idx])
+    return days, out, prices_csv
+
+
+def test_production_capture_is_in_rank_order(tmp_path):
+    days, snaps, prices_csv, out = _setup(tmp_path)
+    lrs.capture(days[150], snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=days[150])
+    assert lrs.load_captures(out)[0]["production"] == [f"T{i:02d}" for i in range(30)]
+
+
+def test_top20_is_first_20_of_production_and_beats_top30_when_ranks_21_30_lag(tmp_path, monkeypatch):
+    days, out, prices_csv = _captures_with_top_drift(tmp_path, monkeypatch, registered_idx=100)
+    res = lrs.summarize(out_dir=out, price_csv=prices_csv)
+    t20 = res["by_mode"][lrs.LIVE]["h5d"]["top20"]
+    assert t20["stats"]["top20_minus_production"]["n"] == 10
+    assert t20["stats"]["top20_minus_production"]["mean_pct"] > 0
+    w = t20["windows"][0]
+    assert w["combo20_pct"] == pytest.approx((w["top20_pct"] + w["sleeve_pct"]) / 2, abs=1e-3)
+    assert set(t20["stats"]) >= {
+        "top20_minus_xbi",
+        "combo20_minus_xbi",
+        "combo20_minus_combo",
+        "combo20_capm",
+        "sharpe_per_window",
+    }
+
+
+def test_top20_counts_only_captures_after_registration(tmp_path, monkeypatch):
+    # Registered on the 4th capture date: only the 6 later captures count (5-day windows don't overlap at step 5).
+    days, out, prices_csv = _captures_with_top_drift(tmp_path, monkeypatch, registered_idx=165)
+    res = lrs.summarize(out_dir=out, price_csv=prices_csv)
+    t20 = res["by_mode"][lrs.LIVE]["h5d"]["top20"]
+    assert t20["stats"]["top20_minus_production"]["n"] == 6
+    assert all(w["as_of_date"] > days[165] for w in t20["windows"])
+    # The base sleeve reading is unchanged by the registration date.
+    assert res["by_mode"][lrs.LIVE]["h5d"]["stats"]["sleeve_minus_xbi"]["n"] == 10
+
+
+def test_top20_pre_registration_is_in_summary(tmp_path, monkeypatch):
+    days, out, prices_csv = _captures_with_top_drift(tmp_path, monkeypatch, registered_idx=100)
+    res = lrs.summarize(out_dir=out, price_csv=prices_csv)
+    assert res["top20_pre_registration"] == lrs.PRE_REGISTRATION_TOP20
+    md = (out / "summary.md").read_text(encoding="utf-8")
+    assert "Top-20" in md and "50/50 Top-20" in md
+
+
+# ── Ranks 1-10 vs 11-30 (pre-registered 2026-11-17) ──────────────────
+
+
+def test_rank_split_compares_top10_with_ranks_11_30(tmp_path, monkeypatch):
+    """T00..T09 drift down, T10..T29 drift up: ranks 1-10 should trail ranks 11-30."""
+    days = _days(330)
+    snaps, out, prices_csv = tmp_path / "snaps", tmp_path / "out", tmp_path / "prices.csv"
+    _write_prices(prices_csv, days, drift=lambda i: -0.004 if i < 10 else (0.003 if i < 30 else 0.0))
+    for k in range(150, 200, 5):
+        _write_snapshot(snaps, days[k])
+        lrs.capture(days[k], snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=days[k])
+    monkeypatch.setattr(lrs, "TOP20_REGISTERED", days[100])
+    monkeypatch.setattr(lrs, "RANK_SPLIT_HORIZONS", (5, 21, 63))
+    res = lrs.summarize(out_dir=out, price_csv=prices_csv)
+    rs = res["rank_split"][lrs.LIVE]
+    assert set(rs) == {"h5d", "h21d", "h63d"}
+    s5 = rs["h5d"]["stats"]
+    assert s5["top10_minus_ranks11_30"]["n"] == 10
+    assert s5["top10_minus_ranks11_30"]["mean_pct"] < 0
+    w = rs["h5d"]["windows"][0]
+    assert w["top10_minus_ranks11_30_pct"] == pytest.approx(w["top10_pct"] - w["ranks11_30_pct"], abs=2e-3)
+    # 63-day windows: 10 captures 5 days apart give one non-overlapping window.
+    assert rs["h63d"]["stats"]["top10_minus_ranks11_30"]["n"] == 1
+    assert res["rank_split_pre_registration"] == lrs.PRE_REGISTRATION_RANK_SPLIT
+    md = (out / "summary.md").read_text(encoding="utf-8")
+    assert "Ranks 1-10 vs 11-30" in md
+
+
+def test_rank_split_counts_only_captures_after_registration(tmp_path, monkeypatch):
+    days = _days(330)
+    snaps, out, prices_csv = tmp_path / "snaps", tmp_path / "out", tmp_path / "prices.csv"
+    _write_prices(prices_csv, days)
+    for k in range(150, 200, 5):
+        _write_snapshot(snaps, days[k])
+        lrs.capture(days[k], snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=days[k])
+    monkeypatch.setattr(lrs, "TOP20_REGISTERED", days[180])
+    res = lrs.summarize(out_dir=out, price_csv=prices_csv)
+    assert all(w["as_of_date"] > days[180] for w in res["rank_split"][lrs.LIVE]["h21d"]["windows"])
