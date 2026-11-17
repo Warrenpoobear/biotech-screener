@@ -16,6 +16,22 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
+## Recent Update — 2026-11-16 (Manager Roster v4: Backtest Lead Is In-Sample — Research Record)
+
+Classification: `RESEARCH_RECORD / NO_MODEL_CHANGE`. Source of truth: `docs/governance/2026-11-16-roster-v4-hindsight-backtest.md`.
+
+Summary:
+- Two histories identical except for the 13F roster (`snapshots_pit_v7`, registry v4.0; `snapshots_pit_v8_old_roster`, registry v3.2), Top-30 selector-only, net 50 bps, 77 months.
+- Before the roster's selection window (Mar 2020 – Oct 2023): new +0.61 pt/month, old +0.52, difference +0.09 (t 0.24).
+- Inside the selection window (Nov 2023 – Jun 2026): new +2.24, old +1.07, difference +1.17 (t 1.73).
+- Full period: new +1.33 (t 2.60), old +0.76 (t 1.51).
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Live roster unchanged; no clock effect.
+- Top-30 backtests on `snapshots_pit_v5`/`v6`/`v7` carry roster hindsight in 2023–2026. Quote the old-roster figure (about +0.5 to +0.8 pt/month, not significant) alongside them.
+
+---
+
 ## Recent Update — 2026-11-16 (Selector-Only Out-of-Sample Clock Start Recorded)
 
 Classification: `GOVERNANCE_RECORD / OPERATOR_DECISION_RECORDED`. Tier 4 record. Source of truth: `docs/governance/2026-11-16-selector-only-clock-start.md`.
