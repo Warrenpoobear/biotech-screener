@@ -1,0 +1,105 @@
+# Proposal: 50/50 Top-30 + low-risk (volatility–beta) sleeve
+
+**Date:** 2026-11-17
+**Status:** PROPOSED — not approved. Nothing in this memo takes effect until the operator approves it in writing (merging this memo is not approval of the change; approval is recorded in §9).
+**Classification:** Tier 4 governance decision. Portfolio-construction model change. Resets the out-of-sample clock.
+**Scope:** what the portfolio holds and how it is judged. The selector, ranker, scoring, eligibility and the production Top-30 itself are **unchanged**.
+
+---
+
+## 1. Decision requested
+
+Replace "equal-weight production Top-30" with:
+
+> **50% production Top-30 + 50% low-risk sleeve**, the sleeve being the 30 lowest-risk eligible names outside the Top-30, ranked on 60-day volatility and 120-day beta to XBI.
+
+Together with the yardstick changes this requires (§5, §6), adopted as **one** governed change with **one** clock reset, followed by a **six-month no-change window** (§7).
+
+## 2. Why
+
+1. **The model is effectively one factor.** The selector's IC tracks the coinvest IC almost exactly (correlation 0.94 over 84 months). When the factor reverses the whole book goes with it: August–September 2026 cost the Top-30 −21.9% over three months against XBI −0.8%.
+2. **Stock-selection add-ons do not fix it.** About 27 add-on and alternative signals were tested on 2026-11-15/17 (13F rebuilds, crowding caps, Top-N, 13D/G, Form 4, financings, FDA events, takeovers, exclusivity, momentum, timing rules, and others). None clears the pre-registered bar (t > 3). See the 2026-11-17 research entry in `docs/MODEL_DOCUMENTATION.md`.
+3. **Diversification at the portfolio level does help, in-sample.** A low-risk sleeve is nearly uncorrelated with the Top-30's excess return and roughly halves drawdown while keeping the long-run excess over XBI.
+4. **The edge of the Top-30 itself is small.** On the v9 history the roster-adjusted range is about +0.3 to +0.7 pt/month against XBI, not significant. Concentrating the whole book on it is the larger risk.
+
+## 3. Specification
+
+| Item | Specification |
+|---|---|
+| Half A | Production Top-30, exactly as today (`actionable_rank` 1–30, selector-only, ruleset `8887576e`), equal weight within the half |
+| Half B | Low-risk sleeve: eligible names in that day's `rankings.csv` **not** in the Top-30; risk score = mean of percentile ranks of `vol_60d` (annualised std of daily log returns, last 60 days) and `beta_120d` (beta of daily log returns to XBI, last 120 days); lower risk = higher score; the 30 best-scoring names, equal weight within the half |
+| Inputs | Split-adjusted closes dated on or before the snapshot date (`production_data/price_history_split_adj.csv`); no other inputs |
+| Exclusions | Names with 20-day annualised volatility < 10% (price pinned near a pending cash-deal price, or stale feed) — as in the existing shadow tool |
+| Split | 50% / 50% of account value |
+| Reconstitution | Monthly, at the first rebalance after month-end, from that day's promoted snapshot (both halves) |
+| Reweighting | Weekly (Monday), back to equal weight within each half and 50/50 between halves — the account's existing weekly practice (supported for the Top-30: +0.14 pt/month after costs, t 2.69; untested for the sleeve) |
+| Overlap | None by construction (the sleeve excludes the Top-30) |
+
+This is the `vol_beta` variant registered as a capture-only shadow on 2026-11-16 (`tools/low_risk_sleeve_shadow.py`, ledger `artifacts/low_risk_sleeve_shadow_vol_beta/`), chosen **before** the 2026-11-17 measure search. The three-measure base sleeve (adds `max_gain_21d`) is not proposed: `max_gain_21d` was the weakest measure in both halves of the 2026-11-17 search.
+
+## 4. Evidence (in-sample; research only)
+
+`snapshots_pit_v9` (85 month-ends; 13F per date, point-in-time market data and financials, CT.gov date rollback), March 2020 – November 2026 (82 months), monthly, net of 50 bp × one-way turnover (≈ $1M per-trade costs):
+
+| Portfolio | Ann. return | Volatility | Sharpe | Max drawdown | Beta | CAPM alpha/month (t) | Worst stretch vs XBI |
+|---|---|---|---|---|---|---|---|
+| Top-30 (today) | 18.4% | 31% | 0.70 | −50% | 1.00 | +0.72 (1.45) | −24% |
+| Vol–beta sleeve alone | 21.9% | 15% | 1.39 | −11% | 0.34 | +1.40 (3.57) | −29% |
+| **50/50 Top-30 + vol–beta (proposed)** | **21.1%** | **21%** | **1.03** | **−25%** | **0.67** | **+1.06 (3.10)** | **−15%** |
+| 50/50 Top-30 + three-measure sleeve | 19.3% | 21% | 0.95 | −26% | 0.69 | +0.92 (2.78) | −14% |
+| XBI | 9.8% | 26% | 0.49 | −57% | 1.00 | — | — |
+
+- Mean excess over XBI is the same as the Top-30 alone (+0.72 pt/month) at two-thirds of the volatility and half the drawdown.
+- By year against XBI: 2020 −27.4 pt, 2021 +22.1, 2022 +17.3, 2023 +13.2, 2024 +8.8, 2025 +22.8, 2026 to date −2.3. The cost is strong rallies (2020).
+- 2026: year to date +21.7% (Top-30 alone +10.7%, XBI +19.6%); last three months −3.3% (Top-30 alone −21.9%).
+- 2024–2026 only (after the measures were fixed in the 2026-11-17 search's selection period): Sharpe 1.40, alpha +1.10 pt/month (t 1.95).
+
+**Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and `vol_beta` shadows started 2026-11-16/17).
+
+## 5. Account Rule 4 must change with it
+
+Rule 4 today: review at −10 pp and liquidate at −15 pp of drawdown **against XBI**. A 0.67-beta book trails XBI in strong rallies by design — the proposed portfolio's worst historical stretch against XBI is −15%, which would have triggered a full liquidation while the portfolio was doing its job.
+
+Options (operator to choose one):
+
+| Option | Rule | Historical behaviour of the proposed portfolio |
+|---|---|---|
+| **A (recommended)** | Measure Rule 4 against a **beta-adjusted benchmark** (0.67 × XBI + 0.33 × cash), same −10 / −15 pp levels | Judges the portfolio on the risk it takes; needs a re-run of the touch frequency before adoption |
+| B | Keep XBI-relative, widen to −20 / −25 pp | Simple; does not distinguish a beta gap from a model failure |
+| C | Absolute drawdown: review at −20%, liquidate at −30% | Historical max drawdown −25% |
+
+## 6. The forward-validation mandate must change with it
+
+`docs/FORWARD_VALIDATION_PROTOCOL.md` §2 tests mean weekly excess of the DEM Top-30 over XBI. Proposed amendments (same structure, new primary statistic):
+
+- **Primary:** CAPM alpha of the 50/50 portfolio against XBI on non-overlapping weekly windows (H₀: alpha ≤ 0).
+- **Secondary:** Sharpe of the 50/50 portfolio vs the Top-30 alone (the existing shadow keeps tracking the Top-30), and mean excess over XBI (reported, not gated).
+- **Fail / rollback:** keep the §4 structure — fail if alpha < 0 with t ≤ −1.65 at 20, 40 or 60 windows; roll back to Top-30-only if the 50/50 trails the Top-30 on a paired basis with t ≤ −1.65 after 20 windows.
+- `CANDIDATE.json` gains the sleeve definition and a candidate hash that covers it (the current hash covers the selector files only; see `governance/HASH_ROTATIONS.md`).
+
+## 7. Clock and change discipline
+
+- The out-of-sample clock resets once, at the first promoted production run that publishes the 50/50 target portfolio; mandate restarts at 0/20.
+- **Six-month no-change window** after that start: no selector, roster, sleeve, size or rule changes unless a fail or rollback rule fires, or an operator-declared incident requires a fix. The clock has reset six times in November 2026; this window exists so forward evidence can accumulate.
+
+## 8. Implementation (after approval; separate PRs)
+
+1. Production step that publishes `target_portfolio.csv` (both halves, weights, sleeve risk measures) next to `rankings.csv`, reusing `tools/low_risk_sleeve_shadow.py::build_sleeve` with `measures=["vol_60d", "beta_120d"]` (no new scoring code). Tests first.
+2. `production_data/AGENTIC_ACCOUNT_RULES.md`: Rule 2 (rebalance to the target portfolio), Rule 4 (chosen option).
+3. Rebalance skill (`biotech-rebalance`) reads `target_portfolio.csv` instead of the Top-30.
+4. `FORWARD_VALIDATION_PROTOCOL.md` §2/§4 amendments; capture and evaluator handle the 50/50 basket; `CANDIDATE.json` and hash rotation entry.
+5. `docs/MODEL_DOCUMENTATION.md` entry; `.claude/rules/operational-state.md` governance event.
+
+Rollback: publish Top-30-only targets again (one flag), revert Rule 4 to the XBI-relative levels.
+
+## 9. Operator decisions
+
+| # | Decision | Recommendation |
+|---|---|---|
+| 1 | Adopt the 50/50 Top-30 + vol–beta portfolio | Adopt, as one governed change |
+| 2 | Rule 4 option (A / B / C) | A, after re-running its touch frequency |
+| 3 | Weekly reweighting of both halves vs monthly-only | Weekly (current practice) |
+| 4 | Mandate amendments in §6 | Adopt |
+| 5 | Six-month no-change window | Adopt |
+
+Approval record: _(operator, date, decisions)_
