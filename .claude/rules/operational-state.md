@@ -185,6 +185,7 @@ metadata:
 
 ## Governance Events (2026-11-17)
 
+- **Out-of-sample clock start recorded (records only):** `oos_clock_start` = **2026-11-17**, the first promoted run on the #696 code (manifest commit `fd731536`, WARN, promoted). Supersedes the 2026-11-16 start; mandate SM-20260629-001 restarts at 0/20. The live 2026-11-16 snapshot directory was later replaced by the v9 rebuild (#698; live copy in `data/snapshots_backup_pre_v9_2026-11-17/`); forward-validation captures store baskets inline, so the ledger is unaffected. Memo: `docs/governance/2026-11-17-oos-clock-start.md`.
 - **Coinvest CUSIP mappings + RPRX, ILMN, STVN added (operator-authorized input change; clock reset):** 14 CUSIPs added to `cusip_static_map.json` (AVTX, CBIO, FTH, QUIT, COAG, NKTR, AKTS, OVID, STTK, TEVA, SKYE, IMMX, MNPR); the three names become active through `config/universe_coverage_exemptions.json`, honoured by `tools/refresh_eligible_biotech_universe.py`. Top-30 on 2026-11-16 inputs unchanged (30/30). `oos_clock_start` = first promoted run on the merged code; mandate 0/20. Memo: `docs/governance/2026-11-17-coinvest-cusips-and-universe-adds-clock-reset.md`.
 
 ## Governance Events (2026-11-16)
