@@ -750,3 +750,81 @@ class TestCadenceDateGeneration:
         """Unknown cadence raises ValueError."""
         with pytest.raises(ValueError):
             generate_cadence_dates(date(2025, 1, 1), date(2025, 12, 31), "weekly")
+
+
+# ===================================================================
+# 13F-HR/A "NEW HOLDINGS" amendments (2026-11-16: ADAR1 Q3 add-on of 6
+# positions replaced its 277-position original)
+# ===================================================================
+
+from tools.warm_13f_cache import resolve_amendment_filings  # noqa: E402
+
+
+class TestNewHoldingsAmendments:
+    Q = date(2026, 9, 30)
+
+    def _orig(self, acc="A_orig", filed=date(2026, 11, 16)):
+        return _make_filing(accession=acc, filing_date=filed, report_date=self.Q, form_type="13F-HR")
+
+    def _amend(self, acc, filed=date(2026, 11, 16)):
+        return _make_filing(accession=acc, filing_date=filed, report_date=self.Q, form_type="13F-HR/A")
+
+    def test_new_holdings_amendment_keeps_original_as_base(self):
+        orig, add = self._orig(), self._amend("A_add")
+        base, addons = resolve_amendment_filings([orig, add], add, {"A_add": "NEW HOLDINGS"})
+        assert base is orig
+        assert addons == [add]
+
+    def test_restatement_replaces_original(self):
+        orig, rest = self._orig(), self._amend("A_rest", date(2026, 11, 20))
+        base, addons = resolve_amendment_filings([orig, rest], rest, {"A_rest": "RESTATEMENT"})
+        assert base is rest
+        assert addons == []
+
+    def test_unknown_amendment_type_keeps_old_behaviour(self):
+        orig, amend = self._orig(), self._amend("A_x")
+        base, addons = resolve_amendment_filings([orig, amend], amend, {"A_x": None})
+        assert base is amend
+        assert addons == []
+
+    def test_new_holdings_after_restatement_uses_restatement_as_base(self):
+        orig = self._orig(filed=date(2026, 11, 10))
+        rest = self._amend("A_rest", date(2026, 11, 12))
+        add = self._amend("A_add", date(2026, 11, 14))
+        types = {"A_rest": "RESTATEMENT", "A_add": "NEW HOLDINGS"}
+        base, addons = resolve_amendment_filings([orig, rest, add], add, types)
+        assert base is rest
+        assert addons == [add]
+
+    def test_new_holdings_without_any_original_stands_alone(self):
+        add = self._amend("A_add")
+        base, addons = resolve_amendment_filings([add], add, {"A_add": "NEW HOLDINGS"})
+        assert base is add
+        assert addons == []
+
+    def test_warm_one_manager_merges_original_and_new_holdings(self, tmp_path):
+        orig = _make_filing(cik="1940272", accession="ORIG", filing_date=date(2026, 11, 16), report_date=self.Q)
+        add = _make_filing(
+            cik="1940272", accession="ADD", filing_date=date(2026, 11, 16), report_date=self.Q, form_type="13F-HR/A"
+        )
+        fetcher = MagicMock(spec=SEC13FFetcher)
+        fetcher.cache_dir = None
+        fetcher.get_recent_filings.return_value = [add, orig]
+        fetcher.fetch_amendment_type.return_value = "NEW HOLDINGS"
+        held = {
+            "ORIG": [_make_holding(cusip="111111111", ticker="AAA"), _make_holding(cusip="222222222", ticker="BBB")],
+            "ADD": [_make_holding(cusip="333333333", ticker="CCC")],
+        }
+        fetcher.parse_holdings.side_effect = lambda f, resolve_tickers=True: held[f.accession_number]
+
+        result = warm_one_manager(
+            {"cik": "1940272", "name": "ADAR1"}, date(2026, 11, 16), tmp_path, fetcher, RateLimiter(rate=1000.0)
+        )
+        assert result["status"] == "ok"
+        assert result["holdings_count"] == 3
+        assert result["accession"] == "ORIG"
+        assert result["form_type"] == "13F-HR"
+        assert result["new_holdings_amendments"] == ["ADD"]
+        data = json.loads((tmp_path / "managers" / "0001940272.json").read_text())
+        assert sorted(h["ticker"] for h in data["holdings"]) == ["AAA", "BBB", "CCC"]
+        assert data["new_holdings_amendments"] == ["ADD"]

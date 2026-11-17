@@ -163,6 +163,53 @@ def select_pit_filing(
     )
 
 
+def resolve_amendment_filings(
+    eligible_group: list[Filing13F],
+    selected: Filing13F,
+    amendment_types: Dict[str, Optional[str]],
+) -> tuple[Filing13F, list[Filing13F]]:
+    """Split a selected 13F-HR/A into (base filing, NEW HOLDINGS add-ons).
+
+    A "RESTATEMENT" amendment replaces the whole information table, so it is its
+    own base. A "NEW HOLDINGS" amendment only lists positions added to the
+    original; used alone it drops every other holding (ADAR1 Q3 2026: 6 of 277).
+    The base is then the latest original or restatement in the same report
+    period, and every NEW HOLDINGS amendment filed after it is added on.
+
+    ``eligible_group`` holds filings for the selected report period filed on or
+    before as_of. ``amendment_types`` maps accession -> upper-cased type (None
+    when unreadable). Unknown types keep the old behaviour (amendment alone).
+    """
+    if "/A" not in (selected.form_type or ""):
+        return selected, []
+    if amendment_types.get(selected.accession_number) != "NEW HOLDINGS":
+        return selected, []
+
+    def order(f: Filing13F) -> tuple:
+        # Same-day ties: an original always precedes its amendments.
+        return (f.filing_date, "/A" in (f.form_type or ""), f.accession_number)
+
+    bases = [
+        f
+        for f in eligible_group
+        if "/A" not in (f.form_type or "") or amendment_types.get(f.accession_number) == "RESTATEMENT"
+    ]
+    if not bases:
+        return selected, []
+    base = max(bases, key=order)
+    addons = sorted(
+        (
+            f
+            for f in eligible_group
+            if "/A" in (f.form_type or "")
+            and amendment_types.get(f.accession_number) == "NEW HOLDINGS"
+            and order(f) > order(base)
+        ),
+        key=order,
+    )
+    return base, addons
+
+
 # ---------------------------------------------------------------------------
 # Per-manager warm
 # ---------------------------------------------------------------------------
@@ -205,10 +252,40 @@ def warm_one_manager(
             return result
 
         filing = selection.filing
+        addons: list[Filing13F] = []
+
+        # A "NEW HOLDINGS" amendment only adds positions: keep the original
+        # (or latest restatement) as the base and add the amendment(s) on.
+        if "/A" in (filing.form_type or ""):
+            group = [f for f in filings if f.report_date == filing.report_date and f.filing_date <= as_of_date]
+            amendment_types: Dict[str, Optional[str]] = {}
+            for f in group:
+                if "/A" in (f.form_type or ""):
+                    rate_limiter.acquire()
+                    t = fetcher.fetch_amendment_type(f)
+                    amendment_types[f.accession_number] = t.strip().upper() if isinstance(t, str) else None
+            base, addons = resolve_amendment_filings(group, filing, amendment_types)
+            if base is not filing or addons:
+                logger.info(
+                    f"  {name} (CIK {cik}): {filing.form_type} {filing.accession_number} is NEW HOLDINGS; "
+                    f"base {base.form_type} {base.accession_number} + {len(addons)} add-on(s)"
+                )
+                filing = base
+                selection = PITFilingSelection(
+                    manager_cik=selection.manager_cik,
+                    filing=base,
+                    period_of_report=base.report_date.isoformat(),
+                    filed_at=max([base.filing_date] + [a.filing_date for a in addons]).isoformat(),
+                    form_type=base.form_type,
+                    accession=base.accession_number,
+                )
 
         # Parse holdings
         rate_limiter.acquire()
-        holdings = fetcher.parse_holdings(filing, resolve_tickers=True)
+        holdings = list(fetcher.parse_holdings(filing, resolve_tickers=True))
+        for a in addons:
+            rate_limiter.acquire()
+            holdings.extend(fetcher.parse_holdings(a, resolve_tickers=True))
 
         # Build manager JSON
         manager_data = {
@@ -219,6 +296,7 @@ def warm_one_manager(
             "filed_at": selection.filed_at,
             "form_type": selection.form_type,
             "accession": selection.accession,
+            "new_holdings_amendments": [a.accession_number for a in addons],
             "holdings": [
                 {
                     "cusip": h.cusip,
@@ -256,6 +334,7 @@ def warm_one_manager(
         result["form_type"] = selection.form_type
         result["accession"] = selection.accession
         result["holdings_count"] = len(holdings)
+        result["new_holdings_amendments"] = [a.accession_number for a in addons]
         result["manager_json_path"] = f"managers/{cik_padded}.json"
         result["raw_xml_path"] = f"raw/{cik_padded}/{filing.accession_number}.xml" if has_raw_xml else ""
 
@@ -305,6 +384,8 @@ def build_index(
             entry["manager_json_path"] = r.get("manager_json_path", "")
             entry["raw_xml_path"] = r.get("raw_xml_path", "")
             entry["rejection_reason"] = ""
+            if r.get("new_holdings_amendments"):
+                entry["new_holdings_amendments"] = r["new_holdings_amendments"]
         else:
             entry["rejection_reason"] = r.get("rejection_reason") or r.get("error") or "unknown"
 
