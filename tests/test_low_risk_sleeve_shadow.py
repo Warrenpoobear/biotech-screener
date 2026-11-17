@@ -200,3 +200,45 @@ def test_summary_with_no_captures(tmp_path):
     _write_prices(prices_csv, _days(30))
     res = lrs.summarize(out_dir=tmp_path / "out", price_csv=prices_csv)
     assert res["status"] == "no_captures"
+
+
+# ── vol_beta variant (second shadow, 2026-11-16) ─────────────────────
+
+
+def test_variants_differ_only_in_measures_and_ledger():
+    base, vb = lrs.VARIANTS["base"], lrs.VARIANTS["vol_beta"]
+    assert base["method"] is lrs.METHOD and base["schema"] == lrs.SCHEMA_VERSION and base["out_dir"] == lrs.OUT_DIR
+    assert vb["method"]["measures"] == ["vol_60d", "beta_120d"]
+    assert vb["schema"] != base["schema"] and vb["out_dir"] != base["out_dir"]
+    for k in ("pool", "exclusion", "basket", "price_source"):
+        assert vb["method"][k] == base["method"][k]
+
+
+def test_build_sleeve_honours_measures(monkeypatch):
+    rows = [{"ticker": f"T{i:02d}", "eligible": "1", "actionable_rank": str(i + 1)} for i in range(70)]
+    as_of = "2026-06-30"
+    # Injected measures: beta falls with the index, max_gain rises with it, vol is flat.
+    prices = {
+        f"T{i:02d}": {"vol_60d": 0.5, "vol_20d": 0.5, "beta_120d": 1.0 - i / 100, "max_gain_21d": i / 100}
+        for i in range(30, 70)
+    }
+    prices["XBI"] = {as_of: 100.0}
+    monkeypatch.setattr(lrs, "risk_measures", lambda series, xbi, as_of: series)
+    base = lrs.build_sleeve(rows, prices, as_of)
+    vb = lrs.build_sleeve(rows, prices, as_of, measures=["vol_60d", "beta_120d"])
+    assert vb["sleeve"][0] == "T69"  # lowest beta first once max_gain is dropped
+    assert base["sleeve"] != vb["sleeve"]
+
+
+def test_vol_beta_capture_writes_its_own_ledger(tmp_path):
+    days, snaps, prices_csv, out = _setup(tmp_path)
+    d = days[150]
+    res = lrs.capture(d, snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=d, variant="vol_beta")
+    assert res["status"] == "captured"
+    row = lrs.load_captures(out)[0]
+    assert row["schema"] == lrs.VARIANTS["vol_beta"]["schema"]
+    assert row["method"]["measures"] == ["vol_60d", "beta_120d"]
+    s = lrs.summarize(out_dir=out, price_csv=prices_csv, variant="vol_beta")
+    assert s["schema"] == lrs.VARIANTS["vol_beta"]["schema"]
+    md = lrs.format_summary_md(s)
+    assert "vol_beta" in md
