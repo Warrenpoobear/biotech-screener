@@ -300,3 +300,43 @@ def test_top20_pre_registration_is_in_summary(tmp_path, monkeypatch):
     assert res["top20_pre_registration"] == lrs.PRE_REGISTRATION_TOP20
     md = (out / "summary.md").read_text(encoding="utf-8")
     assert "Top-20" in md and "50/50 Top-20" in md
+
+
+# ── Ranks 1-10 vs 11-30 (pre-registered 2026-11-17) ──────────────────
+
+
+def test_rank_split_compares_top10_with_ranks_11_30(tmp_path, monkeypatch):
+    """T00..T09 drift down, T10..T29 drift up: ranks 1-10 should trail ranks 11-30."""
+    days = _days(330)
+    snaps, out, prices_csv = tmp_path / "snaps", tmp_path / "out", tmp_path / "prices.csv"
+    _write_prices(prices_csv, days, drift=lambda i: -0.004 if i < 10 else (0.003 if i < 30 else 0.0))
+    for k in range(150, 200, 5):
+        _write_snapshot(snaps, days[k])
+        lrs.capture(days[k], snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=days[k])
+    monkeypatch.setattr(lrs, "TOP20_REGISTERED", days[100])
+    monkeypatch.setattr(lrs, "RANK_SPLIT_HORIZONS", (5, 21, 63))
+    res = lrs.summarize(out_dir=out, price_csv=prices_csv)
+    rs = res["rank_split"][lrs.LIVE]
+    assert set(rs) == {"h5d", "h21d", "h63d"}
+    s5 = rs["h5d"]["stats"]
+    assert s5["top10_minus_ranks11_30"]["n"] == 10
+    assert s5["top10_minus_ranks11_30"]["mean_pct"] < 0
+    w = rs["h5d"]["windows"][0]
+    assert w["top10_minus_ranks11_30_pct"] == pytest.approx(w["top10_pct"] - w["ranks11_30_pct"], abs=2e-3)
+    # 63-day windows: 10 captures 5 days apart give one non-overlapping window.
+    assert rs["h63d"]["stats"]["top10_minus_ranks11_30"]["n"] == 1
+    assert res["rank_split_pre_registration"] == lrs.PRE_REGISTRATION_RANK_SPLIT
+    md = (out / "summary.md").read_text(encoding="utf-8")
+    assert "Ranks 1-10 vs 11-30" in md
+
+
+def test_rank_split_counts_only_captures_after_registration(tmp_path, monkeypatch):
+    days = _days(330)
+    snaps, out, prices_csv = tmp_path / "snaps", tmp_path / "out", tmp_path / "prices.csv"
+    _write_prices(prices_csv, days)
+    for k in range(150, 200, 5):
+        _write_snapshot(snaps, days[k])
+        lrs.capture(days[k], snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=days[k])
+    monkeypatch.setattr(lrs, "TOP20_REGISTERED", days[180])
+    res = lrs.summarize(out_dir=out, price_csv=prices_csv)
+    assert all(w["as_of_date"] > days[180] for w in res["rank_split"][lrs.LIVE]["h21d"]["windows"])
