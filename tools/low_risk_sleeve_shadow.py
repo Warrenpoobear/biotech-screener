@@ -109,6 +109,33 @@ PRE_REGISTRATION = [
     "- Nothing here changes the model or the account. Using the sleeve with real money is a separate governed decision.",
 ]
 
+# Second shadow (added 2026-11-16): same pool, exclusion and basket, scored on vol_60d and
+# beta_120d only. It has its own schema and ledger so the base record is never rewritten.
+METHOD_VOL_BETA = dict(METHOD, measures=["vol_60d", "beta_120d"])
+
+PRE_REGISTRATION_VOL_BETA = [
+    "Pre-registered 2026-11-16, before the first capture. Variant `vol_beta`: the base sleeve without the "
+    "max_gain_21d measure.",
+    "- Why: in the 2026-11-16 hold-out sensitivity test (77 months, net 50 bps, in-sample) max_gain_21d was the "
+    "weak measure (alone: alpha +0.28 pt/month, t 0.65). vol+beta: alpha +1.16 (t 2.95), beta 0.37, Sharpe 1.27, "
+    "max drawdown -12.6%; base: alpha +0.81 (t 2.07), beta 0.40, Sharpe 0.99, max drawdown -15.4%. The variant "
+    "was chosen after seeing that table, so its backtest edge over the base is not evidence.",
+    "- Same readings and thresholds as the base sleeve: CAPM alpha on non-overlapping 21-day windows, the 50/50 "
+    "Top-30 + sleeve Sharpe, and the paired difference against the base sleeve; no reading below "
+    f"{MIN_WINDOWS_FOR_READING} non-overlapping LIVE windows.",
+    "- Nothing here changes the model or the account.",
+]
+
+VARIANTS: Dict[str, Dict[str, Any]] = {
+    "base": {"schema": SCHEMA_VERSION, "method": METHOD, "out_dir": OUT_DIR, "pre_registration": PRE_REGISTRATION},
+    "vol_beta": {
+        "schema": "low_risk_sleeve_shadow.vol_beta.v1",
+        "method": METHOD_VOL_BETA,
+        "out_dir": REPO_ROOT / "artifacts" / "low_risk_sleeve_shadow_vol_beta",
+        "pre_registration": PRE_REGISTRATION_VOL_BETA,
+    },
+}
+
 
 def default_price_csv() -> Path:
     """Split-adjusted closes when present, else the raw history."""
@@ -218,12 +245,18 @@ def production_top(rows: Iterable[Dict[str, str]], top_n: int = PRODUCTION_N) ->
     return [t for _, t in sorted(pool)[:top_n]]
 
 
-def build_sleeve(rows: List[Dict[str, str]], prices: Dict[str, Dict[str, float]], as_of: str) -> Dict[str, Any]:
+def build_sleeve(
+    rows: List[Dict[str, str]],
+    prices: Dict[str, Dict[str, float]],
+    as_of: str,
+    measures: Optional[List[str]] = None,
+) -> Dict[str, Any]:
     """Production Top-30 and the low-risk sleeve (disjoint from it) for one snapshot."""
+    keys = list(measures) if measures is not None else METHOD["measures"]
     production = production_top(rows)
     held = set(production)
     xbi = prices.get(BENCHMARK, {})
-    measures: Dict[str, Dict[str, Optional[float]]] = {}
+    risk: Dict[str, Dict[str, Optional[float]]] = {}
     pinned: List[str] = []
     for row in rows:
         ticker = (row.get("ticker") or "").strip()
@@ -237,20 +270,20 @@ def build_sleeve(rows: List[Dict[str, str]], prices: Dict[str, Dict[str, float]]
         if m["vol_20d"] is not None and m["vol_20d"] < PINNED_VOL_20D:
             pinned.append(ticker)
             continue
-        measures[ticker] = m
+        risk[ticker] = m
 
     # Lower risk = higher percentile: rank the negated measure.
-    ranks = {k: _pct_ranks({t: -m[k] for t, m in measures.items() if m[k] is not None}) for k in METHOD["measures"]}
+    ranks = {k: _pct_ranks({t: -m[k] for t, m in risk.items() if m.get(k) is not None}) for k in keys}
     scores = {}
-    for t in measures:
-        got = [ranks[k][t] for k in METHOD["measures"] if t in ranks[k]]
+    for t in risk:
+        got = [ranks[k][t] for k in keys if t in ranks[k]]
         scores[t] = sum(got) / len(got)
     sleeve = [t for t, _ in sorted(scores.items(), key=lambda kv: (-kv[1], kv[0]))[:SLEEVE_N]]
     price_asof = max((d for d in xbi if d <= as_of), default=None)
     return {
         "production": production,
         "sleeve": sleeve,
-        "measures": {t: dict(measures[t], score=round(scores[t], 6)) for t in sleeve},
+        "measures": {t: dict(risk[t], score=round(scores[t], 6)) for t in sleeve},
         "n_scored": len(scores),
         "excluded_pinned": sorted(pinned),
         "price_asof": price_asof,
@@ -277,12 +310,15 @@ def capture(
     as_of_date: str,
     *,
     snapshots_dir: Path = SNAPSHOTS_DIR,
-    out_dir: Path = OUT_DIR,
+    out_dir: Optional[Path] = None,
     price_csv: Optional[Path] = None,
     today: Optional[str] = None,
     mode: Optional[str] = None,
+    variant: str = "base",
 ) -> Dict[str, Any]:
     """Record the sleeve and the production Top-30 for ``as_of_date``. Never rewrites a date."""
+    spec = VARIANTS[variant]
+    out_dir = Path(out_dir) if out_dir is not None else spec["out_dir"]
     rankings = Path(snapshots_dir) / as_of_date / "rankings.csv"
     if not rankings.exists():
         return {"status": "skipped", "reason": f"no rankings.csv for {as_of_date}"}
@@ -294,7 +330,7 @@ def capture(
     start = (date.fromisoformat(as_of_date) - timedelta(days=PRICE_LOOKBACK_DAYS)).isoformat()
     tickers = {(r.get("ticker") or "").strip() for r in rows} | {BENCHMARK}
     prices = load_prices(price_csv, tickers, start, as_of_date)
-    result = build_sleeve(rows, prices, as_of_date)
+    result = build_sleeve(rows, prices, as_of_date, measures=spec["method"]["measures"])
 
     price_asof = result["price_asof"]
     if (
@@ -312,14 +348,14 @@ def capture(
     if mode is None:
         mode = LIVE if today == as_of_date else REPLAY
     row = {
-        "schema": SCHEMA_VERSION,
+        "schema": spec["schema"],
         "as_of_date": as_of_date,
         "capture_mode": mode,
         "captured_on": today,
         "rankings_sha256": _sha256(rankings),
         "price_source": price_csv.name,
         "price_asof": price_asof,
-        "method": METHOD,
+        "method": spec["method"],
         "n_scored": result["n_scored"],
         "excluded_pinned": result["excluded_pinned"],
         "production": result["production"],
@@ -410,18 +446,22 @@ def _sharpe(xs: List[float]) -> Optional[float]:
 
 def summarize(
     *,
-    out_dir: Path = OUT_DIR,
+    out_dir: Optional[Path] = None,
     price_csv: Optional[Path] = None,
     horizons: Tuple[int, ...] = HORIZONS,
     write: bool = True,
+    variant: str = "base",
 ) -> Dict[str, Any]:
+    spec = VARIANTS[variant]
+    out_dir = Path(out_dir) if out_dir is not None else spec["out_dir"]
     price_csv = Path(price_csv) if price_csv is not None else default_price_csv()
     captures = load_captures(out_dir)
     result: Dict[str, Any] = {
-        "schema": SCHEMA_VERSION,
+        "schema": spec["schema"],
+        "variant": variant,
         "price_source": price_csv.name,
-        "method": METHOD,
-        "pre_registration": PRE_REGISTRATION,
+        "method": spec["method"],
+        "pre_registration": spec["pre_registration"],
         "n_captures": {m: sum(1 for c in captures if c["capture_mode"] == m) for m in (LIVE, REPLAY)},
         "min_windows_for_reading": MIN_WINDOWS_FOR_READING,
         "by_mode": {},
@@ -510,14 +550,15 @@ def _fmt(v: Any, spec: str, suffix: str = "") -> str:
 
 def format_summary_md(result: Dict[str, Any]) -> str:
     lines = [
-        "# Low-risk sleeve shadow — forward record",
+        "# Low-risk sleeve shadow — forward record"
+        + ("" if result.get("variant", "base") == "base" else f" (variant `{result['variant']}`)"),
         "",
         "Sleeve = the 30 lowest-risk eligible names outside the production Top-30 (60-day volatility, "
         "largest one-day gain over 21 days, 120-day beta to XBI), equal weight; names whose 20-day "
         "volatility is below 10% (price pinned near a deal price, or stale) are excluded. Compared with XBI "
         "and the production Top-30 on equal-weight forward returns, gross of costs. Non-overlapping windows only.",
         "",
-        *PRE_REGISTRATION,
+        *result.get("pre_registration", PRE_REGISTRATION),
         "",
         f"Captures: {result['n_captures'].get(LIVE, 0)} live, {result['n_captures'].get(REPLAY, 0)} replay. "
         f"Price source: `{result['price_source']}`. **Only LIVE captures are evidence.**",
@@ -570,7 +611,8 @@ def main() -> int:
     parser.add_argument("--as-of-date")
     parser.add_argument("--capture", action="store_true", help="Record the sleeve for --as-of-date")
     parser.add_argument("--summary", action="store_true", help="Recompute the forward-return comparison")
-    parser.add_argument("--out-dir", type=Path, default=OUT_DIR)
+    parser.add_argument("--variant", choices=sorted(VARIANTS), default="base")
+    parser.add_argument("--out-dir", type=Path, default=None)
     parser.add_argument("--snapshots-dir", type=Path, default=SNAPSHOTS_DIR)
     parser.add_argument("--price-csv", type=Path, default=None)
     args = parser.parse_args()
@@ -578,10 +620,16 @@ def main() -> int:
     if args.capture:
         if not args.as_of_date:
             parser.error("--capture needs --as-of-date")
-        res = capture(args.as_of_date, snapshots_dir=args.snapshots_dir, out_dir=args.out_dir, price_csv=args.price_csv)
+        res = capture(
+            args.as_of_date,
+            snapshots_dir=args.snapshots_dir,
+            out_dir=args.out_dir,
+            price_csv=args.price_csv,
+            variant=args.variant,
+        )
         print(json.dumps(res))
     if args.summary or args.capture:
-        print(format_summary_md(summarize(out_dir=args.out_dir, price_csv=args.price_csv)))
+        print(format_summary_md(summarize(out_dir=args.out_dir, price_csv=args.price_csv, variant=args.variant)))
     else:
         parser.print_help()
     return 0

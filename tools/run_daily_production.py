@@ -7183,6 +7183,20 @@ def run_daily(
         except Exception as _lrs_err:
             _logger.warning(f"Low-risk sleeve shadow failed: {_lrs_err}")
 
+        # Second variant (vol_60d + beta_120d only), own ledger; same capture-only rules.
+        try:
+            from tools.low_risk_sleeve_shadow import capture as _lrs_capture
+            from tools.low_risk_sleeve_shadow import summarize as _lrs_summarize
+
+            _lrsv_result = _lrs_capture(as_of_date, variant="vol_beta")
+            if _lrsv_result.get("status") == "captured":
+                _lrs_summarize(variant="vol_beta")
+            _logger.info(
+                f"Low-risk sleeve shadow (vol_beta) → {_lrsv_result.get('capture_mode') or _lrsv_result.get('status')}"
+            )
+        except Exception as _lrsv_err:
+            _logger.warning(f"Low-risk sleeve shadow (vol_beta) failed: {_lrsv_err}")
+
         # --- Step 5k.11c: Regime shadow (non-blocking, diagnostic) ---
         try:
             from tools.run_regime_shadow import run_regime_shadow
