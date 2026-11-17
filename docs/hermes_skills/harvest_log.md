@@ -1068,3 +1068,9 @@ External-legibility work this week: 0 commits/docs touching operator-facing surf
 Internal-machinery work this week: 1 automated tracker-sync commit in asset-allocation (no code drift); 0 in biotech-screener.
 Ratio verdict: BALANCED
 Observation: Both repos were effectively idle this week (0 and 1 commits respectively) outside of one automated doc-sync commit.
+
+## 2026-11-17 — biotech-ic-council mirror sync (operator-requested)
+
+- Source change: PR #703 (`skills/biotech-ic-council`): checklist items from the 2026-11-17 model review: per-input look-ahead audit of regenerated histories, external reference as-of dates, live-snapshot replacement check, selection after sweep, roster hindsight, Newey-West on overlapping horizons, per-trade cost convention, paired comparisons, red-on-main CI checks, operator-config writers, single-factor and clock-reset churn checks; architecture note updated to selector-only.
+- Synced with `python3 tools/sync_hermes_skills.py --only biotech-ic-council`; `audit_hermes_skills.py` reports no mirror drift.
+- Learnings: LRN-20261117-001..003 (`.learnings/LEARNINGS.md`).
