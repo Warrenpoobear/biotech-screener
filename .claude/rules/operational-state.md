@@ -8,7 +8,8 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-11-16  
+**Last updated:** 2026-11-17  
+**2026-11-17 update scope:** only the new Governance Events (2026-11-17) section.  
 **2026-11-16 update scope:** only the new Governance Events (2026-11-16) section.  
 **Update cadence:** weekly or upon governance-state change  
 **Authority:** operational status snapshot only; not architectural specification  
@@ -181,6 +182,10 @@ metadata:
 - Governance label: Tooling/knowledge-layer expansion only. No model, ranker, selector, sizing, or alpha-promotion change.
 
 ---
+
+## Governance Events (2026-11-17)
+
+- **Coinvest CUSIP mappings + RPRX, ILMN, STVN added (operator-authorized input change; clock reset):** 14 CUSIPs added to `cusip_static_map.json` (AVTX, CBIO, FTH, QUIT, COAG, NKTR, AKTS, OVID, STTK, TEVA, SKYE, IMMX, MNPR); the three names become active through `config/universe_coverage_exemptions.json`, honoured by `tools/refresh_eligible_biotech_universe.py`. Top-30 on 2026-11-16 inputs unchanged (30/30). `oos_clock_start` = first promoted run on the merged code; mandate 0/20. Memo: `docs/governance/2026-11-17-coinvest-cusips-and-universe-adds-clock-reset.md`.
 
 ## Governance Events (2026-11-16)
 

@@ -33,6 +33,28 @@ def _dumps_strict(obj) -> str:
     return json.dumps(_json_safe(obj), indent=2, allow_nan=False) + "\n"
 
 
+# Coverage fields an operator may exempt. A company that runs no clinical trials of its
+# own (royalty aggregator, tools or supply company) can never be "covered" on these;
+# company name and market data can never be exempted.
+EXEMPTABLE_FIELDS = frozenset({"clinical_trials", "scientific_cartography"})
+DEFAULT_EXEMPTIONS_PATH = REPO_ROOT / "config" / "universe_coverage_exemptions.json"
+
+
+def load_coverage_exemptions(path: Path = DEFAULT_EXEMPTIONS_PATH) -> dict[str, list[str]]:
+    """Ticker -> exempted coverage fields, from the operator-maintained config file."""
+    path = Path(path)
+    if not path.exists():
+        return {}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    out: dict[str, list[str]] = {}
+    for entry in data.get("exemptions", []):
+        ticker = str(entry.get("ticker") or "").strip().upper()
+        fields = [f for f in entry.get("fields", []) if f in EXEMPTABLE_FIELDS]
+        if ticker and fields:
+            out[ticker] = fields
+    return out
+
+
 def _ticker(row: dict[str, Any]) -> str:
     return str(row.get("ticker") or "").strip().upper()
 
@@ -133,6 +155,7 @@ def refresh_universe(
     as_of_date: str,
     *,
     finalize_collection: bool = False,
+    coverage_exemptions: dict[str, list[str]] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Return refreshed universe rows and a summary report."""
     trial_tickers, intervention_tickers = _trial_ticker_sets(trial_records)
@@ -149,6 +172,9 @@ def refresh_universe(
 
         refreshable_biotech_count += 1
         coverage = _coverage_status(row, trial_tickers, intervention_tickers)
+        for field in (coverage_exemptions or {}).get(ticker, []):
+            if field in EXEMPTABLE_FIELDS and coverage.get(field) == "pending":
+                coverage[field] = "exempt"
         pending_reasons = [
             name
             for name in ("company_name", "market_data", "clinical_trials", "scientific_cartography")
@@ -261,15 +287,23 @@ def main() -> int:
         help="Audit log appended on --apply (default: universe_audit_log.jsonl beside the universe file).",
     )
     parser.add_argument("--operator", default="operator", help="Name recorded in the audit log.")
+    parser.add_argument(
+        "--exemptions-path",
+        type=Path,
+        default=DEFAULT_EXEMPTIONS_PATH,
+        help="Operator coverage exemptions (clinical_trials / scientific_cartography only).",
+    )
     args = parser.parse_args()
 
     universe = json.loads(args.universe_path.read_text(encoding="utf-8"))
+    exemptions = load_coverage_exemptions(args.exemptions_path)
     trial_records = json.loads(args.trial_records_path.read_text(encoding="utf-8"))
     refreshed, report = refresh_universe(
         universe,
         trial_records,
         args.as_of_date,
         finalize_collection=args.finalize_collection,
+        coverage_exemptions=exemptions,
     )
 
     changes = status_changes(universe, refreshed)

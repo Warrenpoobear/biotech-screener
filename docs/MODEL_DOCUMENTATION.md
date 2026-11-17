@@ -16,6 +16,18 @@ construction remain frozen; this document does not authorize behavior changes.
 
 ---
 
+## Recent Update — 2026-11-17 (Coinvest CUSIP Mappings + RPRX, ILMN, STVN Added — Input Change, Clock Reset)
+
+Classification: `INPUT_CHANGE / CLOCK_RESET`. Operator-authorized 2026-11-17. Source of truth: `docs/governance/2026-11-17-coinvest-cusips-and-universe-adds-clock-reset.md`.
+
+Summary:
+- `cusip_static_map.json` +14 common-stock CUSIPs for active names never resolved in any 13F build (AVTX 12 roster holders, CBIO 10, FTH 9, QUIT 7, COAG 7, NKTR 6, AKTS 6, others ≤3). Coinvest rebuilt: 273 tickers (was 261).
+- RPRX, ILMN, STVN move from `pending_coverage` to active through `config/universe_coverage_exemptions.json` (no own drug trials, so trial/cartography coverage is exempted; name and market data still required).
+- Impact on 2026-11-16 inputs: Top-30 unchanged (30/30), eligible rank correlation 0.971; RPRX/STVN/ILMN rank 147–157; COAG #32, QUIT #35.
+
+Governance verdict:
+- Input change: `oos_clock_start` resets to the first promoted run on the merged code (expected 2026-11-17); mandate SM-20260629-001 restarts at 0/20. `model_hash` unchanged.
+
 ## Recent Update — 2026-11-16 (Manager Roster v4: Backtest Lead Is In-Sample — Research Record)
 
 Classification: `RESEARCH_RECORD / NO_MODEL_CHANGE`. Source of truth: `docs/governance/2026-11-16-roster-v4-hindsight-backtest.md`.

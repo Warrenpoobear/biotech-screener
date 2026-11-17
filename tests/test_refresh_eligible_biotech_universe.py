@@ -86,3 +86,53 @@ def test_refresh_finalize_marks_unavailable_coverage():
     assert refreshed[0]["coverage_status"]["scientific_cartography"] == "unavailable"
     assert report["pending_collection_tickers"] == []
     assert report["pending_coverage_tickers"] == ["NTRI"]
+
+
+# ── Operator coverage exemptions (2026-11-17: RPRX, ILMN, STVN) ──────────────
+
+
+def test_exemption_promotes_name_without_trials():
+    universe = [_row("RPRX", status="pending_coverage")]
+    exemptions = {"RPRX": ["clinical_trials", "scientific_cartography"]}
+
+    refreshed, report = refresh_universe(
+        universe, [], "2026-11-17", finalize_collection=True, coverage_exemptions=exemptions
+    )
+
+    assert refreshed[0]["status"] == "active"
+    assert refreshed[0]["coverage_status"]["clinical_trials"] == "exempt"
+    assert refreshed[0]["coverage_status"]["scientific_cartography"] == "exempt"
+    assert report["promoted_active_tickers"] == ["RPRX"]
+
+
+def test_exemption_never_covers_market_data_or_name():
+    row = _row("STVN", status="pending_coverage", market_data={"company_name": "Stevanato", "sector": "Biotech"})
+    exemptions = {"STVN": ["clinical_trials", "scientific_cartography", "market_data"]}
+
+    refreshed, _ = refresh_universe([row], [], "2026-11-17", finalize_collection=True, coverage_exemptions=exemptions)
+
+    assert refreshed[0]["status"] != "active"
+    assert "market_data" in refreshed[0]["status_reason"]
+
+
+def test_partial_exemption_still_requires_the_rest():
+    universe = [_row("ILMN", status="pending_coverage")]
+    exemptions = {"ILMN": ["scientific_cartography"]}
+
+    refreshed, _ = refresh_universe(
+        universe, [], "2026-11-17", finalize_collection=True, coverage_exemptions=exemptions
+    )
+
+    assert refreshed[0]["status"] == "pending_coverage"
+    assert refreshed[0]["status_reason"] == "coverage_unavailable:clinical_trials"
+
+
+def test_exemptions_file_loads(tmp_path):
+    from tools.refresh_eligible_biotech_universe import load_coverage_exemptions
+
+    p = tmp_path / "ex.json"
+    p.write_text(
+        '{"exemptions": [{"ticker": "rprx", "fields": ["clinical_trials"], "reason": "r", "approved": "2026-11-17"}]}'
+    )
+    assert load_coverage_exemptions(p) == {"RPRX": ["clinical_trials"]}
+    assert load_coverage_exemptions(tmp_path / "missing.json") == {}
