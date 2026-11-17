@@ -1,6 +1,6 @@
 # DEM Top-30 EW — Weekly Forward Validation Summary
 
-**Updated:** 2026-11-16T22:42Z  
+**Updated:** 2026-11-17T21:50Z  
 **Model hash:** `a9a430154568e242`  
 **Ruleset:** `8887576e`  
 **Candidate registered:** 2026-06-26  
