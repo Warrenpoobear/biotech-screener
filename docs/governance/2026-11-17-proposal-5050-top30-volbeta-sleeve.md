@@ -82,8 +82,9 @@ Each design choice was varied one at a time on the same data and costs, with the
 | Market cap | Sleeve built within small (<$2B), mid ($2–10B), large (≥$10B) | Small caps earn most (+1.37 pt/month vs XBI) with twice the drawdown and a weaker 2024–26; mid caps weakest; large caps stabilise; the all-cap mix has the best Sharpe and lowest drawdown | All caps (no restriction) |
 | Rebalance frequency | Monthly, every two weeks, weekly | Weekly +0.04 pt/month (t 1.32), all in the first half of the sample | Monthly reconstitution; weekly reweighting optional |
 | Industry caps | None, 15, 10, 8 per industry | Uncapped sleeve averages 12 biotechnology, 8 specialty/generic, 6 large drug makers; cap 15 binds in 2% of months (no effect); cap 10 no gain; cap 8 −0.15 pt/month and drawdown −17% | None (15 as optional guardrail) |
+| Rank buffer (hold a name until it falls past rank 40, 50 or 60) | Turnover 17%/month with no buffer, 11% at rank 40, 8% at rank 60; at 50 bp costs rank 40 adds +0.14 pt/month (t 0.92, better in 3 of 7 years) but maximum drawdown deepens from −11% to −16%; at 150 bp costs +0.19 (t 1.30, 4 of 7 years) | No buffer (scaling option, §8) |
 
-The edge comes from preferring low-volatility, low-beta names at all, not from fine-tuning; further tuning would be fitting noise. Scripts are in the 2026-11-17 session scratchpad (`lowvol_opt.py`, `volbeta_windows.py`, `volbeta_n.py`, `volbeta_weights.py`, `volbeta_capbuckets.py`, `volbeta_freq.py`, `volbeta_sectorcap.py`, `sleeve_vs_mix.py`).
+The edge comes from preferring low-volatility, low-beta names at all, not from fine-tuning; further tuning would be fitting noise. Scripts are in the 2026-11-17 session scratchpad (`lowvol_opt.py`, `volbeta_windows.py`, `volbeta_n.py`, `volbeta_weights.py`, `volbeta_capbuckets.py`, `volbeta_freq.py`, `volbeta_sectorcap.py`, `volbeta_buffer.py`, `sleeve_vs_mix.py`).
 
 **Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and `vol_beta` shadows started 2026-11-16/17).
 
@@ -120,6 +121,8 @@ Options (operator to choose one):
 3. Rebalance skill (`biotech-rebalance`) reads `target_portfolio.csv` instead of the Top-30.
 4. `FORWARD_VALIDATION_PROTOCOL.md` §2/§4 amendments; capture and evaluator handle the 50/50 basket; `CANDIDATE.json` and hash rotation entry.
 5. `docs/MODEL_DOCUMENTATION.md` entry; `.claude/rules/operational-state.md` governance event.
+
+**Scaling note (not part of this proposal).** At today's size (~$1M) the sleeve trades without a rank buffer: a buffer saves only ~0.03 pt/month in costs, its return gain is not significant, and it lets names that have drifted out of the low-risk set stay in the book (drawdown −16% vs −11%). If the account grows past roughly $20–50M, where costs are about three times higher, revisit a rank-40 buffer for both halves (it also cuts Top-30 turnover) as a separate proposal with its own evidence.
 
 Rollback: publish Top-30-only targets again (one flag), revert Rule 4 to the XBI-relative levels.
 
