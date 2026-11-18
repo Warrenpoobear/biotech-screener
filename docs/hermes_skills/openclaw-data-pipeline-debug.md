@@ -1519,6 +1519,218 @@ instance #2 to leave the 12.0% ceiling question open).
 
 ---
 
+### Class T — Scheduled stage silently failing for months on an argparse flag mismatch
+
+**Signature:** A daily/scheduled stage has been failing on literally every run for an
+extended period (weeks to months) with no visible alarm — the cron script passes a
+CLI flag the target script never accepted, so `argparse` exits 2 immediately, before
+any real work starts. The downstream data file (e.g. a PIT financial record store)
+silently freezes at whatever it last contained from a manual run, and consumers
+(`run_screen.py`, financial_score) keep using increasingly stale data without erroring.
+
+**Confirmed instance (2026-10-16, commit `e0085dd4`, PR branch
+`fix/pit-financials-workers-flag`):** `cron_data_extras.sh` called
+`build_pit_financials.py --workers 3`. `build_pit_financials.py` never defined a
+`--workers` argument. Every run since the stage was scheduled (**57/57 since
+2026-04-28**) exited 2 on argparse before fetching anything.
+`production_data/pit_financials/` was last actually written by a manual run on
+2026-06-22 — nearly 4 months stale by the time this was caught. `run_screen.py` uses
+these records for 340/361 tickers' cash/runway inputs, so financial_score had been
+running on stale filings the whole time with no error surfaced anywhere.
+
+**Compounding gotcha — dropping the bad flag is not sufficient:** simply removing
+`--workers 3` would make the stage "go green" while still fetching nothing, because
+(a) without `--force` the script skips every ticker that already has a file on disk,
+and (b) the underlying `fetch_companyfacts` call also reuses its own raw EDGAR cache.
+A naive fix passes silently and the staleness persists invisibly. The real fix added
+a `--max-age-days N` flag: files older than N days are re-fetched AND the raw
+companyfacts cache is bypassed for those tickers. Facts keep their SEC `filed` date,
+so re-fetching stale records introduces no PIT look-ahead.
+
+**Diagnostic chain:**
+
+```bash
+# 1. Confirm the cron stage's actual invocation vs the script's accepted args
+grep -n "build_pit_financials\|--workers\|--max-age" cron_data_extras.sh
+python3 tools/build_pit_financials.py --help 2>&1 | head -20
+
+# 2. Check how stale the target data store actually is
+python3 -c "
+import glob, os, time
+files = glob.glob('production_data/pit_financials/*.json')
+if files:
+    mtimes = [os.path.getmtime(f) for f in files]
+    newest = max(mtimes)
+    print(f'{len(files)} files, newest mtime age: {(time.time()-newest)/86400:.1f} days')
+"
+
+# 3. Check cron run history for silent exit-2 failures (not just missing-output alerts)
+grep -c "exit.*2\|argparse\|unrecognized arguments" logs/cron_data_extras*.log 2>/dev/null
+```
+
+**Pattern to catch:** Any cron wrapper script invoking a Python tool with a flag
+should be spot-checked against `--help` output at least once after any refactor of
+either side. A silent `argparse` exit-2 produces a non-zero exit code that a naive
+cron harness may not surface distinctly from "ran but found nothing to do" — if the
+cron monitor only checks "did the process start," not "did it exit 0 AND produce
+fresh output," this failure mode is invisible for months. Prefer a watchdog check on
+the *target artifact's* mtime (Class C pattern), not just invocation logs.
+
+---
+
+### Class U — TTM computed from filing form-type instead of each fact's actual period (YTD mixing)
+
+**Signature:** Trailing-twelve-month (TTM) financial aggregates (e.g. operating cash
+flow, burn rate) are silently wrong by roughly 2-3× for tickers whose most recent SEC
+filing is a 10-Q. Runway/burn numbers look plausible individually but are far off
+versus the actual filed values, and the error appears/disappears depending on which
+quarter a company's latest filing happens to be.
+
+**Confirmed instance (2026-10-16, commit `de97f0c6`, PR branch
+`fix/pit-financials-runway`):** `_is_quarterly` in `pit_financials.py` classified
+every 10-Q fact as covering exactly one quarter. SEC 10-Q cash-flow-statement facts
+are actually **year-to-date** (Q2 10-Q = 6 months, Q3 10-Q = 9 months), not a single
+quarter. So whenever a 10-Q was a ticker's latest filing, `_compute_ttm` summed a
+mix of 3/6/9-month YTD values and dropped the 10-K entirely — producing a TTM figure
+that wasn't 12 months of anything coherent. MDGL's TTM operating cash flow computed
+as -$503.5M against an actual -$197.8M (2.5× overstated burn → runway cut roughly in
+half). The bug was latent while the PIT store was stale (Class T) because most
+tickers' latest filing on file was still a 10-K, which is used directly without this
+code path. The Class T fix (refreshing stale records) made this bug near-universal
+across the universe in the same session — 37 tickers were already affected even on
+stale 2026-06-22 data (e.g. NRIX 7.9 vs 13.3 months runway); after the Q2 2026
+refresh it hit most of the universe (MDGL -1.6 months runway, SYRE -6, COGT/URGN/RCUS
+dropped from rankings entirely).
+
+**Fix logic (de97f0c6), in priority order, using each fact's actual start/end dates:**
+1. a full-year fact at the latest period end — used directly (unchanged from before);
+2. else sum four consecutive single-quarter facts;
+3. else YTD fact (including a Q1-quarter fact) + prior full fiscal year − prior-year
+   YTD covering the same months;
+4. else the longest available period at the latest end date, annualized by day-count.
+Facts are de-duplicated by `(start, end)` tuple, not just `end` date, so a 3-month
+fact and a YTD fact sharing the same end date both survive distinctly instead of one
+clobbering the other. Facts that lack period start/end dates fall back to the old
+form-type-based path (no regression for that case). PIT filtering (`filed <= as_of`)
+is applied before any of this, so the fix introduces no look-ahead.
+
+**Measured impact (2026-10-15 research screen vs. the promoted production snapshot):**
+- Fix alone, on then-current (stale) data: Top-30 kept 28/30, top20 overlap 81.8%,
+  2/2 tier/eligibility changes — small, passes drift gates.
+- Fix + the Class T data refresh together: Top-30 kept 22/30, **top20 overlap 33.3%
+  (fails the <30% drift-FAIL threshold)**, 4/4 tier/eligibility changes.
+- Old buggy code + refreshed data (counterfactual, not shipped): Top-30 18/30, top20
+  overlap 29.0% — an even larger, uncontrolled drift.
+This is **Tier 3 (feeds `financial_score`) governance** — a production-score-affecting
+change. Per the NO_MODEL_CHANGE forward-validation window, it was treated as an
+authorized bug-fix decision by the operator and explicitly **resets the out-of-sample
+clock**. Documented in `CHANGELOG.md` under `[Unreleased] - 2026-10-16`.
+
+**Known remaining gap (explicitly not addressed by this fix):** liquidity reported
+under XBRL tags other than `ShortTermInvestments` (e.g. MDGL's marketable securities,
+last correctly mapped in 2018) is still not counted — runway remains understated for
+some names. Cross-reference with Class H (XBRL tag mismatch) if a specific ticker's
+divergence looks like a missing-tag issue rather than a TTM-period issue.
+
+**Diagnostic chain:**
+
+```bash
+# 1. Check if a ticker's latest filing is a 10-Q and TTM looks implausible
+python3 -c "
+import json
+pit = json.load(open('production_data/pit_financials/MDGL.json'))
+cf = sorted(pit['facts'].get('operating_cash_flow', []), key=lambda x: x['end'])
+for f in cf[-6:]:
+    print(f.get('start'), f.get('end'), f.get('form'), f.get('val'))
+"
+
+# 2. Check if _is_quarterly / _compute_ttm distinguish YTD facts from true single-quarter facts
+grep -n "_is_quarterly\|_compute_ttm\|def.*ttm" pit_financials.py | head -20
+
+# 3. Confirm the fact dedup key is (start, end), not just end
+grep -n "dedup\|seen\s*=\|(start, end)\|\.get(\"end\")" pit_financials.py | head -20
+```
+
+**Pattern to catch:** Any TTM/trailing aggregate computed from SEC XBRL facts that
+classifies a fact's period length purely from the filing **form type** (10-K vs 10-Q)
+rather than from the fact's own `start`/`end` dates is suspect. 10-Q cash-flow and
+income-statement facts are YTD, not single-quarter, by SEC convention — only balance
+sheet items (point-in-time) are consistently single-period regardless of form. This
+is a sister pattern to Class L (periodicity confusion) but specifically about mixing
+different period LENGTHS within one TTM sum, rather than applying one wrong divisor.
+
+---
+
+### Class V — CT.gov fetch retry: a failed request must never be read as "0 trials"
+
+**Signature:** A clinical-trial count of exactly 0 for a ticker that plausibly has active
+trials is silently indistinguishable from "CT.gov request failed" — both produce the same
+`0` in the data, with no retry and no error surfaced downstream.
+
+**Confirmed instance (2026-11-13, commit `f1590a44`, fix/ctgov-fetch-retry):**
+`fix(ctgov): retry failed requests, never read a failure as 0 trials; map ACHV/AVTX/IMMX/MNPR`.
+The CT.gov fetch path previously treated a failed HTTP request the same as a genuine
+zero-result response — both collapsed to `trial_count=0`. This silently zeroed out clinical
+signal for any ticker whose fetch transiently failed (timeout, rate limit, 5xx), with no
+distinction from an authentic "no trials found" result. Fix adds retry logic and an explicit
+failure sentinel distinct from a genuine zero count; also corrected sponsor-name mapping gaps
+for ACHV/AVTX/IMMX/MNPR that were contributing to false zero-trial reads.
+
+**Diagnostic recipe:**
+
+```bash
+# 1. Check if the fetch path distinguishes failure from genuine zero
+grep -n "trial_count\s*=\s*0\|except.*requests\|retry" tools/ctgov*.py | head -20
+
+# 2. Spot-check tickers with trial_count=0 against a manual CT.gov search
+# If a ticker has 0 trials in production data but a quick manual search shows active
+# trials, suspect a silent fetch failure rather than a genuine zero.
+
+# 3. Confirm sponsor mapping coverage for any ticker showing persistent trial_count=0
+grep -n "ACHV\|AVTX\|IMMX\|MNPR" tools/ctgov*.py production_data/sponsor_map*.json 2>/dev/null
+```
+
+**Pattern to catch:** Any external API fetch whose failure path returns the same value as
+a legitimate "empty result" response is a silent-zero hazard — same shape as Class M
+(yfinance stale-price fallback) but for a boolean/count field instead of a price. Always
+use a distinct sentinel (None, a dedicated `fetch_failed` flag, or an exception) for
+fetch failure, never collapse it into the domain's valid zero value.
+
+---
+
+### Class W — Backfill runner infinite loop + retired-names false staleness flag
+
+**Signature:** A backfill/catch-up runner loops indefinitely without making forward
+progress (never reaching a terminal state), and independently, the price-staleness check
+flags retired/delisted tickers as stale even though no fresh price is expected for them.
+
+**Confirmed instance (2026-10-20 era commit `a722f564`, fix/staleness-scope-and-backfill-loop):**
+`fix: backfill runner infinite loop; price-staleness check flags retired names`. Two
+related but independent defects landed in the same fix: (1) the backfill runner's loop
+termination condition could be unsatisfied under certain gap patterns, causing it to spin
+without completing; (2) the price-staleness check did not exclude retired/delisted tickers
+from its "must have a recent price" expectation, producing false-positive staleness flags
+for names that will never get a new price again (same family as Class O in this skill,
+delisted-ticker contamination).
+
+**Diagnostic recipe:**
+
+```bash
+# 1. Check backfill runner termination logic
+grep -n "while\|break\|continue\|terminal" tools/backfill_runner.py 2>/dev/null | head -20
+
+# 2. Confirm staleness check excludes retired/delisted status
+grep -n "status.*delisted\|status.*retired\|staleness" tools/*staleness*.py 2>/dev/null | head -10
+```
+
+**Pattern to catch:** Same as Class O (Universe contamination from delisted tickers) —
+any staleness/freshness gate must exclude retired/delisted names from its "expect a
+fresh value" population. A loop-termination defect in a backfill runner should always be
+checked against the Class O delisted-ticker filter, since both can surface together when
+backfilling historical gaps that include names that have since delisted.
+
+---
+
 ## Cross-skill diagnostic routing
 
 ```
@@ -1569,6 +1781,17 @@ Shadow monitor / append-only ledger allows settled rows to be overwritten?
 Financial metrics (burn, runway) look implausible (4× off)?
   → Class L. Periodicity confusion. Check if calculation hardcodes /3 or /12 without
     checking filing period. Confirmed 2026-06-23 (c6e1700c): annual data divided by 3.
+
+A scheduled stage has been failing on every run for weeks/months with no alarm?
+  → Class T. argparse flag mismatch between cron wrapper and target script. Check
+    cron script flags against `--help` output; check target artifact mtime, not just
+    invocation logs. Confirmed 2026-10-16 (e0085dd4): 57/57 failures since 2026-04-28.
+
+TTM/trailing financial aggregate wrong specifically for tickers whose latest filing
+is a 10-Q (not a flat 4× error — period-mixing shape)?
+  → Class U. 10-Q facts are YTD, not single-quarter; check period classification uses
+    each fact's start/end dates, not filing form type. Confirmed 2026-10-16 (de97f0c6):
+    MDGL TTM -$503.5M vs actual -$197.8M.
 ```
 LangGraph node crashes with AttributeError/TypeError on path operations?
   → Class K. artifact_dir (or similar path arg) is None. LangGraph is the third

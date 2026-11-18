@@ -1069,6 +1069,25 @@ Internal-machinery work this week: 1 automated tracker-sync commit in asset-allo
 Ratio verdict: BALANCED
 Observation: Both repos were effectively idle this week (0 and 1 commits respectively) outside of one automated doc-sync commit.
 
+## 2026-11-16
+### Git activity (past 7d)
+- biotech-screener: ~50+ commits. Key new findings extracted this cycle:
+  - `35387815` fix(tools): detect a running production job, not a leftover lock file
+  - `9c730878` fix(watchdog): only recover trapops after today's snapshot is promoted
+  - `f1590a44` fix(ctgov): retry failed requests, never read a failure as 0 trials; map ACHV/AVTX/IMMX/MNPR
+  - `a722f564` fix: backfill runner infinite loop; price-staleness check flags retired names
+  - `0d5abe95` merge PR #691: governance record oos_clock_start 2026-11-16 (selector-only promoted run)
+  - Also: PIT cash/financials fixes, 13F refresh, provenance exclusions, basket ledger race fix, IC heartbeat trend-decay fix, universe-maintenance inactive-name skip fix, semgrep hook scope, CI coverage floor, skill-hash ast-v2 docs, low-risk sleeve shadow feature, regulatory calendar refresh, Sharadar price source adoption, market-cap unit fix, SUPN ticker/PDUFA corrections (no new patchable pattern beyond those above — covered by existing classes or routine).
+- asset-allocation: 1 commit — docs(tracking): MODE A sync 2026-11-16 (598 passed, 0 ruff errors, no code drift) — HOUSEKEEPING, skip.
+### Sessions reviewed: 5
+- No session_search hits within the relevant window for cron/pipeline debug, ruleset/selector governance, asset-allocation phase tracker, or Hermes token cost topics (most recent matches pre-date this cycle).
+- EES v3 veto-monitor findings (2026-11-03 through 2026-11-16, 10 runs): all script_exit=0, gate_20d met=true (n=91 obs), anomalies=[] on every entry. veto_alpha_20d declining slightly over window (5.29 -> 4.75) but gate remains met; no SCRIPT_ERROR/ZERO_VETOES/ALPHA_SPIKE instances. No actionable finding — informational trend only.
+### Skill patches
+- openclaw-cron-scheduler-debug: Added Class P (production lock detection via leftover lock file vs live PID, commit 35387815) and a Class O extension (watchdog trapops recovery gated on snapshot promotion, commit 9c730878).
+- openclaw-data-pipeline-debug: Added Class V (CT.gov fetch retry — failed request must never read as 0 trials, commit f1590a44) and Class W (backfill runner infinite loop + retired-names false staleness flag, commit a722f564).
+### New skills created: none
+### No new findings: aa-model-tracker, openclaw-agent-scope-audit, openclaw-session-routing-debug had no confirmed new instances this cycle.
+
 ## 2026-11-17 — biotech-ic-council mirror sync (operator-requested)
 
 - Source change: PR #703 (`skills/biotech-ic-council`): checklist items from the 2026-11-17 model review: per-input look-ahead audit of regenerated histories, external reference as-of dates, live-snapshot replacement check, selection after sweep, roster hindsight, Newey-West on overlapping horizons, per-trade cost convention, paired comparisons, red-on-main CI checks, operator-config writers, single-factor and clock-reset churn checks; architecture note updated to selector-only.
