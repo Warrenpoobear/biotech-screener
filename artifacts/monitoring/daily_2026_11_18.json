@@ -1,0 +1,396 @@
+{
+  "date": "2026-11-18",
+  "monitoring_day": 161,
+  "timestamp": "2026-11-18T09:00:00.000000Z",
+  "phase": "Day 161 — PRE-MARKET snapshot (Nov 18 09:00 ET, Tuesday). Robinhood MCP unavailable (consecutive weeks). Price basis remains Aug 27 close (NOW 41 TRADING SESSIONS STALE: Aug 28 through Nov 18 open). CRITICAL: 7 of 15 positions NO LONGER IN TOP30 (NRIX, URGN, ALMS, CMPS, SLDB, DRUG, XENE dropped since screener last ran). 8+ MISSED REBALANCE TRIGGERS (Sep 28, Oct 5, 12, 19, 26, Nov 2, 9, 16). OOS clock restarted 2026-11-17 (0/20). Q3 13F filing deadline passed 2026-11-14.",
+  "data_integrity": {
+    "primary_source": "Last live price source: Aug 27 close (daily_2026_09_23.json). Last monitoring snapshot: 2026-09-23 (Day 76). No monitoring files for Sep 24 through Nov 17 (41 trading sessions).",
+    "price_date": "2026-08-27 close (LAST AVAILABLE — 41 TRADING SESSIONS STALE as of Nov 18 open)",
+    "data_gap": "Sep 24 through Nov 18 open — FORTY-ONE consecutive trading sessions without confirmed price data",
+    "monitoring_cron_gap": "daily_2026_09_23.json (Day 76) was the last file written. Sep 24 through Nov 17 monitoring files MISSING (41 sessions). Cause unknown.",
+    "mcp_status": "Robinhood MCP unavailable. No live quotes. No portfolio fetch. All P&L/equity/drawdown metrics based on Aug 27 close (STALE).",
+    "forward_validation_source": "Forward validation capture 2026-11-17 provides current top30 basket and XBI price at capture ($145.28). No individual ticker prices.",
+    "data_quality": "DEGRADED — CRITICAL. 41 trading sessions of price movement UNCAPTURED. 8+ Monday rebalance triggers missed. Roster drift: 7 positions no longer in top30."
+  },
+  "market_status": {
+    "date": "2026-11-18",
+    "weekday": "Tuesday",
+    "status": "OPEN",
+    "note": "Nov 18 = Tuesday. Robinhood MCP unavailable — Nov 18 prices cannot be fetched. All portfolio data carried from Aug 27 basis."
+  },
+  "account": {
+    "account_id": "Robinhood 802349084",
+    "equity_fetchable": false,
+    "equity_estimated_usd": 138.04,
+    "equity_note": "Carried from Aug 27 close basis. Aug 28 through Nov 18 prices all unknown. 41 sessions of actual P&L movement uncaptured.",
+    "cash_carried": 99.87,
+    "buying_power_carried": null,
+    "total_estimated_account_value": 237.91,
+    "equity_note_detail": "No new price data since Aug 27 close. MCP unavailable. Estimate is minimum 41 sessions stale as of Nov 18 open."
+  },
+  "benchmark": {
+    "xbi_entry_price": 133.62,
+    "xbi_at_fv_capture": 145.28,
+    "xbi_at_fv_capture_date": "2026-11-17",
+    "xbi_return_since_entry_at_nov17_pct": 8.72,
+    "xbi_last_close_aug27": 168.23,
+    "xbi_return_since_entry_aug27_pct": 25.9,
+    "xbi_note": "XBI was $145.28 on 2026-11-17 (forward validation capture) — +8.72% from $133.62 entry. NOTABLE: XBI has DECLINED significantly since Aug 27 close of $168.23 (-13.65% from Aug 27 to Nov 17). Portfolio P&L vs entry figures (Aug 27 basis: +37.9% avg, +12.0pp vs XBI) are STALE and do NOT reflect the XBI correction."
+  },
+  "portfolio_overview": {
+    "total_positions": 15,
+    "positions_negative_vs_entry_aug27": 0,
+    "positions_positive_vs_entry_aug27": 15,
+    "avg_pnl_vs_entry_aug27_pct": 37.9,
+    "equity_usd_aug27": 138.04,
+    "cash_usd": 99.87,
+    "total_account_usd_aug27": 237.91,
+    "xbi_return_since_entry_aug27_pct": 25.9,
+    "xbi_return_since_entry_nov17_pct": 8.72,
+    "outperformance_aug27_pp": 12.0,
+    "outperformance_nov17_estimate": "UNKNOWN — portfolio prices not updated since Aug 27. XBI declined from $168.23 to $145.28 (-13.65%) since Aug 27. Individual stock prices unknown.",
+    "drawdown_threshold_review_pp": -10.0,
+    "drawdown_threshold_liquidate_pp": -15.0,
+    "drawdown_status": "CANNOT BE VERIFIED — price data 41 sessions stale. XBI declined $168.23→$145.28 from Aug 27 to Nov 17 (-13.65%). Portfolio prices unknown. Drawdown gate UNVERIFIABLE.",
+    "gap_flags": "UNKNOWN — 41 sessions of price data uncaptured",
+    "roster_drift": {
+      "still_in_top30": ["COGT", "DNTH", "SYRE", "RVMD", "STOK", "PRAX", "TRVI", "ERAS"],
+      "dropped_from_top30": ["NRIX", "URGN", "ALMS", "CMPS", "SLDB", "DRUG", "XENE"],
+      "dropped_count": 7,
+      "total_positions": 15,
+      "roster_note": "7 of 15 portfolio positions no longer in current top30 (as of screener run 2026-11-17). Rule 2: positions that drop below rank 40 should exit within session discovered. These 7 positions should have been exited by prior Monday rebalances."
+    }
+  },
+  "positions": [
+    {
+      "ticker": "COGT",
+      "entry_price": 31.35,
+      "quantity": 0.212789,
+      "last_close_aug27": 37.09,
+      "pnl_vs_entry_aug27_pct": 18.3,
+      "position_value_aug27_usd": 7.89,
+      "in_current_top30": true,
+      "current_rank": 2,
+      "status": "MONITORING — IN TOP30 RANK 2",
+      "price_staleness": "41 sessions"
+    },
+    {
+      "ticker": "DNTH",
+      "entry_price": 72.1,
+      "quantity": 0.092928,
+      "last_close_aug27": 111.54,
+      "pnl_vs_entry_aug27_pct": 54.7,
+      "position_value_aug27_usd": 10.37,
+      "in_current_top30": true,
+      "current_rank": 25,
+      "status": "MONITORING — IN TOP30 RANK 25",
+      "price_staleness": "41 sessions"
+    },
+    {
+      "ticker": "NRIX",
+      "entry_price": 15.46,
+      "quantity": 0.430232,
+      "last_close_aug27": 26.88,
+      "pnl_vs_entry_aug27_pct": 73.9,
+      "position_value_aug27_usd": 11.56,
+      "in_current_top30": false,
+      "status": "ROSTER EXIT — NOT IN TOP30 (as of 2026-11-17 screener). Rule 2: should exit at next rebalance or within session if below rank 40. MULTIPLE MISSED REBALANCES. EXIT PENDING.",
+      "price_staleness": "41 sessions",
+      "exit_flag": true
+    },
+    {
+      "ticker": "URGN",
+      "entry_price": 28.02,
+      "quantity": 0.237681,
+      "last_close_aug27": 45.5,
+      "pnl_vs_entry_aug27_pct": 62.4,
+      "position_value_aug27_usd": 10.81,
+      "in_current_top30": false,
+      "status": "ROSTER EXIT — NOT IN TOP30 (as of 2026-11-17 screener). EXIT PENDING.",
+      "price_staleness": "41 sessions",
+      "exit_flag": true
+    },
+    {
+      "ticker": "ALMS",
+      "entry_price": 20.37,
+      "quantity": 0.326013,
+      "last_close_aug27": 23.21,
+      "pnl_vs_entry_aug27_pct": 13.9,
+      "position_value_aug27_usd": 7.57,
+      "in_current_top30": false,
+      "status": "ROSTER EXIT — NOT IN TOP30 (as of 2026-11-17 screener). LUMUS readout (Sep 30 Q3 2026 deadline) has passed — outcome unknown. EXIT PENDING.",
+      "price_staleness": "41 sessions",
+      "exit_flag": true,
+      "catalyst_note": "LUMUS Phase 2b SLE readout was due Q3 2026 (Sep 30 deadline). Outcome unknown — no price data captured since Sep 23."
+    },
+    {
+      "ticker": "SYRE",
+      "entry_price": 76.1,
+      "quantity": 0.088041,
+      "last_close_aug27": 93.62,
+      "pnl_vs_entry_aug27_pct": 23.0,
+      "position_value_aug27_usd": 8.24,
+      "in_current_top30": true,
+      "current_rank": 11,
+      "status": "MONITORING — IN TOP30 RANK 11. SPY072 RA discontinued Aug 26. SPY-007/SPY-002 pipeline active.",
+      "price_staleness": "41 sessions"
+    },
+    {
+      "ticker": "RVMD",
+      "entry_price": 143.76,
+      "quantity": 0.046465,
+      "last_close_aug27": 221.15,
+      "pnl_vs_entry_aug27_pct": 53.8,
+      "position_value_aug27_usd": 10.28,
+      "in_current_top30": true,
+      "current_rank": 1,
+      "status": "MONITORING — IN TOP30 RANK 1 (TOP RANKED). RAS-targeted oncology.",
+      "price_staleness": "41 sessions"
+    },
+    {
+      "ticker": "CMPS",
+      "entry_price": 11.3,
+      "quantity": 0.590265,
+      "last_close_aug27": 14.64,
+      "pnl_vs_entry_aug27_pct": 29.6,
+      "position_value_aug27_usd": 8.64,
+      "in_current_top30": false,
+      "status": "ROSTER EXIT — NOT IN TOP30 (as of 2026-11-17 screener). NDA rolling submission ongoing. EXIT PENDING.",
+      "price_staleness": "41 sessions",
+      "exit_flag": true
+    },
+    {
+      "ticker": "SLDB",
+      "entry_price": 6.49,
+      "quantity": 1.028527,
+      "last_close_aug27": 10.13,
+      "pnl_vs_entry_aug27_pct": 56.1,
+      "position_value_aug27_usd": 10.42,
+      "in_current_top30": false,
+      "status": "ROSTER EXIT — NOT IN TOP30 (as of 2026-11-17 screener). EXIT PENDING.",
+      "price_staleness": "41 sessions",
+      "exit_flag": true
+    },
+    {
+      "ticker": "DRUG",
+      "entry_price": 63.59,
+      "quantity": 0.105839,
+      "last_close_aug27": 74.54,
+      "pnl_vs_entry_aug27_pct": 17.2,
+      "position_value_aug27_usd": 7.89,
+      "in_current_top30": false,
+      "status": "ROSTER EXIT — NOT IN TOP30 (as of 2026-11-17 screener). EXIT PENDING.",
+      "price_staleness": "41 sessions",
+      "exit_flag": true
+    },
+    {
+      "ticker": "STOK",
+      "entry_price": 28.74,
+      "quantity": 0.231758,
+      "last_close_aug27": 32.59,
+      "pnl_vs_entry_aug27_pct": 13.4,
+      "position_value_aug27_usd": 7.55,
+      "in_current_top30": true,
+      "current_rank": 15,
+      "status": "MONITORING — IN TOP30 RANK 15. Buffer was lowest at Aug 27 (+13.4%), now 41 sessions stale. Actual buffer UNKNOWN.",
+      "price_staleness": "41 sessions",
+      "buffer_watch": true
+    },
+    {
+      "ticker": "PRAX",
+      "entry_price": 241.92,
+      "quantity": 0.02753,
+      "last_close_aug27": 367.85,
+      "pnl_vs_entry_aug27_pct": 52.1,
+      "position_value_aug27_usd": 10.13,
+      "in_current_top30": true,
+      "current_rank": 14,
+      "status": "MONITORING — IN TOP30 RANK 14. FDA PDUFA Dec 27 2026 (~39 days from Nov 18). No AdCom. Clean regulatory posture.",
+      "price_staleness": "41 sessions",
+      "catalyst": {
+        "event": "FDA PDUFA December 27, 2026",
+        "indication": "Relutrigine for SCN2A/SCN8A DEEs",
+        "days_to_pdufa": "~39 days (Nov 18 basis)",
+        "fda_posture": "POSITIVE — no AdCom, no safety/efficacy concerns"
+      }
+    },
+    {
+      "ticker": "TRVI",
+      "entry_price": 13.43,
+      "quantity": 0.496649,
+      "last_close_aug27": 17.96,
+      "pnl_vs_entry_aug27_pct": 33.7,
+      "position_value_aug27_usd": 8.92,
+      "in_current_top30": true,
+      "current_rank": 6,
+      "status": "MONITORING — IN TOP30 RANK 6.",
+      "price_staleness": "41 sessions"
+    },
+    {
+      "ticker": "ERAS",
+      "entry_price": 13.27,
+      "quantity": 0.503396,
+      "last_close_aug27": 19.49,
+      "pnl_vs_entry_aug27_pct": 46.9,
+      "position_value_aug27_usd": 9.81,
+      "in_current_top30": true,
+      "current_rank": 13,
+      "status": "MONITORING — IN TOP30 RANK 13.",
+      "price_staleness": "41 sessions"
+    },
+    {
+      "ticker": "XENE",
+      "entry_price": 51.95,
+      "quantity": 0.128578,
+      "last_close_aug27": 61.93,
+      "pnl_vs_entry_aug27_pct": 19.2,
+      "position_value_aug27_usd": 7.96,
+      "in_current_top30": false,
+      "status": "ROSTER EXIT — NOT IN TOP30 (as of 2026-11-17 screener). NDA azetukalner was due Sep 30 — outcome unknown. EXIT PENDING.",
+      "price_staleness": "41 sessions",
+      "exit_flag": true,
+      "catalyst_note": "NDA azetukalner Q3 2026 deadline (Sep 30) has passed. Filing outcome unknown — 41 sessions of price data uncaptured."
+    }
+  ],
+  "governance_gates": {
+    "drawdown_gate": {
+      "status": "UNVERIFIABLE — price data 41 sessions stale. XBI declined from $168.23 (Aug 27) to $145.28 (Nov 17) = -13.65%. Portfolio prices unknown. Drawdown cannot be measured.",
+      "threshold_review_pp": -10.0,
+      "threshold_liquidate_pp": -15.0,
+      "last_measured_outperformance_aug27_pp": 12.0,
+      "xbi_move_aug27_to_nov17_pct": -13.65,
+      "action_required": "VERIFY — cannot confirm drawdown gate is clear. XBI correction of -13.65% since last known prices may have compressed relative performance significantly."
+    },
+    "roster_exit_gate": {
+      "status": "ACTION REQUIRED",
+      "positions_to_exit": ["NRIX", "URGN", "ALMS", "CMPS", "SLDB", "DRUG", "XENE"],
+      "count": 7,
+      "rule": "Rule 2: positions not in top30 exit at next weekly rebalance",
+      "missed_rebalances": ["2026-09-28", "2026-10-05", "2026-10-12", "2026-10-19", "2026-10-26", "2026-11-02", "2026-11-09", "2026-11-16"],
+      "action": "EXIT 7 positions at next rebalance session. BUY 22 new top30 names to complete rebalance to full top30 equal-weight."
+    },
+    "ic_gate": {
+      "status": "OVERDUE",
+      "days_overdue": 141,
+      "gate_was_due": "2026-07-01",
+      "last_measured": "2026-06-24",
+      "note": "141 days overdue. Operator freeze lift required. OOS clock restarted 2026-11-17 (0/20 windows)."
+    },
+    "h20d_gate": {
+      "status": "OVERDUE",
+      "days_overdue": 141,
+      "gate_date": "2026-07-01",
+      "note": "141 days overdue. Sequential gate: freeze lift → quarantine script → Q3 13F warm → cohort check → IC decomp."
+    },
+    "jaccard_gate": {
+      "status": "STALE",
+      "last_value": 0.875,
+      "last_measured": "2026-06-23",
+      "threshold": 0.4,
+      "note": "0.875 on Jun 23 basis. 7 roster changes since then mean actual Jaccard is unknown. Refresh needed."
+    },
+    "emergency_gate": {
+      "status": "UNVERIFIABLE — 41 sessions stale. All positions positive on Aug 27 basis. Actual gate status unknown.",
+      "detail": "Aug 27 basis: lowest buffer STOK +13.4%. All 15 positions positive vs entry. 41 sessions of price movement unknown."
+    },
+    "monday_rebalance_gate": {
+      "status": "8 CONSECUTIVE MISSED REBALANCE TRIGGERS",
+      "missed": ["2026-09-28", "2026-10-05", "2026-10-12", "2026-10-19", "2026-10-26", "2026-11-02", "2026-11-09", "2026-11-16"],
+      "next_trigger": "2026-11-23 (Monday, 5 days away)",
+      "action": "URGENT — Restore MCP access, fetch live prices, verify drawdown gate, then rebalance to current top30."
+    },
+    "q3_13f_gate": {
+      "status": "FILING DEADLINE PASSED 2026-11-14",
+      "deadline": "2026-11-14",
+      "days_since_deadline": 4,
+      "note": "Q3 2026 13F-HR filings due Nov 14. coinvest_signals.json still on Q2 2026 holdings (as of last check). Rebuilding after filings is a manual governed step.",
+      "action": "Check if Q3 filings landed. If yes: warm 13F cache → cohort quarantine → rebuild coinvest_signals.json (operator-authorized)."
+    },
+    "oos_clock": {
+      "status": "RESTARTED 2026-11-17 (0/20 windows)",
+      "oos_clock_start": "2026-11-17",
+      "mandate": "SM-20260629-001",
+      "model_hash": "a9a430154568e242",
+      "ranker_mode": "selector_only",
+      "windows_captured": 1,
+      "windows_required": 20,
+      "note": "OOS clock restarted yesterday. 0/20 eligible windows captured so far."
+    }
+  },
+  "catalyst_watch": {
+    "PRAX_PDUFA_DEC27": {
+      "ticker": "PRAX",
+      "event": "FDA PDUFA December 27, 2026 (relutrigine — SCN2A/SCN8A DEEs)",
+      "days_to_pdufa": 39,
+      "priority": "ACTIVE — 39 DAYS TO BINARY",
+      "current_pnl_pct_aug27": 52.1,
+      "fda_posture": "POSITIVE — no AdCom, no safety/efficacy concerns",
+      "note": "In top30 (rank 14). PDUFA in 39 days. Clean posture. Watch for label discussions and launch prep."
+    },
+    "ALMS_LUMUS_OUTCOME_UNKNOWN": {
+      "ticker": "ALMS",
+      "event": "LUMUS Phase 2b SLE topline readout — envudeucitinib (ESK-001)",
+      "readout_deadline": "Q3 2026 (Sep 30)",
+      "status": "OUTCOME UNKNOWN — Sep 30 deadline passed 49 days ago. No price data captured post-Sep 23.",
+      "priority": "INVESTIGATE — dropped from top30. Readout may explain roster drop.",
+      "note": "ALMS dropped from top30 since Sep 23. LUMUS readout was due Sep 30. These two facts are likely related. Exit pending at next rebalance."
+    },
+    "XENE_NDA_OUTCOME_UNKNOWN": {
+      "ticker": "XENE",
+      "event": "NDA azetukalner — Q3 2026 (Sep 30 deadline)",
+      "status": "OUTCOME UNKNOWN — Q3 deadline passed 49 days ago. No price data captured post-Sep 23.",
+      "priority": "INVESTIGATE — dropped from top30. NDA may have been filed or delayed.",
+      "note": "XENE dropped from top30 since Sep 23. NDA azetukalner was due Q3 2026 (Sep 30). Outcome unknown."
+    },
+    "Q3_13F_PIPELINE": {
+      "event": "Q3 2026 13F-HR processing — filing deadline 2026-11-14",
+      "priority": "GOVERNANCE — OPERATOR ACTION NEEDED",
+      "filing_deadline": "2026-11-14 (passed 4 days ago)",
+      "action": "Warm 13F cache → check cohort quarantine → rebuild coinvest_signals.json if Q3 filings available."
+    }
+  },
+  "escalation_flags": [
+    {
+      "id": "ROSTER_DRIFT_7_EXITS_PENDING",
+      "reason": "7 of 15 portfolio positions NO LONGER IN CURRENT TOP30 (screener 2026-11-17): NRIX, URGN, ALMS, CMPS, SLDB, DRUG, XENE. Rule 2 requires exit at next weekly rebalance. 8 consecutive Monday rebalance triggers missed (Sep 28 through Nov 16). EXIT THESE 7 POSITIONS AT NEXT REBALANCE (Nov 23).",
+      "priority": "CRITICAL — OPERATOR ACTION AT NEXT REBALANCE"
+    },
+    {
+      "id": "MCP_DOWN_41_TRADING_SESSIONS",
+      "reason": "Robinhood MCP unavailable for 41+ consecutive trading sessions. No live portfolio fetch, no live quotes, no drawdown gate verification possible. All P&L/drawdown metrics based on Aug 27 close.",
+      "priority": "CRITICAL — RESTORE MCP ACCESS"
+    },
+    {
+      "id": "DRAWDOWN_GATE_UNVERIFIABLE",
+      "reason": "XBI declined -13.65% from $168.23 (Aug 27) to $145.28 (Nov 17). Portfolio prices unknown for 41 sessions. Drawdown gate vs XBI CANNOT BE VERIFIED. Rule 4: drawdown ≤ -10pp triggers review freeze; ≤ -15pp triggers liquidation. Gate status UNKNOWN.",
+      "priority": "HIGH — VERIFY DRAWDOWN GATE BEFORE NEXT REBALANCE"
+    },
+    {
+      "id": "8_MISSED_REBALANCE_TRIGGERS",
+      "reason": "8 consecutive Monday rebalance triggers missed: Sep 28, Oct 5, 12, 19, 26, Nov 2, 9, 16. Rule 1: weekly Monday equal-weight rebalance required. Next trigger: Nov 23 (Monday, 5 days). Roster has drifted significantly — 7 exits and 22 new top30 names needed.",
+      "priority": "HIGH — REBALANCE REQUIRED NOV 23"
+    },
+    {
+      "id": "Q3_13F_DEADLINE_PASSED",
+      "reason": "Q3 2026 13F-HR filing deadline passed 2026-11-14 (4 days ago). coinvest_signals.json still on Q2 2026 holdings. Fairmount, Deep Track, Logos Global Q3 holdings unknown. Governed step: warm 13F cache → quarantine check → rebuild.",
+      "priority": "GOVERNANCE — OPERATOR ACTION NEEDED"
+    },
+    {
+      "id": "IC_H20D_OVERDUE_141DAYS",
+      "reason": "IC gate and h20d gate both 141 days overdue (were due 2026-07-01). OOS clock restarted 2026-11-17 (0/20 windows). DEM candidate freeze + NO_MODEL_CHANGE mandate (SM-20260629-001) restarted.",
+      "priority": "GOVERNANCE — OVERDUE"
+    }
+  ],
+  "top30_current_as_of_nov17": {
+    "source": "forward_validation/captures.jsonl — capture date 2026-11-17",
+    "xbi_price_at_capture": 145.28,
+    "tickers": ["RVMD", "COGT", "TNGX", "IRON", "EWTX", "TRVI", "SVRA", "ELVN", "VRDN", "DMRA", "SYRE", "CLDX", "ERAS", "PRAX", "STOK", "TARS", "PHVS", "IMCR", "VOR", "MIRM", "IDYA", "MAZE", "DSGN", "LBRX", "DNTH", "TRAX", "ALKS", "DFTX", "BCRX", "COAG"]
+  },
+  "monitoring_gaps_summary": {
+    "sessions_since_last_snapshot": 41,
+    "last_snapshot_date": "2026-09-23",
+    "first_missing_date": "2026-09-24",
+    "missed_rebalance_dates": ["2026-09-28", "2026-10-05", "2026-10-12", "2026-10-19", "2026-10-26", "2026-11-02", "2026-11-09", "2026-11-16"],
+    "catalyst_events_missed_window": ["ALMS LUMUS Phase 2b SLE readout (Sep 30 deadline)", "XENE NDA azetukalner Q3 deadline (Sep 30)"]
+  }
+}
