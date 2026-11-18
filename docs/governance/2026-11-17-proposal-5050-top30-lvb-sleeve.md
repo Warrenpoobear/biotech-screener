@@ -1,6 +1,7 @@
-# Proposal: 50/50 Top-30 + low-risk (volatility–beta) sleeve
+# Proposal: 50/50 Top-30 + LVB (low vol-beta) sleeve
 
 **Date:** 2026-11-17
+**Terminology:** LVB = low vol-beta sleeve (60-day volatility + 120-day beta to XBI).
 **Status:** PROPOSED — not approved. Nothing in this memo takes effect until the operator approves it in writing (merging this memo is not approval of the change; approval is recorded in §9).
 **Classification:** Tier 4 governance decision. Portfolio-construction model change. Resets the out-of-sample clock.
 **Scope:** what the portfolio holds and how it is judged. The selector, ranker, scoring, eligibility and the production Top-30 itself are **unchanged**.
@@ -11,7 +12,7 @@
 
 Replace "equal-weight production Top-30" with:
 
-> **50% production Top-30 + 50% low-risk sleeve**, the sleeve being the 30 lowest-risk eligible names outside the Top-30, ranked on 60-day volatility and 120-day beta to XBI.
+> **50% production Top-30 + 50% LVB sleeve** (low vol-beta), the sleeve being the 30 lowest-risk eligible names outside the Top-30, ranked on 60-day volatility and 120-day beta to XBI.
 
 Together with the yardstick changes this requires (§5, §6), adopted as **one** governed change with **one** clock reset, followed by a **six-month no-change window** (§7).
 
@@ -19,7 +20,7 @@ Together with the yardstick changes this requires (§5, §6), adopted as **one**
 
 1. **The model is effectively one factor.** The selector's IC tracks the coinvest IC almost exactly (correlation 0.94 over 84 months). When the factor reverses the whole book goes with it: August–September 2026 cost the Top-30 −21.9% over three months against XBI −0.8%.
 2. **Stock-selection add-ons do not fix it.** About 27 add-on and alternative signals were tested on 2026-11-15/17 (13F rebuilds, crowding caps, Top-N, 13D/G, Form 4, financings, FDA events, takeovers, exclusivity, momentum, timing rules, and others). None clears the pre-registered bar (t > 3). See the 2026-11-17 research entry in `docs/MODEL_DOCUMENTATION.md`.
-3. **Diversification at the portfolio level does help, in-sample.** A low-risk sleeve is nearly uncorrelated with the Top-30's excess return and roughly halves drawdown while keeping the long-run excess over XBI. The case is risk reduction, not added alpha: much of the sleeve's alpha against XBI is exposure to large-cap healthcare and the broad market, and against SPY + XLV the 50/50 portfolio's alpha is not significant (§4c).
+3. **Diversification at the portfolio level does help, in-sample.** An LVB sleeve is nearly uncorrelated with the Top-30's excess return and roughly halves drawdown while keeping the long-run excess over XBI. The case is risk reduction, not added alpha: much of the sleeve's alpha against XBI is exposure to large-cap healthcare and the broad market, and against SPY + XLV the 50/50 portfolio's alpha is not significant (§4c).
 4. **The edge of the Top-30 itself is small.** On the v9 history the roster-adjusted range is about +0.3 to +0.7 pt/month against XBI, not significant. Concentrating the whole book on it is the larger risk.
 
 ## 3. Specification
@@ -27,7 +28,7 @@ Together with the yardstick changes this requires (§5, §6), adopted as **one**
 | Item | Specification |
 |---|---|
 | Half A | Production Top-30, exactly as today (`actionable_rank` 1–30, selector-only, ruleset `8887576e`), equal weight within the half |
-| Half B | Low-risk sleeve: eligible names in that day's `rankings.csv` **not** in the Top-30; risk score = mean of percentile ranks of `vol_60d` (annualised std of daily log returns, last 60 days) and `beta_120d` (beta of daily log returns to XBI, last 120 days); lower risk = higher score; the 30 best-scoring names, equal weight within the half |
+| Half B | LVB (low vol-beta) sleeve: eligible names in that day's `rankings.csv` **not** in the Top-30; risk score = mean of percentile ranks of `vol_60d` (annualised std of daily log returns, last 60 days) and `beta_120d` (beta of daily log returns to XBI, last 120 days); lower risk = higher score; the 30 best-scoring names, equal weight within the half |
 | Inputs | Split-adjusted closes dated on or before the snapshot date (`production_data/price_history_split_adj.csv`); no other inputs |
 | Exclusions | Names with 20-day annualised volatility < 10% (price pinned near a pending cash-deal price, or stale feed) — as in the existing shadow tool |
 | Split | 50% / 50% of account value |
@@ -36,7 +37,7 @@ Together with the yardstick changes this requires (§5, §6), adopted as **one**
 | Industry cap (optional guardrail) | At most 15 of the 30 sleeve names from one industry (point-in-time `industry` field). Binds in about 2% of months historically and changes nothing; it only guards against a future pile-up. Operator choice (§9, decision 6) |
 | Overlap | None by construction (the sleeve excludes the Top-30) |
 
-This is the `vol_beta` variant registered as a capture-only shadow on 2026-11-16 (`tools/low_risk_sleeve_shadow.py`, ledger `artifacts/low_risk_sleeve_shadow_vol_beta/`), chosen **before** the 2026-11-17 measure search. The three-measure base sleeve (adds `max_gain_21d`) is not proposed: `max_gain_21d` was the weakest measure in both halves of the 2026-11-17 search.
+This is the LVB shadow (variant `lvb`, registered as `vol_beta`) recorded capture-only since 2026-11-16 (`tools/low_risk_sleeve_shadow.py`, ledger `artifacts/low_risk_sleeve_shadow_vol_beta/`), chosen **before** the 2026-11-17 measure search. The three-measure base sleeve (adds `max_gain_21d`) is not proposed: `max_gain_21d` was the weakest measure in both halves of the 2026-11-17 search.
 
 ## 4. Evidence (in-sample; research only)
 
@@ -45,8 +46,8 @@ This is the `vol_beta` variant registered as a capture-only shadow on 2026-11-16
 | Portfolio | Ann. return | Volatility | Sharpe | Max drawdown | Beta | CAPM alpha/month (t) | Worst stretch vs XBI |
 |---|---|---|---|---|---|---|---|
 | Top-30 (today) | 18.4% | 31% | 0.70 | −50% | 1.00 | +0.72 (1.45) | −24% |
-| Vol–beta sleeve alone | 21.9% | 15% | 1.39 | −11% | 0.34 | +1.40 (3.57) | −29% |
-| **50/50 Top-30 + vol–beta (proposed)** | **21.1%** | **21%** | **1.03** | **−25%** | **0.67** | **+1.06 (3.10)** | **−15%** |
+| LVB sleeve alone | 21.9% | 15% | 1.39 | −11% | 0.34 | +1.40 (3.57) | −29% |
+| **50/50 Top-30 + LVB (proposed)** | **21.1%** | **21%** | **1.03** | **−25%** | **0.67** | **+1.06 (3.10)** | **−15%** |
 | 50/50 Top-30 + three-measure sleeve | 19.3% | 21% | 0.95 | −26% | 0.69 | +0.92 (2.78) | −14% |
 | XBI | 9.8% | 26% | 0.49 | −57% | 1.00 | — | — |
 
@@ -94,7 +95,7 @@ XBI is equal-weighted small and mid-cap biotech. The sleeve holds mostly large, 
 | Portfolio | vs XBI | vs SPY (beta) | vs XLV (beta; R²) | vs SPY + XLV | vs SPY + XLV + IWM + XBI | 2024–26 vs SPY + XLV |
 |---|---|---|---|---|---|---|
 | Top-30 | +0.72 (t 1.43) | +0.41 (t 0.45; 0.91) | +0.65 (t 0.74; 0.99; 0.24) | +0.25 (t 0.29) | +0.65 (t 1.21) | +0.64 (t 0.45) |
-| Vol–beta sleeve | +1.39 (t 3.51) | +0.91 (t 2.16; 0.57) | +0.85 (t 2.72; 0.79; 0.61) | +0.74 (t 2.34) | +0.86 (t 3.02) | +1.29 (t 2.89) |
+| LVB sleeve | +1.39 (t 3.51) | +0.91 (t 2.16; 0.57) | +0.85 (t 2.72; 0.79; 0.61) | +0.74 (t 2.34) | +0.86 (t 3.02) | +1.29 (t 2.89) |
 | 70/30 Top-30 + sleeve | +0.92 (t 2.36) | +0.57 (t 0.80; 0.81) | +0.72 (t 1.08; 0.93; 0.33) | +0.40 (t 0.61) | +0.72 (t 1.81) | +0.84 (t 0.83) |
 | **50/50 (proposed)** | **+1.06 (t 3.05)** | **+0.67 (t 1.15; 0.74)** | **+0.76 (t 1.45; 0.89; 0.42)** | **+0.50 (t 0.97)** | **+0.76 (t 2.38)** | **+0.97 (t 1.26)** |
 
@@ -107,7 +108,7 @@ Alpha in pt/month (t).
 
 Script: `volbeta_spy.py`, `mix_factors.py` (2026-11-17 scratchpad).
 
-**Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and `vol_beta` shadows started 2026-11-16/17); alpha against XBI overstates the sleeve's edge (§4c).
+**Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and LVB shadows started 2026-11-16/17); alpha against XBI overstates the sleeve's edge (§4c).
 
 ## 5. Account Rule 4 must change with it
 
@@ -152,7 +153,7 @@ Rollback: publish Top-30-only targets again (one flag), revert Rule 4 to the XBI
 
 | # | Decision | Recommendation |
 |---|---|---|
-| 1 | Adopt the 50/50 Top-30 + vol–beta portfolio | Adopt, as one governed change |
+| 1 | Adopt the 50/50 Top-30 + LVB portfolio | Adopt, as one governed change |
 | 2 | Rule 4 option (A / B / C) | A, after re-running its touch frequency |
 | 3 | Weekly reweighting of both halves vs monthly-only | Weekly (current practice) |
 | 4 | Mandate amendments in §6 | Adopt |
