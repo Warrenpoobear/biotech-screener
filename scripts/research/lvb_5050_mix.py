@@ -23,7 +23,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from lvb_universe_backtest import stats  # noqa: E402
+from lvb_universe_backtest import span_years, stats  # noqa: E402
 
 from tools.low_risk_sleeve_shadow import load_prices  # noqa: E402
 
@@ -80,7 +80,7 @@ def main() -> int:
 
     out = {"months": len(dates), "first": dates[0], "last": top[dates[-1]]["d1"], "portfolios": {}}
     for name, s in (("Top-30", T), (label, L), ("50/50", M), ("S&P 500 (SPY)", list(spy))):
-        x = stats(s, xbi)
+        x = stats(s, xbi, years=span_years([top[dates[0]], top[dates[-1]]]))
         worst12, behind = _rolling12(s, xbi)
         out["portfolios"][name] = {
             "ann_return": round(x["ann_return"], 4),

@@ -37,7 +37,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts" / "research"))
 
 from lvb_sharadar_prices import _load_key  # noqa: E402
-from lvb_universe_backtest import run_variant, stats  # noqa: E402
+from lvb_universe_backtest import month_end_dates, run_variant, span_years, stats  # noqa: E402
 
 from common.sharadar_client import SharadarClient  # noqa: E402
 from tools.low_risk_sleeve_shadow import load_prices  # noqa: E402
@@ -78,7 +78,7 @@ def main() -> int:
     cache = Path(args.cache_dir)
     cache.mkdir(parents=True, exist_ok=True)
     snap = (REPO / args.snapshot_dir).resolve()
-    dates = sorted(p.name for p in snap.iterdir() if p.name[:2] == "20" and (p / "rankings.csv").exists())
+    dates = month_end_dates([p.name for p in snap.iterdir() if p.name[:2] == "20" and (p / "rankings.csv").exists()])
     rankings = {}
     for d in dates:
         with open(snap / d / "rankings.csv", encoding="utf-8", newline="") as fh:
@@ -267,7 +267,7 @@ def main() -> int:
         adds_by_pool[pool] = added
         for v in ("full", "ex_top30"):
             rows = [r for r in run_variant(v, dates, sdir, prices) if r["d0"] >= args.start]
-            s = stats([r["net"] for r in rows], [r["xbi"] for r in rows])
+            s = stats([r["net"] for r in rows], [r["xbi"] for r in rows], years=span_years(rows))
             added_held = [len(set(r["names"]) & set(added.get(r["d0"], []))) for r in rows]
             s["avg_added_names_held"] = sum(added_held) / len(rows)
             s["avg_added_to_pool"] = sum(len(added.get(r["d0"], [])) for r in rows) / len(rows)
