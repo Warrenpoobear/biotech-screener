@@ -1,9 +1,9 @@
 # AZN ADR ratio change missing from the split-adjusted price file (2026-11-18)
 
 **Classification:** `DATA_CORRECTION` (Tier 3: a price input during the NO_MODEL_CHANGE window).
-**Status:** PROPOSED in PR #712. Merging it is the operator's decision; the daily run then regenerates `price_history_split_adj.csv` from the corrected registry.
+**Status:** APPROVED by the operator 2026-11-18 and merged in PR #712. The daily run regenerates `price_history_split_adj.csv` from the corrected registry.
 **Measured effect on the current ranking:** none (see "Effect").
-**Clock:** operator decision pending (see "Clock").
+**Clock:** no reset (operator ruling 2026-11-18; see "Clock").
 
 ## Finding
 
@@ -44,7 +44,7 @@ No other registry entry newly matches under the new rule.
 
 ## Clock
 
-The protocol resets the out-of-sample clock for any authorized bug fix. This fix changes no current score, order or holding, and the forward-validation captures store baskets inline. **Recommendation: record it as a data correction without a reset,** the same way the 2026-11-13 registry correction was proposed. The operator decides.
+The protocol resets the out-of-sample clock for any authorized bug fix. This fix changes no current score, order or holding, and the forward-validation captures store baskets inline. **Operator ruling (2026-11-18): data correction, no reset.** `oos_clock_start` stays 2026-11-17; mandate SM-20260629-001 continues; no hash rotation.
 
 ## Related: JBIO registry entry is mislabelled (not changed here)
 

@@ -8,7 +8,8 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-11-17  
+**Last updated:** 2026-11-18  
+**2026-11-18 update scope:** only the new Governance Events (2026-11-18) section (SUPN names, PR #709; AZN split fix, PR #712).  
 **2026-11-17 update scope:** only the new Governance Events (2026-11-17) section.  
 **2026-11-16 update scope:** only the new Governance Events (2026-11-16) section.  
 **Update cadence:** weekly or upon governance-state change  
@@ -182,6 +183,11 @@ metadata:
 - Governance label: Tooling/knowledge-layer expansion only. No model, ranker, selector, sizing, or alpha-promotion change.
 
 ---
+
+## Governance Events (2026-11-18)
+
+- **AZN ADR ratio change registered; split repair applies registry splits below the gap thresholds (PR #712, merged 2026-11-18): no clock reset (operator ruling).** AstraZeneca's 2:1 ADR ratio change (2026-01-28 in our feed; Sharadar `ACTIONS` dates it 2026-02-02) was a +96% one-day "return" in `price_history_split_adj.csv`. `scripts/repair_price_history_splits.py` now applies a registry split inside the +300%/−75% thresholds when a one-day move in the 5-day window matches its factor within 15%; `corporate_actions.json` gains AZN `reverse_split` 1:2. Only AZN's 1,525 rows before 2026-01-28 change; no current score, order or holding changes. `oos_clock_start` stays 2026-11-17; mandate SM-20260629-001 continues; no hash rotation. Also recorded: the JBIO 2025-04-29 registry entry ("forward_split 9:1") is really a $2.40 special dividend + 1:35 reverse split (follow-up, not changed). Memo: `docs/governance/2026-11-18-azn-adr-ratio-split-fix.md`.
+- **SUPN company name and EU-registry sponsor aliases (PR #709, merged 2026-11-18): no clock reset (operator ruling).** Follow-up to the INDV→SUPN ticker change (#618): SUPN's `company_name` fields read "Supernus, Inc.", and the `SPONSOR_ALIASES` table shared by the EUCTR/CTIS/ISRCTN collectors is re-keyed from `INDV` to `SUPN` with both the Supernus and Indivior sponsor names. The only model input affected is the set of EU-registry trials matched to SUPN (rank 103, tier C on 2026-11-17). `oos_clock_start` stays 2026-11-17; mandate SM-20260629-001 continues; no hash rotation. Memo: `docs/governance/2026-11-18-supn-name-and-sponsor-aliases-no-clock-reset.md`.
 
 ## Governance Events (2026-11-17)
 
