@@ -1,7 +1,7 @@
 # Proposal: 50/50 Top-30 + LVB (low vol-beta) sleeve
 
 **Date:** 2026-11-17
-**Terminology:** LVB = low vol-beta sleeve (60-day volatility + 120-day beta to XBI).
+**Terminology:** LVB = low vol-beta sleeve (60-day volatility + 120-day beta to XBI), drawn from the **full eligible universe** (it may hold Top-30 names). The earlier ex-Top-30 version is called "LVB ex-Top-30" where it appears (2026-11-18: operator set LVB = full universe).
 **Status:** PROPOSED — not approved. Nothing in this memo takes effect until the operator approves it in writing (merging this memo is not approval of the change; approval is recorded in §9).
 **Classification:** Tier 4 governance decision. Portfolio-construction model change. Resets the out-of-sample clock.
 **Scope:** what the portfolio holds and how it is judged. The selector, ranker, scoring, eligibility and the production Top-30 itself are **unchanged**.
@@ -12,7 +12,7 @@
 
 Replace "equal-weight production Top-30" with:
 
-> **50% production Top-30 + 50% LVB sleeve** (low vol-beta), the sleeve being the 30 lowest-risk eligible names outside the Top-30, ranked on 60-day volatility and 120-day beta to XBI.
+> **50% production Top-30 + 50% LVB sleeve** (low vol-beta), the sleeve being the 30 lowest-risk names in the full eligible universe, ranked on 60-day volatility and 120-day beta to XBI. A name in both halves carries both weights.
 
 Together with the yardstick changes this requires (§5, §6), adopted as **one** governed change with **one** clock reset, followed by a **six-month no-change window** (§7).
 
@@ -28,16 +28,16 @@ Together with the yardstick changes this requires (§5, §6), adopted as **one**
 | Item | Specification |
 |---|---|
 | Half A | Production Top-30, exactly as today (`actionable_rank` 1–30, selector-only, ruleset `8887576e`), equal weight within the half |
-| Half B | LVB (low vol-beta) sleeve: eligible names in that day's `rankings.csv` **not** in the Top-30; risk score = mean of percentile ranks of `vol_60d` (annualised std of daily log returns, last 60 days) and `beta_120d` (beta of daily log returns to XBI, last 120 days); lower risk = higher score; the 30 best-scoring names, equal weight within the half |
+| Half B | LVB (low vol-beta) sleeve: all eligible names in that day's `rankings.csv`, **including** Top-30 names; risk score = mean of percentile ranks of `vol_60d` (annualised std of daily log returns, last 60 days) and `beta_120d` (beta of daily log returns to XBI, last 120 days); lower risk = higher score; the 30 best-scoring names, equal weight within the half |
 | Inputs | Split-adjusted closes dated on or before the snapshot date (`production_data/price_history_split_adj.csv`); no other inputs |
 | Exclusions | Names with 20-day annualised volatility < 10% (price pinned near a pending cash-deal price, or stale feed) — as in the existing shadow tool |
 | Split | 50% / 50% of account value |
 | Reconstitution | Monthly, at the first rebalance after month-end, from that day's promoted snapshot (both halves) |
 | Reweighting | Weekly (Monday), back to equal weight within each half and 50/50 between halves — the account's existing weekly practice (Top-30: +0.14 pt/month after costs, t 2.69; sleeve: +0.04, t 1.32 — optional for the sleeve, kept for one simple rule) |
 | Industry cap (optional guardrail) | At most 15 of the 30 sleeve names from one industry (point-in-time `industry` field). Binds in about 2% of months historically and changes nothing; it only guards against a future pile-up. Operator choice (§9, decision 6) |
-| Overlap | None by construction (the sleeve excludes the Top-30) |
+| Overlap | Allowed. A name in both halves carries both weights (1/60 + 1/60 = 3.3%, the largest single-name weight). Historically the halves share 2.5 names on average (maximum 8; some overlap in 84% of months). Against the ex-Top-30 sleeve the 50/50 differs by −0.002 pt/month (t −0.03) |
 
-This is the LVB shadow (variant `lvb`, registered as `vol_beta`) recorded capture-only since 2026-11-16 (`tools/low_risk_sleeve_shadow.py`, ledger `artifacts/low_risk_sleeve_shadow_vol_beta/`), chosen **before** the 2026-11-17 measure search. The three-measure base sleeve (adds `max_gain_21d`) is not proposed: `max_gain_21d` was the weakest measure in both halves of the 2026-11-17 search.
+This is the LVB standalone shadow (variant `lvb_full`, registered as `vol_beta_full`, pre-registered 2026-11-17; ledger `artifacts/low_risk_sleeve_shadow_vol_beta_full/`; first LIVE capture 2026-11-18, the 2026-11-17 capture is REPLAY). Its `combo` reading is this 50/50, with a name allowed in both halves. The ex-Top-30 shadow (variant `lvb`, registered as `vol_beta`, capture-only since 2026-11-16) continues as a comparison. The two measures were chosen **before** the 2026-11-17 measure search. The three-measure base sleeve (adds `max_gain_21d`) is not proposed: `max_gain_21d` was the weakest measure in both halves of the 2026-11-17 search.
 
 ## 4. Evidence (in-sample; research only)
 
@@ -46,15 +46,15 @@ This is the LVB shadow (variant `lvb`, registered as `vol_beta`) recorded captur
 | Portfolio | Ann. return | Volatility | Sharpe | Max drawdown | Beta | CAPM alpha/month (t) | Worst stretch vs XBI |
 |---|---|---|---|---|---|---|---|
 | Top-30 (today) | 18.4% | 31% | 0.70 | −50% | 1.00 | +0.72 (1.45) | −24% |
-| LVB sleeve alone | 21.9% | 15% | 1.39 | −11% | 0.34 | +1.40 (3.57) | −29% |
-| **50/50 Top-30 + LVB (proposed)** | **21.1%** | **21%** | **1.03** | **−25%** | **0.67** | **+1.06 (3.10)** | **−15%** |
-| 50/50 Top-30 + three-measure sleeve | 19.3% | 21% | 0.95 | −26% | 0.69 | +0.92 (2.78) | −14% |
+| LVB sleeve alone | 22.0% | 16% | 1.35 | −12% | 0.35 | +1.40 (3.42) | −30% |
+| **50/50 Top-30 + LVB (proposed)** | **21.0%** | **21%** | **1.02** | **−26%** | **0.68** | **+1.06 (2.99)** | **−15%** |
+| 50/50 Top-30 + three-measure sleeve | 18.8% | 21% | 0.93 | −26% | 0.69 | +0.89 (2.65) | −17% |
 | XBI | 9.8% | 26% | 0.49 | −57% | 1.00 | — | — |
 
-- Mean excess over XBI is the same as the Top-30 alone (+0.72 pt/month) at two-thirds of the volatility and half the drawdown.
-- By year against XBI: 2020 −27.4 pt, 2021 +22.1, 2022 +17.3, 2023 +13.2, 2024 +8.8, 2025 +22.8, 2026 to date −2.3. The cost is strong rallies (2020).
-- 2026: year to date +21.7% (Top-30 alone +10.7%, XBI +19.6%); last three months −3.3% (Top-30 alone −21.9%).
-- 2024–2026 only (after the measures were fixed in the 2026-11-17 search's selection period): Sharpe 1.40, alpha +1.10 pt/month (t 1.95).
+- Mean excess over XBI is about the same as the Top-30 alone (+0.71 vs +0.72 pt/month) at two-thirds of the volatility and half the drawdown.
+- By year against XBI: 2020 −26.4 pt, 2021 +20.8, 2022 +16.0, 2023 +12.7, 2024 +11.2, 2025 +23.9, 2026 to date −3.1. The cost is strong rallies (2020).
+- 2026: year to date +21.1% (Top-30 alone +10.7%, XBI +19.6%); last three months −4.3% (Top-30 alone −20.4%, XBI −10.2%).
+- 2024–2026 only (after the measures were fixed in the 2026-11-17 search's selection period): Sharpe 1.43, alpha +1.14 pt/month (t 2.04).
 
 ### 4a. Weight between the halves
 
@@ -62,17 +62,17 @@ Same 82 months, blends of the two halves:
 
 | Sleeve share | Ann. return | Sharpe | Max drawdown | Beta | Alpha/month (t) | Worst stretch vs XBI | Worst 12 months vs XBI | 12-month periods behind XBI |
 |---|---|---|---|---|---|---|---|---|
-| 0% (Top-30 only) | 18.4% | 0.70 | −50% | 1.00 | +0.72 (1.45) | −24% | −14% | 26% |
-| 25% | 19.9% | 0.84 | −38% | 0.84 | +0.89 (2.21) | −16% | −9% | 21% |
-| **50% (proposed)** | **21.1%** | **1.03** | **−25%** | **0.67** | **+1.06 (3.10)** | **−15%** | **−11%** | **13%** |
-| 75% | 21.7% | 1.24 | −15% | 0.51 | +1.23 (3.61) | −17% | −28% | 20% |
-| 100% (sleeve only) | 21.9% | 1.39 | −11% | 0.34 | +1.40 (3.57) | −29% | −49% | 23% |
+| 0% (Top-30 only) | 18.4% | 0.70 | −50% | 1.00 | +0.72 (1.45) | −24% | −14% | 30% |
+| 25% | 19.9% | 0.84 | −39% | 0.84 | +0.89 (2.19) | −16% | −9% | 25% |
+| **50% (proposed)** | **21.0%** | **1.02** | **−26%** | **0.68** | **+1.06 (2.99)** | **−15%** | **−11%** | **18%** |
+| 75% | 21.7% | 1.22 | −16% | 0.51 | +1.23 (3.46) | −17% | −27% | 24% |
+| 100% (sleeve only) | 22.0% | 1.35 | −12% | 0.35 | +1.40 (3.42) | −30% | −48% | 32% |
 
-Mean excess over XBI is the same at every split (+0.70 to +0.72 pt/month). 50/50 has the smallest XBI-relative risk of any split; more sleeve improves absolute and beta-adjusted figures but widens the XBI-relative risk sharply (the 100% sleeve trailed XBI by 49 pt over 12 months in the 2020 rally) and drops the coinvest model entirely. 50/50 is proposed because Rule 4 and the mandate are XBI-anchored; choosing 75% or 100% from this table would be choosing with hindsight.
+Mean excess over XBI is the same at every split (+0.71 to +0.72 pt/month). 50/50 has the smallest XBI-relative risk of any split; more sleeve improves absolute and beta-adjusted figures but widens the XBI-relative risk sharply (the 100% sleeve trailed XBI by 48 pt over 12 months in the 2020 rally) and drops the coinvest model entirely. 50/50 is proposed because Rule 4 and the mandate are XBI-anchored; choosing 75% or 100% from this table would be choosing with hindsight.
 
 ### 4b. Sleeve design checks (2026-11-17)
 
-Each design choice was varied one at a time on the same data and costs, with the selection period (March 2020 – 2023) kept separate from 2024–2026 where a choice was searched. The proposed specification came out best or tied on every dimension:
+These checks were run on LVB ex-Top-30 (before 2026-11-18); the full-universe LVB differs from it by +0.01 pt/month (t 0.09), so they carry over. Each design choice was varied one at a time on the same data and costs, with the selection period (March 2020 – 2023) kept separate from 2024–2026 where a choice was searched. The proposed specification came out best or tied on every dimension:
 
 | Dimension | Tested | Result | Specification |
 |---|---|---|---|
@@ -95,18 +95,18 @@ XBI is equal-weighted small and mid-cap biotech. The sleeve holds mostly large, 
 | Portfolio | vs XBI | vs SPY (beta) | vs XLV (beta; R²) | vs SPY + XLV | vs SPY + XLV + IWM + XBI | 2024–26 vs SPY + XLV |
 |---|---|---|---|---|---|---|
 | Top-30 | +0.72 (t 1.43) | +0.41 (t 0.45; 0.91) | +0.65 (t 0.74; 0.99; 0.24) | +0.25 (t 0.29) | +0.65 (t 1.21) | +0.64 (t 0.45) |
-| LVB sleeve | +1.39 (t 3.51) | +0.91 (t 2.16; 0.57) | +0.85 (t 2.72; 0.79; 0.61) | +0.74 (t 2.34) | +0.86 (t 3.02) | +1.29 (t 2.89) |
-| 70/30 Top-30 + sleeve | +0.92 (t 2.36) | +0.57 (t 0.80; 0.81) | +0.72 (t 1.08; 0.93; 0.33) | +0.40 (t 0.61) | +0.72 (t 1.81) | +0.84 (t 0.83) |
-| **50/50 (proposed)** | **+1.06 (t 3.05)** | **+0.67 (t 1.15; 0.74)** | **+0.76 (t 1.45; 0.89; 0.42)** | **+0.50 (t 0.97)** | **+0.76 (t 2.38)** | **+0.97 (t 1.26)** |
+| LVB sleeve | +1.40 (t 3.36) | +0.92 (t 2.06; 0.57) | +0.81 (t 2.58; 0.84; 0.64) | +0.73 (t 2.28) | +0.84 (t 2.81) | +1.33 (t 3.02) |
+| 70/30 Top-30 + sleeve | +0.92 (t 2.31) | +0.56 (t 0.79; 0.81) | +0.70 (t 1.06; 0.95; 0.34) | +0.40 (t 0.60) | +0.70 (t 1.76) | +0.85 (t 0.84) |
+| **50/50 (proposed)** | **+1.06 (t 2.94)** | **+0.67 (t 1.12; 0.74)** | **+0.73 (t 1.40; 0.92; 0.43)** | **+0.49 (t 0.94)** | **+0.74 (t 2.26)** | **+0.98 (t 1.30)** |
 
 Alpha in pt/month (t).
 
-- The sleeve behaves largely like a healthcare-sector portfolio: XLV explains 61% of its monthly variation, XBI 35%. Its beta to SPY is 0.57.
-- After healthcare and the market are accounted for, the sleeve keeps about +0.7 to +0.9 pt/month (t 2.3–3.0): real but smaller and less certain than the XBI figure. Over the period it still beat every ETF on risk-adjusted terms (Sharpe 1.39 vs SPY 1.17, XLV 0.91; max drawdown −11% vs SPY −24%, XLV −16%).
-- **The 50/50 portfolio's +1.06 (t 3.05) against XBI falls to +0.50 (t 0.97) against SPY + XLV.** Its benefit over the Top-30 alone is lower risk (drawdown −25% vs −50%, Sharpe 1.03 vs 0.70), not demonstrated stock-selection alpha. This memo should be read as a risk proposal.
+- The sleeve behaves largely like a healthcare-sector portfolio: XLV explains 64% of its monthly variation, XBI 34%. Its beta to SPY is 0.57.
+- After healthcare and the market are accounted for, the sleeve keeps about +0.7 to +0.9 pt/month (t 2.1–2.8): real but smaller and less certain than the XBI figure. Over the period it still beat every ETF on risk-adjusted terms (Sharpe 1.35 vs SPY 1.17, XLV 0.91; max drawdown −12% vs SPY −24%, XLV −16%).
+- **The 50/50 portfolio's +1.06 (t 2.94) against XBI falls to +0.49 (t 0.94) against SPY + XLV.** Its benefit over the Top-30 alone is lower risk (drawdown −26% vs −50%, Sharpe 1.02 vs 0.70), not demonstrated stock-selection alpha. This memo should be read as a risk proposal.
 - Building the sleeve on beta to SPY instead of XBI is slightly worse on every measure (−0.15 pt/month, t −0.8); beta to XBI stays.
 
-Script: `volbeta_spy.py`, `mix_factors.py` (`~/data/lvb_research_2026_11/scripts/`).
+Scripts: `lvb_full_memo.py` (all §4, §4a and §4c figures with full-universe LVB, 2026-11-18), `volbeta_spy.py`, `mix_factors.py` (`~/data/lvb_research_2026_11/scripts/`).
 
 ### 4d. Survivorship check on LVB (indirect 2026-11-17; partial direct 2026-11-18)
 
@@ -152,6 +152,8 @@ Script: `delist2/partial_survivorship_v2.py` (data and scripts in `~/data/lvb_re
 
 ### 4e. Calculation check (2026-11-17)
 
+Run on LVB ex-Top-30 before the 2026-11-18 redefinition; the production code builds both versions with the same `build_sleeve` (`exclude_production=False` for the full universe), so the arithmetic and price checks apply to both.
+
 - **Measures:** `vol_60d` and `beta_120d` from the production code (`tools/low_risk_sleeve_shadow.py::risk_measures`) match an independent recomputation from raw closes for 8 names on 2026-11-17 to the second decimal (e.g. AbbVie 19.59% / 0.230, Privia 28.81% / 0.083, Vericel 49.23% / 0.185).
 - **Baskets:** on the same v9 `rankings.csv` files, the research backtest and the production `build_sleeve` pick 29.3 of 30 names on average (minimum 25); the Top-30 definitions agree 30/30. Differences come from simple vs log returns, sample vs population standard deviation, and recent listings without 120 days of history (neutral beta rank in research; volatility alone in production).
 - **Results with production baskets:** LVB 22.0%/yr, Sharpe 1.37, max drawdown −11.9%, alpha +1.39 pt/month (t 3.52), vs 21.9%, 1.39, −10.6%, +1.40 (t 3.57) by the research method; 50/50 21.2%, 1.03, −25.0%, +1.06 (t 3.08) vs 21.1%, 1.03, −25.1%, +1.06 (t 3.10). Difference +0.007 pt/month (t 0.10). The §4 figures stand under either method.
@@ -166,15 +168,15 @@ Scripts: `lvb_verify.py`, `lvb_prodbaskets.py`, `stooq_check.py`, `stooq_impact.
 
 ## 5. Account Rule 4 must change with it
 
-Rule 4 today: review at −10 pp and liquidate at −15 pp of drawdown **against XBI**. A 0.67-beta book trails XBI in strong rallies by design — the proposed portfolio's worst historical stretch against XBI is −15%, which would have triggered a full liquidation while the portfolio was doing its job.
+Rule 4 today: review at −10 pp and liquidate at −15 pp of drawdown **against XBI**. A 0.68-beta book trails XBI in strong rallies by design — the proposed portfolio's worst historical stretch against XBI is −15%, which would have triggered a full liquidation while the portfolio was doing its job.
 
 Options (operator to choose one):
 
 | Option | Rule | Historical behaviour of the proposed portfolio |
 |---|---|---|
-| **A (recommended)** | Measure Rule 4 against a **beta-adjusted benchmark** (0.67 × XBI + 0.33 × cash), same −10 / −15 pp levels | Judges the portfolio on the risk it takes; needs a re-run of the touch frequency before adoption |
+| **A (recommended)** | Measure Rule 4 against a **beta-adjusted benchmark** (0.68 × XBI + 0.32 × cash), same −10 / −15 pp levels | Judges the portfolio on the risk it takes; needs a re-run of the touch frequency before adoption |
 | B | Keep XBI-relative, widen to −20 / −25 pp | Simple; does not distinguish a beta gap from a model failure |
-| C | Absolute drawdown: review at −20%, liquidate at −30% | Historical max drawdown −25% |
+| C | Absolute drawdown: review at −20%, liquidate at −30% | Historical max drawdown −26% |
 
 ## 6. The forward-validation mandate must change with it
 
@@ -192,7 +194,7 @@ Options (operator to choose one):
 
 ## 8. Implementation (after approval; separate PRs)
 
-1. Production step that publishes `target_portfolio.csv` (both halves, weights, sleeve risk measures) next to `rankings.csv`, reusing `tools/low_risk_sleeve_shadow.py::build_sleeve` with `measures=["vol_60d", "beta_120d"]` (no new scoring code). Tests first.
+1. Production step that publishes `target_portfolio.csv` (both halves, weights, sleeve risk measures) next to `rankings.csv`, reusing `tools/low_risk_sleeve_shadow.py::build_sleeve` with `measures=["vol_60d", "beta_120d"]` and `exclude_production=False` (no new scoring code); a name in both halves gets the sum of its weights. Tests first.
 2. `production_data/AGENTIC_ACCOUNT_RULES.md`: Rule 2 (rebalance to the target portfolio), Rule 4 (chosen option).
 3. Rebalance skill (`biotech-rebalance`) reads `target_portfolio.csv` instead of the Top-30.
 4. `FORWARD_VALIDATION_PROTOCOL.md` §2/§4 amendments; capture and evaluator handle the 50/50 basket; `CANDIDATE.json` and hash rotation entry.
