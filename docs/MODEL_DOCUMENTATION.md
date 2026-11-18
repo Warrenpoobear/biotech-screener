@@ -32,6 +32,7 @@ Classification: `GOVERNANCE_RECORD / DATA_HYGIENE / NO_MODEL_CHANGE`. Operator-a
 - **Universe audit (PR #700):** the XBI/IBB audit used IBB holdings pinned to 2026-06-26 by a hard-coded URL date for five months; holdings older than 10 days are now refused, and a downloaded iShares CSV can be supplied.
 - **CI (PR #702):** the `replay` regression check had failed on every run since at least 2026-06-10 because its golden rankings were made by February code; regenerated from the same input bundle with current code, so a red check again means a ranking change.
 - **Shadows (PR #697, capture-only):** Top-20, 50/50 Top-20 + low-risk sleeve, and ranks 1–10 vs 11–30, counted only from captures after 2026-11-17; no reading below 20 LIVE windows.
+- **LVB naming (PR #707 and this PR, capture-only):** **LVB** (low vol-beta) is the low-risk sleeve scored on 60-day volatility and 120-day beta to XBI only. Two shadows: `lvb` (outside the Top-30; registered 2026-11-16 as `vol_beta`) and `lvb_full` (full eligible universe, standalone; registered 2026-11-17 as `vol_beta_full`, PR #707). The old variant names still work; ledgers keep their original schema strings and `artifacts/low_risk_sleeve_shadow_vol_beta*/` directories. "Low-risk sleeve" alone means the original three-measure sleeve (PR #674).
 
 ## Recent Update — 2026-11-17 (Research Record: v9 Backtests, Roster Range, Portfolio Construction, Signal Screen — No Model Change)
 
