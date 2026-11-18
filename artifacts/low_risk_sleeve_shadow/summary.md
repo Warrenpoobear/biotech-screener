@@ -10,7 +10,7 @@ Pre-registered 2026-11-15, before the first capture.
 - Backtest expectation for comparison (in-sample, 84 months): alpha +0.69 pt/month, beta 0.43, correlation with Top-30 excess 0.14.
 - Nothing here changes the model or the account. Using the sleeve with real money is a separate governed decision.
 
-Captures: 1 live, 0 replay. Price source: `price_history_split_adj.csv`. **Only LIVE captures are evidence.**
+Captures: 2 live, 0 replay. Price source: `price_history_split_adj.csv`. **Only LIVE captures are evidence.**
 
 ## LIVE
 

@@ -93,6 +93,10 @@ artifacts/low_risk_sleeve_shadow/*
 artifacts/low_risk_sleeve_shadow_vol_beta/*
 !artifacts/low_risk_sleeve_shadow_vol_beta/*.jsonl
 !artifacts/low_risk_sleeve_shadow_vol_beta/*.md
+!artifacts/low_risk_sleeve_shadow_vol_beta_full/
+artifacts/low_risk_sleeve_shadow_vol_beta_full/*
+!artifacts/low_risk_sleeve_shadow_vol_beta_full/*.jsonl
+!artifacts/low_risk_sleeve_shadow_vol_beta_full/*.md
 # Allow catalyst calendar HTML artifacts
 !artifacts/catalyst_calendars/
 artifacts/catalyst_calendars/*

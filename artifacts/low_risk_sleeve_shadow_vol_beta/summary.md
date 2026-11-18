@@ -7,7 +7,7 @@ Pre-registered 2026-11-16, before the first capture. Variant `vol_beta`: the bas
 - Same readings and thresholds as the base sleeve: CAPM alpha on non-overlapping 21-day windows, the 50/50 Top-30 + sleeve Sharpe, and the paired difference against the base sleeve; no reading below 20 non-overlapping LIVE windows.
 - Nothing here changes the model or the account.
 
-Captures: 1 live, 0 replay. Price source: `price_history_split_adj.csv`. **Only LIVE captures are evidence.**
+Captures: 2 live, 0 replay. Price source: `price_history_split_adj.csv`. **Only LIVE captures are evidence.**
 
 ## LIVE
 
