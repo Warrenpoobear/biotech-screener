@@ -173,6 +173,33 @@ PRE_REGISTRATION_RANK_SPLIT = [
     "- Nothing here changes the model or the account.",
 ]
 
+# Sixth reading (added 2026-11-17): variant `vol_beta_full`, the vol_beta sleeve drawn from the full eligible
+# universe (production Top-30 names allowed) as a standalone strategy. Own schema and ledger.
+METHOD_VOL_BETA_FULL = dict(
+    METHOD_VOL_BETA, pool="eligible names in rankings.csv, including the production Top-30 (standalone sleeve)"
+)
+
+PRE_REGISTRATION_VOL_BETA_FULL = [
+    "Pre-registered 2026-11-17, before the first capture. Variant `vol_beta_full`: the vol_beta sleeve "
+    "(vol_60d + beta_120d, 30 names, equal weight, same pinned-price exclusion) drawn from the full eligible "
+    "universe, so production Top-30 names may be held. Tracked as a candidate standalone strategy.",
+    "- Why: on the v9 rebuild (82 months, in-sample, survivor-only, 50 bp per unit of one-way turnover) the "
+    "full-universe sleeve returned 22.0%/yr, Sharpe 1.35, max drawdown -12.2%, beta 0.35, CAPM alpha "
+    "+1.40 pt/month (t 3.42); 2024-26 alpha +1.74 (t 2.83). It overlapped the Top-30 by 2.5 names on average "
+    "and differed from the ex-Top-30 sleeve by +0.01 pt/month (t 0.09). The measures and windows were chosen "
+    "on the same data, so the backtest is not evidence.",
+    "- Judged on risk-adjusted terms, not on excess return over XBI: by design it trails XBI in strong "
+    "rallies (worst 12 months vs XBI -48% in the 2020 rally).",
+    "- Primary reading: CAPM alpha against XBI on non-overlapping 21-trading-day windows, and Sharpe against "
+    "XBI and the production Top-30. Secondary: the same at 5 days; the paired difference against the "
+    "`vol_beta` (ex-Top-30) sleeve.",
+    "- The `combo` reading here is a 50/50 mix that can hold a name in both halves; the proposal's mix uses "
+    "the `vol_beta` ledger instead.",
+    f"- No reading below {MIN_WINDOWS_FOR_READING} non-overlapping LIVE windows at a horizon. Gross of costs.",
+    "- Nothing here changes the model or the account. Running the sleeve alone with real money is a separate "
+    "governed decision with its own benchmark and mandate.",
+]
+
 VARIANTS: Dict[str, Dict[str, Any]] = {
     "base": {"schema": SCHEMA_VERSION, "method": METHOD, "out_dir": OUT_DIR, "pre_registration": PRE_REGISTRATION},
     "vol_beta": {
@@ -180,6 +207,13 @@ VARIANTS: Dict[str, Dict[str, Any]] = {
         "method": METHOD_VOL_BETA,
         "out_dir": REPO_ROOT / "artifacts" / "low_risk_sleeve_shadow_vol_beta",
         "pre_registration": PRE_REGISTRATION_VOL_BETA,
+    },
+    "vol_beta_full": {
+        "schema": "low_risk_sleeve_shadow.vol_beta_full.v1",
+        "method": METHOD_VOL_BETA_FULL,
+        "out_dir": REPO_ROOT / "artifacts" / "low_risk_sleeve_shadow_vol_beta_full",
+        "pre_registration": PRE_REGISTRATION_VOL_BETA_FULL,
+        "exclude_production": False,
     },
 }
 
@@ -297,11 +331,15 @@ def build_sleeve(
     prices: Dict[str, Dict[str, float]],
     as_of: str,
     measures: Optional[List[str]] = None,
+    exclude_production: bool = True,
 ) -> Dict[str, Any]:
-    """Production Top-30 and the low-risk sleeve (disjoint from it) for one snapshot."""
+    """Production Top-30 and the low-risk sleeve for one snapshot.
+
+    The sleeve is disjoint from the Top-30 unless ``exclude_production`` is False (standalone sleeve).
+    """
     keys = list(measures) if measures is not None else METHOD["measures"]
     production = production_top(rows)
-    held = set(production)
+    held = set(production) if exclude_production else set()
     xbi = prices.get(BENCHMARK, {})
     risk: Dict[str, Dict[str, Optional[float]]] = {}
     pinned: List[str] = []
@@ -377,7 +415,13 @@ def capture(
     start = (date.fromisoformat(as_of_date) - timedelta(days=PRICE_LOOKBACK_DAYS)).isoformat()
     tickers = {(r.get("ticker") or "").strip() for r in rows} | {BENCHMARK}
     prices = load_prices(price_csv, tickers, start, as_of_date)
-    result = build_sleeve(rows, prices, as_of_date, measures=spec["method"]["measures"])
+    result = build_sleeve(
+        rows,
+        prices,
+        as_of_date,
+        measures=spec["method"]["measures"],
+        exclude_production=spec.get("exclude_production", True),
+    )
 
     price_asof = result["price_asof"]
     if (
@@ -707,8 +751,8 @@ def format_summary_md(result: Dict[str, Any]) -> str:
         "# Low-risk sleeve shadow — forward record"
         + ("" if result.get("variant", "base") == "base" else f" (variant `{result['variant']}`)"),
         "",
-        "Sleeve = the 30 lowest-risk eligible names outside the production Top-30 (60-day volatility, "
-        "largest one-day gain over 21 days, 120-day beta to XBI), equal weight; names whose 20-day "
+        f"Sleeve = the {SLEEVE_N} lowest-risk names; pool: {result.get('method', METHOD)['pool']}; measures: "
+        f"{', '.join(result.get('method', METHOD)['measures'])}; equal weight; names whose 20-day "
         "volatility is below 10% (price pinned near a deal price, or stale) are excluded. Compared with XBI "
         "and the production Top-30 on equal-weight forward returns, gross of costs. Non-overlapping windows only.",
         "",

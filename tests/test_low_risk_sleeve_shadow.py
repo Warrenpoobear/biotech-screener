@@ -340,3 +340,54 @@ def test_rank_split_counts_only_captures_after_registration(tmp_path, monkeypatc
     monkeypatch.setattr(lrs, "TOP20_REGISTERED", days[180])
     res = lrs.summarize(out_dir=out, price_csv=prices_csv)
     assert all(w["as_of_date"] > days[180] for w in res["rank_split"][lrs.LIVE]["h21d"]["windows"])
+
+
+# ── vol_beta_full variant (standalone sleeve, full eligible universe, 2026-11-17) ──
+
+
+def _injected_rows_and_prices(n=70):
+    rows = [{"ticker": f"T{i:02d}", "eligible": "1", "actionable_rank": str(i + 1)} for i in range(n)]
+    as_of = "2026-06-30"
+    # Production names T00..T29 are the calmest here, so only the pool rule decides whether they appear.
+    prices = {f"T{i:02d}": {"vol_60d": 0.2 + i / 100, "vol_20d": 0.3, "beta_120d": 0.2 + i / 100} for i in range(n)}
+    prices["XBI"] = {as_of: 100.0}
+    return rows, prices, as_of
+
+
+def test_vol_beta_full_variant_spec():
+    vb, full = lrs.VARIANTS["vol_beta"], lrs.VARIANTS["vol_beta_full"]
+    assert full["method"]["measures"] == ["vol_60d", "beta_120d"]
+    assert full["exclude_production"] is False
+    assert vb.get("exclude_production", True) is True
+    assert "including" in full["method"]["pool"]
+    assert full["schema"] not in (vb["schema"], lrs.SCHEMA_VERSION)
+    assert full["out_dir"] not in (vb["out_dir"], lrs.OUT_DIR)
+    for k in ("exclusion", "basket", "price_source", "score"):
+        assert full["method"][k] == vb["method"][k]
+
+
+def test_build_sleeve_full_universe_may_hold_production_names(monkeypatch):
+    rows, prices, as_of = _injected_rows_and_prices()
+    monkeypatch.setattr(lrs, "risk_measures", lambda series, xbi, as_of: series)
+    ex = lrs.build_sleeve(rows, prices, as_of, measures=["vol_60d", "beta_120d"])
+    full = lrs.build_sleeve(rows, prices, as_of, measures=["vol_60d", "beta_120d"], exclude_production=False)
+    assert not set(ex["sleeve"]) & set(ex["production"])
+    assert full["sleeve"] == [f"T{i:02d}" for i in range(30)]  # calmest names, all in production
+    assert full["production"] == ex["production"]  # production list is still recorded
+    assert full["n_scored"] == ex["n_scored"] + 30
+
+
+def test_vol_beta_full_capture_writes_its_own_ledger(tmp_path):
+    days, snaps, prices_csv, out = _setup(tmp_path)
+    d = days[150]
+    res = lrs.capture(d, snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=d, variant="vol_beta_full")
+    assert res["status"] == "captured" and res["capture_mode"] == lrs.LIVE
+    row = lrs.load_captures(out)[0]
+    assert row["schema"] == lrs.VARIANTS["vol_beta_full"]["schema"]
+    assert row["method"]["measures"] == ["vol_60d", "beta_120d"]
+    assert len(row["production"]) == lrs.PRODUCTION_N and len(row["sleeve"]) == lrs.SLEEVE_N
+    s = lrs.summarize(out_dir=out, price_csv=prices_csv, variant="vol_beta_full")
+    assert s["pre_registration"] == lrs.PRE_REGISTRATION_VOL_BETA_FULL
+    md = lrs.format_summary_md(s)
+    assert "vol_beta_full" in md and "including the production Top-30" in md
+    assert "max_gain_21d" not in md.split("Pre-registered")[0]
