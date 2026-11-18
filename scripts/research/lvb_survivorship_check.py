@@ -43,6 +43,10 @@ from common.sharadar_client import SharadarClient  # noqa: E402
 from tools.low_risk_sleeve_shadow import load_prices  # noqa: E402
 
 SICS = {"2834", "2835", "2836"}
+MIN_PRICE = 5.0  # common/data_quality.py
+MIN_DOLLAR_VOLUME = 500_000.0  # common/data_quality.py
+DD_GATE = -0.40  # ruleset drawdown_gate
+DD_REL_GATE = -0.25  # ruleset drawdown_rel_xbi_gate
 CATS = {
     "Domestic Common Stock",
     "Domestic Common Stock Primary Class",
@@ -94,12 +98,14 @@ def main() -> int:
     all_tickers = sorted(set().union(*map(set, trading.values())))
 
     # 2. Ticker metadata: SIC, category, delisted flag.
+    in_snap = {d: {r["ticker"] for r in rankings[d]} for d in dates}
+    snap_tickers = set().union(*in_snap.values())
     meta_rows = _cached(
-        cache / "tickers_meta.json",
+        cache / "tickers_meta_v2.json",
         lambda: client.fetch(
             "TICKERS",
-            tickers=all_tickers,
-            fields=["table", "ticker", "name", "category", "isdelisted", "siccode", "lastpricedate"],
+            tickers=sorted(set(all_tickers) | snap_tickers),
+            fields=["table", "permaticker", "ticker", "name", "category", "isdelisted", "siccode", "lastpricedate"],
         ),
     )
     meta = {}
@@ -108,9 +114,33 @@ def main() -> int:
             meta.setdefault(m["ticker"], m)
     bio = {t for t, m in meta.items() if m.get("siccode") in SICS and m.get("category") in CATS}
 
+    # Renamed tickers: Sharadar keeps a company's older history under a suffixed ticker
+    # (SUPN1 = Supernus, already in the universe as SUPN). Same permaticker or same
+    # company name as a snapshot name = the same company, not a missing one.
+    def _norm(name):
+        return " ".join((name or "").upper().replace(",", " ").replace(".", " ").split())
+
+    snap_perma = {str(meta[t].get("permaticker")) for t in snap_tickers if t in meta}
+    snap_names = {_norm(meta[t].get("name")) for t in snap_tickers if t in meta}
+
+    def _renamed(t):
+        # Suffixed ticker whose base is a snapshot name of the same company, e.g. SUPN1
+        # ("SUPERNUS PHARMACEUTICALS INC") vs SUPN ("SUPERNUS INC", new holding company and
+        # new permaticker after the 2026-11 reorganisation).
+        base = t.rstrip("0123456789")
+        if base == t or base not in snap_tickers or base not in meta:
+            return False
+        a, b = _norm(meta[t].get("name")).split(), _norm(meta[base].get("name")).split()
+        return bool(a and b and a[0] == b[0])
+
+    same_company = {
+        t
+        for t in bio
+        if str(meta[t].get("permaticker")) in snap_perma or _norm(meta[t].get("name")) in snap_names or _renamed(t)
+    }
+
     # 3. Missing names per date and their point-in-time market cap.
-    in_snap = {d: {r["ticker"] for r in rankings[d]} for d in dates}
-    missing = {d: sorted((set(trading.get(d, [])) & bio) - in_snap[d]) for d in dates}
+    missing = {d: sorted((set(trading.get(d, [])) & bio) - in_snap[d] - same_company) for d in dates}
     cand = sorted(set().union(*map(set, missing.values())))
 
     def _mcaps():
@@ -137,16 +167,55 @@ def main() -> int:
             for r in sorted(rows, key=lambda r: (r["ticker"], str(r["date"]))):
                 if r.get("closeadj") not in (None, ""):
                     w.writerow([r["ticker"], str(r["date"])[:10], r["closeadj"]])
+    # Raw (unadjusted) close and volume for the price and liquidity rules.
+    raw_csv = cache / "sharadar_raw_candidates.csv"
+    if not raw_csv.exists():
+        rows = client.fetch(
+            "SEP", tickers=cand, fields=["ticker", "date", "close", "volume"], date_range=("2019-06-01", "2026-12-31")
+        )
+        with open(raw_csv, "w", encoding="utf-8", newline="") as fh:
+            w = csv.writer(fh, lineterminator="\n")
+            w.writerow(["ticker", "date", "close", "volume"])
+            for r in sorted(rows, key=lambda r: (r["ticker"], str(r["date"]))):
+                if r.get("close") not in (None, ""):
+                    w.writerow([r["ticker"], str(r["date"])[:10], r["close"], r.get("volume") or 0])
+    raw = defaultdict(list)
+    with open(raw_csv, encoding="utf-8", newline="") as fh:
+        for r in csv.DictReader(fh):
+            raw[r["ticker"]].append((r["date"], float(r["close"]), float(r["volume"] or 0)))
+
     prices = load_prices(Path(args.sharadar_prices))
     for t, s in load_prices(cand_csv).items():
         prices.setdefault(t, s)
     split = load_prices(REPO / args.split_prices)
     fallback = []
-    for t in set().union(*map(set, in_snap.values())):
+    first_needed = "2019-08-01"  # 120 trading days before the first snapshot
+    for t in snap_tickers:
         sh = prices.get(t, {})
-        if t in split and (not sh or min(sh) > min(split[t])):
+        if t in split and (not sh or (min(sh) > first_needed and min(split[t]) < min(sh))):
             prices[t] = split[t]
             fallback.append(t)
+
+    # Production-like eligibility for an added name on date d (see decision_engine L0 gates and
+    # common/data_quality.py): price >= $5, 20-day median dollar volume >= $500k, and not
+    # (252-day drawdown < -40% AND drawdown minus XBI's < -25%). Fundamental red flags and
+    # missing financials cannot be replicated here.
+    def _drawdown(series, d):
+        pts = [series[k] for k in sorted(k for k in series if k <= d)[-252:]]
+        return pts[-1] / max(pts) - 1 if pts else None
+
+    def eligible(t, d):
+        hist = [x for x in raw.get(t, []) if x[0] <= d][-20:]
+        if not hist or hist[-1][1] < MIN_PRICE:
+            return "price"
+        dv = sorted(c * v for _, c, v in hist)
+        if dv[len(dv) // 2] < MIN_DOLLAR_VOLUME:
+            return "liquidity"
+        dd = _drawdown(prices.get(t, {}), d)
+        xdd = _drawdown(prices.get("XBI", {}), d)
+        if dd is not None and xdd is not None and dd < DD_GATE and dd - xdd < DD_REL_GATE:
+            return "deep_drawdown"
+        return None
 
     # 5. Build augmented rankings and rerun.
     def min_eligible_mcap(d):
@@ -158,6 +227,8 @@ def main() -> int:
             except (TypeError, ValueError):
                 pass
         return min(vals) if vals else 0.0
+
+    rejected = defaultdict(lambda: defaultdict(int))
 
     def augmented(pool):
         out_dir = cache / f"rankings_{pool}"
@@ -171,6 +242,11 @@ def main() -> int:
                     continue
                 mc = mcap.get(d, {}).get(t)
                 if mc is None or mc < floor:  # Sharadar DAILY marketcap is in $ millions
+                    rejected[pool]["market_cap"] += 1
+                    continue
+                why = eligible(t, d)
+                if why:
+                    rejected[pool][why] += 1
                     continue
                 adds.append(t)
                 rows.append({"ticker": t, "eligible": "1", "actionable_rank": ""})
@@ -211,6 +287,8 @@ def main() -> int:
     )[:25]
     summary["fallback_to_split_prices"] = sorted(fallback)
     summary["n_candidates"] = len(cand)
+    summary["same_company_excluded"] = sorted(same_company - snap_tickers)
+    summary["addback_rejections"] = {p: dict(v) for p, v in rejected.items()}
     out = Path(args.out)
     out.write_text(
         json.dumps(
