@@ -202,11 +202,11 @@ def test_summary_with_no_captures(tmp_path):
     assert res["status"] == "no_captures"
 
 
-# ── vol_beta variant (second shadow, 2026-11-16) ─────────────────────
+# ── LVB variant (registered as vol_beta, 2026-11-16) ─────────────────────
 
 
 def test_variants_differ_only_in_measures_and_ledger():
-    base, vb = lrs.VARIANTS["base"], lrs.VARIANTS["vol_beta"]
+    base, vb = lrs.VARIANTS["base"], lrs.VARIANTS["lvb"]
     assert base["method"] is lrs.METHOD and base["schema"] == lrs.SCHEMA_VERSION and base["out_dir"] == lrs.OUT_DIR
     assert vb["method"]["measures"] == ["vol_60d", "beta_120d"]
     assert vb["schema"] != base["schema"] and vb["out_dir"] != base["out_dir"]
@@ -236,12 +236,12 @@ def test_vol_beta_capture_writes_its_own_ledger(tmp_path):
     res = lrs.capture(d, snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=d, variant="vol_beta")
     assert res["status"] == "captured"
     row = lrs.load_captures(out)[0]
-    assert row["schema"] == lrs.VARIANTS["vol_beta"]["schema"]
+    assert row["schema"] == lrs.VARIANTS["lvb"]["schema"]
     assert row["method"]["measures"] == ["vol_60d", "beta_120d"]
     s = lrs.summarize(out_dir=out, price_csv=prices_csv, variant="vol_beta")
-    assert s["schema"] == lrs.VARIANTS["vol_beta"]["schema"]
+    assert s["schema"] == lrs.VARIANTS["lvb"]["schema"]
     md = lrs.format_summary_md(s)
-    assert "vol_beta" in md
+    assert "lvb" in md and "LVB" in md
 
 
 # ── Top-20 and 50/50 Top-20 + sleeve readings (pre-registered 2026-11-17) ──
@@ -342,7 +342,7 @@ def test_rank_split_counts_only_captures_after_registration(tmp_path, monkeypatc
     assert all(w["as_of_date"] > days[180] for w in res["rank_split"][lrs.LIVE]["h21d"]["windows"])
 
 
-# ── vol_beta_full variant (standalone sleeve, full eligible universe, 2026-11-17) ──
+# ── LVB standalone variant (registered as vol_beta_full, full eligible universe, 2026-11-17) ──
 
 
 def _injected_rows_and_prices(n=70):
@@ -355,7 +355,7 @@ def _injected_rows_and_prices(n=70):
 
 
 def test_vol_beta_full_variant_spec():
-    vb, full = lrs.VARIANTS["vol_beta"], lrs.VARIANTS["vol_beta_full"]
+    vb, full = lrs.VARIANTS["lvb"], lrs.VARIANTS["lvb_full"]
     assert full["method"]["measures"] == ["vol_60d", "beta_120d"]
     assert full["exclude_production"] is False
     assert vb.get("exclude_production", True) is True
@@ -383,11 +383,39 @@ def test_vol_beta_full_capture_writes_its_own_ledger(tmp_path):
     res = lrs.capture(d, snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=d, variant="vol_beta_full")
     assert res["status"] == "captured" and res["capture_mode"] == lrs.LIVE
     row = lrs.load_captures(out)[0]
-    assert row["schema"] == lrs.VARIANTS["vol_beta_full"]["schema"]
+    assert row["schema"] == lrs.VARIANTS["lvb_full"]["schema"]
     assert row["method"]["measures"] == ["vol_60d", "beta_120d"]
     assert len(row["production"]) == lrs.PRODUCTION_N and len(row["sleeve"]) == lrs.SLEEVE_N
     s = lrs.summarize(out_dir=out, price_csv=prices_csv, variant="vol_beta_full")
-    assert s["pre_registration"] == lrs.PRE_REGISTRATION_VOL_BETA_FULL
+    assert s["pre_registration"] == lrs.PRE_REGISTRATION_LVB_FULL
     md = lrs.format_summary_md(s)
-    assert "vol_beta_full" in md and "including the production Top-30" in md
+    assert "lvb_full" in md and "including the production Top-30" in md
     assert "max_gain_21d" not in md.split("Pre-registered")[0]
+
+
+# ── LVB naming (2026-11-17): variants renamed, ledgers and schemas unchanged ──
+
+
+def test_lvb_variant_names_and_legacy_aliases():
+    assert {"lvb", "lvb_full"} <= set(lrs.VARIANTS)
+    assert lrs.resolve_variant("vol_beta") == "lvb" and lrs.resolve_variant("vol_beta_full") == "lvb_full"
+    assert lrs.resolve_variant("base") == "base"
+    # Renaming must not move or re-label the existing ledgers.
+    assert lrs.VARIANTS["lvb"]["schema"] == "low_risk_sleeve_shadow.vol_beta.v1"
+    assert lrs.VARIANTS["lvb"]["out_dir"].name == "low_risk_sleeve_shadow_vol_beta"
+    assert lrs.VARIANTS["lvb_full"]["schema"] == "low_risk_sleeve_shadow.vol_beta_full.v1"
+    assert lrs.VARIANTS["lvb_full"]["out_dir"].name == "low_risk_sleeve_shadow_vol_beta_full"
+
+
+def test_legacy_variant_name_writes_the_same_ledger(tmp_path):
+    days, snaps, prices_csv, out = _setup(tmp_path)
+    d = days[150]
+    assert (
+        lrs.capture(d, snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=d, variant="vol_beta")["status"]
+        == "captured"
+    )
+    assert lrs.capture(d, snapshots_dir=snaps, out_dir=out, price_csv=prices_csv, today=d, variant="lvb")["status"] == (
+        "exists"
+    )
+    s = lrs.summarize(out_dir=out, price_csv=prices_csv, variant="vol_beta")
+    assert s["variant"] == "lvb" and "LVB" in lrs.format_summary_md(s)

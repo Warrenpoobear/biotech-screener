@@ -24,6 +24,11 @@ Risk measures (each uses only closes dated on or before the snapshot date):
 The sleeve score is the mean of the available percentile ranks (lower risk =
 higher score). A name needs ``vol_60d`` to be scored.
 
+LVB (low vol-beta): the variants ``lvb`` (outside the Top-30) and ``lvb_full`` (full
+eligible universe, standalone) score on ``vol_60d`` and ``beta_120d`` only. They were
+registered as ``vol_beta`` / ``vol_beta_full``; those names still work as aliases, and
+the ledgers keep their original schema strings and directories.
+
 Exclusion: a name whose 20-day annualised volatility is below ``PINNED_VOL_20D``
 (10%) is left out and listed in ``excluded_pinned``. Such a price is pinned near a
 pending cash-deal price (e.g. TECH, OPCH, PCRX on 2026-11-12) or the feed is stale;
@@ -109,11 +114,11 @@ PRE_REGISTRATION = [
     "- Nothing here changes the model or the account. Using the sleeve with real money is a separate governed decision.",
 ]
 
-# Second shadow (added 2026-11-16): same pool, exclusion and basket, scored on vol_60d and
+# Second shadow, LVB (added 2026-11-16 as `vol_beta`): same pool, exclusion and basket, scored on vol_60d and
 # beta_120d only. It has its own schema and ledger so the base record is never rewritten.
-METHOD_VOL_BETA = dict(METHOD, measures=["vol_60d", "beta_120d"])
+METHOD_LVB = dict(METHOD, measures=["vol_60d", "beta_120d"])
 
-PRE_REGISTRATION_VOL_BETA = [
+PRE_REGISTRATION_LVB = [
     "Pre-registered 2026-11-16, before the first capture. Variant `vol_beta`: the base sleeve without the "
     "max_gain_21d measure.",
     "- Why: in the 2026-11-16 hold-out sensitivity test (77 months, net 50 bps, in-sample) max_gain_21d was the "
@@ -173,13 +178,13 @@ PRE_REGISTRATION_RANK_SPLIT = [
     "- Nothing here changes the model or the account.",
 ]
 
-# Sixth reading (added 2026-11-17): variant `vol_beta_full`, the vol_beta sleeve drawn from the full eligible
+# Sixth reading, LVB standalone (added 2026-11-17 as `vol_beta_full`): the LVB sleeve drawn from the full eligible
 # universe (production Top-30 names allowed) as a standalone strategy. Own schema and ledger.
-METHOD_VOL_BETA_FULL = dict(
-    METHOD_VOL_BETA, pool="eligible names in rankings.csv, including the production Top-30 (standalone sleeve)"
+METHOD_LVB_FULL = dict(
+    METHOD_LVB, pool="eligible names in rankings.csv, including the production Top-30 (standalone sleeve)"
 )
 
-PRE_REGISTRATION_VOL_BETA_FULL = [
+PRE_REGISTRATION_LVB_FULL = [
     "Pre-registered 2026-11-17, before the first capture. Variant `vol_beta_full`: the vol_beta sleeve "
     "(vol_60d + beta_120d, 30 names, equal weight, same pinned-price exclusion) drawn from the full eligible "
     "universe, so production Top-30 names may be held. Tracked as a candidate standalone strategy.",
@@ -202,20 +207,33 @@ PRE_REGISTRATION_VOL_BETA_FULL = [
 
 VARIANTS: Dict[str, Dict[str, Any]] = {
     "base": {"schema": SCHEMA_VERSION, "method": METHOD, "out_dir": OUT_DIR, "pre_registration": PRE_REGISTRATION},
-    "vol_beta": {
+    "lvb": {
         "schema": "low_risk_sleeve_shadow.vol_beta.v1",
-        "method": METHOD_VOL_BETA,
+        "method": METHOD_LVB,
         "out_dir": REPO_ROOT / "artifacts" / "low_risk_sleeve_shadow_vol_beta",
-        "pre_registration": PRE_REGISTRATION_VOL_BETA,
+        "pre_registration": PRE_REGISTRATION_LVB,
     },
-    "vol_beta_full": {
+    "lvb_full": {
         "schema": "low_risk_sleeve_shadow.vol_beta_full.v1",
-        "method": METHOD_VOL_BETA_FULL,
+        "method": METHOD_LVB_FULL,
         "out_dir": REPO_ROOT / "artifacts" / "low_risk_sleeve_shadow_vol_beta_full",
-        "pre_registration": PRE_REGISTRATION_VOL_BETA_FULL,
+        "pre_registration": PRE_REGISTRATION_LVB_FULL,
         "exclude_production": False,
     },
 }
+
+
+# Names the LVB variants were registered under (2026-11-16/17). Kept so older commands still work;
+# they resolve to the same spec, schema and ledger.
+VARIANT_ALIASES: Dict[str, str] = {"vol_beta": "lvb", "vol_beta_full": "lvb_full"}
+
+
+def resolve_variant(variant: str) -> str:
+    """Canonical variant name (``vol_beta`` -> ``lvb``); unknown names raise KeyError."""
+    name = VARIANT_ALIASES.get(variant, variant)
+    if name not in VARIANTS:
+        raise KeyError(variant)
+    return name
 
 
 def default_price_csv() -> Path:
@@ -402,6 +420,7 @@ def capture(
     variant: str = "base",
 ) -> Dict[str, Any]:
     """Record the sleeve and the production Top-30 for ``as_of_date``. Never rewrites a date."""
+    variant = resolve_variant(variant)
     spec = VARIANTS[variant]
     out_dir = Path(out_dir) if out_dir is not None else spec["out_dir"]
     rankings = Path(snapshots_dir) / as_of_date / "rankings.csv"
@@ -640,6 +659,7 @@ def summarize(
     write: bool = True,
     variant: str = "base",
 ) -> Dict[str, Any]:
+    variant = resolve_variant(variant)
     spec = VARIANTS[variant]
     out_dir = Path(out_dir) if out_dir is not None else spec["out_dir"]
     price_csv = Path(price_csv) if price_csv is not None else default_price_csv()
@@ -746,10 +766,17 @@ def _fmt(v: Any, spec: str, suffix: str = "") -> str:
     return "n/a" if v is None else f"{v:{spec}}{suffix}"
 
 
+_LVB_LABEL = {"lvb": ", LVB", "lvb_full": ", LVB standalone"}
+
+
 def format_summary_md(result: Dict[str, Any]) -> str:
     lines = [
         "# Low-risk sleeve shadow — forward record"
-        + ("" if result.get("variant", "base") == "base" else f" (variant `{result['variant']}`)"),
+        + (
+            ""
+            if result.get("variant", "base") == "base"
+            else f" (variant `{result['variant']}`{_LVB_LABEL.get(result['variant'], '')})"
+        ),
         "",
         f"Sleeve = the {SLEEVE_N} lowest-risk names; pool: {result.get('method', METHOD)['pool']}; measures: "
         f"{', '.join(result.get('method', METHOD)['measures'])}; equal weight; names whose 20-day "
@@ -858,7 +885,7 @@ def main() -> int:
     parser.add_argument("--as-of-date")
     parser.add_argument("--capture", action="store_true", help="Record the sleeve for --as-of-date")
     parser.add_argument("--summary", action="store_true", help="Recompute the forward-return comparison")
-    parser.add_argument("--variant", choices=sorted(VARIANTS), default="base")
+    parser.add_argument("--variant", choices=sorted(VARIANTS) + sorted(VARIANT_ALIASES), default="base")
     parser.add_argument("--out-dir", type=Path, default=None)
     parser.add_argument("--snapshots-dir", type=Path, default=SNAPSHOTS_DIR)
     parser.add_argument("--price-csv", type=Path, default=None)

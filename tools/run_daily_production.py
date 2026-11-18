@@ -7183,34 +7183,29 @@ def run_daily(
         except Exception as _lrs_err:
             _logger.warning(f"Low-risk sleeve shadow failed: {_lrs_err}")
 
-        # Second variant (vol_60d + beta_120d only), own ledger; same capture-only rules.
+        # LVB (low vol-beta: vol_60d + beta_120d only), own ledger; same capture-only rules.
         try:
             from tools.low_risk_sleeve_shadow import capture as _lrs_capture
             from tools.low_risk_sleeve_shadow import summarize as _lrs_summarize
 
-            _lrsv_result = _lrs_capture(as_of_date, variant="vol_beta")
+            _lrsv_result = _lrs_capture(as_of_date, variant="lvb")
             if _lrsv_result.get("status") == "captured":
-                _lrs_summarize(variant="vol_beta")
-            _logger.info(
-                f"Low-risk sleeve shadow (vol_beta) → {_lrsv_result.get('capture_mode') or _lrsv_result.get('status')}"
-            )
+                _lrs_summarize(variant="lvb")
+            _logger.info(f"LVB shadow → {_lrsv_result.get('capture_mode') or _lrsv_result.get('status')}")
         except Exception as _lrsv_err:
-            _logger.warning(f"Low-risk sleeve shadow (vol_beta) failed: {_lrsv_err}")
+            _logger.warning(f"LVB shadow failed: {_lrsv_err}")
 
-        # Third variant (vol_beta drawn from the full eligible universe, standalone), own ledger.
+        # LVB standalone (drawn from the full eligible universe), own ledger.
         try:
             from tools.low_risk_sleeve_shadow import capture as _lrs_capture
             from tools.low_risk_sleeve_shadow import summarize as _lrs_summarize
 
-            _lrsf_result = _lrs_capture(as_of_date, variant="vol_beta_full")
+            _lrsf_result = _lrs_capture(as_of_date, variant="lvb_full")
             if _lrsf_result.get("status") == "captured":
-                _lrs_summarize(variant="vol_beta_full")
-            _logger.info(
-                "Low-risk sleeve shadow (vol_beta_full) → "
-                f"{_lrsf_result.get('capture_mode') or _lrsf_result.get('status')}"
-            )
+                _lrs_summarize(variant="lvb_full")
+            _logger.info(f"LVB standalone shadow → {_lrsf_result.get('capture_mode') or _lrsf_result.get('status')}")
         except Exception as _lrsf_err:
-            _logger.warning(f"Low-risk sleeve shadow (vol_beta_full) failed: {_lrsf_err}")
+            _logger.warning(f"LVB standalone shadow failed: {_lrsf_err}")
 
         # --- Step 5k.11c: Regime shadow (non-blocking, diagnostic) ---
         try:
