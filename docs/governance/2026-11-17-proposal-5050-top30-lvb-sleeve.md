@@ -130,6 +130,16 @@ The v9 history holds only names still listed in 2025–26; no delisted-stock pri
 
 Script: `lvb_survivorship.py` (2026-11-17 scratchpad).
 
+### 4e. Calculation check (2026-11-17)
+
+- **Measures:** `vol_60d` and `beta_120d` from the production code (`tools/low_risk_sleeve_shadow.py::risk_measures`) match an independent recomputation from raw closes for 8 names on 2026-11-17 to the second decimal (e.g. AbbVie 19.59% / 0.230, Privia 28.81% / 0.083, Vericel 49.23% / 0.185).
+- **Baskets:** on the same v9 `rankings.csv` files, the research backtest and the production `build_sleeve` pick 29.3 of 30 names on average (minimum 25); the Top-30 definitions agree 30/30. Differences come from simple vs log returns, sample vs population standard deviation, and recent listings without 120 days of history (neutral beta rank in research; volatility alone in production).
+- **Results with production baskets:** LVB 22.0%/yr, Sharpe 1.37, max drawdown −11.9%, alpha +1.39 pt/month (t 3.52), vs 21.9%, 1.39, −10.6%, +1.40 (t 3.57) by the research method; 50/50 21.2%, 1.03, −25.0%, +1.06 (t 3.08) vs 21.1%, 1.03, −25.1%, +1.06 (t 3.10). Difference +0.007 pt/month (t 0.10). The §4 figures stand under either method.
+- **Look-ahead:** corrupting every close after the as-of date leaves the basket and its measures unchanged.
+- This checks the arithmetic, not the inputs: the price history is survivor-only (§4d) and was not reconciled to a second price source.
+
+Scripts: `lvb_verify.py`, `lvb_prodbaskets.py` (2026-11-17 scratchpad).
+
 **Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending; LVB's alpha sits in the small-cap names most exposed to it, §4d); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and LVB shadows started 2026-11-16/17); alpha against XBI overstates the sleeve's edge (§4c).
 
 ## 5. Account Rule 4 must change with it
