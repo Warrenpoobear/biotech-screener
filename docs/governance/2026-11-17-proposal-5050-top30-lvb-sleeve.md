@@ -233,6 +233,8 @@ Options (operator to choose one):
 
 **Scaling note (not part of this proposal).** At today's size (~$1M) the sleeve trades without a rank buffer: a buffer saves only ~0.03 pt/month in costs, its return gain is not significant, and it lets names that have drifted out of the low-risk set stay in the book (drawdown −16% vs −11%). If the account grows past roughly $20–50M, where costs are about three times higher, revisit a rank-40 buffer for both halves (it also cuts Top-30 turnover) as a separate proposal with its own evidence.
 
+**Reconstitution frequency (2026-11-18, not part of this proposal).** Quarterly reconstitution of LVB, with holdings left to drift between reconstitutions and all three quarterly month sets tested, trails monthly by −0.08 pt/month (t −0.95; better in 3 of 7 years). It cuts turnover from about 200% to 127% a year, but the signal fades faster than the costs saved: before costs quarterly trails by −0.12. Semiannual is worse (−0.21, t −1.56, deeper drawdowns). Quarterly breaks even only at roughly 150–200 bp per trade, so it belongs with the rank buffer as an option to revisit if the account grows to that scale. For the Top-30, quarterly results depend on which months are traded (+0.39 to −0.17 pt/month; average +0.12, t 0.65), so there is no case for changing its frequency. Script: `lvb_quarterly.py` (`~/data/lvb_research_2026_11/scripts/`).
+
 Rollback: publish Top-30-only targets again (one flag), revert Rule 4 to the XBI-relative levels.
 
 ## 9. Operator decisions
