@@ -164,6 +164,36 @@ Run on LVB ex-Top-30 before the 2026-11-18 redefinition; the production code bui
 
 Scripts: `lvb_verify.py`, `lvb_prodbaskets.py`, `stooq_check.py`, `stooq_impact.py` (`~/data/lvb_research_2026_11/scripts/`).
 
+### 4f. LVB against a plain index as the second half (2026-11-18)
+
+Is LVB better than simply holding an ETF in the second half? Same 82 months and costs. ETF halves carry no trading costs, and ETF returns include dividends while LVB's do not, so the comparison slightly favours the ETFs.
+
+| Second half alone | Ann. return | Sharpe | Max drawdown | Beta to XBI |
+|---|---|---|---|---|
+| LVB | 22.0% | 1.35 | −12% | 0.35 |
+| SPY | 18.2% | 1.17 | −24% | 0.31 |
+| XLV | 13.4% | 0.91 | −16% | 0.29 |
+
+| 50/50 with the Top-30 | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) | Worst stretch vs XBI | 12-month periods behind XBI |
+|---|---|---|---|---|---|---|
+| **Top-30 + LVB (proposed)** | **21.0%** | **1.02** | **−26%** | **+1.06 (2.99)** | **−15%** | **18%** |
+| Top-30 + SPY | 19.3% | 0.98 | −26% | +0.95 (2.89) | −16% | 13% |
+| Top-30 + XLV | 16.8% | 0.88 | −23% | +0.78 (2.27) | −19% | 27% |
+
+- **LVB beats XLV:** +0.63 pt/month (t 2.0), ahead in 5 of 7 years. Scaled to LVB's beta to XBI, the gap is +0.38 (t 1.1).
+- **LVB does not clearly beat SPY:** +0.27 pt/month (t 0.6); in the 50/50 the gap is +0.13 (t 0.6).
+- **The edge over both comes almost entirely from 2024–26.** Against SPY it is −0.18 pt/month in 2020–23 and +0.84 (t 1.1) in 2024–26; against XLV +0.22 (t 0.5) and +1.15 (t 2.8). Healthcare lagged in 2024–25, so XLV is a weak benchmark.
+- **Most of the 50/50's improvement over the Top-30 alone comes from pairing it with any low-beta asset.** A plain SPY half halves the drawdown and keeps alpha against XBI at t 2.9.
+- **What LVB adds over SPY is about +0.1 to +0.4 pt/month at the portfolio level, counting the dividend effect.** That is not statistically established, and it sits in 2024–26 and in the small-cap names whose survivorship is untested (§4d).
+- **SPY has none of LVB's risks:** no model, no survivorship question, no turnover, no dependence on the price store. LVB's advantage is that the book stays in healthcare.
+
+**Consequence for this proposal:** the baseline LVB has to beat is "50/50 Top-30 + SPY", not the Top-30 alone. Two defensible choices, for decision 1 (§9):
+
+1. **Adopt the 50/50 with LVB, and judge the LVB half against SPY going forward.** The `lvb_full` shadow already records the sleeve; SPY needs adding to the daily price refresh (§8 step 5).
+2. **Adopt the 50/50 with SPY now, and switch to LVB once its forward record beats SPY.** This is the conservative reading of the evidence. LVB's case beyond SPY rests mainly on the low-volatility effect being well documented outside this data.
+
+Script: `lvb_vs_xlv.py` (`~/data/lvb_research_2026_11/scripts/`).
+
 **Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending; LVB's alpha sits in the small-cap names most exposed to it, §4d); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and LVB shadows started 2026-11-16/17); alpha against XBI overstates the sleeve's edge (§4c).
 
 ## 5. Account Rule 4 must change with it
@@ -209,7 +239,7 @@ Rollback: publish Top-30-only targets again (one flag), revert Rule 4 to the XBI
 
 | # | Decision | Recommendation |
 |---|---|---|
-| 1 | Adopt the 50/50 Top-30 + LVB portfolio | Adopt, as one governed change |
+| 1 | Adopt the 50/50, with LVB or with SPY as the second half (§4f) | Adopt the 50/50 as one governed change; LVB vs SPY for the second half is the operator's call (§4f, options 1 and 2) |
 | 2 | Rule 4 option (A / B / C) | A, after re-running its touch frequency |
 | 3 | Weekly reweighting of both halves vs monthly-only | Weekly (current practice) |
 | 4 | Mandate amendments in §6 | Adopt |
