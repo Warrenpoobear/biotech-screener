@@ -1,7 +1,7 @@
 # Wake Robin DEM — Model Documentation
 
 **Version:** 1.7.2 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
-**Last updated:** 2026-11-18 (LVB sleeve backtest corrections — price source, survivorship, broader benchmarks, quarterly rebalance; in-sample research record, **no model change**. AZN split-adjusted price fix, PR #712, merged 2026-11-18; operator ruling: data correction, no clock reset. See the 2026-11-18 entry below)
+**Last updated:** 2026-11-18 (LVB sleeve backtest corrections — price source, survivorship, broader benchmarks, quarterly rebalance, and a later rebalance-calendar correction to the same figures; in-sample research record, **no model change**. AZN split-adjusted price fix, PR #712, merged 2026-11-18; operator ruling: data correction, no clock reset. See the 2026-11-18 entry below)
 **Update before that:** 2026-11-17 (out-of-sample clock start recorded at 2026-11-17, PR #701; `snapshots_pit_v9` history rebuild written into `data/snapshots`, PR #698; research record — v9 backtests, roster range, portfolio construction and a 20-signal screen, **no model change**; ops fixes PRs #699, #700, #702. See the 2026-11-17 entries below)
 **Prior update:** 2026-11-15 (weekend of governance and research work; **no change to scoring, selection, order, sizing or eligibility except the operator-requested `de_vol_60d` input fix, PR #676, which lands before `oos_clock_start`**. Selector-only clock not yet started: dated drift override, `ast-v2` candidate hash `a9a430154568e242`, `ranker_mode` capture check, account Rule 4 at −10/−15 pp, protocol §4 fail and rollback rules. Low-risk sleeve shadow (PR #674, capture-only). Research history `data/snapshots_pit_v6` = v5 inputs + current code; backtests unchanged. Weekend signal research recorded as context only. See the 2026-11-15 entries below)
 **Earlier updates:** 2026-11-12/13 (missing-field fixes PR #614 + #636 with a clock reset; Sharadar price source PR #622 without a memo; market-cap look-ahead found in regenerated history and backtest claims deprecated, PR #660; production order switched to selector-only, PR #665. See the 2026-11-12 and 2026-11-13 entries). 2026-11-01 (coinvest 13F integrity fix + operator roster change; selector-input change with a clock reset. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`)
@@ -22,6 +22,31 @@ construction remain frozen; this document does not authorize behavior changes.
 Classification: `RESEARCH_RECORD + DATA_CORRECTION / NO_MODEL_CHANGE`. Recorded at operator request. In-sample research only; none of it is out-of-sample evidence, and nothing here changes scoring, order, size, eligibility or the portfolio.
 
 **Setup for every figure below:** `data/snapshots_pit_v9`, 2020-03-31 → 2026-11-16, 82 monthly periods, net of 50 bp × one-way turnover. LVB = the 30 lowest-risk eligible names by mean percentile rank of `vol_60d` and `beta_120d` to XBI, equal weight, names with 20-day volatility below 10% excluded; built with `tools/low_risk_sleeve_shadow.py::build_sleeve`. Alpha is CAPM alpha in pt/month (t).
+
+> **Correction (2026-11-18, later the same day): rebalance calendar.** `lvb_universe_backtest.py` and `lvb_survivorship_check.py` used every snapshot folder as a rebalance date. `snapshots_pit_v9` holds two extra mid-month dates (2026-02-27 beside 2026-02-28, and 2026-04-16), so "82 monthly periods" were 82 holding periods over 79.5 months, including a 1-day period and two half-month periods, annualised as months. The scripts now rebalance on the last snapshot of each month (`month_end_dates`) and compound annual return over the actual span (`span_years`); tests in `tests/test_lvb_research_calendar.py`. The old code rerun on the same inputs reproduces every figure below exactly; the corrected values are (old → corrected; 80 monthly periods from 2020-03-31; maximum drawdowns and betas unchanged):
+>
+> | Figure | Old | Corrected |
+> |---|---|---|
+> | §1 full universe, production prices: ann. / Sharpe / alpha (t) | 21.8% / 1.35 / +1.38 (3.36) | 22.5% / 1.36 / +1.42 (3.36) |
+> | §1 ex-Top-30, production prices | 22.0% / 1.37 / +1.39 (3.46) | 22.9% / 1.39 / +1.43 (3.48) |
+> | §1 full universe, Sharadar | 19.4% / 1.23 / +1.22 (3.00) | 20.0% / 1.25 / +1.25 (2.99) |
+> | §1 ex-Top-30, Sharadar: ann. / alpha (t) | 20.8% / +1.31 (3.38) | 21.5% / +1.34 (3.38) |
+> | §1 XBI ann. return | 9.8% | 10.2% |
+> | §1 full minus ex-Top-30, production prices (t) | −0.02 (−0.16) | −0.02 (−0.22) |
+> | §2 alpha vs SPY (beta) / vs XLV | +0.75 (1.73; 0.55) / +0.66 (2.09) | +0.79 (1.76; 0.54) / +0.67 (2.09) |
+> | §2 quarterly alpha: Mar/Jun/Sep/Dec, Jan/Apr/Jul/Oct, Feb/May/Aug/Nov | +1.20, +1.13, +1.19 | +1.23, +1.15, +1.22 (t 2.93, 2.92, 2.98) |
+> | §2 ex-Top-30 quarterly range: ann. / alpha | 17.4–22.8% / +1.06–1.43 | 18.0–23.6% / +1.09–1.47 |
+> | §3 survivors / + delisted / + every missing: alpha (t) | +1.26 (3.05) / +1.08 (2.66) / +0.79 (2.03) | +1.29 (3.05) / +1.11 (2.66) / +0.82 (2.05) |
+> | §3 the same: ann. return | 19.9% / 17.6% / 12.2% | 20.5% / 18.2% / 12.7% |
+> | §3 ex-Top-30 alpha: survivors → + delisted | +1.29 → +1.12 | +1.33 → +1.14 |
+> | §3b Top-30 alone: ann. / Sharpe / alpha (t) | 18.7% / 0.71 / +0.74 (1.46) | 19.4% / 0.72 / +0.76 (1.47) |
+> | §3b 50/50, memo inputs | 21.1% / 1.02 / +1.06 (2.97) | 21.8% / 1.04 / +1.09 (2.98) |
+> | **§3b 50/50, corrected** | **19.0% / 0.94 / +0.91 (2.58)** | **19.7% / 0.95 / +0.94 (2.58)** |
+> | §3b 50/50 minus Top-30 (t); vs SPY; vs XLV | −0.18 (−0.44); +0.52 (0.87); +0.60 (1.14) | −0.18 (−0.45); +0.55 (0.91); +0.61 (1.14) |
+> | §3b SPY ann. return | 18.2% | 18.8% |
+> | Net reading: LVB alpha vs XBI after price-source and survivorship corrections | about +1.08 | about +1.11 |
+>
+> No conclusion changes. Separately: on Sharadar prices `lvb_universe_backtest.py` starts at 2020-01-31 (Sharadar has the lookback history the production file lacks), so its raw output covers 84 periods including the February–March 2020 crash; the §1–§3 Sharadar figures (old and corrected) are restricted to holding periods from 2020-03-31, as `lvb_5050_mix.py` and `lvb_survivorship_check.py` do through `--start`. The same calendar correction to the 50/50 proposal memo's research scripts is recorded in that memo (§4 note). Runs: `~/data/lvb_research_2026_11/repo_runs_2026_11_18/` (local).
 
 ### 1. Full universe vs ex-Top-30, and the price source
 

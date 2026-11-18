@@ -41,6 +41,29 @@ This is the LVB standalone shadow (variant `lvb_full`, registered as `vol_beta_f
 
 ## 4. Evidence (in-sample; research only)
 
+> **Correction (2026-11-18): rebalance calendar.** The research scripts behind §4–§4f used every snapshot folder in `snapshots_pit_v9` as a rebalance date. The folder holds two extra mid-month dates (2026-02-27 beside 2026-02-28, and 2026-04-16), so "82 months" was 82 holding periods covering 79.5 months, including a 1-day period and two half-month periods, annualised as if each were a month. Rerun on the last snapshot of each month (80 monthly periods) with annual return compounded over the actual span; data, costs and method otherwise unchanged. **Every figure moves slightly in LVB's favour and no conclusion changes.** The tables below are left as originally written; the corrected values are:
+>
+> | Figure | As written | Corrected |
+> |---|---|---|
+> | Top-30: ann. return / Sharpe / alpha vs XBI (t) | 18.4% / 0.70 / +0.72 (1.45) | 19.1% / 0.71 / +0.74 (1.46) |
+> | LVB: ann. return / Sharpe / alpha vs XBI (t) | 22.0% / 1.35 / +1.40 (3.42) | 22.8% / 1.37 / +1.44 (3.44) |
+> | **50/50: ann. return / Sharpe / alpha vs XBI (t)** | **21.0% / 1.02 / +1.06 (2.99)** | **21.8% / 1.04 / +1.09 (3.01)** |
+> | 50/50 Top-30 + three-measure sleeve: ann. / Sharpe / alpha (t) | 18.8% / 0.93 / +0.89 (2.65) | 19.6% / 0.96 / +0.93 (2.69) |
+> | XBI: ann. return | 9.8% | 10.2% |
+> | Mean excess over XBI: 50/50 vs Top-30 | +0.71 vs +0.72 | +0.74 vs +0.74 |
+> | 50/50, 2024–26: Sharpe / alpha (t) | 1.43 / +1.14 (2.04) | 1.50 / +1.23 (2.08) |
+> | 50/50, 2026 year to date (Top-30 alone) | +21.1% (+10.7%) | +21.4% (+11.0%) |
+> | §4a 25% / 75% sleeve: Sharpe / alpha (t) | 0.84 / +0.89 (2.19); 1.22 / +1.23 (3.46) | 0.86 / +0.92 (2.20); 1.24 / +1.26 (3.48) |
+> | §4a 12-month periods behind XBI: 0 / 50 / 100% sleeve | 30% / 18% / 32% | 28% / 16% / 29% |
+> | §4a worst 12 months vs XBI, 100% sleeve | −48 pt | −49 pt |
+> | §4c LVB alpha vs SPY / XLV / four-factor | +0.92 / +0.81 / +0.84 | +0.97 / +0.84 / +0.87 (t 2.12 / 2.60 / 2.84) |
+> | §4d partial delisted check (last 20 → 18 monthly periods): delisted minus survivors | −0.015 pt/month (t −0.4) | −0.017 pt/month (t −0.37) |
+> | §4f LVB minus XLV / minus SPY (t) | +0.63 (2.0) / +0.27 (0.6) | +0.65 (2.03) / +0.28 (0.57) |
+> | §4f 50/50 with SPY: ann. / Sharpe / alpha (t) | 19.3% / 0.98 / +0.95 (2.89) | 20.0% / 1.00 / +0.97 (2.86) |
+> | §8 quarterly LVB reconstitution minus monthly, average of phases (t) | −0.08 (−0.95) | −0.09 (−1.02); gross −0.13 (−1.38) |
+>
+> Unchanged: maximum drawdowns, betas, overlap with the Top-30 (now 2.5 names on average, some in 85% of months), full-universe minus ex-Top-30 (0.000 pt/month), and the calculation and survivorship checks. Quarterly and semiannual phase results move by up to ±0.1 pt/month because dropping the extra dates shifts which months each schedule trades; the conclusion that quarterly trails monthly at 50 bp stands. The same correction to the repo scripts behind `docs/MODEL_DOCUMENTATION.md` (2026-11-18 entry) is recorded there. Scripts and outputs: `~/data/lvb_research_2026_11/scripts/` (`lowvol_opt.py`, `rerun_backtest.py`, `delist2/partial_survivorship_v2.py`); pre-fix copies in `backup_pre_calendar_fix_2026_11_18/`.
+
 `snapshots_pit_v9` (85 month-ends; 13F per date, point-in-time market data and financials, CT.gov date rollback), March 2020 – November 2026 (82 months), monthly, net of 50 bp × one-way turnover (≈ $1M per-trade costs):
 
 | Portfolio | Ann. return | Volatility | Sharpe | Max drawdown | Beta | CAPM alpha/month (t) | Worst stretch vs XBI |

@@ -11,7 +11,8 @@ so the backtest and the forward shadows share one definition:
   - full:     pool includes the Top-30 (shadow variant `vol_beta_full`)
   - top30:    production Top-30 (actionable_rank 1..30), for reference
 
-Monthly, from each snapshot date's close to the next snapshot date's close, net
+Monthly, from each month's last snapshot close to the next month's last snapshot close
+(extra mid-month snapshots are skipped: month_end_dates), net
 of 50 bp x one-way turnover (turnover measured against drifted weights). XBI is
 gross. Closes are split-adjusted and dated on or before each date.
 
@@ -30,8 +31,9 @@ import argparse
 import json
 import math
 import sys
+from datetime import date
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
@@ -47,6 +49,22 @@ MIN_PRICED = 25
 def _close_on_or_before(series: Dict[str, float], day: str):
     days = [d for d in series if d <= day]
     return series[max(days)] if days else None
+
+
+def month_end_dates(dates: List[str]) -> List[str]:
+    """The last snapshot date in each calendar month (plus the final date), sorted.
+
+    Snapshot sets can hold extra mid-month dates (v9: 2026-02-27 beside 2026-02-28, and
+    2026-04-16). Using every snapshot as a rebalance date makes 1-day and half-month
+    periods that are then annualised as months.
+    """
+    ds = sorted(set(dates))
+    return [d for i, d in enumerate(ds) if i + 1 == len(ds) or ds[i + 1][:7] != d[:7]]
+
+
+def span_years(rows: List[dict]) -> float:
+    """Calendar years from the first period's start (d0) to the last period's end (d1)."""
+    return (date.fromisoformat(rows[-1]["d1"]) - date.fromisoformat(rows[0]["d0"])).days / 365.25
 
 
 def _is_rebalance(d0: str, every: int, phase: int) -> bool:
@@ -107,7 +125,8 @@ def run_variant(variant: str, dates: List[str], snap_dir: Path, prices, every: i
     return out
 
 
-def stats(rs: List[float], xs: List[float]) -> dict:
+def stats(rs: List[float], xs: List[float], years: Optional[float] = None) -> dict:
+    """Annual return compounds over ``years`` when given (actual span), else treats each period as a month."""
     n = len(rs)
     m = sum(rs) / n
     sd = math.sqrt(sum((r - m) ** 2 for r in rs) / (n - 1))
@@ -134,7 +153,7 @@ def stats(rs: List[float], xs: List[float]) -> dict:
         worst = min(worst, rel / rpk - 1)
     return {
         "months": n,
-        "ann_return": cum ** (12 / n) - 1,
+        "ann_return": cum ** (1 / (years if years else n / 12)) - 1,
         "ann_vol": sd * math.sqrt(12),
         "sharpe": m / sd * math.sqrt(12),
         "max_drawdown": mdd,
@@ -159,8 +178,8 @@ def main() -> int:
     args = ap.parse_args()
 
     snap_dir = (REPO / args.snapshot_dir).resolve()
-    dates = sorted(
-        p.name for p in snap_dir.iterdir() if p.is_dir() and p.name[:2] == "20" and (p / "rankings.csv").exists()
+    dates = month_end_dates(
+        [p.name for p in snap_dir.iterdir() if p.is_dir() and p.name[:2] == "20" and (p / "rankings.csv").exists()]
     )
     prices = load_prices(REPO / args.prices)
     monthly = {v: run_variant(v, dates, snap_dir, prices, args.rebalance_every, args.phase) for v in VARIANTS}
@@ -170,13 +189,13 @@ def main() -> int:
     summary = {}
     for v in VARIANTS:
         rs = keep[v]
-        s = stats([r["net"] for r in rs], [r["xbi"] for r in rs])
+        s = stats([r["net"] for r in rs], [r["xbi"] for r in rs], years=span_years(rs))
         s["avg_turnover"] = sum(r["turnover"] for r in rs) / len(rs)
         s["avg_overlap_top30"] = sum(r["overlap_top30"] for r in rs) / len(rs)
         s["first"], s["last"] = rs[0]["d0"], rs[-1]["d1"]
         summary[v] = s
     xs = [r["xbi"] for r in keep["full"]]
-    summary["XBI"] = stats(xs, xs)
+    summary["XBI"] = stats(xs, xs, years=span_years(keep["full"]))
 
     diff = [a["net"] - b["net"] for a, b in zip(keep["full"], keep["ex_top30"])]
     md = sum(diff) / len(diff)
@@ -196,7 +215,7 @@ def main() -> int:
     }
 
     result = {
-        "schema": "lvb_universe_backtest.v1",
+        "schema": "lvb_universe_backtest.v2",
         "method": {
             "measures": MEASURES,
             "cost_one_way": COST_ONE_WAY,
@@ -204,6 +223,8 @@ def main() -> int:
             "prices": args.prices,
             "rebalance_every_months": args.rebalance_every,
             "phase": args.phase,
+            "calendar": "month_end",
+            "annualisation": "actual_span",
         },
         "summary": summary,
         "monthly": keep,
