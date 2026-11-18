@@ -75,10 +75,26 @@ The ex-Top-30 sleeve is more sensitive to the quarterly phase (17.4% to 22.8% a 
 - The survivors-only base is 19.9% rather than 19.4% because this script keeps Sharadar dividend-adjusted prices for names such as ABBV where the plain Sharadar run fell back to the split file.
 - This adds back returns for the sleeve only. It is not the v9 survivorship rebuild (coinvest, financials and the Top-30 are not re-run), which remains pending.
 
+### 3b. 50/50 Top-30 + LVB, recomputed on corrected data
+
+Same 82 months, monthly rebalance to 50/50, Sharadar total-return prices for both halves, LVB from the survivorship-corrected pool (`scripts/research/lvb_5050_mix.py`, PR #714):
+
+| Portfolio | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) | Mean excess vs XBI (t) |
+|---|---|---|---|---|---|
+| Top-30 alone | 18.7% | 0.71 | −49.7% | +0.74 (1.46) | +0.75 (1.50) |
+| 50/50, memo inputs (production prices) | 21.1% | 1.02 | −26.1% | +1.06 (2.97) | +0.71 (1.61) |
+| **50/50, corrected** | **19.0%** | **0.94** | **−27.9%** | **+0.91 (2.58)** | **+0.57 (1.30)** |
+| S&P 500 (SPY) | 18.2% | 1.17 | −23.9% | +1.17 (2.76) | +0.44 (0.61) |
+
+- The mix still halves the Top-30's volatility and drawdown and cuts 12-month periods behind XBI from 28% to 18% (halves' excess correlation 0.10).
+- It trails the Top-30 alone by 0.18 pt/month (t −0.44): the memo's "same excess as the Top-30" does not hold on corrected data, though the gap is not significant.
+- Over this period it trails the S&P 500 on Sharpe (0.94 vs 1.17); alpha vs SPY alone +0.52 (t 0.87), vs XLV alone +0.60 (t 1.14).
+- Only the LVB half is survivorship-corrected; the Top-30 half is still survivor-only.
+
 ### Net reading
 
 - **In-sample LVB alpha vs XBI goes from the memo's +1.40 to about +1.08 pt/month** after the price-source and survivorship corrections. The Sharadar runs still carry the JBIO understatement (about 0.04 pt/month), which is not corrected here. Against XLV alone it is +0.66 (t 2.09) before the survivorship correction. Directionally supportive, smaller and less certain than first reported; requires forward validation.
-- **The 50/50 Top-30 + LVB proposal** (`docs/governance/2026-11-17-proposal-5050-top30-lvb-sleeve.md`; PROPOSED, Tier 4, not approved) is not changed by this entry. Its LVB figures are superseded for evidence purposes by the readings above.
+- **The 50/50 Top-30 + LVB proposal** (`docs/governance/2026-11-17-proposal-5050-top30-lvb-sleeve.md`; PROPOSED, Tier 4, not approved) is not changed by this entry. Its LVB and 50/50 figures are superseded for evidence purposes by the readings above (corrected 50/50: 19.0%/yr, Sharpe 0.94, alpha vs XBI +0.91, t 2.58).
 - Forward shadows unchanged: `lvb` (`vol_beta`) live since 2026-11-16, `lvb_full` (`vol_beta_full`) from 2026-11-17. No reading below 20 LIVE windows.
 - Research code: `scripts/research/lvb_universe_backtest.py`, `lvb_factor_alpha.py`, `lvb_sharadar_prices.py`, `lvb_survivorship_check.py` — PR #714 (Tier 2, research only, not merged). Sharadar data stays local (licensed, not in git).
 
