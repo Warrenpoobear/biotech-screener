@@ -86,7 +86,7 @@ Each design choice was varied one at a time on the same data and costs, with the
 | Rank buffer (hold a name until it falls past rank 40, 50 or 60) | Turnover 17%/month with no buffer, 11% at rank 40, 8% at rank 60; at 50 bp costs rank 40 adds +0.14 pt/month (t 0.92, better in 3 of 7 years) but maximum drawdown deepens from −11% to −16%; at 150 bp costs +0.19 (t 1.30, 4 of 7 years) | No buffer (scaling option, §8) |
 | Stop losses (sell on a daily close, execute next close, cash until the monthly rebalance) | 10–30% below purchase price, 10–25% below peak, whole sleeve to cash if down 5/8/10% within the month (12 rules) | Every rule lowered return and deepened maximum drawdown (−11.5% to −29% vs −10.6%); cost −0.03 to −0.57 pt/month, tighter stops worse (t −2.5 to −3.7), better in at most 2 of 7 years; stopped names gained a further 1–3% before the rebalance; no help in the five worst months. Survivor-only history understates the benefit of exiting names that collapse or delist | No stops |
 
-The edge comes from preferring low-volatility, low-beta names at all, not from fine-tuning; further tuning would be fitting noise. Scripts are in the 2026-11-17 session scratchpad (`lowvol_opt.py`, `volbeta_windows.py`, `volbeta_n.py`, `volbeta_weights.py`, `volbeta_capbuckets.py`, `volbeta_freq.py`, `volbeta_sectorcap.py`, `volbeta_buffer.py`, `volbeta_stops.py`, `sleeve_vs_mix.py`).
+The edge comes from preferring low-volatility, low-beta names at all, not from fine-tuning; further tuning would be fitting noise. Scripts are in `~/data/lvb_research_2026_11/scripts/` (`lowvol_opt.py`, `volbeta_windows.py`, `volbeta_n.py`, `volbeta_weights.py`, `volbeta_capbuckets.py`, `volbeta_freq.py`, `volbeta_sectorcap.py`, `volbeta_buffer.py`, `volbeta_stops.py`, `sleeve_vs_mix.py`).
 
 ### 4c. Alpha against broader benchmarks (2026-11-17)
 
@@ -106,7 +106,7 @@ Alpha in pt/month (t).
 - **The 50/50 portfolio's +1.06 (t 3.05) against XBI falls to +0.50 (t 0.97) against SPY + XLV.** Its benefit over the Top-30 alone is lower risk (drawdown −25% vs −50%, Sharpe 1.03 vs 0.70), not demonstrated stock-selection alpha. This memo should be read as a risk proposal.
 - Building the sleeve on beta to SPY instead of XBI is slightly worse on every measure (−0.15 pt/month, t −0.8); beta to XBI stays.
 
-Script: `volbeta_spy.py`, `mix_factors.py` (2026-11-17 scratchpad).
+Script: `volbeta_spy.py`, `mix_factors.py` (`~/data/lvb_research_2026_11/scripts/`).
 
 ### 4d. Survivorship check on LVB (indirect 2026-11-17; partial direct 2026-11-18)
 
@@ -128,20 +128,27 @@ The v9 history holds only names still listed in 2025–26; no delisted-stock pri
 - **What survives:** the drawdown reduction. Even large-cap-only LVB has far shallower drawdowns than XBI (−15% to −22% for ≥ $2B–5B vs −57%).
 - **Consequence for this proposal:** LVB's alpha is treated as unproven until the delisted rebuild (about 400 names, prices, point-in-time financials, 13F CUSIPs, IPO dates; rerun of 85 dates). The case for adoption rests on risk reduction (§2, §4c). If the operator prefers, decision 1 can wait for that rebuild.
 
-Script: `lvb_survivorship.py` (2026-11-17 scratchpad).
+Script: `lvb_survivorship.py` (`~/data/lvb_research_2026_11/scripts/`).
 
-**Partial direct check (2026-11-18, last 20 months only).** Delisted-name prices came from Massive (Polygon) grouped daily bars, 2024-11-19 to 2026-11-17; Massive holds only about 2 years on the current plan. Candidates were 13F-held common stocks absent from the price store that stopped trading at least 10 days before the window's end. Each was kept only if its Massive price matched the 13F implied price within 15%, and was screened to healthcare SIC via EDGAR. Thirteen names qualified (SYRS, RGLS, VIGL, CRGX, HLVX, SCPH, TRML, CDTX, RPTX, APLT, DVAX, RAPT, LYRA). They were added to the eligible universe under the production rules (price ≥ $2, 20-day median dollar volume ≥ $1M). Full-universe LVB was rerun over the 20 v9 month-ends from 2025-05-30 to 2026-10-30:
+**Partial direct check (2026-11-18, last 20 months only).** Delisted-name prices came from Massive (Polygon) grouped daily bars, 2024-11-19 to 2026-11-17; Massive holds only about 2 years on the current plan. Delisted names were found two ways:
+- 13 were 13F-held common stocks absent from the price store, kept only when their Massive price matched the 13F implied price within 15%.
+- 60 more came from EDGAR Form 25-NSE filings by healthcare companies (SIC 2834, 2835, 2836, 8731 and related). Each was mapped by CIK to the Massive common-stock ticker delisted within 45 days of the filing.
+
+Of the 166 healthcare companies EDGAR shows delisting in the window, 70 mapped this way. The rest filed Form 25 for notes or warrants rather than common stock (63), had no delisted ticker in Massive (14), or are still in the price store (17). Two SPACs were excluded as not operating-company delistings; one of them (PCSC, Freenome) kept trading under a new ticker. Each added series stops at its own delisting date.
+
+The 73 names were added to the eligible universe under the production rules (price ≥ $2, 20-day median dollar volume ≥ $1M), and full-universe LVB was rerun over the 20 v9 month-ends from 2025-05-30 to 2026-10-30:
 
 | Universe | Cumulative | Mean pt/month | Alpha vs XBI | Beta |
 |---|---|---|---|---|
 | Survivors only | +67.6% | 2.69 | 1.95 | 0.23 |
-| With delisted names (exits at −30% or −100%) | +66.4% | 2.65 | 1.92 | 0.22 |
+| With 73 delisted names (exits at 0%, −30% or −100%) | +67.0% | 2.68 | 1.96 | 0.22 |
 
-- **Difference −0.04 pt/month (t −1.6), the same under every exit assumption.** LVB held a delisted name in only 3 of 20 months, one at a time: DVAX (2025-05) and CRGX (2025-06, 2025-07, a wind-down trading near cash). Neither exited while held.
-- **The pinned-price exclusion worked as designed.** It removed takeover targets trading at a fixed deal price (RGLS, VIGL, SCPH, CDTX, RAPT, and DVAX in 2026-01).
-- **Limits.** This covers 13 of about 150 pharma/biotech delistings EDGAR shows for the window (Form 25-NSE); the rest did not map from 13F CUSIPs or could not be price-validated. It does not reach 2020–24. It is consistent with the plausibility argument above, but it is not the full rebuild, and the treatment of LVB's alpha as unproven stands.
+- **Difference −0.015 pt/month (t −0.4), the same under every exit assumption.** LVB held a delisted name in 4 of 20 months, at most two at a time: DVAX (2025-05), CRGX (2025-06 and 2025-07, a wind-down trading near cash), EXAS (2025-07) and XOMA (2026-05). None of them delisted during a month it was held.
+- **The failures never reached the sleeve.** 38 of the 73 exits had a price pinned to a deal before delisting; the other 35 are wind-downs, failures and other exits. LVB held none of them in the month they left; it held XOMA only, two months before its exit.
+- **The pinned-price exclusion worked as designed.** It removed takeover targets trading at a fixed deal price, including RGLS, VIGL, SCPH, CDTX, RAPT and DVAX in 2026-01.
+- **Limits.** The test does not reach 2020–24, where §4d puts most of the small-cap exposure, and it does not reach the 2022 biotech drawdown. It strengthens the plausibility argument above, but it is not the full rebuild, and the treatment of LVB's alpha as unproven stands.
 
-Script: `delist2/partial_survivorship.py` (2026-11-18 scratchpad).
+Script: `delist2/partial_survivorship_v2.py` (data and scripts in `~/data/lvb_research_2026_11/`).
 
 ### 4e. Calculation check (2026-11-17)
 
@@ -153,7 +160,7 @@ Script: `delist2/partial_survivorship.py` (2026-11-18 scratchpad).
 - **Dividends:** both sources are split-adjusted only, so LVB's returns exclude dividends. Comparisons with XBI (§4, also price-only) are like for like; the §4c regressions on total-return ETFs understate LVB's alpha against SPY/XLV slightly (roughly 0.1 pt/month), which does not change the conclusions.
 - These checks cover the arithmetic and the price inputs, not survivorship: Stooq, like the store, holds only names still listed (§4d).
 
-Scripts: `lvb_verify.py`, `lvb_prodbaskets.py`, `stooq_check.py`, `stooq_impact.py` (2026-11-17 scratchpad).
+Scripts: `lvb_verify.py`, `lvb_prodbaskets.py`, `stooq_check.py`, `stooq_impact.py` (`~/data/lvb_research_2026_11/scripts/`).
 
 **Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending; LVB's alpha sits in the small-cap names most exposed to it, §4d); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and LVB shadows started 2026-11-16/17); alpha against XBI overstates the sleeve's edge (§4c).
 
