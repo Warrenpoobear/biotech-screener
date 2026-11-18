@@ -7,7 +7,7 @@
 
 After correcting the price source and the survivorship gap, LVB on the full eligible universe returned **17.6% a year** over 82 months, with Sharpe **1.12**, maximum drawdown **−17.8%** and CAPM alpha against XBI of **+1.08 pt/month (t 2.66)**. XBI returned 9.8% a year, with Sharpe 0.49 and maximum drawdown −57%.
 
-The proposal memo's +1.40 pt/month (§4, t 3.42) overstates the edge by about a quarter. Against SPY + XLV the alpha is about **+0.6 pt/month (t 1.8)** even before the survivorship correction. Most of LVB's advantage over XBI is owning large, steady healthcare names, not stock selection.
+The proposal memo's +1.40 pt/month (§4, t 3.42) overstates the edge by about a quarter. Against large-cap healthcare alone (XLV) the alpha is **+0.66 pt/month (t 2.09)** even before the survivorship correction. Most of LVB's advantage over XBI is owning large, steady healthcare names, not stock selection.
 
 ## Definition
 
@@ -80,9 +80,6 @@ Full universe, monthly. The Sharadar column uses Sharadar on both sides of each 
 | XBI | +1.38 (3.36) | +1.22 (3.00) | 0.34 |
 | SPY | +0.90 (2.06) | +0.75 (1.73) | 0.55 |
 | XLV | +0.81 (2.56) | +0.66 (2.09) | 0.81 |
-| SPY + XLV | +0.72 (2.25) | +0.58 (1.80) | 0.11 SPY, 0.75 XLV |
-| SPY + XLV + IWM + XBI | +0.83 (2.76) | +0.68 (2.26) | — |
-| SPY + XLV, 2024–26 only | +1.31 (3.04) | +1.04 (2.40) | — |
 
 Alpha in pt/month, t in brackets. XLV explains about 62% of LVB's monthly variation; XBI explains about a third.
 
