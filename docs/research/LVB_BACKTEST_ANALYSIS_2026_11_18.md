@@ -1,13 +1,13 @@
 # LVB sleeve backtest analysis (2026-11-18)
 
-**Classification:** `RESEARCH_RECORD / NO_MODEL_CHANGE` (Tier 2). In-sample, pseudo-PIT history. Not evidence for a production change; the 50/50 Top-30 + LVB proposal (`docs/governance/2026-11-17-proposal-5050-top30-lvb-sleeve.md`, branch `governance/proposal-5050-volbeta`) remains a Tier 4 decision.
+**Classification:** `RESEARCH_RECORD / NO_MODEL_CHANGE` (Tier 2). In-sample, pseudo-PIT history. Not evidence for a production change; the 50/50 Top-30 + LVB proposal (`docs/governance/2026-11-17-proposal-5050-top30-lvb-sleeve.md`, PROPOSED) remains a Tier 4 decision.
 **Code:** `scripts/research/lvb_universe_backtest.py`, `lvb_factor_alpha.py`, `lvb_sharadar_prices.py`, `lvb_survivorship_check.py` (PR #714).
 
 ## Answer
 
 After correcting the price source and the survivorship gap, LVB on the full eligible universe returned **17.6% a year** over 82 months, with Sharpe **1.12**, maximum drawdown **−17.8%** and CAPM alpha against XBI of **+1.08 pt/month (t 2.66)**. XBI returned 9.8% a year, with Sharpe 0.49 and maximum drawdown −57%.
 
-The proposal memo's +1.40 pt/month (t 3.57) overstated the edge by about a quarter. Against SPY + XLV the alpha is about **+0.6 pt/month (t 1.8)** even before the survivorship correction. Most of LVB's advantage over XBI is owning large, steady healthcare names, not stock selection.
+The proposal memo's +1.40 pt/month (§4, t 3.42) overstates the edge by about a quarter. Against SPY + XLV the alpha is about **+0.6 pt/month (t 1.8)** even before the survivorship correction. Most of LVB's advantage over XBI is owning large, steady healthcare names, not stock selection.
 
 ## Definition
 
@@ -23,14 +23,14 @@ The sleeve is built with the shadow tool's own `tools/low_risk_sleeve_shadow.bui
 
 | Step | Full-universe LVB: annual return | Sharpe | Max drawdown | Alpha vs XBI, pt/month (t) |
 |---|---|---|---|---|
-| Memo (ex-Top-30, production prices) | 21.9% | 1.39 | −11% | +1.40 (3.57) |
+| Proposal memo §4 (full universe, production prices) | 22.0% | 1.35 | −12% | +1.40 (3.42) |
 | Rerun, full universe, production prices | 21.8% | 1.35 | −12.3% | +1.38 (3.36) |
 | Sharadar total-return prices | 19.4% | 1.23 | −12.6% | +1.22 (3.00) |
 | + names delisted since, added back | 17.6% | 1.12 | −17.8% | +1.08 (2.66) |
 
 ### 1. Pool: full universe vs ex-Top-30
 
-**Same within noise.** The paired difference, full minus ex-Top-30, is −0.02 pt/month (t −0.16). The full-universe sleeve holds 2.5 Top-30 names a month on average, and none in 16 of 82 months. The ex-Top-30 rerun reproduces the memo (22.0%, Sharpe 1.37, alpha +1.39) within small price differences.
+**Same within noise.** The paired difference, full minus ex-Top-30, is −0.02 pt/month (t −0.16). The full-universe sleeve holds 2.5 Top-30 names a month on average, and none in 16 of 82 months. The full-universe rerun on production prices reproduces the memo's §4 figures within small price differences; the ex-Top-30 rerun (22.0%, Sharpe 1.37, alpha +1.39) matches the memo's earlier research-method figures (21.9%, 1.39, +1.40).
 
 ### 2. Price source
 
@@ -103,7 +103,7 @@ Full universe, Sharadar prices. Between rebalances the book drifts and pays no c
 ## Limits
 
 - **In-sample.** The measures were chosen on the same period.
-- **Approximate survivorship.** The add-back uses rules modelled on eligibility, not the screen itself.
+- **Approximate survivorship.** The add-back uses rules modelled on eligibility, not the screen itself. The proposal memo's partial check (§4d) calls price ≥ $2 and dollar volume ≥ $1M the production rules; `common/data_quality.py:81-82` says $5 and $500k, which this analysis uses. Which applies to the universe build is open.
 - **Short sample.** 82 months, with the 2020 rally driving the worst relative stretch (−30% against XBI).
 - **Price data.** The three events above; Sharadar `closeadj` misses at least one special dividend.
 - **Not reproducible from git alone.** Sharadar data is licensed and kept local; the scripts re-fetch it with `SHARADAR_API_KEY`.
