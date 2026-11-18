@@ -19,7 +19,7 @@ Together with the yardstick changes this requires (§5, §6), adopted as **one**
 
 1. **The model is effectively one factor.** The selector's IC tracks the coinvest IC almost exactly (correlation 0.94 over 84 months). When the factor reverses the whole book goes with it: August–September 2026 cost the Top-30 −21.9% over three months against XBI −0.8%.
 2. **Stock-selection add-ons do not fix it.** About 27 add-on and alternative signals were tested on 2026-11-15/17 (13F rebuilds, crowding caps, Top-N, 13D/G, Form 4, financings, FDA events, takeovers, exclusivity, momentum, timing rules, and others). None clears the pre-registered bar (t > 3). See the 2026-11-17 research entry in `docs/MODEL_DOCUMENTATION.md`.
-3. **Diversification at the portfolio level does help, in-sample.** A low-risk sleeve is nearly uncorrelated with the Top-30's excess return and roughly halves drawdown while keeping the long-run excess over XBI.
+3. **Diversification at the portfolio level does help, in-sample.** A low-risk sleeve is nearly uncorrelated with the Top-30's excess return and roughly halves drawdown while keeping the long-run excess over XBI. The case is risk reduction, not added alpha: much of the sleeve's alpha against XBI is exposure to large-cap healthcare and the broad market, and against SPY + XLV the 50/50 portfolio's alpha is not significant (§4c).
 4. **The edge of the Top-30 itself is small.** On the v9 history the roster-adjusted range is about +0.3 to +0.7 pt/month against XBI, not significant. Concentrating the whole book on it is the larger risk.
 
 ## 3. Specification
@@ -87,7 +87,27 @@ Each design choice was varied one at a time on the same data and costs, with the
 
 The edge comes from preferring low-volatility, low-beta names at all, not from fine-tuning; further tuning would be fitting noise. Scripts are in the 2026-11-17 session scratchpad (`lowvol_opt.py`, `volbeta_windows.py`, `volbeta_n.py`, `volbeta_weights.py`, `volbeta_capbuckets.py`, `volbeta_freq.py`, `volbeta_sectorcap.py`, `volbeta_buffer.py`, `volbeta_stops.py`, `sleeve_vs_mix.py`).
 
-**Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and `vol_beta` shadows started 2026-11-16/17).
+### 4c. Alpha against broader benchmarks (2026-11-17)
+
+XBI is equal-weighted small and mid-cap biotech. The sleeve holds mostly large, commercial drug makers, so alpha measured against XBI alone overstates it. Same 82 months, monthly net returns, regressed on ETF total returns (SPY, XLV, IWM, XBI; yfinance adjusted closes, research copy only):
+
+| Portfolio | vs XBI | vs SPY (beta) | vs XLV (beta; R²) | vs SPY + XLV | vs SPY + XLV + IWM + XBI | 2024–26 vs SPY + XLV |
+|---|---|---|---|---|---|---|
+| Top-30 | +0.72 (t 1.43) | +0.41 (t 0.45; 0.91) | +0.65 (t 0.74; 0.99; 0.24) | +0.25 (t 0.29) | +0.65 (t 1.21) | +0.64 (t 0.45) |
+| Vol–beta sleeve | +1.39 (t 3.51) | +0.91 (t 2.16; 0.57) | +0.85 (t 2.72; 0.79; 0.61) | +0.74 (t 2.34) | +0.86 (t 3.02) | +1.29 (t 2.89) |
+| 70/30 Top-30 + sleeve | +0.92 (t 2.36) | +0.57 (t 0.80; 0.81) | +0.72 (t 1.08; 0.93; 0.33) | +0.40 (t 0.61) | +0.72 (t 1.81) | +0.84 (t 0.83) |
+| **50/50 (proposed)** | **+1.06 (t 3.05)** | **+0.67 (t 1.15; 0.74)** | **+0.76 (t 1.45; 0.89; 0.42)** | **+0.50 (t 0.97)** | **+0.76 (t 2.38)** | **+0.97 (t 1.26)** |
+
+Alpha in pt/month (t).
+
+- The sleeve behaves largely like a healthcare-sector portfolio: XLV explains 61% of its monthly variation, XBI 35%. Its beta to SPY is 0.57.
+- After healthcare and the market are accounted for, the sleeve keeps about +0.7 to +0.9 pt/month (t 2.3–3.0): real but smaller and less certain than the XBI figure. Over the period it still beat every ETF on risk-adjusted terms (Sharpe 1.39 vs SPY 1.17, XLV 0.91; max drawdown −11% vs SPY −24%, XLV −16%).
+- **The 50/50 portfolio's +1.06 (t 3.05) against XBI falls to +0.50 (t 0.97) against SPY + XLV.** Its benefit over the Top-30 alone is lower risk (drawdown −25% vs −50%, Sharpe 1.03 vs 0.70), not demonstrated stock-selection alpha. This memo should be read as a risk proposal.
+- Building the sleeve on beta to SPY instead of XBI is slightly worse on every measure (−0.15 pt/month, t −0.8); beta to XBI stays.
+
+Script: `volbeta_spy.py`, `mix_factors.py` (2026-11-17 scratchpad).
+
+**Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and `vol_beta` shadows started 2026-11-16/17); alpha against XBI overstates the sleeve's edge (§4c).
 
 ## 5. Account Rule 4 must change with it
 
@@ -106,7 +126,7 @@ Options (operator to choose one):
 `docs/FORWARD_VALIDATION_PROTOCOL.md` §2 tests mean weekly excess of the DEM Top-30 over XBI. Proposed amendments (same structure, new primary statistic):
 
 - **Primary:** CAPM alpha of the 50/50 portfolio against XBI on non-overlapping weekly windows (H₀: alpha ≤ 0).
-- **Secondary:** Sharpe of the 50/50 portfolio vs the Top-30 alone (the existing shadow keeps tracking the Top-30), and mean excess over XBI (reported, not gated).
+- **Secondary:** Sharpe of the 50/50 portfolio vs the Top-30 alone (the existing shadow keeps tracking the Top-30), mean excess over XBI, and alpha against SPY + XLV (§4c) — all reported, not gated. The SPY + XLV reading is the check that the result is more than healthcare-sector exposure.
 - **Fail / rollback:** keep the §4 structure — fail if alpha < 0 with t ≤ −1.65 at 20, 40 or 60 windows; roll back to Top-30-only if the 50/50 trails the Top-30 on a paired basis with t ≤ −1.65 after 20 windows.
 - `CANDIDATE.json` gains the sleeve definition and a candidate hash that covers it (the current hash covers the selector files only; see `governance/HASH_ROTATIONS.md`).
 
@@ -121,7 +141,8 @@ Options (operator to choose one):
 2. `production_data/AGENTIC_ACCOUNT_RULES.md`: Rule 2 (rebalance to the target portfolio), Rule 4 (chosen option).
 3. Rebalance skill (`biotech-rebalance`) reads `target_portfolio.csv` instead of the Top-30.
 4. `FORWARD_VALIDATION_PROTOCOL.md` §2/§4 amendments; capture and evaluator handle the 50/50 basket; `CANDIDATE.json` and hash rotation entry.
-5. `docs/MODEL_DOCUMENTATION.md` entry; `.claude/rules/operational-state.md` governance event.
+5. Add SPY and XLV to the daily price refresh so the §6 SPY + XLV reading (and the sleeve shadows) can use production prices.
+6. `docs/MODEL_DOCUMENTATION.md` entry; `.claude/rules/operational-state.md` governance event.
 
 **Scaling note (not part of this proposal).** At today's size (~$1M) the sleeve trades without a rank buffer: a buffer saves only ~0.03 pt/month in costs, its return gain is not significant, and it lets names that have drifted out of the low-risk set stay in the book (drawdown −16% vs −11%). If the account grows past roughly $20–50M, where costs are about three times higher, revisit a rank-40 buffer for both halves (it also cuts Top-30 turnover) as a separate proposal with its own evidence.
 
