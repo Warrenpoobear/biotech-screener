@@ -108,7 +108,29 @@ Alpha in pt/month (t).
 
 Script: `volbeta_spy.py`, `mix_factors.py` (2026-11-17 scratchpad).
 
-**Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and LVB shadows started 2026-11-16/17); alpha against XBI overstates the sleeve's edge (§4c).
+### 4d. Survivorship check on LVB (indirect, 2026-11-17)
+
+The v9 history holds only names still listed in 2025–26; no delisted-stock prices are available until the Sharadar account is unlocked (the 2026-11-15 delisted-price pull was not kept). A direct test is not possible yet. Indirect check: LVB rebuilt within a minimum market cap (point-in-time `market_cap_mm`, re-ranked within the pool), where delisting is mostly by takeover rather than failure. Same 82 months and costs:
+
+| LVB universe | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) | Alpha vs SPY + XLV (t) | Picks under $2B |
+|---|---|---|---|---|---|---|
+| All caps (specification) | 22.0% | 1.35 | −12% | +1.40 (3.4) | +0.73 (2.3) | 22% |
+| ≥ $1B | 14.7% | 0.95 | −14% | +0.83 (2.2) | +0.18 (0.6) | 11% |
+| ≥ $2B | 16.1% | 1.01 | −15% | +0.91 (2.4) | +0.21 (0.7) | 0% |
+| ≥ $5B | 12.2% | 0.84 | −22% | +0.61 (1.9) | +0.04 (0.1) | 0% |
+| ≥ $10B | 5.5% | 0.44 | −34% | +0.12 (0.4) | −0.36 (−1.1) | 0% |
+
+(Full-universe LVB, as in the `lvb_full` shadow; the ex-Top-30 sleeve behaves the same, §4b.)
+
+- **LVB's alpha comes mostly from its small-cap picks** (about 22% of names). Without them, alpha against SPY + XLV is about +0.2 pt/month and not significant.
+- **Those are the names most exposed to survivorship bias:** a small biotech that failed and delisted is missing, so the small low-volatility names in the history are survivors by construction.
+- **Mitigating:** failing biotechs usually become volatile before delisting and would tend to drop out of LVB first; for missing names making up 10% of the sleeve to erase the SPY + XLV alpha they would have to trail by about 7 pt/month (−60% a year). This is a plausibility argument, not a measurement.
+- **What survives:** the drawdown reduction. Even large-cap-only LVB has far shallower drawdowns than XBI (−15% to −22% for ≥ $2B–5B vs −57%).
+- **Consequence for this proposal:** LVB's alpha is treated as unproven until the delisted rebuild (about 400 names, prices, point-in-time financials, 13F CUSIPs, IPO dates; rerun of 85 dates). The case for adoption rests on risk reduction (§2, §4c). If the operator prefers, decision 1 can wait for that rebuild.
+
+Script: `lvb_survivorship.py` (2026-11-17 scratchpad).
+
+**Limits.** In-sample; the history keeps only names that survived to 2025 (survivorship rebuild pending; LVB's alpha sits in the small-cap names most exposed to it, §4d); the sleeve definition was informed by data covering the same period; the 13F roster carries hindsight; 82 months is a short sample; no forward evidence yet (the PR #697 and LVB shadows started 2026-11-16/17); alpha against XBI overstates the sleeve's edge (§4c).
 
 ## 5. Account Rule 4 must change with it
 
