@@ -49,6 +49,10 @@ DROP_THRESHOLD = -0.75  # -75% single-day → forward split
 # days (vendor and registry dates can differ by a day or two).
 CONFIRM_WINDOW_DAYS = 5
 
+# A registry split below the gap thresholds is applied only when a one-day move
+# in the window matches its factor within this relative tolerance.
+REGISTRY_FACTOR_TOLERANCE = 0.15
+
 # Quantization for output prices (6 decimal places)
 PRICE_QUANT = Decimal("0.000001")
 
@@ -122,6 +126,62 @@ def filter_confirmed_splits(
             ok = any(abs((rd - e["date"]).days) <= window_days for rd in reg_dates)
             (confirmed if ok else unconfirmed).setdefault(ticker, []).append(e)
     return confirmed, unconfirmed
+
+
+def find_registry_splits_below_threshold(
+    prices: Dict[str, Dict[date, Decimal]],
+    registry: Any,
+    confirmed: Dict[str, List[Dict[str, Any]]],
+    window_days: int = CONFIRM_WINDOW_DAYS,
+    tolerance: float = REGISTRY_FACTOR_TOLERANCE,
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Registry splits too small for the gap detector (e.g. an ADR ratio change).
+
+    ``detect_splits`` only sees one-day moves beyond +300% / -75%, so a 2:1
+    ratio change (AZN 2026-01-28, +96%) never reached the registry check. For a
+    registry split with a ``factor`` and no confirmed event within
+    ``window_days``, the one-day move within that window whose ratio is closest
+    to the factor is applied, but only if it is within ``tolerance`` (relative)
+    of it. A registry entry alone never adjusts a series that shows no matching
+    move, so an already-adjusted source is not adjusted twice.
+    """
+    from common.corporate_actions import get_splits_only
+
+    found: Dict[str, List[Dict[str, Any]]] = {}
+    for ticker, series in prices.items():
+        actions = get_splits_only(ticker, registry)
+        if not actions:
+            continue
+        have = [e["date"] for e in confirmed.get(ticker, [])]
+        days = sorted(series)
+        for a in actions:
+            try:
+                eff = date.fromisoformat(a.effective_date)
+                expected = float(a.factor)
+            except (TypeError, ValueError):
+                continue
+            if expected <= 0 or any(abs((d - eff).days) <= window_days for d in have):
+                continue
+            best = None
+            for prev_d, d in zip(days, days[1:]):
+                if abs((d - eff).days) > window_days or series[prev_d] <= 0:
+                    continue
+                ratio = series[d] / series[prev_d]
+                err = abs(float(ratio) / expected - 1.0)
+                if err <= tolerance and (best is None or err < best[0]):
+                    best = (err, d, ratio)
+            if best is None:
+                continue
+            _, d, ratio = best
+            found.setdefault(ticker, []).append(
+                {
+                    "date": d,
+                    "factor": ratio,
+                    "pct_change": round(float(ratio) - 1.0, 6),
+                    "flag_type": ("reverse_split" if ratio > 1 else "forward_split") + "_registry_small",
+                }
+            )
+    return found
 
 
 def compute_adjusted_prices(
@@ -286,6 +346,8 @@ def repair_price_history(
             raise FileNotFoundError(registry_path)
         registry = load_actions(Path(registry_path))
         splits, unconfirmed = filter_confirmed_splits(detected, registry)
+        for ticker, events in find_registry_splits_below_threshold(prices, registry, splits).items():
+            splits[ticker] = sorted(splits.get(ticker, []) + events, key=lambda e: e["date"])
         mode = "registry_confirmed"
     except Exception as exc:
         # A gap is not evidence of a split. EYPT and ABOS crashes were
