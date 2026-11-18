@@ -16,6 +16,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 
 import numpy as np
@@ -46,17 +47,37 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--backtest", required=True)
     ap.add_argument("--variants", default="ex_top30,full")
+    ap.add_argument(
+        "--etf-prices",
+        default=None,
+        help="ticker,date,close CSV (e.g. Sharadar closeadj from lvb_sharadar_prices.py); default: yfinance",
+    )
     args = ap.parse_args()
 
     monthly = json.load(open(args.backtest, encoding="utf-8"))["monthly"]
     first = min(r["d0"] for rows in monthly.values() for r in rows)
     last = max(r["d1"] for rows in monthly.values() for r in rows)
-    end = np.datetime64(last) + np.timedelta64(5, "D")
-    px = yf.download(ETFS, start=first[:8] + "01", end=str(end), auto_adjust=True, progress=False)["Close"]
 
-    def ret(t, a, b):
-        s = px[t]
-        return float(s[:b].iloc[-1] / s[:a].iloc[-1] - 1)
+    if args.etf_prices:
+        series = {t: {} for t in ETFS}
+        with open(args.etf_prices, encoding="utf-8", newline="") as fh:
+            for row in csv.DictReader(fh):
+                if row["ticker"] in series:
+                    series[row["ticker"]][row["date"]] = float(row["close"])
+
+        def ret(t, a, b):
+            s = series[t]
+            pa = s[max(d for d in s if d <= a)]
+            pb = s[max(d for d in s if d <= b)]
+            return pb / pa - 1
+
+    else:
+        end = np.datetime64(last) + np.timedelta64(5, "D")
+        px = yf.download(ETFS, start=first[:8] + "01", end=str(end), auto_adjust=True, progress=False)["Close"]
+
+        def ret(t, a, b):
+            s = px[t]
+            return float(s[:b].iloc[-1] / s[:a].iloc[-1] - 1)
 
     out = {}
     for v in args.variants.split(","):
