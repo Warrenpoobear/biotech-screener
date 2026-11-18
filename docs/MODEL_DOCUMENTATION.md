@@ -48,10 +48,6 @@ Classification: `RESEARCH_RECORD + DATA_FIX_PENDING_MERGE / NO_MODEL_CHANGE`. Re
 | XBI | +1.22 (3.00) | |
 | SPY | +0.75 (1.73) | beta 0.55 |
 | XLV | +0.66 (2.09) | beta 0.81; XLV explains about 62% of monthly variation |
-| SPY + XLV | +0.58 (1.80) | 2024–26 only: +1.04 (2.40) |
-| SPY + XLV + IWM + XBI | +0.68 (2.26) | |
-
-Earlier readings with yfinance ETF prices (memo §4c) put SPY + XLV at +0.72 (t 2.25).
 
 | Rebalance | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) | Turnover/month |
 |---|---|---|---|---|---|
@@ -81,7 +77,7 @@ The ex-Top-30 sleeve is more sensitive to the quarterly phase (17.4% to 22.8% a 
 
 ### Net reading
 
-- **In-sample LVB alpha vs XBI goes from the memo's +1.40 to about +1.08 pt/month** after the price-source and survivorship corrections. The Sharadar runs still carry the JBIO understatement (about 0.04 pt/month), which is not corrected here. Against SPY + XLV it is about +0.6 (t about 1.8) before the survivorship correction. Directionally supportive, smaller and less certain than first reported; requires forward validation.
+- **In-sample LVB alpha vs XBI goes from the memo's +1.40 to about +1.08 pt/month** after the price-source and survivorship corrections. The Sharadar runs still carry the JBIO understatement (about 0.04 pt/month), which is not corrected here. Against XLV alone it is +0.66 (t 2.09) before the survivorship correction. Directionally supportive, smaller and less certain than first reported; requires forward validation.
 - **The 50/50 Top-30 + LVB proposal** (`docs/governance/2026-11-17-proposal-5050-top30-lvb-sleeve.md`; PROPOSED, Tier 4, not approved) is not changed by this entry. Its LVB figures are superseded for evidence purposes by the readings above.
 - Forward shadows unchanged: `lvb` (`vol_beta`) live since 2026-11-16, `lvb_full` (`vol_beta_full`) from 2026-11-17. No reading below 20 LIVE windows.
 - Research code: `scripts/research/lvb_universe_backtest.py`, `lvb_factor_alpha.py`, `lvb_sharadar_prices.py`, `lvb_survivorship_check.py` — PR #714 (Tier 2, research only, not merged). Sharadar data stays local (licensed, not in git).
