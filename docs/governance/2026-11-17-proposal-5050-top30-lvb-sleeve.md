@@ -108,7 +108,7 @@ Alpha in pt/month (t).
 
 Script: `volbeta_spy.py`, `mix_factors.py` (2026-11-17 scratchpad).
 
-### 4d. Survivorship check on LVB (indirect, 2026-11-17)
+### 4d. Survivorship check on LVB (indirect 2026-11-17; partial direct 2026-11-18)
 
 The v9 history holds only names still listed in 2025–26; no delisted-stock prices are available until the Sharadar account is unlocked (the 2026-11-15 delisted-price pull was not kept). A direct test is not possible yet. Indirect check: LVB rebuilt within a minimum market cap (point-in-time `market_cap_mm`, re-ranked within the pool), where delisting is mostly by takeover rather than failure. Same 82 months and costs:
 
@@ -129,6 +129,19 @@ The v9 history holds only names still listed in 2025–26; no delisted-stock pri
 - **Consequence for this proposal:** LVB's alpha is treated as unproven until the delisted rebuild (about 400 names, prices, point-in-time financials, 13F CUSIPs, IPO dates; rerun of 85 dates). The case for adoption rests on risk reduction (§2, §4c). If the operator prefers, decision 1 can wait for that rebuild.
 
 Script: `lvb_survivorship.py` (2026-11-17 scratchpad).
+
+**Partial direct check (2026-11-18, last 20 months only).** Delisted-name prices came from Massive (Polygon) grouped daily bars, 2024-11-19 to 2026-11-17; Massive holds only about 2 years on the current plan. Candidates were 13F-held common stocks absent from the price store that stopped trading at least 10 days before the window's end. Each was kept only if its Massive price matched the 13F implied price within 15%, and was screened to healthcare SIC via EDGAR. Thirteen names qualified (SYRS, RGLS, VIGL, CRGX, HLVX, SCPH, TRML, CDTX, RPTX, APLT, DVAX, RAPT, LYRA). They were added to the eligible universe under the production rules (price ≥ $2, 20-day median dollar volume ≥ $1M). Full-universe LVB was rerun over the 20 v9 month-ends from 2025-05-30 to 2026-10-30:
+
+| Universe | Cumulative | Mean pt/month | Alpha vs XBI | Beta |
+|---|---|---|---|---|
+| Survivors only | +67.6% | 2.69 | 1.95 | 0.23 |
+| With delisted names (exits at −30% or −100%) | +66.4% | 2.65 | 1.92 | 0.22 |
+
+- **Difference −0.04 pt/month (t −1.6), the same under every exit assumption.** LVB held a delisted name in only 3 of 20 months, one at a time: DVAX (2025-05) and CRGX (2025-06, 2025-07, a wind-down trading near cash). Neither exited while held.
+- **The pinned-price exclusion worked as designed.** It removed takeover targets trading at a fixed deal price (RGLS, VIGL, SCPH, CDTX, RAPT, and DVAX in 2026-01).
+- **Limits.** This covers 13 of about 150 pharma/biotech delistings EDGAR shows for the window (Form 25-NSE); the rest did not map from 13F CUSIPs or could not be price-validated. It does not reach 2020–24. It is consistent with the plausibility argument above, but it is not the full rebuild, and the treatment of LVB's alpha as unproven stands.
+
+Script: `delist2/partial_survivorship.py` (2026-11-18 scratchpad).
 
 ### 4e. Calculation check (2026-11-17)
 
