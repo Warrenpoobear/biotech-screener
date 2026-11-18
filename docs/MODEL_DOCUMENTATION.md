@@ -1,10 +1,10 @@
 # Wake Robin DEM — Model Documentation
 
 **Version:** 1.7.2 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
-**Last updated:** 2026-11-17 (out-of-sample clock start recorded at 2026-11-17, PR #701; `snapshots_pit_v9` history rebuild written into `data/snapshots`, PR #698; research record — v9 backtests, roster range, portfolio construction and a 20-signal screen, **no model change**; ops fixes PRs #699, #700, #702. See the 2026-11-17 entries below)
-**Update before that:** 2026-11-15 (weekend of governance and research work; **no change to scoring, selection, order, sizing or eligibility except the operator-requested `de_vol_60d` input fix, PR #676, which lands before `oos_clock_start`**. Selector-only clock not yet started: dated drift override, `ast-v2` candidate hash `a9a430154568e242`, `ranker_mode` capture check, account Rule 4 at −10/−15 pp, protocol §4 fail and rollback rules. Low-risk sleeve shadow (PR #674, capture-only). Research history `data/snapshots_pit_v6` = v5 inputs + current code; backtests unchanged. Weekend signal research recorded as context only. See the 2026-11-15 entries below)
-**Prior update:** 2026-11-12/13 (missing-field fixes PR #614 + #636 with a clock reset; Sharadar price source PR #622 without a memo; market-cap look-ahead found in regenerated history and backtest claims deprecated, PR #660; production order switched to selector-only, PR #665. See the 2026-11-12 and 2026-11-13 entries)
-**Earlier update:** 2026-11-01 (coinvest 13F integrity fix + operator roster change; selector-input change with a clock reset. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`)
+**Last updated:** 2026-11-18 (LVB sleeve backtest corrections — price source, survivorship, broader benchmarks, quarterly rebalance; in-sample research record, **no model change**. AZN split-adjusted price fix, PR #712, merged 2026-11-18; operator ruling: data correction, no clock reset. See the 2026-11-18 entry below)
+**Update before that:** 2026-11-17 (out-of-sample clock start recorded at 2026-11-17, PR #701; `snapshots_pit_v9` history rebuild written into `data/snapshots`, PR #698; research record — v9 backtests, roster range, portfolio construction and a 20-signal screen, **no model change**; ops fixes PRs #699, #700, #702. See the 2026-11-17 entries below)
+**Prior update:** 2026-11-15 (weekend of governance and research work; **no change to scoring, selection, order, sizing or eligibility except the operator-requested `de_vol_60d` input fix, PR #676, which lands before `oos_clock_start`**. Selector-only clock not yet started: dated drift override, `ast-v2` candidate hash `a9a430154568e242`, `ranker_mode` capture check, account Rule 4 at −10/−15 pp, protocol §4 fail and rollback rules. Low-risk sleeve shadow (PR #674, capture-only). Research history `data/snapshots_pit_v6` = v5 inputs + current code; backtests unchanged. Weekend signal research recorded as context only. See the 2026-11-15 entries below)
+**Earlier updates:** 2026-11-12/13 (missing-field fixes PR #614 + #636 with a clock reset; Sharadar price source PR #622 without a memo; market-cap look-ahead found in regenerated history and backtest claims deprecated, PR #660; production order switched to selector-only, PR #665. See the 2026-11-12 and 2026-11-13 entries). 2026-11-01 (coinvest 13F integrity fix + operator roster change; selector-input change with a clock reset. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`)
 **Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + **selector-only order** (`--ranker-mode selector_only`, operator decision 2026-11-13; the pairwise `minimal_v2` ranker is scored as a shadow and no longer orders the portfolio) + EW Top-30. Takes effect with the first production run on the merged code; out-of-sample clock resets. See the 2026-11-13 entry below and `docs/governance/2026-11-13-selector-only-production-switch.md`. *(Status before 2026-11-13: Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature: `coinvest_score_z` + `financial_score`; ordinal-only; does **not** read `inst_delta_z`) + EW Top-30. **FROZEN** until governance gates clear.)*
 **Coinvest input (from 2026-11-02 production run):** Q2 2026 13F (`period_of_report=2026-06-30`, file as_of 2026-10-30), 30-manager `elite_core` roster (registry v4.0) + unchanged 6-manager `conditional` tier. Forward-validation clock: `oos_clock_start` = **2026-11-17** (first promoted run on the PR #696 code; recorded in `CANDIDATE.json` by PR #701; mandate SM-20260629-001 at 0/20). Superseded starts: 2026-11-02, 2026-11-12, 2026-11-16. Q3 2026 13F holdings are in coinvest from the 2026-11-17 run (PRs #690/#692).
 Deployed ranker artifact = **capped Family C live-pilot vector**, not identical to the trained `minimal_v2`
@@ -14,6 +14,105 @@ weights. See `production_data/ranker_v2_model.json` → `provenance` block for t
 stale selector/ranker prose with the already-active v1.14.0 configuration. The
 selector, ranker_v2 weights, eligibility rules, decision rulesets, and EW Top-30
 construction remain frozen; this document does not authorize behavior changes.
+
+---
+
+## Recent Update — 2026-11-18 (LVB Sleeve Backtest Corrections; AZN Split-Adjusted Price Fix — No Model Change)
+
+Classification: `RESEARCH_RECORD + DATA_CORRECTION / NO_MODEL_CHANGE`. Recorded at operator request. In-sample research only; none of it is out-of-sample evidence, and nothing here changes scoring, order, size, eligibility or the portfolio.
+
+**Setup for every figure below:** `data/snapshots_pit_v9`, 2020-03-31 → 2026-11-16, 82 monthly periods, net of 50 bp × one-way turnover. LVB = the 30 lowest-risk eligible names by mean percentile rank of `vol_60d` and `beta_120d` to XBI, equal weight, names with 20-day volatility below 10% excluded; built with `tools/low_risk_sleeve_shadow.py::build_sleeve`. Alpha is CAPM alpha in pt/month (t).
+
+### 1. Full universe vs ex-Top-30, and the price source
+
+| LVB variant | Prices | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) |
+|---|---|---|---|---|---|
+| Full universe (`lvb_full` / `vol_beta_full`) | production split-adjusted | 21.8% | 1.35 | −12.3% | +1.38 (3.36) |
+| Ex-Top-30 (`lvb` / `vol_beta`) | production split-adjusted | 22.0% | 1.37 | −11.9% | +1.39 (3.46) |
+| Full universe | Sharadar `closeadj` | 19.4% | 1.23 | −12.6% | +1.22 (3.00) |
+| Ex-Top-30 | Sharadar `closeadj` | 20.8% | not reported | not reported | +1.31 (3.38) |
+| XBI | either | 9.8% | | | |
+
+- **Full and ex-Top-30 are the same within noise:** paired full minus ex-Top-30 −0.02 pt/month (t −0.16). The full-universe sleeve holds 2.5 Top-30 names a month on average (none in 16 of 82 months).
+- The production-price runs reproduce the 50/50 proposal memo's LVB figures within small price-data differences (memo §4 full universe 22.0%, Sharpe 1.35, +1.40; §4e research method 21.9%, 1.39, +1.40).
+- Sharadar `closeadj` is total return (SEP for stocks, SFP for ETFs). The production-file figures are higher mainly because of three events:
+  - **AZN 2026-01-28:** the ADR ratio change is recorded as a +96% one-day gain in `price_history_split_adj.csv`, adding about +3.4 pt to the sleeve that month. **A production data defect;** fixed in PR #712 (section 4 below).
+  - **JBIO 2025-04-29 (Aerovate → Jade), resolved from Sharadar ACTIONS:** AVTE paid a $2.40 special cash dividend on a $2.68 stock, did a 1:35 reverse split and became JBIO. 35 old shares ($93.80 adjusted) received $84.00 cash plus one new share at $10.14, about 98% of value, so the true return is about 0. The production split-adjusted file shows about 0%: its registry entry ("forward_split 9:1, factor 0.108") is mislabelled but its factor equals 10.14/93.80. Sharadar `closeadj` misses the dividend and books −87%, so **the Sharadar LVB runs are understated** by about 2.9 pt in April 2025 (about 0.04 pt/month over 82 months).
+  - **LENZ March 2024 (Graphite merger):** +98% in the production file vs +36% in Sharadar for the month.
+- Sharadar lacks SUPN for 2021–2022 (the older history sits under SUPN1).
+
+### 2. Broader benchmarks and rebalance frequency (Sharadar on both sides, full universe)
+
+| Benchmark | Alpha/month (t) | Note |
+|---|---|---|
+| XBI | +1.22 (3.00) | |
+| SPY | +0.75 (1.73) | beta 0.55 |
+| XLV | +0.66 (2.09) | beta 0.81; XLV explains about 62% of monthly variation |
+
+| Rebalance | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) | Turnover/month |
+|---|---|---|---|---|---|
+| Monthly | 19.4% | 1.23 | −12.6% | +1.22 (3.00) | 16.5% |
+| Quarterly, Mar/Jun/Sep/Dec | 19.5% | 1.20 | −14.3% | +1.20 (2.92) | 10.0% |
+| Quarterly, Jan/Apr/Jul/Oct | 18.5% | 1.20 | −11.9% | +1.13 (2.94) | 10.3% |
+| Quarterly, Feb/May/Aug/Nov | 19.2% | 1.22 | −13.3% | +1.19 (2.98) | 9.5% |
+
+The ex-Top-30 sleeve is more sensitive to the quarterly phase (17.4% to 22.8% a year, alpha +1.06 to +1.43).
+
+### 3. Survivorship check (Sharadar, LVB only)
+
+- Sharadar lists 1,076 SIC 2834–2836 common stocks that traded at a quarter-end since March 2020; v9 holds 290; 402 of the missing are delisted.
+- Each month, names missing from `rankings.csv` were added back if they passed production-like eligibility: Sharadar point-in-time market cap ≥ the smallest eligible name that day; price ≥ $5 and 20-day median dollar volume ≥ $500k (`common/data_quality.py`); not past the deep-drawdown gate (252-day drawdown < −40% and more than 25 pt worse than XBI, ruleset `drawdown_gate` / `drawdown_rel_xbi_gate`). Renamed tickers SUPN1, BHVN1 and INBX1 were matched to universe names. **The fundamental red-flag and missing-financials gates were not replicated.**
+
+| Full-universe LVB | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) | Excess vs XBI/month |
+|---|---|---|---|---|---|
+| Survivors only | 19.9% | 1.25 | −12.2% | +1.26 (3.05) | +0.55 |
+| + delisted names | 17.6% | 1.12 | −17.8% | +1.08 (2.66) | +0.39 |
+| + every missing name | 12.2% | 0.93 | −15.8% | +0.79 (2.03) | −0.02 |
+
+- With delisted names, about 58 added names pass per month and LVB holds 3.5 of them on average (most held: Taro, Seagen, Theravance, Abcam, Eagle, Horizon, Dynavax, Catalent, Intra-Cellular, Alexion). Paired difference −0.16 pt/month (t −1.54).
+- Ex-Top-30: alpha +1.29 → +1.12 (t 2.70); maximum drawdown −12% → −20%.
+- "Every missing name" adds mostly still-listed large pharma. That is a universe-scope question, not survivorship.
+- The survivors-only base is 19.9% rather than 19.4% because this script keeps Sharadar dividend-adjusted prices for names such as ABBV where the plain Sharadar run fell back to the split file.
+- This adds back returns for the sleeve only. It is not the v9 survivorship rebuild (coinvest, financials and the Top-30 are not re-run), which remains pending.
+
+### 3b. 50/50 Top-30 + LVB, recomputed on corrected data
+
+Same 82 months, monthly rebalance to 50/50, Sharadar total-return prices for both halves, LVB from the survivorship-corrected pool (`scripts/research/lvb_5050_mix.py`, PR #714):
+
+| Portfolio | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) | Mean excess vs XBI (t) |
+|---|---|---|---|---|---|
+| Top-30 alone | 18.7% | 0.71 | −49.7% | +0.74 (1.46) | +0.75 (1.50) |
+| 50/50, memo inputs (production prices) | 21.1% | 1.02 | −26.1% | +1.06 (2.97) | +0.71 (1.61) |
+| **50/50, corrected** | **19.0%** | **0.94** | **−27.9%** | **+0.91 (2.58)** | **+0.57 (1.30)** |
+| S&P 500 (SPY) | 18.2% | 1.17 | −23.9% | +1.17 (2.76) | +0.44 (0.61) |
+
+- The mix still halves the Top-30's volatility and drawdown and cuts 12-month periods behind XBI from 28% to 18% (halves' excess correlation 0.10).
+- It trails the Top-30 alone by 0.18 pt/month (t −0.44): the memo's "same excess as the Top-30" does not hold on corrected data, though the gap is not significant.
+- Over this period it trails the S&P 500 on Sharpe (0.94 vs 1.17); alpha vs SPY alone +0.52 (t 0.87), vs XLV alone +0.60 (t 1.14).
+- Only the LVB half is survivorship-corrected; the Top-30 half is still survivor-only.
+
+### Net reading
+
+- **In-sample LVB alpha vs XBI goes from the memo's +1.40 to about +1.08 pt/month** after the price-source and survivorship corrections. The Sharadar runs still carry the JBIO understatement (about 0.04 pt/month), which is not corrected here. Against XLV alone it is +0.66 (t 2.09) before the survivorship correction. Directionally supportive, smaller and less certain than first reported; requires forward validation.
+- **The 50/50 Top-30 + LVB proposal** (`docs/governance/2026-11-17-proposal-5050-top30-lvb-sleeve.md`; PROPOSED, Tier 4, not approved) is not changed by this entry. Its LVB and 50/50 figures are superseded for evidence purposes by the readings above (corrected 50/50: 19.0%/yr, Sharpe 0.94, alpha vs XBI +0.91, t 2.58).
+- Forward shadows unchanged: `lvb` (`vol_beta`) live since 2026-11-16, `lvb_full` (`vol_beta_full`) from 2026-11-17. No reading below 20 LIVE windows.
+- Research code: `scripts/research/lvb_universe_backtest.py`, `lvb_factor_alpha.py`, `lvb_sharadar_prices.py`, `lvb_survivorship_check.py` — PR #714 (Tier 2, research only, not merged). Sharadar data stays local (licensed, not in git).
+
+### 4. AZN split-adjusted price fix (PR #712, Tier 3 input change, merged 2026-11-18, no clock reset)
+
+- `scripts/repair_price_history_splits.py` now applies a registry split whose factor sits inside the +300%/−75% gap thresholds when a one-day move within the 5-day window matches the factor within 15%. `production_data/corporate_actions.json` gains AZN `reverse_split` 1:2 effective 2026-01-28.
+- Regenerating `price_history_split_adj.csv` from the live `price_history.csv` changes only AZN's 1,525 rows before 2026-01-28 (×1.964).
+- **Today's scoring inputs are unchanged.** `run_screen.py` reads raw `price_history.csv` plus the registry for momentum and drawdown; AZN's 252-day drawdown is −0.1299 with and without the entry. The split-adjusted file feeds the Path C drawdown (baseline 2026-05-29) and shadows whose windows start after 2026-01-28.
+- `model_hash` unchanged. **Operator ruling 2026-11-18: data correction, no clock reset;** `oos_clock_start` stays 2026-11-17, mandate SM-20260629-001 continues. Memo: `docs/governance/2026-11-18-azn-adr-ratio-split-fix.md`.
+- Proposed follow-up, not done: replace the mislabelled JBIO registry entry with a $2.40 `special_dividend` plus a 1:35 `reverse_split` on 2025-04-29. The current factor already gives about the right return.
+
+### Governance
+
+- Verdict: `NO_MODEL_CHANGE`. Model frozen; ranker, selector, scoring, eligibility, sizing, production wiring and trading unchanged by this entry.
+- Operator action: decide the 50/50 proposal on the corrected figures. (PR #712: ruled no clock reset, 2026-11-18.)
+- Mirror: both branches (#712, #714) are pushed to WR-SW-Dev. Mirror PRs are not opened because `origin/main` and `WR-SW-Dev/main` have diverged (323/36) and the mirror lacks the code these build on; they follow the main sync.
+- Skill synchronization: `skills/`, `docs/hermes_skills/` and `.claude/skills/` reviewed; none cites LVB figures, so none was updated.
+- Open: the memo §4d partial survivorship check used price ≥ $2 and dollar volume ≥ $1M as "production rules"; this check uses $5 and $500k from `common/data_quality.py`. Not reconciled here.
 
 ---
 

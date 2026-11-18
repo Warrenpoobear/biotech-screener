@@ -399,6 +399,55 @@ branch protection).
 
 ---
 
+## Class P — Production lock detection via leftover lock file, not actual running process
+
+**Signature:** A scheduled production run is skipped with "already running" even though
+no production process is actually executing — a stale lock file from a prior crashed/killed
+run remains on disk and the guard treats its mere presence as proof of a live job.
+
+**Confirmed instance (2026-11-15, commit `35387815`, fix/production-lock-detection):**
+`fix(tools): detect a running production job, not a leftover lock file`. The production
+guard previously checked only for the existence of a lock file path; it did not verify
+the PID inside it corresponded to a live process. A crashed run left the lock file behind,
+causing every subsequent scheduled run to self-skip as "already running" until an operator
+manually removed the stale file.
+
+**Diagnostic recipe:**
+
+```bash
+# 1. Check if a lock file exists and whether its PID is actually alive
+cat logs/.daily_production.lock 2>/dev/null
+ps -p "$(cat logs/.daily_production.lock 2>/dev/null)" 2>/dev/null || echo "LOCK PID NOT RUNNING — stale lock"
+
+# 2. Confirm the guard now checks the process, not just file presence (post-35387815)
+grep -n "lock\|is_running\|psutil\|os.kill" tools/run_daily_production.py | head -10
+```
+
+**Resolution:** Guard must verify the PID inside the lock file is a live process (e.g.
+`os.kill(pid, 0)` or psutil check), not merely that the lock file exists. Stale locks from
+crashed runs should be detected and cleared automatically rather than requiring manual
+`rm`.
+
+**Pattern to catch:** Any "already running" / "job in progress" guard based solely on file
+existence (not PID liveness) will false-positive-lock after any crash, OOM kill, or manual
+`kill -9` of the prior run.
+
+---
+
+### Class O extension — Watchdog trapops recovery gated on snapshot promotion (2026-11-xx)
+
+**Confirmed instance (commit `9c730878`, fix/trapops-watchdog-false-alarm):**
+`fix(watchdog): only recover trapops after today's snapshot is promoted`. Same family as
+Class O (pre-market false-positive recovery) — the watchdog's trapops recovery branch was
+firing before today's snapshot had been promoted, triggering an unnecessary recovery pass
+on data that wasn't ready yet. Fix gates trapops recovery on snapshot-promotion status,
+consistent with the Class O principle: "absence of an artifact is not proof of a missed
+run if the artifact isn't due yet."
+
+**Diagnostic:** `grep -n "trapops\|snapshot.*promot" tools/cron_watchdog.sh`
+
+---
+
 ## Quick-reference triage
 
 ```
