@@ -8,7 +8,8 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-11-17  
+**Last updated:** 2026-11-18  
+**2026-11-18 update scope:** only the new Governance Events (2026-11-18) section.  
 **2026-11-17 update scope:** only the new Governance Events (2026-11-17) section.  
 **2026-11-16 update scope:** only the new Governance Events (2026-11-16) section.  
 **Update cadence:** weekly or upon governance-state change  
@@ -182,6 +183,10 @@ metadata:
 - Governance label: Tooling/knowledge-layer expansion only. No model, ranker, selector, sizing, or alpha-promotion change.
 
 ---
+
+## Governance Events (2026-11-18)
+
+- **SUPN company name and EU-registry sponsor aliases (PR #709, merged 2026-11-18): no clock reset (operator ruling).** Follow-up to the INDV→SUPN ticker change (#618): SUPN's `company_name` fields read "Supernus, Inc.", and the `SPONSOR_ALIASES` table shared by the EUCTR/CTIS/ISRCTN collectors is re-keyed from `INDV` to `SUPN` with both the Supernus and Indivior sponsor names. The only model input affected is the set of EU-registry trials matched to SUPN (rank 103, tier C on 2026-11-17). `oos_clock_start` stays 2026-11-17; mandate SM-20260629-001 continues; no hash rotation. Memo: `docs/governance/2026-11-18-supn-name-and-sponsor-aliases-no-clock-reset.md`.
 
 ## Governance Events (2026-11-17)
 
