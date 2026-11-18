@@ -369,6 +369,14 @@
       "old_ticker": "ACHV",
       "new_ticker": "QUIT",
       "notes": "ACHV to QUIT ticker change, Sharadar-confirmed"
+    },
+    {
+      "ticker": "AZN",
+      "action": "reverse_split",
+      "effective_date": "2026-01-28",
+      "ratio": "1:2",
+      "factor": 2.0,
+      "notes": "ADR ratio change: one ADR went from 0.5 to 1 ordinary share, so the quoted price doubled (+96% on 2026-01-28 in price_history.csv). Not a return."
     }
   ]
 }
