@@ -1,7 +1,7 @@
 # LVB sleeve backtest analysis (2026-11-18)
 
 **Classification:** `RESEARCH_RECORD / NO_MODEL_CHANGE` (Tier 2). In-sample, pseudo-PIT history. Not evidence for a production change; the 50/50 Top-30 + LVB proposal (`docs/governance/2026-11-17-proposal-5050-top30-lvb-sleeve.md`, PROPOSED) remains a Tier 4 decision.
-**Code:** `scripts/research/lvb_universe_backtest.py`, `lvb_factor_alpha.py`, `lvb_sharadar_prices.py`, `lvb_survivorship_check.py` (PR #714).
+**Code:** `scripts/research/lvb_universe_backtest.py`, `lvb_factor_alpha.py`, `lvb_sharadar_prices.py`, `lvb_survivorship_check.py`, `lvb_5050_mix.py` (PR #714).
 
 ## Answer
 
@@ -96,6 +96,37 @@ Full universe, Sharadar prices. Between rebalances the book drifts and pays no c
 
 - **Quarterly costs little:** 0.02–0.09 pt/month of alpha, for about 40% less turnover.
 - **The ex-Top-30 version is more sensitive to timing** (17.4% to 22.8% across phases), because its pool shifts whenever the Top-30 changes.
+
+## 50/50 Top-30 + LVB, recomputed
+
+On corrected data the 50/50 mix still halves the Top-30's drawdown, but it now gives up some return: alpha against XBI is **+0.91 pt/month (t 2.58)**, down from the memo's +1.06 (t 2.99). Over this period it also trails a plain S&P 500 position on risk-adjusted terms.
+
+| Portfolio | Annual return | Volatility | Sharpe | Max drawdown | Beta to XBI | Alpha vs XBI (t) | Mean excess vs XBI (t) | Worst 12 months vs XBI | 12-month periods behind XBI |
+|---|---|---|---|---|---|---|---|---|---|
+| Top-30 alone | 18.7% | 30.7% | 0.71 | −49.7% | 1.01 | +0.74 (1.46) | +0.75 (1.50) | −12% | 28% |
+| LVB alone (corrected) | 17.6% | 15.6% | 1.12 | −17.8% | 0.35 | +1.08 (2.66) | +0.39 (0.59) | −31% | 38% |
+| 50/50, memo inputs (production prices) | 21.1% | 20.9% | 1.02 | −26.1% | 0.68 | +1.06 (2.97) | +0.71 (1.61) | −9% | 18% |
+| 50/50, Sharadar prices | 19.9% | 20.8% | 0.98 | −27.0% | 0.68 | +0.98 (2.76) | +0.63 (1.43) | −9% | 18% |
+| **50/50, corrected** | **19.0%** | **20.9%** | **0.94** | **−27.9%** | **0.68** | **+0.91 (2.58)** | **+0.57 (1.30)** | **−10%** | **18%** |
+| XBI | 9.8% | 26.2% | 0.49 | −56.7% | 1.00 | — | — | — | — |
+| S&P 500 (SPY) | 18.2% | 15.4% | 1.17 | −23.9% | 0.31 | +1.17 (2.76) | +0.44 (0.61) | −34% | 31% |
+
+Alpha and excess in pt/month. Same 82 months, net of 50 bp × one-way turnover, rebalanced to 50/50 monthly. "Corrected" = Sharadar total-return prices for both halves, with LVB drawn from the survivorship-corrected pool. The "memo inputs" row reproduces the proposal memo's 50/50 (21.0%, Sharpe 1.02, −26%, +1.06). Script: `scripts/research/lvb_5050_mix.py`.
+
+- **Return:** the corrected mix trails the Top-30 alone by 0.18 pt/month (t −0.44). The memo's statement that the mix keeps the Top-30's full excess over XBI does not hold on corrected data; the shortfall is small and not significant.
+- **Risk:** it halves volatility and maximum drawdown, and cuts the share of 12-month periods spent behind XBI from 28% to 18%. The halves' excess returns are nearly uncorrelated (0.10).
+- **Against the S&P 500:** 19.0% a year against 18.2%, with more volatility (20.9% vs 15.4%) and a deeper drawdown (−28% vs −24%), so a lower Sharpe (0.94 vs 1.17). Alpha against SPY alone is +0.52 pt/month (t 0.87), against XLV alone +0.60 (t 1.14).
+- **Limit:** only the LVB half is survivorship-corrected. The Top-30 half still comes from the survivor-only v9 universe; coinvest selection cannot be recomputed for names missing from the snapshots.
+
+| Year | Top-30 | LVB (corrected) | 50/50 (corrected) | XBI |
+|---|---|---|---|---|
+| 2026 (to Nov 16) | +10.8% | +23.3% | +17.8% | +19.8% |
+| 2025 | +76.9% | +23.4% | +49.4% | +35.9% |
+| 2024 | +13.6% | +19.7% | +17.7% | +1.0% |
+| 2023 | +15.3% | +5.4% | +10.7% | +7.6% |
+| 2022 | −14.4% | −4.9% | −8.8% | −25.9% |
+| 2021 | −23.2% | +14.9% | −5.7% | −20.5% |
+| 2020 (from Mar 31) | +91.3% | +44.7% | +66.9% | +82.2% |
 
 ## Limits
 
