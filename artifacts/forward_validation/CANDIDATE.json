@@ -2,8 +2,16 @@
   "registered": "2026-06-26",
   "registered_at": "2026-06-28T14:53:26.269583+00:00",
   "rehashed_at": "2026-07-10T19:52:38.671168+00:00",
-  "model_hash": "827c35a9ed3ee6e1",
-  "hash_scheme": "ast-v1",
+  "model_hash": "a9a430154568e242",
+  "hash_scheme": "ast-v2",
+  "prior_model_hashes": [
+    {
+      "model_hash": "827c35a9ed3ee6e1",
+      "hash_scheme": "ast-v1",
+      "superseded_on": "2026-11-15",
+      "note": "Same model, wider fingerprint. ast-v2 adds common/ranker_mode.py and the A4_SELECTOR_CONFIG assignment in run_screen.py. The three engine files are unchanged and compute_model_hash_ast_v1() still returns this value. See governance/HASH_ROTATIONS.md (2026-11-15)."
+    }
+  ],
   "legacy_model_hash": "a9983a67c6954813",
   "legacy_hash_scheme": "raw-bytes",
   "equivalence_note": "a7a80e85 (legacy raw-bytes) proven annotation-only-equivalent to the frozen candidate a9983a67; adopted behavioral hash 827c35a9ed3ee6e1 records the SAME behavioral identity, not a new freeze. See docs/governance/2026-07-10-dem-candidate-hash-equivalence.md.",
@@ -14,5 +22,45 @@
   "price_source": "production_data/price_history.csv (close, split-adjusted)",
   "xbi_source": "production_data/price_history.csv (close, split-adjusted, ticker=XBI)",
   "protocol": "docs/FORWARD_VALIDATION_PROTOCOL.md",
-  "status": "active"
+  "oos_clock_start": "2026-11-17",
+  "oos_clock_reset_note": "Operator-recorded 2026-11-17. Coinvest CUSIP mappings plus RPRX/ILMN/STVN universe adds (PR #696, model-input change, operator-authorized 2026-11-17) reset the clock; it starts with the first promoted production run on the merged code, 2026-11-17 (run manifest commit fd731536, WARN, promoted). Supersedes the 2026-11-16 start. model_hash unchanged (ast-v2). Captures dated before oos_clock_start do not count toward SM-20260629-001; the mandate restarts at 0/20. The 2026-11-16 capture stores its baskets inline, so the later replacement of data/snapshots/2026-11-16 with the v9 rebuild (#698; live directory kept in data/snapshots_backup_pre_v9_2026-11-17/, rankings.csv sha256 c2d1c1647524cdb7...) does not alter the ledger. See docs/governance/2026-11-17-coinvest-cusips-and-universe-adds-clock-reset.md and docs/governance/2026-11-17-oos-clock-start.md.",
+  "status": "active",
+  "prior_oos_clock_starts": [
+    {
+      "oos_clock_start": "2026-11-02",
+      "superseded_on": "2026-11-12",
+      "memo": "docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md"
+    },
+    {
+      "oos_clock_start": "2026-11-12",
+      "superseded_on": "2026-11-16",
+      "memo": "docs/governance/2026-11-12-clock-start-and-path-c-re-record.md"
+    },
+    {
+      "oos_clock_start": "2026-11-16",
+      "superseded_on": "2026-11-17",
+      "memo": "docs/governance/2026-11-16-selector-only-clock-start.md"
+    }
+  ],
+  "ranker_mode": "selector_only",
+  "rehashed_at_ast_v2": "2026-11-15",
+  "resolved_clock_resets": [
+    {
+      "authorized": "2026-11-13",
+      "reason": "Production order switched from the pairwise minimal_v2 ranker to selector-only (run_screen.py --ranker-mode default). model_hash is unchanged because the ranker dispatch is outside the hashed files; behavior is not.",
+      "takes_effect": "first daily production run on the merged code",
+      "action_required": "record the new oos_clock_start here after that run; captures from selector-only runs do not count toward SM-20260629-001 until it is recorded; the mandate restarts at 0/20",
+      "memo": "docs/governance/2026-11-13-selector-only-production-switch.md",
+      "resolved_on": "2026-11-16",
+      "oos_clock_start": "2026-11-16"
+    },
+    {
+      "authorized": "2026-11-17",
+      "reason": "Coinvest CUSIP mappings (14) and RPRX, ILMN, STVN added to the universe via coverage exemptions (model-input change).",
+      "takes_effect": "first daily production run on the merged code",
+      "memo": "docs/governance/2026-11-17-coinvest-cusips-and-universe-adds-clock-reset.md",
+      "resolved_on": "2026-11-17",
+      "oos_clock_start": "2026-11-17"
+    }
+  ]
 }

@@ -652,6 +652,8 @@ class TestDiagnoseMissingPrior:
 
         out = diagnose_missing_prior(snap, "2026-02-25")
         assert "current 2026-02-25 not in date_dirs" in out
+        # Older dirs are still walked (promoted-history root has no current dir).
+        assert "2026-02-20" in out.split("candidates", 1)[-1]
 
     def test_diagnose_reports_no_date_dirs(self, tmp_path):
         from run_phase2_snapshot_delta import diagnose_missing_prior

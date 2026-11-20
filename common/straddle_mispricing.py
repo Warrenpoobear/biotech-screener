@@ -15,6 +15,13 @@ from typing import Any, Dict, Optional
 
 from common.event_move_lookup import indication_bucket, lookup_event_move, phase_bucket
 
+# An event move priced above this (150% of the share price) is not a usable
+# market signal: it comes from junk quotes on thin chains (e.g. SABS ATM IV
+# 26.8 = 2,680% annualised on a 9-DTE contract) stretched by sqrt(days/365) to
+# a far-dated catalyst. 41/260 rows on 2026-11-11 priced moves above 200%,
+# up to 2,641%. Such rows get no cheap_vol_score / priced_move_pct.
+MAX_PLAUSIBLE_IMPLIED_MOVE = 1.5
+
 
 def compute_cheap_vol_score(
     opt_atm_iv: float,
@@ -73,6 +80,9 @@ def compute_cheap_vol_score(
         t = catalyst_days / 365.0
         implied_move = opt_atm_iv * math.sqrt(t)
     else:
+        return empty
+
+    if implied_move > MAX_PLAUSIBLE_IMPLIED_MOVE:
         return empty
 
     # Historical fair move from lookup table

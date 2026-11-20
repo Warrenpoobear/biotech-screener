@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wake Robin · Catalyst Calendar</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ECF0F8;--sf:#FFFFFF;--sf2:#F4F6FC;
+  --t1:#0C1427;--t2:#49586B;--t3:#8E9BAD;--bd:#D5DAE9;
+  --pdufa-ink:#7C2D12;--pdufa-fill:#FFF7ED;--pdufa-edge:#FDBA74;--pdufa-dot:#EA580C;
+  --ph3-ink:#064E3B;--ph3-fill:#ECFDF5;--ph3-edge:#6EE7B7;--ph3-dot:#16A34A;
+  --ph12-ink:#3730A3;--ph12-fill:#EEF2FF;--ph12-edge:#C7D2FE;--ph12-dot:#6366F1;
+  --held-ink:#1E40AF;--held-fill:#EFF6FF;--held-edge:#BFDBFE;
+  --now-ink:#5B21B6;--now-fill:#FAF5FF;--now-edge:#E9D5FF;
+  --fn:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,sans-serif;
+  --fm:ui-monospace,'Cascadia Code','SF Mono',Menlo,Consolas,monospace;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#090E1D;--sf:#0E1527;--sf2:#131C35;
+  --t1:#DCE5F7;--t2:#7A90B5;--t3:#2F4268;--bd:#1A2540;
+  --pdufa-ink:#FCD34D;--pdufa-fill:#130B02;--pdufa-edge:#7C2D12;--pdufa-dot:#F97316;
+  --ph3-ink:#6EE7B7;--ph3-fill:#020F0A;--ph3-edge:#065F46;--ph3-dot:#10B981;
+  --ph12-ink:#A5B4FC;--ph12-fill:#06081C;--ph12-edge:#3730A3;--ph12-dot:#818CF8;
+  --held-ink:#93C5FD;--held-fill:#081428;--held-edge:#1D4ED8;
+  --now-ink:#C084FC;--now-fill:#2D1657;--now-edge:#7C3AED;
+}}
+:root[data-theme="light"]{--bg:#ECF0F8;--sf:#FFFFFF;--sf2:#F4F6FC;--t1:#0C1427;--t2:#49586B;--t3:#8E9BAD;--bd:#D5DAE9;--pdufa-ink:#7C2D12;--pdufa-fill:#FFF7ED;--pdufa-edge:#FDBA74;--pdufa-dot:#EA580C;--ph3-ink:#064E3B;--ph3-fill:#ECFDF5;--ph3-edge:#6EE7B7;--ph3-dot:#16A34A;--ph12-ink:#3730A3;--ph12-fill:#EEF2FF;--ph12-edge:#C7D2FE;--ph12-dot:#6366F1;--held-ink:#1E40AF;--held-fill:#EFF6FF;--held-edge:#BFDBFE;--now-ink:#5B21B6;--now-fill:#FAF5FF;--now-edge:#E9D5FF}
+:root[data-theme="dark"]{--bg:#090E1D;--sf:#0E1527;--sf2:#131C35;--t1:#DCE5F7;--t2:#7A90B5;--t3:#2F4268;--bd:#1A2540;--pdufa-ink:#FCD34D;--pdufa-fill:#130B02;--pdufa-edge:#7C2D12;--pdufa-dot:#F97316;--ph3-ink:#6EE7B7;--ph3-fill:#020F0A;--ph3-edge:#065F46;--ph3-dot:#10B981;--ph12-ink:#A5B4FC;--ph12-fill:#06081C;--ph12-edge:#3730A3;--ph12-dot:#818CF8;--held-ink:#93C5FD;--held-fill:#081428;--held-edge:#1D4ED8;--now-ink:#C084FC;--now-fill:#2D1657;--now-edge:#7C3AED}
+
+body{font-family:var(--fn);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5;min-height:100vh}
+
+.hd{background:var(--sf);border-bottom:1px solid var(--bd);padding:13px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hd-corp{font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3)}
+.hd-sep{color:var(--bd)}
+.hd-title{font-size:15px;font-weight:700;color:var(--t1);letter-spacing:-.02em}
+.hd-meta{margin-left:auto;font-family:var(--fm);font-size:10px;color:var(--t3)}
+.toggle{background:none;border:1px solid var(--bd);border-radius:4px;color:var(--t3);cursor:pointer;font-size:10px;padding:2px 8px;font-family:var(--fm)}
+
+/* PDUFA banner */
+.pdufa-banner{background:var(--pdufa-fill);border-bottom:1px solid var(--pdufa-edge);padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--pdufa-dot);flex-shrink:0;animation:beat 1.8s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.55}}
+@media(prefers-reduced-motion:reduce){.pulse{animation:none}}
+.pb-label{font-family:var(--fm);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--pdufa-dot)}
+.pb-main{font-size:13px;font-weight:600;color:var(--pdufa-ink)}
+.pb-sym{font-family:var(--fm);font-weight:700;letter-spacing:.04em}
+.pb-aside{margin-left:auto;font-family:var(--fm);font-size:10px;color:var(--t2)}
+
+/* cluster alert */
+.cluster{background:var(--ph3-fill);border-bottom:1px solid var(--ph3-edge);padding:9px 24px;font-size:12px;color:var(--t2)}
+.cluster strong{color:var(--ph3-ink)}
+
+.content{max-width:920px;margin:0 auto;padding:24px 24px}
+
+.month{margin-bottom:28px}
+.month-label{font-family:var(--fm);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);padding-bottom:6px;border-bottom:1px solid var(--bd);margin-bottom:2px;display:flex;justify-content:space-between}
+.month-ct{color:var(--t3)}
+
+.row{display:grid;grid-template-columns:90px 68px 1fr auto;gap:0 10px;align-items:center;padding:7px 8px;border-left:2px solid transparent;border-radius:3px;transition:background .1s}
+.row:hover{background:var(--sf2)}
+.row--pdufa{border-left-color:var(--pdufa-dot);background:color-mix(in srgb,var(--pdufa-fill) 50%,transparent)}
+.row--ph3{border-left-color:var(--ph3-dot)}
+.row--ph12{border-left-color:var(--ph12-dot)}
+
+.cd{font-family:var(--fm);font-variant-numeric:tabular-nums}
+.ds{font-size:12px;font-weight:500;color:var(--t2);display:block}
+.do{font-size:10px;color:var(--t3);display:block}
+
+.ct{display:flex;flex-direction:column;gap:2px}
+.sym{font-family:var(--fm);font-size:13px;font-weight:700;color:var(--t1)}
+.held{font-family:var(--fm);font-size:8px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--held-ink);background:var(--held-fill);border:1px solid var(--held-edge);border-radius:2px;padding:0 4px;line-height:15px;display:inline-block;width:fit-content}
+
+.cv{min-width:0}
+.dg{font-size:13px;font-weight:600;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.di{font-size:11.5px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dn{font-family:var(--fm);font-size:9.5px;color:var(--t3);margin-top:1px}
+
+.cc{display:flex;align-items:center;justify-content:flex-end;flex-shrink:0;gap:4px}
+.chip{font-family:var(--fm);font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:2px;white-space:nowrap}
+.chip-p{background:var(--pdufa-fill);color:var(--pdufa-ink);border:1px solid var(--pdufa-edge)}
+.chip-3{background:var(--ph3-fill);color:var(--ph3-ink);border:1px solid var(--ph3-edge)}
+.chip-1{background:var(--ph12-fill);color:var(--ph12-ink);border:1px solid var(--ph12-edge)}
+
+.legend{display:flex;flex-wrap:wrap;gap:12px 18px;padding:14px 0;border-top:1px solid var(--bd);margin-top:6px}
+.li{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2)}
+.lsw{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+.notes{margin-top:20px;background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:14px 16px}
+.notes-hd{font-family:var(--fm);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.notes ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.notes li{font-size:11px;color:var(--t2);padding-left:14px;position:relative}
+.notes li::before{content:'›';position:absolute;left:2px;color:var(--t3)}
+code{font-family:var(--fm);font-size:10px;background:var(--sf2);border-radius:2px;padding:0 3px}
+
+@media(max-width:600px){
+  .row{grid-template-columns:76px 56px 1fr}
+  .cc{display:none}
+  .hd-meta{display:none}
+  .content{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <span class="hd-corp">Wake Robin Capital</span>
+  <span class="hd-sep">·</span>
+  <span class="hd-title">Catalyst Calendar</span>
+  <span class="hd-meta">as-of 2026-11-03 &nbsp;·&nbsp; event_ledger.py + pdufa_dates.json &nbsp;·&nbsp; 150d window → 2027-04-01</span>
+  <button class="toggle" onclick="var r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';this.textContent=r.dataset.theme==='dark'?'☀ light':'🌙 dark'">🌙 dark</button>
+</header>
+
+<!-- SMMT PDUFA in 11 days -->
+<div class="pdufa-banner">
+  <span class="pulse"></span>
+  <span class="pb-label">PDUFA · +11 days</span>
+  <span class="pb-main"><span class="pb-sym">SMMT</span> — Ivonescimab BLA · EGFR-mutated NSCLC post-TKI · Fast Track</span>
+  <span class="pb-aside">Nov 14, 2026 &nbsp;·&nbsp; HIGH confidence</span>
+</div>
+
+<!-- Dec-1 cluster -->
+<div class="cluster">
+  <strong>Dec 1 cluster (28d):</strong> Three held Phase 3 windows hit simultaneously —
+  <strong>CMPS</strong> (Ph3 completion, COMP360 psilocybin TRD) ·
+  <strong>PRAX</strong> (Ph3 primary completion) ·
+  <strong>XENE</strong> (Ph3 completion) · plus <strong>ERAS</strong> Ph1.
+  Highest portfolio-event density in window.
+</div>
+
+<main class="content">
+
+<!-- ════ NOVEMBER ════ -->
+<div class="month">
+  <div class="month-label"><span>November 2026</span><span class="month-ct">4 events</span></div>
+
+  <div class="row row--pdufa">
+    <div class="cd"><span class="ds">Nov 14</span><span class="do">+11d</span></div>
+    <div class="ct"><span class="sym">SMMT</span></div>
+    <div class="cv">
+      <div class="dg">Ivonescimab · EGFR-mutated NSCLC, chemo combination</div>
+      <div class="di">Summit Therapeutics · Phase III HARMONi · Fast Track</div>
+    </div>
+    <div class="cc"><span class="chip chip-p">PDUFA · BLA</span></div>
+  </div>
+
+  <div class="row row--ph12">
+    <div class="cd"><span class="ds">Nov 18</span><span class="do">+15d</span></div>
+    <div class="ct"><span class="sym">SYRE</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Phase 1 primary completion · healthy volunteers</div>
+      <div class="dn">NCT06873724 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-1">Ph 1 · PCD</span></div>
+  </div>
+
+  <div class="row row--ph3">
+    <div class="cd"><span class="ds">Nov 15</span><span class="do">+12d</span></div>
+    <div class="ct"><span class="sym">VRDN</span></div>
+    <div class="cv">
+      <div class="di">Veligrotug TED follow-on trial completion (approved Jun-30)</div>
+      <div class="dn">NCT06625411 · CLINICAL_CD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-3">Ph 3 · CD</span></div>
+  </div>
+
+  <div class="row row--ph3">
+    <div class="cd"><span class="ds">Nov 27</span><span class="do">+24d</span></div>
+    <div class="ct"><span class="sym">CYTK</span></div>
+    <div class="cv">
+      <div class="di">Cytokinetics · cardiac · Phase 3 primary completion</div>
+      <div class="dn">NCT04464525 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-3">Ph 3 · PCD</span></div>
+  </div>
+</div>
+
+<!-- ════ DECEMBER ════ -->
+<div class="month">
+  <div class="month-label"><span>December 2026</span><span class="month-ct">5 events · ★ Dec 1 cluster</span></div>
+
+  <div class="row row--ph3">
+    <div class="cd"><span class="ds">Dec 1</span><span class="do">+28d</span></div>
+    <div class="ct"><span class="sym">CMPS</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="dg">COMP360 (psilocybin) · Treatment-Resistant Depression</div>
+      <div class="di">Phase 3 completion — NDA update pending</div>
+      <div class="dn">NCT05711940 · CLINICAL_CD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-3">Ph 3 · CD</span></div>
+  </div>
+
+  <div class="row row--ph3">
+    <div class="cd"><span class="ds">Dec 1</span><span class="do">+28d</span></div>
+    <div class="ct"><span class="sym">PRAX</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Praxis Precision Medicine · CNS / epilepsy · Phase 3 primary completion</div>
+      <div class="dn">NCT07010471 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-3">Ph 3 · PCD</span></div>
+  </div>
+
+  <div class="row row--ph3">
+    <div class="cd"><span class="ds">Dec 1</span><span class="do">+28d</span></div>
+    <div class="ct"><span class="sym">XENE</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Xenon Pharmaceuticals · epilepsy · Phase 3 completion</div>
+      <div class="dn">NCT05716100 · CLINICAL_CD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-3">Ph 3 · CD</span></div>
+  </div>
+
+  <div class="row row--ph12">
+    <div class="cd"><span class="ds">Dec 1</span><span class="do">+28d</span></div>
+    <div class="ct"><span class="sym">ERAS</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Erasca · oncology · Phase 1 completion</div>
+      <div class="dn">NCT05907304 · CLINICAL_CD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-1">Ph 1 · CD</span></div>
+  </div>
+
+  <div class="row row--ph12">
+    <div class="cd"><span class="ds">Dec 31</span><span class="do">+58d</span></div>
+    <div class="ct"><span class="sym">RVMD</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Revolution Medicines · oncology · Phase 1 primary completion</div>
+      <div class="dn">NCT06040541 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-1">Ph 1 · PCD</span></div>
+  </div>
+</div>
+
+<!-- ════ JANUARY ════ -->
+<div class="month">
+  <div class="month-label"><span>January 2027</span><span class="month-ct">4 events</span></div>
+
+  <div class="row row--ph12">
+    <div class="cd"><span class="ds">Jan 1</span><span class="do">+59d</span></div>
+    <div class="ct"><span class="sym">ERAS</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Erasca · oncology · Phase 1 completion</div>
+      <div class="dn">NCT04866134 · CLINICAL_CD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-1">Ph 1 · CD</span></div>
+  </div>
+
+  <div class="row row--ph12">
+    <div class="cd"><span class="ds">Jan 1</span><span class="do">+59d</span></div>
+    <div class="ct"><span class="sym">NRIX</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Nurix Therapeutics · solid tumors · Phase 1 primary completion</div>
+      <div class="dn">NCT05131022 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-1">Ph 1 · PCD</span></div>
+  </div>
+
+  <div class="row row--ph3">
+    <div class="cd"><span class="ds">Jan 1</span><span class="do">+59d</span></div>
+    <div class="ct"><span class="sym">PRAX</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Praxis · CNS · Phase 3 primary completion</div>
+      <div class="dn">NCT07505004 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-3">Ph 3 · PCD</span></div>
+  </div>
+
+  <div class="row row--ph3">
+    <div class="cd"><span class="ds">Jan 1</span><span class="do">+59d</span></div>
+    <div class="ct"><span class="sym">XENE</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Xenon · epilepsy · Phase 3 primary completion</div>
+      <div class="dn">NCT06922110 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-3">Ph 3 · PCD</span></div>
+  </div>
+</div>
+
+<!-- ════ MARCH ════ -->
+<div class="month">
+  <div class="month-label"><span>March 2027</span><span class="month-ct">6 events</span></div>
+
+  <div class="row row--ph12">
+    <div class="cd"><span class="ds">Mar 1</span><span class="do">+118d</span></div>
+    <div class="ct"><span class="sym">COGT</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Cogent Biosciences · GIST · Phase 1 primary completion</div>
+      <div class="dn">NCT06777316 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-1">Ph 1 · PCD</span></div>
+  </div>
+
+  <div class="row row--ph12">
+    <div class="cd"><span class="ds">Mar 1</span><span class="do">+118d</span></div>
+    <div class="ct"><span class="sym">DRUG</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Bright Path Biotherapeutics · Phase 2 completion</div>
+      <div class="dn">NCT07266324 · CLINICAL_CD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-1">Ph 2 · CD</span></div>
+  </div>
+
+  <div class="row row--ph12">
+    <div class="cd"><span class="ds">Mar 1</span><span class="do">+118d</span></div>
+    <div class="ct"><span class="sym">PRAX</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Praxis · CNS · Phase 2 completion</div>
+      <div class="dn">NCT05818553 · CLINICAL_CD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-1">Ph 2 · CD</span></div>
+  </div>
+
+  <div class="row row--ph3">
+    <div class="cd"><span class="ds">Mar 1</span><span class="do">+118d</span></div>
+    <div class="ct"><span class="sym">STOK</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Stoke Therapeutics · Phase 3 primary completion</div>
+      <div class="dn">NCT06872125 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-3">Ph 3 · PCD</span></div>
+  </div>
+
+  <div class="row row--ph3">
+    <div class="cd"><span class="ds">Mar 1</span><span class="do">+118d</span></div>
+    <div class="ct"><span class="sym">URGN</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">UroGen Pharma · bladder / urothelial carcinoma · Phase 3 primary completion</div>
+      <div class="dn">NCT06774131 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-3">Ph 3 · PCD</span></div>
+  </div>
+
+  <div class="row row--ph3">
+    <div class="cd"><span class="ds">Mar 1</span><span class="do">+118d</span></div>
+    <div class="ct"><span class="sym">XENE</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Xenon · epilepsy · Phase 3 completion</div>
+      <div class="dn">NCT06922110 · CLINICAL_CD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-3">Ph 3 · CD</span></div>
+  </div>
+</div>
+
+<!-- ════ MARCH–APRIL TAIL ════ -->
+<div class="month">
+  <div class="month-label"><span>March – April 2027 (tail)</span><span class="month-ct">2 events</span></div>
+
+  <div class="row row--ph12">
+    <div class="cd"><span class="ds">Mar 31</span><span class="do">+148d</span></div>
+    <div class="ct"><span class="sym">RVMD</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Revolution Medicines · oncology · Phase 1 primary completion</div>
+      <div class="dn">NCT05462717 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-1">Ph 1 · PCD</span></div>
+  </div>
+
+  <div class="row row--ph3">
+    <div class="cd"><span class="ds">Apr 1</span><span class="do">+149d</span></div>
+    <div class="ct"><span class="sym">XENE</span><span class="held">held</span></div>
+    <div class="cv">
+      <div class="di">Xenon · epilepsy · Phase 3 primary completion</div>
+      <div class="dn">NCT05667142 · CLINICAL_PCD · HIGH</div>
+    </div>
+    <div class="cc"><span class="chip chip-3">Ph 3 · PCD</span></div>
+  </div>
+</div>
+
+<!-- legend -->
+<div class="legend">
+  <div class="li"><span class="lsw" style="background:var(--pdufa-dot)"></span>PDUFA — FDA action date</div>
+  <div class="li"><span class="lsw" style="background:var(--ph3-dot)"></span>Phase 3 completion / primary completion</div>
+  <div class="li"><span class="lsw" style="background:var(--ph12-dot)"></span>Phase 1/2 trial milestone</div>
+  <div class="li"><span class="lsw" style="background:var(--held-ink)"></span>Held — Phase 2 portfolio (acct 802349084)</div>
+  <div class="li" style="font-size:10px;color:var(--t3)">CD = completion date · PCD = primary completion date · CTGov milestone ≠ guaranteed data readout date</div>
+</div>
+
+<!-- notes -->
+<div class="notes">
+  <div class="notes-hd">Data Provenance</div>
+  <ul>
+    <li>Source: <code>event_ledger.py build_event_ledger(2026-11-03)</code> · 21,022 entries · 726 events in 150d window</li>
+    <li>PDUFA from <code>production_data/pdufa_dates.json</code> · 1 upcoming (SMMT Nov-14 · HIGH). All 9 prior PDUFAs resolved (AXSM, BIIB, MNKD, ARVN, ARGX, VRDN, TSHA, VERA, MRNA).</li>
+    <li>Phase confirmed via <code>trial_records.json</code> × source_uid join. CTGov PIT cache not warmed for 2026-11-03 — fell back to trial_records.json.</li>
+    <li><code>market_data.json</code> stale (collected 2026-07-31; 6d over 5d gate). <code>price_history.csv</code> missing from production_data/. Run <code>tools/run_daily_production.py</code> to refresh both before next screen run.</li>
+    <li>13F roster updated 2026-11-01: Q2 2026 coinvest rebuilt, registry v4.0 (30-manager elite_core), OOS clock reset to 2026-11-02 (0/20). Memo: docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md.</li>
+    <li>Held = Phase 2 original 15 positions (Jun 10, 2026 entry). No events found in 150d window for DNTH, ALMS, SLDB, TRVI, STOK (excepting STOK Mar-1). No events for DRUG before Mar-1.</li>
+  </ul>
+</div>
+
+</main>
+</body>
+</html>

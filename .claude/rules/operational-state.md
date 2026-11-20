@@ -8,10 +8,17 @@ metadata:
 
 # Operational State
 
-**Last updated:** 2026-07-12  
+**Last updated:** 2026-11-18  
+**2026-11-18 update scope:** only the new Governance Events (2026-11-18) section (SUPN names, PR #709; AZN split fix, PR #712).  
+**2026-11-17 update scope:** only the new Governance Events (2026-11-17) section.  
+**2026-11-16 update scope:** only the new Governance Events (2026-11-16) section.  
 **Update cadence:** weekly or upon governance-state change  
 **Authority:** operational status snapshot only; not architectural specification  
-**Staleness risk:** MEDIUM (reference `governance.md` for timeless process)
+**Staleness risk:** MEDIUM (reference `governance.md` for timeless process)  
+**2026-11-15 update scope:** only the new Governance Events (2026-11-15) section.  
+**2026-11-13 update scope:** only the new Governance Events (2026-11-13) section. Everything else keeps its own as-of date.  
+**2026-11-12 update scope:** only Architecture Freeze Status, Governance Events, and the `inst_delta_z` line under Forward Shadow & IC (corrected: the live ranker does not read it). Everything else keeps its own as-of date.  
+**2026-11-01 update scope:** only these sections were refreshed: Architecture Freeze Status, 13F Cycle Status, Governance Events, and the superseded Q1-promotion note in h20d. Sections with older dates (Forward Shadow & IC, h20d, Active Spec Status, Hermes Skills Hub) were not reviewed and keep their own as-of dates.
 
 ---
 
@@ -19,7 +26,7 @@ metadata:
 
 - **ID**: `8887576e` (v1.14.0)
 - **File**: `production_data/decision_rulesets/v1.14.0_coinvest_only_selector.json`
-- **Key settings**: sort_anchor=selector_score, coinvest-only selector (coinvest_score_z 100%), pairwise_minimal ranker (ordinal-only), EW Top-30. inst_delta_z zeroed in selector 2026-05-04 (ALERT: mean_ic=-0.097, two-frame confirmed).
+- **Key settings**: sort_anchor=selector_score, coinvest-only selector (coinvest_score_z 100%), **selector-only order since 2026-11-13** (`--ranker-mode selector_only`; the pairwise_minimal ranker is a shadow), EW Top-30. inst_delta_z zeroed in selector 2026-05-04 (ALERT: mean_ic=-0.097, two-frame confirmed).
 - **Prior ruleset**: `2a3e79eb` (v1.13.0) â€” RETIRED 2026-05-04
 - **Pinned in**: `run_screen.py` AND `run_phase2_snapshot_delta.py` (must stay in sync)
 - **Manifest**: 36+ entries, no dup IDs
@@ -31,10 +38,15 @@ metadata:
 **MODEL BEHAVIOR REMAINS FROZEN. The 2026-06-24 "lift" was tooling-scoped only — do not read it as authorization to change the model.**
 
 - **INC-2026-06-20 scoped freeze — narrowly lifted 2026-06-24:** operator authorized the lift **solely to unblock Spec 100** (ranker IC tooling correction). Spec 100 is implemented (commit `2faa88e6`); that lift is spent.
-- **Currently binding (2026-07-12):**
-  - **DEM candidate freeze + NO_MODEL_CHANGE forward-validation window** — `docs/FORWARD_VALIDATION_PROTOCOL.md` §1 (RATIFIED 2026-06-28; mandate SM-20260629-001, 0/20 eligible LIVE windows). No ranker/selector/feature/eligibility/sizing/rebalance-policy/price-source change; any authorized bug fix resets the out-of-sample clock.
-  - **FROZEN (BLOCKED_LEVEL_0)** per `docs/model_documentation.md` (canonical; synced 2026-07-10) — model doc governs where this snapshot disagrees.
-- **Candidate identity:** `model_hash=827c35a9ed3ee6e1` / `hash_scheme=ast-v1` (legacy `a9983a67c6954813`; `registered=2026-06-26` unchanged) — `artifacts/forward_validation/CANDIDATE.json`.
+- **Currently binding (2026-11-12):**
+  - **DEM candidate freeze + NO_MODEL_CHANGE forward-validation window**, per `docs/FORWARD_VALIDATION_PROTOCOL.md` §1 (RATIFIED 2026-06-28; mandate SM-20260629-001). No ranker/selector/feature/eligibility/sizing/rebalance-policy/price-source change is permitted, and any authorized bug fix resets the out-of-sample clock.
+  - **Clock reset 2026-11-12 (operator-authorized 2026-11-04; supersedes the 2026-11-02 start):** PR #614 (CT.gov source refresh + blocking `ctgov_content_freshness` gate) and PR #636 (`inst_delta_z` registry-transition guard writes blank) merged 2026-11-12.
+    - `oos_clock_start` = **2026-11-12**, recorded in `CANDIDATE.json` on 2026-11-12 after the first run on the merged code (manifest commit `2770e533`, WARN, promoted). The **mandate restarts at 0/20**. Record: `docs/governance/2026-11-12-clock-start-and-path-c-re-record.md`.
+    - All captures from 2026-11-02 up to the new start (on disk: 2026-11-03 → 2026-11-11; `WEEKLY_SUMMARY.md` shows 1 eligible under the stale epoch) and the 7 pre-2026-11-01 windows (t = 1.64) are history only.
+    - Memo: `docs/governance/2026-11-04-missing-fields-clock-reset.md`.
+  - **Price source:** Sharadar is primary with yfinance fallback (PR #622, merged 2026-11-11). The first in-pipeline run is expected 2026-11-12. There is no governance memo for this protocol §1 price-source change, so **operator acknowledgement is pending** (see the model doc 2026-11-12 entry).
+  - **FROZEN (BLOCKED_LEVEL_0)** per `docs/MODEL_DOCUMENTATION.md` (canonical; synced 2026-11-12). Where this snapshot disagrees with the model doc, the model doc governs.
+- **Candidate identity (2026-11-15):** `model_hash=a9a430154568e242` / `hash_scheme=ast-v2` (adds `common/ranker_mode.py` and `A4_SELECTOR_CONFIG`; same model, wider fingerprint; `governance/HASH_ROTATIONS.md`). *Before 2026-11-15:* `model_hash=827c35a9ed3ee6e1` / `hash_scheme=ast-v1` (legacy `a9983a67c6954813`; `registered=2026-06-26` unchanged). Source: `artifacts/forward_validation/CANDIDATE.json` (`oos_clock_start=2026-11-12`; the superseded 2026-11-02 start is kept under `prior_oos_clock_starts`). The hash is unchanged by both resets because only inputs and tooling changed, not engine files.
 - `ranker_active_contract.py` (branch `hygiene/ranker-active-contract-2026-04-30`) remains deferred
 - All prior ranker IC claims based on `composite_score` remain non-authoritative; ranker IC = `final_score` per Spec 100, interpretation deferred pending governance battery
 
@@ -50,9 +62,19 @@ metadata:
 
 ---
 
-## 13F Cycle Status (Q1 2026 â€” COMPLETE)
+## 13F Cycle Status
 
-*Updated: 2026-05-16*
+*Updated: 2026-11-01*
+
+- **Q2 2026 (period 2026-06-30) is now promoted into coinvest through the 2026-11-01 authorized change.** Filings landed 2026-08-14, but production `coinvest_signals.json` stayed on Q1 (as_of 2026-05-22) until this change.
+  - The rebuilt file is as_of 2026-10-30, built with builder 1.1.0 (230-day staleness gate, `firm_group`, roster gate) and filing age recomputed at run time.
+  - Registry v4.0: `elite_core` = 30 operator-specified managers (was 49), 26 moved to `retired`, `conditional` (6) unchanged.
+  - The roster was chosen on trailing 3-year returns, so backtests over that window are selection-biased and must not be cited as evidence.
+  - Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`.
+- **Post-merge follow-up:** run `tools/check_13f_cohort_quarantine.py --pre-date 2026-10-30 --post-date <first post-merge snapshot>`, then a 5-day observation window.
+- **Next cycle (Q3 2026):** period ending 2026-09-30, filing deadline ~**2026-11-14**. Rebuilding `coinvest_signals.json` after the filings is a **manual, governed step**. The staleness gate stops silent carry-forward but does not trigger the rebuild.
+
+### Q1 2026 (historical record, updated 2026-05-16)
 
 - **All three tracked managers filed Q1 2026 13F-HR on deadline day (May 15, 2026)**
 - Accession numbers: Fairmount 0001104659-26-062419, Deep Track 0001856083-26-000003, Logos Global 0001172661-26-002196
@@ -69,7 +91,7 @@ metadata:
 
 **Post-filing action sequence**: (1) Warm 13F cache, (2) Run cohort quarantine, (3) Check collapse guards (coinvest_score_z SD), (4) Refresh IC decomposition, (5) 5-day observation window.
 
-**Next cycle (Q2 2026):** Period ending June 30, 2026. Filing deadline ~August 14, 2026. Monitor EDGAR starting ~August 11.
+*(The Q2 2026 "next cycle" note that was here is superseded. See the 2026-11-01 entries above.)*
 
 ---
 
@@ -79,11 +101,15 @@ metadata:
 
 - **Forward shadow**: accumulating since 2026-04-03. Enough calendar/trading time has elapsed for IC refresh; gated on explicit operator freeze lift.
 - **score_rank_pct IC** (weekly sweep 2026-06-24): mean_ic = **+0.0432**, hit_rate = 54.3%, N = 35 dates. Verdict: **HEALTHY**. This cleared the Path C IC gate and the Day-5 IC checkpoint.
-- **Path C**: FORMALLY CLOSED 2026-06-24. IC gate met (mean_ic +0.0432 > +0.03). Catalyst-timing override policy remains in production weights; no reversion required. Transition to Path A durable gates.
+  - *(Corrected 2026-11-12: this figure has the wrong sign and measures the composite percentile, not the production order. The IC tools negated `score_rank_pct`, which is higher-is-better. Corrected readings for the same period: `score_rank_pct` −0.0201, `actionable_rank` +0.1534, `coinvest_score_z` +0.1478. See `docs/governance/2026-11-12-ic-dashboard-sign-correction.md`.)*
+- **Path C**: FORMALLY CLOSED 2026-06-24. *(Re-recorded 2026-11-12: the gate is met on the production order, `actionable_rank` mean IC +0.1534 over 31 live dates; the original `score_rank_pct` +0.0432 citation is retracted. See `docs/governance/2026-11-12-clock-start-and-path-c-re-record.md`.)* Original record: IC gate met (mean_ic +0.0432 > +0.03). Catalyst-timing override policy remains in production weights; no reversion required. Transition to Path A durable gates.
 - **IC checkpoint (Phase 2)**: Extended to 2026-07-01 (coincides with h20d re-eval gate). Next formal IC review: 2026-07-01. Early-review trigger: score_rank_pct mean_ic drops below 0.00 in any intervening daily snapshot.
 - **coinvest_score_z IC** (last measured 2026-05-13): Pooled mean IC = -0.031 (14 dates). Refresh pending freeze lift.
 - **Ranker IC**: UNMEASURED. Existing tools conflate composite_score with final_score (Spec 095). All prior ranker IC claims remain non-authoritative until Spec 100 reviewed.
-- **inst_delta_z**: zeroed in selector since 2026-05-04. Active in ranker (NW-t = +3.32). Reinstatement requires IC recovery evidence.
+- **inst_delta_z**: zeroed in selector since 2026-05-04.
+  - *(Corrected 2026-11-12: it is **not** in the live ranker. `minimal_v2` reads only `coinvest_score_z` + `financial_score`. The NW-t = +3.32 is a historical within-cohort audit figure.)*
+  - A missing delta, including on a registry transition, is blank with `has_inst_delta="False"`, not 0 (PR #635/#636). The IC panel skips it.
+  - Reinstatement requires IC recovery evidence.
 - **PIT/backtest research (2026-06-22)**: Autonomous PIT/backtest research quarantined (PR #379). Not accepted evidence. Do not cite for model decisions without explicit operator acceptance.
 
 ## h20d Re-Evaluation Gate
@@ -92,7 +118,7 @@ metadata:
 
 - Override granted 2026-05-26 (OPTION_B_OVERRIDE_2026_05_26) despite failed 13F Jaccard (0.463).
 - Current metrics (2026-06-23): Filing coverage 100% ✓, signal coverage 85.22% ✓, Top-30 Jaccard 0.875 ✓. All observable metrics favorable.
-- Q1 2026 13F data not yet promoted to production (quarantine script deferred). Run after first post-promotion snapshot:
+- *(Superseded 2026-11-01: the memo shows production `coinvest_signals.json` ran on Q1 2026 holdings from June to October. It has now moved to Q2 2026. Use `--pre-date 2026-10-30` per the 13F section above.)* Original note: Q1 2026 13F data not yet promoted to production (quarantine script deferred). Run after first post-promotion snapshot:
   ```bash
   python3 tools/check_13f_cohort_quarantine.py \
       --pre-date <last-pre-promo> --post-date <first-post-promo>
@@ -125,7 +151,7 @@ metadata:
 ### Active / Blocked
 | Spec | Title | Status | Blocker |
 |------|-------|--------|---------|
-| 094 | Selector-only comparator | RANKER_UNPROVEN | Blocked by scoped freeze |
+| 094 | Selector-only comparator | **Superseded in practice 2026-11-13: production is selector-only by operator decision; the ledger now records the ranker as the shadow.** Earlier status: RANKER_UNPROVEN; forward capture added 2026-11-12 (`tools/selector_only_shadow.py`, capture-only; starts with the first daily run after deploy) | Needs 20 non-overlapping LIVE windows before any reading |
 | 095 | Evaluation scope (IC tooling gap) | CURRENT_TOOLS_CONFLATED | Blocks ranker IC claims |
 | 100 | Ranker IC tooling correction | Spec written, no impl | Blocked by scoped freeze |
 | 104 | Insider diagnostic stabilization | MEASURED | Isolation guard (R4a) |
@@ -157,6 +183,84 @@ metadata:
 - Governance label: Tooling/knowledge-layer expansion only. No model, ranker, selector, sizing, or alpha-promotion change.
 
 ---
+
+## Governance Events (2026-11-18)
+
+- **AZN ADR ratio change registered; split repair applies registry splits below the gap thresholds (PR #712, merged 2026-11-18): no clock reset (operator ruling).** AstraZeneca's 2:1 ADR ratio change (2026-01-28 in our feed; Sharadar `ACTIONS` dates it 2026-02-02) was a +96% one-day "return" in `price_history_split_adj.csv`. `scripts/repair_price_history_splits.py` now applies a registry split inside the +300%/−75% thresholds when a one-day move in the 5-day window matches its factor within 15%; `corporate_actions.json` gains AZN `reverse_split` 1:2. Only AZN's 1,525 rows before 2026-01-28 change; no current score, order or holding changes. `oos_clock_start` stays 2026-11-17; mandate SM-20260629-001 continues; no hash rotation. Also recorded: the JBIO 2025-04-29 registry entry ("forward_split 9:1") is really a $2.40 special dividend + 1:35 reverse split (follow-up, not changed). Memo: `docs/governance/2026-11-18-azn-adr-ratio-split-fix.md`.
+- **SUPN company name and EU-registry sponsor aliases (PR #709, merged 2026-11-18): no clock reset (operator ruling).** Follow-up to the INDV→SUPN ticker change (#618): SUPN's `company_name` fields read "Supernus, Inc.", and the `SPONSOR_ALIASES` table shared by the EUCTR/CTIS/ISRCTN collectors is re-keyed from `INDV` to `SUPN` with both the Supernus and Indivior sponsor names. The only model input affected is the set of EU-registry trials matched to SUPN (rank 103, tier C on 2026-11-17). `oos_clock_start` stays 2026-11-17; mandate SM-20260629-001 continues; no hash rotation. Memo: `docs/governance/2026-11-18-supn-name-and-sponsor-aliases-no-clock-reset.md`.
+
+## Governance Events (2026-11-17)
+
+- **Out-of-sample clock start recorded (records only):** `oos_clock_start` = **2026-11-17**, the first promoted run on the #696 code (manifest commit `fd731536`, WARN, promoted). Supersedes the 2026-11-16 start; mandate SM-20260629-001 restarts at 0/20. The live 2026-11-16 snapshot directory was later replaced by the v9 rebuild (#698; live copy in `data/snapshots_backup_pre_v9_2026-11-17/`); forward-validation captures store baskets inline, so the ledger is unaffected. Memo: `docs/governance/2026-11-17-oos-clock-start.md`.
+- **Coinvest CUSIP mappings + RPRX, ILMN, STVN added (operator-authorized input change; clock reset):** 14 CUSIPs added to `cusip_static_map.json` (AVTX, CBIO, FTH, QUIT, COAG, NKTR, AKTS, OVID, STTK, TEVA, SKYE, IMMX, MNPR); the three names become active through `config/universe_coverage_exemptions.json`, honoured by `tools/refresh_eligible_biotech_universe.py`. Top-30 on 2026-11-16 inputs unchanged (30/30). `oos_clock_start` = first promoted run on the merged code; mandate 0/20. Memo: `docs/governance/2026-11-17-coinvest-cusips-and-universe-adds-clock-reset.md`.
+
+## Governance Events (2026-11-16)
+
+- **Selector-only out-of-sample clock started (records only):** `oos_clock_start` = **2026-11-16**, the first promoted selector-only run (manifest commit `ae5ceb81`). Supersedes the 2026-11-12 start; mandate SM-20260629-001 restarts at 0/20. Starting configuration includes PR #682 (PIT cash/securities fix) and PR #676 (`de_vol_60d`). `model_hash a9a430154568e242` unchanged. Memo: `docs/governance/2026-11-16-selector-only-clock-start.md`.
+- **The 2026-11-15 "Selector-only clock has not started" item below is superseded by this entry.**
+
+## Governance Events (2026-11-15)
+
+- **`de_vol_60d` refreshed every run (operator-requested input fix, before the clock starts):** `run_screen.py` Step C was fill-if-missing, so 244 of 287 tickers carried a months-old `vol_60d` into the selector's market-structure block (about 3% of `selector_score`); historical snapshots carry the same frozen values.
+  - It is now overwrite-always, like beta and RSI.
+  - Measured impact: live Top-30 30/30 on 2026-11-12 (mean 29.0/30 over 30 days); 84-month backtest −0.01 pt/month (t −0.13).
+  - `model_hash` unchanged. If merged before the 2026-11-16 run, it is part of the selector-only starting configuration; otherwise the clock starts at the first promoted run on the merged code.
+  - Memo: `docs/governance/2026-11-15-vol-60d-refresh-pre-clock.md`.
+- **Selector-only clock has not started.** The 2026-11-13 runs failed promotion on the drift gate and no capture was taken. PR #666 added a dated drift override (`config/drift_gate_overrides.json`, valid 2026-11-16 to 2026-11-20 against the 2026-11-12 snapshot). `oos_clock_start` is to be recorded after the first promoted selector-only run, expected 2026-11-16.
+- **Recorded before the clock starts** (`docs/governance/2026-11-15-pre-clock-decisions.md`):
+  - A routine quarterly 13F refresh (same roster, same builder, same code) is **not** a clock reset. Q3 2026 filings are due 2026-11-16; `coinvest_signals.json` is still on Q2 holdings.
+  - The forward-validation capture now checks the snapshot's `ranker_mode` against `CANDIDATE.json` (hard check `ranker_mode_match`). No hash rotation.
+  - **Adopted by the operator the same day (in force):** agentic-account Rule 4 is now review at −10 pp and liquidation at −15 pp against XBI (was −2 / −5); `FORWARD_VALIDATION_PROTOCOL.md` §4 gains a fail rule (mean weekly excess < 0 with t ≤ −1.65 at 20, 40 or 60 windows), a read-out at 60 windows and a selector-only rollback rule (paired t ≤ −1.65 against the shadow ranker basket after 20 windows).
+
+## Governance Events (2026-11-13)
+
+- **Production order switched to selector-only (operator-authorized model change, 2026-11-13):**
+  - `run_screen.py --ranker-mode` default is now `selector_only`: `final_score = selector_score`, no ranker reorders the cohort. The pairwise `minimal_v2` ranker is still scored as a shadow. Rollback: `--ranker-mode pairwise_minimal`.
+  - Basis: the ranker's `financial_score` weight was fitted on history with market-cap look-ahead; selector order alone was ahead by +0.57 pt/period (t = 1.63) on `snapshots_pit_v5`. **Checklist v2 was not run; the difference is not significant.**
+  - On 2026-11-12 inputs the Top-30 overlap with the ranker order is 17/30.
+  - **Clock resets.** `oos_clock_start` is to be recorded after the first production run on the merged code; mandate SM-20260629-001 restarts at 0/20. `model_hash` is unchanged because the hash does not cover the dispatch in `run_screen.py` (`governance/HASH_ROTATIONS.md`).
+  - Memo: `docs/governance/2026-11-13-selector-only-production-switch.md`.
+
+- **Market-cap look-ahead found in every regenerated history; backtest claims deprecated (in force; operator sign-off 2026-11-13, PR #660):**
+  - Historical `run_screen.py --as-of-date` runs read today's `market_data.json`. `financial_score` divides cash and burn by that market cap, so on regenerated history it tracked later market-cap growth.
+  - Same model, same inputs, point-in-time market data (`data/snapshots_pit_v4`, 79 periods, net 50 bps): Top-30 +0.68 pt/period, t = 1.47 (with today's market data: +1.64, t = 2.99). `financial_score` monthly IC −0.001 (was −0.067, t = −6.9). Selector-only minus current rule +0.62 pt/period, t = 1.64 (was −0.60).
+  - The `minimal_v2` ranker's weights were fitted on the contaminated history. **No model change is made or authorized by this entry.** Any change to the ranker is a governed model change with a clock reset.
+  - Tooling fix: PR #659 (`regenerate_pit_v2_snapshots.py` builds point-in-time market data and protects live state). Tier 2, no clock effect.
+  - Records: `docs/governance/2026-11-13-historical-run-market-data-lookahead.md` (PR #659) and `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+- **Heavy-Lift Jobs note above is superseded:** "PIT financial regeneration is COMPLETE" refers to `snapshots_pit_v2`, which carries the market-cap look-ahead.
+
+## Governance Events (2026-11-12)
+
+- **Missing-field fixes and clock reset (PR #614 `8f821f92` + #636 `01c5bd0b`, merged 2026-11-12; operator-authorized 2026-11-04):**
+  - M2: `production_data/trial_records.json` had been frozen since about 2026-08-07. `cron_data_refresh.sh stage_ctgov` now runs `collect_ctgov_data.py`, and a new **blocking** gate `ctgov_content_freshness` FAILs when the newest `last_update_posted` is more than 7 days old.
+  - M3: `_apply_inst_registry_transition_guard` blanks `inst_delta_z` on a manager-count change. There is no ranking effect under the live ruleset.
+  - `oos_clock_start` = first post-merge run (pending; expected 2026-11-12). Mandate 0/20. No hash rotation.
+  - Memo: `docs/governance/2026-11-04-missing-fields-clock-reset.md`.
+  - The M2 ranking impact has not been measured; measure it on the first post-deploy run.
+- **Sharadar price + market-cap source (PR #622, merged 2026-11-11), with the market-cap unit fix (PR #621):**
+  - The commit message says this was operator-authorized, but there is **no memo or HASH_ROTATIONS entry**.
+  - Protocol §1 forbids price-source changes in the window without authorization and a reset. Operator acknowledgement is pending.
+  - The first in-pipeline run coincides with the #614 reset start.
+- **Financial score fix (PR #649 `8b5fdd8c`, merged and deployed 2026-11-12 before the 16:30 ET run; operator-authorized in session):**
+  - Operating cash flow, not net income, decides whether a company is "profitable" in `module_2_financial_v2.py`; liquid assets prefer the deduped `CashAndSecurities` total.
+  - `financial_score` is a live ranker input, so this is an input change. On 2026-11-11 data the Top-30 membership is unchanged (30/30); KYMR moves from rank 7 to 4.
+  - It lands before `oos_clock_start` is recorded, so it is part of the new window's starting configuration if the start is 2026-11-12 or later. No hash rotation.
+  - PR #610 and #611 were closed unmerged: their year-to-date divisor double-scales the trailing-12-month PIT store.
+  - Memo: `docs/governance/2026-11-12-financial-runway-solvency-fix.md`.
+- **Ops (PR #633):** the watchdog's trapops recovery is now gated on today's `rankings.csv`, which removes the false MISSED/FAILED alarms. Tier 1, no reset.
+
+## Governance Events (2026-11-01)
+
+- **Coinvest 13F integrity fix + roster change; out-of-sample clock reset (2026-11-01, operator-authorized):** fixes four defects:
+  - D1: coinvest stuck on Q1 2026.
+  - D2: filing age frozen at 7 days.
+  - D3: no 13F staleness gate (Broadfin moved CIK; its old book persisted).
+  - D4: Foresite IV/V/VI triple-counted.
+
+  Changes: builder 1.1.0, `run_screen.py::_refresh_coinvest_filing_age`, registry v4.0 (30-manager `elite_core`), coinvest rebuilt from Q2 2026. Forward-validation `oos_clock_start=2026-11-02` and mandate SM-20260629-001 restarts at 0/20.
+
+  On 2026-10-30 control vs treatment, Top-30 overlap was 25/30. `model_hash 827c35a9ed3ee6e1` and ruleset `8887576e` are unchanged. Hash rotation is logged in `governance/HASH_ROTATIONS.md` (reviewer: operator; PR review pending). This does **not** unfreeze the model or clear any gate. Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`.
+- **Coinvest CUSIP-first resolution (D5, 2026-11-01, operator-authorized, same reset):** builder 1.2.0 prefers `cusip_static_map.json` over the cache's live-lookup ticker. That lookup left DMRA, DFTX, VOR and others blank and mis-tagged Organon → ORIC, IQVIA → IRWD and others. The map gains 47 verified entries. coinvest is rebuilt (271/357 tickers); 2026-10-30 Top-30 overlap is 27/30 against the roster-only file. `oos_clock_start` is unchanged at 2026-11-02. Memo: `docs/governance/2026-11-01-coinvest-cusip-first-resolution.md`.
 
 ## Governance Events (2026-06-20 to 2026-06-24)
 

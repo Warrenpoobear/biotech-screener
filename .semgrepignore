@@ -6,3 +6,9 @@
 
 # bind() function calls in event-outcome tests false-match sc-mcp-opens-socket ($S.bind).
 tests/test_event_outcome_binder.py
+
+# dashboard/app.py is the local operator dashboard; uvicorn.run() binding a port is
+# intended. It false-matches sc-mcp-opens-socket, a rule written to vet EXTERNAL MCP
+# servers (see the header of .semgrep/mcp-supply-chain.yml). Keep in sync with the
+# semgrep-governance hook's `exclude:` in .pre-commit-config.yaml.
+dashboard/app.py

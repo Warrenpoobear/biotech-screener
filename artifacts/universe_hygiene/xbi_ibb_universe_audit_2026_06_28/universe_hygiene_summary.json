@@ -1,5 +1,5 @@
 {
-  "audit_timestamp": "2026-07-20T12:31:11.074272+00:00",
+  "audit_timestamp": "2026-11-09T13:30:59.995943+00:00",
   "reference_date": "2026-06-28",
   "stale_cutoff": "2026-06-15",
   "governance": [
@@ -15,23 +15,23 @@
     "total": 357,
     "by_classification": {
       "ACTIVE_VALID": 325,
-      "NEEDS_REVIEW": 24,
-      "DELISTED_OR_INACTIVE": 7,
+      "NEEDS_REVIEW": 23,
+      "DELISTED_OR_INACTIVE": 8,
       "ACTIVE_BUT_STALE_PRICE": 1
     }
   },
   "xbi": {
-    "holdings_count": 147,
-    "source": "SPDR_LIVE_XLSX (https://www.ssga.com/us/en/institutional/etfs/library-content/products/fund-data/etfs/us/holdings-daily-us-en-xbi.xlsx) @ 2026-07-20T12:31:13.497245+00:00",
-    "missing_from_model": 6,
+    "holdings_count": 157,
+    "source": "SPDR_LIVE_XLSX (https://www.ssga.com/us/en/institutional/etfs/library-content/products/fund-data/etfs/us/holdings-daily-us-en-xbi.xlsx) @ 2026-11-09T13:31:02.126777+00:00",
+    "missing_from_model": 12,
     "missing_by_classification": {
-      "MISSING_CORE_BIOTECH_CANDIDATE": 5,
+      "MISSING_CORE_BIOTECH_CANDIDATE": 11,
       "MISSING_LOW_RELEVANCE": 1
     }
   },
   "ibb": {
     "holdings_count": 242,
-    "source": "BLACKROCK_VARNISH_API_portfolioId=239699 (iShares Biotechnology ETF, asOfDate=20260626) @ 2026-07-20T12:31:14.703433+00:00",
+    "source": "BLACKROCK_VARNISH_API_portfolioId=239699 (iShares Biotechnology ETF, asOfDate=20260626) @ 2026-11-09T13:31:02.848867+00:00",
     "missing_from_model": 5,
     "missing_by_classification": {
       "MISSING_CORE_BIOTECH_CANDIDATE": 2,
@@ -41,28 +41,28 @@
     }
   },
   "identifier_conflicts": 0,
-  "proposed_actions": 19,
+  "proposed_actions": 26,
   "known_problem_tickers": {
     "RNA": {
       "in_model": true,
       "model_classification": "ACTIVE_VALID",
-      "status": "active",
+      "status": "excluded_acquired",
       "company_name": "Atrium Therapeutics, Inc.",
-      "last_price_date": "2026-07-17"
+      "last_price_date": "2026-10-30"
     },
     "GOSS": {
       "in_model": true,
       "model_classification": "ACTIVE_VALID",
       "status": "active",
       "company_name": "Gossamer Bio, Inc.",
-      "last_price_date": "2026-07-17"
+      "last_price_date": "2026-11-06"
     },
     "REPL": {
       "in_model": true,
       "model_classification": "ACTIVE_VALID",
       "status": "active",
       "company_name": "Replimune Group, Inc.",
-      "last_price_date": "2026-07-17"
+      "last_price_date": "2026-11-06"
     },
     "ACLX": {
       "in_model": true,

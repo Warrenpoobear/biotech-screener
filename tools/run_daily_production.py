@@ -44,6 +44,7 @@ from dotenv import load_dotenv
 load_dotenv(REPO_ROOT / ".env")
 
 from archive_snapshot import get_git_info, sha256_file
+from common.drift_override import find_applicable_override, load_drift_overrides  # noqa: E402
 from common.types import is_retired_status  # noqa: E402  (needs REPO_ROOT on sys.path)
 
 # ---------------------------------------------------------------------------
@@ -83,6 +84,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset(
         "drift_monitoring",
         "ctgov_pit_dates",
         "sec_13f_cache",
+        "sec_13f_refresh_pending",
         "institutional_summary",
         "institutional_delta",
         "pnl_attribution",
@@ -97,6 +99,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset(
         "eligibility_consistency",
         "cache_health",
         "source_freshness",
+        "ctgov_content_freshness",
         "ruleset_health",
         "exposure_missingness",
         "risk_concentration",
@@ -356,11 +359,11 @@ MODE_DEFAULTS = {
     },
     "daily-production": {
         "price_refresh_scope": "full",
-        "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory",
+        "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory,pdufa_bio",
     },
     "full-refresh": {
         "price_refresh_scope": "full",
-        "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory,euctr,ctis,isrctn,merged_trials",
+        "warm_sources": "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory,pdufa_bio,euctr,ctis,isrctn,merged_trials",
     },
     "research": {
         "price_refresh_scope": "top30",
@@ -419,6 +422,14 @@ def _load_top_n_tickers_from_prior_snapshot(
         return None
 
 
+def sharadar_price_source_enabled() -> bool:
+    """Sharadar is the primary price source unless BIOTECH_PRICE_SOURCE=yfinance
+    or no SHARADAR_API_KEY is available (then yfinance alone, as before)."""
+    if os.environ.get("BIOTECH_PRICE_SOURCE", "sharadar").strip().lower() == "yfinance":
+        return False
+    return bool(os.environ.get("SHARADAR_API_KEY", "").strip())
+
+
 def refresh_prices(
     price_csv: Path,
     through_date: str,
@@ -466,11 +477,32 @@ def refresh_prices(
             if tickers and "XBI" not in tickers:
                 tickers.append("XBI")
 
+    # Sharadar first (official closes, upserts a trailing window so provisional
+    # values are revised), then yfinance appends whatever is still missing —
+    # e.g. today's bar if Sharadar has not published it yet, or tickers SEP/SFP
+    # do not cover. Roll back with BIOTECH_PRICE_SOURCE=yfinance.
+    sharadar_stats: Optional[Dict[str, Any]] = None
+    if sharadar_price_source_enabled():
+        from common.sharadar_prices import last_dates, refresh_prices_from_sharadar
+
+        _sh_tickers = list(tickers) if tickers else sorted(last_dates(price_csv))
+        if "XBI" not in _sh_tickers:
+            _sh_tickers.append("XBI")
+        sharadar_stats = refresh_prices_from_sharadar(price_csv, through_date, _sh_tickers)
+        _logger.info(
+            f"  Sharadar prices: {sharadar_stats.get('status')} — "
+            f"{sharadar_stats.get('n_revised', 0)} revised, {sharadar_stats.get('n_appended', 0)} appended, "
+            f"latest={sharadar_stats.get('latest_date')}, no-data={len(sharadar_stats.get('no_data_tickers') or [])}"
+            + (f" ({sharadar_stats.get('detail')})" if sharadar_stats.get("detail") else "")
+        )
+
     stats = extend_price_csv(
         csv_path=price_csv,
         through_date=through_date,
         tickers=tickers,
     )
+    if sharadar_stats is not None:
+        stats["sharadar"] = sharadar_stats
 
     # Compute XBI last date from the CSV
     xbi_last_date = _get_ticker_last_date(price_csv, "XBI")
@@ -1465,6 +1497,70 @@ def check_source_freshness(
     )
 
 
+CTGOV_CONTENT_MAX_AGE_DAYS = 7
+
+
+def check_ctgov_content_freshness(
+    trial_records_path: Path,
+    as_of_date: str,
+    max_age_days: int = CTGOV_CONTENT_MAX_AGE_DAYS,
+) -> GateResult:
+    """Age CT.gov by content, not by cache filename (blocking FAIL).
+
+    source_freshness dates CT.gov by the daily trial_records_<date>.json copy,
+    which warm_caches rewrites every day even when the source file is never
+    refreshed. This gate takes the newest last_update_posted on or before
+    as_of_date (later dates are ignored, so historical reruns stay PIT) and
+    FAILs when it is older than max_age_days.
+    """
+    name = "ctgov_content_freshness"
+    if not trial_records_path.exists():
+        return GateResult(name=name, status="FAIL", detail=f"{trial_records_path.name} not found")
+    try:
+        with open(trial_records_path, encoding="utf-8") as f:
+            records = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(name=name, status="FAIL", detail=f"Cannot read {trial_records_path.name}: {e}")
+
+    newest = None
+    for rec in records if isinstance(records, list) else []:
+        d = (rec.get("last_update_posted") or "")[:10] if isinstance(rec, dict) else ""
+        try:
+            datetime.strptime(d, "%Y-%m-%d")
+        except ValueError:
+            continue
+        if d <= as_of_date and (newest is None or d > newest):
+            newest = d
+    if newest is None:
+        return GateResult(
+            name=name,
+            status="FAIL",
+            detail=f"No last_update_posted on or before {as_of_date} in {trial_records_path.name}",
+            threshold=max_age_days,
+        )
+
+    age = (datetime.strptime(as_of_date, "%Y-%m-%d") - datetime.strptime(newest, "%Y-%m-%d")).days
+    value = {"newest_last_update_posted": newest, "age_days": age}
+    if age > max_age_days:
+        return GateResult(
+            name=name,
+            status="FAIL",
+            detail=(
+                f"{trial_records_path.name} newest last_update_posted={newest} is {age}d old (>{max_age_days}d) — "
+                "CT.gov source not refreshed; run collect_ctgov_data.py"
+            ),
+            value=value,
+            threshold=max_age_days,
+        )
+    return GateResult(
+        name=name,
+        status="PASS",
+        detail=f"newest last_update_posted={newest} ({age}d old)",
+        value=value,
+        threshold=max_age_days,
+    )
+
+
 def check_missing_reason_fraction(
     snapshot_date_dir: Path,
     max_frac: float,
@@ -1815,8 +1911,20 @@ def check_risk_concentration(
 def check_turnover(
     snapshot_date_dir: Path,
     max_pct: float,
+    as_of_date: Optional[str] = None,
+    overrides_path: Optional[Path] = None,
 ) -> GateResult:
-    """Check name turnover from the delta report."""
+    """Check name turnover from the delta report.
+
+    A delta report without a turnover figure means the gate measured nothing
+    (the report had no prior, or churn comparisons were suppressed on a
+    cache-degraded run). That is reported as WARN, not PASS.
+
+    A FAIL is downgraded to WARN when a dated operator override
+    (config/drift_gate_overrides.json, see common/drift_override.py) is pinned
+    to the report's prior snapshot, covers ``as_of_date`` and names
+    ``name_turnover_pct``.
+    """
     delta_path = snapshot_date_dir / "phase2_run_delta_report.txt"
     if not delta_path.exists():
         return GateResult(
@@ -1831,17 +1939,44 @@ def check_turnover(
 
     match = re.search(r"Name turnover:\s+([\d.]+)%", text)
     if not match:
+        reason = "churn comparisons suppressed" if "CHURN COMPARISONS: SUPPRESSED" in text else "no turnover figure"
         return GateResult(
             name="turnover",
-            status="PASS",
-            detail="Could not parse turnover from delta report; skipped",
+            status="WARN",
+            detail=f"Turnover NOT measured: delta report has {reason}",
         )
 
     turnover = float(match.group(1))
-    status = "FAIL" if turnover > max_pct else "PASS"
+    if turnover <= max_pct:
+        return GateResult(
+            name="turnover",
+            status="PASS",
+            detail=f"Name turnover={turnover:.1f}%",
+            value=turnover,
+            threshold=max_pct,
+        )
+
+    fail_reason = f"FAIL name_turnover_pct: {turnover:.1f}% > {max_pct}%"
+    prior_match = re.search(r"^Prior:\s+(\d{4}-\d{2}-\d{2})", text, flags=re.MULTILINE)
+    override = None
+    if as_of_date and prior_match:
+        override = find_applicable_override(
+            load_drift_overrides(overrides_path), as_of_date, prior_match.group(1), [fail_reason]
+        )
+    if override is not None:
+        return GateResult(
+            name="turnover",
+            status="WARN",
+            detail=(
+                f"Name turnover={turnover:.1f}% vs {prior_match.group(1)} — OPERATOR OVERRIDE {override.id} "
+                f"({override.authorized_by}; {override.memo}) — not blocked: {fail_reason}"
+            ),
+            value=turnover,
+            threshold=max_pct,
+        )
     return GateResult(
         name="turnover",
-        status=status,
+        status="FAIL",
         detail=f"Name turnover={turnover:.1f}%",
         value=turnover,
         threshold=max_pct,
@@ -2183,6 +2318,16 @@ def _write_drift_report_md(
         f"**Status**: {report['status']}",
         f"**Thresholds ID**: `{report['thresholds_id']}`",
         "",
+    ]
+    _ovr = report.get("override_applied")
+    if _ovr:
+        lines += [
+            f"**Operator override applied**: `{_ovr['id']}` ({_ovr['authorized_by']}). "
+            f"FAIL downgraded to WARN for: {'; '.join(report.get('fail_reasons', []))}. "
+            f"Reason: {_ovr['reason']} Memo: `{_ovr['memo']}`.",
+            "",
+        ]
+    lines += [
         "## Metrics",
         "",
         "| Metric | Value | Threshold | Status |",
@@ -2278,12 +2423,17 @@ def check_drift_monitoring(
     snapshot_dir: Path,
     as_of_date: str,
     thresholds: DriftThresholds,
+    overrides_path: Optional[Path] = None,
 ) -> GateResult:
     """Compare current snapshot vs most recent prior.
 
     WARN thresholds flag operational concerns. FAIL thresholds block
     snapshot promotion when extreme drift is detected (likely a data
     feed failure or pipeline bug).
+
+    A dated operator override (config/drift_gate_overrides.json, see
+    common/drift_override.py) downgrades FAIL to WARN when it is pinned to
+    this prior snapshot, covers this date and names every failing metric.
 
     Writes drift_report.json + drift_report.md as sidecar artifacts.
     """
@@ -2382,9 +2532,11 @@ def check_drift_monitoring(
             f"warn_near_miss_share_pct: {metrics['near_miss_share_pct']:.1f}% of top-30 within 25bps of K=30 cutoff > {thresholds.warn_near_miss_share_pct}%"
         )
 
-    if fail_reasons:
+    override = find_applicable_override(load_drift_overrides(overrides_path), as_of_date, prior.name, fail_reasons)
+
+    if fail_reasons and override is None:
         status = "FAIL"
-    elif warn_reasons:
+    elif fail_reasons or warn_reasons:
         status = "WARN"
     else:
         status = "PASS"
@@ -2400,6 +2552,7 @@ def check_drift_monitoring(
         "fail_reasons": fail_reasons,
         "warn_reasons": warn_reasons,
         "status": status,
+        "override_applied": override.to_json() if override is not None else None,
     }
 
     report_json_path = staging_date_dir / "drift_report.json"
@@ -2410,7 +2563,12 @@ def check_drift_monitoring(
     _write_drift_report_md(report, report_md_path)
 
     detail = f"vs {prior.name}: "
-    if fail_reasons:
+    if fail_reasons and override is not None:
+        detail += (
+            f"OPERATOR OVERRIDE {override.id} ({override.authorized_by}; {override.memo}) — "
+            "not blocked: " + "; ".join(fail_reasons)
+        )
+    elif fail_reasons:
         detail += "BLOCKED — " + "; ".join(fail_reasons)
     elif warn_reasons:
         detail += "; ".join(warn_reasons)
@@ -2727,6 +2885,68 @@ def check_sec_13f_cache(
         value=value,
         threshold=threshold,
     )
+
+
+def check_sec_13f_refresh_pending(
+    as_of_date: str,
+    *,
+    cache_base_dir: Optional[Path] = None,
+    coinvest_path: Optional[Path] = None,
+    warn_share: float = 0.5,
+) -> GateResult:
+    """WARN when most roster managers have filed a newer quarter than coinvest_signals.json uses.
+
+    Rebuilding ``coinvest_signals.json`` after a 13F deadline is a manual, governed
+    step. Nothing triggers it, and from June to October 2026 production ran on
+    Q1 holdings while Q2 filings sat in the cache. WARN-only — never FAIL.
+    """
+    name = "sec_13f_refresh_pending"
+    threshold = {"warn_share": warn_share}
+    base = cache_base_dir or (REPO_ROOT / "data" / "caches" / "sec_13f" / "PIT")
+    signals_path = coinvest_path or (REPO_ROOT / "production_data" / "coinvest_signals.json")
+
+    try:
+        with open(signals_path) as f:
+            signals = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        return GateResult(name=name, status="WARN", detail=f"Cannot read {signals_path.name}: {e}", threshold=threshold)
+    in_use = signals.get("period_of_report") if isinstance(signals, dict) else None
+    if not isinstance(in_use, str) or len(in_use) != 10:
+        return GateResult(
+            name=name,
+            status="WARN",
+            detail=f"{signals_path.name} records no period_of_report; cannot tell which quarter is in use",
+            threshold=threshold,
+        )
+
+    index_path = base / as_of_date / "index.json"
+    try:
+        with open(index_path) as f:
+            index = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        # The sec_13f_cache gate already reports a missing or unreadable index.
+        return GateResult(
+            name=name,
+            status="PASS",
+            detail=f"in use {in_use}; no readable 13F cache index for {as_of_date} (see sec_13f_cache)",
+            threshold=threshold,
+        )
+
+    filed = [m for m in index.get("managers", []) if m.get("selected") and isinstance(m.get("period_of_report"), str)]
+    newer = [m for m in filed if m["period_of_report"] > in_use]
+    share = len(newer) / len(filed) if filed else 0.0
+    value = {"period_in_use": in_use, "managers_with_newer_filing": len(newer), "managers_with_filing": len(filed)}
+    newest = max((m["period_of_report"] for m in newer), default=None)
+    detail = f"coinvest uses {in_use}; {len(newer)}/{len(filed)} managers have a newer filing"
+    if filed and share >= warn_share:
+        return GateResult(
+            name=name,
+            status="WARN",
+            detail=f"{detail} (period {newest}) — rebuild coinvest_signals.json (manual, governed step)",
+            value=value,
+            threshold=threshold,
+        )
+    return GateResult(name=name, status="PASS", detail=detail, value=value, threshold=threshold)
 
 
 # ---------------------------------------------------------------------------
@@ -4374,7 +4594,7 @@ def check_market_data_staleness(
 ) -> GateResult:
     """Check that market_data.json is fresh relative to the screen date.
 
-    Reads the ``collected_at`` field from the first record and computes
+    Uses the OLDEST ``collected_at`` across all records and computes its
     calendar-day age against ``as_of_date``.  FAIL if age > max_age_days.
     """
     from datetime import date as _date
@@ -4398,7 +4618,6 @@ def check_market_data_staleness(
             detail=f"Cannot read market_data.json: {e}",
         )
 
-    # Find the most common collected_at date
     collected_dates = [r.get("collected_at") for r in records if isinstance(r, dict) and r.get("collected_at")]
     if not collected_dates:
         return GateResult(
@@ -4407,10 +4626,12 @@ def check_market_data_staleness(
             detail="No collected_at field found in market_data.json",
         )
 
-    collected_at = max(collected_dates)  # latest collection date
+    # Judge the file by its OLDEST row. max() let one fresh row (or the price
+    # patch re-stamping rows) mask months-old avg_volume/beta/volatility on the
+    # rest, so the collect_market_data.py auto-refresh never ran (2026-11-12).
     try:
-        collected = _date.fromisoformat(collected_at)
         as_of = _date.fromisoformat(as_of_date)
+        parsed = [_date.fromisoformat(str(d)[:10]) for d in collected_dates]
     except ValueError as e:
         return GateResult(
             name="market_data_staleness",
@@ -4418,14 +4639,18 @@ def check_market_data_staleness(
             detail=f"Bad date format: {e}",
         )
 
+    collected = min(parsed)
+    collected_at = collected.isoformat()
     age_days = (as_of - collected).days
+    n_stale = sum(1 for d in parsed if (as_of - d).days > max_age_days)
     if age_days > max_age_days:
         return GateResult(
             name="market_data_staleness",
             status="FAIL",
             detail=(
                 f"market_data.json is {age_days}d stale "
-                f"(collected={collected_at}, as_of={as_of_date}, max={max_age_days}d). "
+                f"(oldest collected={collected_at}, {n_stale}/{len(parsed)} rows older than "
+                f"{max_age_days}d, as_of={as_of_date}). "
                 "Run: python collect_market_data.py"
             ),
             value=age_days,
@@ -4435,10 +4660,15 @@ def check_market_data_staleness(
     return GateResult(
         name="market_data_staleness",
         status="PASS",
-        detail=f"market_data.json collected={collected_at}, age={age_days}d",
+        detail=f"market_data.json oldest collected={collected_at}, age={age_days}d",
         value=age_days,
         threshold=max_age_days,
     )
+
+
+# Median market_cap below this means the file is in $ millions, not USD (a real
+# biotech universe median is hundreds of $M). See check_market_data_schema.
+MARKET_DATA_MIN_MEDIAN_CAP_USD = 10_000_000
 
 
 def check_market_data_schema(data_dir: Path) -> GateResult:
@@ -4504,6 +4734,30 @@ def check_market_data_schema(data_dir: Path) -> GateResult:
             value=len(bad_records),
             threshold=0,
         )
+
+    # Units check: market_cap must be raw USD. A file written in $ millions
+    # (Sharadar DAILY units; 2026-11-04 refresh) passes every type check, yet
+    # run_screen divides by 1e6 again, shrinking every company ~1e6x and
+    # silently reshuffling size bands, liquidity and the actionable ranking.
+    caps = sorted(
+        rec["market_cap"]
+        for rec in records
+        if isinstance(rec, dict) and isinstance(rec.get("market_cap"), (int, float)) and rec["market_cap"] > 0
+    )
+    if caps:
+        median_cap = caps[len(caps) // 2]
+        if median_cap < MARKET_DATA_MIN_MEDIAN_CAP_USD:
+            mm_scale = sum(1 for c in caps if c < 1e6)
+            return GateResult(
+                name="market_data_schema",
+                status="FAIL",
+                detail=(
+                    f"market_cap looks like $ millions, not USD: median {median_cap:,.1f} "
+                    f"(< {MARKET_DATA_MIN_MEDIAN_CAP_USD:,.0f}); {mm_scale}/{len(caps)} records < 1e6"
+                ),
+                value=median_cap,
+                threshold=MARKET_DATA_MIN_MEDIAN_CAP_USD,
+            )
 
     return GateResult(
         name="market_data_schema",
@@ -5319,7 +5573,7 @@ def run_daily(
     price_cache_dir: Optional[Path] = None,
     fail_on_bad_cache: bool = False,
     skip_pit_warm: bool = False,
-    warm_sources: str = "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory",
+    warm_sources: str = "sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory,pdufa_bio",
     warm_price_pit: bool = True,
     price_pit_backfill: bool = True,
     auto_refresh_market_data: bool = True,
@@ -5599,12 +5853,19 @@ def run_daily(
             verbose=False,
         )
         _opt_meta = _opt_result.get("metadata", {})
-        _logger.info(
-            f"Options snapshot → {_opt_meta.get('returned_count', 0)}/"
-            f"{_opt_meta.get('universe_count', 0)} fetched | "
-            f"liquid={_opt_meta.get('liquid_count', 0)} "
-            f"event_premium={_opt_meta.get('event_premium_detected', 0)}"
-        )
+        if _opt_meta.get("skipped"):
+            _logger.warning(
+                f"Options snapshot → SKIPPED ({_opt_meta.get('skip_reason')}): "
+                f"as_of={as_of_date} != market today {_opt_meta.get('market_today')}; "
+                "current-state source cannot serve a past date (PIT guard)"
+            )
+        else:
+            _logger.info(
+                f"Options snapshot → {_opt_meta.get('returned_count', 0)}/"
+                f"{_opt_meta.get('universe_count', 0)} fetched | "
+                f"liquid={_opt_meta.get('liquid_count', 0)} "
+                f"event_premium={_opt_meta.get('event_premium_detected', 0)}"
+            )
     except Exception as _opt_err:
         _logger.warning(f"Options snapshot failed (non-blocking): {_opt_err}")
 
@@ -5734,6 +5995,11 @@ def run_daily(
     gate_results.append(freshness_gate)
     _logger.info(f"Source freshness gate: {freshness_gate.status} — {freshness_gate.detail}")
 
+    # --- Gate: CT.gov content freshness (blocking; newest trial update, not cache filename) ---
+    ctgov_content_gate = check_ctgov_content_freshness(data_dir / "trial_records.json", as_of_date)
+    gate_results.append(ctgov_content_gate)
+    _logger.info(f"CTGov content freshness gate: {ctgov_content_gate.status} — {ctgov_content_gate.detail}")
+
     # --- No-op detection (logging-only; never skips work) ---
     try:
         _noop = detect_no_material_input_change(
@@ -5794,6 +6060,16 @@ def run_daily(
         )
         _emit_self_improvement_artifacts(_final_snap, manifest)
         return manifest
+
+    # --- Market caps from Sharadar DAILY (raw USD; DAILY reports $ millions) ---
+    if sharadar_price_source_enabled():
+        from common.sharadar_prices import update_market_caps_from_daily
+
+        _mc = update_market_caps_from_daily(data_dir / "market_data.json", as_of_date)
+        _logger.info(
+            f"Sharadar market caps: {_mc.get('status')} — {_mc.get('n_updated', 0)}/{_mc.get('n_records', '?')} updated"
+            + (f" ({_mc.get('detail')})" if _mc.get("detail") else "")
+        )
 
     # --- Pre-patch: update market_data.json prices from price_history.csv ---
     # price_history.csv refreshes daily via a different endpoint; market_data.json
@@ -6074,7 +6350,7 @@ def run_daily(
     gate_results.append(missing_gate)
     _logger.info(f"Missing-reason gate: {missing_gate.status} — {missing_gate.detail}")
 
-    turnover_gate = _safe_gate("turnover", check_turnover, staging_date_dir, config.turnover_max_pct)
+    turnover_gate = _safe_gate("turnover", check_turnover, staging_date_dir, config.turnover_max_pct, as_of_date)
     gate_results.append(turnover_gate)
     _logger.info(f"Turnover gate: {turnover_gate.status} — {turnover_gate.detail}")
 
@@ -6110,6 +6386,11 @@ def run_daily(
     )
     gate_results.append(sec_13f_gate)
     _logger.info(f"13F cache gate: {sec_13f_gate.status} — {sec_13f_gate.detail}")
+
+    # --- Gate: sec_13f_refresh_pending (WARN-only) ---
+    sec_13f_pending_gate = _safe_gate("sec_13f_refresh_pending", check_sec_13f_refresh_pending, as_of_date)
+    gate_results.append(sec_13f_pending_gate)
+    _logger.info(f"13F refresh pending gate: {sec_13f_pending_gate.status} — {sec_13f_pending_gate.detail}")
 
     # --- Gate: institutional_summary (WARN-only, post-screen) ---
     inst_gate = _safe_gate(
@@ -6858,6 +7139,73 @@ def run_daily(
                 _logger.info(f"Coinvest shadow → skipped ({_cs_result.get('error', '?')})")
         except Exception as _cs_err:
             _logger.warning(f"Coinvest shadow failed: {_cs_err}")
+
+        # --- Step 5k.11b2: Selector-only shadow capture (non-blocking, Spec 094) ---
+        # Records the production Top-30 next to the Top-30 the selector alone
+        # would hold. Capture-only: reads rankings.csv, writes its own ledger.
+        try:
+            from tools.selector_only_shadow import capture as _sos_capture
+            from tools.selector_only_shadow import summarize as _sos_summarize
+
+            _sos_result = _sos_capture(as_of_date)
+            if _sos_result.get("status") == "captured":
+                _sos_summarize()
+                _logger.info(
+                    f"Selector-only shadow → {_sos_result.get('capture_mode')}, "
+                    f"overlap={_sos_result.get('overlap')}/30"
+                )
+            else:
+                _logger.info(
+                    f"Selector-only shadow → {_sos_result.get('status')} ({_sos_result.get('reason', as_of_date)})"
+                )
+        except Exception as _sos_err:
+            _logger.warning(f"Selector-only shadow failed: {_sos_err}")
+
+        # --- Step 5k.11b3: Low-risk sleeve shadow (non-blocking, research record) ---
+        # Records the 30 lowest-risk eligible names outside the Top-30 next to the
+        # production Top-30. Capture-only: reads rankings.csv and split-adjusted
+        # prices, writes its own ledger. No effect on rankings, gates or accounts.
+        try:
+            from tools.low_risk_sleeve_shadow import capture as _lrs_capture
+            from tools.low_risk_sleeve_shadow import summarize as _lrs_summarize
+
+            _lrs_result = _lrs_capture(as_of_date)
+            if _lrs_result.get("status") == "captured":
+                _lrs_summarize()
+                _logger.info(
+                    f"Low-risk sleeve shadow → {_lrs_result.get('capture_mode')}, "
+                    f"prices as of {_lrs_result.get('price_asof')}"
+                )
+            else:
+                _logger.info(
+                    f"Low-risk sleeve shadow → {_lrs_result.get('status')} ({_lrs_result.get('reason', as_of_date)})"
+                )
+        except Exception as _lrs_err:
+            _logger.warning(f"Low-risk sleeve shadow failed: {_lrs_err}")
+
+        # LVB (low vol-beta: vol_60d + beta_120d only), own ledger; same capture-only rules.
+        try:
+            from tools.low_risk_sleeve_shadow import capture as _lrs_capture
+            from tools.low_risk_sleeve_shadow import summarize as _lrs_summarize
+
+            _lrsv_result = _lrs_capture(as_of_date, variant="lvb")
+            if _lrsv_result.get("status") == "captured":
+                _lrs_summarize(variant="lvb")
+            _logger.info(f"LVB shadow → {_lrsv_result.get('capture_mode') or _lrsv_result.get('status')}")
+        except Exception as _lrsv_err:
+            _logger.warning(f"LVB shadow failed: {_lrsv_err}")
+
+        # LVB standalone (drawn from the full eligible universe), own ledger.
+        try:
+            from tools.low_risk_sleeve_shadow import capture as _lrs_capture
+            from tools.low_risk_sleeve_shadow import summarize as _lrs_summarize
+
+            _lrsf_result = _lrs_capture(as_of_date, variant="lvb_full")
+            if _lrsf_result.get("status") == "captured":
+                _lrs_summarize(variant="lvb_full")
+            _logger.info(f"LVB standalone shadow → {_lrsf_result.get('capture_mode') or _lrsf_result.get('status')}")
+        except Exception as _lrsf_err:
+            _logger.warning(f"LVB standalone shadow failed: {_lrsf_err}")
 
         # --- Step 5k.11c: Regime shadow (non-blocking, diagnostic) ---
         try:

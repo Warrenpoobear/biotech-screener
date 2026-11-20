@@ -13,7 +13,7 @@ from __future__ import annotations
 from decimal import Decimal, InvalidOperation
 from typing import Any, Dict, List, Optional
 
-from common.corporate_actions import CorporateActionRegistry, is_dead, load_actions
+from common.corporate_actions import CorporateActionRegistry, is_dead, is_retired_symbol, load_actions
 from common.integration_contracts import is_validation_enabled, validate_module_1_output
 from common.provenance import create_provenance
 from common.types import StatusGate
@@ -168,9 +168,13 @@ def compute_module_1_universe(
         status, reason_detail = _classify_status(record)
 
         # Corporate actions gate: PIT-safe check for acquired/delisted tickers
+        # and for symbols that have been renamed away (INDV -> SUPN).
         if status == StatusGate.ACTIVE and is_dead(ticker, as_of_date, ca_reg):
             status = StatusGate.EXCLUDED_ACQUIRED
             reason_detail = "corporate_actions_registry"
+        elif status == StatusGate.ACTIVE and is_retired_symbol(ticker, as_of_date, ca_reg):
+            status = StatusGate.EXCLUDED_DELISTED
+            reason_detail = "ticker_retired"
 
         if status == StatusGate.ACTIVE:
             # Extract market cap for output (already validated if we're here)

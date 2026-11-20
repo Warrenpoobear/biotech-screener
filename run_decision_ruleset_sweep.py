@@ -150,7 +150,7 @@ def load_archive_data(tar_path: Path, date_str: str) -> ArchiveData:
     tmp_dir = tempfile.mkdtemp(prefix=f"sweep_{date_str}_")
     try:
         with tarfile.open(tar_path, "r:gz") as tar:
-            tar.extractall(tmp_dir)
+            tar.extractall(tmp_dir, filter="data")
 
         archive_root = Path(tmp_dir) / date_str
         if not archive_root.exists():

@@ -17,6 +17,11 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
+
+from common.atomic_io import atomic_write_text  # noqa: E402
+
 FIN_DAT = REPO / "production_data" / "financial_data.json"
 FIN_REC = REPO / "production_data" / "financial_records.json"
 
@@ -96,8 +101,9 @@ def main(dry_run: bool = False) -> int:
         return 0
 
     fin_recs.extend(added)
-    with open(FIN_REC, "w") as f:
-        json.dump(fin_recs, f, indent=2, default=str)
+    # Atomic replace: production_data files are hard-linked into staging dirs,
+    # and an in-place write would mutate every linked copy.
+    atomic_write_text(FIN_REC, json.dumps(fin_recs, indent=2, default=str))
     print(f"merge_financial: wrote financial_records.json ({len(fin_recs) - len(added)} → {len(fin_recs)} records)")
     return 0
 

@@ -1,5 +1,7 @@
 # Performance Attribution
 
+> **Deprecated 2026-11-13 (market-cap look-ahead).** The "+2.34pp/mo, t = 2.57" backtest, the Checklist v2 bundle result and the regime split quoted in this file were computed on history that read today's market cap on every past date. They are not evidence. With point-in-time market data the Top-30 shows +0.68 pt/period net of 50 bps (t = 1.47). Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+
 **Status:** DRAFT / NOT ACTIVE
 **Created:** 2026-05-18
 
@@ -103,6 +105,8 @@ HPR = (ending_value - beginning_value + income) / beginning_value
 
 ### DEM Production Metrics (True PIT Backtest)
 
+*(Deprecated 2026-11-13: market-cap look-ahead. The table is kept as a record of what was claimed.)*
+
 | Metric | Value | Period |
 | --- | --- | --- |
 | Monthly alpha (net-of-cost) | +2.34pp | Jun 2020 - Apr 2026 |
@@ -124,8 +128,8 @@ HPR = (ending_value - beginning_value + income) / beginning_value
 | Survivorship-free | Includes delisted companies | Yes (universe at as_of_date) |
 | Net of transaction costs | Realistic cost model | Yes (backtest/cost_model.py) |
 | Regime-segmented | Not just pooled results | Yes (bear/neutral/bull split) |
-| Statistically significant | t-stat > 2.0 | Yes (t = 2.57) |
-| Economically meaningful | Alpha > transaction costs | Yes (+2.34pp/mo >> costs) |
+| Statistically significant | t-stat > 2.0 | Claimed t = 2.57 — deprecated 2026-11-13; t = 1.47 with point-in-time market data |
+| Economically meaningful | Alpha > transaction costs | Claimed +2.34pp/mo — deprecated 2026-11-13; +0.68 pt/period net of 50 bps with point-in-time market data |
 | Replicable | Same inputs = same output | Yes (deterministic) |
 
 ### Red Flags in Performance Claims

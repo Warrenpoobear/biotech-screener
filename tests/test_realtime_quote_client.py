@@ -54,12 +54,14 @@ def test_resolve_alpaca_credentials_alpaca_prefix_alias(monkeypatch):
 
 
 def test_resolve_api_key_prefers_massive(monkeypatch):
+    monkeypatch.setenv("MASSIVE_ENABLED", "1")  # Massive is opt-in since 2026-11-11
     monkeypatch.setenv("MASSIVE_API_KEY", "massive-123")
     monkeypatch.setenv("POLYGON_API_KEY", "polygon-456")
     assert _resolve_api_key() == "massive-123"
 
 
 def test_resolve_api_key_falls_back_to_polygon(monkeypatch):
+    monkeypatch.setenv("MASSIVE_ENABLED", "1")  # Massive is opt-in since 2026-11-11
     monkeypatch.delenv("MASSIVE_API_KEY", raising=False)
     monkeypatch.setenv("POLYGON_API_KEY", "polygon-456")
     assert _resolve_api_key() == "polygon-456"
@@ -101,8 +103,18 @@ def test_factory_prefers_alpaca_over_polygon(monkeypatch):
     assert client.health().mode == "live"
 
 
+def test_factory_without_massive_opt_in_does_not_use_polygon(monkeypatch):
+    _clear_env(monkeypatch, ALPACA_ENV_VARS, POLYGON_ENV_VARS, FALLBACK_ENV_VARS)
+    monkeypatch.delenv("MASSIVE_ENABLED", raising=False)
+    monkeypatch.setenv("MASSIVE_API_KEY", "abc")
+    from common.realtime_quote_client import _resolve_api_key
+
+    assert _resolve_api_key() is None
+
+
 def test_factory_falls_back_to_polygon_when_no_alpaca(monkeypatch):
     _clear_env(monkeypatch, ALPACA_ENV_VARS, POLYGON_ENV_VARS, FALLBACK_ENV_VARS)
+    monkeypatch.setenv("MASSIVE_ENABLED", "1")  # Massive is opt-in since 2026-11-11
     monkeypatch.setenv("MASSIVE_API_KEY", "abc")
     client = make_quote_client()
     assert isinstance(client, PolygonMassiveQuoteClient)

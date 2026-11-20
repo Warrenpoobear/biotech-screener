@@ -67,7 +67,7 @@ Always warm 8-K cache BEFORE running screen.
 
 ### Forward Validation Protocol — daily truth-card (hardened 2026-07-10, PR #489)
 
-`docs/FORWARD_VALIDATION_PROTOCOL.md` (RATIFIED 2026-06-28) pre-registers a daily "truth card" plus weekly/monthly summaries for the frozen DEM Top-30 candidate (v1.4 / ruleset `8887576e`; candidate `model_hash=827c35a9ed3ee6e1`, `hash_scheme=ast-v1`; legacy `a9983a67c6954813`; registered 2026-06-26 unchanged).
+`docs/FORWARD_VALIDATION_PROTOCOL.md` (RATIFIED 2026-06-28) pre-registers a daily "truth card" plus weekly/monthly summaries for the frozen DEM Top-30 candidate (v1.4 / ruleset `8887576e`; candidate `model_hash=a9a430154568e242`, `hash_scheme=ast-v2` (since 2026-11-15; prior `ast-v1` `827c35a9ed3ee6e1`); legacy `a9983a67c6954813`; registered 2026-06-26 unchanged).
 
 **WIRED and hardened.** Originally wired `a90297f8` (2026-06-28), but the capture tail never actually ran in production 2026-04-17 → 2026-07-10 (`set -euo pipefail` aborted it on the pipeline's WARN exit 2); repaired + deployed 2026-07-10 (PR #489, `4d8623e5`). Current behavior:
 - `tools/run_forward_validation.py` — immutable daily truth-card capture (top-30 EW by `actionable_rank`), model-hash check vs `CANDIDATE.json`, 8-point DQ gate, adversarial seeds (1000-bootstrap + bottom-30) — invoked by the wrapper **only on pipeline exit 0/2** with a freshness/provenance gate; every capture is LIVE or REPLAY (`fv_capture.v2`); only LIVE + quality-PASS + hash-match + benchmark + realized 5d excess counts toward mandate SM-20260629-001
@@ -77,6 +77,11 @@ Always warm 8-K cache BEFORE running screen.
 - wired via `tools/cron_daily_production.sh` (after the diagnostic-reports block)
 
 Gate progress: **0/20 eligible LIVE windows (code-enforced)** — the 10 legacy captures (2026-06-12 → 2026-06-26) are a one-time backfill and do not count. 2026-09-30 = status checkpoint (not a deadline); ~mid-November 2026 = 20-window gate. For current status always read `docs/model_documentation.md` § "Recent Updates — 2026-07-10" and `artifacts/forward_validation/LIVENESS_STATUS.json` — do not trust counts cached in skills.
+
+Current model-status note, 2026-11-12:
+- The "mid-November 20-window gate" above is **superseded**. The clock was reset on 2026-11-01 and again on 2026-11-12. `oos_clock_start` is the first production run using the PR #614/#636 code (expected 2026-11-12), and the mandate restarts at 0/20. Read the newest "Recent Update" in `docs/MODEL_DOCUMENTATION.md`.
+- New **blocking** production gate `ctgov_content_freshness`: it FAILs if the newest `last_update_posted` in `production_data/trial_records.json` is more than 7 days old. The source file is refreshed by `tools/cron_data_refresh.sh ctgov` (`collect_ctgov_data.py`). A fresh `cache/ctgov/trial_records_<date>.json` filename does **not** prove fresh content.
+- Prices: Sharadar is primary, with yfinance fallback (PR #622; `BIOTECH_PRICE_SOURCE=yfinance` reverts). This price-source change still needs operator governance acknowledgement under `docs/FORWARD_VALIDATION_PROTOCOL.md` §1.
 
 **Governance:** NO_MODEL_CHANGE — the candidate is *observed*, not promoted. Clearing the 20-window gate only makes it *eligible* for an operator promotion decision; promotion/unfreeze remain explicit operator actions, and the §2 test is locked (not to be re-specified after data is seen).
 

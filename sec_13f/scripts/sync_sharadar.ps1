@@ -5,8 +5,8 @@
 # SETUP:
 #   1. Edit $BiotechScreenerPath below to your actual install path
 #   2. Set your API key (choose one method):
-#      - Environment variable: [Environment]::SetEnvironmentVariable("NASDAQ_DATA_LINK_API_KEY", "your_key", "User")
-#      - Or create file: data\config\nasdaq_api_key.txt
+#      - Environment variable: [Environment]::SetEnvironmentVariable("SHARADAR_API_KEY", "your_key", "User")
+#      - Or create file: data\config\sharadar_api_key.txt
 #   3. Schedule in Task Scheduler (see SCHEDULING section)
 #
 # SCHEDULING (Windows Task Scheduler):
@@ -77,8 +77,8 @@ try {
     Write-Log "Python: $PythonVersion"
 
     # Check API key
-    $ApiKeyEnv = $env:NASDAQ_DATA_LINK_API_KEY
-    $ApiKeyFile = Join-Path $BiotechScreenerPath "data\config\nasdaq_api_key.txt"
+    $ApiKeyEnv = $env:SHARADAR_API_KEY
+    $ApiKeyFile = Join-Path $BiotechScreenerPath "data\config\sharadar_api_key.txt"
     
     if ($ApiKeyEnv) {
         Write-Log "API key: Environment variable set"

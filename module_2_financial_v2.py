@@ -391,16 +391,19 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
 
     effective_cfo = cfo if cfo is not None else cfo_ops
 
-    # Profitable company
-    if (effective_cfo is not None and effective_cfo > Decimal("0")) or (
-        net_income is not None and net_income > Decimal("0")
-    ):
+    # Cash from operations decides solvency. Positive net income with negative
+    # CFO is a milestone, a collaboration payment or another non-cash item, not
+    # a company that has stopped burning cash. Net income is used only when no
+    # operating-cash-flow figure exists.
+    cfo_positive = effective_cfo is not None and effective_cfo > Decimal("0")
+    income_only = effective_cfo is None and net_income is not None and net_income > Decimal("0")
+    if cfo_positive or income_only:
         return BurnResult(
             monthly_burn=Decimal("0"),
             burn_source=BurnSource.PROFITABLE,
             burn_confidence=BurnConfidence.HIGH,
             burn_period="na",
-            raw_value=effective_cfo or net_income,
+            raw_value=effective_cfo if effective_cfo is not None else net_income,
             rejection_reasons={"all": "company_profitable"},
         )
 
@@ -618,8 +621,22 @@ def calculate_liquid_assets(financial_data: Dict) -> LiquidAssetsResult:
     if cash > Decimal("0"):
         components.append("Cash")
 
-    # Marketable securities (check multiple field names, first match wins)
+    # The collectors already dedupe treasury tags into CashAndSecurities, dated
+    # with the cash balance. Prefer that total: an individual investment tag can
+    # be years stale or be the non-current portfolio.
+    reported_total = _to_decimal(financial_data.get("CashAndSecurities"))
+    if reported_total is not None and reported_total > Decimal("0"):
+        securities = reported_total - cash if reported_total > cash else Decimal("0")
+        return LiquidAssetsResult(
+            liquid_assets=reported_total,
+            cash=cash,
+            marketable_securities=securities,
+            components_used=["CashAndSecurities"],
+        )
+
+    # Otherwise take the largest investment tag, not the first one found.
     mkt_sec = None
+    mkt_field = None
     for field in [
         "MarketableSecurities",
         "ShortTermInvestments",
@@ -627,13 +644,14 @@ def calculate_liquid_assets(financial_data: Dict) -> LiquidAssetsResult:
         "AvailableForSaleDebtCurrent",
     ]:
         val = _to_decimal(financial_data.get(field))
-        if val is not None and val > Decimal("0"):
+        if val is not None and val > Decimal("0") and (mkt_sec is None or val > mkt_sec):
             mkt_sec = val
-            components.append(field)
-            break
+            mkt_field = field
 
     if mkt_sec is None:
         mkt_sec = Decimal("0")
+    elif mkt_field is not None:
+        components.append(mkt_field)
 
     liquid_assets = cash + mkt_sec
 

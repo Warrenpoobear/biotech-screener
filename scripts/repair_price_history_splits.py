@@ -5,8 +5,20 @@ Detects single-day price discontinuities (reverse/forward splits) and
 retroactively adjusts all *prior* prices by the split factor so that
 returns computed across the split boundary are continuous.
 
+Only discontinuities CONFIRMED by a split in ``corporate_actions.json`` (same
+ticker, within ``CONFIRM_WINDOW_DAYS``) are applied. Biotech names routinely
+move -75%/+300% in a day on trial readouts; unconfirmed jumps are real price
+moves and are reported, not adjusted (EYPT 2026-10-19 and ABOS 2026-10-30
+crashes were previously smoothed away as "forward splits"). If the registry is
+missing or unreadable, nothing is adjusted: a price gap alone is not a split.
+
 The adjustment is cumulative: if a ticker has two splits, all prices
 before the first split are multiplied by both factors.
+
+Registry ``special_dividend`` entries are back-adjusted too (factor
+``(close_before - amount) / close_before`` on prices before the ex-date), but
+only when the raw series visibly drops by roughly the amount, mirroring
+``run_screen``'s momentum adjustment.
 
 CLI:
   python scripts/repair_price_history_splits.py \
@@ -32,6 +44,14 @@ from typing import Any, Dict, List, Tuple
 
 JUMP_THRESHOLD = 3.0  # +300% single-day → reverse split
 DROP_THRESHOLD = -0.75  # -75% single-day → forward split
+
+# A detected jump confirms against a registry split within this many calendar
+# days (vendor and registry dates can differ by a day or two).
+CONFIRM_WINDOW_DAYS = 5
+
+# A registry split below the gap thresholds is applied only when a one-day move
+# in the window matches its factor within this relative tolerance.
+REGISTRY_FACTOR_TOLERANCE = 0.15
 
 # Quantization for output prices (6 decimal places)
 PRICE_QUANT = Decimal("0.000001")
@@ -78,6 +98,90 @@ def detect_splits(
     for ticker in splits:
         splits[ticker].sort(key=lambda e: e["date"])
     return splits
+
+
+def filter_confirmed_splits(
+    splits: Dict[str, List[Dict[str, Any]]],
+    registry: Any,
+    window_days: int = CONFIRM_WINDOW_DAYS,
+) -> Tuple[Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]:
+    """Split detected events into (confirmed, unconfirmed) by the registry.
+
+    An event is confirmed when the registry has a forward/reverse split for the
+    same ticker whose effective_date is within ``window_days`` of the event.
+    Confirmed events keep their observed factor (unchanged legacy behaviour).
+    """
+    from common.corporate_actions import get_splits_only
+
+    confirmed: Dict[str, List[Dict[str, Any]]] = {}
+    unconfirmed: Dict[str, List[Dict[str, Any]]] = {}
+    for ticker, events in splits.items():
+        reg_dates = []
+        for a in get_splits_only(ticker, registry):
+            try:
+                reg_dates.append(date.fromisoformat(a.effective_date))
+            except (TypeError, ValueError):
+                continue
+        for e in events:
+            ok = any(abs((rd - e["date"]).days) <= window_days for rd in reg_dates)
+            (confirmed if ok else unconfirmed).setdefault(ticker, []).append(e)
+    return confirmed, unconfirmed
+
+
+def find_registry_splits_below_threshold(
+    prices: Dict[str, Dict[date, Decimal]],
+    registry: Any,
+    confirmed: Dict[str, List[Dict[str, Any]]],
+    window_days: int = CONFIRM_WINDOW_DAYS,
+    tolerance: float = REGISTRY_FACTOR_TOLERANCE,
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Registry splits too small for the gap detector (e.g. an ADR ratio change).
+
+    ``detect_splits`` only sees one-day moves beyond +300% / -75%, so a 2:1
+    ratio change (AZN 2026-01-28, +96%) never reached the registry check. For a
+    registry split with a ``factor`` and no confirmed event within
+    ``window_days``, the one-day move within that window whose ratio is closest
+    to the factor is applied, but only if it is within ``tolerance`` (relative)
+    of it. A registry entry alone never adjusts a series that shows no matching
+    move, so an already-adjusted source is not adjusted twice.
+    """
+    from common.corporate_actions import get_splits_only
+
+    found: Dict[str, List[Dict[str, Any]]] = {}
+    for ticker, series in prices.items():
+        actions = get_splits_only(ticker, registry)
+        if not actions:
+            continue
+        have = [e["date"] for e in confirmed.get(ticker, [])]
+        days = sorted(series)
+        for a in actions:
+            try:
+                eff = date.fromisoformat(a.effective_date)
+                expected = float(a.factor)
+            except (TypeError, ValueError):
+                continue
+            if expected <= 0 or any(abs((d - eff).days) <= window_days for d in have):
+                continue
+            best = None
+            for prev_d, d in zip(days, days[1:]):
+                if abs((d - eff).days) > window_days or series[prev_d] <= 0:
+                    continue
+                ratio = series[d] / series[prev_d]
+                err = abs(float(ratio) / expected - 1.0)
+                if err <= tolerance and (best is None or err < best[0]):
+                    best = (err, d, ratio)
+            if best is None:
+                continue
+            _, d, ratio = best
+            found.setdefault(ticker, []).append(
+                {
+                    "date": d,
+                    "factor": ratio,
+                    "pct_change": round(float(ratio) - 1.0, 6),
+                    "flag_type": ("reverse_split" if ratio > 1 else "forward_split") + "_registry_small",
+                }
+            )
+    return found
 
 
 def compute_adjusted_prices(
@@ -154,6 +258,58 @@ def write_adjusted_csv(
     return len(rows)
 
 
+def apply_special_dividends(
+    raw_prices: Dict[str, Dict[date, Decimal]],
+    adjusted: Dict[str, Dict[date, Decimal]],
+    registry: Any,
+) -> List[Dict[str, Any]]:
+    """Back-adjust registry special cash dividends in place; return what was applied.
+
+    The ex-date drop of a special dividend is a distribution, not a return. For
+    each registry ``special_dividend`` the factor ``(close_before - amount) /
+    close_before`` (from RAW closes) multiplies every adjusted price strictly
+    before the ex-date. Same visibility rule as ``run_screen``: applied only when
+    the raw series drops by 0.5x..1.5x the amount across the ex-date, so a
+    dividend-adjusted source is never adjusted twice.
+    """
+    from common.corporate_actions import get_special_dividends
+
+    applied: List[Dict[str, Any]] = []
+    for ticker, raw in raw_prices.items():
+        if ticker not in adjusted:
+            continue
+        for a in get_special_dividends(ticker, registry):
+            try:
+                ex = date.fromisoformat(a.effective_date)
+                amount = Decimal(str(a.amount)) if a.amount else None
+            except (TypeError, ValueError, ArithmeticError):
+                continue
+            if not amount or amount <= 0:
+                continue
+            dates = sorted(raw)
+            before = next((raw[d] for d in reversed(dates) if d < ex), None)
+            after = next((raw[d] for d in dates if d >= ex), None)
+            if not before or not after or amount >= before:
+                continue
+            drop = before - after
+            if not (amount / 2 <= drop <= amount * Decimal("1.5")):
+                continue
+            factor = (before - amount) / before
+            adj = adjusted[ticker]
+            for d in adj:
+                if d < ex:
+                    adj[d] = adj[d] * factor
+            applied.append(
+                {
+                    "ticker": ticker,
+                    "ex_date": ex.isoformat(),
+                    "amount": float(amount),
+                    "factor": round(float(factor), 6),
+                }
+            )
+    return applied
+
+
 # ---------------------------------------------------------------------------
 # High-level orchestrator
 # ---------------------------------------------------------------------------
@@ -164,10 +320,12 @@ def repair_price_history(
     output_path: Path,
     jump_threshold: float = JUMP_THRESHOLD,
     drop_threshold: float = DROP_THRESHOLD,
+    registry_path: Path | None = None,
 ) -> Dict[str, Any]:
     """Full repair pipeline.
 
-    Returns summary dict with statistics.
+    ``registry_path`` defaults to ``corporate_actions.json`` next to the input
+    prices. Returns summary dict with statistics.
     """
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     from backtest.returns_provider import CSVReturnsProvider
@@ -176,14 +334,35 @@ def repair_price_history(
     provider = CSVReturnsProvider(prices_path, price_col="close")
     prices = provider._prices
 
-    # Detect splits
-    splits = detect_splits(prices, jump_threshold, drop_threshold)
+    # Detect candidate splits, then keep only registry-confirmed ones
+    detected = detect_splits(prices, jump_threshold, drop_threshold)
+    registry_path = registry_path or (Path(prices_path).parent / "corporate_actions.json")
+    unconfirmed: Dict[str, List[Dict[str, Any]]] = {}
+    registry = None
+    try:
+        from common.corporate_actions import load_actions
+
+        if not Path(registry_path).exists():
+            raise FileNotFoundError(registry_path)
+        registry = load_actions(Path(registry_path))
+        splits, unconfirmed = filter_confirmed_splits(detected, registry)
+        for ticker, events in find_registry_splits_below_threshold(prices, registry, splits).items():
+            splits[ticker] = sorted(splits.get(ticker, []) + events, key=lambda e: e["date"])
+        mode = "registry_confirmed"
+    except Exception as exc:
+        # A gap is not evidence of a split. EYPT and ABOS crashes were
+        # adjusted when this path fell back to the price-gap heuristic.
+        print(f"WARNING: corporate-actions registry unavailable ({exc}); not adjusting any price gaps")
+        splits = {}
+        unconfirmed = detected
+        mode = "registry_missing"
 
     total_events = sum(len(events) for events in splits.values())
     tickers_affected = sorted(splits.keys())
 
     # Compute adjusted prices
     adjusted = compute_adjusted_prices(prices, splits)
+    dividends_applied = apply_special_dividends(prices, adjusted, registry) if registry is not None else []
 
     # Write output
     n_rows = write_adjusted_csv(adjusted, output_path)
@@ -208,6 +387,12 @@ def repair_price_history(
             for ticker, events in splits.items()
         },
         "rows_written": n_rows,
+        "split_mode": mode,
+        "special_dividends_applied": dividends_applied,
+        "unconfirmed_not_applied": {
+            ticker: [{"date": e["date"].isoformat(), "pct_change": e["pct_change"]} for e in events]
+            for ticker, events in unconfirmed.items()
+        },
     }
 
 
@@ -263,6 +448,11 @@ def main() -> None:
                     f"  {ticker:6s}  {e['date']}  {e['flag_type']:14s}  "
                     f"factor={e['factor']:.4f}  ({e['pct_change']:+.2%})"
                 )
+
+    if result["special_dividends_applied"]:
+        print("\nSpecial dividends back-adjusted:")
+        for d in result["special_dividends_applied"]:
+            print(f"  {d['ticker']:6s}  ex {d['ex_date']}  ${d['amount']:.2f}  factor={d['factor']:.4f}")
 
 
 if __name__ == "__main__":

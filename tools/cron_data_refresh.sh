@@ -19,6 +19,8 @@
 #   iv               Rebuild historical IV features from surface data
 #   universe         Run universe maintenance health check
 #   status           Write logs/data_refresh_status_{date}.json summary
+#   sharadar         Sharadar shadow cache sync -> cache/sharadar/ (SHADOW ONLY;
+#                    NOT part of `all`; own cron slot, see tools/sync_sharadar_shadow.py)
 #   all              Run all stages (default)
 #
 # NOTE: euctr/ctis/isrctn/merged_trials are intentionally kept here and NOT in
@@ -53,6 +55,25 @@ log() {
 }
 
 stage_ctgov() {
+    # Refresh the source file first. warm_caches only PIT-filters
+    # production_data/trial_records.json into the daily cache; without this the
+    # file froze at last_update_posted=2026-09-14 and every daily cache was an
+    # identical copy (zero CTGov diff events, 2026-08-07..2026-11-03). Write to
+    # a copy and swap so a timeout never leaves a truncated file; seeding the
+    # copy keeps the collector's coverage-regression guard active.
+    log "CTgov source refresh (collect_ctgov_data.py, timeout 3000s)..."
+    local src="production_data/trial_records.json"
+    local tmp="${src}.refresh.tmp"
+    local rc=0
+    cp "$src" "$tmp"
+    timeout 3000 $PYTHON collect_ctgov_data.py --output "$tmp" 2>&1 | tail -8 || rc=$?
+    if [ $rc -eq 0 ]; then
+        mv "$tmp" "$src"
+        log "CTgov source refresh done"
+    else
+        rm -f "$tmp"
+        log "CTgov source refresh FAILED (exit $rc) — keeping previous file; ctgov_content_freshness gate will flag staleness"
+    fi
     log "CTgov warm cache..."
     $PYTHON warm_caches.py --sources ctgov --as-of-date "$TODAY" 2>&1 | tail -5
     log "CTgov done"
@@ -259,6 +280,20 @@ stage_universe() {
     log "Universe done"
 }
 
+stage_sharadar() {
+    # Shadow-only mirror of Sharadar tables. Production does not read cache/sharadar/.
+    log "Sharadar shadow sync (timeout 3600s)..."
+    local rc=0
+    timeout 3600 $PYTHON tools/sync_sharadar_shadow.py 2>&1 | tail -15 || rc=$?
+    if [ $rc -eq 124 ]; then
+        log "Sharadar sync TIMED OUT after 3600s — next run resumes from state.json"
+    elif [ $rc -ne 0 ]; then
+        log "Sharadar sync finished with exit $rc — see cache/sharadar/status_latest.json"
+    else
+        log "Sharadar sync done"
+    fi
+}
+
 stage_status() {
     log "Writing status report..."
     $PYTHON - "$REPO_ROOT" "$TODAY" <<'PYEOF'
@@ -410,6 +445,9 @@ case "$MODE" in
     universe)
         stage_universe
         ;;
+    sharadar)
+        stage_sharadar
+        ;;
     status)
         stage_status
         ;;
@@ -434,7 +472,7 @@ case "$MODE" in
         stage_status
         ;;
     *)
-        echo "Usage: $0 {ctgov|sec_8k|fda_adcom|fda_regulatory|euctr|ctis|isrctn|merged_trials|pdufa_extracted|herald|firecrawl|iv|universe|status|all}"
+        echo "Usage: $0 {ctgov|sec_8k|fda_adcom|fda_regulatory|euctr|ctis|isrctn|merged_trials|pdufa_extracted|herald|firecrawl|iv|universe|sharadar|status|all}"
         exit 1
         ;;
 esac

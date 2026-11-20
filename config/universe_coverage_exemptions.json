@@ -1,0 +1,23 @@
+{
+  "description": "Operator-approved coverage exemptions for tools/refresh_eligible_biotech_universe.py. Only clinical_trials and scientific_cartography can be exempted; company name and market data are always required. Memo: docs/governance/2026-11-17-coinvest-cusips-and-universe-adds-clock-reset.md",
+  "exemptions": [
+    {
+      "ticker": "RPRX",
+      "fields": ["clinical_trials", "scientific_cartography"],
+      "reason": "Royalty Pharma: royalty aggregator, sponsors no clinical trials of its own (NBI constituent).",
+      "approved": "2026-11-17"
+    },
+    {
+      "ticker": "ILMN",
+      "fields": ["scientific_cartography"],
+      "reason": "Illumina: sequencing tools; has trial records but no drug interventions (IBB constituent).",
+      "approved": "2026-11-17"
+    },
+    {
+      "ticker": "STVN",
+      "fields": ["clinical_trials", "scientific_cartography"],
+      "reason": "Stevanato Group: drug containment and delivery supplier, sponsors no clinical trials (IBB constituent).",
+      "approved": "2026-11-17"
+    }
+  ]
+}

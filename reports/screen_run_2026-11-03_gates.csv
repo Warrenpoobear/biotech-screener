@@ -1,0 +1,47 @@
+time_et,step,check,status,detail
+20:34:25,pre-flight,Ruleset governance,PASS,Ruleset 8887576e is active
+20:34:25,pre-flight,Trading day,PASS,2026-11-03 is a weekday (trading day)
+20:34:45,1/5 Refreshing price_history.csv,Price-append,PASS,append-health n/a: only 3 tickers needed fetch (<20); n_already_current=338
+20:34:59,1/5 Refreshing price_history.csv,Deploy,WARN,"checkout is 5 commit(s) behind origin/main (d3a5737b vs 371a23cc) — merged work is not deployed: 371a23cc data: refresh financial_records.json from SEC EDGAR (2026-11-03); c948fcda feat: catalyst calendar, PDUFA status cleanup, Sharadar price refresh (2026-11-03); 5b4fb4d4 Merge pull request #594 from Warrenpoobear/data/etf-aum-ledger-2026-11-03; +2 more"
+20:35:09,1/5 Refreshing price_history.csv,Working-tree,PASS,"no source modifications — snapshot is reproducible from HEAD; 332 pipeline output file(s) modified, as expected"
+20:35:12,1/5 Refreshing price_history.csv,Split-adj,PASS,"split-adjusted series current: last=2026-11-03, raw last=2026-11-03, gap=0"
+20:35:14,1/5 Refreshing price_history.csv,XBI,PASS,"XBI last=2026-11-03, gap=0 trading days"
+20:36:40,"1.5 Warming caches (sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory) for 2026-11-03",CTGov cache,PASS,PIT cache found: trial_records_2026-11-03.json
+20:36:44,"1.5 Warming caches (sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory) for 2026-11-03",Source freshness,PASS,"All measured sources within TTL (8 checked, 0 skipped)"
+20:36:46,"1.5 Warming caches (sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory) for 2026-11-03",Inputs,PASS,All required inputs found in production_data/
+20:36:46,"1.5 Warming caches (sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory) for 2026-11-03",Market data schema,PASS,"344 records, all valid"
+20:36:48,"1.5 Warming caches (sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory) for 2026-11-03",Market data staleness,PASS,"market_data.json collected=2026-11-03, age=0d"
+20:36:48,"1.5 Warming caches (sec_8k,ctgov,sec_13f,fda_adcom,fda_regulatory) for 2026-11-03",Market data coverage,PASS,342/342 (100.0%) coverage
+20:39:59,3/5 Running data integrity audit,Audit,WARN,STALE_MISMATCH: price recompute diff [0/3 stale in held — none affect portfolio] [1 info] (range_de_beta_xbi_60d:1)
+20:39:59,4/5 Evaluating gates,Missing-reason,PASS,3/298 tickers (1.0%) have missing_reason
+20:39:59,4/5 Evaluating gates,Turnover,PASS,Could not parse turnover from delta report; skipped
+20:39:59,4/5 Evaluating gates,Drift,WARN,vs 2026-11-02: warn_tier_migration_count: 27 > 10; warn_feature_coverage_drop_pct: inst_flow_abs_negative dropped 100.0pp > 10.0pp
+20:40:00,4/5 Evaluating gates,Ruleset health,WARN,Active ruleset 8887576e: synthetic backfilled receipt present; promotion baseline metrics unavailable
+20:39:59,4/5 Evaluating gates,Canary regression,PASS,"overall=INFO (2025-04-30=INFO, 2025-10-31=INFO, 2026-02-07=INFO)"
+20:40:00,4/5 Evaluating gates,CTGov PIT dates,PASS,"first_posted=100.0%, last_update=100.0%, results=27.8%, (n=21843, trial_records_2026-11-03.json)"
+20:40:00,4/5 Evaluating gates,13F cache,PASS,"coverage=100.0%, (30/30 managers)"
+20:40:00,4/5 Evaluating gates,Institutional summary,PASS,"coverage=81.2%, (242/298 tickers), (30/30 managers)"
+20:40:00,4/5 Evaluating gates,Institutional delta,PASS,"institutional_summary_delta.json valid: 2026-11-03 vs 2026-08-13, 290 common tickers"
+20:40:03,4/5 Evaluating gates,PnL attribution,PASS,"PnL OK: 2026-11-02→2026-11-03, gross=1.1697%, turnover=0.15"
+20:40:03,4/5 Evaluating gates,PIT price cache,PASS,"coverage=99.3%, 296/298 tickers, anchor=2026-11-03"
+20:40:06,4/5 Evaluating gates,Forward eval,WARN,"mean_ic=-0.0151 < floor=0.0200 (n=5, horizon=20d)"
+20:40:10,4/5 Evaluating gates,Optionality stability,PASS,"YELLOW: 20d_mean_ic=-0.0769, n_snap=40"
+20:40:10,4/5 Evaluating gates,PIT bundle health,PASS,PIT bundle prerequisites available for 2026-11-03
+20:40:10,4/5 Evaluating gates,DE schema,PASS,"298 rows, all DE columns present and valid"
+20:40:10,4/5 Evaluating gates,Sort contrib sanity,PASS,"174 eligible rows, all contribs valid"
+20:40:10,4/5 Evaluating gates,Portfolio weights,PASS,"weight sum=99.90%, 30 portfolio positions"
+20:40:10,4/5 Evaluating gates,Eligibility consistency,PASS,"298 rows, all consistent"
+20:40:10,4/5 Evaluating gates,Cache health,PASS,sec8k=ok ctgov=ok
+20:40:10,4/5 Evaluating gates,Exposure missingness,PASS,"All exposures OK (34 held/top-K). de_beta_xbi_60d=0.0%, de_drawdown=0.0%, de_rsi_14d=0.0%, de_alpha_60d=0.0%, de_vol_60d=0.0%, de_drawdown_rel_xbi=0.0%"
+20:40:10,4/5 Evaluating gates,Risk concentration,PASS,catalyst<=7d=0%; high_risk=49%; stacked=0%
+20:40:10,4/5 Evaluating gates,Regulatory calendar,WARN,"n_manual=11, used=1, flagged=22, coverage=12.6% | coverage 12.6% > 12.0% ceiling (over-flagging risk); newest disclosed_at=2026-04-26 is 191d old (threshold=180d)"
+20:40:10,4/5 Evaluating gates,Options coverage,PASS,"opt_has_data=290/298, liquid=121, thin=169, oqc_nonzero=107, step10_oqc=1"
+20:40:10,4/5 Evaluating gates,Hard queue artifacts,PASS,"queue_json=ok, queue_csv=ok"
+20:40:10,4/5 Evaluating gates,Hard catalyst supply,PASS,"hard=97, hard_0_90d=76"
+20:40:10,4/5 Evaluating gates,Hard options coverage,PASS,"hard=97, opt_cov=100.0%, straddle_cov=100.0%, reviewable=95"
+20:40:10,4/5 Evaluating gates,Hard carry state,PASS,"state_entries=51, backslides=0"
+20:40:10,4/5 Evaluating gates,Hard queue actionability,PASS,"reviewable=95, cheap_rich=95, disagreement=3, ts=21, skew=8"
+,summary,phase2_health (run_screen),FAIL,"catalyst=86.1%, A=36 [headwind_exposure]; --strict exit 1, snapshot promoted"
+,summary,collection_health (run_screen),FAIL,2 flags
+,summary,overall_result,WARN,snapshot promoted to data/snapshots/2026-11-03; 36 PASS / 7 WARN / 0 FAIL in gate ledger
+,summary,readiness_scorecard,HOLD,trade plan skipped (readiness gate FAIL — trades blocked)

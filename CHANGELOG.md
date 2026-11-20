@@ -2,6 +2,30 @@
 
 All notable changes to the biotech screener will be documented in this file.
 
+## [Unreleased] - 2026-10-16
+
+### Fixed (MODEL-AFFECTING — financial_score input)
+
+#### PIT financials TTM mixed year-to-date cash-flow periods
+- **Bug**: `pit_financials._is_quarterly` treated every 10-Q fact as a single
+  quarter. 10-Q cash-flow statements are year-to-date (Q2 = 6 months, Q3 = 9),
+  so when a 10-Q was a ticker's latest filing `_compute_ttm` summed mixed
+  3/6/9-month values and dropped the 10-K.
+- **Impact**: burn overstated, runway understated. MDGL TTM operating cash flow
+  -$503.5M vs actual -$197.8M. In production data (refreshed 2026-06-22) 37
+  tickers were affected; with Q2 2026 filings loaded it becomes near-universal.
+- **Fix**: TTM is derived from each fact's start/end period — full year, else
+  four single quarters, else YTD + prior FY − prior-year YTD, else annualized.
+  Facts are de-duplicated by (start, end). Facts without period dates keep the
+  previous form-based path. PIT filtering unchanged.
+- **Measured (2026-10-15 research screen vs promoted snapshot)**: fix alone keeps
+  28/30 of the Top-30 (top20 overlap 81.8%); fix + refreshed SEC data keeps 22/30
+  (top20 overlap 33.3%, passes the 30% drift FAIL limit).
+- **Governance**: Tier 3. Authorized bug fix under the NO_MODEL_CHANGE window;
+  resets the forward-validation out-of-sample clock.
+- **Known gap**: liquidity under tags other than ShortTermInvestments (e.g.
+  marketable securities) is still not counted.
+
 ## [Unreleased] - 2026-07-08
 
 ### Changed (non-model / typing only)

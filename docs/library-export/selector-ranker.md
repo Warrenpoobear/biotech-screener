@@ -1,5 +1,7 @@
 # Selector / Ranker / Construction Skill
 
+> **Deprecated 2026-11-13 (market-cap look-ahead).** The "+2.34pp/mo, t = 2.57" backtest, the Checklist v2 bundle result and the regime split quoted in this file were computed on history that read today's market cap on every past date. They are not evidence. With point-in-time market data the Top-30 shows +0.68 pt/period net of 50 bps (t = 1.47). Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+
 ## Purpose
 
 Reference for the production two-stage selector/ranker architecture and EW Top-30 construction. This is how the screener turns scored tickers into an actionable ranked portfolio.
@@ -42,7 +44,7 @@ Modules 1-5 (scoring)
 
 ### Selector Validation
 
-- Checklist v2 (2026-04-04): bootstrap +2.42pp/mo, 95% CI [1.25%, 3.70%], P(>0) = 99.99%
+- Checklist v2 (2026-04-04): bootstrap +2.42pp/mo, 95% CI [1.25%, 3.70%], P(>0) = 99.99% *(Deprecated 2026-11-13: market-cap look-ahead.)*
 - LOSO: ROBUST across all dimensions
 - Neither component survives standalone, but the bundle is real
 - Sort anchor: `selector_score`
@@ -100,8 +102,8 @@ Coinvest selects WHICH 30 names enter the portfolio. It captures institutional c
 
 ### Production Evidence
 
-- True PIT backtest: +2.34pp/mo net-of-cost, t = 2.57, 69% hit rate, 67 monthly periods (Jun 2020 - Apr 2026)
-- Bear/neutral alpha engine: Bear +3.37pp (75% hit), Neutral +6.23pp (93% hit), Bull -0.37pp (50% hit)
+- True PIT backtest: +2.34pp/mo net-of-cost, t = 2.57, 69% hit rate, 67 monthly periods (Jun 2020 - Apr 2026) *(Deprecated 2026-11-13: market-cap look-ahead.)*
+- Bear/neutral alpha engine: Bear +3.37pp (75% hit), Neutral +6.23pp (93% hit), Bull -0.37pp (50% hit) *(Deprecated 2026-11-13: market-cap look-ahead.)*
 - Regime caveat: expect bounded underperformance in strong bull markets
 
 ---
@@ -206,7 +208,7 @@ size_multiplier = max(0.40, 1.0 - 0.60 * ev_severity_score)
 
 
 **RECONCILED 2026-07-12 (repo commit `fbe9bf83`, PR #492):**
-- **Candidate identity:** `model_hash=827c35a9ed3ee6e1` (`ast-v1` behavioral fingerprint over ranker_engine.py / selector_engine.py / decision_engine.py); legacy raw-bytes `a9983a67c6954813`. Registered 2026-06-26 (unchanged); re-hashed 2026-07-10 so behavior-neutral edits no longer flip the frozen hash.
+- **Candidate identity:** `model_hash=a9a430154568e242` (`ast-v2` behavioral fingerprint since 2026-11-15: ranker_engine.py / selector_engine.py / decision_engine.py plus common/ranker_mode.py and the A4_SELECTOR_CONFIG assignment in run_screen.py; same model, wider fingerprint); prior `ast-v1` `827c35a9ed3ee6e1`; legacy raw-bytes `a9983a67c6954813`. Registered 2026-06-26 (unchanged); re-hashed 2026-07-10 so behavior-neutral edits no longer flip the frozen hash.
 - **Deployed ≠ trained:** `production_data/ranker_v2_model.json` is a **2-feature pairwise_logistic** — coinvest_score_z capped +0.02 (trained +0.0613) and financial_score −0.0533. Any prose claiming a 5- or 6-feature production ranker is wrong.
 - **13F Q1 2026: HOLD / observation-only.** 55-manager Jaccard last measured 0.463 (FAIL vs 0.70); the 0.875 figure was the Q4/49-manager comparison. Authority: `artifacts/readiness/H20D_REEVAL_VERDICT_2026_07_04.md`; clearance requires `tools/check_13f_cohort_quarantine.py` against a post-Q1-promotion snapshot.
 

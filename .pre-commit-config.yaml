@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/psf/black
-    rev: "26.5.1"
+    rev: "26.10.1"
     hooks:
       - id: black
         args: [--line-length=120, --target-version=py312]
@@ -61,6 +61,8 @@ repos:
             production_data/.*|
             output/.*|
             artifacts/forward_validation/.*\.jsonl|
+            artifacts/selector_only_shadow/.*\.jsonl|
+            artifacts/low_risk_sleeve_shadow(_vol_beta(_full)?)?/.*\.jsonl|
             .*\.csv|
             .*\.tar\.gz
           )$
@@ -82,6 +84,9 @@ repos:
         language: system
         types: [python]
         require_serial: true
+        # pre-commit passes explicit filenames, which bypasses .semgrepignore; keep
+        # this list in sync with it (rule fixtures + documented false positives).
+        exclude: ^(\.semgrep/.*\.py|tests/test_event_outcome_binder\.py|dashboard/app\.py)$
 
       # Model-affecting diffs (scoring/ranking/selector/ruleset/model weights)
       # must ship with a documentation update so hash-locked changes leave a

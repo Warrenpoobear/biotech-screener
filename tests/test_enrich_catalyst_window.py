@@ -181,7 +181,7 @@ class TestCatalystOnlyMode:
         # Extract and verify
         tmp_extract = tmp_path / "verify"
         with tarfile.open(tar_path, "r:gz") as tar:
-            tar.extractall(tmp_extract)
+            tar.extractall(tmp_extract, filter="data")
         with open(tmp_extract / date_str / "inputs" / "decision_inputs.json") as f:
             updated = json.load(f)
 
@@ -243,7 +243,7 @@ class TestCatalystOnlyMode:
 
         tmp_extract = tmp_path / "verify"
         with tarfile.open(tar_path, "r:gz") as tar:
-            tar.extractall(tmp_extract)
+            tar.extractall(tmp_extract, filter="data")
         with open(tmp_extract / date_str / "inputs" / "decision_inputs.json") as f:
             updated = json.load(f)
 

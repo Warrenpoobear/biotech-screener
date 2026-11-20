@@ -62,15 +62,16 @@ class TestEliteManagers:
 
     def test_get_manager_by_short_name(self):
         """Should find manager by short name."""
-        ra = get_manager_by_short_name("RA Capital")
-        assert ra is not None
+        # RA Capital was retired from the roster 2026-11-01; use an active manager.
+        deerfield = get_manager_by_short_name("Deerfield")
+        assert deerfield is not None
         # CIK stored without leading zeros
-        assert ra["cik"] == "1346824"
+        assert deerfield["cik"] == "1009258"
 
     def test_get_manager_by_short_name_case_insensitive(self):
         """Short name lookup should be case-insensitive."""
-        ra = get_manager_by_short_name("ra capital")
-        assert ra is not None
+        deerfield = get_manager_by_short_name("deerfield")
+        assert deerfield is not None
 
     def test_manager_weight_tier_1(self):
         """Tier 1 manager should have higher weight."""

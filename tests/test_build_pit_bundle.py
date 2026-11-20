@@ -356,6 +356,40 @@ class TestCarryForward:
         result = _find_latest_cache_date(cache, "2025-12-31")
         assert result == "2025-09-30"
 
+    def test_carry_forward_ages_filings_against_target_date(self, tmp_path):
+        """Carry-forward reads the older cache but scores age on the target date."""
+        cache = tmp_path / "13f"
+        (cache / "2026-01-15").mkdir(parents=True)
+        captured = {}
+
+        def _fake_build(**kwargs):
+            captured.update(kwargs)
+            return {
+                "schema_version": "coinvest_features.v1",
+                "signal_coverage_pct": 1.0,
+            }
+
+        with (
+            patch("elite_managers.get_all_managers", return_value=[]),
+            patch(
+                "scripts.build_coinvest_features_from_13f.build_coinvest_features",
+                side_effect=_fake_build,
+            ),
+        ):
+            manifest = build_single_bundle(
+                as_of_date="2026-04-15",
+                bundle_root=tmp_path / "bundles",
+                universe_tickers={"AAAA"},
+                cache_13f_root=cache,
+                skip_clinical=True,
+                skip_catalyst=True,
+                coinvest_carry_forward="last_available",
+            )
+
+        assert captured["as_of_date"] == "2026-04-15"
+        assert captured["cache_dir"] == cache / "2026-01-15"
+        assert manifest["components"]["coinvest_features"]["source_date"] == "2026-01-15"
+
 
 # ---------------------------------------------------------------------------
 # CTgov cache date discovery

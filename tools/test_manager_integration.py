@@ -316,7 +316,7 @@ def main() -> None:
             registry = json.load(f)
         ciks = []
         for tier, managers in registry.items():
-            if not isinstance(managers, list):
+            if not isinstance(managers, list) or tier == "retired":
                 continue
             for m in managers:
                 if isinstance(m, dict) and m.get("cik"):

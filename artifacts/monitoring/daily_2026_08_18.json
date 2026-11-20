@@ -1,0 +1,475 @@
+{
+    "date": "2026-08-18",
+    "monitoring_day": 52,
+    "timestamp": "2026-08-18T09:00:00.000000Z",
+    "phase": "Day 52 — PRE-MARKET snapshot (Aug 18 09:00 ET). RECOVERY from Aug 14 selloff. KEY UPDATE: PRAX EMERALD timeline revised to Q4 2026 (not Sep 1 as prior tracking). STOK buffer restored to +12.21% (was +5.67%). No gap flags today. DRUG ticker showing company name discrepancy — FLAG for operator review. IC/h20d gates 48 days overdue.",
+    "data_integrity": {
+        "primary_source": "stockanalysis.com WebFetch (pre-market Aug 18, 2026 ~09:00-09:10 ET)",
+        "price_date": "2026-08-18 pre-market (~09:00-09:10 ET)",
+        "note": "Robinhood MCP unavailable Day 52. Yahoo Finance API blocked by proxy. Prices sourced from stockanalysis.com WebFetch for all 15 tickers. XBI from WebSearch. Pre-market prices used as primary — session prices may deviate at open.",
+        "quantities_source": "production_data/phase2_entry_prices.json (sourced via MCP 2026-06-24, unchanged)",
+        "cash_basis": "Carried forward $99.87 from Jun 24 MCP sourcing (unchanged — no MCP access)",
+        "data_quality": "LIVE PRE-MARKET — best available without Robinhood MCP or Yahoo Finance API"
+    },
+    "account": {
+        "account_id": "Robinhood 802349084",
+        "equity_fetchable": false,
+        "equity_estimated_usd": 138.93,
+        "equity_note": "Computed from Aug 18 pre-market prices × phase2_entry_prices.json quantities. Pre-market; actual session prices will differ.",
+        "cash_carried": 99.87,
+        "buying_power_carried": null,
+        "total_estimated_account_value": 238.80,
+        "equity_delta_vs_day51": 4.34,
+        "equity_delta_note": "Day 51 estimate $134.59 (Aug 14 prices carried). Day 52 $138.93 (+$4.34 / +3.23%). Recovery from Aug 14 sector selloff.",
+        "data_source": "Quantities from phase2_entry_prices.json × Aug 18 pre-market prices (stockanalysis.com)"
+    },
+    "benchmark": {
+        "xbi_entry_price": 133.62,
+        "xbi_aug14_last_known": 154.78,
+        "xbi_aug17_close": 157.65,
+        "xbi_aug18_current": 159.53,
+        "xbi_return_since_entry_pct": 19.39,
+        "xbi_aug17_range": "155.86 - 159.69",
+        "xbi_aug14_to_aug18_chg_pct": 3.07,
+        "xbi_note": "XBI recovered from Aug 14 selloff. $154.78 (Aug 14) → ~$157.65 (Aug 17 close est.) → $159.53 (Aug 18 pre-market). +19.39% since Jun 10 entry."
+    },
+    "portfolio_overview": {
+        "total_positions": 15,
+        "positions_negative_vs_entry": 0,
+        "positions_positive_vs_entry": 15,
+        "avg_pnl_vs_entry_pct": 38.75,
+        "equity_usd": 138.93,
+        "cash_usd": 99.87,
+        "total_account_usd": 238.80,
+        "xbi_return_since_entry_pct": 19.39,
+        "drawdown_vs_xbi_pp": 19.36,
+        "drawdown_threshold_pp": -2.0,
+        "drawdown_status": "CLEAR — +19.36pp vs XBI. Recovered from Aug 14 drawdown narrowing.",
+        "gap_flags_today": 0,
+        "gap_threshold_pct": 5.0,
+        "near_gap_watch": ["RVMD +4.07%", "DRUG +3.98%"],
+        "session_character": "RECOVERY DAY. XBI +3.07% since Aug 14 close. Broad biotech recovery from Aug 14 sector selloff. All 15 positions recovered. STOK buffer restored to +12.21%.",
+        "key_watch_open": "RVMD: +4.07% pre-market (approaching gap threshold). DRUG company name discrepancy. ALMS: LUMUS readout any day Q3 2026.",
+        "q2_13f_note": "Q2 13F deadline passed Aug 14. Filings available on EDGAR. Local pipeline update blocked on operator freeze lift."
+    },
+    "positions": [
+        {
+            "ticker": "NRIX",
+            "company": "Nurix Therapeutics, Inc.",
+            "entry_price": 15.46,
+            "quantity": 0.430232,
+            "aug17_close": 27.17,
+            "aug18_premarket": 27.11,
+            "day_chg_pct": -0.22,
+            "pnl_vs_entry_pct": 75.36,
+            "position_value_usd": 11.66,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "Best P&L at +75.36%. Recovery from Aug 14 -1.07%. Stable pre-market -0.22%. Post-Roche $700M deal underpins valuation."
+        },
+        {
+            "ticker": "URGN",
+            "company": "UroGen Pharma Ltd.",
+            "entry_price": 28.02,
+            "quantity": 0.237681,
+            "aug17_close": 49.14,
+            "aug18_premarket": 49.00,
+            "day_chg_pct": -0.28,
+            "pnl_vs_entry_pct": 74.91,
+            "position_value_usd": 11.65,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+74.91% vs entry. Fully recovered from Aug 14 -3.97%. Near prior ATH ($49.14 Aug 17 close). ZUSDURI commercial ramp ongoing."
+        },
+        {
+            "ticker": "DNTH",
+            "company": "Dianthus Therapeutics, Inc.",
+            "entry_price": 72.10,
+            "quantity": 0.092928,
+            "aug17_close": 114.86,
+            "aug18_premarket": 114.11,
+            "day_chg_pct": -0.65,
+            "pnl_vs_entry_pct": 58.27,
+            "position_value_usd": 10.60,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+58.27% vs entry. Recovered from Aug 14 dip. Pre-market mild pull -0.65%. EMERGE Phase 3 ongoing."
+        },
+        {
+            "ticker": "PRAX",
+            "company": "Praxis Precision Medicines, Inc.",
+            "entry_price": 241.92,
+            "quantity": 0.027530,
+            "aug17_close": 376.38,
+            "aug18_premarket": 373.00,
+            "day_chg_pct": -0.90,
+            "pnl_vs_entry_pct": 54.19,
+            "position_value_usd": 10.27,
+            "gap_flag": false,
+            "status": "MONITORING — EMERALD_TIMELINE_REVISED",
+            "note": "+54.19% vs entry. IMPORTANT TIMELINE UPDATE: EMERALD Phase 3 (relutrigine in DEEs) readout now Q4 2026 per Q2 2026 earnings (previously tracking as Sep 1). Removes imminent binary catalyst urgency. Aug 17 recovered +2.61%. Pre-market mild pull -0.90%. Essential3 (essential tremor) already positive Phase 3.",
+            "emerald_timing_update": {
+                "prior_tracking": "Sep 1, 2026 (15 days)",
+                "updated_guidance": "Q4 2026",
+                "source": "Praxis Q2 2026 earnings release",
+                "implication": "Binary catalyst urgency reduced. EMERALD monitoring continues on quarterly cadence, not daily countdown."
+            }
+        },
+        {
+            "ticker": "RVMD",
+            "company": "Revolution Medicines, Inc.",
+            "entry_price": 143.76,
+            "quantity": 0.046465,
+            "aug17_close": 203.71,
+            "aug18_current": 212.00,
+            "day_chg_pct": 4.07,
+            "pnl_vs_entry_pct": 47.46,
+            "position_value_usd": 9.85,
+            "gap_flag": false,
+            "near_gap_watch": true,
+            "status": "ELEVATED_WATCH — NEAR_GAP",
+            "note": "+47.46% vs entry. +4.07% today approaching 5% gap threshold. Strong momentum. Check for catalyst — no confirmed news found. ATH trajectory. If closes above +5%, will trigger retroactive gap flag review."
+        },
+        {
+            "ticker": "SLDB",
+            "company": "Solid Biosciences Inc.",
+            "entry_price": 6.49,
+            "quantity": 1.028527,
+            "aug17_close": 9.10,
+            "aug18_premarket": 9.15,
+            "day_chg_pct": 0.55,
+            "pnl_vs_entry_pct": 41.00,
+            "position_value_usd": 9.41,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+41.00% vs entry. Full recovery from Aug 14 -2.43%. Stable pre-market. Cash runway mid-2028."
+        },
+        {
+            "ticker": "TRVI",
+            "company": "Travere Therapeutics, Inc.",
+            "entry_price": 13.43,
+            "quantity": 0.496649,
+            "aug17_close": 18.46,
+            "aug18_current": 18.48,
+            "day_chg_pct": 0.11,
+            "pnl_vs_entry_pct": 37.61,
+            "position_value_usd": 9.18,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+37.61% vs entry. Stable. Aug 14 elevated volume (+1.97%, 318k) appears to have been sector rotation / residual strength rather than confirmed catalyst. Aug 17 stable, Aug 18 flat."
+        },
+        {
+            "ticker": "SYRE",
+            "company": "Spyre/Synta Therapeutics (SYRE)",
+            "entry_price": 76.10,
+            "quantity": 0.088041,
+            "aug17_close": 104.60,
+            "aug18_premarket": 102.64,
+            "day_chg_pct": -1.87,
+            "pnl_vs_entry_pct": 34.87,
+            "position_value_usd": 9.04,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+34.87% vs entry. Modest pre-market pull -1.87%. Fully recovered from Aug 14 -3.14%. SKYLINE Phase 2 met primary endpoints Q2 2026."
+        },
+        {
+            "ticker": "ERAS",
+            "company": "Erasca, Inc.",
+            "entry_price": 13.27,
+            "quantity": 0.503396,
+            "aug17_close": 18.28,
+            "aug18_premarket": 18.07,
+            "day_chg_pct": -1.15,
+            "pnl_vs_entry_pct": 36.17,
+            "position_value_usd": 9.10,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+36.17% vs entry. Pre-market mild pull -1.15%. Recovered from Aug 14 -4.66% (was approaching 5% threshold). No confirmed catalyst for the Aug 14 move."
+        },
+        {
+            "ticker": "DRUG",
+            "company": "IDENTITY_FLAG — stockanalysis.com shows 'Bright Minds Biosciences Inc.' for DRUG ticker",
+            "entry_price": 63.59,
+            "quantity": 0.105839,
+            "aug17_close": 76.44,
+            "aug18_current": 79.48,
+            "day_chg_pct": 3.98,
+            "pnl_vs_entry_pct": 25.00,
+            "position_value_usd": 8.41,
+            "gap_flag": false,
+            "near_gap_watch": true,
+            "status": "IDENTITY_FLAG — OPERATOR_REVIEW_NEEDED",
+            "note": "+25.00% vs entry. CRITICAL: stockanalysis.com shows 'Bright Minds Biosciences Inc. (DRUG)' — not Nuvation Bio as prior monitoring assumed. Price continuity intact ($76.40 Aug 14 → $76.44 Aug 17 → $79.48 Aug 18). Ticker may have been reassigned, or company rebranded. OPERATOR MUST VERIFY: Is the position in Nuvation Bio or Bright Minds Biosciences? +3.98% today approaching gap threshold.",
+            "company_identity_flag": {
+                "prior_tracking": "Nuvation Bio (DRUG)",
+                "aug18_source_shows": "Bright Minds Biosciences Inc. (DRUG)",
+                "price_continuity": "Consistent — $76.40 Aug 14 → $76.44 Aug 17 → $79.48 Aug 18",
+                "action_required": "Operator verify position identity in Robinhood 802349084"
+            }
+        },
+        {
+            "ticker": "ALMS",
+            "company": "Alumis Inc.",
+            "entry_price": 20.37,
+            "quantity": 0.326013,
+            "aug17_close": 25.50,
+            "aug18_premarket": 25.30,
+            "day_chg_pct": -0.78,
+            "pnl_vs_entry_pct": 24.20,
+            "position_value_usd": 8.25,
+            "gap_flag": false,
+            "status": "ELEVATED_WATCH — LUMUS_BINARY_PENDING",
+            "note": "+24.20% vs entry. Recovered from Aug 14 -6.81% GAP FLAG (was +16.89%). Q2 2026 earnings Aug 14 confirmed LUMUS Phase 2b SLE readout still expected Q3 2026 (any day through Sep 30). CEO cited LUMUS as 'potentially pivotal'. No readout announced. Pre-market mild pull -0.78%."
+        },
+        {
+            "ticker": "XENE",
+            "company": "Xenon Pharmaceuticals Inc.",
+            "entry_price": 51.95,
+            "quantity": 0.128578,
+            "aug17_close": 62.36,
+            "aug18_premarket": 62.33,
+            "day_chg_pct": -0.05,
+            "pnl_vs_entry_pct": 19.98,
+            "position_value_usd": 8.02,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+19.98% vs entry. Fully stabilized. Recovered from Aug 14 -4.00% (was approaching 5% threshold). Flat pre-market."
+        },
+        {
+            "ticker": "COGT",
+            "company": "Cogent Biosciences, Inc.",
+            "entry_price": 31.35,
+            "quantity": 0.212789,
+            "aug17_close": 37.87,
+            "aug18_premarket": 37.66,
+            "day_chg_pct": -0.55,
+            "pnl_vs_entry_pct": 20.13,
+            "position_value_usd": 8.02,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+20.13% vs entry. Recovered from Aug 14 -4.36%. Mild pre-market pull -0.55%. Bezuclastinib BezginD Phase 3 ongoing."
+        },
+        {
+            "ticker": "CMPS",
+            "company": "COMPASS Pathways plc",
+            "entry_price": 11.30,
+            "quantity": 0.590265,
+            "aug17_close": 13.72,
+            "aug18_premarket": 13.55,
+            "day_chg_pct": -1.24,
+            "pnl_vs_entry_pct": 19.91,
+            "position_value_usd": 8.00,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+19.91% vs entry. Recovered from Aug 14 -7.17% GAP FLAG. Q2 2026 earnings Aug 5: $433M cash, COMP360 Phase III progressing, FDA filing target Q4 2026. Pre-market mild pull -1.24% — normalized from post-Canaccord selling dynamic."
+        },
+        {
+            "ticker": "STOK",
+            "company": "Stoke Therapeutics, Inc.",
+            "entry_price": 28.74,
+            "quantity": 0.231758,
+            "aug17_close": 32.13,
+            "aug18_premarket": 32.25,
+            "day_chg_pct": 0.37,
+            "pnl_vs_entry_pct": 12.21,
+            "position_value_usd": 7.47,
+            "gap_flag": false,
+            "status": "MONITORING — BUFFER_RESTORED",
+            "note": "Buffer RESTORED to +12.21% (was +5.67% on Aug 14 — lowest portfolio position). +2.75% recovery Aug 17, flat+0.37% pre-market Aug 18. Emergency watch flag cleared. Entry price $28.74; current $32.25 = $3.51/share buffer (vs $1.63 on Aug 14)."
+        }
+    ],
+    "gap_flags_summary": {
+        "count": 0,
+        "threshold_pct": 5.0,
+        "near_gap_watch": [
+            {"ticker": "RVMD", "day_pct": 4.07, "pnl_vs_entry": 47.46, "direction": "UP", "note": "Approaching 5% upside gap threshold — check for catalyst"},
+            {"ticker": "DRUG", "day_pct": 3.98, "pnl_vs_entry": 25.00, "direction": "UP", "note": "Also has identity flag (Bright Minds vs Nuvation)"}
+        ],
+        "prior_session_flags_resolved": [
+            {"ticker": "STOK", "aug14_chg_pct": -7.89, "aug18_pnl_pct": 12.21, "status": "RECOVERED"},
+            {"ticker": "CMPS", "aug14_chg_pct": -7.17, "aug18_pnl_pct": 19.91, "status": "RECOVERED"},
+            {"ticker": "ALMS", "aug14_chg_pct": -6.81, "aug18_pnl_pct": 24.20, "status": "RECOVERED"},
+            {"ticker": "PRAX", "aug14_chg_pct": -5.87, "aug18_pnl_pct": 54.19, "status": "RECOVERED"}
+        ]
+    },
+    "forward_catalyst_watch": {
+        "PRAX_EMERALD_UPDATED": {
+            "ticker": "PRAX",
+            "event": "EMERALD Phase 3 — relutrigine in developmental and epileptic encephalopathies (DEEs)",
+            "prior_tracking": "Sep 1, 2026 (15-day countdown)",
+            "updated_guidance": "Q4 2026",
+            "source": "Praxis Q2 2026 earnings (Aug 2026)",
+            "priority": "MONITORING — TIMELINE EXTENDED",
+            "note": "IMPORTANT CORRECTION: Prior monitoring tracked EMERALD readout as Sep 1 (SLC6A1/elsunersen). Q2 2026 earnings confirm EMERALD (relutrigine, DEEs) readout is Q4 2026. Removes immediate binary catalyst urgency. Essential3 (essential tremor, relutrigine) already achieved positive Phase 3. Position P&L +54.19%. Continue monitoring quarterly."
+        },
+        "ALMS_LUMUS": {
+            "ticker": "ALMS",
+            "event": "LUMUS Phase 2b SLE topline readout — envudeucitinib (ESK-001)",
+            "readout_window": "Q3 2026 (through Sep 30)",
+            "priority": "ELEVATED — Binary catalyst. Still any day.",
+            "last_price": 25.30,
+            "pnl_vs_entry_pct": 24.20,
+            "note": "Q2 2026 earnings (Aug 14) confirmed Q3 2026 readout still expected. CEO: LUMUS 'may substantiate role in IFN-driven diseases.' Position recovered from +16.89% to +24.20% since Aug 14. No readout announced. Monitor every session."
+        },
+        "Q2_13F_PIPELINE": {
+            "event": "Q2 2026 13F-HR processing",
+            "priority": "GOVERNANCE — OPERATOR ACTION NEEDED",
+            "filing_deadline": "2026-08-14 (passed 4 days ago)",
+            "pipeline_status": "NOT INGESTED — still shows Q1 2026 data",
+            "action_required": "Operator freeze lift → warm_13f_cache.py → cohort quarantine check → IC decomposition refresh"
+        },
+        "RVMD_MOMENTUM": {
+            "ticker": "RVMD",
+            "event": "Strong upward momentum — +4.07% today, no confirmed catalyst",
+            "priority": "MONITOR — check for news",
+            "last_price": 212.00,
+            "pnl_vs_entry_pct": 47.46,
+            "note": "Revolution Medicines +4.07% today approaching gap flag threshold. No catalyst identified in this monitoring run. Check for analyst upgrades, partnership news, or clinical data update."
+        },
+        "DRUG_IDENTITY": {
+            "event": "DRUG ticker company identity discrepancy",
+            "priority": "OPERATOR_REVIEW",
+            "note": "stockanalysis.com shows 'Bright Minds Biosciences Inc. (DRUG)' — prior monitoring tracked as 'Nuvation Bio (DRUG)'. Price history is continuous. Operator must verify actual position identity in Robinhood 802349084."
+        }
+    },
+    "governance_gates": {
+        "drawdown_gate": {
+            "status": "CLEAR",
+            "portfolio_avg_pnl_vs_entry_pct": 38.75,
+            "xbi_return_since_entry_pct": 19.39,
+            "outperformance_pp": 19.36,
+            "threshold_pp": -2.0,
+            "detail": "Aug 18 pre-market: +19.36pp outperformance vs XBI. Well above -2.0pp threshold. Strongest outperformance reading since monitoring began."
+        },
+        "ic_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 48,
+            "gate_was_due": "2026-07-01",
+            "last_measured": "2026-06-24",
+            "last_ic": 0.0432,
+            "hit_rate": 0.543,
+            "note": "48 days overdue (+1 from Day 51). Operator freeze lift required. DEM candidate freeze + NO_MODEL_CHANGE forward-validation window (SM-20260629-001, 0/20 LIVE windows). No change."
+        },
+        "h20d_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 48,
+            "gate_date": "2026-07-01",
+            "override_posture": "MAINTAINED (OPTION_B_OVERRIDE_2026_05_26)",
+            "note": "48 days overdue. Freeze lift → quarantine script → Q2 13F warm → cohort check → IC decomp. All prerequisite data now available on EDGAR (Q2 deadline passed Aug 14)."
+        },
+        "jaccard_gate": {
+            "status": "MAINTAINED",
+            "last_value": 0.875,
+            "last_measured": "2026-06-23",
+            "threshold": 0.40,
+            "note": "0.875 well above 0.40. Refresh pending freeze lift + Q2 13F processing."
+        },
+        "emergency_gate": {
+            "status": "CLEAR",
+            "detail": "All 15 positions above entry. Lowest: STOK +12.21% ($32.25 vs $28.74 entry). Buffer restored from $1.63 (Aug 14) to $3.51/share.",
+            "watch_item": "None currently. STOK emergency watch cleared."
+        },
+        "positions_20pct_loss_gate": {
+            "status": "CLEAR",
+            "count": 0,
+            "lowest_pnl_name": "STOK",
+            "lowest_pnl_pct": 12.21,
+            "note": "All 15 positions positive. No positions within 20% of entry."
+        }
+    },
+    "escalation_flags": [
+        {
+            "id": "DRUG_IDENTITY_FLAG",
+            "ticker": "DRUG",
+            "reason": "stockanalysis.com shows 'Bright Minds Biosciences Inc. (DRUG)' rather than 'Nuvation Bio'. Price history continuous but company identity unclear. Operator must verify actual position identity in Robinhood 802349084.",
+            "priority": "OPERATOR_REVIEW",
+            "action": "Log into Robinhood account 802349084 and confirm holding name for DRUG ticker."
+        },
+        {
+            "id": "PRAX_EMERALD_TIMELINE_CORRECTION",
+            "ticker": "PRAX",
+            "reason": "EMERALD Phase 3 readout now guided Q4 2026 (from Q2 2026 earnings), not Sep 1 as prior monitoring tracked. Prior monitoring artifacts from Day 40-51 had 'countdown' framing. Correct forward-monitoring cadence to quarterly.",
+            "priority": "INFORMATIONAL_CORRECTION",
+            "action": "No trade action needed. Adjust monitoring expectation — EMERALD is Q4 2026, not imminent."
+        },
+        {
+            "id": "ALMS_LUMUS_PENDING",
+            "ticker": "ALMS",
+            "reason": "LUMUS Phase 2b SLE readout confirmed Q3 2026 (any day through Sep 30). No announcement as of Aug 18. Position recovered to +24.20%.",
+            "priority": "ELEVATED",
+            "current_pnl_pct": 24.20
+        },
+        {
+            "id": "RVMD_MOMENTUM_CHECK",
+            "ticker": "RVMD",
+            "reason": "+4.07% today approaching 5% gap threshold. Check for catalyst. No confirmed news found in this run.",
+            "priority": "MONITOR",
+            "current_pnl_pct": 47.46,
+            "day_chg_pct": 4.07
+        },
+        {
+            "id": "Q2_13F_NOT_INGESTED",
+            "reason": "Q2 13F filings now 4 days past deadline (Aug 14). Fairmount CIK 0001802528, Deep Track 0001856083, Logos Global 0001792126 likely filed on deadline. Local pipeline not updated. Operator freeze lift required.",
+            "priority": "GOVERNANCE_ACTION_NEEDED"
+        },
+        {
+            "id": "IC_H20D_GATES_OVERDUE_48_DAYS",
+            "reason": "IC gate and h20d gate both 48 days overdue. All prerequisite data now available on EDGAR. Operator freeze lift is the only blocking step.",
+            "priority": "GOVERNANCE_OVERDUE"
+        }
+    ],
+    "monitoring_status": {
+        "period_extended": true,
+        "original_end": "2026-06-30",
+        "extension_rationale": "Extended through ALMS LUMUS Q3 binary (Sep 30), Q2 13F processing, IC/h20d governance gates, PRAX EMERALD Q4 2026",
+        "robinhood_mcp_status": "UNAVAILABLE — Day 52 consecutive",
+        "yahoo_finance_api_status": "BLOCKED — proxy SSL reset. Fallback to stockanalysis.com WebFetch.",
+        "data_source_aug18": "stockanalysis.com WebFetch (all 15 tickers, pre-market Aug 18 ~09:00-09:10 ET)",
+        "days_since_last_mcp_data": 55,
+        "overall_status": "ALL CLEAR — no gates tripped, no gap flags, full portfolio recovery from Aug 14 selloff",
+        "key_developments_today": [
+            "STOK buffer restored: +5.67% → +12.21% (emergency watch cleared)",
+            "PRAX EMERALD timeline corrected: Sep 1 → Q4 2026",
+            "ALMS LUMUS confirmed Q3 2026 (Aug 14 earnings) — no readout yet",
+            "CMPS: Q2 earnings positive ($433M cash, COMP360 Phase III on track)",
+            "DRUG ticker identity discrepancy: Bright Minds vs Nuvation Bio (operator review needed)",
+            "RVMD +4.07% — approaching gap threshold, check for catalyst"
+        ],
+        "alerts_active": [
+            "DRUG_IDENTITY_FLAG: Company name mismatch — operator verify Robinhood position",
+            "ALMS_LUMUS_PENDING: Binary readout any day through Sep 30",
+            "RVMD_MOMENTUM: +4.07% near gap threshold",
+            "Q2_13F_NOT_INGESTED: Pipeline update pending freeze lift",
+            "IC_GATE_OVERDUE_48_DAYS",
+            "H20D_GATE_OVERDUE_48_DAYS"
+        ],
+        "recommended_manual_actions": [
+            "1. VERIFY DRUG position identity in Robinhood 802349084 — stockanalysis.com shows 'Bright Minds Biosciences' for DRUG ticker.",
+            "2. CHECK RVMD catalyst — +4.07% today without identified news. Check for analyst upgrades or clinical update.",
+            "3. MONITOR ALMS daily — LUMUS SLE readout any day through Sep 30.",
+            "4. OPERATOR: Freeze lift to process Q2 13F filings (Fairmount, Deep Track, Logos Global — all filed by Aug 14 deadline).",
+            "5. After freeze lift: warm_13f_cache.py → check_13f_cohort_quarantine.py → IC decomp refresh."
+        ],
+        "next_key_dates": [
+            "2026-08-18 09:30 ET (TODAY): Market open — watch RVMD, ALMS",
+            "2026-09-30: ALMS LUMUS readout window closes (any day through this date)",
+            "Q4 2026: PRAX EMERALD Phase 3 readout (revised from Sep 1)",
+            "TBD (operator): Freeze lift → Q2 13F pipeline warm → IC/h20d gate catch-up"
+        ],
+        "next_scheduled_monitoring": "2026-08-19 09:00 ET (Wednesday)"
+    },
+    "_data_integrity": {
+        "source": "stockanalysis.com WebFetch (pre-market Aug 18 ~09:00-09:10 ET)",
+        "xbi_source": "WebSearch result",
+        "aug18_fetch_timestamp": "2026-08-18T09:10Z",
+        "tickers_with_live_premarket_data": [
+            "COGT", "DNTH", "NRIX", "URGN", "ALMS", "SYRE", "RVMD",
+            "CMPS", "SLDB", "DRUG", "STOK", "PRAX", "TRVI", "ERAS", "XENE", "XBI"
+        ],
+        "data_quality": "PRE-MARKET LIVE — all 15 tickers + XBI fetched Aug 18 pre-market",
+        "quantities_basis": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged)",
+        "cash_basis": "Carried $99.87 (last confirmed 2026-06-24 via MCP)",
+        "robinhood_mcp_unavailable_since": "Day 1 (2026-06-11)",
+        "data_escalation": "Robinhood MCP unavailable 52 consecutive days. Yahoo Finance API blocked by proxy. stockanalysis.com WebFetch is current fallback — pre-market data available."
+    }
+}

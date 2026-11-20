@@ -14,6 +14,23 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
+
+@pytest.fixture
+def settled_uptime():
+    """Make the uptime check see a long-running system.
+
+    scheduler_health_check raises ALERT when /proc/uptime is under 30 minutes (WSL2 just
+    woke). A CI runner is always freshly booted, so tests about log age must pin uptime
+    or they read ALERT for a reason they are not testing.
+    """
+    import tools.run_agent_direct as module
+
+    with patch.object(module, "open", create=True) as mock_file:
+        mock_file.return_value.__enter__.return_value.read.return_value = "360000.0 720000.0"
+        yield
+
 
 def test_scheduler_health_check_function_exists():
     """Scheduler health check function is implemented."""
@@ -58,7 +75,7 @@ def test_scheduler_health_detects_gateway_inactivity_alert():
         stale_log.unlink()
 
 
-def test_scheduler_health_detects_gateway_inactivity_warn():
+def test_scheduler_health_detects_gateway_inactivity_warn(settled_uptime):
     """Scheduler health check detects moderate gateway inactivity (2-6 hours) as WARN."""
     from tools.run_agent_direct import PROJECT_ROOT, scheduler_health_check
 
@@ -80,7 +97,7 @@ def test_scheduler_health_detects_gateway_inactivity_warn():
         warn_log.unlink()
 
 
-def test_scheduler_health_detects_no_logs():
+def test_scheduler_health_detects_no_logs(settled_uptime):
     """Scheduler health check detects missing gateway logs as WARN."""
     from tools.run_agent_direct import PROJECT_ROOT, scheduler_health_check
 
@@ -164,7 +181,7 @@ def test_scheduler_health_accepts_any_agent_name():
         assert isinstance(diagnostics, list), f"Agent {agent_name}: diagnostics should be list"
 
 
-def test_scheduler_health_thresholds_are_conservative():
+def test_scheduler_health_thresholds_are_conservative(settled_uptime):
     """Scheduler health check uses conservative thresholds (alert early)."""
     from tools.run_agent_direct import PROJECT_ROOT, scheduler_health_check
 

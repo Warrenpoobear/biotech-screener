@@ -256,3 +256,55 @@ class TestProductionDataIntegrity:
             key = (a.ticker, a.action, a.effective_date)
             assert key not in seen, f"Duplicate action: {key}"
             seen.add(key)
+
+
+# ---------------------------------------------------------------------------
+# 2026-11-13: one-day trial-readout moves must not be registered as splits
+# ---------------------------------------------------------------------------
+
+# (ticker, date) pairs that sat in the registry as forward/reverse splits from
+# 2026-04-05 to 2026-11-13. Each is a real price move on heavy volume (trial or
+# regulatory news); Sharadar ACTIONS has no split for the ticker on or near the
+# date. Registering them makes price_history_split_adj.csv erase the move.
+_FALSE_SPLITS_REMOVED_2026_11_13 = [
+    ("ABVX", "2025-07-23"),
+    ("ACRS", "2023-11-13"),
+    ("AMLX", "2024-03-08"),
+    ("BIOA", "2024-12-09"),
+    ("COGT", "2020-07-06"),
+    ("DFTX", "2020-03-03"),
+    ("DRUG", "2024-10-15"),
+    ("FGEN", "2023-06-26"),
+    ("GOSS", "2026-02-23"),
+    ("IVVD", "2021-12-14"),
+    ("JBIO", "2024-06-17"),
+    ("KALA", "2025-09-29"),
+    ("KOD", "2022-02-23"),
+    ("LYRA", "2024-05-06"),
+    ("MCRB", "2020-08-10"),
+    ("MENS", "2025-12-17"),
+    ("MLTX", "2025-09-29"),
+    ("NMRA", "2025-01-02"),
+    ("ORKA", "2020-05-28"),
+    ("PHVS", "2022-12-08"),
+    ("PRAX", "2022-06-06"),
+    ("PRQR", "2022-02-11"),
+    ("REPL", "2025-07-22"),
+    ("SRRK", "2024-10-07"),
+    ("SYRE", "2023-06-22"),
+    ("VTYX", "2023-11-07"),
+]
+
+
+def test_trial_readout_moves_are_not_registered_as_splits():
+    import json
+    from pathlib import Path
+
+    registry = json.loads(
+        (Path(__file__).resolve().parents[1] / "production_data" / "corporate_actions.json").read_text(encoding="utf-8")
+    )
+    splits = {
+        (a["ticker"], a["effective_date"]) for a in registry["actions"] if "split" in str(a.get("action", "")).lower()
+    }
+    still_there = sorted(splits & set(_FALSE_SPLITS_REMOVED_2026_11_13))
+    assert not still_there, f"real price moves registered as splits: {still_there}"

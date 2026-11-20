@@ -54,7 +54,7 @@ def test_document_from_scrape_metadata_error():
     assert err == "blocked"
 
 
-@patch.dict("os.environ", {"FIRECRAWL_API_KEY": "fc-test"}, clear=False)
+@patch.dict("os.environ", {"FIRECRAWL_API_KEY": "fc-test"}, clear=False)  # pragma: allowlist secret
 def test_search_delegates_to_v2_client():
     adapter = FirecrawlResearchAdapter(api_key="fc-test")
     mock_web = MagicMock(url="https://statnews.com/x", title="Story", description=None)

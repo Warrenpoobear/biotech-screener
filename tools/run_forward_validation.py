@@ -43,7 +43,18 @@ MODEL_FILES = [
     REPO_ROOT / "ranker_engine.py",
     REPO_ROOT / "selector_engine.py",
     REPO_ROOT / "decision_engine.py",
+    # ast-v2: the production order mode (default and the selector-only rule).
+    REPO_ROOT / "common" / "ranker_mode.py",
 ]
+
+# ast-v2: module-level assignments that set model behavior but live in a file too large
+# and too often edited to hash whole. Only the named assignment's AST is fingerprinted,
+# so unrelated edits to the file do not move the hash.
+MODEL_CONFIG_ASSIGNMENTS: dict[Path, tuple[str, ...]] = {
+    # The production selector's block weights and institutional signal weights.
+    REPO_ROOT
+    / "run_screen.py": ("A4_SELECTOR_CONFIG",),
+}
 
 
 # ---------------------------------------------------------------------------
@@ -61,7 +72,11 @@ def sha256_file(path: Path) -> str | None:
 
 # Behavioral fingerprint scheme. Bump this string whenever the normalization
 # rules below change (it is mixed into the hash so schemes never collide).
-HASH_SCHEME = "ast-v1"
+#   ast-v1 (2026-07-10): ranker_engine.py, selector_engine.py, decision_engine.py.
+#   ast-v2 (2026-11-15): adds common/ranker_mode.py and the A4_SELECTOR_CONFIG assignment
+#     in run_screen.py. Under ast-v1 the selector's weights and the order mode could change
+#     without the hash changing (the 2026-11-13 selector-only switch did exactly that).
+HASH_SCHEME = "ast-v2"
 
 
 class _BehaviorNeutralStripper(ast.NodeTransformer):
@@ -121,6 +136,39 @@ def _behavioral_fingerprint(path: Path) -> str:
     return ast.dump(tree, annotate_fields=True, include_attributes=False)
 
 
+def _assignment_fingerprint(path: Path, names: tuple[str, ...]) -> str:
+    """AST fingerprint of the module-level assignments to ``names`` in ``path``.
+
+    A name that is not assigned at module level contributes a ``MISSING`` marker, so
+    removing or renaming a covered assignment moves the hash instead of dropping out.
+    """
+    tree = ast.parse(path.read_bytes())
+    tree = _BehaviorNeutralStripper().visit(tree)
+    ast.fix_missing_locations(tree)
+    found: dict[str, list[str]] = {name: [] for name in names}
+    for node in tree.body:
+        if not isinstance(node, ast.Assign):
+            continue
+        for target in node.targets:
+            if isinstance(target, ast.Name) and target.id in found:
+                found[target.id].append(ast.dump(node.value, annotate_fields=True, include_attributes=False))
+    parts = []
+    for name in sorted(found):
+        parts.append(f"{name}=" + ("|".join(found[name]) if found[name] else "MISSING"))
+    return ";".join(parts)
+
+
+def compute_model_hash_ast_v1() -> str:
+    """The superseded ``ast-v1`` fingerprint (three engine files only). Audit use only."""
+    h = hashlib.sha256()
+    h.update(b"ast-v1")
+    for p in MODEL_FILES[:3]:
+        if p.exists():
+            h.update(p.name.encode())
+            h.update(_behavioral_fingerprint(p).encode())
+    return h.hexdigest()[:16]
+
+
 def compute_model_hash() -> str:
     """Behavioral fingerprint of the scoring-model files (``HASH_SCHEME``).
 
@@ -137,6 +185,10 @@ def compute_model_hash() -> str:
         if p.exists():
             h.update(p.name.encode())
             h.update(_behavioral_fingerprint(p).encode())
+    for p, names in MODEL_CONFIG_ASSIGNMENTS.items():
+        if p.exists():
+            h.update(f"config:{p.name}:".encode())
+            h.update(_assignment_fingerprint(p, names).encode())
     return h.hexdigest()[:16]
 
 
@@ -248,7 +300,46 @@ def forward_return_realized(fill: dict | None) -> bool:
     return bool(fill) and fill.get(_MANDATE_RETURN_KEY) is not None
 
 
-def capture_is_eligible_for_mandate(capture: dict, fill: dict | None) -> bool:
+def mandate_clock_epoch(candidate: dict) -> str | None:
+    """Out-of-sample clock start recorded in CANDIDATE.json, if any.
+
+    Set when an operator-authorized fix changes model inputs that the model
+    hash does not cover (e.g. the coinvest 13F rebuild of 2026-11-01).
+    """
+    return candidate.get("oos_clock_start") or None
+
+
+def snapshot_ranker_mode(snap_dir: Path) -> str | None:
+    """Production order mode the snapshot was built with (``metadata.json``), if recorded."""
+    path = snap_dir / "metadata.json"
+    if not path.exists():
+        return None
+    try:
+        value = json.loads(path.read_text()).get("ranker_mode")
+    except (json.JSONDecodeError, OSError):
+        return None
+    return value if isinstance(value, str) and value else None
+
+
+def check_ranker_mode(candidate: dict | None, snap_dir: Path) -> tuple[bool, str]:
+    """Does the snapshot's order mode match the one pinned in CANDIDATE.json?
+
+    ``model_hash`` covers the engine files but not the ``--ranker-mode`` dispatch in
+    ``run_screen.py``, so a switch between ``selector_only`` and ``pairwise_minimal``
+    leaves the hash unchanged while it changes the Top-30. A candidate that pins
+    ``ranker_mode`` therefore also requires the snapshot to record the same mode.
+    A candidate without the field (registered before 2026-11-13) pins nothing.
+    """
+    pinned = (candidate or {}).get("ranker_mode")
+    if not pinned:
+        return True, "candidate does not pin ranker_mode"
+    actual = snapshot_ranker_mode(snap_dir)
+    if actual is None:
+        return False, f"candidate pins ranker_mode={pinned} but the snapshot records none (metadata.json)"
+    return actual == pinned, f"snapshot={actual} candidate={pinned}"
+
+
+def capture_is_eligible_for_mandate(capture: dict, fill: dict | None, clock_epoch: str | None = None) -> bool:
     """Authoritative eligibility rule for SM-20260629-001.
 
     A capture counts toward the 20-window gate ONLY if it is a genuine, complete,
@@ -257,14 +348,20 @@ def capture_is_eligible_for_mandate(capture: dict, fill: dict | None) -> bool:
       * ``capture_mode == "LIVE"``      — not a replay/backfill
       * ``quality_status == "PASS"``     — no hard DQ failure
       * ``model_hash_match`` is True      — the frozen candidate, not drift
+      * ``ranker_mode_match`` is not False — the candidate's order mode (see
+        :func:`check_ranker_mode`); captures written before the field existed
+        carry no value and are not excluded by it
       * ``benchmark_available`` is True    — XBI present for excess-vs-benchmark
       * ``forward_return_realized(fill)``  — the 5d window has been observed
+      * ``date >= clock_epoch``           — after any authorized clock reset
 
     Legacy / pre-schema captures lack these fields, so ``.get`` returns falsy and
     they are correctly excluded. This rule lives in code (not prose) so the
     mandate counter cannot silently count replay data, drifted models, missing
     benchmarks, or unrealized windows.
     """
+    if clock_epoch is not None and (capture.get("date") or "") < clock_epoch:
+        return False
     return capture_is_live_and_clean(capture) and forward_return_realized(fill)
 
 
@@ -281,6 +378,7 @@ def capture_is_live_and_clean(capture: dict) -> bool:
         capture.get("capture_mode") == "LIVE"
         and capture.get("quality_status") == "PASS"
         and bool(capture.get("model_hash_match"))
+        and capture.get("ranker_mode_match") is not False
         and bool(capture.get("benchmark_available"))
     )
 
@@ -494,6 +592,10 @@ def run_dq_checks(
         checks.append(
             chk("model_hash_match", False, "CANDIDATE.json not found — run with --register-candidate first", hard=True)
         )
+
+    # 7b. Order mode matches candidate (the hash does not cover the ranker dispatch)
+    mode_ok, mode_detail = check_ranker_mode(candidate, snap_dir)
+    checks.append(chk("ranker_mode_match", mode_ok, mode_detail, hard=True))
 
     # 8. Snapshot freshness
     from datetime import date as ddate
@@ -763,6 +865,7 @@ def main() -> int:
         return next((c["pass"] for c in dq_checks if c["check"] == name), False)
 
     model_hash_match = _check_pass("model_hash_match")
+    ranker_mode_match = _check_pass("ranker_mode_match")
     benchmark_available = _check_pass("xbi_price_available")
 
     # --- Capture mode (LIVE only for a fresh, same-invocation production run) ---
@@ -776,7 +879,9 @@ def main() -> int:
 
     # Capture-time eligibility (the mandate counter additionally requires the 5d
     # forward return to be realized — see capture_is_eligible_for_mandate()).
-    eligible_at_capture = capture_mode == "LIVE" and quality == "PASS" and model_hash_match and benchmark_available
+    eligible_at_capture = (
+        capture_mode == "LIVE" and quality == "PASS" and model_hash_match and ranker_mode_match and benchmark_available
+    )
 
     # --- Prices ---
     effective_price_date = nearest_price_date_before(date)
@@ -800,6 +905,9 @@ def main() -> int:
         "candidate_model_hash": candidate.get("model_hash") if candidate else None,
         "quality_status": quality,
         "model_hash_match": model_hash_match,
+        "ranker_mode": snapshot_ranker_mode(snap_dir),
+        "candidate_ranker_mode": candidate.get("ranker_mode") if candidate else None,
+        "ranker_mode_match": ranker_mode_match,
         "benchmark_available": benchmark_available,
         "eligible_for_mandate": eligible_at_capture,
         # --- Existing fields ---

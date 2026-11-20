@@ -36,7 +36,12 @@ sys.path.insert(0, str(REPO_ROOT))
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("universe_maintenance")
 
+from common.types import is_retired_status  # noqa: E402
+
 SCHEMA_VERSION = "universe_maintenance.v1"
+
+# Statuses module_1 deliberately does not score yet (coverage still being built).
+NOT_YET_SCORED = frozenset({"pending_coverage", "pending_data_collection"})
 
 # Staleness thresholds (trading days)
 PRICE_STALE_WARN = 5
@@ -151,20 +156,37 @@ def build_universe_maintenance(
     as_of_date: str,
     *,
     production_dir: Path = REPO_ROOT / "production_data",
-    snapshots_dir: Path = REPO_ROOT / "data" / "snapshots_pit",
+    # Daily production snapshots. data/snapshots_pit is the bundle-REPLAY output
+    # dir (only fills on demand; last 2026-06-10), which made the daily report
+    # diff against a months-old roster (fixed n_flagged=78).
+    snapshots_dir: Path = REPO_ROOT / "data" / "snapshots",
     cache_dir: Path = REPO_ROOT / "cache" / "ctgov",
     price_csv: Path = REPO_ROOT / "production_data" / "price_history.csv",
+    out_dir: Path = REPO_ROOT / "artifacts" / "universe_maintenance",
 ) -> Dict[str, Any]:
-    """Build universe maintenance report."""
+    """Build universe maintenance report.
+
+    Retired names (delisted / excluded_acquired / retired) and the benchmark row are
+    skipped: a stale price and no ranking are expected for them. ``pending_coverage``
+    names are excluded from scoring by module_1 until coverage exists, so they are not
+    flagged as missing from rankings; their other gaps are still reported.
+    """
     universe = load_universe(production_dir / "universe.json")
     if not universe:
         return {"error": "empty universe"}
 
+    skipped_inactive = sorted(
+        u["ticker"]
+        for u in universe
+        if u.get("ticker") and (is_retired_status(u.get("status")) or u.get("status") == "benchmark")
+    )
+    universe = [u for u in universe if u.get("ticker") not in set(skipped_inactive)]
     universe_tickers = {u["ticker"] for u in universe if u.get("ticker")}
+    rankable_tickers = {u["ticker"] for u in universe if u.get("ticker") and u.get("status") not in NOT_YET_SCORED}
 
     # Run all checks
     price_issues = check_price_freshness(price_csv, universe_tickers, as_of_date)
-    missing_rankings = check_rankings_coverage(snapshots_dir, universe_tickers, as_of_date)
+    missing_rankings = check_rankings_coverage(snapshots_dir, rankable_tickers, as_of_date)
     no_trials = check_trial_coverage(cache_dir, universe_tickers)
     no_cik = check_cik_coverage(universe)
 
@@ -191,8 +213,10 @@ def build_universe_maintenance(
         "schema": SCHEMA_VERSION,
         "as_of_date": as_of_date,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "universe_size": len(universe),
+        "universe_size": len(universe) + len(skipped_inactive),
         "n_active": sum(1 for u in universe if u.get("status") == "active"),
+        "n_skipped_inactive": len(skipped_inactive),
+        "skipped_inactive": skipped_inactive,
         "n_flagged": len(flagged),
         "summary": {
             "price_stale_alert": sum(1 for v in price_issues.values() if v["status"] == "STALE_ALERT"),
@@ -207,7 +231,6 @@ def build_universe_maintenance(
     }
 
     # Write
-    out_dir = REPO_ROOT / "artifacts" / "universe_maintenance"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     json_path = out_dir / f"{as_of_date}_report.json"
@@ -229,6 +252,8 @@ def format_report_md(d: Dict[str, Any]) -> str:
     lines.append(f"# Universe Maintenance — {d['as_of_date']}")
     lines.append("")
     lines.append(f"Universe: {d['universe_size']} tickers ({d['n_active']} active) | Flagged: {d['n_flagged']}")
+    if d.get("n_skipped_inactive"):
+        lines.append(f"Skipped (retired/benchmark, not checked): {d['n_skipped_inactive']}")
     lines.append("")
 
     s = d.get("summary", {})

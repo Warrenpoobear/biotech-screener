@@ -10,11 +10,49 @@ from __future__ import annotations
 import argparse
 import json
 from copy import deepcopy
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 GENERIC_COMPANY_NAMES = {"healthcare", "biotechnology", "biotech", "unknown"}
+
+
+def _json_safe(obj):
+    """Replace NaN/inf floats with None, recursively."""
+    if isinstance(obj, float):
+        return obj if obj == obj and obj not in (float("inf"), float("-inf")) else None
+    if isinstance(obj, dict):
+        return {k: _json_safe(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_json_safe(v) for v in obj]
+    return obj
+
+
+def _dumps_strict(obj) -> str:
+    return json.dumps(_json_safe(obj), indent=2, allow_nan=False) + "\n"
+
+
+# Coverage fields an operator may exempt. A company that runs no clinical trials of its
+# own (royalty aggregator, tools or supply company) can never be "covered" on these;
+# company name and market data can never be exempted.
+EXEMPTABLE_FIELDS = frozenset({"clinical_trials", "scientific_cartography"})
+DEFAULT_EXEMPTIONS_PATH = REPO_ROOT / "config" / "universe_coverage_exemptions.json"
+
+
+def load_coverage_exemptions(path: Path = DEFAULT_EXEMPTIONS_PATH) -> dict[str, list[str]]:
+    """Ticker -> exempted coverage fields, from the operator-maintained config file."""
+    path = Path(path)
+    if not path.exists():
+        return {}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    out: dict[str, list[str]] = {}
+    for entry in data.get("exemptions", []):
+        ticker = str(entry.get("ticker") or "").strip().upper()
+        fields = [f for f in entry.get("fields", []) if f in EXEMPTABLE_FIELDS]
+        if ticker and fields:
+            out[ticker] = fields
+    return out
 
 
 def _ticker(row: dict[str, Any]) -> str:
@@ -117,6 +155,7 @@ def refresh_universe(
     as_of_date: str,
     *,
     finalize_collection: bool = False,
+    coverage_exemptions: dict[str, list[str]] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Return refreshed universe rows and a summary report."""
     trial_tickers, intervention_tickers = _trial_ticker_sets(trial_records)
@@ -133,6 +172,9 @@ def refresh_universe(
 
         refreshable_biotech_count += 1
         coverage = _coverage_status(row, trial_tickers, intervention_tickers)
+        for field in (coverage_exemptions or {}).get(ticker, []):
+            if field in EXEMPTABLE_FIELDS and coverage.get(field) == "pending":
+                coverage[field] = "exempt"
         pending_reasons = [
             name
             for name in ("company_name", "market_data", "clinical_trials", "scientific_cartography")
@@ -182,6 +224,50 @@ def refresh_universe(
     return refreshed, report
 
 
+def status_changes(before: list[dict[str, Any]], after: list[dict[str, Any]]) -> list[dict[str, str]]:
+    """Tickers whose ``status`` differs between two universe lists, in ticker order."""
+    old = {_ticker(row): str(row.get("status", "active") or "active") for row in before if _ticker(row)}
+    changes = []
+    for row in after:
+        ticker = _ticker(row)
+        if not ticker or ticker not in old:
+            continue
+        new_status = str(row.get("status", "active") or "active")
+        if new_status != old[ticker]:
+            changes.append(
+                {
+                    "ticker": ticker,
+                    "prior_status": old[ticker],
+                    "new_status": new_status,
+                    "status_reason": str(row.get("status_reason") or ""),
+                }
+            )
+    return sorted(changes, key=lambda change: change["ticker"])
+
+
+def audit_lines(changes: list[dict[str, str]], as_of_date: str, operator: str, timestamp: str) -> list[str]:
+    """One ``universe_audit_log.jsonl`` line per status change (same shape as apply_ticker_change.py)."""
+    lines = []
+    for change in changes:
+        reason = f"coverage refresh as of {as_of_date}"
+        if change["status_reason"]:
+            reason += f": {change['status_reason']}"
+        lines.append(
+            json.dumps(
+                {
+                    "timestamp": timestamp,
+                    "action": "coverage_refresh",
+                    "ticker": change["ticker"],
+                    "prior_status": change["prior_status"],
+                    "new_status": change["new_status"],
+                    "reason": reason,
+                    "operator": operator,
+                }
+            )
+        )
+    return lines
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--as-of-date", required=True)
@@ -194,20 +280,47 @@ def main() -> int:
     )
     parser.add_argument("--apply", action="store_true", help="Write refreshed universe.json. Defaults to dry-run.")
     parser.add_argument("--report-path", type=Path, default=None, help="Optional path for refresh report JSON.")
+    parser.add_argument(
+        "--audit-log-path",
+        type=Path,
+        default=None,
+        help="Audit log appended on --apply (default: universe_audit_log.jsonl beside the universe file).",
+    )
+    parser.add_argument("--operator", default="operator", help="Name recorded in the audit log.")
+    parser.add_argument(
+        "--exemptions-path",
+        type=Path,
+        default=DEFAULT_EXEMPTIONS_PATH,
+        help="Operator coverage exemptions (clinical_trials / scientific_cartography only).",
+    )
     args = parser.parse_args()
 
     universe = json.loads(args.universe_path.read_text(encoding="utf-8"))
+    exemptions = load_coverage_exemptions(args.exemptions_path)
     trial_records = json.loads(args.trial_records_path.read_text(encoding="utf-8"))
     refreshed, report = refresh_universe(
         universe,
         trial_records,
         args.as_of_date,
         finalize_collection=args.finalize_collection,
+        coverage_exemptions=exemptions,
     )
 
+    changes = status_changes(universe, refreshed)
+    report["status_changes"] = changes
     report["dry_run"] = not args.apply
     if args.apply:
-        args.universe_path.write_text(json.dumps(refreshed, indent=2) + "\n", encoding="utf-8")
+        # NaN-safe: run_screen loads universe.json with orjson, which rejects NaN.
+        args.universe_path.write_text(_dumps_strict(refreshed), encoding="utf-8")
+        if changes:
+            audit_path = args.audit_log_path or args.universe_path.with_name("universe_audit_log.jsonl")
+            stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            existing = audit_path.read_text(encoding="utf-8") if audit_path.exists() else ""
+            if existing and not existing.endswith("\n"):
+                existing += "\n"
+            new_lines = audit_lines(changes, args.as_of_date, args.operator, stamp)
+            audit_path.write_text(existing + "\n".join(new_lines) + "\n", encoding="utf-8")
+            report["audit_log_entries"] = len(new_lines)
     if args.report_path:
         args.report_path.parent.mkdir(parents=True, exist_ok=True)
         args.report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")

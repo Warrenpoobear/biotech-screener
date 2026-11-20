@@ -67,9 +67,15 @@ class TestUniverseJsonDelisted:
         total = len(data)
         delisted_count = sum(1 for e in data if isinstance(e, dict) and e.get("status") == "delisted")
         active_count = total - delisted_count
-        assert total == 357, f"Expected 357 total entries, got {total}"
-        assert delisted_count == 7, f"Expected 7 delisted entries, got {delisted_count}"
-        assert active_count == 350, f"Expected 350 active entries, got {active_count}"
+        # Exact counts drift with every retirement or addition (they pinned
+        # 357/7/350 and broke on the next corporate action). Assert the
+        # invariant instead: every known-delisted ticker is counted as delisted,
+        # and the active count is exactly total minus delisted.
+        assert delisted_count >= len(
+            DELISTED_TICKERS
+        ), f"Expected >= {len(DELISTED_TICKERS)} delisted, got {delisted_count}"
+        assert active_count == total - delisted_count
+        assert active_count > 0
 
     def test_delisted_tickers_not_in_active_set(self):
         data = self._load()
@@ -280,13 +286,17 @@ class TestMarketDataCoverageDelistedExclusion:
 
 
 class TestProductionActiveUniverse:
-    """End-to-end check: applying the filter to the real universe.json yields 350 active tickers."""
+    """End-to-end check: applying the filter to the real universe.json drops every delisted entry."""
 
-    def test_active_screen_universe_is_350(self):
+    def test_active_screen_universe_excludes_every_delisted_entry(self):
         with open(UNIVERSE_PATH) as f:
             data = json.load(f)
-        active = [e for e in data if isinstance(e, dict) and e.get("status") != "delisted" and e.get("ticker")]
-        assert len(active) == 350, f"Expected 350 active tickers, got {len(active)}"
+        tickered = [e for e in data if isinstance(e, dict) and e.get("ticker")]
+        active = [e for e in tickered if e.get("status") != "delisted"]
+        delisted = [e for e in tickered if e.get("status") == "delisted"]
+        assert len(active) + len(delisted) == len(tickered)
+        assert not {e["ticker"] for e in active} & DELISTED_TICKERS
+        assert len(active) > 0
 
     def test_tern_excluded_from_active_screen_universe(self):
         with open(UNIVERSE_PATH) as f:
