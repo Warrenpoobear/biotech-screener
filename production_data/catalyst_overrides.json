@@ -13,6 +13,28 @@
       "source": "Q3 2024 earnings call transcript - management guidance 'mid-2026 data readout'",
       "nct_id": "NCT05501886",
       "notes": "BTD + Fast Track designated; expect SABCS or ASCO presentation"
+    },
+    {
+      "ticker": "COGT",
+      "event_date": "2026-12-30",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_description": "bezuclastinib NDA PDUFA for NonAdvSM (non-advanced systemic mastocytosis) — second of two concurrent FDA decisions for bezuclastinib (first: GIST 2026-11-30)",
+      "confidence": 0.9,
+      "source_filed_at": "2026-11-07",
+      "source": "pdufa_dates.json (SEC_8K); operator verification 2026-11-07 against company IR",
+      "nct_id": null,
+      "notes": "pdufa_dates.json already carries both COGT PDUFA entries. This override ensures the NonAdvSM date is surfaced explicitly in catalyst audit logs. GIST PDUFA (2026-11-30) is the nearer event and will be shown as next_catalyst_date until it passes."
+    },
+    {
+      "ticker": "IMCR",
+      "event_date": "2027-05-01",
+      "event_type": "TRIAL_READOUT",
+      "event_description": "TEBE-AM Phase 3 topline overall survival data (tebentafusp in 2L+ advanced cutaneous melanoma, 540 patients, event-driven OS endpoint) — guided Q2 2027 per Q3 2026 earnings 2026-11-07, slipped from prior guidance of 'as early as end of 2026'",
+      "confidence": 0.6,
+      "source_filed_at": "2026-11-07",
+      "source": "Immunocore Q3 2026 earnings press release 2026-11-07; Biohedge density overlay 2026-11-05",
+      "nct_id": "NCT05549297",
+      "notes": "Guidance slipped ~1 quarter from Sep 2026 'as early as end of 2026' to Q2 2027 per Q3 report. Date set to 2027-05-01 (mid-Q2) as placeholder; actual timing event-driven. KIMMTRAK is commercial ($102M Q3 revenue); this is an expansion indication catalyst, not approval-to-launch."
     }
   ]
 }
