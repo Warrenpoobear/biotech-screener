@@ -1,0 +1,303 @@
+{
+  "date": "2026-11-16",
+  "monitoring_day": "Day ~115 (approximate \u2014 cron gap since Sep 23)",
+  "timestamp": "2026-11-16T14:07:00.000000Z",
+  "phase": "Day ~115 PRE-MARKET snapshot (Nov 16 09:00 ET, Monday). Robinhood MCP STILL UNAVAILABLE. Price basis remains Aug 27 close (~54 trading sessions stale). MONITORING CRON GAP: Sep 24 through Nov 15 (38 consecutive trading sessions with no snapshot written). GOVERNANCE NOTE: Rule 4 drawdown thresholds changed 2026-11-15 (-10pp review, -15pp liquidate; was -2pp/-5pp). Production switched to SELECTOR-ONLY 2026-11-13. Q3 2026 13F filings due ~2026-11-14 \u2014 coinvest may require rebuild. SELECTOR-ONLY CLOCK HAS NOT STARTED YET.",
+  "data_integrity": {
+    "primary_source": "Carried forward from daily_2026_09_23.json (last snapshot). Aug 27 close is LAST known price data.",
+    "price_date": "2026-08-27 close (LAST AVAILABLE \u2014 now approximately 54 trading sessions stale as of Nov 16 open)",
+    "data_gap": "38 consecutive trading sessions with no monitoring snapshot (Sep 24 through Nov 15, inclusive)",
+    "monitoring_cron_gap": "Last written file was daily_2026_09_23.json. Cron appears to have stopped firing after Sep 23 or files were not persisted. 38 sessions missing.",
+    "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged \u2014 no confirmed trades since Jun 24 rebalance)",
+    "cash_basis": "Carried forward 9.87 from Jun 24 MCP sourcing (unchanged, no confirmed trading activity)",
+    "mcp_status": "Robinhood MCP unavailable. No live quotes. No live portfolio fetch. All figures are carried-forward estimates only.",
+    "live_data_available": false
+  },
+  "market_status": {
+    "session": "PRE-MARKET (09:00 ET, Monday Nov 16)",
+    "trading_day": true,
+    "note": "No live data available. Figures below are stale carry-forward from Aug 27 close."
+  },
+  "account": {
+    "account_id": "Robinhood 802349084",
+    "equity_fetchable": false,
+    "equity_estimated_usd": 138.04,
+    "equity_note": "EXTREMELY STALE \u2014 last confirmed Aug 27 close (~54 sessions ago). Actual value unknown.",
+    "cash_carried": 99.87,
+    "buying_power_carried": null,
+    "total_estimated_account_value": 237.91,
+    "staleness_warning": "CRITICAL \u2014 ~54 trading sessions since last confirmed data. P&L and drawdown figures are unreliable."
+  },
+  "benchmark": {
+    "xbi_since_entry_pct": null,
+    "note": "XBI return not updated since Aug 27 close basis. Stale figure from last snapshot: +25.9pp since Jun-10 entry. Current value unknown.",
+    "last_known_xbi_since_entry_pct": 25.9,
+    "last_known_as_of": "2026-08-27"
+  },
+  "portfolio_overview": {
+    "total_positions": 15,
+    "equity_usd_estimate": 138.04,
+    "cash_usd_estimate": 99.87,
+    "total_account_estimate": 237.91,
+    "cost_basis_usd": 100.13,
+    "avg_pnl_vs_entry_pct_last_known": 37.88,
+    "xbi_return_since_entry_pct_last_known": 25.9,
+    "outperformance_pp_last_known": 11.98,
+    "all_figures_stale": true,
+    "stale_as_of": "2026-08-27 close (~54 sessions)",
+    "gap_flags": 0,
+    "gap_flags_note": "No gap check possible \u2014 no current prices"
+  },
+  "positions": {
+    "COGT": {
+      "entry_price": 31.35,
+      "quantity": 0.212789,
+      "cost_basis": 6.6709,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "DNTH": {
+      "entry_price": 72.1,
+      "quantity": 0.092928,
+      "cost_basis": 6.7001,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "NRIX": {
+      "entry_price": 15.46,
+      "quantity": 0.430232,
+      "cost_basis": 6.6514,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "URGN": {
+      "entry_price": 28.02,
+      "quantity": 0.237681,
+      "cost_basis": 6.6598,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "ALMS": {
+      "entry_price": 20.37,
+      "quantity": 0.326013,
+      "cost_basis": 6.6409,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "SYRE": {
+      "entry_price": 76.1,
+      "quantity": 0.088041,
+      "cost_basis": 6.6999,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "RVMD": {
+      "entry_price": 143.76,
+      "quantity": 0.046465,
+      "cost_basis": 6.6798,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "CMPS": {
+      "entry_price": 11.3,
+      "quantity": 0.590265,
+      "cost_basis": 6.67,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "SLDB": {
+      "entry_price": 6.49,
+      "quantity": 1.028527,
+      "cost_basis": 6.6751,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "DRUG": {
+      "entry_price": 63.59,
+      "quantity": 0.105839,
+      "cost_basis": 6.7303,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "STOK": {
+      "entry_price": 28.74,
+      "quantity": 0.231758,
+      "cost_basis": 6.6607,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "PRAX": {
+      "entry_price": 241.92,
+      "quantity": 0.02753,
+      "cost_basis": 6.6601,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "TRVI": {
+      "entry_price": 13.43,
+      "quantity": 0.496649,
+      "cost_basis": 6.67,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "ERAS": {
+      "entry_price": 13.27,
+      "quantity": 0.503396,
+      "cost_basis": 6.6801,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    },
+    "XENE": {
+      "entry_price": 51.95,
+      "quantity": 0.128578,
+      "cost_basis": 6.6796,
+      "last_known_price": null,
+      "last_known_pnl_pct": null,
+      "current_price": "UNAVAILABLE",
+      "gap_flag": false,
+      "note": "No current price. Last known from Aug 27 close (stale)."
+    }
+  },
+  "governance_gates": {
+    "drawdown_gate": {
+      "status": "UNVERIFIABLE \u2014 MCP and price data unavailable",
+      "rule_version": "UPDATED 2026-11-15 (operator decision)",
+      "threshold_review_pp": -10.0,
+      "threshold_liquidate_pp": -15.0,
+      "old_threshold_review_pp": -2.0,
+      "old_threshold_liquidate_pp": -5.0,
+      "last_known_outperformance_pp": 11.98,
+      "last_known_as_of": "2026-08-27 close (~54 sessions stale)",
+      "detail": "Cannot measure current drawdown. Last known: +11.98pp vs XBI (Aug 27 basis). Rule 4 thresholds changed 2026-11-15 to -10pp review / -15pp liquidate. Gate UNVERIFIABLE."
+    },
+    "ic_gate": {
+      "status": "OVERDUE \u2014 CRITICAL",
+      "gate_was_due": "2026-07-01",
+      "last_measured": "2026-06-24",
+      "last_ic": 0.0432,
+      "days_overdue": 138,
+      "note": "IC gate 138 days overdue as of Nov 16. Corrected reading (2026-11-12): score_rank_pct IC is -0.0201 (wrong sign in original). actionable_rank IC = +0.1534, coinvest_score_z IC = +0.1478 per 2026-11-12 correction memo."
+    },
+    "jaccard_gate": {
+      "status": "DEFERRED \u2014 Q2 13F promoted 2026-11-01; Q3 due ~2026-11-14",
+      "q2_top30_jaccard": 0.875,
+      "note": "Q2 2026 coinvest promoted 2026-11-01. Q3 2026 filings due ~Nov 14 \u2014 may now be available. coinvest rebuild required before Q3 Jaccard can be run."
+    },
+    "forward_validation_clock": {
+      "status": "NOT STARTED",
+      "oos_clock_start": "Pending \u2014 first promoted selector-only run expected 2026-11-16",
+      "mandate": "SM-20260629-001",
+      "windows_accumulated": 0,
+      "windows_required": 20,
+      "detail": "2026-11-13 runs failed promotion on drift gate. PR #666 drift override added (valid 2026-11-16 to 2026-11-20). First capture pending today's run."
+    },
+    "emergency_gate": {
+      "status": "NOT TRIPPED on last known data",
+      "last_checked": "2026-08-27 (stale)",
+      "note": "Cannot verify current state without live data."
+    }
+  },
+  "major_governance_events_since_last_snapshot": [
+    {
+      "date": "2026-11-15",
+      "event": "Rule 4 drawdown thresholds changed: -10pp review (was -2pp), -15pp liquidate (was -5pp). vol_60d refreshed every run. Selector-only clock has NOT started \u2014 2026-11-13 runs failed drift gate. PR #666 drift override valid Nov 16-20.",
+      "memo": "docs/governance/2026-11-15-pre-clock-decisions.md"
+    },
+    {
+      "date": "2026-11-13",
+      "event": "Production order switched to SELECTOR-ONLY (final_score = selector_score). Pairwise ranker is shadow only. All historical backtest figures deprecated due to market-cap look-ahead contamination.",
+      "memo": "docs/governance/2026-11-13-selector-only-production-switch.md"
+    },
+    {
+      "date": "2026-11-12",
+      "event": "Clock reset to 2026-11-12. Financial score fix (operating cash flow, not net income). Sharadar price source deployed. Missing-field fixes (ctgov freshness gate, inst_delta_z blank guard).",
+      "memo": "docs/governance/2026-11-12-clock-start-and-path-c-re-record.md"
+    },
+    {
+      "date": "2026-11-01",
+      "event": "Coinvest 13F integrity fix: Q2 2026 promoted, registry v4.0 (30 elite_core managers), filing-age refreshed, staleness gate added. Clock reset to 2026-11-02 (later superseded by 2026-11-12 reset).",
+      "memo": "docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md"
+    }
+  ],
+  "catalyst_watch": {
+    "note": "No live catalyst data available. Last catalyst review was Sep 23. ALMS LUMUS binary (target ~Sep 30 2026) and XENE NDA (target ~Sep 30 2026) flagged in prior snapshot \u2014 outcomes UNKNOWN from monitoring perspective. Actual outcomes may be known from screener artifacts.",
+    "alms_lumus": "OUTCOME UNKNOWN (target was ~Sep 30 2026)",
+    "xene_nda": "OUTCOME UNKNOWN (target was ~Sep 30 2026)",
+    "live_catalyst_check": "NOT AVAILABLE \u2014 no MCP, no live data"
+  },
+  "q3_13f_note": {
+    "status": "Q3 2026 filings due ~2026-11-14",
+    "action_required": "Run tools/warm_13f_cache.py and rebuild coinvest_signals.json from Q3 data. Then run check_13f_cohort_quarantine.py with --pre-date 2026-10-30 --post-date <first post-Q3 snapshot>. This is a MANUAL GOVERNED STEP.",
+    "current_coinvest_basis": "Q2 2026 (as_of 2026-10-30, promoted 2026-11-01)"
+  },
+  "monitoring_cron_gap": {
+    "last_written": "daily_2026_09_23.json",
+    "missing_sessions": "Sep 24 through Nov 15 (~38 trading sessions)",
+    "cause": "Unknown \u2014 cron may have stopped or files not persisted",
+    "resolution": "Operator review required to determine cause and restart reliable monitoring"
+  },
+  "escalation_flags": [
+    "CRITICAL: Robinhood MCP unavailable \u2014 no live data for ~54 consecutive trading sessions",
+    "CRITICAL: 38-session monitoring cron gap (Sep 24 \u2013 Nov 15). Cause unknown.",
+    "CRITICAL: Drawdown status UNVERIFIABLE \u2014 cannot determine if Rule 4 thresholds are tripped",
+    "HIGH: IC gate 138 days overdue (due Jul 1 2026)",
+    "HIGH: Selector-only forward-validation clock NOT yet started \u2014 first capture expected today",
+    "HIGH: Q3 2026 13F filings due ~Nov 14 \u2014 coinvest rebuild required (manual governed step)",
+    "MEDIUM: ALMS LUMUS and XENE NDA outcomes unknown from monitoring perspective",
+    "INFO: Rule 4 drawdown thresholds changed 2026-11-15 (-10pp/-15pp replaces -2pp/-5pp)",
+    "INFO: Production switched to selector-only 2026-11-13 \u2014 all historical backtest claims deprecated"
+  ],
+  "monitoring_summary": {
+    "run_at": "2026-11-16T14:07:00Z",
+    "live_data_sourced": false,
+    "positions_checked": 15,
+    "gap_flags_triggered": 0,
+    "governance_gates_tripped": 0,
+    "governance_gates_unverifiable": 3,
+    "escalation_count": 9,
+    "action_required": "OPERATOR REVIEW REQUIRED \u2014 Monitoring has been dark for 38 sessions. MCP unavailable. Drawdown unverifiable. Q3 13F rebuild pending. Selector-only clock capture expected today.",
+    "no_trading_actions_taken": true
+  }
+}
