@@ -63,6 +63,7 @@ repos:
             artifacts/forward_validation/.*\.jsonl|
             artifacts/selector_only_shadow/.*\.jsonl|
             artifacts/low_risk_sleeve_shadow(_vol_beta(_full)?)?/.*\.jsonl|
+            artifacts/monitoring/.*\.json|
             .*\.csv|
             .*\.tar\.gz
           )$
