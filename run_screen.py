@@ -2028,22 +2028,30 @@ def _observed_registry_split_factor(
     from_date: Any,
     to_date: Any,
     registry: Any,
-    tolerance: float = 2.0,
+    tolerance: Optional[float] = None,
 ) -> float:
     """Cumulative factor for registry splits and special dividends in
     (from_date, to_date] that are actually VISIBLE in this price series.
 
-    A registry split is applied only when the series jumps across its
-    effective date by roughly the registry factor (within ``tolerance`` x).
-    That makes the adjustment idempotent: on an already split-adjusted source
-    (yfinance history fetched after the split, or Sharadar SEP ``close``) the
+    A registry split is applied only when the adjacent bars around its
+    effective date match the registry factor within
+    ``REGISTRY_FACTOR_TOLERANCE`` (15% relative; the same window the
+    price-history repair uses). On an already split-adjusted source the
     jump is absent and the split is skipped instead of applied twice.
+    A factor of 2.0 is not confirmed by a flat series: ``abs(1 / 2 - 1)``
+    is 0.5, outside 15%. The old log check (``<= log(2)``) confirmed it.
 
     ``prices_desc`` is ``[(date, close), ...]`` sorted newest first.
     """
-    import math
+    from common.corporate_actions import (
+        REGISTRY_FACTOR_TOLERANCE,
+        get_special_dividends,
+        get_splits_only,
+        registry_split_confirmed,
+    )
 
-    from common.corporate_actions import get_splits_only
+    if tolerance is None:
+        tolerance = REGISTRY_FACTOR_TOLERANCE
 
     factor = 1.0
     f_iso, t_iso = from_date.isoformat(), to_date.isoformat()
@@ -2054,14 +2062,12 @@ def _observed_registry_split_factor(
         after = next((p for d, p in reversed(prices_desc) if d.isoformat() >= a.effective_date), None)
         if not before or not after:
             continue
-        observed = after / before
-        if abs(math.log(observed) - math.log(a.factor)) <= math.log(tolerance):
+        if registry_split_confirmed(after / before, a.factor, tolerance):
             factor *= a.factor
 
     # Special cash dividends: the ex-date drop is a distribution, not a return.
     # Same visibility rule — applied only when the series drops by roughly the
     # dividend (0.5x..1.5x), so a dividend-adjusted source is not adjusted twice.
-    from common.corporate_actions import get_special_dividends
 
     for a in get_special_dividends(ticker, registry):
         if not a.amount or not (f_iso < a.effective_date <= t_iso):
@@ -2538,6 +2544,65 @@ def _corp_action_split_adjust(
     return adjusted
 
 
+def _apply_confirmed_registry_splits(
+    ticker: str,
+    series: List[Any],
+    registry: Any,
+    as_of_date: str,
+) -> List[Any]:
+    """Scale pre-split closes by registry factors the series actually shows.
+
+    Confirmation is ``registry_split_confirmed``: the adjacent bars around the
+    effective date must match the registry factor within 15%. The same factor
+    momentum applies is then multiplied into every close strictly before that
+    date. A flat series is returned unchanged, so an already-adjusted source
+    is not adjusted twice. Splits after ``as_of_date`` are invisible.
+
+    Returns the same list object when nothing is confirmed.
+    """
+    if not series or registry is None or not as_of_date:
+        return series
+    from common.corporate_actions import get_splits_only, registry_split_confirmed
+
+    ordered = sorted(series, key=lambda row: row[0])
+    confirmed: List[Tuple[str, float]] = []
+    for action in get_splits_only(ticker, registry, as_of=as_of_date):
+        if not action.factor or action.factor <= 0 or not action.effective_date:
+            continue
+        before = None
+        after = None
+        for d, px in ordered:
+            d_iso = d.isoformat() if hasattr(d, "isoformat") else str(d)[:10]
+            if d_iso < action.effective_date:
+                before = px
+            elif after is None:
+                after = px
+                break
+        if not before or not after or before <= 0 or after <= 0:
+            continue
+        if registry_split_confirmed(after / before, action.factor):
+            confirmed.append((action.effective_date, float(action.factor)))
+    if not confirmed:
+        return series
+    logger.info(
+        "confirmed registry split %s: %s",
+        ticker,
+        ", ".join(f"{eff} x{fac:g}" for eff, fac in confirmed),
+    )
+
+    def _scaled(d: Any, px: float) -> Tuple[Any, float]:
+        d_iso = d.isoformat() if hasattr(d, "isoformat") else str(d)[:10]
+        fac = 1.0
+        for eff, split_fac in confirmed:
+            if d_iso < eff:
+                fac *= split_fac
+        if fac == 1.0:
+            return (d, px)
+        return (d, px * fac)
+
+    return [_scaled(d, px) for d, px in series]
+
+
 def _hydrate_drawdown(
     rec_by_ticker: Dict[str, Dict[str, Any]],
     price_history_path: Optional[Path],
@@ -2712,9 +2777,13 @@ def _hydrate_drawdown(
             continue
 
         series.sort(key=lambda x: x[0])
+        raw_series = series
+        series = _apply_confirmed_registry_splits(ticker, series, _ca_registry, as_of_date)
+        confirmed_basis = series is not raw_series
         unfiltered_series = list(series)  # preserve for fallback
 
-        # Filter split artifacts before computing drawdown
+        # Filter split artifacts before computing drawdown. Confirmed splits
+        # are already on one basis, so a +96% ADR move is not left in the window.
         series, split_warns = _filter_price_outliers(series)
         if split_warns:
             logger.warning(
@@ -2730,32 +2799,44 @@ def _hydrate_drawdown(
             # compute the 252-bar peak across the split (pre-split high) and
             # report a phantom deep drawdown — this is the IMMP/GOSS bug.
             if len(unfiltered_series) >= MIN_BARS_FOR_ESTIMATE and split_warns:
-                # If corporate_actions.json confirms a real split, scale the
+                # Confirmed splits were scaled above. Do not scale them again.
+                # A remaining outlier is not a registry match; keep it in the
+                # confirmed-basis series (a real move). Otherwise, if
+                # corporate_actions.json confirms a real split, scale the
                 # restored series so the peak is on the post-split basis. If no
                 # action is registered (a genuine crash the −75% heuristic
                 # misfired on), keep the raw series — the deep drawdown is real.
-                adjusted = _corp_action_split_adjust(ticker, unfiltered_series, as_of_date, _ca_registry)
-                if adjusted is not None:
+                if confirmed_basis:
                     logger.info(
-                        "_hydrate_drawdown: %s recent-split fallback: filtered=%d < %d, "
-                        "using corporate-action split-adjusted series (%d bars)",
+                        "_hydrate_drawdown: %s confirmed-split series kept "
+                        "(%d bars); remaining outlier is not a registry match",
                         ticker,
-                        len(series),
-                        MIN_BARS_FOR_ESTIMATE,
-                        len(adjusted),
-                    )
-                    series = adjusted
-                else:
-                    logger.info(
-                        "_hydrate_drawdown: %s split-filter fallback: "
-                        "filtered=%d bars < %d, restoring unfiltered %d bars "
-                        "(no corporate action — treated as real crash)",
-                        ticker,
-                        len(series),
-                        MIN_BARS_FOR_ESTIMATE,
                         len(unfiltered_series),
                     )
                     series = unfiltered_series
+                else:
+                    adjusted = _corp_action_split_adjust(ticker, unfiltered_series, as_of_date, _ca_registry)
+                    if adjusted is not None:
+                        logger.info(
+                            "_hydrate_drawdown: %s recent-split fallback: filtered=%d < %d, "
+                            "using corporate-action split-adjusted series (%d bars)",
+                            ticker,
+                            len(series),
+                            MIN_BARS_FOR_ESTIMATE,
+                            len(adjusted),
+                        )
+                        series = adjusted
+                    else:
+                        logger.info(
+                            "_hydrate_drawdown: %s split-filter fallback: "
+                            "filtered=%d bars < %d, restoring unfiltered %d bars "
+                            "(no corporate action — treated as real crash)",
+                            ticker,
+                            len(series),
+                            MIN_BARS_FOR_ESTIMATE,
+                            len(unfiltered_series),
+                        )
+                        series = unfiltered_series
             else:
                 df["drawdown_missing_reason"] = "series_too_short"
                 continue
@@ -2836,6 +2917,7 @@ def _hydrate_beta_rsi(
     rec_by_ticker: Dict[str, Dict[str, Any]],
     price_history_path: Optional[Path],
     as_of_date: str,
+    corporate_actions: Any = None,
 ) -> int:
     """Hydrate ``beta_xbi_60d``, ``alpha_60d``, and ``rsi_14d`` from price CSV.
 
@@ -2850,6 +2932,11 @@ def _hydrate_beta_rsi(
     over the same aligned window.
 
     **RSI** is 14-day Wilder-smoothed, unchanged from prior implementation.
+
+    Registry splits confirmed within 15% (the same window as momentum) are
+    scaled into the series before the outlier filter, so beta, alpha, RSI
+    and ``vol_60d`` do not treat that jump as a return. A flat series is
+    not scaled.
 
     **XBI staleness guard**: when XBI price data is >3 trading days behind
     *as_of_date*, beta and alpha are *not* computed.  Instead the missing-
@@ -2915,6 +3002,18 @@ def _hydrate_beta_rsi(
 
     for tk in prices_by_ticker:
         prices_by_ticker[tk].sort(key=lambda x: x[0])
+
+    _ca_registry = corporate_actions
+    if _ca_registry is None:
+        try:
+            from common.corporate_actions import load_actions
+
+            _ca_registry = load_actions()
+        except Exception:  # pragma: no cover - fail-open
+            _ca_registry = None
+    if _ca_registry is not None:
+        for tk in list(prices_by_ticker):
+            prices_by_ticker[tk] = _apply_confirmed_registry_splits(tk, prices_by_ticker[tk], _ca_registry, as_of_date)
 
     # ------------------------------------------------------------------
     # Filter split artifacts from all price series

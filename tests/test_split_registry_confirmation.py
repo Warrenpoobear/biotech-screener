@@ -176,3 +176,185 @@ def test_registry_loads_special_dividend():
     reg = load_actions(REPO_ROOT / "production_data" / "corporate_actions.json")
     divs = get_special_dividends("SUPN", reg)
     assert [(a.effective_date, a.amount) for a in divs] == [("2026-11-03", 8.13)]
+
+
+# Factor 2.0 (AZN ADR ratio). The old momentum check was
+# abs(log(observed) - log(factor)) <= log(2). On a flat already-adjusted
+# series observed == 1, so abs(log(1) - log(2)) == log(2) and the lookback
+# was doubled again (~-50%). A 15% relative window does not confirm that.
+
+
+FACTOR_2 = {
+    "ticker": "AZ2",
+    "action": "reverse_split",
+    "effective_date": SPLIT_DAY.isoformat(),
+    "ratio": "1:2",
+    "factor": 2.0,
+}
+
+
+def _factor2_days():
+    return [d for d in _bdays(date(2026, 4, 1), 200) if d <= date(2026, 11, 11)]
+
+
+def _factor2_jump_series():
+    """Exact 2x jump on SPLIT_DAY. Flat on each side, so one adjustment is a zero return."""
+    return [(d, 50.0 if d < SPLIT_DAY else 100.0) for d in _factor2_days()]
+
+
+def _factor2_flat_series():
+    """Already on the post-split basis: no jump to confirm."""
+    return [(d, 100.0) for d in _factor2_days()]
+
+
+def _factor2_drawdown_jump_series():
+    """2x-matching jump, with an earlier pre-split high that only the adjusted series sees.
+
+    Adjacent bars are 50 → 90 (ratio 1.8, within 15% of 2.0). Prices before
+    2026-09-01 are 100. After ×2 those become 200, above the post-split 90,
+    so drawdown is -0.55. Raw peak is 100 and drawdown is -0.10.
+    """
+    rows = []
+    for d in _factor2_days():
+        if d < date(2026, 9, 1):
+            px = 100.0
+        elif d < SPLIT_DAY:
+            px = 50.0
+        else:
+            px = 90.0
+        rows.append((d, px))
+    return rows
+
+
+def _registry(actions):
+    from common.corporate_actions import CorporateAction, CorporateActionRegistry
+
+    reg = CorporateActionRegistry(
+        actions=[
+            CorporateAction(
+                ticker=a["ticker"],
+                action=a["action"],
+                effective_date=a["effective_date"],
+                ratio=a.get("ratio"),
+                factor=a.get("factor"),
+                amount=a.get("amount"),
+            )
+            for a in actions
+        ]
+    )
+    reg._build_indices()
+    return reg
+
+
+def test_split_ratio_confirmation_window_rejects_flat_factor_2():
+    """The shared 15% window: exact 2x confirms; a flat series (ratio 1) does not."""
+    from common.corporate_actions import registry_split_confirmed
+
+    assert registry_split_confirmed(2.0, 2.0)
+    assert registry_split_confirmed(1.964435, 2.0)  # AZN 187.80 / 95.60
+    assert registry_split_confirmed(2.2, 2.0)  # 10% off, inside the window
+    assert not registry_split_confirmed(1.0, 2.0)
+    assert not registry_split_confirmed(2.4, 2.0)  # 20% off, outside the window
+
+
+def test_momentum_factor2_jumped_series_adjusts_once(tmp_path):
+    _write_prices(tmp_path / "price_history.csv", {"AZ2": _factor2_jump_series(), "XBI": _crash_series()})
+    _write_registry(tmp_path / "corporate_actions.json", [FACTOR_2])
+    md = {"AZ2": {}}
+    rs.compute_momentum_from_price_history(tmp_path / "price_history.csv", AS_OF, md)
+    # Once: lookback ×2 meets the post price. Twice would be about -50%. Unadjusted would be +100%.
+    assert abs(md["AZ2"]["return_60d"]) < 1e-9
+    assert abs(md["AZ2"]["return_120d"]) < 1e-9
+
+
+def test_momentum_factor2_flat_series_is_not_adjusted(tmp_path):
+    _write_prices(tmp_path / "price_history.csv", {"AZ2": _factor2_flat_series(), "XBI": _crash_series()})
+    _write_registry(tmp_path / "corporate_actions.json", [FACTOR_2])
+    md = {"AZ2": {}}
+    rs.compute_momentum_from_price_history(tmp_path / "price_history.csv", AS_OF, md)
+    assert abs(md["AZ2"]["return_60d"]) < 1e-9
+    assert abs(md["AZ2"]["return_120d"]) < 1e-9
+
+
+def test_drawdown_factor2_jumped_series_adjusts_once(tmp_path):
+    from run_screen import _hydrate_drawdown
+
+    prices = tmp_path / "price_history.csv"
+    _write_prices(prices, {"AZ2": _factor2_drawdown_jump_series()})
+    recs = {"AZ2": {"ticker": "AZ2", "defensive_features": {}}}
+    _hydrate_drawdown(recs, prices, AS_OF, corporate_actions=_registry([FACTOR_2]))
+    dd = recs["AZ2"]["defensive_features"]["drawdown"]
+    # Adjusted peak 200, last close 90. Raw peak 100 would be -0.10. Twice would be -0.775.
+    assert abs(dd - (-0.55)) < 1e-6
+
+
+def test_drawdown_factor2_flat_series_is_not_adjusted(tmp_path):
+    from run_screen import _hydrate_drawdown
+
+    prices = tmp_path / "price_history.csv"
+    _write_prices(prices, {"AZ2": _factor2_flat_series()})
+    recs = {"AZ2": {"ticker": "AZ2", "defensive_features": {}}}
+    _hydrate_drawdown(recs, prices, AS_OF, corporate_actions=_registry([FACTOR_2]))
+    dd = recs["AZ2"]["defensive_features"]["drawdown"]
+    assert dd == 0.0
+
+
+def _beta_prices(jump: bool):
+    """Weekdays through AS_OF. The split sits inside the 60-day beta window."""
+    days = [d for d in _bdays(date(2026, 7, 1), 120) if d <= date(2026, 11, 11)]
+    split_at = days[-40]
+    az, xbi_rows = [], []
+    for i, d in enumerate(days):
+        px = 100.0 if (not jump or d >= split_at) else 50.0
+        az.append((d, px))
+        # Varying benchmark returns. A constant daily rate has zero variance
+        # and beta is undefined.
+        xbi_rows.append((d, 100.0 + (i % 5)))
+    return az, xbi_rows, split_at
+
+
+def test_beta_factor2_jumped_series_adjusts_once(tmp_path):
+    from run_screen import _hydrate_beta_rsi
+
+    az, xbi, split_at = _beta_prices(jump=True)
+    _write_prices(tmp_path / "price_history.csv", {"AZ2": az, "XBI": xbi})
+    reg = _registry(
+        [
+            {
+                "ticker": "AZ2",
+                "action": "reverse_split",
+                "effective_date": split_at.isoformat(),
+                "ratio": "1:2",
+                "factor": 2.0,
+            }
+        ]
+    )
+    recs = {"AZ2": {"ticker": "AZ2", "defensive_features": {}}}
+    _hydrate_beta_rsi(recs, tmp_path / "price_history.csv", AS_OF, corporate_actions=reg)
+    df = recs["AZ2"]["defensive_features"]
+    # Adjusted series is flat, so beta and alpha are ~0. The raw +100% day is not.
+    assert abs(df["beta_xbi_60d"]) < 1e-6
+    assert abs(df["alpha_60d"]) < 1e-6
+
+
+def test_beta_factor2_flat_series_is_not_adjusted(tmp_path):
+    from run_screen import _hydrate_beta_rsi
+
+    az, xbi, split_at = _beta_prices(jump=False)
+    _write_prices(tmp_path / "price_history.csv", {"AZ2": az, "XBI": xbi})
+    reg = _registry(
+        [
+            {
+                "ticker": "AZ2",
+                "action": "reverse_split",
+                "effective_date": split_at.isoformat(),
+                "ratio": "1:2",
+                "factor": 2.0,
+            }
+        ]
+    )
+    recs = {"AZ2": {"ticker": "AZ2", "defensive_features": {}}}
+    _hydrate_beta_rsi(recs, tmp_path / "price_history.csv", AS_OF, corporate_actions=reg)
+    df = recs["AZ2"]["defensive_features"]
+    assert abs(df["beta_xbi_60d"]) < 1e-6
+    assert abs(df["alpha_60d"]) < 1e-6
