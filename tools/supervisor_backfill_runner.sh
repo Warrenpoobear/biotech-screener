@@ -106,7 +106,12 @@ echo "[backfill] Backfill range: $START_DATE → $TODAY"
 # Generate list of missing weekday dates
 MISSING_DATES=()
 CURRENT_DATE="$START_DATE"
-while [ "$CURRENT_DATE" != "$TODAY" ]; do
+# Strictly-before comparison (ISO dates sort lexicographically). The loop used
+# to be `!= "$TODAY"`, which never terminates when START_DATE is already past
+# TODAY — i.e. whenever today's supervisor artifact exists before this runs
+# (START_DATE = LAST_DATE + 1 day = tomorrow). That spun at ~27% CPU forking
+# `date` from 2026-11-10 19:19 until it was killed 2026-11-11 ~11:40.
+while [[ "$CURRENT_DATE" < "$TODAY" ]]; do
     if is_weekday "$CURRENT_DATE"; then
         MISSING_DATES+=("$CURRENT_DATE")
     fi

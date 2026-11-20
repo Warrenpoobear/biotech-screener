@@ -1,0 +1,478 @@
+{
+    "date": "2026-08-21",
+    "monitoring_day": 53,
+    "timestamp": "2026-08-21T09:00:00.000000Z",
+    "phase": "Day 53 — PRE-MARKET snapshot (Aug 21 09:00 ET). ALERT: 5 GAP FLAGS on Aug 20 close. Broad portfolio selloff Aug 19-20 vs XBI recovery. URGN -6.94% (IntraGel partnership announced), DRUG -7.29%, SLDB -6.57%, PRAX -5.60%, ERAS -5.48%. All 15 positions still positive vs entry. STOK lowest at +9.25% — watch closely. Governance drawdown gate CLEAR (+12.61pp outperformance since inception).",
+    "data_integrity": {
+        "primary_source": "stockanalysis.com WebFetch (Aug 20, 2026 closing prices fetched Aug 21 pre-market)",
+        "price_date": "2026-08-20 close (4:00 PM EDT)",
+        "note": "Robinhood MCP unavailable Day 53. Yahoo Finance API blocked. Prices sourced from stockanalysis.com WebFetch for all 15 tickers. XBI from WebSearch ($164.28 current). NRIX pre-market Aug 21 $27.35 (+1.11%) captured from stockanalysis.com.",
+        "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged)",
+        "cash_basis": "Carried forward $99.87 from Jun 24 MCP sourcing (unchanged)",
+        "data_quality": "AUG 20 CLOSE — best available without Robinhood MCP or Yahoo Finance API"
+    },
+    "account": {
+        "account_id": "Robinhood 802349084",
+        "equity_fetchable": false,
+        "equity_estimated_usd": 135.72,
+        "equity_note": "Computed from Aug 20 close prices x phase2_entry_prices.json quantities.",
+        "cash_carried": 99.87,
+        "buying_power_carried": null,
+        "total_estimated_account_value": 235.59,
+        "equity_delta_vs_day52": -3.21,
+        "equity_delta_pct_vs_day52": -2.31,
+        "equity_note_detail": "Day 52 estimate $138.93 (Aug 18 pre-market). Day 53 $135.72 (-$3.21 / -2.31%). Portfolio sold off Aug 19-20 while XBI recovered."
+    },
+    "benchmark": {
+        "xbi_entry_price": 133.62,
+        "xbi_aug18_last_known": 159.53,
+        "xbi_aug21_current": 164.28,
+        "xbi_return_since_entry_pct": 22.94,
+        "xbi_aug18_to_aug21_chg_pct": 2.98,
+        "xbi_note": "XBI recovered further Aug 19-20: $159.53 (Aug 18) → ~$164.28 (Aug 21 pre-market). +22.94% since Jun 10 entry. Portfolio underperformed XBI by ~5.3pp over Aug 19-20 two-day window. Long-run outperformance still +12.61pp."
+    },
+    "portfolio_overview": {
+        "total_positions": 15,
+        "positions_negative_vs_entry": 0,
+        "positions_positive_vs_entry": 15,
+        "avg_pnl_vs_entry_pct": 35.55,
+        "avg_pnl_vs_entry_pct_day52": 38.75,
+        "avg_pnl_delta_2day": -3.20,
+        "equity_usd": 135.72,
+        "cash_usd": 99.87,
+        "total_account_usd": 235.59,
+        "xbi_return_since_entry_pct": 22.94,
+        "outperformance_pp": 12.61,
+        "drawdown_threshold_pp": -2.0,
+        "drawdown_status": "CLEAR — +12.61pp vs XBI since inception. But 2-day relative underperformance of ~5.3pp warrants monitoring.",
+        "gap_flags_today": 5,
+        "gap_threshold_pct": 5.0,
+        "near_gap_watch": ["STOK -4.93%", "ALMS -4.71%", "COGT -4.18%", "XENE -4.16%"],
+        "session_character": "BROAD SELLOFF. 5 gap flags on Aug 20 close — worst single-day flag count in monitoring period. XBI up +2.98% over same 2 days. Portfolio-specific or sector-rotation pressure. URGN has confirmed catalyst (IntraGel deal, -$7M cash). Others (DRUG, SLDB, PRAX, ERAS) need catalyst check at open.",
+        "key_watch_open": "RVMD: +4.07% pre-market Aug 18 resolved; today -1.36% (Aug 20). STOK -4.93% near gap. ALMS LUMUS still pending Q3. URGN IntraGel deal negative reaction."
+    },
+    "positions": [
+        {
+            "ticker": "NRIX",
+            "company": "Nurix Therapeutics, Inc.",
+            "entry_price": 15.46,
+            "quantity": 0.430232,
+            "aug18_premarket": 27.11,
+            "aug20_close": 27.05,
+            "aug21_premarket": 27.35,
+            "day_chg_pct_aug20": -2.66,
+            "pnl_vs_entry_pct": 75.00,
+            "position_value_usd": 11.64,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+75.00% vs entry. Aug 20 -2.66% (sector drag). Pre-market Aug 21 $27.35 (+1.11%) showing recovery. Post-Roche $700M deal underpins. Lowest day change among top performers."
+        },
+        {
+            "ticker": "URGN",
+            "company": "UroGen Pharma Ltd.",
+            "entry_price": 28.02,
+            "quantity": 0.237681,
+            "aug18_premarket": 49.00,
+            "aug20_close": 46.80,
+            "day_chg_pct_aug20": -6.94,
+            "pnl_vs_entry_pct": 67.02,
+            "position_value_usd": 11.12,
+            "gap_flag": true,
+            "status": "GAP_FLAG — CATALYST_IDENTIFIED",
+            "note": "+67.02% vs entry. GAP FLAG -6.94% on Aug 20. CATALYST IDENTIFIED: UroGen announced strategic collaboration and $7M equity investment in IntraGel Therapeutics (SRGel platform, 3 oncology products + TumoCure option). Market reacted negatively to capital deployment. P&L still strong at +67.02%. Monitor for stabilization at open.",
+            "catalyst": {
+                "event": "Strategic Option and Research License Agreement with IntraGel Therapeutics",
+                "date": "2026-08-20",
+                "detail": "$7M equity investment + research license for SRGel platform + option on TumoCure (advanced H&N cancer). Market sold off on capital allocation.",
+                "source": "StockTitan / URGN press release Aug 20"
+            }
+        },
+        {
+            "ticker": "DNTH",
+            "company": "Dianthus Therapeutics, Inc.",
+            "entry_price": 72.10,
+            "quantity": 0.092928,
+            "aug18_premarket": 114.11,
+            "aug20_close": 109.51,
+            "day_chg_pct_aug20": -3.69,
+            "pnl_vs_entry_pct": 51.89,
+            "position_value_usd": 10.18,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+51.89% vs entry. Aug 20 -3.69% (sector drag, no confirmed catalyst). EMERGE Phase 3 ongoing. Below gap threshold."
+        },
+        {
+            "ticker": "PRAX",
+            "company": "Praxis Precision Medicines, Inc.",
+            "entry_price": 241.92,
+            "quantity": 0.027530,
+            "aug18_premarket": 373.00,
+            "aug20_close": 364.58,
+            "day_chg_pct_aug20": -5.60,
+            "pnl_vs_entry_pct": 50.70,
+            "position_value_usd": 10.03,
+            "gap_flag": true,
+            "status": "GAP_FLAG — NO_CATALYST_IDENTIFIED",
+            "note": "+50.70% vs entry. GAP FLAG -5.60% on Aug 20. No confirmed catalyst found. EMERALD Phase 3 readout guided Q4 2026 (per Q2 earnings — not imminent). Check for analyst downgrades or sector rotation at open. P&L strong at +50.70%.",
+            "emerald_update": "Q4 2026 readout — no change from Aug 18 correction."
+        },
+        {
+            "ticker": "RVMD",
+            "company": "Revolution Medicines, Inc.",
+            "entry_price": 143.76,
+            "quantity": 0.046465,
+            "aug18_premarket": 212.00,
+            "aug20_close": 211.74,
+            "day_chg_pct_aug20": -1.36,
+            "pnl_vs_entry_pct": 47.28,
+            "position_value_usd": 9.84,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+47.28% vs entry. Modest Aug 20 pull -1.36%. Aug 18 near-gap (+4.07%) resolved without triggering flag — was momentum, no confirmed catalyst. Stable."
+        },
+        {
+            "ticker": "SLDB",
+            "company": "Solid Biosciences Inc.",
+            "entry_price": 6.49,
+            "quantity": 1.028527,
+            "aug18_premarket": 9.15,
+            "aug20_close": 9.10,
+            "day_chg_pct_aug20": -6.57,
+            "pnl_vs_entry_pct": 40.22,
+            "position_value_usd": 9.36,
+            "gap_flag": true,
+            "status": "GAP_FLAG — NO_CATALYST_IDENTIFIED",
+            "note": "+40.22% vs entry. GAP FLAG -6.57% on Aug 20. Coincidence with Aug 18 pre-market $9.15 → Aug 20 close $9.10 (essentially flat absolute but big 1-day drop within Aug 20 session suggests intraday news or sector rotation). No confirmed catalyst found. Elevated volume (1.08M). Cash runway mid-2028 unchanged."
+        },
+        {
+            "ticker": "TRVI",
+            "company": "Travere Therapeutics, Inc.",
+            "entry_price": 13.43,
+            "quantity": 0.496649,
+            "aug18_premarket": 18.48,
+            "aug20_close": 18.25,
+            "day_chg_pct_aug20": -2.98,
+            "pnl_vs_entry_pct": 35.89,
+            "position_value_usd": 9.06,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+35.89% vs entry. Aug 20 -2.98% (sector drag). Below gap threshold. Stable."
+        },
+        {
+            "ticker": "SYRE",
+            "company": "Spyre Therapeutics (SYRE)",
+            "entry_price": 76.10,
+            "quantity": 0.088041,
+            "aug18_premarket": 102.64,
+            "aug20_close": 107.79,
+            "day_chg_pct_aug20": -1.04,
+            "pnl_vs_entry_pct": 41.64,
+            "position_value_usd": 9.49,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+41.64% vs entry. Notably recovered Aug 19-20 from Aug 18 pre-market $102.64 to $107.79 (Aug 20 close). Only position to gain vs Aug 18 levels. SKYLINE Phase 2 met primary endpoints Q2 2026."
+        },
+        {
+            "ticker": "ERAS",
+            "company": "Erasca, Inc.",
+            "entry_price": 13.27,
+            "quantity": 0.503396,
+            "aug18_premarket": 18.07,
+            "aug20_close": 17.08,
+            "day_chg_pct_aug20": -5.48,
+            "pnl_vs_entry_pct": 28.71,
+            "position_value_usd": 8.60,
+            "gap_flag": true,
+            "status": "GAP_FLAG — NO_CATALYST_IDENTIFIED",
+            "note": "+28.71% vs entry. GAP FLAG -5.48% on Aug 20. High volume (2.67M — elevated). No confirmed catalyst. ERAS had a prior Aug 14 near-gap at -4.66%; this exceeded it. Check for clinical news or analyst action at open."
+        },
+        {
+            "ticker": "DRUG",
+            "company": "Bright Minds Biosciences Inc. (DRUG)",
+            "entry_price": 63.59,
+            "quantity": 0.105839,
+            "aug18_premarket": 79.48,
+            "aug20_close": 78.56,
+            "day_chg_pct_aug20": -7.29,
+            "pnl_vs_entry_pct": 23.54,
+            "position_value_usd": 8.32,
+            "gap_flag": true,
+            "status": "GAP_FLAG — LARGEST_DAILY_MOVE — NO_CATALYST_IDENTIFIED",
+            "note": "+23.54% vs entry. GAP FLAG -7.29% on Aug 20 — LARGEST DAILY DROP in portfolio today. NOTE: Baseline (Jun 10) already identified DRUG as 'Bright Minds Biosciences Inc.' — identity flag from Day 52 is resolved. Low volume (124K) despite large move — suggests thin liquidity amplifying price action. No catalyst found. Low float stock; volatility expected.",
+            "identity_resolution": "RESOLVED — DRUG = Bright Minds Biosciences Inc. (confirmed in baseline Jun 10 artifact). Prior 'Nuvation Bio' tracking in mid-monitoring was erroneous."
+        },
+        {
+            "ticker": "ALMS",
+            "company": "Alumis Inc.",
+            "entry_price": 20.37,
+            "quantity": 0.326013,
+            "aug18_premarket": 25.30,
+            "aug20_close": 22.86,
+            "day_chg_pct_aug20": -4.71,
+            "pnl_vs_entry_pct": 12.23,
+            "position_value_usd": 7.45,
+            "gap_flag": false,
+            "near_gap_watch": true,
+            "status": "ELEVATED_WATCH — LUMUS_BINARY_PENDING + NEAR_GAP",
+            "note": "+12.23% vs entry. Near-gap at -4.71% (Aug 20). LUMUS Phase 2b SLE readout still expected Q3 2026 (through Sep 30) — binary catalyst any day. Price pulled back from $25.30 (Aug 18) to $22.86 (Aug 20, -9.65% over 2 days). Buffer narrowed significantly. Monitor daily."
+        },
+        {
+            "ticker": "XENE",
+            "company": "Xenon Pharmaceuticals Inc.",
+            "entry_price": 51.95,
+            "quantity": 0.128578,
+            "aug18_premarket": 62.33,
+            "aug20_close": 59.73,
+            "day_chg_pct_aug20": -4.16,
+            "pnl_vs_entry_pct": 14.99,
+            "position_value_usd": 7.68,
+            "gap_flag": false,
+            "near_gap_watch": true,
+            "status": "MONITORING — NEAR_GAP",
+            "note": "+14.99% vs entry. Near-gap at -4.16% (Aug 20). Below 5% threshold. Pulled back from $62.33 (Aug 18) to $59.73 (Aug 20)."
+        },
+        {
+            "ticker": "COGT",
+            "company": "Cogent Biosciences, Inc.",
+            "entry_price": 31.35,
+            "quantity": 0.212789,
+            "aug18_premarket": 37.66,
+            "aug20_close": 35.31,
+            "day_chg_pct_aug20": -4.18,
+            "pnl_vs_entry_pct": 12.64,
+            "position_value_usd": 7.51,
+            "gap_flag": false,
+            "near_gap_watch": true,
+            "status": "MONITORING — NEAR_GAP",
+            "note": "+12.64% vs entry. Near-gap at -4.18% (Aug 20). Buffer narrowed from +20.13% (Aug 18) to +12.64% — watch closely. Bezuclastinib BezginD Phase 3 ongoing."
+        },
+        {
+            "ticker": "CMPS",
+            "company": "COMPASS Pathways plc",
+            "entry_price": 11.30,
+            "quantity": 0.590265,
+            "aug18_premarket": 13.55,
+            "aug20_close": 13.82,
+            "day_chg_pct_aug20": -1.36,
+            "pnl_vs_entry_pct": 22.30,
+            "position_value_usd": 8.16,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+22.30% vs entry. Modest Aug 20 -1.36%. Actually recovered vs Aug 18 pre-market ($13.55 → $13.82). COMP360 Phase III on track, FDA filing Q4 2026. Resilient."
+        },
+        {
+            "ticker": "STOK",
+            "company": "Stoke Therapeutics, Inc.",
+            "entry_price": 28.74,
+            "quantity": 0.231758,
+            "aug18_premarket": 32.25,
+            "aug20_close": 31.40,
+            "day_chg_pct_aug20": -4.93,
+            "pnl_vs_entry_pct": 9.25,
+            "position_value_usd": 7.28,
+            "gap_flag": false,
+            "near_gap_watch": true,
+            "status": "ELEVATED_WATCH — LOWEST_BUFFER + NEAR_GAP",
+            "note": "+9.25% vs entry — LOWEST BUFFER IN PORTFOLIO. Near-gap at -4.93% (Aug 20). Buffer has compressed: +12.21% (Aug 18) → +9.25% today. $31.40 vs $28.74 entry = $2.66/share buffer. Aug 14 emergency watch triggered at +5.67% ($30.37). Current buffer is thin but above Aug 14 low. Monitor closely — a further -4.5% from open would approach Aug 14 emergency levels."
+        }
+    ],
+    "gap_flags_summary": {
+        "count": 5,
+        "threshold_pct": 5.0,
+        "flags": [
+            {"ticker": "DRUG", "day_pct_aug20": -7.29, "pnl_vs_entry": 23.54, "catalyst": "NONE_IDENTIFIED — thin volume (124K), low-float volatility"},
+            {"ticker": "URGN", "day_pct_aug20": -6.94, "pnl_vs_entry": 67.02, "catalyst": "CONFIRMED — IntraGel $7M strategic investment, market negative reaction"},
+            {"ticker": "SLDB", "day_pct_aug20": -6.57, "pnl_vs_entry": 40.22, "catalyst": "NONE_IDENTIFIED — elevated volume (1.08M)"},
+            {"ticker": "PRAX", "day_pct_aug20": -5.60, "pnl_vs_entry": 50.70, "catalyst": "NONE_IDENTIFIED — check analyst action"},
+            {"ticker": "ERAS", "day_pct_aug20": -5.48, "pnl_vs_entry": 28.71, "catalyst": "NONE_IDENTIFIED — highest volume (2.67M)"}
+        ],
+        "near_gap_watch": [
+            {"ticker": "STOK", "day_pct": -4.93, "pnl_vs_entry": 9.25, "note": "LOWEST BUFFER — watch closely"},
+            {"ticker": "ALMS", "day_pct": -4.71, "pnl_vs_entry": 12.23, "note": "LUMUS binary pending — near-gap compounds uncertainty"},
+            {"ticker": "COGT", "day_pct": -4.18, "pnl_vs_entry": 12.64, "note": "Buffer compressed from +20% to +12.6%"},
+            {"ticker": "XENE", "day_pct": -4.16, "pnl_vs_entry": 14.99, "note": "Approaching threshold"}
+        ],
+        "historical_context": "5 gap flags on Aug 20 is the MOST in any single session during this monitoring period. Prior worst: Aug 14 (STOK, CMPS, ALMS all >5%; 3 flags). Aug 20 event appears broader and may be sector-specific rotation or macro event.",
+        "aggregate_selloff_note": "XBI was up +2.98% over Aug 18→Aug 21, while portfolio was down -2.31%. Portfolio-specific pressure, not sector-wide."
+    },
+    "forward_catalyst_watch": {
+        "STOK_EMERGENCY_WATCH": {
+            "ticker": "STOK",
+            "event": "Lowest portfolio buffer — emergency watch re-activated",
+            "current_pnl": 9.25,
+            "entry_price": 28.74,
+            "current_price": 31.40,
+            "buffer_usd_per_share": 2.66,
+            "aug14_emergency_level_pct": 5.67,
+            "priority": "ELEVATED",
+            "note": "Buffer $2.66/share. Further -8.6% from current would bring back to Aug 14 emergency watch level. Monitor at open."
+        },
+        "ALMS_LUMUS": {
+            "ticker": "ALMS",
+            "event": "LUMUS Phase 2b SLE topline readout — envudeucitinib (ESK-001)",
+            "readout_window": "Q3 2026 (through Sep 30 — 40 days remaining)",
+            "priority": "ELEVATED — Binary catalyst + near-gap pressure",
+            "current_pnl_pct": 12.23,
+            "note": "LUMUS readout pending + Aug 20 near-gap (-4.71%) = elevated watch. CEO Q2 2026: 'may substantiate role in IFN-driven diseases.' No readout announced. Monitor every session."
+        },
+        "URGN_INTRAGEL": {
+            "ticker": "URGN",
+            "event": "IntraGel strategic collaboration announced Aug 20 — market reaction -6.94%",
+            "priority": "WATCH — stabilization expected",
+            "current_pnl_pct": 67.02,
+            "note": "Market sold off on $7M capital deployment. If strategic rationale becomes clearer or coverage upgrades, may recover. Strong underlying P&L cushion (+67%). ZUSDURI commercial ramp ongoing."
+        },
+        "PRAX_EMERALD": {
+            "ticker": "PRAX",
+            "event": "EMERALD Phase 3 — relutrigine in DEEs — Q4 2026",
+            "priority": "MONITORING — QUARTERLY",
+            "current_pnl_pct": 50.70,
+            "note": "Q4 2026 readout. Aug 20 -5.60% without confirmed catalyst — check for analyst action. P&L strong."
+        },
+        "Q2_13F_PIPELINE": {
+            "event": "Q2 2026 13F-HR processing",
+            "priority": "GOVERNANCE — OPERATOR ACTION NEEDED",
+            "filing_deadline": "2026-08-14 (passed 7 days ago)",
+            "pipeline_status": "NOT INGESTED",
+            "action_required": "Operator freeze lift → warm_13f_cache.py → cohort quarantine → IC decomp"
+        }
+    },
+    "governance_gates": {
+        "drawdown_gate": {
+            "status": "CLEAR",
+            "portfolio_avg_pnl_vs_entry_pct": 35.55,
+            "xbi_return_since_entry_pct": 22.94,
+            "outperformance_pp": 12.61,
+            "threshold_pp": -2.0,
+            "detail": "Aug 21 pre-market: +12.61pp outperformance vs XBI since Jun 10 entry. Well above -2.0pp threshold. 2-day relative underperformance (portfolio -2.31% vs XBI +2.98%) narrowed the lead but drawdown gate remains firmly clear."
+        },
+        "ic_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 51,
+            "gate_was_due": "2026-07-01",
+            "last_measured": "2026-06-24",
+            "last_ic": 0.0432,
+            "hit_rate": 0.543,
+            "note": "51 days overdue. Operator freeze lift required. DEM candidate freeze + NO_MODEL_CHANGE (SM-20260629-001, 0/20 LIVE windows)."
+        },
+        "h20d_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 51,
+            "gate_date": "2026-07-01",
+            "override_posture": "MAINTAINED (OPTION_B_OVERRIDE_2026_05_26)",
+            "note": "51 days overdue. Freeze lift → quarantine script → Q2 13F warm → cohort check → IC decomp."
+        },
+        "jaccard_gate": {
+            "status": "MAINTAINED",
+            "last_value": 0.875,
+            "last_measured": "2026-06-23",
+            "threshold": 0.40,
+            "note": "0.875 well above 0.40. Refresh pending freeze lift + Q2 13F processing."
+        },
+        "emergency_gate": {
+            "status": "CLEAR",
+            "detail": "All 15 positions above entry. Lowest: STOK +9.25% ($31.40 vs $28.74 entry). Buffer compressed from +12.21% (Aug 18) but above Aug 14 emergency low (+5.67%).",
+            "watch_item": "STOK — approaching concern if drops another ~4% from here."
+        },
+        "positions_20pct_loss_gate": {
+            "status": "CLEAR",
+            "count": 0,
+            "lowest_pnl_name": "STOK",
+            "lowest_pnl_pct": 9.25,
+            "note": "All 15 positions positive. Lowest buffer compressed to +9.25% but not approaching 20% loss from entry."
+        }
+    },
+    "escalation_flags": [
+        {
+            "id": "AUG20_5_GAP_FLAGS",
+            "reason": "5 gap flags on Aug 20 close — worst single-day count in monitoring period. DRUG -7.29%, URGN -6.94%, SLDB -6.57%, PRAX -5.60%, ERAS -5.48%. Only URGN has confirmed catalyst (IntraGel deal). PRAX, SLDB, ERAS, DRUG no catalyst identified.",
+            "priority": "HIGH — MANUAL_REVIEW_REQUIRED",
+            "action": "Check for news on PRAX, SLDB, ERAS, DRUG at Aug 21 open. Assess if 4 unidentified-catalyst gaps represent sector event, index rebalancing, or company-specific news."
+        },
+        {
+            "id": "STOK_BUFFER_COMPRESSION",
+            "ticker": "STOK",
+            "reason": "STOK buffer compressed from +12.21% (Aug 18) to +9.25% (Aug 20) following -4.93% session. Lowest portfolio position. Prior Aug 14 emergency watch triggered at +5.67%.",
+            "priority": "ELEVATED",
+            "action": "Monitor STOK at open. If drops further toward $30.00 (~+4.4%), re-activate emergency watch."
+        },
+        {
+            "id": "ALMS_LUMUS_NEAR_GAP",
+            "ticker": "ALMS",
+            "reason": "ALMS near-gap (-4.71%) on Aug 20 with LUMUS binary readout still pending (through Sep 30). Dual risk: market selloff + binary event asymmetry. Buffer narrowed to +12.23%.",
+            "priority": "ELEVATED",
+            "current_pnl_pct": 12.23
+        },
+        {
+            "id": "DRUG_IDENTITY_RESOLVED",
+            "ticker": "DRUG",
+            "reason": "DRUG = Bright Minds Biosciences Inc. CONFIRMED. Baseline (Jun 10) already shows this. Prior 'Nuvation Bio' tracking in Days 1-51 was an artifact of mid-monitoring speculation. No operator action needed for identity.",
+            "priority": "RESOLVED",
+            "action": "None — identity confirmed via baseline cross-reference."
+        },
+        {
+            "id": "Q2_13F_NOT_INGESTED_7DAYS",
+            "reason": "Q2 13F filings 7 days past deadline (Aug 14). Fairmount CIK 0001802528, Deep Track 0001856083, Logos Global 0001792126 likely filed. Local pipeline not updated. Operator freeze lift required.",
+            "priority": "GOVERNANCE_ACTION_NEEDED"
+        },
+        {
+            "id": "IC_H20D_GATES_OVERDUE_51_DAYS",
+            "reason": "IC gate and h20d gate both 51 days overdue. Operator freeze lift is the only blocking step.",
+            "priority": "GOVERNANCE_OVERDUE"
+        }
+    ],
+    "monitoring_status": {
+        "period_extended": true,
+        "original_end": "2026-06-30",
+        "extension_rationale": "Extended through ALMS LUMUS Q3 binary (Sep 30), Q2 13F processing, IC/h20d governance gates, PRAX EMERALD Q4 2026",
+        "robinhood_mcp_status": "UNAVAILABLE — Day 53 consecutive",
+        "yahoo_finance_api_status": "BLOCKED — proxy SSL. Fallback: stockanalysis.com WebFetch.",
+        "data_source_aug21": "stockanalysis.com WebFetch (Aug 20 closing prices for all 15 tickers, fetched Aug 21 pre-market)",
+        "days_since_last_mcp_data": 58,
+        "overall_status": "ALERT — 5 GAP FLAGS on Aug 20. Portfolio underperformed XBI Aug 19-20. All 15 positions still positive. STOK lowest buffer (+9.25%). Drawdown gate CLEAR.",
+        "key_developments_since_day52": [
+            "5 gap flags Aug 20 — worst session in monitoring period",
+            "DRUG -7.29% (largest drop) — no catalyst, low float",
+            "URGN -6.94% — IntraGel $7M strategic deal, negative market reaction",
+            "SLDB -6.57%, PRAX -5.60%, ERAS -5.48% — no catalysts identified",
+            "STOK buffer compressed to +9.25% (lowest in portfolio)",
+            "ALMS compressed to +12.23% with LUMUS binary pending",
+            "SYRE recovered to $107.79 (up vs Aug 18) — only position to gain",
+            "XBI rose +2.98% Aug 18→21 while portfolio fell -2.31%",
+            "DRUG identity resolved: confirmed = Bright Minds Biosciences Inc."
+        ],
+        "alerts_active": [
+            "AUG20_5_GAP_FLAGS: DRUG-7.29%, URGN-6.94%, SLDB-6.57%, PRAX-5.60%, ERAS-5.48%",
+            "STOK_BUFFER_COMPRESSION: +9.25% lowest buffer",
+            "ALMS_LUMUS_NEAR_GAP: Binary pending + near-gap",
+            "Q2_13F_NOT_INGESTED: 7 days past deadline",
+            "IC_GATE_OVERDUE_51_DAYS",
+            "H20D_GATE_OVERDUE_51_DAYS"
+        ],
+        "recommended_manual_actions": [
+            "1. PRIORITY: Check for news/catalysts on PRAX, SLDB, ERAS, DRUG at Aug 21 open — 4 of 5 gap flags have no identified catalyst.",
+            "2. MONITOR STOK — buffer at +9.25%. Re-activate emergency watch if approaches $30.00 (~+4.4% from entry).",
+            "3. MONITOR ALMS — LUMUS readout any day through Sep 30. Near-gap compression adds urgency.",
+            "4. OPERATOR: Freeze lift to process Q2 13F filings (7 days overdue).",
+            "5. After freeze lift: warm_13f_cache.py → check_13f_cohort_quarantine.py → IC decomp refresh."
+        ],
+        "next_key_dates": [
+            "2026-08-21 09:30 ET (TODAY): Market open — watch PRAX, SLDB, ERAS, DRUG for catalyst discovery",
+            "2026-09-30: ALMS LUMUS readout window closes",
+            "Q4 2026: PRAX EMERALD Phase 3 readout",
+            "TBD (operator): Freeze lift → Q2 13F pipeline warm → IC/h20d gate catch-up"
+        ],
+        "next_scheduled_monitoring": "2026-08-24 09:00 ET (Monday)"
+    },
+    "_data_integrity": {
+        "source": "stockanalysis.com WebFetch (Aug 20 close prices, fetched Aug 21 pre-market)",
+        "xbi_source": "WebSearch (heygotrade.com) — $164.28 current",
+        "urgn_catalyst_source": "WebSearch (stocktitan.net) — IntraGel deal Aug 20",
+        "aug21_fetch_timestamp": "2026-08-21T09:00Z",
+        "tickers_fetched": ["COGT", "DNTH", "NRIX", "URGN", "ALMS", "SYRE", "RVMD", "CMPS", "SLDB", "DRUG", "STOK", "PRAX", "TRVI", "ERAS", "XENE"],
+        "quantities_basis": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged)",
+        "cash_basis": "Carried $99.87 (last confirmed 2026-06-24 via MCP)",
+        "robinhood_mcp_unavailable_since": "Day 1 (2026-06-11)",
+        "day53_note": "Portfolio experienced worst single-session gap-flag count. Read-only observation. No trades executed or recommended."
+    }
+}

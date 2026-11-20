@@ -143,7 +143,7 @@ Cross-sectional regression with Newey-West corrected standard errors.
 
 The ONLY true out-of-sample evidence. Accumulates daily from production.
 
-> **Related forward test — DEM Top-30 candidate (mandate SM-20260629-001):** `docs/FORWARD_VALIDATION_PROTOCOL.md` (RATIFIED 2026-06-28, §2 test locked — not to be re-specified after forward data is seen) pre-registers weekly non-overlapping 5-day excess vs XBI as the primary gate, 20-window minimum, adversarial controls (bootstrap percentile + bottom-30). Candidate identity: `model_hash=827c35a9ed3ee6e1` / `hash_scheme=ast-v1` (behavioral AST fingerprint of ranker/selector/decision engines; legacy raw-bytes hash `a9983a67c6954813`; `registered=2026-06-26` unchanged — same freeze, re-hashed 2026-07-10). Authority for current status: `artifacts/forward_validation/CANDIDATE.json` + `docs/model_documentation.md` § "Recent Updates — 2026-07-10".
+> **Related forward test — DEM Top-30 candidate (mandate SM-20260629-001):** `docs/FORWARD_VALIDATION_PROTOCOL.md` (RATIFIED 2026-06-28, §2 test locked — not to be re-specified after forward data is seen) pre-registers weekly non-overlapping 5-day excess vs XBI as the primary gate, 20-window minimum, adversarial controls (bootstrap percentile + bottom-30). Candidate identity: `model_hash=a9a430154568e242` / `hash_scheme=ast-v2` since 2026-11-15 (behavioral AST fingerprint of the ranker/selector/decision engines plus `common/ranker_mode.py` and `A4_SELECTOR_CONFIG`; prior `ast-v1` `827c35a9ed3ee6e1`; legacy raw-bytes hash `a9983a67c6954813`; `registered=2026-06-26` unchanged — same freeze, re-hashed 2026-07-10). Authority for current status: `artifacts/forward_validation/CANDIDATE.json` + `docs/model_documentation.md` § "Recent Updates — 2026-07-10".
 >
 > **Hardened 2026-07-10 (PR #489):** captures run only on pipeline exit 0/2 with a freshness/provenance gate; every capture is classified LIVE or REPLAY (`fv_capture.v2`); a window counts toward the mandate only if LIVE ∧ quality PASS ∧ model-hash match ∧ XBI benchmark present ∧ realized 5d excess. Backfilled/replay rows never count. Tooling: `tools/run_forward_validation.py`, `tools/fill_forward_returns.py`, `tools/weekly_validation_summary.py`, liveness monitor `tools/forward_validation_liveness_monitor.py`. This is distinct from coinvest\_shadow\_tracker v2 (which remains the live signal-level shadow). NO_MODEL_CHANGE — the candidate is observed, not promoted; clearing the gate only makes it *eligible* for an operator promotion decision.
 
@@ -152,11 +152,18 @@ The ONLY true out-of-sample evidence. Accumulates daily from production.
 | Evaluator | Score field | Scope | Overlap rule | Role |
 | --- | --- | --- | --- | --- |
 | Daily forward_eval gate (`tools/forward_eval_gate.py`) | negated `actionable_rank` | `eligible` (tradeable) rows | PIT dates ≥ ~horizon apart (28 cal days @ h20) | WARN-only evaluator-health tripwire; floor +0.02 |
-| IC dashboard (`tools/build_ic_dashboard.py`) | `score_rank_pct`, `inst_delta_z` | ranked universe | daily overlapping (60-date lookback) | selector signal-health monitoring |
+| IC dashboard (`tools/build_ic_dashboard.py`) | `score_rank_pct` (higher is better), negated `actionable_rank`, `coinvest_score_z`, `inst_delta_z` | ranked universe; `actionable_rank` on ranked rows only | daily overlapping (60-date lookback) | selector signal-health monitoring |
 | Spec 100 backtest (`run_rank_ic_backtest.py`) | `final_score` (default) | configurable | research-side | ranker IC / promotion research |
 | Forward-shadow mandate (SM-20260629-001) | Top-30 EW 5d excess vs XBI | frozen candidate basket | one window per ISO week | only evidence that can resolve DEM HOLD |
 
 A HEALTHY dashboard or PASS gate is **not** mandate progress; zero mandate windows is **zero evidence, not zero alpha**.
+
+**Current model-status note, 2026-11-12 (IC dashboard sign correction):**
+- Until 2026-11-12 the dashboard and `scripts/shared_regime_check.py` negated `score_rank_pct`. Every `score_rank_pct` IC in `artifacts/ic_dashboard/`, `history.jsonl` and the weekly sweep reports written before the fix has the **wrong sign**. Do not cite them without flipping it.
+- `score_rank_pct` is the composite percentile and is informational. For the production order, read `actionable_rank` in the dashboard.
+- Check `recent_ic` and `trend` as well as the mean: `decaying` means the mean is still healthy but the last 5 dates average at or below zero.
+- Forward returns must come from `price_history_split_adj.csv`. `price_history.csv` carries unadjusted reverse splits.
+- Memo: `docs/governance/2026-11-12-ic-dashboard-sign-correction.md`. Canonical: `docs/MODEL_DOCUMENTATION.md`.
 
 ### Arms
 
@@ -299,9 +306,16 @@ Any IC research on expectation-gap features against historical snapshots must ve
 
 ## DEM Top-30 Forward Validation Status (2026-07-10)
 
-*Candidate `model_hash=827c35a9ed3ee6e1` (`ast-v1`; legacy `a9983a67c6954813`) / ruleset `8887576e`, registered 2026-06-26 (re-hashed 2026-07-10, same freeze).*
+*Candidate `model_hash=a9a430154568e242` (`ast-v2` since 2026-11-15; prior `ast-v1` `827c35a9ed3ee6e1`; legacy `a9983a67c6954813`) / ruleset `8887576e`, registered 2026-06-26 (re-hashed 2026-07-10, same freeze).*
 
 - **Mandate progress: 0/20 eligible LIVE windows (code-enforced).** The 10 captures dated 2026-06-12 → 2026-06-26 are a one-time 2026-06-28 backfill (`fv_capture.v1`, legacy hash) and do not count. The production capture tail never ran live 2026-04-17 → 2026-07-10 (`set -e` swallowed it); repaired + deployed 2026-07-10 (PR #489). The clock starts at the first clean LIVE capture.
+- **Clock reset 2026-11-01 (operator-authorized):** the coinvest 13F integrity fix and roster change set `oos_clock_start=2026-11-02`, so the mandate is **0/20 from 2026-11-02**. The 7 eligible windows accrued before the reset (mean weekly excess +0.713%, t = 1.64) are kept as history and **do not count**. Do not cite them as mandate progress. `model_hash` is unchanged. Memo: `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`.
+- **Clock reset 2026-11-12 (supersedes the 2026-11-02 start; operator-authorized 2026-11-04):** the CT.gov source refresh and `inst_delta_z` guard fixes (PR #614/#636) reset the clock again.
+  - `oos_clock_start` = the first production run using the merged code (expected 2026-11-12).
+  - Mandate SM-20260629-001 is **0/20** from that run. No capture dated before that run counts (on disk: 2026-11-03 → 2026-11-11).
+  - `CANDIDATE.json` reads 2026-11-02 until the operator updates it. Do not cite tool counts that include those two dates.
+  - `model_hash` is unchanged. Memo: `docs/governance/2026-11-04-missing-fields-clock-reset.md`. Canonical: `docs/MODEL_DOCUMENTATION.md`.
+- **`inst_delta_z` blank ≠ 0 (2026-11-12, PR #635/#636):** a missing or unusable delta (unknown filing period, same-source prior, manager-registry transition) is blank with `has_inst_delta="False"`. The IC dashboard skips it. Never impute 0 or count it as an observation. Older `inst_delta_z` IC readings may include neutral-zero dates and are contaminated.
 - Live status source: `artifacts/forward_validation/LIVENESS_STATUS.json` (refresh via `tools/forward_validation_liveness_monitor.py`); windows: `artifacts/forward_validation/WEEKLY_SUMMARY.md`.
 - Status: OBSERVE / DEM thesis HOLD. Per `docs/FORWARD_VALIDATION_PROTOCOL.md`, clearing the gate only makes the candidate *eligible* for an operator promotion decision; promotion/unfreeze remain explicit operator actions.
 
@@ -310,7 +324,7 @@ Any IC research on expectation-gap features against historical snapshots must ve
 ## Governance Freeze Status (2026-07-10)
 
 - The May-era "architecture freeze through ~2026-05-26" is superseded. Current binding constraints: **DEM candidate freeze + NO_MODEL_CHANGE forward-validation window** (`docs/FORWARD_VALIDATION_PROTOCOL.md` §1) and **FROZEN (BLOCKED_LEVEL_0)** per `docs/model_documentation.md` (canonical). The 2026-06-24 operator lift was scoped to Spec-100 tooling only; no model-behavior change is authorized.
-- **13F Q1 2026: HOLD / observation-only.** 55-manager cohort Jaccard last measured 0.463 (FAIL vs 0.70); the 0.875 figure was the Q4/49-manager comparison and must not be cited as clearance. Authority: `artifacts/readiness/H20D_REEVAL_VERDICT_2026_07_04.md`.
+- **13F Q1 2026: HOLD / observation-only.** 55-manager cohort Jaccard last measured 0.463 (FAIL vs 0.70); the 0.875 figure was the Q4/49-manager comparison and must not be cited as clearance. Authority: `artifacts/readiness/H20D_REEVAL_VERDICT_2026_07_04.md`. *(Superseded 2026-11-01: coinvest now uses Q2 2026 13F with a 30-manager `elite_core` plus 6 conditional managers. The 49/55-manager cohort figures are historical. Next quarantine check: `--pre-date 2026-10-30 --post-date <first post-merge snapshot>`.)*
 - Any change to ranker, selector, eligibility, sizing, or the candidate registration resets the out-of-sample clock and requires explicit operator authorization.
 
 ## Session-end learning

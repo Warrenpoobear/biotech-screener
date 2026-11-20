@@ -1,12 +1,28 @@
 {
   "schema_version": "cohort_pending.v1",
-  "pending_since": null,
-  "new_manager_ciks": [],
-  "new_manager_names": [],
-  "last_addition": "2026-04-25",
-  "consume_on_next_snapshot_after": null,
-  "consumed_at": "2026-07-04",
-  "consumed_by_snapshot": "2026-04-27",
-  "note": "April 2026 cohort change (Fairmount Funds, Vestal Point, Kynam, Soleus) was consumed by the 2026-04-27 snapshot (valid_from_snapshot 2026-04-27) per artifacts/manager_cohort_expansion_2026-04-27.md and tools/onboard_manager.py. This pending marker was stale and is cleared as part of the Q1 2026 holdings ratification (artifacts/audit/q1_2026_holdings_ratification_2026_07_04.md).",
+  "pending_since": "2026-11-01",
+  "new_manager_ciks": [
+    "0002110839",
+    "0001910456",
+    "0001831942",
+    "0001615982",
+    "0001940272",
+    "0001839435",
+    "0001687078"
+  ],
+  "new_manager_names": [
+    "Broadfin Holdings",
+    "Lynx1 Capital Management",
+    "Commodore Capital",
+    "Venrock Healthcare Capital Partners",
+    "ADAR1 Capital Management",
+    "Octagon Capital Advisors",
+    "MPM BioImpact"
+  ],
+  "last_addition": "2026-11-01",
+  "consume_on_next_snapshot_after": "2026-11-02",
+  "consumed_at": null,
+  "consumed_by_snapshot": null,
+  "note": "2026-11-01 roster change (registry v4.0): 7 managers onboarded (listed above) and 26 moved to retired; see docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md. The first post-merge snapshot (>= 2026-11-02) compares cohorts unlike-for-like and must be marked per the instructions below. Previous cohort change (April 2026) was consumed by the 2026-04-27 snapshot.",
   "instructions": "Production screen runs producing snapshots dated >= consume_on_next_snapshot_after should: (1) write data/snapshots/<date>/cohort_state.json marking inst_delta_z_valid=false and rank_delta_valid=false for THAT snapshot only, (2) clear this file. The SECOND snapshot after a cohort change is decision-grade again because it compares like-for-like cohorts."
 }

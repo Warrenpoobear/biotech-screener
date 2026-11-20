@@ -282,7 +282,9 @@ def check_deprecated_merged_into() -> list[dict[str, Any]]:
     for name, entry in sorted(registry.items()):
         if entry.get("status") != "deprecated":
             continue
-        if entry.get("merged_into"):
+        if entry.get("merged_into") or entry.get("retired_without_successor") is True:
+            # A deprecated agent either names its successor or is explicitly recorded as
+            # removed with none (for example the xAI/Grok agents, deleted outright).
             findings.append({"check": "deprecated_merged_into", "agent": name, "status": "PASS"})
         else:
             findings.append(
@@ -290,7 +292,7 @@ def check_deprecated_merged_into() -> list[dict[str, Any]]:
                     "check": "deprecated_merged_into",
                     "agent": name,
                     "status": "FAIL",
-                    "detail": "deprecated without merged_into",
+                    "detail": "deprecated without merged_into or retired_without_successor",
                 }
             )
     return findings

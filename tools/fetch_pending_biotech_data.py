@@ -15,9 +15,26 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+import tools.refresh_eligible_biotech_universe as _refresh_mod  # noqa: E402
 from collect_ctgov_data import _fetch_all_trials, get_trials_for_ticker  # noqa: E402
 from collect_financial_data import get_cik_from_ticker, get_company_facts  # noqa: E402
 from tools.refresh_eligible_biotech_universe import refresh_universe  # noqa: E402
+
+
+def _json_safe(obj: Any) -> Any:
+    """Replace NaN/inf floats with None, recursively (yfinance can return NaN closes)."""
+    if isinstance(obj, float):
+        return obj if obj == obj and obj not in (float("inf"), float("-inf")) else None
+    if isinstance(obj, dict):
+        return {k: _json_safe(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_json_safe(v) for v in obj]
+    return obj
+
+
+def dumps_universe_json(obj: Any) -> str:
+    """Strict JSON for files run_screen loads with orjson, which rejects NaN."""
+    return json.dumps(_json_safe(obj), indent=2, allow_nan=False) + "\n"
 
 
 def _ticker(row: dict[str, Any]) -> str:
@@ -244,8 +261,15 @@ def fetch_pending_data(
     trial_fetcher: Callable[[str], list[dict[str, Any]]] = get_trials_for_ticker,
     fallback_trial_fetcher: Callable[[dict[str, Any], str], list[dict[str, Any]]] = _fetch_trials_for_universe_row,
     sleep_seconds: float = 0.2,
+    coverage_exemptions: dict[str, list[str]] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
-    """Fetch and merge data for pending rows."""
+    """Fetch and merge data for pending rows.
+
+    ``coverage_exemptions`` defaults to the operator file (config/universe_coverage_exemptions.json), the same
+    one refresh_eligible_biotech_universe.py reads, so the fetch step cannot demote an exempted name.
+    """
+    if coverage_exemptions is None:
+        coverage_exemptions = _refresh_mod.load_coverage_exemptions(_refresh_mod.DEFAULT_EXEMPTIONS_PATH)
     pending = _pending_tickers(universe)
     report: dict[str, Any] = {
         "as_of_date": as_of_date,
@@ -300,6 +324,7 @@ def fetch_pending_data(
         merged_trials,
         as_of_date,
         finalize_collection=True,
+        coverage_exemptions=coverage_exemptions,
     )
     report["refresh_report"] = refresh_report
     return refreshed_universe, merged_trials, report
@@ -328,8 +353,8 @@ def main() -> int:
 
     report["dry_run"] = not args.apply
     if args.apply:
-        args.universe_path.write_text(json.dumps(refreshed_universe, indent=2) + "\n", encoding="utf-8")
-        args.trial_records_path.write_text(json.dumps(merged_trials, indent=2) + "\n", encoding="utf-8")
+        args.universe_path.write_text(dumps_universe_json(refreshed_universe), encoding="utf-8")
+        args.trial_records_path.write_text(dumps_universe_json(merged_trials), encoding="utf-8")
     args.report_path.parent.mkdir(parents=True, exist_ok=True)
     args.report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2, sort_keys=True))

@@ -6,8 +6,8 @@ REM
 REM SETUP:
 REM   1. Edit BIOTECH_SCREENER_PATH below to your actual install path
 REM   2. Set your API key (choose one method):
-REM      - Environment variable: setx NASDAQ_DATA_LINK_API_KEY "your_key"
-REM      - Or create file: data\config\nasdaq_api_key.txt
+REM      - Environment variable: setx SHARADAR_API_KEY "your_key"
+REM      - Or create file: data\config\sharadar_api_key.txt
 REM   3. Schedule in Task Scheduler (see SCHEDULING section below)
 REM
 REM SCHEDULING (Windows Task Scheduler):

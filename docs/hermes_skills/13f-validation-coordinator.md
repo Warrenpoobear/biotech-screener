@@ -24,6 +24,13 @@ Monitor 55-manager institutional registry cohort stability post-h20d override au
 - ⚠️ 55-manager validation: FAILED (below threshold, but override approved)
 - 🔄 Weekly monitoring: ACTIVE (starting 2026-05-31)
 
+**Current status note (2026-11-01): the 55-manager cohort and `--pre-date 2026-05-15` baseline below are historical.**
+- Registry v4.0 is now 30 `elite_core` + 6 `conditional`, with 26 `retired` managers excluded.
+- Coinvest was rebuilt from Q2 2026 13F under an operator-authorized change with an out-of-sample clock reset.
+- The next quarantine check is `python3 tools/check_13f_cohort_quarantine.py --pre-date 2026-10-30 --post-date <first post-merge snapshot>`, followed by a 5-day observation window.
+- Do not compare Jaccard against the 48/55-manager baselines.
+- See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md` and `docs/MODEL_DOCUMENTATION.md`.
+
 **Trigger conditions (weekly):**
 - Every Friday 6:22 PM ET starting 2026-05-31
 - Run: `python3 tools/check_13f_cohort_quarantine.py --pre-date 2026-05-15 --post-date [FRIDAY_DATE]`

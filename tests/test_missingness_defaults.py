@@ -35,7 +35,17 @@ class TestEnsureDefaults:
         assert rows[0]["coinvest_score_z"] == 0.0
 
     def test_fills_nan_uppercase_with_default(self):
-        rows = [{"ticker": "AAA", "inst_delta_z": "NaN"}]
+        rows = [{"ticker": "AAA", "catalyst_decay_w": "NaN"}]
+        _ensure_defaults(rows)
+        assert rows[0]["catalyst_decay_w"] == 0.0
+
+    def test_inst_delta_nan_stays_missing_without_a_measurement(self):
+        rows = [{"ticker": "AAA", "inst_delta_z": "NaN", "has_inst_delta": "False"}]
+        _ensure_defaults(rows)
+        assert rows[0]["inst_delta_z"] == ""
+
+    def test_inst_delta_nan_fills_when_measured(self):
+        rows = [{"ticker": "AAA", "inst_delta_z": "NaN", "has_inst_delta": "True"}]
         _ensure_defaults(rows)
         assert rows[0]["inst_delta_z"] == 0.0
 
@@ -66,7 +76,10 @@ class TestEnsureDefaults:
         _ensure_defaults(rows)
         for field in _ALWAYS_NUMERIC_DEFAULTS:
             assert field in rows[0], f"{field} should be set"
-            assert rows[0][field] == _ALWAYS_NUMERIC_DEFAULTS[field]
+            if field == "inst_delta_z":
+                assert rows[0][field] == ""
+            else:
+                assert rows[0][field] == _ALWAYS_NUMERIC_DEFAULTS[field]
 
     def test_custom_defaults(self):
         rows = [{"ticker": "AAA"}]

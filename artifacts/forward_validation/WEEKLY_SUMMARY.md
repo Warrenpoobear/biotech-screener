@@ -1,9 +1,10 @@
 # DEM Top-30 EW — Weekly Forward Validation Summary
 
-**Updated:** 2026-08-07T20:30Z  
-**Model hash:** `827c35a9ed3ee6e1`  
+**Updated:** 2026-11-17T21:50Z  
+**Model hash:** `a9a430154568e242`  
 **Ruleset:** `8887576e`  
 **Candidate registered:** 2026-06-26  
+**Out-of-sample clock start:** 2026-11-16  
 **Test:** Equal-weight Top-30 by `actionable_rank` vs XBI (5-day non-overlapping windows)  
 
 ---
@@ -12,23 +13,23 @@
 
 | Metric | Value |
 |--------|-------|
-| Non-overlapping 5d windows (all captured) | **6** |
-| **Mandate-eligible live windows** | **3** |
-| Mean weekly excess (basket − XBI) | **+1.304%** |
-| Std weekly excess | 0.866% |
-| t-stat | **— (n=6, need ≥10)** |
-| Hit rate (excess > 0) | **100%** |
-| Cumulative excess | **+7.83%** |
-| Cumulative basket | +34.27% |
-| Cumulative XBI | +26.44% |
+| Non-overlapping 5d windows (all captured) | **13** |
+| **Mandate-eligible live windows** | **0** |
+| Mean weekly excess (basket − XBI) | **+1.142%** |
+| Std weekly excess | 1.936% |
+| t-stat | **2.13** |
+| Hit rate (excess > 0) | **77%** |
+| Cumulative excess | **+14.85%** |
+| Cumulative basket | +45.46% |
+| Cumulative XBI | +30.61% |
 
 > Statistics above are **descriptive over all captured windows (incl. replay)** and are not mandate evidence. The mandate gate below counts only mandate-eligible live windows (capture_mode=LIVE, quality=PASS, model_hash_match, benchmark_available, 5d return realized).
 
 ## Gate Progress (mandate-eligible windows only)
 
-- [3/20] Directional proof (XS>0, hit>50%)
-- [3/40] Strong evidence (t>1.5)
-- [3/52] Investable evidence (t near 2.0)
+- [0/20] Directional proof (XS>0, hit>50%)
+- [0/40] Strong evidence (t>1.5)
+- [0/52] Investable evidence (t near 2.0)
 
 ---
 
@@ -39,9 +40,16 @@
 | 2026-W24 | 2026-06-12 | ? | — | +10.75% | +9.69% | +1.06% | + | 100% | +5.31% | DEGRADED |
 | 2026-W25 | 2026-06-15 | ? | — | +9.76% | +8.31% | +1.45% | + | 98% | +5.60% | DEGRADED |
 | 2026-W26 | 2026-06-22 | ? | — | +9.05% | +8.54% | +0.51% | + | 80% | +6.97% | DEGRADED |
-| 2026-W29 | 2026-07-15 | LIVE | ✓ | -0.72% | -1.11% | +0.39% | + | 96% | -4.45% | PASS |
-| 2026-W30 | 2026-07-20 | LIVE | ✓ | -0.32% | -2.00% | +1.67% | + | 95% | -2.28% | PASS |
-| 2026-W31 | 2026-07-28 | LIVE | ✓ | +5.76% | +3.02% | +2.74% | + | 96% | +3.23% | PASS |
+| 2026-W29 | 2026-07-15 | LIVE | — | -0.72% | -1.11% | +0.39% | + | 96% | -4.45% | PASS |
+| 2026-W30 | 2026-07-20 | LIVE | — | -0.32% | -2.00% | +1.67% | + | 95% | -2.28% | PASS |
+| 2026-W31 | 2026-07-28 | LIVE | — | +5.76% | +3.02% | +2.74% | + | 96% | +3.23% | PASS |
+| 2026-W32 | 2026-08-03 | LIVE | — | +5.63% | +7.05% | -1.42% | - | 9% | +7.41% | PASS |
+| 2026-W33 | 2026-08-10 | LIVE | — | -1.13% | +0.03% | -1.16% | - | 28% | -2.89% | PASS |
+| 2026-W42 | 2026-10-15 | LIVE | — | +3.42% | +1.24% | +2.18% | + | 92% | -1.58% | PASS |
+| 2026-W43 | 2026-10-19 | LIVE | — | +1.47% | +1.77% | -0.30% | - | 69% | -2.04% | PASS |
+| 2026-W44 | 2026-10-26 | LIVE | — | +2.08% | +1.05% | +1.03% | + | 88% | -2.38% | PASS |
+| 2026-W45 | 2026-11-03 | LIVE | — | +6.26% | +0.06% | +6.21% | + | 98% | +1.14% | PASS |
+| 2026-W46 | 2026-11-09 | LIVE | — | -6.54% | -7.02% | +0.48% | + | 76% | -8.28% | PASS |
 
 ---
 
@@ -52,16 +60,16 @@ B30 = equal-weight bottom-30 basket **raw return** over the same window (not an 
 
 | Control | Current average |
 |---------|----------------|
-| Bootstrap percentile (avg) | 94% |
-| Bottom-30 avg excess vs XBI | -2.01% |
-| Bottom-30 avg raw return | +2.40% |
+| Bootstrap percentile (avg) | 79% |
+| Bottom-30 avg excess vs XBI | -1.91% |
+| Bottom-30 avg raw return | +0.44% |
 
 ---
 
 ## Interpretation Notes
 
-- 6 independent weekly 5d periods. One-tailed 95% threshold: ~1.65. Two-tailed 95%: 1.96.
-  t-stat suppressed — need ≥10 windows for a meaningful estimate (n=6). Accumulating evidence.
+- 13 independent weekly 5d periods. One-tailed 95% threshold: ~1.65. Two-tailed 95%: 1.96.
+  t=2.13 — two-tailed 95% cleared. Operator review of investability gate required.
 
 - Do not promote EES, expectation-gap, or options-layer signals based on this record.
 - Do not reinterpret historical evidence as forward evidence.

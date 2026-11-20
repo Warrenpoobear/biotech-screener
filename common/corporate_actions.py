@@ -46,6 +46,7 @@ ACTION_TYPES = frozenset(
         "ticker_change",
         "spinoff",
         "bankruptcy",
+        "special_dividend",
     }
 )
 
@@ -77,6 +78,8 @@ class CorporateAction:
     # Rename fields
     old_ticker: Optional[str] = None
     new_ticker: Optional[str] = None
+    # Special dividend: cash per share; effective_date = ex-date
+    amount: Optional[float] = None
     # General
     notes: str = ""
 
@@ -152,6 +155,7 @@ def load_actions(path: Optional[Path] = None) -> CorporateActionRegistry:
                 announced_date=announced,
                 old_ticker=raw.get("old_ticker"),
                 new_ticker=raw.get("new_ticker"),
+                amount=raw.get("amount"),
                 notes=raw.get("notes", ""),
             )
         )
@@ -235,6 +239,34 @@ def is_dead(
         if a.action in DEAD_ACTION_TYPES:
             return True
     return False
+
+
+def is_retired_symbol(
+    ticker: str,
+    as_of: str,
+    registry: CorporateActionRegistry,
+) -> bool:
+    """True when ``ticker`` was renamed away on or before ``as_of``.
+
+    The surviving symbol (``new_ticker``) is not retired. INDV stopped trading
+    when the combined company began trading as SUPN; a ticker_change recorded
+    on SUPN does not make ``is_dead("INDV")`` true, because death actions are
+    keyed by the action's own ticker.
+    """
+    symbol = (ticker or "").upper()
+    for action in registry._rename_map.get(symbol, []):
+        new = (action.new_ticker or "").upper()
+        if action.effective_date and action.effective_date <= as_of and new and new != symbol:
+            return True
+    return False
+
+
+def list_retired_symbols(
+    as_of: str,
+    registry: CorporateActionRegistry,
+) -> List[str]:
+    """Old symbols that have been renamed away as of ``as_of``."""
+    return sorted(symbol for symbol in registry._rename_map if is_retired_symbol(symbol, as_of, registry))
 
 
 def is_pending_deal(
@@ -328,6 +360,16 @@ def cumulative_split_factor(
         if from_date < a.effective_date <= to_date and a.factor:
             factor *= a.factor
     return factor
+
+
+def get_special_dividends(
+    ticker: str,
+    registry: CorporateActionRegistry,
+    *,
+    as_of: Optional[str] = None,
+) -> List[CorporateAction]:
+    """Return special (non-recurring) cash dividends for a ticker."""
+    return [a for a in get_actions(ticker, registry, as_of=as_of) if a.action == "special_dividend"]
 
 
 def list_dead_tickers(

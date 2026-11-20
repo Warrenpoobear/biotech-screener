@@ -701,3 +701,51 @@ Until this is automated, the gap will silently re-appear for every new stub batc
 - Recurrence-Count: 1
 - Promotion-lane: skill
 - Skill-Path: biotech-snapshot-qa
+
+## [LRN-20261117-001] ic_backtest_roster_hindsight_quote_both
+
+**Context:** 2026-11-17 IC council model review. The 13F roster v4 was chosen on trailing 2023–26 returns; at Top-30 it ties the old roster v3.2 before the selection window (+0.10 pt/month, t 0.27) and gains all of its lead inside it. Every regenerated history (v5–v9) uses v4, so their Top-N figures carry the hindsight.
+
+**Rule:** Quote every Top-N backtest under both rosters, split at the selection window.
+
+**Suggested-Action:** Checklist item in `skills/biotech-ic-council/references/biotech-domain-checks.md` (Backtest validity), added 2026-11-17.
+
+### Metadata
+- Source: ic_council_model_review_2026-11-17
+- Pattern-Key: IC_BACKTEST_roster_hindsight_quote_both
+- Recurrence-Count: 2
+- Area: research
+- Promotion-lane: skill
+- Skill-Path: skills/biotech-ic-council/SKILL.md
+
+## [LRN-20261117-002] ic_production_baseline_red_check_masks_regressions
+
+**Context:** The `replay` CI job failed on every run, `main` included (no pass in 400+ runs since at least 2026-06-10), because its golden rankings were made by February code. Every PR carried a red check that meant nothing, so a real ranking regression would have been invisible.
+
+**Rule:** Before reading a red check as evidence about a PR, check the same job on `main`; a permanently red check is a broken check, fix the baseline.
+
+**Suggested-Action:** Production reliability checklist item, added 2026-11-17; golden rankings regenerated in PR #702.
+
+### Metadata
+- Source: ic_council_model_review_2026-11-17
+- Pattern-Key: IC_PRODUCTION_baseline_red_check_masks_regressions
+- Recurrence-Count: 1
+- Area: hermes_ops
+- Promotion-lane: skill
+- Skill-Path: skills/biotech-ic-council/SKILL.md
+
+## [LRN-20261117-003] ic_pit_leak_audit_each_input_class_and_reference_as_of
+
+**Context:** The v9 rebuild was clean on 13F, market data and financials but per-date CT.gov caches carried trial records as captured months later (25–45% of records updated after the as-of date for 2020–2025 dates). Separately, the ETF audit's IBB holdings were pinned to 2026-06-26 by a hard-coded URL date for five months. The live 2026-11-16 snapshot was replaced; the forward-validation ledger was safe only because captures store baskets inline.
+
+**Rule:** Audit regenerated histories per input class per date, read external reference data by its own as-of date, and before replacing a live snapshot confirm the ledger does not depend on the path.
+
+**Suggested-Action:** PIT discipline checklist items, added 2026-11-17; IBB staleness guard in PR #700.
+
+### Metadata
+- Source: ic_council_model_review_2026-11-17
+- Pattern-Key: IC_PIT_LEAK_audit_each_input_class_and_reference_as_of
+- Recurrence-Count: 1
+- Area: data_pipeline
+- Promotion-lane: skill
+- Skill-Path: skills/biotech-ic-council/SKILL.md

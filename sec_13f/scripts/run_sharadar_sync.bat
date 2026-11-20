@@ -9,7 +9,7 @@ REM
 REM SETUP:
 REM   1. Set your API key as a system environment variable:
 REM      - Open System Properties > Advanced > Environment Variables
-REM      - Add: NASDAQ_DATA_LINK_API_KEY = your_api_key_here
+REM      - Add: SHARADAR_API_KEY = your_api_key_here
 REM
 REM   2. Update PYTHON_PATH and REPO_ROOT below if needed
 REM
@@ -27,12 +27,12 @@ REM Change to repo directory
 cd /d "%REPO_ROOT%"
 
 REM Check for API key
-if "%NASDAQ_DATA_LINK_API_KEY%"=="" (
-    echo ERROR: NASDAQ_DATA_LINK_API_KEY environment variable not set
+if "%SHARADAR_API_KEY%"=="" (
+    echo ERROR: SHARADAR_API_KEY environment variable not set
     echo.
     echo Set it via:
     echo   1. System Properties ^> Advanced ^> Environment Variables
-    echo   2. Or run: set NASDAQ_DATA_LINK_API_KEY=your_key_here
+    echo   2. Or run: set SHARADAR_API_KEY=your_key_here
     exit /b 1
 )
 

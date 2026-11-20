@@ -280,20 +280,19 @@ def check_ic_health(dt: date) -> CheckResult:
         elif health == "WARN":
             anomalies.append(f"SIGNAL_WARN: {sig_name}")
 
-    # Check history for trend decay (3+ consecutive IC drops)
+    # Check history for trend decay (3+ IC drops across the last 5 rows).
+    # build_ic_dashboard writes flat rows ("<signal>_ic"). Rows from before the
+    # 2026-11-12 sign fix have no "actionable_rank_ic" key and carry the inverted
+    # score_rank_pct sign, so they are skipped rather than compared across the flip.
     hist_path = ARTIFACTS_DIR / "ic_dashboard" / "history.jsonl"
     if hist_path.exists():
-        lines = hist_path.read_text().strip().split("\n")
+        lines = [ln for ln in hist_path.read_text().strip().split("\n") if ln.strip()]
         if len(lines) >= 5:
             try:
-                recent = [json.loads(line) for line in lines[-5:]]
+                recent = [r for r in (json.loads(line) for line in lines[-5:]) if "actionable_rank_ic" in r]
                 for sig_name in signals:
-                    ics = [
-                        r.get("signals", {}).get(sig_name, {}).get("ic")
-                        for r in recent
-                        if isinstance(r.get("signals", {}).get(sig_name), dict)
-                    ]
-                    ics = [x for x in ics if x is not None]
+                    ics = [r.get(f"{sig_name}_ic") for r in recent]
+                    ics = [x for x in ics if isinstance(x, (int, float))]
                     if len(ics) >= 4:
                         drops = sum(1 for i in range(1, len(ics)) if ics[i] < ics[i - 1])
                         if drops >= 3:

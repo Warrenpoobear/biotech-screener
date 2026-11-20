@@ -27,7 +27,10 @@ SLA baselines for agent artifact freshness and CI health. Used by fleet heartbea
 | CTgov diff | `artifacts/ctgov_daily/{date}_diff.json` | daily_premarket | 2d | — |
 | Snapshot | `data/snapshots/{date}/rankings.csv` | daily_after_production | 2d | — |
 
+| CTgov source content | newest `last_update_posted` in `production_data/trial_records.json` (on or before as_of) | daily (`cron_data_refresh.sh ctgov`) | 7d (blocking gate `ctgov_content_freshness`) | 7d |
+
 **Content date rule:** prefer `YYYY-MM-DD` embedded in filenames over file mtime (git checkout must not mask staleness).
+- Note, 2026-11-12: a filename date can also mask staleness when the file is rewritten daily from a stale source. `trial_records_{date}.json` looked fresh from about 2026-08-07 to 2026-11-11 while the source was frozen. For CT.gov, check the content date row above. See `docs/governance/2026-11-04-missing-fields-clock-reset.md`.
 
 ## Health check commands
 

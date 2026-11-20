@@ -50,7 +50,7 @@ class TestNoSecretsInArgv:
 
 class TestProvision:
     def test_creates_tenant_with_credentials_and_password(self, store):
-        provision(store, "scott", "111111111", password="pw-1234", bearer="rh-token")
+        provision(store, "scott", "111111111", password="pw-1234", bearer="rh-token")  # pragma: allowlist secret
         c = store.get("scott")
         assert c.account_number == "111111111"
         assert c.robinhood_bearer == "rh-token"
@@ -58,7 +58,7 @@ class TestProvision:
 
     def test_optional_anthropic_key_is_stored(self, store):
         provision(store, "scott", "1", password="p", bearer="b", anthropic_key="sk-ant-x")
-        assert store.get("scott").anthropic_api_key == "sk-ant-x"
+        assert store.get("scott").anthropic_api_key == "sk-ant-x"  # pragma: allowlist secret
 
     def test_anthropic_key_omitted_leaves_none(self, store):
         provision(store, "scott", "1", password="p", bearer="b")
@@ -85,18 +85,18 @@ class TestOverwriteProtection:
     def test_existing_tenant_is_refused_by_default(self, store):
         provision(store, "scott", "1", password="p", bearer="b")
         with pytest.raises(ProvisionError, match="already exists"):
-            provision(store, "scott", "1", password="p2", bearer="b2")
+            provision(store, "scott", "1", password="p2", bearer="b2")  # pragma: allowlist secret
 
     def test_existing_tenant_updated_when_explicitly_allowed(self, store):
         provision(store, "scott", "1", password="p", bearer="b")
-        provision(store, "scott", "2", password="p2", bearer="b2", update=True)
+        provision(store, "scott", "2", password="p2", bearer="b2", update=True)  # pragma: allowlist secret
         assert store.get("scott").account_number == "2"
         assert store.verify_password("scott", "p2") is True
 
     def test_refusal_does_not_alter_the_existing_record(self, store):
         provision(store, "scott", "1", password="p", bearer="b")
         with pytest.raises(ProvisionError):
-            provision(store, "scott", "999", password="other", bearer="other")
+            provision(store, "scott", "999", password="other", bearer="other")  # pragma: allowlist secret
         assert store.get("scott").account_number == "1"
         assert store.verify_password("scott", "p") is True
 
@@ -118,7 +118,13 @@ class TestStoredSecretsAreEncrypted:
     def test_bearer_and_password_absent_from_the_db_file(self, tmp_path):
         path = tmp_path / "cred.db"
         s = CredentialStore(path, key=generate_key())
-        provision(s, "scott", "1", password="PLAINTEXT_PW_MARKER", bearer="PLAINTEXT_BEARER_MARKER")
+        provision(
+            s,
+            "scott",
+            "1",
+            password="PLAINTEXT_PW_MARKER",  # pragma: allowlist secret
+            bearer="PLAINTEXT_BEARER_MARKER",  # pragma: allowlist secret
+        )
         raw = path.read_bytes()
         assert b"PLAINTEXT_PW_MARKER" not in raw
         assert b"PLAINTEXT_BEARER_MARKER" not in raw

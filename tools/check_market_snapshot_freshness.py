@@ -189,6 +189,20 @@ def check_freshness(
     }
 
 
+def count_present_feeds(feeds: dict) -> int:
+    """Count feeds that produced a value.
+
+    Live refresh statuses contain "live". Reconstructed snapshots use "pit"
+    and "pit_volume_proxy". A "failed" status stays absent.
+    """
+    present = 0
+    for status in feeds.values():
+        text = str(status)
+        if "live" in text or text.startswith("pit"):
+            present += 1
+    return present
+
+
 def emit_diagnostic(result: dict) -> None:
     """Log a human-readable diagnostic for the freshness check result."""
     status = "FRESH" if result["ok"] else "STALE/INVALID"
@@ -204,9 +218,9 @@ def emit_diagnostic(result: dict) -> None:
     for issue in result.get("issues", []):
         log.error("  ISSUE: %s", issue)
     feeds = result.get("feeds", {})
-    live = sum(1 for v in feeds.values() if "live" in str(v))
+    present = count_present_feeds(feeds)
     if feeds:
-        log.info("  Feeds: %d/%d live", live, len(feeds))
+        log.info("  Feeds: %d/%d present", present, len(feeds))
 
 
 def main() -> int:

@@ -53,7 +53,7 @@ def _extract_archive(tar_path: Path) -> Tuple[Path, Path]:
     """Extract tar.gz to tempdir, return (tmp_dir, archive_root)."""
     tmp_dir = Path(tempfile.mkdtemp(prefix="audit_cat_"))
     with tarfile.open(tar_path, "r:gz") as tar:
-        tar.extractall(tmp_dir)
+        tar.extractall(tmp_dir, filter="data")
 
     date_str = tar_path.name.replace(".tar.gz", "")
     archive_root = tmp_dir / date_str

@@ -81,6 +81,34 @@ if [ "$PROD_RAN" = false ]; then
     fi
 fi
 
+# A run that finished and was refused promotion by a gate is not a missed run.
+# Re-running it gives the same verdict unless the failure was transient, and
+# each attempt costs a full data refresh plus the pipeline. On 2026-11-13 the
+# drift gate failed three times in a row this way. Allow one retry per day
+# (WATCHDOG_MAX_GATE_FAILS total attempts, default 2), then stop and notify once.
+WATCHDOG_MAX_GATE_FAILS="${WATCHDOG_MAX_GATE_FAILS:-2}"
+if [ "$PROD_RAN" = false ]; then
+    DAILY_LOG="$REPO/logs/daily_production_${TODAY}.log"
+    GATE_FAILS=0
+    if [ -f "$DAILY_LOG" ]; then
+        GATE_FAILS=$(grep -ac "RESULT: FAIL — snapshot NOT promoted" "$DAILY_LOG" 2>/dev/null || true)
+        GATE_FAILS="${GATE_FAILS:-0}"
+    fi
+    if [ "$GATE_FAILS" -ge "$WATCHDOG_MAX_GATE_FAILS" ]; then
+        GATE_MARKER="$REPO/logs/.watchdog_gate_fail_${TODAY}"
+        if [ ! -f "$GATE_MARKER" ]; then
+            LAST_FAIL=$(grep -a "\[FAIL\]" "$DAILY_LOG" | tail -1 | sed 's/^.*\[FAIL\] //' | cut -c1-200)
+            log "GATE_FAIL: production for $TODAY ran ${GATE_FAILS}x and was refused promotion each time (${LAST_FAIL:-see $DAILY_LOG}) — not retrying; operator action needed"
+            $PYTHON "$REPO/tools/notify_cron_missed.py" \
+                --date "$TODAY" \
+                --reason "gate_fail_not_promoted" >> "$LOG" 2>&1 \
+                || log "notify_cron_missed failed (exit $?)"
+            : > "$GATE_MARKER"
+        fi
+        PROD_RAN=gatefail
+    fi
+fi
+
 if [ "$PROD_RAN" = false ]; then
     log "MISSED: No production run for $TODAY — triggering manual recovery"
 
@@ -102,7 +130,7 @@ if [ "$PROD_RAN" = false ]; then
     log "Running daily_production..."
     bash "$REPO/tools/cron_daily_production.sh" >> "$CRON_LOG" 2>&1
     log "daily_production done (exit $?)"
-elif [ "$PROD_RAN" = "skip" ]; then
+elif [ "$PROD_RAN" = "skip" ] || [ "$PROD_RAN" = "notdue" ] || [ "$PROD_RAN" = "gatefail" ]; then
     : # already logged above
 else
     log "Production already ran for $TODAY — skipping production recovery"
@@ -248,9 +276,14 @@ fi
 # The production pipeline writes trapops_daily_summary.json into the promoted
 # snapshot dir. If that file is missing, run trapops standalone to generate it.
 # Using artifact presence avoids false-negative from log touched by earlier run.
+# Only recover once today's snapshot has been promoted (rankings.csv exists):
+# before the 16:30 run there is no snapshot dir, so trapops_monitor cannot write
+# and every pre-close watchdog pass logged MISSED + FAILED (2026-11-12).
 TRAPOPS_LOG="$REPO/logs/trapops_cron.log"
 TRAPOPS_ARTIFACT="$REPO/data/snapshots/$TODAY/trapops_daily_summary.json"
-if [ ! -f "$TRAPOPS_ARTIFACT" ]; then
+if [ ! -f "$REPO/data/snapshots/$TODAY/rankings.csv" ]; then
+    log "Trapops: no promoted snapshot for $TODAY yet — nothing to recover"
+elif [ ! -f "$TRAPOPS_ARTIFACT" ]; then
     log "MISSED trapops artifact for $TODAY — recovering"
     (cd "$REPO" && $PYTHON "$REPO/tools/trapops_monitor.py" --snapshot-date "$TODAY" >> "$TRAPOPS_LOG" 2>&1) \
         && log "Trapops recovery OK — artifact written" \

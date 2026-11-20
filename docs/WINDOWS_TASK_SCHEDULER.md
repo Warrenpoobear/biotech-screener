@@ -18,7 +18,7 @@ This guide shows how to automate the Sharadar SEP sync and backtest pipeline usi
 2. Click **Advanced** tab → **Environment Variables**
 3. Under **System variables**, click **New**
 4. Add:
-   - Variable name: `NASDAQ_DATA_LINK_API_KEY`
+   - Variable name: `SHARADAR_API_KEY`
    - Variable value: `your_api_key_here`
 5. Click OK to save
 
@@ -54,7 +54,7 @@ scripts\run_backtest.bat
 
 ### General Tab
 - **Name**: `Sharadar SEP Daily Sync`
-- **Description**: `Sync Sharadar SEP prices from Nasdaq Data Link`
+- **Description**: `Sync Sharadar SEP prices from api.sharadar.com`
 - **Security options**: 
   - Select "Run whether user is logged on or not"
   - Check "Run with highest privileges"
@@ -167,9 +167,9 @@ dir output\runs\sharadar_*
 
 ### API errors
 
-1. Verify `NASDAQ_DATA_LINK_API_KEY` is set as a **System** variable (not User)
+1. Verify `SHARADAR_API_KEY` is set as a **System** variable (not User)
 2. Restart Task Scheduler after setting environment variables
-3. Test manually: `echo %NASDAQ_DATA_LINK_API_KEY%`
+3. Test manually: `echo %SHARADAR_API_KEY%`
 
 ### Python not found
 
@@ -215,7 +215,7 @@ Create a third task for weekly full history refresh:
    - Arguments: `--full-refresh`
    - Start in: `C:\path\to\biotech_screener`
 
-This ensures any corrections from Nasdaq Data Link are captured.
+This ensures any corrections from Sharadar are captured.
 
 ---
 

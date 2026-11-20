@@ -603,3 +603,20 @@ class TestCollectBatch:
         results = collect_batch({})
         assert results == {}
         mock_collect.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# SUPN after the INDV -> SUPN ticker change (2026-11-03)
+# ---------------------------------------------------------------------------
+
+
+def test_supn_aliases_cover_both_legacy_sponsors():
+    """Indivior acquired Supernus and renamed itself Supernus, Inc. (INDV -> SUPN).
+
+    The EU registry collectors search SPONSOR_ALIASES plus the universe company
+    name, so SUPN must carry both sponsor families whatever the company name says.
+    """
+    aliases = SPONSOR_ALIASES["SUPN"]
+    assert any("Indivior" in a for a in aliases)
+    assert any("Supernus" in a for a in aliases)
+    assert "INDV" not in SPONSOR_ALIASES  # retired ticker; universe has no INDV row

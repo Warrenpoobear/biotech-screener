@@ -303,3 +303,79 @@ class TestEndToEnd:
         adj = compute_adjusted_prices({}, splits)
         assert splits == {}
         assert adj == {}
+
+
+# ---------------------------------------------------------------------------
+# Special dividends (registry special_dividend entries)
+# ---------------------------------------------------------------------------
+
+
+def _registry(tmp_path: Path, actions: list[dict]):
+    import json
+
+    from common.corporate_actions import load_actions
+
+    p = tmp_path / "corporate_actions.json"
+    p.write_text(json.dumps({"_schema": "test", "actions": actions}), encoding="utf-8")
+    return load_actions(p)
+
+
+class TestSpecialDividends:
+
+    _DIV = {"ticker": "DIV", "action": "special_dividend", "effective_date": "2025-01-03", "amount": 8.0}
+
+    def _prices(self):
+        return _prices(
+            "DIV",
+            [
+                ("2025-01-01", 35.0),
+                ("2025-01-02", 36.0),
+                ("2025-01-03", 28.0),  # ex-date: 36 - 8 = 28, the whole drop is the dividend
+                ("2025-01-06", 28.5),
+            ],
+        )
+
+    def test_ex_date_drop_removed(self, tmp_path):
+        from scripts.repair_price_history_splits import apply_special_dividends
+
+        prices = self._prices()
+        adj = compute_adjusted_prices(prices, {})
+        applied = apply_special_dividends(prices, adj, _registry(tmp_path, [self._DIV]))
+
+        assert [a["ex_date"] for a in applied] == ["2025-01-03"]
+        ret = float(adj["DIV"][date(2025, 1, 3)] / adj["DIV"][date(2025, 1, 2)]) - 1.0
+        assert abs(ret) < 1e-9
+        # Ex-date and later prices are untouched; earlier ones scale by (36-8)/36
+        assert adj["DIV"][date(2025, 1, 3)] == Decimal("28.0")
+        assert adj["DIV"][date(2025, 1, 1)] == Decimal("35.0") * (Decimal("28") / Decimal("36"))
+
+    def test_already_adjusted_series_not_adjusted_twice(self, tmp_path):
+        from scripts.repair_price_history_splits import apply_special_dividends
+
+        prices = _prices("DIV", [("2025-01-02", 28.0), ("2025-01-03", 28.0), ("2025-01-06", 28.5)])
+        adj = compute_adjusted_prices(prices, {})
+        applied = apply_special_dividends(prices, adj, _registry(tmp_path, [self._DIV]))
+
+        assert applied == []
+        assert adj["DIV"][date(2025, 1, 2)] == Decimal("28.0")
+
+    def test_other_tickers_untouched(self, tmp_path):
+        from scripts.repair_price_history_splits import apply_special_dividends
+
+        prices = _merge(self._prices(), _prices("CLEAN", [("2025-01-02", 10.0), ("2025-01-03", 5.0)]))
+        adj = compute_adjusted_prices(prices, {})
+        apply_special_dividends(prices, adj, _registry(tmp_path, [self._DIV]))
+
+        assert adj["CLEAN"][date(2025, 1, 2)] == Decimal("10.0")
+
+    def test_end_to_end_reports_dividend(self, tmp_path):
+        from scripts.repair_price_history_splits import repair_price_history
+
+        src = tmp_path / "price_history.csv"
+        _write_price_csv(src, [("DIV", d, str(p)) for d, p in sorted(self._prices()["DIV"].items())])
+        _registry(tmp_path, [self._DIV])
+
+        result = repair_price_history(src, tmp_path / "out.csv")
+
+        assert result["special_dividends_applied"][0]["ticker"] == "DIV"
+        assert result["total_split_events"] == 0

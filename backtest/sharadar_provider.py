@@ -15,8 +15,8 @@ Usage:
     # From local CSV export
     provider = SharadarReturnsProvider.from_csv("path/to/SEP.csv")
 
-    # With API (requires QUANDL_API_KEY)
-    provider = SharadarReturnsProvider.from_api(api_key="...")
+    # With the direct Sharadar API (api.sharadar.com; key from SHARADAR_API_KEY)
+    provider = SharadarReturnsProvider.from_api(tickers=[...], start_date=..., end_date=...)
 """
 
 from __future__ import annotations
@@ -140,83 +140,72 @@ class SharadarReturnsProvider:
     @classmethod
     def from_api(
         cls,
-        api_key: str,
-        tickers: List[str],
-        start_date: str,
-        end_date: str,
+        api_key: Optional[str] = None,
+        tickers: Optional[List[str]] = None,
+        start_date: str = "",
+        end_date: str = "",
         cache_dir: Optional[Path] = None,
+        *,
+        client: Any = None,
+        delisting_policy: str = DELISTING_POLICY_CONSERVATIVE,
     ) -> "SharadarReturnsProvider":
         """
-        Load from Sharadar/Nasdaq Data Link API.
+        Load adjusted closes from the direct Sharadar API (api.sharadar.com).
 
         Args:
-            api_key: Nasdaq Data Link API key
+            api_key: Sharadar key; defaults to the SHARADAR_API_KEY env var
             tickers: List of tickers to fetch
             start_date: Start date (YYYY-MM-DD)
             end_date: End date (YYYY-MM-DD)
             cache_dir: Optional cache directory
+            client: Optional pre-built SharadarClient (injected in tests)
+
+        Raises:
+            SharadarAuthError / SharadarError on API failure. Errors are no
+            longer swallowed per ticker: a bad key used to yield an empty
+            provider that looked like "no data".
         """
         prices: Dict[str, Dict[str, Decimal]] = {}
+        tickers = list(tickers or [])
 
-        # Check cache first
         if cache_dir:
-            cache_file = cache_dir / f"sharadar_{start_date}_{end_date}.json"
+            cache_file = Path(cache_dir) / f"sharadar_{start_date}_{end_date}.json"
             if cache_file.exists():
-                with open(cache_file) as f:
+                with open(cache_file, encoding="utf-8") as f:
                     cached = json.load(f)
-                # Convert to Decimal
                 for ticker, ticker_prices in cached.items():
                     prices[ticker] = {d: Decimal(p) for d, p in ticker_prices.items()}
-                return cls(prices)
+                return cls(prices, delisting_policy=delisting_policy)
 
-        # Fetch from API
-        base_url = "https://data.nasdaq.com/api/v3/datatables/SHARADAR/SEP"
+        if client is None:
+            from common.sharadar_client import SharadarClient
 
-        for ticker in tickers:
-            params = {
-                "ticker": ticker,
-                "date.gte": start_date,
-                "date.lte": end_date,
-                "api_key": api_key,
-            }
+            client = SharadarClient(api_key=api_key)
 
-            url = f"{base_url}?{urllib.parse.urlencode(params)}"
-
-            try:
-                req = urllib.request.Request(url)
-                with urllib.request.urlopen(req, timeout=30) as response:
-                    data = json.loads(response.read().decode("utf-8"))
-
-                # Parse response
-                columns = data.get("datatable", {}).get("columns", [])
-                rows = data.get("datatable", {}).get("data", [])
-
-                # Find column indices
-                col_idx = {c["name"]: i for i, c in enumerate(columns)}
-                date_idx = col_idx.get("date")
-                price_idx = col_idx.get("closeadj")
-
-                if date_idx is None or price_idx is None:
-                    continue
-
-                prices[ticker] = {}
-                for row in rows:
-                    date_str = str(row[date_idx])[:10]
-                    price = Decimal(str(row[price_idx])).quantize(PRICE_QUANTIZE, rounding=ROUND_HALF_UP)
-                    prices[ticker][date_str] = price
-
-            except Exception as e:
-                print(f"Error fetching {ticker}: {e}")
+        rows = client.fetch(
+            "SEP",
+            tickers=tickers,
+            fields=["ticker", "date", "closeadj"],
+            date_range=(start_date, end_date),
+        )
+        for row in rows:
+            ticker = str(row.get("ticker") or "").upper()
+            raw = row.get("closeadj")
+            if not ticker or raw is None:
                 continue
+            try:
+                price = Decimal(str(raw)).quantize(PRICE_QUANTIZE, rounding=ROUND_HALF_UP)
+            except (ValueError, TypeError, InvalidOperation):
+                continue
+            prices.setdefault(ticker, {})[str(row.get("date"))[:10]] = price
 
-        # Cache results
         if cache_dir:
-            cache_dir.mkdir(parents=True, exist_ok=True)
+            Path(cache_dir).mkdir(parents=True, exist_ok=True)
             cache_data = {t: {d: str(p) for d, p in tp.items()} for t, tp in prices.items()}
-            with open(cache_file, "w") as f:
-                json.dump(cache_data, f)
+            with open(cache_file, "w", encoding="utf-8") as f:
+                json.dump(cache_data, f, sort_keys=True)
 
-        return cls(prices)
+        return cls(prices, delisting_policy=delisting_policy)
 
     def get_available_tickers(self) -> List[str]:
         """Get list of available tickers."""
@@ -529,7 +518,7 @@ def create_returns_provider(
         )
     elif source == "sharadar_api":
         return SharadarReturnsProvider.from_api(
-            api_key=kwargs["api_key"],
+            api_key=kwargs.get("api_key"),
             tickers=kwargs["tickers"],
             start_date=kwargs["start_date"],
             end_date=kwargs["end_date"],

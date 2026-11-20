@@ -109,6 +109,10 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
                 "DebtSecuritiesAvailableForSaleCurrent": "DebtSecuritiesAvailableForSaleCurrent",
                 "AvailableForSaleSecuritiesCurrent": "AvailableForSaleSecurities",
                 "AvailableForSaleSecuritiesDebtSecuritiesCurrent": "AvailableForSaleDebtCurrent",
+                # Also read by the PIT store (tools/build_pit_financials.py CURRENT_INVESTMENT_TAGS).
+                # GRAL reports its treasury portfolio only under the first one.
+                "DebtSecuritiesAvailableForSaleExcludingAccruedInterestCurrent": "DebtSecuritiesAvailableForSaleExclAccruedCurrent",
+                "HeldToMaturitySecuritiesCurrent": "HeldToMaturitySecuritiesCurrent",
                 "CostOfRevenue": "COGS",
                 "ResearchAndDevelopmentExpense": "R&D",
                 "NetIncomeLoss": "NetIncome",
@@ -347,32 +351,7 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
                     financial_data["Cash_date"] = financial_data.get("CashEquivalentsOnly_date")
                     financial_data["Cash_source"] = "CashEquivalentsAtCarryingValue"
 
-            # Aggregate CashAndSecurities (Cash + non-cash liquid securities)
-            # DEDUP NOTE: ShortTermInvestments, MarketableSecurities,
-            # AvailableForSaleSecurities, AvailableForSaleDebtCurrent, and
-            # DebtSecuritiesAvailableForSaleCurrent all represent the SAME
-            # treasury/bond portfolio for many filers — just different XBRL tags.
-            # Adding them causes double/triple-counting (e.g. ABUS: STI+AvailDebt).
-            # Fix: take MAX across all investment tags as one component.
-            mkt_sec = financial_data.get("MarketableSecurities", 0) or 0
-            st_inv = financial_data.get("ShortTermInvestments", 0) or 0
-            avail = financial_data.get("AvailableForSaleSecurities", 0) or 0
-            avail_debt = financial_data.get("AvailableForSaleDebtCurrent", 0) or 0
-            debt_avail_current = financial_data.get("DebtSecuritiesAvailableForSaleCurrent", 0) or 0
-            investment_component = max(st_inv, mkt_sec, avail, avail_debt, debt_avail_current)
-            total_liquid = cash + investment_component
-            if total_liquid > 0:
-                financial_data["CashAndSecurities"] = total_liquid
-                # Use most recent date from components
-                dates = [
-                    financial_data.get("Cash_date"),
-                    financial_data.get("MarketableSecurities_date"),
-                    financial_data.get("ShortTermInvestments_date"),
-                    financial_data.get("AvailableForSaleDebtCurrent_date"),
-                ]
-                dates = [d for d in dates if d]
-                if dates:
-                    financial_data["CashAndSecurities_date"] = max(dates)
+            aggregate_cash_and_securities(financial_data)
 
             financial_data["collected_at"] = date.today().isoformat()
             return financial_data
@@ -381,6 +360,43 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
 
     except Exception:
         return None
+
+
+# Current-investment fields (friendly names). They describe the SAME treasury/bond
+# portfolio under different XBRL tags, so CashAndSecurities takes the MAX across them
+# (adding them double-counts, e.g. ABUS: STI + AvailDebt). Keep in step with
+# CURRENT_INVESTMENT_TAGS in tools/build_pit_financials.py.
+CURRENT_INVESTMENT_FIELDS = (
+    "ShortTermInvestments",
+    "MarketableSecurities",
+    "AvailableForSaleSecurities",
+    "AvailableForSaleDebtCurrent",
+    "DebtSecuritiesAvailableForSaleCurrent",
+    "DebtSecuritiesAvailableForSaleExclAccruedCurrent",
+    "HeldToMaturitySecuritiesCurrent",
+)
+
+
+def aggregate_cash_and_securities(financial_data: Dict) -> None:
+    """Set CashAndSecurities = Cash + max(current investment fields), in place."""
+    cash = financial_data.get("Cash", 0) or 0
+    cash_date = financial_data.get("Cash_date")
+    investment_component = 0
+    component_dates = []
+    for field in CURRENT_INVESTMENT_FIELDS:
+        val = financial_data.get(field, 0) or 0
+        dt = financial_data.get(f"{field}_date")
+        if not val:
+            continue
+        investment_component = max(investment_component, val)
+        if dt:
+            component_dates.append(dt)
+    total_liquid = cash + investment_component
+    if total_liquid > 0:
+        financial_data["CashAndSecurities"] = total_liquid
+        dates = [d for d in [cash_date] + component_dates if d]
+        if dates:
+            financial_data["CashAndSecurities_date"] = max(dates)
 
 
 def get_yfinance_fallback(ticker: str) -> Optional[Dict]:

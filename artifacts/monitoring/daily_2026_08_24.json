@@ -1,0 +1,548 @@
+{
+    "date": "2026-08-24",
+    "monitoring_day": 54,
+    "timestamp": "2026-08-24T09:00:00.000000Z",
+    "phase": "Day 54 — PRE-MARKET snapshot (Aug 24 09:00 ET). Portfolio broadly RECOVERED from Aug 20 five-gap-flag selloff. Aug 21 session: ALMS +5.73% gap flag UPSIDE (sector-driven — Moderna/Merck mRNA cancer trial success Aug 19). STOK buffer rebuilt to +12.35% (from +9.25% Aug 20 emergency low). CMPS continued lower -3.55% on Aug 21. ALMS LUMUS Phase 2b SLE binary readout remains pending through Sep 30. All 15 positions positive vs entry. Governance drawdown gate CLEAR (+12.63pp outperformance). IC gate 54 days overdue. Q2 13F 10 days past deadline.",
+    "data_integrity": {
+        "primary_source": "stockanalysis.com WebFetch (Aug 21 closing prices — most recent available; fetched Aug 24 pre-market)",
+        "price_date": "2026-08-21 close (4:00 PM EDT)",
+        "premarket_aug24": "STOK $32.16 (-0.40% pre-market Aug 24). TRVI pre-market no change. Limited pre-market data available.",
+        "note": "Robinhood MCP unavailable Day 54. Yahoo Finance API blocked. Prices sourced from stockanalysis.com WebFetch for all 15 tickers. XBI close $165.73 (Aug 21). Aug 22-23 weekend — no price action. Aug 24 pre-market data limited.",
+        "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged)",
+        "cash_basis": "Carried forward $99.87 from Jun 24 MCP sourcing (unchanged, no trading since)",
+        "data_quality": "AUG 21 CLOSE — best available without Robinhood MCP or Yahoo Finance API. Aug 24 pre-market data limited to STOK/TRVI."
+    },
+    "account": {
+        "account_id": "Robinhood 802349084",
+        "equity_fetchable": false,
+        "equity_estimated_usd": 136.83,
+        "equity_note": "Computed from Aug 21 close prices x phase2_entry_prices.json quantities.",
+        "cash_carried": 99.87,
+        "buying_power_carried": null,
+        "total_estimated_account_value": 236.70,
+        "equity_delta_vs_day53": 1.11,
+        "equity_delta_pct_vs_day53": 0.82,
+        "equity_note_detail": "Day 53 equity $135.72 (Aug 20 close basis). Day 54 $136.83 (Aug 21 close basis). Portfolio recovered +$1.11 / +0.82% on Aug 21, partially reversing Aug 20 selloff."
+    },
+    "benchmark": {
+        "xbi_entry_price": 133.62,
+        "xbi_aug20_estimated": 164.28,
+        "xbi_aug21_close": 165.73,
+        "xbi_aug21_day_chg_pct": 1.44,
+        "xbi_return_since_entry_pct": 24.03,
+        "xbi_note": "XBI Aug 21 close $165.73 (+1.44% on day). +24.03% since Jun 10 entry ($133.62). Sector tailwind from Moderna/Merck mRNA cancer therapy trial success (Aug 19). Portfolio outperformance now +12.63pp."
+    },
+    "portfolio_overview": {
+        "total_positions": 15,
+        "positions_negative_vs_entry": 0,
+        "positions_positive_vs_entry": 15,
+        "avg_pnl_vs_entry_pct": 36.66,
+        "avg_pnl_vs_entry_pct_day53": 35.55,
+        "avg_pnl_delta_1day": 1.11,
+        "equity_usd": 136.83,
+        "cash_usd": 99.87,
+        "total_account_usd": 236.70,
+        "xbi_return_since_entry_pct": 24.03,
+        "outperformance_pp": 12.63,
+        "drawdown_threshold_pp": -2.0,
+        "drawdown_status": "CLEAR — +12.63pp vs XBI since Jun 10 inception. Recovered from Aug 20 relative underperformance.",
+        "gap_flags_today_aug21": 1,
+        "gap_flags_aug21_direction": "UPSIDE",
+        "gap_threshold_pct": 5.0,
+        "near_gap_watch_aug21": ["COGT +4.02% (upside near-threshold)", "CMPS -3.55% (downside near-threshold)"],
+        "session_character_aug21": "RECOVERY SESSION. Portfolio broadly recovered from Aug 20 5-flag selloff. Sector-wide tailwind from Moderna/Merck mRNA cancer therapy Phase 3 success (Aug 19). Only 1 gap flag (ALMS upside). DRUG and CMPS continued lower; 13 of 15 positions positive on day.",
+        "key_watch_aug24_open": "ALMS LUMUS binary readout still pending — any session through Sep 30. CMPS continued lower despite strong fundamentals. STOK buffer rebuilt. Monitor Q2 13F catalyst channel."
+    },
+    "positions": [
+        {
+            "ticker": "NRIX",
+            "company": "Nurix Therapeutics, Inc.",
+            "entry_price": 15.46,
+            "quantity": 0.430232,
+            "aug20_close": 27.05,
+            "aug21_close": 26.72,
+            "day_chg_pct_aug21": -1.22,
+            "pnl_vs_entry_pct": 72.83,
+            "position_value_usd": 11.50,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+72.83% vs entry. Aug 21 -1.22% (modest pullback; Roche $700M deal underpins). Pre-market Aug 24 not yet available. Stable top performer."
+        },
+        {
+            "ticker": "URGN",
+            "company": "UroGen Pharma Ltd.",
+            "entry_price": 28.02,
+            "quantity": 0.237681,
+            "aug20_close": 46.80,
+            "aug21_close": 46.86,
+            "day_chg_pct_aug21": 0.13,
+            "pnl_vs_entry_pct": 67.24,
+            "position_value_usd": 11.14,
+            "gap_flag": false,
+            "status": "MONITORING — STABILIZED POST-INTRAGEL",
+            "note": "+67.24% vs entry. Aug 21 +0.13% — stabilized after Aug 20 IntraGel gap flag (-6.94%). IntraGel $7M strategic deal reaction fading. Strong P&L cushion. ZUSDURI commercial ramp ongoing."
+        },
+        {
+            "ticker": "PRAX",
+            "company": "Praxis Precision Medicines, Inc.",
+            "entry_price": 241.92,
+            "quantity": 0.027530,
+            "aug20_close": 364.58,
+            "aug21_close": 375.94,
+            "day_chg_pct_aug21": 3.12,
+            "pnl_vs_entry_pct": 55.40,
+            "position_value_usd": 10.35,
+            "gap_flag": false,
+            "status": "MONITORING — FDA PDUFA DEC 27 2026",
+            "note": "+55.40% vs entry. Aug 21 +3.12% — recovered from Aug 20 gap flag (-5.60%). CATALYST IDENTIFIED FOR AUG 20 DROP: FDA extended relutrigine NDA review to Dec 27, 2026 (from Sep 27). Extension announced June 29 (major amendment — sensitivity analyses submitted). NO safety/efficacy concerns raised; no AdCom requested. PDUFA Dec 27, 2026 is now the key catalyst date. Market may have re-weighted the timeline on Aug 20.",
+            "catalyst": {
+                "event": "FDA PDUFA extended to December 27, 2026 (from September 27, 2026)",
+                "announced": "2026-06-29",
+                "indication": "SCN2A and SCN8A developmental and epileptic encephalopathies (DEEs)",
+                "reason": "Major amendment — additional sensitivity analyses submitted; no new clinical study requested",
+                "safety_flags": "NONE — FDA cited no safety or manufacturing concerns",
+                "adcom": "NOT REQUESTED",
+                "source": "Praxis press release / quiverquant.com / globenewswire.com"
+            }
+        },
+        {
+            "ticker": "DNTH",
+            "company": "Dianthus Therapeutics, Inc.",
+            "entry_price": 72.10,
+            "quantity": 0.092928,
+            "aug20_close": 109.51,
+            "aug21_close": 111.10,
+            "day_chg_pct_aug21": 1.45,
+            "pnl_vs_entry_pct": 54.09,
+            "position_value_usd": 10.32,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+54.09% vs entry. Aug 21 +1.45% (recovery from Aug 20 -3.69%). EMERGE Phase 3 ongoing. Stable."
+        },
+        {
+            "ticker": "RVMD",
+            "company": "Revolution Medicines, Inc.",
+            "entry_price": 143.76,
+            "quantity": 0.046465,
+            "aug20_close": 211.74,
+            "aug21_close": 209.46,
+            "day_chg_pct_aug21": -1.08,
+            "pnl_vs_entry_pct": 45.70,
+            "position_value_usd": 9.73,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+45.70% vs entry. Aug 21 -1.08% (modest pullback, well within normal range). Stable."
+        },
+        {
+            "ticker": "SLDB",
+            "company": "Solid Biosciences Inc.",
+            "entry_price": 6.49,
+            "quantity": 1.028527,
+            "aug20_close": 9.10,
+            "aug21_close": 9.30,
+            "day_chg_pct_aug21": 2.20,
+            "pnl_vs_entry_pct": 43.30,
+            "position_value_usd": 9.57,
+            "gap_flag": false,
+            "status": "MONITORING — RECOVERED FROM AUG 20 GAP FLAG",
+            "note": "+43.30% vs entry. Aug 21 +2.20% — recovered from Aug 20 gap flag (-6.57%). No catalyst identified for Aug 20 drop; sector-driven recovery Aug 21. Volume normalized. Cash runway mid-2028 unchanged."
+        },
+        {
+            "ticker": "SYRE",
+            "company": "Spyre Therapeutics",
+            "entry_price": 76.10,
+            "quantity": 0.088041,
+            "aug20_close": 107.79,
+            "aug21_close": 106.49,
+            "day_chg_pct_aug21": -1.21,
+            "pnl_vs_entry_pct": 39.93,
+            "position_value_usd": 9.38,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+39.93% vs entry. Aug 21 -1.21% (slight pullback after Aug 19-20 strength). SKYLINE Phase 2 met primary endpoints Q2 2026. Stable."
+        },
+        {
+            "ticker": "TRVI",
+            "company": "Travere Therapeutics, Inc.",
+            "entry_price": 13.43,
+            "quantity": 0.496649,
+            "aug20_close": 18.25,
+            "aug21_close": 17.96,
+            "day_chg_pct_aug21": -1.59,
+            "pnl_vs_entry_pct": 33.73,
+            "position_value_usd": 8.92,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+33.73% vs entry. Aug 21 -1.59%. Pre-market Aug 24: no change (flat). Below gap threshold. Stable."
+        },
+        {
+            "ticker": "ERAS",
+            "company": "Erasca, Inc.",
+            "entry_price": 13.27,
+            "quantity": 0.503396,
+            "aug20_close": 17.08,
+            "aug21_close": 17.63,
+            "day_chg_pct_aug21": 3.22,
+            "pnl_vs_entry_pct": 32.86,
+            "position_value_usd": 8.88,
+            "gap_flag": false,
+            "status": "MONITORING — RECOVERED FROM AUG 20 GAP FLAG",
+            "note": "+32.86% vs entry. Aug 21 +3.22% — recovered from Aug 20 gap flag (-5.48%). No catalyst confirmed for Aug 20 drop. Sector-driven recovery. Volume still elevated (2.44M Aug 21). Monitor."
+        },
+        {
+            "ticker": "DRUG",
+            "company": "Bright Minds Biosciences Inc.",
+            "entry_price": 63.59,
+            "quantity": 0.105839,
+            "aug20_close": 78.56,
+            "aug21_close": 77.42,
+            "day_chg_pct_aug21": -1.45,
+            "pnl_vs_entry_pct": 21.75,
+            "position_value_usd": 8.19,
+            "gap_flag": false,
+            "status": "ELEVATED_WATCH — CONTINUED_DECLINE + NO_CATALYST",
+            "note": "+21.75% vs entry. Aug 21 -1.45% — continued decline for second session after Aug 20 gap flag (-7.29%). Cumulative 2-day decline: $78.56 → $77.42 = -$1.14. Low float, thin liquidity (165K vol Aug 21). Still no catalyst identified for either decline. Buffer narrowing: was +23.54% (Aug 20), now +21.75%. Watch closely.",
+            "identity": "CONFIRMED — Bright Minds Biosciences Inc. (per baseline Jun 10 artifact)"
+        },
+        {
+            "ticker": "CMPS",
+            "company": "COMPASS Pathways plc",
+            "entry_price": 11.30,
+            "quantity": 0.590265,
+            "aug20_close": 13.82,
+            "aug21_close": 13.33,
+            "day_chg_pct_aug21": -3.55,
+            "pnl_vs_entry_pct": 17.96,
+            "position_value_usd": 7.87,
+            "gap_flag": false,
+            "near_gap_watch": true,
+            "status": "ELEVATED_WATCH — CONTINUED_DECLINE + NEAR_GAP",
+            "note": "+17.96% vs entry. Aug 21 -3.55% — near downside gap threshold (-5%). Second consecutive session declining: $13.82 (Aug 20) → $13.33 (Aug 21). Aug 5 Q2 earnings POSITIVE (NDA rolling submission underway, final Q4 2026, commercial launch H1 2027, $433M cash, VA PIVOT trial). 6-month Phase 3 data confirmed durable benefit. Decline appears sector-rotation/profit-taking, not fundamental. Buffer compressed: +22.30% (Aug 20) → +17.96% (Aug 21). Watch at open.",
+            "catalyst_context": {
+                "q2_2026_earnings": "Reported Aug 5. NDA rolling submission underway. Commercial launch H1 2027. Cash $433M.",
+                "comp360_phase3": "6-month data from second Phase 3 trial confirms rapid and durable profile.",
+                "va_pivot_trial": "COMP360 psilocybin in veterans with TRD + concurrent PTSD.",
+                "conference": "Canaccord Genuity Aug 12: blockbuster opportunity described.",
+                "nda_timeline": "Final submission Q4 2026 → FDA filing → H1 2027 launch target."
+            }
+        },
+        {
+            "ticker": "ALMS",
+            "company": "Alumis Inc.",
+            "entry_price": 20.37,
+            "quantity": 0.326013,
+            "aug20_close": 22.86,
+            "aug21_close": 24.17,
+            "day_chg_pct_aug21": 5.73,
+            "pnl_vs_entry_pct": 18.66,
+            "position_value_usd": 7.88,
+            "gap_flag": true,
+            "gap_flag_direction": "UPSIDE",
+            "status": "GAP_FLAG_UPSIDE — SECTOR_DRIVEN — LUMUS_BINARY_PENDING",
+            "note": "+18.66% vs entry. GAP FLAG UPSIDE +5.73% on Aug 21 — sector-driven (Moderna/Merck mRNA cancer therapy trial success Aug 19, not LUMUS results). LUMUS Phase 2b SLE topline data still anticipated Q3 2026 (per Q2 earnings Aug 14 — 408 patients, Week 48 BICLA endpoint). LUMUS readout is the binary event; no announcement as of Aug 24 pre-market. Background context: Phase 3 psoriasis (ONWARD1/ONWARD2) win and $300M equity raise were January 2026. NDA filing planned H2 2026. Buffer improved to +18.66% vs +12.23% (Aug 20) — binary cushion rebuilt somewhat.",
+            "lumus_catalyst": {
+                "event": "LUMUS Phase 2b SLE topline readout — envudeucitinib (ESK-001)",
+                "readout_window": "Q3 2026 (through Sep 30 — 37 days remaining)",
+                "patients": 408,
+                "primary_endpoint": "BICLA at Week 48",
+                "priority": "ELEVATED — Binary catalyst, any session",
+                "current_buffer_pct": 18.66,
+                "ceo_commentary": "May substantiate role in IFN-driven diseases (Sjogren's, CLE as additional indications)",
+                "lumus_readout_announced": false
+            }
+        },
+        {
+            "ticker": "COGT",
+            "company": "Cogent Biosciences, Inc.",
+            "entry_price": 31.35,
+            "quantity": 0.212789,
+            "aug20_close": 35.31,
+            "aug21_close": 36.73,
+            "day_chg_pct_aug21": 4.02,
+            "pnl_vs_entry_pct": 17.16,
+            "position_value_usd": 7.81,
+            "gap_flag": false,
+            "near_gap_watch": true,
+            "status": "MONITORING — UPSIDE_NEAR_GAP",
+            "note": "+17.16% vs entry. Aug 21 +4.02% — strong recovery from Aug 20 near-gap (-4.18%). Buffer rebuilt from +12.64% to +17.16%. Bezuclastinib BezginD Phase 3 ongoing. Volume elevated (2.5M)."
+        },
+        {
+            "ticker": "XENE",
+            "company": "Xenon Pharmaceuticals Inc.",
+            "entry_price": 51.95,
+            "quantity": 0.128578,
+            "aug20_close": 59.73,
+            "aug21_close": 60.77,
+            "day_chg_pct_aug21": 1.74,
+            "pnl_vs_entry_pct": 16.98,
+            "position_value_usd": 7.81,
+            "gap_flag": false,
+            "status": "MONITORING",
+            "note": "+16.98% vs entry. Aug 21 +1.74% — recovered from Aug 20 near-gap (-4.16%). Below gap threshold. Stable."
+        },
+        {
+            "ticker": "STOK",
+            "company": "Stoke Therapeutics, Inc.",
+            "entry_price": 28.74,
+            "quantity": 0.231758,
+            "aug20_close": 31.40,
+            "aug21_close": 32.29,
+            "aug24_premarket": 32.16,
+            "aug24_premarket_chg_pct": -0.40,
+            "day_chg_pct_aug21": 2.83,
+            "pnl_vs_entry_pct": 12.35,
+            "position_value_usd": 7.48,
+            "gap_flag": false,
+            "status": "MONITORING — BUFFER_REBUILT",
+            "note": "+12.35% vs entry — LOWEST BUFFER BUT REBUILT. Aug 21 +2.83% recovered from Aug 20 near-gap (-4.93%). Buffer improved: +9.25% (Aug 20 emergency zone) → +12.35% (Aug 21 close). Aug 24 pre-market $32.16 (-0.40%) — minor pullback; buffer still healthy vs Aug 14 emergency low (+5.67%). Emergency watch DE-ESCALATED from Aug 20 level. Continue monitoring daily."
+        }
+    ],
+    "gap_flags_summary": {
+        "aug21_session": {
+            "count": 1,
+            "direction": "UPSIDE",
+            "threshold_pct": 5.0,
+            "flags": [
+                {
+                    "ticker": "ALMS",
+                    "day_pct_aug21": 5.73,
+                    "pnl_vs_entry": 18.66,
+                    "catalyst": "SECTOR_DRIVEN — Moderna/Merck mRNA cancer therapy trial success (Aug 19). LUMUS SLE readout NOT yet announced."
+                }
+            ],
+            "near_gap": [
+                {"ticker": "COGT", "day_pct": 4.02, "direction": "upside", "pnl_vs_entry": 17.16},
+                {"ticker": "CMPS", "day_pct": -3.55, "direction": "downside", "pnl_vs_entry": 17.96, "note": "Watch closely — downside near-threshold despite strong fundamentals"}
+            ],
+            "context": "RECOVERY SESSION vs Aug 20 (5 downside gap flags). Sector-wide biotech rally driven by Moderna/Merck mRNA trial win. 12 of 15 positions moved in range -3.55% to +5.73%. DRUG continued decline -1.45%. CMPS continued decline -3.55%."
+        },
+        "aug20_resolution": {
+            "URGN": "STABILIZED — IntraGel deal reaction fading (+0.13% Aug 21)",
+            "SLDB": "RECOVERED — +2.20% Aug 21, no catalyst ever identified for Aug 20 drop",
+            "PRAX": "RECOVERED — +3.12% Aug 21. Aug 20 drop now attributed to PDUFA extension (announced Jun 29; Dec 27, 2026 new date)",
+            "ERAS": "RECOVERED — +3.22% Aug 21, no catalyst identified for Aug 20 drop",
+            "DRUG": "CONTINUED_LOWER — -1.45% Aug 21. Cumulative 2-day decline. Still no catalyst identified."
+        }
+    },
+    "new_catalyst_intel": {
+        "PRAX_FDA_PDUFA": {
+            "ticker": "PRAX",
+            "event": "FDA extended relutrigine NDA review to December 27, 2026",
+            "original_pdufa": "2026-09-27",
+            "new_pdufa": "2026-12-27",
+            "announced": "2026-06-29",
+            "reason": "Major amendment — additional sensitivity analyses of existing clinical data submitted",
+            "fda_signal": "POSITIVE — no safety/efficacy concerns, no AdCom requested, no new studies requested",
+            "impact": "3-month delay but clean review. Likely explains Aug 20 gap flag (-5.60%) as market re-priced timeline. Recovered Aug 21 +3.12% as investors accepted timeline.",
+            "note": "PDUFA Dec 27, 2026 is now the key catalyst date for PRAX."
+        },
+        "CMPS_NDA_PIPELINE": {
+            "ticker": "CMPS",
+            "event": "Q2 2026 earnings (Aug 5) + NDA filing progress",
+            "nda_status": "Rolling submission underway; final submission expected Q4 2026",
+            "commercial_launch_target": "H1 2027",
+            "cash": "$433M at Jun 30, 2026",
+            "comp360_data": "6-month data from second Phase 3 trial confirming rapid and durable profile",
+            "va_pivot": "VA PILOT multi-site RCT testing COMP360 in veterans with TRD + PTSD",
+            "conference_aug12": "Canaccord Genuity 46th Annual Growth — blockbuster opportunity described, strong payer interest",
+            "note": "Fundamentals strong. Aug 21 -3.55% decline likely post-earnings/conference profit-taking. Buffer compressed to +17.96%."
+        },
+        "ALMS_PHASE3_BACKGROUND": {
+            "ticker": "ALMS",
+            "context": "Phase 3 ONWARD1/ONWARD2 psoriasis win (envudeucitinib, ~65% PASI90, ~40% PASI100) + $300M equity raise were January 2026 events. NDA filing in psoriasis planned H2 2026. These are background, not new. The Aug 21 +5.73% gap is sector-driven, not a new ALMS announcement.",
+            "active_binary": "LUMUS Phase 2b SLE — still pending, 408 patients, BICLA endpoint — ANY SESSION through Sep 30"
+        },
+        "SECTOR_CONTEXT_AUG19": {
+            "event": "Moderna (MRNA) + Merck (MRK) mRNA-based personalized cancer therapy Phase 3 trial success",
+            "date": "2026-08-19",
+            "impact": "Broad biotech sector rally Aug 19-21. XBI +1.44% on Aug 21 (Aug 21 close $165.73). Explains ALMS gap flag upside and broad portfolio recovery after Aug 20 selloff.",
+            "source": "Seeking Alpha Aug 19 2026"
+        }
+    },
+    "governance_gates": {
+        "drawdown_gate": {
+            "status": "CLEAR",
+            "portfolio_avg_pnl_vs_entry_pct": 36.66,
+            "xbi_return_since_entry_pct": 24.03,
+            "outperformance_pp": 12.63,
+            "threshold_pp": -2.0,
+            "detail": "Aug 24 pre-market (Aug 21 close basis): +12.63pp outperformance vs XBI since Jun 10 entry. Well above -2.0pp threshold. Outperformance held through Aug 20 selloff and partially widened on Aug 21 recovery."
+        },
+        "ic_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 54,
+            "gate_was_due": "2026-07-01",
+            "last_measured": "2026-06-24",
+            "last_ic": 0.0432,
+            "hit_rate": 0.543,
+            "note": "54 days overdue. Operator freeze lift required. DEM candidate freeze + NO_MODEL_CHANGE window (SM-20260629-001, 0/20 LIVE windows). Forward validation continues to accumulate."
+        },
+        "h20d_gate": {
+            "status": "OVERDUE",
+            "days_overdue": 54,
+            "gate_date": "2026-07-01",
+            "override_posture": "MAINTAINED (OPTION_B_OVERRIDE_2026_05_26)",
+            "note": "54 days overdue. Freeze lift → quarantine script → Q2 13F warm → cohort check → IC decomp."
+        },
+        "jaccard_gate": {
+            "status": "MAINTAINED",
+            "last_value": 0.875,
+            "last_measured": "2026-06-23",
+            "threshold": 0.40,
+            "note": "0.875 well above 0.40. Refresh pending freeze lift + Q2 13F processing."
+        },
+        "emergency_gate": {
+            "status": "CLEAR",
+            "detail": "All 15 positions above entry. Lowest: STOK +12.35% ($32.29 vs $28.74 entry). BUFFER REBUILT from Aug 20 low (+9.25%). Aug 24 pre-market STOK $32.16 (-0.40%) — still +11.89% vs entry in pre-market.",
+            "de_escalation": "STOK emergency watch DE-ESCALATED from Aug 20 level. Continue daily monitoring."
+        },
+        "positions_20pct_loss_gate": {
+            "status": "CLEAR",
+            "count": 0,
+            "lowest_pnl_name": "STOK",
+            "lowest_pnl_pct": 12.35,
+            "note": "All 15 positions positive. Lowest buffer STOK +12.35% — well above -20% loss threshold."
+        }
+    },
+    "forward_catalyst_watch": {
+        "ALMS_LUMUS_BINARY": {
+            "ticker": "ALMS",
+            "event": "LUMUS Phase 2b SLE topline readout — envudeucitinib",
+            "readout_window": "Q3 2026 (through Sep 30 — ~37 calendar days remaining)",
+            "patients": 408,
+            "primary_endpoint": "BICLA response at Week 48",
+            "priority": "ELEVATED — Binary catalyst, ANY SESSION",
+            "current_pnl_pct": 18.66,
+            "buffer_improved": "12.23% (Aug 20) → 18.66% (Aug 21) — some cushion rebuilt",
+            "background_complete": "Phase 3 psoriasis (ONWARD1/ONWARD2) won Jan 2026; NDA filing H2 2026 planned. LUMUS is the SLE inflection.",
+            "note": "Monitor every session. A positive LUMUS readout would likely be a major upside catalyst; negative would be significant downside."
+        },
+        "PRAX_PDUFA_DEC27": {
+            "ticker": "PRAX",
+            "event": "FDA PDUFA action date for relutrigine — December 27, 2026",
+            "indication": "SCN2A and SCN8A DEEs",
+            "current_pnl_pct": 55.40,
+            "days_to_pdufa": "~125 days",
+            "fda_posture": "No safety/efficacy concerns. No AdCom. Extension for additional sensitivity analyses only.",
+            "note": "Long runway. Monitor quarterly. Positive FDA posture is reassuring."
+        },
+        "CMPS_NDA_FILING": {
+            "ticker": "CMPS",
+            "event": "Final NDA submission — Q4 2026. Commercial launch target H1 2027.",
+            "current_pnl_pct": 17.96,
+            "comp360_phase3_status": "Two positive Phase 3 trials; 6-month durability confirmed",
+            "cash": "$433M — funded through launch",
+            "note": "Monitor as NDA submission approaches Q4. Near-gap pressure Aug 21 unresolved despite strong fundamentals."
+        },
+        "Q2_13F_PIPELINE": {
+            "event": "Q2 2026 13F-HR processing — Fairmount, Deep Track, Logos Global",
+            "priority": "GOVERNANCE — OPERATOR ACTION NEEDED",
+            "filing_deadline": "2026-08-14 (PASSED — 10 days ago)",
+            "tracked_ciks": {
+                "Fairmount": "0001802528",
+                "DeepTrack": "0001856083",
+                "LogosGlobal": "0001792126"
+            },
+            "pipeline_status": "NOT INGESTED — 10 days past deadline",
+            "action_sequence": [
+                "1. Operator freeze lift",
+                "2. python tools/warm_13f_cache.py --ciks 1802528,1856083,1792126 --existing-pit-dirs",
+                "3. python3 tools/check_13f_cohort_quarantine.py --pre-date <last-pre-promo> --post-date <first-post-promo>",
+                "4. Refresh IC decomposition"
+            ]
+        }
+    },
+    "escalation_flags": [
+        {
+            "id": "ALMS_LUMUS_BINARY_PENDING",
+            "ticker": "ALMS",
+            "reason": "LUMUS Phase 2b SLE readout pending through Sep 30 — binary event, ~37 calendar days remaining. Any session could produce the readout. Positive = major upside catalyst. Negative = significant downside. Current buffer +18.66% (improved from +12.23% Aug 20).",
+            "priority": "ELEVATED — MONITOR DAILY"
+        },
+        {
+            "id": "DRUG_CONTINUED_DECLINE",
+            "ticker": "DRUG",
+            "reason": "DRUG (Bright Minds Biosciences) declined -7.29% Aug 20 + -1.45% Aug 21 = cumulative ~$2.28/share decline without identified catalyst. Buffer eroded: +23.54% → +21.75%. Low float, thin liquidity. Watch for further weakness.",
+            "priority": "ELEVATED"
+        },
+        {
+            "id": "CMPS_NEAR_GAP_DESPITE_FUNDAMENTALS",
+            "ticker": "CMPS",
+            "reason": "CMPS declined -3.55% on Aug 21 to near-gap threshold despite strong fundamentals (Q2 earnings positive, NDA on track, $433M cash). Buffer compressed to +17.96%. Disconnect between price action and fundamentals warrants monitoring.",
+            "priority": "WATCH"
+        },
+        {
+            "id": "Q2_13F_NOT_INGESTED_10DAYS",
+            "reason": "Q2 2026 13F filings 10 days past deadline. Q2 period ended Jun 30. Fairmount, Deep Track, Logos Global likely filed. Production coinvest_score_z signal running on stale Q1 data. Operator freeze lift is gating step.",
+            "priority": "GOVERNANCE_ACTION_NEEDED"
+        },
+        {
+            "id": "IC_H20D_GATES_OVERDUE_54_DAYS",
+            "reason": "IC gate and h20d gate both 54 days overdue. Operator freeze lift is the only blocking step. Forward validation continues to accumulate but cannot be formally reviewed.",
+            "priority": "GOVERNANCE_OVERDUE"
+        }
+    ],
+    "monitoring_status": {
+        "period_extended": true,
+        "original_end": "2026-06-30",
+        "current_monitoring_through": "Ongoing — ALMS LUMUS Q3 binary (Sep 30), Q2 13F processing, PRAX PDUFA Dec 27, CMPS NDA Q4",
+        "robinhood_mcp_status": "UNAVAILABLE — Day 54 consecutive",
+        "yahoo_finance_api_status": "BLOCKED — proxy SSL. Fallback: stockanalysis.com WebFetch.",
+        "data_source_aug24": "stockanalysis.com WebFetch (Aug 21 closing prices for all 15 tickers + XBI; pre-market Aug 24 limited to STOK/TRVI)",
+        "days_since_last_mcp_data": 61,
+        "overall_status": "RECOVERING — Portfolio broadly recovered Aug 21 from Aug 20 worst-session selloff. 1 gap flag (ALMS upside, sector-driven). STOK buffer rebuilt (+12.35%). Drawdown gate CLEAR (+12.63pp). ALMS LUMUS binary remains primary watch.",
+        "key_developments_since_day53": [
+            "Aug 21: Portfolio recovered broadly; 12 of 15 positions positive on day",
+            "Aug 21: ALMS +5.73% gap flag UPSIDE — sector-driven (Moderna/Merck mRNA trial), NOT LUMUS readout",
+            "Aug 21: COGT +4.02% (near upside gap); CMPS -3.55% (near downside gap)",
+            "Aug 21: PRAX +3.12% recovery — FDA PDUFA extension to Dec 27, 2026 now confirmed context for Aug 20 gap",
+            "Aug 21: SLDB +2.20% and ERAS +3.22% recovered from Aug 20 gap flags — no catalysts identified",
+            "Aug 21: URGN +0.13% — stabilized post-IntraGel deal",
+            "Aug 21: STOK +2.83% — buffer rebuilt to +12.35% from +9.25% Aug 20 emergency low",
+            "Aug 21: DRUG -1.45% second consecutive decline — still no catalyst identified",
+            "Aug 21: CMPS -3.55% despite strong Q2 earnings / NDA pipeline",
+            "Q2 13F pipeline: 10 days past Aug 14 deadline, not ingested",
+            "ALMS LUMUS Phase 2b SLE readout still pending Q3 2026",
+            "XBI Aug 21 close $165.73 (+1.44%), +24.03% since entry — outperformance +12.63pp"
+        ],
+        "alerts_active": [
+            "ALMS_LUMUS_BINARY_PENDING: ~37 days remaining in Q3 window",
+            "DRUG_CONTINUED_DECLINE: 2-session decline, +21.75% buffer (watch)",
+            "CMPS_NEAR_GAP: -3.55% Aug 21 despite strong fundamentals",
+            "Q2_13F_NOT_INGESTED: 10 days past deadline",
+            "IC_GATE_OVERDUE_54_DAYS",
+            "H20D_GATE_OVERDUE_54_DAYS"
+        ],
+        "recommended_manual_actions": [
+            "1. MONITOR ALMS every session — LUMUS SLE binary readout pending any day through Sep 30.",
+            "2. OPERATOR: Freeze lift to process Q2 13F filings (10 days overdue). Sequence: warm_13f_cache → quarantine check → IC decomp.",
+            "3. WATCH CMPS — near downside gap despite strong NDA pipeline. Assess if technical selling or broader concern.",
+            "4. WATCH DRUG — continued decline without catalyst. Monitor for further weakness.",
+            "5. PRAX PDUFA Dec 27, 2026 confirmed — monitor quarterly."
+        ],
+        "next_key_dates": [
+            "2026-08-24 09:30 ET (TODAY): Market open — watch ALMS for LUMUS announcement, CMPS for continued weakness",
+            "2026-09-30: ALMS LUMUS readout window closes (Q3 end)",
+            "Q4 2026: CMPS final NDA submission target",
+            "2026-12-27: PRAX relutrigine FDA PDUFA action date",
+            "TBD (operator): Freeze lift → Q2 13F pipeline warm → IC/h20d gate catch-up"
+        ],
+        "next_scheduled_monitoring": "2026-08-25 09:00 ET (Tuesday)"
+    },
+    "_data_integrity": {
+        "source": "stockanalysis.com WebFetch (Aug 21 close prices, fetched Aug 24 pre-market)",
+        "xbi_source": "stockanalysis.com WebFetch — $165.73 close Aug 21",
+        "catalyst_sources": [
+            "PRAX: quiverquant.com / globenewswire.com — FDA PDUFA extension announcement Jun 29, 2026",
+            "CMPS: businesswire.com / ir.compasspathways.com — Q2 2026 earnings Aug 5, 2026",
+            "ALMS: investors.alumis.com — Q2 2026 earnings Aug 14, 2026; LUMUS readout anticipated Q3 2026",
+            "SECTOR: seekingalpha.com — Moderna/Merck mRNA cancer trial success Aug 19, 2026"
+        ],
+        "aug24_fetch_timestamp": "2026-08-24T09:00Z",
+        "tickers_fetched": ["COGT", "DNTH", "NRIX", "URGN", "ALMS", "SYRE", "RVMD", "CMPS", "SLDB", "DRUG", "STOK", "PRAX", "TRVI", "ERAS", "XENE"],
+        "quantities_basis": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged)",
+        "cash_basis": "Carried $99.87 (last confirmed 2026-06-24 via MCP)",
+        "robinhood_mcp_unavailable_since": "Day 1 (2026-06-11)",
+        "day54_note": "Portfolio recovered from Aug 20 worst-session selloff. Sector-wide biotech rally Aug 21 (Moderna/Merck). ALMS LUMUS binary the primary pending event. Read-only observation. No trades executed or recommended."
+    }
+}

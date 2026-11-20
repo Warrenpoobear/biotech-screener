@@ -52,6 +52,8 @@ from typing import Any, Dict, List, Set, Tuple
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from common.atomic_io import atomic_write_text  # noqa: E402
+
 logger = logging.getLogger(__name__)
 
 # Valid source types (ranked by trust)
@@ -237,10 +239,9 @@ def ingest_candidates(
     if accepted and not dry_run:
         merged = existing + accepted
         path = data_dir / "pdufa_dates.json"
-        path.write_text(
-            json.dumps(merged, indent=2, ensure_ascii=False) + "\n",
-            encoding="utf-8",
-        )
+        # Atomic replace: pdufa_dates.json is hard-linked into staged PIT inputs;
+        # write_text() would rewrite every staged copy (common/atomic_io.py).
+        atomic_write_text(path, json.dumps(merged, indent=2, ensure_ascii=False) + "\n")
         report["written_to"] = str(path)
         report["total_after_ingest"] = len(merged)
         logger.info(

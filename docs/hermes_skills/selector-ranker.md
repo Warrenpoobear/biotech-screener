@@ -20,6 +20,10 @@ description: >
 
 # Selector / Ranker / Construction Skill
 
+> **Production order is selector-only since 2026-11-13** (operator decision): `run_screen.py --ranker-mode selector_only` is the default, `final_score = selector_score`, and the pairwise ranker described below is scored as a shadow only. Rollback: `--ranker-mode pairwise_minimal`. Record: `docs/governance/2026-11-13-selector-only-production-switch.md`.
+>
+> **Deprecated 2026-11-13 (market-cap look-ahead).** Backtest figures in this file that come from regenerated historical snapshots are not evidence: historical runs read today's market cap, and `financial_score` divides cash and burn by it. With point-in-time market data the Top-30 shows +0.68 pt/period net of 50 bps (t = 1.47, 79 periods), `financial_score` has no measurable relation to next-period returns (monthly IC −0.001), and selector-only is ahead of the ranker by +0.62 pt/period (t = 1.64). Affected lines are marked below. The ranker code and model file are unchanged. Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+
 ## Purpose
 
 Reference for the production two-stage selector/ranker architecture and EW Top-30 construction. This is how the screener turns scored tickers into an actionable ranked portfolio.
@@ -76,8 +80,8 @@ Modules 1-5 (scoring)
 
 ### Selector Validation
 
-- Checklist v2 (2026-04-04): bootstrap +2.42pp/mo, 95% CI \[1.25%, 3.70%\], P(>0) = 99.99%
-- LOSO: ROBUST across all dimensions
+- Checklist v2 (2026-04-04): bootstrap +2.42pp/mo, 95% CI \[1.25%, 3.70%\], P(>0) = 99.99% *(Deprecated 2026-11-13: market-cap look-ahead.)*
+- LOSO: ROBUST across all dimensions *(Deprecated 2026-11-13: market-cap look-ahead.)*
 - Neither component survives standalone, but the bundle is real
 - Sort anchor: `selector_score`
 
@@ -112,12 +116,12 @@ Coinvest selects WHICH 30 names enter the portfolio. It captures institutional c
 
 - Weight: -0.0533 in `production_data/ranker_v2_model.json`
 - **Confirmed intentional**: stress-upside thesis (Spec 074, reconfirmed Spec 093 2026-05-13)
-- Classification: INTENTIONAL\_STRESS\_UPSIDE
+- Classification: INTENTIONAL\_STRESS\_UPSIDE *(Under question since 2026-11-13: the negative relation this explains was measured on history with market-cap look-ahead and is absent with point-in-time market cap.)*
 - Negative weight means financially safe names are penalized (more catalytic, less safe names preferred)
-- Evidence: correct higher\_is\_better=True encoding; six-diagnostic audit confirmed TRUE PENALTY in both bull (NW-t=-3.42) and bear (-3.38) regimes
+- Evidence: correct higher\_is\_better=True encoding; six-diagnostic audit confirmed TRUE PENALTY in both bull (NW-t=-3.42) and bear (-3.38) regimes *(Deprecated 2026-11-13: market-cap look-ahead.)*
 - Raw components: 50% runway + 30% dilution + 20% liquidity (all directional: higher = better health)
 - Rank-normalized within stage x size cohort (direction preserved)
-- t-statistic significant (-3.41), persists across cohorts and regimes
+- t-statistic significant (-3.41), persists across cohorts and regimes *(Deprecated 2026-11-13: market-cap look-ahead.)*
 
 ---
 
@@ -126,10 +130,12 @@ Coinvest selects WHICH 30 names enter the portfolio. It captures institutional c
 ### EW Top-30
 
 - Equal-weight, top 30 names by final\_score
-- K=30 validated by PIT sweep (stable K=25-35 plateau, net-of-cost peak)
+- K=30 validated by PIT sweep (stable K=25-35 plateau, net-of-cost peak) *(Deprecated 2026-11-13: market-cap look-ahead.)*
 - RW-EW delta = -0.09pp, t = -0.95 (rank-weighting does NOT help)
 
 ### Production Evidence
+
+*(Deprecated 2026-11-13: every figure in this subsection, including the regime table, was computed on history with market-cap look-ahead.)*
 
 - True PIT backtest (split-adjusted v2, 2026-06-27): **+3.33pp/mo hedged** (+3.20pp net-of-cost), t_nw=2.74, 66.7% hit rate, 69 monthly periods (Jun 2020 – Feb 2026)
 - Regime breakdown (all three regimes positive — prior "bull adverse" claim RETRACTED, was split artifact):
@@ -284,9 +290,14 @@ size_multiplier = max(0.40, 1.0 - 0.60 * ev_severity_score)
 ## Governance Freeze & Quarantine Status (2026-07-10)
 
 - Production ruleset frozen at `8887576e` (v1.14.0). Model status: **FROZEN (BLOCKED_LEVEL_0)** — canonical authority `docs/model_documentation.md`. The binding window is the **DEM candidate freeze + NO_MODEL_CHANGE forward-validation window** (`docs/FORWARD_VALIDATION_PROTOCOL.md` §1; mandate SM-20260629-001, 0/20 eligible live windows). No selector/ranker/sizing change is authorized; any such change resets the out-of-sample clock and requires explicit operator authorization.
-- **Candidate identity:** `model_hash=827c35a9ed3ee6e1` (`ast-v1` behavioral fingerprint over `ranker_engine.py`/`selector_engine.py`/`decision_engine.py`); legacy raw-bytes `a9983a67c6954813`. Registered 2026-06-26 (unchanged); re-hashed 2026-07-10.
+- **Candidate identity:** `model_hash=a9a430154568e242` (`ast-v2` behavioral fingerprint since 2026-11-15: `ranker_engine.py`/`selector_engine.py`/`decision_engine.py` plus `common/ranker_mode.py` and the `A4_SELECTOR_CONFIG` assignment in `run_screen.py`; same model, wider fingerprint); prior `ast-v1` `827c35a9ed3ee6e1`; legacy raw-bytes `a9983a67c6954813`. Registered 2026-06-26 (unchanged); re-hashed 2026-07-10.
 - **Deployed ≠ trained:** `production_data/ranker_v2_model.json` is a 2-feature `pairwise_logistic` with `coinvest_score_z` capped to +0.02 (trained +0.0613) and `financial_score` −0.0533; see the artifact's `provenance` block. Any prose claiming a 5- or 6-feature production ranker is wrong.
-- **13F Q1 2026: HOLD / observation-only.** 55-manager Jaccard last measured 0.463 (FAIL vs 0.70); the 0.875 figure was Q4/49-manager. Authority: `artifacts/readiness/H20D_REEVAL_VERDICT_2026_07_04.md`; clearance requires `tools/check_13f_cohort_quarantine.py` against a post-Q1-promotion snapshot.
+- **13F Q1 2026: HOLD / observation-only.** 55-manager Jaccard last measured 0.463 (FAIL vs 0.70); the 0.875 figure was Q4/49-manager. Authority: `artifacts/readiness/H20D_REEVAL_VERDICT_2026_07_04.md`; clearance requires `tools/check_13f_cohort_quarantine.py` against a post-Q1-promotion snapshot. *(Superseded 2026-11-01: the selector input `coinvest_signals.json` was rebuilt from Q2 2026 13F with a 30-manager `elite_core` (registry v4.0), and the out-of-sample clock was reset (`oos_clock_start=2026-11-02`, mandate 0/20). The next check is `--pre-date 2026-10-30 --post-date <first post-merge snapshot>`. Engine `model_hash` is unchanged. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`.)*
+- **Current model-status note, 2026-11-12:**
+  - The 2026-11-02 clock start is superseded. `oos_clock_start` is the first production run using the PR #614/#636 code (expected 2026-11-12), and the mandate is 0/20 from there (memo `docs/governance/2026-11-04-missing-fields-clock-reset.md`). `model_hash` and ruleset are unchanged; still FROZEN.
+  - The live `minimal_v2` ranker reads only `coinvest_score_z` + `financial_score`. It does **not** read `inst_delta_z`; only the legacy `minimal` feature set did. A blank `inst_delta_z` therefore has no ranking effect under ruleset `8887576e`.
+  - `financial_score` input fix (PR #649, merged 2026-11-12): operating cash flow, not net income, decides "profitable". Top-30 membership unchanged on 2026-11-11; KYMR rank 7 → 4. Ranker weights and sign untouched. The −0.0533 weight was fit on pre-correction inputs and has not been re-fit.
+  - Canonical: `docs/MODEL_DOCUMENTATION.md`.
 
 ## Session-end learning
 

@@ -1372,7 +1372,7 @@ class TestSmartMoneySignal(unittest.TestCase):
         """Tier1 holders should be recognized and weighted highest."""
         result = self.compute_smart_money_signal(
             overlap_count=2,
-            holders=["Baker Bros", "RA Capital"],
+            holders=["Baker Bros", "Deep Track"],
         )
         # Should recognize both as Tier1
         self.assertEqual(result.tier_breakdown.get(1, 0), 2)
@@ -1386,7 +1386,7 @@ class TestSmartMoneySignal(unittest.TestCase):
         # 2 Tier1 holders
         tier1_result = self.compute_smart_money_signal(
             overlap_count=2,
-            holders=["Baker Bros", "RA Capital"],
+            holders=["Baker Bros", "Deep Track"],
         )
 
         # 2 unknown holders
@@ -1404,8 +1404,8 @@ class TestSmartMoneySignal(unittest.TestCase):
         """NEW and INCREASE changes should boost score."""
         result = self.compute_smart_money_signal(
             overlap_count=2,
-            holders=["Baker Bros", "RA Capital"],
-            position_changes={"Baker Bros": "NEW", "RA Capital": "INCREASE"},
+            holders=["Baker Bros", "Deep Track"],
+            position_changes={"Baker Bros": "NEW", "Deep Track": "INCREASE"},
         )
         # Score should be above base + overlap bonus
         self.assertGreater(result.position_change_adjustment, Decimal("0"))
@@ -1416,8 +1416,8 @@ class TestSmartMoneySignal(unittest.TestCase):
         """DECREASE and EXIT changes should reduce score."""
         result = self.compute_smart_money_signal(
             overlap_count=2,
-            holders=["Baker Bros", "RA Capital"],
-            position_changes={"Baker Bros": "DECREASE", "RA Capital": "EXIT"},
+            holders=["Baker Bros", "Deep Track"],
+            position_changes={"Baker Bros": "DECREASE", "Deep Track": "EXIT"},
         )
         # Score should be reduced
         self.assertLess(result.position_change_adjustment, Decimal("0"))
@@ -1429,16 +1429,16 @@ class TestSmartMoneySignal(unittest.TestCase):
         # Many Tier1 holders increasing - should not exceed 80
         result_high = self.compute_smart_money_signal(
             overlap_count=5,
-            holders=["Baker Bros", "RA Capital", "Perceptive", "BVF", "EcoR1"],
-            position_changes={h: "NEW" for h in ["Baker Bros", "RA Capital", "Perceptive", "BVF", "EcoR1"]},
+            holders=["Baker Bros", "Deep Track", "Perceptive", "BVF", "EcoR1"],
+            position_changes={h: "NEW" for h in ["Baker Bros", "Deep Track", "Perceptive", "BVF", "EcoR1"]},
         )
         self.assertLessEqual(result_high.smart_money_score, Decimal("80"))
 
         # Many exits - should not go below 20
         result_low = self.compute_smart_money_signal(
             overlap_count=5,
-            holders=["Baker Bros", "RA Capital", "Perceptive", "BVF", "EcoR1"],
-            position_changes={h: "EXIT" for h in ["Baker Bros", "RA Capital", "Perceptive", "BVF", "EcoR1"]},
+            holders=["Baker Bros", "Deep Track", "Perceptive", "BVF", "EcoR1"],
+            position_changes={h: "EXIT" for h in ["Baker Bros", "Deep Track", "Perceptive", "BVF", "EcoR1"]},
         )
         self.assertGreaterEqual(result_low.smart_money_score, Decimal("20"))
 

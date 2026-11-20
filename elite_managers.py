@@ -88,6 +88,7 @@ def _manager_to_legacy_format(mgr: Dict[str, Any], tier: int) -> Dict[str, Any]:
         "style": mgr.get("style", "diversified_healthcare"),
         "aum_b": mgr.get("aum_b", 0),
         "tier": tier,
+        "firm_group": mgr.get("firm_group", ""),
     }
 
 

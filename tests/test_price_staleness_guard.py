@@ -165,3 +165,49 @@ def test_strict_flag_reads_env(monkeypatch):
     finally:
         monkeypatch.delenv("BIOTECH_STRICT_PRICE_STALENESS", raising=False)
         importlib.reload(run_screen)
+
+
+# --- 2026-11-11: retired names are not "scored" ----------------------------
+def _write_registry(tmp_path: Path, actions: list) -> None:
+    import json
+
+    (tmp_path / "corporate_actions.json").write_text(
+        json.dumps({"_schema": "corporate_actions.v1", "actions": actions}), encoding="utf-8"
+    )
+
+
+def test_dead_tickers_are_excluded_even_if_in_market_data(tmp_path, caplog):
+    """market_data.json keeps entries for acquired names; they are never ranked,
+    so a frozen price series must not be reported (2026-11-11: CRNX/APGE/TBPH...)."""
+    _write_registry(
+        tmp_path,
+        [{"ticker": "GONE", "action": "acquisition", "announced_date": "2026-05-01", "effective_date": "2026-06-01"}],
+    )
+    rows = _series("FRESH", AS_OF) + _series("GONE", "2026-05-31")
+    text = _run(tmp_path, rows, ["FRESH", "GONE"], caplog)
+
+    assert "GONE@" not in text
+    assert "Price history stale" not in text
+    assert "scored tickers with price history: 1" in text
+
+
+def test_dead_ticker_exclusion_is_point_in_time(tmp_path, caplog):
+    """Before its effective date the name still trades, so it is still checked."""
+    _write_registry(
+        tmp_path,
+        [{"ticker": "LATER", "action": "acquisition", "announced_date": "2026-08-01", "effective_date": "2026-09-01"}],
+    )
+    rows = _series("FRESH", AS_OF) + _series("LATER", "2026-07-01")
+    text = _run(tmp_path, rows, ["FRESH", "LATER"], caplog)
+
+    assert "LATER@" in text
+
+
+def test_strict_mode_does_not_raise_for_dead_tickers(tmp_path, caplog, monkeypatch):
+    """Strict mode used to abort the whole run over a retired, unranked name."""
+    _write_registry(
+        tmp_path,
+        [{"ticker": "GONE", "action": "acquisition", "announced_date": "2026-05-01", "effective_date": "2026-06-01"}],
+    )
+    rows = _series("FRESH", AS_OF) + _series("GONE", "2026-05-31")
+    _run(tmp_path, rows, ["FRESH", "GONE"], caplog, strict=True, monkeypatch=monkeypatch)  # must not raise

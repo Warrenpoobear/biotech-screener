@@ -117,11 +117,14 @@ def sample_holdings_snapshots() -> Dict[str, Dict[str, Any]]:
             "holdings": {
                 "current": {
                     "0001263508": {"value_kusd": 150000, "quarter_end": "2025-09-30"},  # Baker Bros
-                    "0001346824": {"value_kusd": 200000, "quarter_end": "2025-09-30"},  # RA Capital
+                    "0001009258": {
+                        "value_kusd": 200000,
+                        "quarter_end": "2025-09-30",
+                    },  # Deerfield (RA Capital retired 2026-11-01)
                 },
                 "prior": {
                     "0001263508": {"value_kusd": 100000, "quarter_end": "2025-06-30"},  # +50%
-                    "0001346824": {"value_kusd": 180000, "quarter_end": "2025-06-30"},  # +11%
+                    "0001009258": {"value_kusd": 180000, "quarter_end": "2025-06-30"},  # +11%
                 },
             },
         },
@@ -132,7 +135,10 @@ def sample_holdings_snapshots() -> Dict[str, Dict[str, Any]]:
                 },
                 "prior": {
                     "0000909661": {"value_kusd": 500000, "quarter_end": "2025-06-30"},  # -40%
-                    "0001167483": {"value_kusd": 100000, "quarter_end": "2025-06-30"},  # Deerfield - exited
+                    "0001167483": {
+                        "value_kusd": 100000,
+                        "quarter_end": "2025-06-30",
+                    },  # unregistered CIK (-> Manager_7483) - exited
                 },
             },
         },
@@ -326,11 +332,11 @@ class TestSmartMoneyPositionChanges:
         assert "BETA" in result
         assert "GAMA" in result
 
-        # ACME: Baker Bros +50% = INCREASE, RA Capital +11% = INCREASE
+        # ACME: Baker Bros +50% = INCREASE, Deerfield +11% = INCREASE
         # FIX: position_changes keyed by full holder name from elite_managers registry
         acme_changes = result["ACME"]["position_changes"]
         assert acme_changes.get("Baker Bros Advisors") == "INCREASE"
-        assert acme_changes.get("RA Capital Management") == "INCREASE"
+        assert acme_changes.get("Deerfield Management") == "INCREASE"
 
         # BETA: 0000909661 (Farallon) -40% = DECREASE, 0001167483 (unregistered) exited = EXIT
         beta_changes = result["BETA"]["position_changes"]
@@ -353,7 +359,7 @@ class TestSmartMoneyPositionChanges:
         # FIX: holder_tiers keyed by full name from elite_managers registry
         acme_tiers = result["ACME"]["holder_tiers"]
         assert acme_tiers["Baker Bros Advisors"] == 1
-        assert acme_tiers["RA Capital Management"] == 1
+        assert acme_tiers["Deerfield Management"] == 1
 
     def test_coinvest_overlap_count(self, sample_holdings_snapshots: Dict):
         """Test coinvest overlap count is correct."""

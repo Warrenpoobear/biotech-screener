@@ -416,16 +416,58 @@ def find_snapshots(
     idx = all_dates.index(current_name)
     for candidate in all_dates[idx + 1 :]:
         candidate_path = snapshot_dir / candidate
-        if is_snapshot_degraded(candidate_path):
-            continue  # skip degraded — don't use as baseline
-        rankings_csv = candidate_path / "rankings.csv"
-        if not rankings_csv.exists():
-            continue
-        with open(rankings_csv, "r") as f:
-            header = f.readline().strip()
-        if "tier_dev" in header.split(","):
+        if _is_valid_delta_baseline(candidate_path):
             return current_path, candidate_path
     return current_path, None
+
+
+def _is_valid_delta_baseline(candidate_path: Path) -> bool:
+    """True if a snapshot dir can serve as the delta prior (auto mode).
+
+    Rejects degraded snapshots and any whose rankings.csv lacks tier_dev.
+    """
+    if is_snapshot_degraded(candidate_path):
+        return False
+    rankings_csv = candidate_path / "rankings.csv"
+    if not rankings_csv.exists():
+        return False
+    with open(rankings_csv, "r") as f:
+        header = f.readline().strip()
+    return "tier_dev" in header.split(",")
+
+
+def find_prior_snapshot(
+    snapshot_dir: Path,
+    current_date: str,
+    prior_date: Optional[str] = None,
+) -> Optional[Path]:
+    """Locate a prior snapshot in a directory that need NOT contain current_date.
+
+    Production writes the current snapshot into a per-run staging directory
+    while every earlier snapshot lives in the promoted snapshots root, so
+    ``find_snapshots`` (which requires both in one directory) can never find
+    a prior there. Same selection rules as ``find_snapshots``: an explicit
+    ``prior_date`` must exist; auto mode takes the newest date strictly before
+    ``current_date`` that passes ``_is_valid_delta_baseline``.
+    """
+    if not snapshot_dir.is_dir():
+        return None
+    date_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    all_dates = sorted(
+        [d.name for d in snapshot_dir.iterdir() if d.is_dir() and date_re.match(d.name)],
+        reverse=True,
+    )
+    if prior_date is not None:
+        if prior_date.lower() == "none" or prior_date not in all_dates:
+            return None
+        return snapshot_dir / prior_date
+    for candidate in all_dates:
+        if candidate >= current_date:
+            continue
+        candidate_path = snapshot_dir / candidate
+        if _is_valid_delta_baseline(candidate_path):
+            return candidate_path
+    return None
 
 
 def diagnose_missing_prior(snapshot_dir: Path, current_date: str) -> str:
@@ -449,10 +491,13 @@ def diagnose_missing_prior(snapshot_dir: Path, current_date: str) -> str:
         lines.append("  REASON: no date-matching directories present")
         return "\n".join(lines)
     if current_date not in date_dirs:
-        lines.append(f"  REASON: current {current_date} not in date_dirs " f"(newest 5: {date_dirs[:5]})")
-        return "\n".join(lines)
-    idx = date_dirs.index(current_date)
-    candidates = date_dirs[idx + 1 :]
+        # Expected for a promoted-history root searched by find_prior_snapshot
+        # (current lives in a staging dir); still walk the older candidates.
+        lines.append(f"  NOTE: current {current_date} not in date_dirs " f"(newest 5: {date_dirs[:5]})")
+        candidates = [d for d in date_dirs if d < current_date]
+    else:
+        idx = date_dirs.index(current_date)
+        candidates = date_dirs[idx + 1 :]
     if not candidates:
         lines.append("  REASON: no date directories older than current")
         return "\n".join(lines)

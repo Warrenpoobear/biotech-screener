@@ -1,5 +1,7 @@
 # Backtest Framework
 
+> **Deprecated 2026-11-13 (market-cap look-ahead).** The "+2.34pp/mo, t = 2.57" backtest, the Checklist v2 bundle result and the regime split quoted in this file were computed on history that read today's market cap on every past date. They are not evidence. With point-in-time market data the Top-30 shows +0.68 pt/period net of 50 bps (t = 1.47). Record: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+
 **Status:** DRAFT / NOT ACTIVE
 **Created:** 2026-05-18
 
@@ -59,7 +61,7 @@ The True PIT backtest uses net-of-cost returns. Cost model components:
 | Market impact | `backtest/cost_model.py` | Volume-based impact model |
 | Turnover | Measured from portfolio changes | Monthly rebalance frequency |
 
-**Production evidence (net-of-cost):** +2.34pp/mo, t = 2.57, 69% hit rate, 67 monthly periods (Jun 2020 - Apr 2026).
+**Production evidence (net-of-cost):** +2.34pp/mo, t = 2.57, 69% hit rate, 67 monthly periods (Jun 2020 - Apr 2026). *(Deprecated 2026-11-13: market-cap look-ahead.)*
 
 ### Rule 5: Regime Conditioning
 
