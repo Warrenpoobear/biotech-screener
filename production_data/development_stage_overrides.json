@@ -9,43 +9,50 @@
       "stage": "commercial",
       "evidence": "Ryoncil (remestemcel-L) FDA-approved 2024-12-18 for steroid-refractory acute graft-versus-host disease in pediatric patients. Internal source module_4_lead_phase reports phase_3 (stale).",
       "added_by": "spec_068_audit_2026-04-28",
-      "review_by": "2026-07-28"
+      "review_by": "2026-07-28",
+      "effective_from": "2026-04-28"
     },
     "VCEL": {
       "stage": "commercial",
       "evidence": "MACI (autologous cultured chondrocytes) and Epicel commercial. financial_records.json Revenue=$276M, FY2025. Internal source module_4_lead_phase reports approved (one bucket below commercial).",
       "added_by": "spec_068_audit_2026-04-28",
-      "review_by": "2026-07-28"
+      "review_by": "2026-07-28",
+      "effective_from": "2026-04-28"
     },
     "HALO": {
       "stage": "commercial",
       "evidence": "ENHANZE drug delivery platform commercial; multiple partnered marketed products. financial_records.json Revenue=$1.4B, FY2025. Internal source module_4_lead_phase reports approved (one bucket below commercial).",
       "added_by": "spec_068_audit_2026-04-28",
-      "review_by": "2026-07-28"
+      "review_by": "2026-07-28",
+      "effective_from": "2026-04-28"
     },
     "MLYS": {
       "stage": "nda_bla",
       "evidence": "Lorundrostat NDA submission per pdufa_dates_extracted.json (PDUFA pending). Internal source module_4_lead_phase reports phase_3 (stale).",
       "added_by": "spec_068_audit_2026-04-28",
-      "review_by": "2026-07-28"
+      "review_by": "2026-07-28",
+      "effective_from": "2026-04-28"
     },
     "INSM": {
       "stage": "commercial",
       "evidence": "Brensocatib (BRINSUPRI) FDA-approved 2025-08-12 for non-cystic fibrosis bronchiectasis (NDA 217673). Commercially launched in US, EU, UK, and Japan (MHLW approval Aug 2026, Japan launch Oct 2026). Q3 2026 global BRINSUPRI revenue grew 29% QoQ. Source: FDA approval letter; Insmed Q3 2026 earnings 2026-10-29. Internal source module_4_lead_phase reports phase_3 (stale — references pre-approval trial records).",
       "added_by": "operator_review_2026-11-07",
-      "review_by": "2027-02-07"
+      "review_by": "2027-02-07",
+      "effective_from": "2026-11-07"
     },
     "IMCR": {
       "stage": "commercial",
       "evidence": "KIMMTRAK (tebentafusp-tebn) FDA-approved for HLA-A*02:01+ metastatic uveal melanoma; launched in 30+ markets. Q3 2026 net sales $102M; YTD 2026 net sales $325M (+10% YoY). Source: Immunocore Q3 2026 earnings 2026-11-07. Internal source module_4_lead_phase reports phase_3 (stale — KIMMTRAK approval not reflected; active Phase 3 trials TEBE-AM and ATOM are expansion indications).",
       "added_by": "operator_review_2026-11-07",
-      "review_by": "2027-02-07"
+      "review_by": "2027-02-07",
+      "effective_from": "2026-11-07"
     },
     "ANRO": {
       "stage": "phase_2",
       "evidence": "Alto Neuroscience has no approved products. Stage classifier picked up two PHASE4/WITHDRAWN ClinicalTrials.gov trials (Duloxetine and Sertraline EEG studies, withdrawn 2023) that predate company formation — these are not Alto products. Lead program ALTO-207 (pramipexole + ondansetron) is in Phase 2b (PACE-1, NCT not on trial_records for this ticker), with topline data guided 2H 2027. Phase 3 initiation planned early 2027. Source: Alto Neuroscience Q2 2026 10-Q 2026-08-11; Sep 2026 corporate deck.",
       "added_by": "operator_review_2026-11-07",
-      "review_by": "2027-02-07"
+      "review_by": "2027-02-07",
+      "effective_from": "2026-11-07"
     }
   }
 }

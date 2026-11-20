@@ -662,37 +662,68 @@ def _normalize_phase_to_development_stage(phase) -> str:
 
 
 # Display-only manual overrides for the development_stage column (Spec 068).
-# Loaded once at import. Affects ONLY development_stage / development_stage_source;
-# does NOT mutate archetype, tier_commercial, stage_bucket, lead_program_phase,
-# scoring, ranker, selector, eligibility, EES, Event EV, Module 5 cohorts, or QA.
-def _load_development_stage_overrides() -> Dict[str, str]:
-    """Read production_data/development_stage_overrides.json -> {ticker: stage}.
+# Loaded inside the run for that run's as_of_date. Affects ONLY
+# development_stage / development_stage_source; does NOT mutate archetype,
+# tier_commercial, stage_bucket, lead_program_phase, scoring, ranker, selector,
+# eligibility, EES, Event EV, Module 5 cohorts, or QA.
+#
+# A row applies only when effective_from <= as_of_date. A row with no
+# effective_from is not applied: it has no point-in-time availability, and
+# applying it on every historical as_of would be look-ahead. The same rule
+# rejects catalyst overrides that lack source_filed_at.
+def _load_development_stage_overrides(
+    as_of_date: str,
+    path: Optional[Path] = None,
+) -> Tuple[Dict[str, str], List[Dict[str, str]]]:
+    """Read development_stage_overrides.json for this as_of_date.
 
-    Returns empty dict on missing file, malformed JSON, or unknown stage values.
-    Entries with stages outside DEVELOPMENT_STAGE_VALUES are silently dropped to
-    prevent invalid values from leaking into rankings.csv.
+    Returns (applied {ticker: stage}, skipped [{ticker, reason}, ...]).
+    Applied entries are those with a known stage and effective_from on or
+    before as_of_date. Missing file, malformed JSON, unknown stages, missing
+    or future effective_from, and malformed entries are skipped, not applied.
     """
-    p = Path(__file__).resolve().parent / "production_data" / "development_stage_overrides.json"
+    p = path or (Path(__file__).resolve().parent / "production_data" / "development_stage_overrides.json")
     if not p.exists():
-        return {}
+        return {}, []
     try:
         raw = json.loads(p.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return {}
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("development_stage overrides unreadable at %s: %s", p, exc)
+        return {}, [{"ticker": "*", "reason": "unreadable_file"}]
     entries = raw.get("entries", {}) if isinstance(raw, dict) else {}
     if not isinstance(entries, dict):
-        return {}
+        return {}, [{"ticker": "*", "reason": "malformed_file"}]
+    as_of = date.fromisoformat(as_of_date)
     out: Dict[str, str] = {}
-    for ticker, payload in entries.items():
+    skipped: List[Dict[str, str]] = []
+    for ticker, payload in sorted(entries.items(), key=lambda kv: str(kv[0]).upper()):
+        key = str(ticker).upper()
         if not isinstance(payload, dict):
+            skipped.append({"ticker": key, "reason": "malformed_entry"})
             continue
         stage = payload.get("stage")
-        if isinstance(stage, str) and stage in DEVELOPMENT_STAGE_VALUES:
-            out[str(ticker).upper()] = stage
-    return out
+        if not isinstance(stage, str) or stage not in DEVELOPMENT_STAGE_VALUES:
+            skipped.append({"ticker": key, "reason": "invalid_stage"})
+            continue
+        raw_from = payload.get("effective_from")
+        if not isinstance(raw_from, str) or not raw_from.strip():
+            skipped.append({"ticker": key, "reason": "missing_effective_from"})
+            continue
+        try:
+            effective = date.fromisoformat(raw_from.strip()[:10])
+        except ValueError:
+            skipped.append({"ticker": key, "reason": "unparseable_effective_from"})
+            continue
+        if effective > as_of:
+            skipped.append({"ticker": key, "reason": "effective_from_after_as_of"})
+            continue
+        out[key] = stage
+    return out, skipped
 
 
-_DEVELOPMENT_STAGE_OVERRIDES: Dict[str, str] = _load_development_stage_overrides()
+# Empty at import. save_validation_snapshot loads the file for the run's as_of_date
+# and passes that map in. Tests may still monkeypatch this fallback.
+_DEVELOPMENT_STAGE_OVERRIDES: Dict[str, str] = {}
 
 
 def _classify_cohort_churn_severity(churn_pct: float, threshold_pct: float = 10.0) -> str:
@@ -867,7 +898,11 @@ def _annotate_cohort_membership_streaks(
         row["cohort_membership_streak"] = streak
 
 
-def _derive_development_stage(row: Dict[str, Any], m4_lead_phase) -> Tuple[str, str, str]:
+def _derive_development_stage(
+    row: Dict[str, Any],
+    m4_lead_phase,
+    overrides: Optional[Dict[str, str]] = None,
+) -> Tuple[str, str, str]:
     """
     Display-only derivation of (development_stage, source, lead_program_phase_raw).
 
@@ -882,6 +917,8 @@ def _derive_development_stage(row: Dict[str, Any], m4_lead_phase) -> Tuple[str, 
     Override map (Spec 068, Lane 1) is display-only and consulted first. It does
     NOT mutate archetype, tier_commercial, lead_program_phase, scoring, ranker,
     selector, eligibility, EES, Event EV, Module 5 cohorts, or QA gates.
+    ``overrides`` is the map loaded for this run's as_of_date. When omitted, the
+    module fallback is used so tests can monkeypatch it.
 
     Never reads composite_score / final_score / actionable_rank / clinical_score
     inputs; never writes anywhere except the returned tuple.
@@ -892,8 +929,9 @@ def _derive_development_stage(row: Dict[str, Any], m4_lead_phase) -> Tuple[str, 
     raw_prog = str(row.get("lead_program_phase") or "").strip()
 
     ticker = str(row.get("ticker") or "").upper()
-    if ticker in _DEVELOPMENT_STAGE_OVERRIDES:
-        return (_DEVELOPMENT_STAGE_OVERRIDES[ticker], "override", raw_m4 or raw_prog)
+    table = _DEVELOPMENT_STAGE_OVERRIDES if overrides is None else overrides
+    if ticker in table:
+        return (table[ticker], "override", raw_m4 or raw_prog)
 
     if archetype.startswith("commercial_"):
         return ("commercial", "archetype", raw_m4 or raw_prog)
@@ -1510,25 +1548,49 @@ def _load_manager_registry(data_dir: Path = None) -> Dict[str, Dict]:
     return {}
 
 
-def _refresh_coinvest_filing_age(coinvest_signals: Dict[str, Any], as_of_date: str) -> None:
+def _refresh_coinvest_filing_age(coinvest_signals: Dict[str, Any], as_of_date: str) -> List[str]:
     """Recompute filing age in a pre-built coinvest_signals.json as of this run.
 
     The builder records days_since_latest_filing relative to its own build
     date, so a file built once and reused would report a frozen age.  Entries
     carrying latest_filed_at (builder >= 1.1.0) get their age and recency
-    state recomputed in place; legacy entries are left as built.
+    state recomputed in place; legacy entries with no latest_filed_at are
+    left as built.
+
+    A latest_filed_at after as_of_date is look-ahead. Those signals are
+    removed, the same rule the holdings fallback applies per holder
+    (filed_at > ref_date is excluded). Clamping the age at 0 left the
+    future filing in the file and marked it fresh.
     """
     as_of = date.fromisoformat(as_of_date)
-    for sig in coinvest_signals.values():
-        filed_str = sig.get("latest_filed_at") if isinstance(sig, dict) else None
+    dropped: List[str] = []
+    for ticker in list(coinvest_signals.keys()):
+        sig = coinvest_signals.get(ticker)
+        if not isinstance(sig, dict):
+            continue
+        filed_str = sig.get("latest_filed_at")
         if not filed_str:
             continue
         try:
-            age = max(0, (as_of - date.fromisoformat(filed_str)).days)
+            filed = date.fromisoformat(str(filed_str)[:10])
         except (ValueError, TypeError):
             continue
+        if filed > as_of:
+            dropped.append(str(ticker))
+            del coinvest_signals[ticker]
+            continue
+        age = (as_of - filed).days
         sig["days_since_latest_filing"] = age
         sig["coinvest_recency_state"] = "fresh" if age <= 90 else "stale"
+    dropped.sort()
+    if dropped:
+        logger.warning(
+            "Coinvest PIT: dropped %d prebuilt signal(s) with latest_filed_at after %s: %s",
+            len(dropped),
+            as_of_date,
+            ", ".join(dropped[:15]),
+        )
+    return dropped
 
 
 def _convert_holdings_to_coinvest(
@@ -1977,18 +2039,20 @@ _STRICT_PRICE_STALENESS = os.getenv("BIOTECH_STRICT_PRICE_STALENESS", "0").strip
     "yes",
     "on",
 }
-"""Detection-only by default.  Set ``BIOTECH_STRICT_PRICE_STALENESS=1`` to make
-ALERT-level staleness abort the run instead of logging.  Left off so this guard
-cannot change production behaviour on its own."""
+"""Default: a scored name whose last close is more than PRICE_STALENESS_ALERT_DAYS
+behind as_of_date is excluded from the run and recorded on the manifest.
+Set ``BIOTECH_STRICT_PRICE_STALENESS=1`` to abort the run instead of excluding."""
 
 
 def _dead_tickers_as_of(data_dir: Path, as_of_date: str) -> Set[str]:
     """Tickers dead (acquisition / delisted / bankruptcy) on or before as_of_date.
 
     Reads ``corporate_actions.json`` from the run's own data dir only, so a run
-    checks against the registry it scores with (no fallback to the repo copy:
-    a data dir without a registry keeps the check unchanged). Fail-open: any
-    error returns an empty set.
+    checks against the registry it scores with (no fallback to the repo copy).
+    A missing file is an empty registry, the same rule as ``load_actions`` and
+    the universe-maintenance cross-check added in PR #579. A file that is
+    present but cannot be read fails closed: an empty set would score acquired
+    names as if the registry had said they were alive.
     """
     _path = Path(data_dir) / "corporate_actions.json"
     if not _path.exists():
@@ -2000,8 +2064,10 @@ def _dead_tickers_as_of(data_dir: Path, as_of_date: str) -> Set[str]:
         dead = {str(t).upper() for t in list_dead_tickers(as_of_date, _registry)}
         dead.update(str(t).upper() for t in list_retired_symbols(as_of_date, _registry))
         return dead
-    except Exception:  # pragma: no cover - fail-open
-        return set()
+    except Exception as exc:
+        raise RuntimeError(
+            f"corporate_actions.json at {_path} could not be read; refusing to score as if no ticker is dead"
+        ) from exc
 
 
 def _load_run_corporate_actions(data_dir: Path) -> Any:
@@ -2082,8 +2148,40 @@ def _observed_registry_split_factor(
     return factor
 
 
+def _exclude_stale_priced_securities(
+    m1_result: Dict[str, Any],
+    exclusions: List[Dict[str, Any]],
+) -> Tuple[List[str], List[Dict[str, Any]]]:
+    """Drop alert-stale names from Module 1's active set.
+
+    Returns ``(active tickers, exclusions that left the scored set)``. A name
+    in the exclusion list that Module 1 did not score is not recorded: it was
+    never going to be ranked. Does not rewrite ``excluded_securities``; the
+    manifest record is the audit of who was removed for staleness.
+    """
+    securities = list(m1_result.get("active_securities") or [])
+    by_ticker = {str(e.get("ticker") or "").upper(): e for e in exclusions if e.get("ticker")}
+    if not by_ticker:
+        return [s.get("ticker") for s in securities if s.get("ticker")], []
+    kept: List[Dict[str, Any]] = []
+    applied: List[Dict[str, Any]] = []
+    for sec in securities:
+        ticker = str(sec.get("ticker") or "").upper()
+        if ticker in by_ticker:
+            applied.append(dict(by_ticker[ticker]))
+            continue
+        kept.append(sec)
+    m1_result["active_securities"] = kept
+    applied.sort(key=lambda e: e["ticker"])
+    return [s.get("ticker") for s in kept if s.get("ticker")], applied
+
+
 def compute_momentum_from_price_history(
-    price_history_path: Path, as_of_date: str, market_data_by_ticker: Dict[str, Dict], xbi_ticker: str = "XBI"
+    price_history_path: Path,
+    as_of_date: str,
+    market_data_by_ticker: Dict[str, Dict],
+    xbi_ticker: str = "XBI",
+    staleness_exclusions: Optional[List[Dict[str, Any]]] = None,
 ) -> int:
     """
     Compute momentum returns from price_history.csv and inject into market_data.
@@ -2139,14 +2237,18 @@ def compute_momentum_from_price_history(
 
     logger.info(f"Loaded price history for {len(prices_by_ticker)} tickers")
 
+    # Names whose last close is past the alert threshold. Filled below; the
+    # enrichment loop must not write momentum from those closes.
+    _severe_names: Set[str] = set()
+
     # Staleness check — PER-TICKER, scoped to the tickers actually being scored.
     #
     # The previous form took max() over every ticker's latest date and compared that
     # single global maximum against as_of_date.  That is structurally blind: one fresh
     # ticker pins the maximum at as_of_date, so the check reports 0 days stale no
-    # matter how far behind every other ticker is.  Those names still get
-    # return_20d/60d/120d computed from their stale closes just below, and are then
-    # ranked against fresh peers.
+    # matter how far behind every other ticker is.  Those names used to get
+    # return_20d/60d/120d from their stale closes and were ranked against fresh
+    # peers. Alert-level gaps are now excluded from the scored set.
     #
     # Observed 2026-08-05: the global check saw 0 days stale while CPRX (15d),
     # ESPR (21d) and SGMO (35d) were being scored off stale closes — their yfinance
@@ -2194,9 +2296,34 @@ def compute_momentum_from_price_history(
             _emit = logger.error if _severe else logger.warning
             _emit(
                 f"  Price history stale for {len(_stale)}/{len(_gaps)} scored tickers "
-                f"(as_of {as_of_date}) — momentum returns for these are computed from "
-                f"stale closes and ranked against fresh peers. Worst: {_detail}{_more}"
+                f"(as_of {as_of_date}). Names more than {PRICE_STALENESS_ALERT_DAYS} days "
+                f"behind are excluded from scoring; milder gaps are still scored. "
+                f"Worst: {_detail}{_more}"
             )
+            _severe_names = {_t for _t, _, _ in _severe}
+            if staleness_exclusions is not None:
+                for _t, _d, _n in sorted(_severe, key=lambda _g: _g[0]):
+                    staleness_exclusions.append(
+                        {
+                            "ticker": _t,
+                            "last_close": _d.isoformat(),
+                            "gap_days": int(_n),
+                            "threshold_days": PRICE_STALENESS_ALERT_DAYS,
+                            "action": "excluded",
+                        }
+                    )
+            for _t in _severe_names:
+                _rec = market_data_by_ticker.get(_t)
+                if isinstance(_rec, dict):
+                    for _k in (
+                        "return_20d",
+                        "return_60d",
+                        "return_120d",
+                        "xbi_return_20d",
+                        "xbi_return_60d",
+                        "xbi_return_120d",
+                    ):
+                        _rec.pop(_k, None)
             if _STRICT_PRICE_STALENESS and _severe:
                 _names = ", ".join(
                     f"{_t}({_n}d)" for _t, _, _n in sorted(_severe, key=lambda _g: _g[2], reverse=True)[:15]
@@ -2204,7 +2331,7 @@ def compute_momentum_from_price_history(
                 raise RuntimeError(
                     f"Price history severely stale for {len(_severe)} scored ticker(s) "
                     f">{PRICE_STALENESS_ALERT_DAYS}d behind as_of_date {as_of_date}: {_names}. "
-                    f"Unset BIOTECH_STRICT_PRICE_STALENESS to downgrade this to a log line."
+                    f"Unset BIOTECH_STRICT_PRICE_STALENESS to exclude these names instead of aborting."
                 )
 
     # Sort each ticker's prices by date (most recent first for easy lookups)
@@ -2282,6 +2409,8 @@ def compute_momentum_from_price_history(
             continue
 
         ticker_upper = ticker.upper()
+        if ticker_upper in _severe_names:
+            continue
         return_20d = get_return(ticker_upper, 20)
         return_60d = get_return(ticker_upper, 60)
         return_120d = get_return(ticker_upper, 120)
@@ -7500,9 +7629,18 @@ def save_validation_snapshot(
     _m4_lead_phase_lookup = {
         s.get("ticker", ""): s.get("lead_phase", "") for s in (results.get("module_4_clinical", {}).get("scores") or [])
     }
+    _stage_overrides, _stage_skipped = _load_development_stage_overrides(as_of_date)
+    if _stage_skipped:
+        logger.warning(
+            "development_stage overrides not applied (%d): %s",
+            len(_stage_skipped),
+            "; ".join(f"{s['ticker']}:{s['reason']}" for s in _stage_skipped[:20]),
+        )
     for _row in csv_rows:
         _stage, _source, _raw_phase = _derive_development_stage(
-            _row, _m4_lead_phase_lookup.get(_row.get("ticker", ""), "")
+            _row,
+            _m4_lead_phase_lookup.get(_row.get("ticker", ""), ""),
+            overrides=_stage_overrides,
         )
         _row["development_stage"] = _stage
         _row["development_stage_source"] = _source
@@ -8926,6 +9064,8 @@ def save_validation_snapshot(
         "cache_refresh_rejected_sources": _cr["rejected_sources"],
         "cache_refresh_summary": _cr["summary"] or None,
         "pseudo_pit_version": 2 if results.get("run_metadata", {}).get("pit_mode", "off") != "off" else 1,
+        "price_staleness_exclusions": results.get("run_metadata", {}).get("price_staleness_exclusions") or [],
+        "development_stage_overrides_skipped": _stage_skipped,
     }
 
     # --- data_sources provenance (for anti-lookahead validation) ---
@@ -10707,11 +10847,13 @@ def run_screening_pipeline(
     # Compute momentum returns from price history
     # This enriches market_data_by_ticker with return_20d, return_60d, return_120d and XBI benchmarks
     price_history_path = data_dir / "price_history.csv"
+    price_staleness_exclusions: List[Dict[str, Any]] = []
     if price_history_path.exists() and market_data_by_ticker:
         momentum_enriched = compute_momentum_from_price_history(
             price_history_path=price_history_path,
             as_of_date=as_of_date,
             market_data_by_ticker=market_data_by_ticker,
+            staleness_exclusions=price_staleness_exclusions,
         )
         if momentum_enriched > 0:
             logger.info(f"  Momentum data computed for {momentum_enriched} tickers")
@@ -10746,7 +10888,9 @@ def run_screening_pipeline(
                 }
             else:
                 raise ValueError(f"coinvest_signals.json must be a dict or list, got {type(_raw).__name__}")
-            _refresh_coinvest_filing_age(coinvest_signals, as_of_date)
+            _future_coinvest = _refresh_coinvest_filing_age(coinvest_signals, as_of_date)
+            if _future_coinvest:
+                coinvest_audit_data["prebuilt_future_filings_dropped"] = _future_coinvest
         else:
             # Fallback: try loading holdings file and convert to coinvest format
             # Prefer holdings_detailed.json (dict format with conviction data) over holdings_snapshots.json (list format)
@@ -10988,8 +11132,16 @@ def run_screening_pipeline(
     # Validate Module 1 output schema
     validate_pipeline_handoff("module_1", "module_2", m1_result)
 
-    active_tickers = [s["ticker"] for s in m1_result["active_securities"]]
+    active_tickers, price_staleness_exclusions = _exclude_stale_priced_securities(m1_result, price_staleness_exclusions)
     logger.info(f"  Active: {len(active_tickers)}, Excluded: {len(m1_result['excluded_securities'])}")
+    if price_staleness_exclusions:
+        logger.error(
+            "Excluding %d scored name(s) whose last close is >%d days behind %s: %s",
+            len(price_staleness_exclusions),
+            PRICE_STALENESS_ALERT_DAYS,
+            as_of_date,
+            ", ".join(f"{e['ticker']}({e['gap_days']}d)" for e in price_staleness_exclusions[:15]),
+        )
     print(f"[timing] module_1: {__import__('time').time() - _t_m1:.2f}s", flush=True)
 
     # Module 2: Financial health
@@ -12184,6 +12336,7 @@ def run_screening_pipeline(
         "catalyst_mode": m3_result.get("catalyst_mode", "full"),
         # PIT audit + holdings schema for reproducibility
         "coinvest_audit": coinvest_audit_data if coinvest_audit_data else None,
+        "price_staleness_exclusions": price_staleness_exclusions,
         "holdings_detailed_schema": holdings_schema_data,
         # Conviction horizon overlay audit (Enhancement 12)
         "conviction_horizon_overlay_applied": (

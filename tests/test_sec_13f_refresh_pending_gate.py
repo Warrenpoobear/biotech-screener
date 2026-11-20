@@ -1,4 +1,4 @@
-"""WARN-only gate: newer 13F filings are waiting for a coinvest rebuild."""
+"""Gate: newer 13F filings waiting on a coinvest rebuild FAIL the run when most managers are ahead."""
 
 from __future__ import annotations
 
@@ -32,10 +32,10 @@ def test_gate_name_is_allowlisted():
     assert "sec_13f_refresh_pending" in GATE_ALLOWLIST
 
 
-def test_warns_when_most_managers_have_a_newer_quarter(tmp_path):
+def test_fails_when_most_managers_have_a_newer_quarter(tmp_path):
     kw = _setup(tmp_path, "2026-06-30", ["2026-09-30"] * 20 + ["2026-06-30"] * 10)
     gate = check_sec_13f_refresh_pending(AS_OF, **kw)
-    assert gate.status == "WARN"
+    assert gate.status == "FAIL"
     assert "20/30" in gate.detail and "2026-09-30" in gate.detail
     assert gate.value["managers_with_newer_filing"] == 20
 
@@ -69,6 +69,6 @@ def test_missing_cache_index_is_left_to_the_cache_gate(tmp_path):
     assert check_sec_13f_refresh_pending("2026-11-18", **kw).status == "PASS"
 
 
-def test_never_fails(tmp_path):
+def test_fails_when_every_manager_is_newer(tmp_path):
     kw = _setup(tmp_path, "2026-06-30", ["2027-12-31"] * 30)
-    assert check_sec_13f_refresh_pending(AS_OF, **kw).status != "FAIL"
+    assert check_sec_13f_refresh_pending(AS_OF, **kw).status == "FAIL"

@@ -365,12 +365,25 @@ class TestFilingAgeAtLoad:
         assert signals["AAAA"]["days_since_latest_filing"] == 168
         assert signals["AAAA"]["coinvest_recency_state"] == "stale"
 
-    def test_future_filing_never_yields_negative_age(self):
+    def test_future_filing_is_dropped(self):
+        """A prebuilt signal filed after as_of_date is look-ahead and must not score.
+
+        The old path clamped the age at 0, which left the filing in the file
+        and marked it fresh.
+        """
         from run_screen import _refresh_coinvest_filing_age
 
-        signals = {"AAAA": {"latest_filed_at": "2026-11-14", "days_since_latest_filing": 0}}
-        _refresh_coinvest_filing_age(signals, "2026-10-30")
-        assert signals["AAAA"]["days_since_latest_filing"] == 0
+        signals = {
+            "AAAA": {"latest_filed_at": "2026-11-14", "days_since_latest_filing": 0, "coinvest_recency_state": "fresh"},
+            "BBBB": {"latest_filed_at": "2026-08-14", "days_since_latest_filing": 7},
+            "period_of_report": "not-a-signal",
+        }
+        dropped = _refresh_coinvest_filing_age(signals, "2026-10-30")
+        assert dropped == ["AAAA"]
+        assert "AAAA" not in signals
+        assert signals["BBBB"]["days_since_latest_filing"] == 77
+        assert signals["BBBB"]["coinvest_recency_state"] == "fresh"
+        assert signals["period_of_report"] == "not-a-signal"
 
 
 # ===================================================================

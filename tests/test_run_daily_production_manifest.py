@@ -7,6 +7,7 @@ written with a FAIL record so ops/QA can see the state.
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -105,3 +106,35 @@ def test_manifest_tolerates_non_utf8_metadata(tmp_path, screen_proc):
         snapshot_date_dir=snap,
     )
     assert manifest["overall_status"] == "PASS"
+    assert manifest["price_staleness_exclusions"] == []
+
+
+def test_manifest_records_price_staleness_exclusions(tmp_path, screen_proc):
+    snap = tmp_path / "2026-11-20"
+    snap.mkdir()
+    (snap / "metadata.json").write_text(
+        json.dumps(
+            {
+                "price_staleness_exclusions": [
+                    {
+                        "ticker": "SGMO",
+                        "last_close": "2026-07-01",
+                        "gap_days": 35,
+                        "threshold_days": 10,
+                        "action": "excluded",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    manifest = build_run_manifest(
+        as_of_date="2026-11-20",
+        gate_results=[_GateStub()],
+        price_stats={},
+        screen_proc=screen_proc,
+        audit_proc=None,
+        config=_ConfigStub(),
+        snapshot_date_dir=snap,
+    )
+    assert manifest["price_staleness_exclusions"][0]["ticker"] == "SGMO"

@@ -1,7 +1,7 @@
 # Wake Robin DEM — Model Documentation
 
 **Version:** 1.7.2 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
-**Last updated:** 2026-11-20 (split confirmation window on momentum, drawdown, beta, and RSI. Tier 3 input fix. `model_hash` unchanged. Clock implication recorded; `oos_clock_start` not moved in the PR. See the 2026-11-20 entry below.)
+**Last updated:** 2026-11-20 (point-in-time and staleness fixes on model inputs: alert-stale prices are excluded from the scored set, prebuilt coinvest signals filed after `as_of_date` are dropped, and the 13F refresh gate FAILs when most managers' cached quarter is newer than `coinvest_signals.json`. Out-of-sample clock resets on merge. See `docs/governance/2026-11-20-pit-staleness-and-lookahead-fixes.md`. Same date: split confirmation window on momentum, drawdown, beta, and RSI, already on main via #722. `model_hash` unchanged. See the two 2026-11-20 entries below.)
 **Update before that:** 2026-11-18 (LVB sleeve backtest corrections — price source, survivorship, broader benchmarks, quarterly rebalance, and a later rebalance-calendar correction to the same figures; in-sample research record, **no model change**. AZN split-adjusted price fix, PR #712, merged 2026-11-18; operator ruling: data correction, no clock reset. See the 2026-11-18 entry below)
 **Prior to that:** 2026-11-17 (out-of-sample clock start recorded at 2026-11-17, PR #701; `snapshots_pit_v9` history rebuild written into `data/snapshots`, PR #698; research record — v9 backtests, roster range, portfolio construction and a 20-signal screen, **no model change**; ops fixes PRs #699, #700, #702. See the 2026-11-17 entries below)
 **Prior update:** 2026-11-15 (weekend of governance and research work; **no change to scoring, selection, order, sizing or eligibility except the operator-requested `de_vol_60d` input fix, PR #676, which lands before `oos_clock_start`**. Selector-only clock not yet started: dated drift override, `ast-v2` candidate hash `a9a430154568e242`, `ranker_mode` capture check, account Rule 4 at −10/−15 pp, protocol §4 fail and rollback rules. Low-risk sleeve shadow (PR #674, capture-only). Research history `data/snapshots_pit_v6` = v5 inputs + current code; backtests unchanged. Weekend signal research recorded as context only. See the 2026-11-15 entries below)
@@ -15,6 +15,16 @@ weights. See `production_data/ranker_v2_model.json` → `provenance` block for t
 stale selector/ranker prose with the already-active v1.14.0 configuration. The
 selector, ranker_v2 weights, eligibility rules, decision rulesets, and EW Top-30
 construction remain frozen; this document does not authorize behavior changes.
+
+---
+
+## Recent Update — 2026-11-20 (Point-in-Time Staleness and Look-Ahead Fixes — Input Change, Clock Reset)
+
+Classification: Tier 3. No ranker, selector, sizing, or `final_score` formula change. `model_hash a9a430154568e242` (`ast-v2`) and ruleset `8887576e` are unchanged. Memo: `docs/governance/2026-11-20-pit-staleness-and-lookahead-fixes.md`.
+
+An authorized bug fix during the NO_MODEL_CHANGE window. Merging resets the out-of-sample clock: `oos_clock_start` is the first promoted production run on the merged code, and mandate SM-20260629-001 restarts at 0/20. `CANDIDATE.json` is updated after that run, not in this change.
+
+What changes on a live run dated 2026-11-20, if prices are current and no coinvest filing is after that date: the scored set and coinvest inputs are unchanged. Catalyst overrides CELC, COGT, and IMCR still apply (all have `source_filed_at`). Development-stage overrides MESO, VCEL, HALO, MLYS, INSM, IMCR, and ANRO still apply (each now carries `effective_from` equal to the review date already on the row). The 13F refresh gate FAILs, and the snapshot is not promoted, when most roster managers in the cache have a newer quarter than the coinvest file.
 
 ---
 
