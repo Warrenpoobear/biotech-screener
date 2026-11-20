@@ -29,6 +29,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from common.atomic_io import atomic_append_line, atomic_write_text  # noqa: E402
+
 UNIVERSE_JSON = PROJECT_ROOT / "production_data" / "universe.json"
 AUDIT_LOG = PROJECT_ROOT / "production_data" / "universe_audit_log.jsonl"
 SNAPSHOTS_ROOT = PROJECT_ROOT / "data" / "snapshots"
@@ -52,13 +54,14 @@ def _load_universe() -> List[Dict]:
 
 
 def _save_universe(universe: List[Dict]) -> None:
-    UNIVERSE_JSON.write_text(json.dumps(universe, indent=2))
+    # Atomic replace: universe.json is hard-linked into staged PIT inputs and an
+    # in-place write would rewrite those too (see common/atomic_io.py).
+    atomic_write_text(UNIVERSE_JSON, json.dumps(universe, indent=2))
 
 
 def _append_audit_log(entry: Dict) -> None:
-    AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)
-    with AUDIT_LOG.open("a") as f:
-        f.write(json.dumps(entry) + "\n")
+    # Same hazard as _save_universe: append mode writes through hard links.
+    atomic_append_line(AUDIT_LOG, json.dumps(entry))
 
 
 def _now_iso() -> str:

@@ -218,16 +218,29 @@ class TestProductionRankerConfigExcludesOptions:
     def _run_screen_source(self) -> str:
         return _read(REPO_ROOT / "run_screen.py")
 
-    def test_default_ranker_mode_is_pairwise_minimal(self):
-        src = self._run_screen_source()
-        # run_screen.py:4020 — ranker_mode="pairwise_minimal" default kwarg
-        # in the main pipeline entrypoint signature.
-        assert 'ranker_mode="pairwise_minimal"' in src, (
-            "Default ranker_mode no longer 'pairwise_minimal' — this is the "
-            "switch that keeps live options fields (consumed by ranker_engine's "
-            "clinical_50 path) out of final_score. Changing this default "
-            "requires re-evaluating the options policy boundary."
+    def test_default_ranker_mode_keeps_options_out_of_final_score(self):
+        """The default mode must not route clinical_50 (the options-consuming ranker)
+        into final_score. Since 2026-11-13 the default is selector_only: final_score is
+        the selector score and no ranker output reaches it."""
+        from common.ranker_mode import DEFAULT_RANKER_MODE
+
+        assert DEFAULT_RANKER_MODE in ("selector_only", "pairwise_minimal"), (
+            "Default ranker_mode is no longer an options-free mode — clinical_50 consumes "
+            "live options fields. Changing this default requires re-evaluating the options "
+            "policy boundary."
         )
+        src = self._run_screen_source()
+        assert "ranker_mode: str = DEFAULT_RANKER_MODE" in src
+        assert "default=DEFAULT_RANKER_MODE" in src
+        assert 'ranker_mode="pairwise_minimal"' not in src and 'ranker_mode="clinical_50"' not in src
+
+    def test_selector_only_branch_never_reads_clinical50_results(self):
+        src = self._run_screen_source()
+        start = src.index('if ranker_mode == "selector_only":')
+        end = src.index('elif ranker_mode == "pairwise_minimal" and _rv2_ok:', start)
+        body = src[start:end]
+        assert "apply_selector_only_ranking(" in body
+        assert "_rnk_results" not in body and "_rr." not in body
 
     def test_production_ranker_v2_config_pins_minimal_v2(self):
         src = self._run_screen_source()
@@ -259,13 +272,13 @@ class TestProductionRankerConfigExcludesOptions:
         # confirm `_shadow_clinical50` exists as the only place `_rnk_results` is
         # consumed inside that specific branch's lexical region.
         assert "_shadow_clinical50" in src, "Expected shadow-logging dict _shadow_clinical50 not found"
-        assert 'if ranker_mode == "pairwise_minimal" and _rv2_ok:' in src
+        assert 'ranker_mode == "pairwise_minimal" and _rv2_ok:' in src
 
         # Within the pairwise_minimal production branch body, final_score is
         # assigned from _rv2 (ranker_v2_score), never from _rr (RankerResult/
         # clinical_50). We check the specific span between the branch's `if`
         # and its matching top-level `else:` for ranker_mode dispatch.
-        start = src.index('if ranker_mode == "pairwise_minimal" and _rv2_ok:')
+        start = src.index('ranker_mode == "pairwise_minimal" and _rv2_ok:')
         # The dispatch's else branch begins the clinical_50 PRODUCTION fallback;
         # bound our search window there.
         else_marker = "# --- PRODUCTION: clinical_50 (legacy / fallback) ---"

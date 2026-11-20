@@ -114,6 +114,12 @@ Quarter-over-quarter change in institutional holdings. Measures whether smart mo
 - Current production status: selector weight 0%, absent from the production 2-feature ranker
 - Historical audit showed positive within-cohort discrimination \(NW-t = +3.32\), but this is not active production behavior
 - When zeroed, selector runs on coinvest\_score\_z alone and ranker uses only `coinvest_score_z` + `financial_score`
+- **Blank vs. zero, 2026-11-12 (PR #635/#636):** a missing or unusable delta stays **blank** with `has_inst_delta="False"`. It is never a neutral 0.0. Causes:
+  - an unknown 13F filing period;
+  - a same-source prior;
+  - a manager-registry transition, handled by `run_screen.py::_apply_inst_registry_transition_guard`. Raw `inst_delta_*` counts are kept.
+
+  The IC dashboard skips blank dates. Do not impute 0 or count blanks as IC observations. Memo: `docs/governance/2026-11-04-missing-fields-clock-reset.md`.
 
 ---
 

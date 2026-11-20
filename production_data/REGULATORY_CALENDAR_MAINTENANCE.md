@@ -77,6 +77,7 @@ python3 -m pytest tests/test_regulatory_calendar.py -v --override-ini="addopts="
 - Mark stale entries via `notes` (e.g., "PDUFA date passed; decision: approved")
 - To update a date, add a new entry with the corrected date and a later `as_of_disclosed_at`
 - **Dedupe key**: `(ticker, pdufa_date, event_type)` — duplicates are flagged as warnings
+- **Caveat (2026-11-15):** no reader honours `status` — every row is loaded as a scheduled event. A future date that has been superseded (review extended) or resolved early (approved before the target) is still read as upcoming. Until a loader supports supersession, remove the superseded row or move an early approval to its action date, and keep the old date in `notes` / `original_target_date`. See `docs/governance/2026-11-15-regulatory-calendar-refresh.md` §4.
 
 ## Sources for new entries
 

@@ -100,8 +100,10 @@
     "source": "SEC_8K",
     "source_url": "https://www.businesswire.com/news/home/20260129109846/en/Summit-Therapeutics-Announces-U.S.-FDA-Acceptance-of-Biologics-License-Application-BLA-Seeking-Approval-for-Ivonescimab-in-Combination-with-Chemotherapy-in-Treatment-of-Patients-with-EGFRm-NSCLC-Post-TKI-Therapy",
     "as_of_disclosed_at": "2026-01-29",
-    "status": "pending",
-    "notes": "BLA accepted with Fast Track designation, based on Phase III HARMONi trial. PDUFA November 14, 2026. Verified from Summit press release 2026-01-29."
+    "status": "resolved",
+    "notes": "BLA accepted with Fast Track designation, based on Phase III HARMONi trial. PDUFA November 14, 2026. Verified from Summit press release 2026-01-29. | 2026-11-15: FDA issued a complete response letter; Summit announced it 2026-11-15 (no letter date given). Sources: company release https://smmttx.com/news/press-releases/news-details/2026/Summit-Therapeutics-Provides-Update-Regarding-Ivonescimab-Biologics-License-Application/default.aspx ; STAT 2026-11-15.",
+    "status_as_of": "2026-11-15",
+    "outcome": "CRL"
   },
   {
     "ticker": "ARGX",
@@ -216,19 +218,6 @@
     "notes": "Verified 2026-11-03 against filing text (accession 0000875320-26-000256)."
   },
   {
-    "ticker": "EXEL",
-    "drug_name": "zanzalintinib",
-    "indication": "previously treated mCRC",
-    "pdufa_date": "2026-12-03",
-    "event_type": "PDUFA",
-    "submission_type": "NDA",
-    "confidence": "HIGH",
-    "source": "SEC_8K",
-    "source_url": "https://www.sec.gov/Archives/edgar/data/939767/000093976726000096/exel20260630exhibit991.htm",
-    "as_of_disclosed_at": "2026-08-05",
-    "notes": "Verified 2026-11-03 against filing text (accession 0000939767-26-000096)."
-  },
-  {
     "ticker": "VNDA",
     "drug_name": "Quimilza (imsidolimab)",
     "indication": "generalized pustular psoriasis",
@@ -244,7 +233,7 @@
   {
     "ticker": "PRAX",
     "drug_name": "relutrigine",
-    "indication": "",
+    "indication": "SCN2A and SCN8A developmental and epileptic encephalopathies",
     "pdufa_date": "2026-12-27",
     "event_type": "PDUFA",
     "submission_type": "NDA",
@@ -284,27 +273,35 @@
     "ticker": "NUVB",
     "drug_name": "IBTROZI (taletrectinib)",
     "indication": "ROS1+ NSCLC label update",
-    "pdufa_date": "2027-01-04",
+    "pdufa_date": "2026-09-17",
     "event_type": "PDUFA",
     "submission_type": "sNDA",
     "confidence": "HIGH",
     "source": "SEC_8K",
     "source_url": "https://www.sec.gov/Archives/edgar/data/1811063/000119312526336751/d261840dex991.htm",
     "as_of_disclosed_at": "2026-08-06",
-    "notes": "Verified 2026-11-03 against filing text (accession 0001193125-26-336751)."
+    "notes": "Verified 2026-11-03 against filing text (accession 0001193125-26-336751). | 2026-11-15: FDA approved the sNDA in September 2026, four months before the 2027-01-04 target (company Q3 release 2026-11-04; OncLive 2026-09-17). Exact FDA action day not stated; 2026-09-17 is the announcement date. Source: https://www.onclive.com/view/fda-clears-snda-for-taletrectinib-with-updated-dor-data-in-ros1-nsclc. pdufa_date moved from 2027-01-04 to the approval announcement date so the event is not read as upcoming; for as-of dates between 2026-08-06 and the approval this places the event earlier than was then known.",
+    "original_target_date": "2027-01-04",
+    "status": "resolved",
+    "status_as_of": "2026-11-15",
+    "outcome": "approved_early"
   },
   {
     "ticker": "IBRX",
     "drug_name": "ANKTIVA + BCG",
     "indication": "NMIBC papillary without CIS",
-    "pdufa_date": "2027-01-06",
+    "pdufa_date": "2026-10-14",
     "event_type": "PDUFA",
     "submission_type": "sBLA",
     "confidence": "HIGH",
     "source": "SEC_8K",
     "source_url": "https://www.sec.gov/Archives/edgar/data/1326110/000132611026000077/ibrx-202684x8kexhibit991.htm",
     "as_of_disclosed_at": "2026-08-04",
-    "notes": "Verified 2026-11-03 against filing text (accession 0001326110-26-000077)."
+    "notes": "Verified 2026-11-03 against filing text (accession 0001326110-26-000077). | 2026-11-15: FDA expanded the ANKTIVA label to BCG-unresponsive NMIBC with papillary-only tumors; announced in the company 8-K exhibit dated 2026-10-14. FDA action day not stated separately. Source: https://www.sec.gov/Archives/edgar/data/0001326110/000119312526421820/d188887dex991.htm. pdufa_date moved from 2027-01-06 to the approval announcement date so the event is not read as upcoming; for as-of dates between 2026-08-04 and the approval this places the event earlier than was then known.",
+    "original_target_date": "2027-01-06",
+    "status": "resolved",
+    "status_as_of": "2026-11-15",
+    "outcome": "approved_early"
   },
   {
     "ticker": "DYN",
@@ -387,7 +384,7 @@
   {
     "ticker": "ARGX",
     "drug_name": "efgartigimod",
-    "indication": "(indication not stated in source table)",
+    "indication": "Pediatric generalized myasthenia gravis (inferred from the Q3 2026 business update; medium confidence)",
     "pdufa_date": "2027-02-18",
     "event_type": "PDUFA",
     "submission_type": "sBLA",
@@ -395,7 +392,7 @@
     "source": "SEC_6K",
     "source_url": "https://www.sec.gov/Archives/edgar/data/1697862/000169786226000034/argxq326.htm",
     "as_of_disclosed_at": "2026-10-22",
-    "notes": "Verified 2026-11-03 against filing text (accession 0001697862-26-000034). CHECK indication; canonical 2026-06-07 entry is a past, separate event"
+    "notes": "Verified 2026-11-03 against filing text (accession 0001697862-26-000034). Indication set 2026-11-15 from the Q3 2026 business update (pediatric gMG sBLA, priority review); not stated in one primary sentence with the date; canonical 2026-06-07 entry is a past, separate event"
   },
   {
     "ticker": "ARQT",
@@ -460,7 +457,7 @@
     "source": "SEC_8K",
     "source_url": "https://www.sec.gov/Archives/edgar/data/939767/000093976726000114/exel20260930exhibit991.htm",
     "as_of_disclosed_at": "2026-10-29",
-    "notes": "Verified 2026-11-03 against filing text (accession 0000939767-26-000114). second application per Q3 release"
+    "notes": "Verified 2026-11-03 against filing text (accession 0000939767-26-000114). Same NDA as the former 2026-12-03 entry (removed 2026-11-15): in September 2026 the FDA extended the review by three months after a major amendment (10-Q for the quarter ended 2026-10-02, accession 0000939767-26-000116)"
   },
   {
     "ticker": "NTLA",
@@ -578,5 +575,217 @@
     "source_url": "https://www.sec.gov/Archives/edgar/data/1953926/000110465926095437/tm2622871d1_ex99-1.htm",
     "as_of_disclosed_at": "2026-08-13",
     "notes": "Verified 2026-11-03 against filing text (accession 0001104659-26-095437)."
+  },
+  {
+    "ticker": "CYTK",
+    "drug_name": "Aficamten - (MAPLE-HCM)",
+    "indication": "Obstructive HCM: MAPLE-HCM label update to the approved MYQORZO (aficamten) label",
+    "pdufa_date": "2026-11-14",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1061983/000119312526206360/cytk-ex99_1.htm",
+    "as_of_disclosed_at": "2026-05-05",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (CYTOKINETICS INC 8-K 2026-05-05). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.pdufa.bio/pdufa/CYTK-aficamten. | 2026-11-15: target date (Saturday 11-14) passed; no FDA outcome announced by the company or in news as of 2026-11-15.",
+    "status": "pending",
+    "status_as_of": "2026-11-15"
+  },
+  {
+    "ticker": "TEVA",
+    "drug_name": "BXCL501 (dexmedetomidine sublingual film; IGALMI) at-home use sNDA",
+    "indication": "Agitation associated with bipolar I or II…",
+    "pdufa_date": "2026-11-14",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1720893/000110465926061773/tm2614679d1_ex99-1.htm",
+    "as_of_disclosed_at": "2026-05-15",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (BioXcel Therapeutics, Inc. 8-K 2026-05-15). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.pdufa.bio/pdufa/TEVA-igalmi. | 2026-11-15: target date (Saturday 11-14) passed; no FDA outcome announced by the company or in news as of 2026-11-15. Teva acquired BioXcel's neuroscience assets including IGALMI and this pending sNDA in a Chapter 11 sale (court approval 2026-10-21, closing announced by Teva 2026-10-27). The date comes from BioXcel's 8-K; Teva's own releases do not restate it.",
+    "status": "pending",
+    "status_as_of": "2026-11-15"
+  },
+  {
+    "ticker": "SVRA",
+    "drug_name": "MOLBREEVI (Molgradex)",
+    "indication": "Autoimmune pulmonary alveolar proteinosis…",
+    "pdufa_date": "2026-11-22",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1160308/000119312526219371/svra-20260331.htm",
+    "as_of_disclosed_at": "2026-05-12",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (Savara Inc 10-Q 2026-05-12). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.pdufa.bio/pdufa/SVRA-molbreevi."
+  },
+  {
+    "ticker": "SNY",
+    "drug_name": "venglustat",
+    "indication": "type 3 Gaucher disease (GD3)",
+    "pdufa_date": "2026-11-25",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1121404/000119312526260613/d123884dex991.htm",
+    "as_of_disclosed_at": "2026-06-08",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (Sanofi 6-K 2026-06-08). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.biopharmawatch.com/blog/fda-calendar-q4-2026-key-pdufa-dates-upcoming-approvals."
+  },
+  {
+    "ticker": "MLYS",
+    "drug_name": "Lorundrostat",
+    "indication": "Uncontrolled hypertension (uHTN) or resistant…",
+    "pdufa_date": "2026-12-22",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1933414/000193341426000112/mlys2026q28kex991.htm",
+    "as_of_disclosed_at": "2026-08-11",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (Mineralys Therapeutics, Inc. 8-K 2026-08-11). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.pdufa.bio/pdufa/MLYS-lorundrostat."
+  },
+  {
+    "ticker": "GILD",
+    "drug_name": "Anito-cel (anitocabtagene autoleucel)",
+    "indication": "",
+    "pdufa_date": "2026-12-23",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "PRESS_RELEASE",
+    "source_url": "https://www.gilead.com/news/news-details/2026/gilead-sciences-to-acquire-arcellx-to-maximize-long-term-potential-of-anito-cel",
+    "as_of_disclosed_at": "2026-11-11",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (company press release). as_of_disclosed_at = filing/announcement date of that source unknown -> kept ingest date 2026-11-11. Discovered via https://www.pdufa.bio/pdufa/GILD-anito-cel."
+  },
+  {
+    "ticker": "AGIO",
+    "drug_name": "Mitapivat (PYRUKYND)",
+    "indication": "Sickle cell disease (sNDA; goal date extended from 2026-11-01 after a major amendment)",
+    "pdufa_date": "2027-02-01",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "PRESS_RELEASE",
+    "source_url": "https://www.globenewswire.com/news-release/2026/10/30/3392151/31990/en/agios-announces-new-pdufa-goal-date-of-february-1-2027-for-mitapivat-sickle-cell-disease-snda-company-is-launch-ready-and-in-labeling-discussions-with-fda.html",
+    "as_of_disclosed_at": "2026-10-30",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (Agios press release 2026-10-30 (GlobeNewswire)). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.pdufa.bio/pdufa/AGIO-mitapivat."
+  },
+  {
+    "ticker": "VSTM",
+    "drug_name": "AVMAPKI FAKZYNJA CO-PACK blister pack (NDA)",
+    "indication": "KRAS-mutated recurrent low-grade serous ovarian cancer (new blister-pack presentation of the approved combination)",
+    "pdufa_date": "2027-02-07",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1526119/000110465926123386/tm2628982d2_ex99-1.htm",
+    "as_of_disclosed_at": "2026-11-05",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (Verastem 8-K 2026-11-05 (EX-99.1, Q3 2026 results presentation)). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.pdufa.bio/pdufa/VSTM-avmapki-fakzynja-blister-pack."
+  },
+  {
+    "ticker": "JAZZ",
+    "drug_name": "Cannabidiol oral capsule formulation (NDA)",
+    "indication": "CNS/Neurology",
+    "pdufa_date": "2027-04-16",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1232524/000123252426000056/a3q26earningsrelease.htm",
+    "as_of_disclosed_at": "2026-11-02",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (Jazz 8-K 2026-11-02 (EX-99.1, Q3 2026 results)). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.pdufa.bio/pdufa/JAZZ-cannabidiol-capsule."
+  },
+  {
+    "ticker": "QURE",
+    "drug_name": "Ifezuntirgene inilparvovec (AMT-130) - Huntington's disease",
+    "indication": "Neurology",
+    "pdufa_date": "2027-05-01",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1590560/000110465926120915/tm2628699d1_ex99-1.htm",
+    "as_of_disclosed_at": "2026-11-02",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (uniQure 8-K 2026-11-02 (EX-99.1, BLA accepted, priority review)). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.pdufa.bio/pdufa/QURE-amt-130."
+  },
+  {
+    "ticker": "BMRN",
+    "drug_name": "VOXZOGO (vosoritide) - hypochondroplasia (sNDA)",
+    "indication": "Rare Disease",
+    "pdufa_date": "2027-05-30",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1048477/000104847726000021/earningsrelease-2nov26ex991.htm",
+    "as_of_disclosed_at": "2026-11-02",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (BioMarin 8-K 2026-11-02 (EX-99.1, Q3 2026 results)). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.pdufa.bio/pdufa/BMRN-voxzogo-hypochondroplasia."
+  },
+  {
+    "ticker": "URGN",
+    "drug_name": "UGN-103 (mitomycin)",
+    "indication": "Oncology",
+    "pdufa_date": "2027-06-14",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1668243/000143774926034769/ex_1036873.htm",
+    "as_of_disclosed_at": "2026-11-04",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (UroGen 8-K 2026-11-04 (EX-99.1, Q3 2026 results)). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.pdufa.bio/pdufa/URGN-ugn-103."
+  },
+  {
+    "ticker": "COGT",
+    "drug_name": "Bezuclastinib - advanced systemic mastocytosis (AdvSM)",
+    "indication": "Oncology",
+    "pdufa_date": "2027-06-29",
+    "event_type": "PDUFA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1622229/000119312526449926/cogt-ex99_1.htm",
+    "as_of_disclosed_at": "2026-11-05",
+    "notes": "Verified 2026-11-11: PDUFA date string present in primary source (Cogent 8-K 2026-11-05 (EX-99.1, Q3 2026 results)). as_of_disclosed_at = filing/announcement date of that source. Discovered via https://www.pdufa.bio/pdufa/COGT-bezuclastinib-advsm."
+  },
+  {
+    "ticker": "AQST",
+    "drug_name": "Libervant (diazepam) buccal film",
+    "indication": "Seizure clusters, patients 12 years and older (final action on a tentatively approved NDA)",
+    "pdufa_date": "2027-03-23",
+    "event_type": "PDUFA",
+    "submission_type": "NDA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/0001398733/000139873326000073/q32026-ex991earningsrelease.htm",
+    "as_of_disclosed_at": "2026-11-03",
+    "notes": "Verified 2026-11-15 against the source text. Final approval \"is subject to expiration of the orphan drug exclusivity for Valtoco® on January 10, 2027, and final FDA action, with a PDUFA goal date of March 23, 2027.\" Q3 2026 release (8-K Ex. 99.1, 2026-11-03). A final action after an exclusivity expiry, not a fresh review."
+  },
+  {
+    "ticker": "AQST",
+    "drug_name": "Libervant (diazepam) buccal film",
+    "indication": "Seizure clusters, label expansion to patients 6 to 11 years",
+    "pdufa_date": "2027-03-29",
+    "event_type": "PDUFA",
+    "submission_type": "NDA",
+    "confidence": "HIGH",
+    "source": "SEC_8K",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/0001398733/000139873326000073/q32026-ex991earningsrelease.htm",
+    "as_of_disclosed_at": "2026-11-03",
+    "notes": "Verified 2026-11-15 against the source text. \"The Company has also submitted a Type 9 NDA seeking to add patients six to eleven years of age to the label, with a PDUFA goal date of March 29, 2027.\" Q3 2026 release (8-K Ex. 99.1, 2026-11-03). The date may have been public earlier (around the Eton licensing news of about 2026-10-14); the 8-K date is used as the conservative disclosure date. ETON (licensee) cites the same date and is not added."
+  },
+  {
+    "ticker": "UTHR",
+    "drug_name": "ralinepag",
+    "indication": "Pulmonary arterial hypertension",
+    "pdufa_date": "2027-06-24",
+    "event_type": "PDUFA",
+    "submission_type": "NDA",
+    "confidence": "HIGH",
+    "source": "PRESS_RELEASE",
+    "source_url": "https://ir.unither.com/press-releases/2026/08-24-2026-120021913",
+    "as_of_disclosed_at": "2026-08-24",
+    "notes": "Verified 2026-11-15 against the source text. \"The FDA has set a Prescription Drug User Fee Act target action date of June 24, 2027.\" Company release; information stated as of 2026-08-24. Missed by the 2026-11-03 refresh."
+  },
+  {
+    "ticker": "CELC",
+    "drug_name": "REVTORPYK (gedatolisib)",
+    "indication": "HR+/HER2- PIK3CA-mutant locally advanced or metastatic breast cancer after at least one line of endocrine therapy",
+    "pdufa_date": "2027-06-25",
+    "event_type": "PDUFA",
+    "submission_type": "sNDA",
+    "confidence": "HIGH",
+    "source": "PRESS_RELEASE",
+    "source_url": "https://www.globenewswire.com/news-release/2026/11/9/3398409/0/en/celcuity-announces-fda-acceptance-of-snda-for-revtorpyk-gedatolisib-for-hr-her2-pik3ca-mutant-locally-advanced-or-metastatic-breast-cancer.html",
+    "as_of_disclosed_at": "2026-11-09",
+    "notes": "Verified 2026-11-15 against the source text. \"The FDA assigned a Prescription Drug User Fee Act (“PDUFA”) goal date of June 25, 2027.\" Release dated 2026-11-09 (GlobeNewswire), read via a verbatim reproduction because the newswire blocked access; no 8-K filed for it."
   }
 ]

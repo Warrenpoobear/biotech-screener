@@ -485,6 +485,51 @@ class TestCheckIcHealthCarriedMuffle:
         assert "SIGNAL_WARN: inst_delta_z" in result.anomalies
 
 
+def _write_ic_history(hb_mod, rows: list[dict]) -> None:
+    path = hb_mod.ARTIFACTS_DIR / "ic_dashboard" / "history.jsonl"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+
+
+class TestCheckIcHealthTrendDecay:
+    """history.jsonl rows are flat (``<signal>_ic``), as build_ic_dashboard writes them.
+
+    The check used to read ``row["signals"][name]["ic"]``, a shape no row has, so
+    TREND_DECAY could never fire. Rows from before the 2026-11-12 sign fix (no
+    ``actionable_rank_ic`` key) carry the inverted score_rank_pct sign and are skipped.
+    """
+
+    DS = "2026-11-20"
+    SIGNALS = {"actionable_rank": {"health": "HEALTHY"}, "coinvest_score_z": {"health": "HEALTHY"}}
+
+    def _post_fix(self, d, ar, cv=0.10):
+        return {"date": d, "actionable_rank_ic": ar, "coinvest_score_z_ic": cv}
+
+    def test_three_drops_in_flat_rows_flag_trend_decay(self, hb_mod):
+        _write_dashboard(hb_mod, self.DS, self.SIGNALS, attention="LOW")
+        ics = [0.20, 0.15, 0.12, 0.08, 0.05]
+        _write_ic_history(hb_mod, [self._post_fix(f"2026-11-1{i}", ic) for i, ic in enumerate(ics)])
+        result = hb_mod.check_ic_health(date.fromisoformat(self.DS))
+        assert any(a.startswith("TREND_DECAY: actionable_rank") for a in result.anomalies)
+        assert not any("coinvest_score_z" in a for a in result.anomalies)
+        assert result.status == "WARN"
+
+    def test_no_decay_when_ic_rising(self, hb_mod):
+        _write_dashboard(hb_mod, self.DS, self.SIGNALS, attention="LOW")
+        ics = [0.05, 0.08, 0.12, 0.15, 0.20]
+        _write_ic_history(hb_mod, [self._post_fix(f"2026-11-1{i}", ic) for i, ic in enumerate(ics)])
+        result = hb_mod.check_ic_health(date.fromisoformat(self.DS))
+        assert not any(a.startswith("TREND_DECAY") for a in result.anomalies)
+
+    def test_pre_sign_fix_rows_are_ignored(self, hb_mod):
+        _write_dashboard(hb_mod, self.DS, {"score_rank_pct": {"health": "HEALTHY"}}, attention="LOW")
+        pre = [{"date": f"2026-11-0{i}", "score_rank_pct_ic": ic} for i, ic in enumerate([0.20, 0.18, 0.17, 0.16])]
+        post = [{"date": "2026-11-12", "score_rank_pct_ic": -0.03, "actionable_rank_ic": 0.02}]
+        _write_ic_history(hb_mod, pre + post)
+        result = hb_mod.check_ic_health(date.fromisoformat(self.DS))
+        assert not any(a.startswith("TREND_DECAY") for a in result.anomalies)
+
+
 class TestNeedsLLMCarriedSuppression:
     """P1 #1 — needs_llm should suppress LLM escalation when ALL anomalies
     are [CARRIED]-tagged. Mixed (some [CARRIED], some unmuffled) still

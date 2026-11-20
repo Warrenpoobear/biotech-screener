@@ -26,6 +26,7 @@ Usage:
 
 import hashlib
 import json
+import re
 import time
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -290,6 +291,55 @@ class SEC13FFetcher:
             largest = xml_files[0]
             return f"{self.EDGAR_BASE}/Archives/edgar/data/{cik_int}/{accession}/{largest['name']}"
 
+        return None
+
+    def fetch_amendment_type(self, filing: Filing13F) -> Optional[str]:
+        """Return the cover-page ``amendmentType`` of a 13F-HR/A, upper-cased.
+
+        13F amendments come in two kinds: "RESTATEMENT" replaces the whole
+        information table, while "NEW HOLDINGS" only adds positions to the
+        original. Returns None when the cover page cannot be read (the caller
+        then keeps the old behaviour and treats the amendment as a restatement).
+        Cached in ``cache_dir`` as ``<filing_id>_amendment_type.txt``.
+        """
+        if "/A" not in (filing.form_type or ""):
+            return None
+        cache_file = self.cache_dir / f"{filing.filing_id}_amendment_type.txt" if self.cache_dir else None
+        if cache_file is not None and cache_file.exists():
+            return cache_file.read_text(encoding="utf-8").strip() or None
+        if not HAS_REQUESTS:
+            return None
+
+        cik_int = int(filing.cik)
+        base = f"{self.EDGAR_BASE}/Archives/edgar/data/{cik_int}/{filing.accession_number}"
+        urls = [f"{base}/primary_doc.xml"]
+        try:
+            time.sleep(0.1)
+            resp = self.session.get(f"{base}/index.json", timeout=30)
+            resp.raise_for_status()
+            for item in resp.json().get("directory", {}).get("item", []):
+                name = item.get("name", "")
+                if name.lower().endswith(".xml") and "infotable" not in name.lower():
+                    url = f"{base}/{name}"
+                    if url not in urls:
+                        urls.append(url)
+        except Exception as e:
+            print(f"Error fetching filing index for amendment type ({filing.filing_id}): {e}")
+
+        for url in urls:
+            try:
+                time.sleep(0.1)
+                resp = self.session.get(url, timeout=30)
+                if resp.status_code != 200:
+                    continue
+                m = re.search(r"<(?:\w+:)?amendmentType>\s*([^<]+?)\s*</", resp.text)
+                if m:
+                    value = m.group(1).strip().upper()
+                    if cache_file is not None:
+                        cache_file.write_text(value, encoding="utf-8")
+                    return value
+            except Exception as e:
+                print(f"Error fetching cover page {url}: {e}")
         return None
 
     def fetch_info_table_xml(self, filing: Filing13F) -> Optional[str]:

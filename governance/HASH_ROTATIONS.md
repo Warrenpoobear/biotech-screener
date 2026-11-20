@@ -61,3 +61,57 @@ Memo: `docs/governance/2026-11-03-pdufa-calendar-refresh.md`
 - **Reason:** the curated calendar had not been edited since 2026-06-22. This adds 32 dates, each verified against its source SEC filing.
 - **Expected downstream impact:** on 2026-10-30, Top-30 overlap 29/30 (TVTX out, PVLA in) and headwind exposure 59.9% → 56.6%.
 - **Reviewer:** operator (Darren Schulz). PR open; merge pending.
+
+## 2026-11-13 — production order switched to selector-only (operator-authorized; behavior change WITHOUT a hash change)
+
+Memo: `docs/governance/2026-11-13-selector-only-production-switch.md`
+
+| Surface | Old | New |
+|---|---|---|
+| `run_screen.py --ranker-mode` default | `pairwise_minimal` | `selector_only` |
+| Candidate `model_hash` (ast-v1) | `827c35a9ed3ee6e1` | **unchanged** — the hash covers `ranker_engine.py`, `selector_engine.py`, `decision_engine.py`; the ranker dispatch is in `run_screen.py` |
+| `production_data/ranker_v2_model.json` | unchanged | unchanged (scored as a shadow only) |
+| Ruleset | `8887576e` | unchanged |
+
+- **Effective date:** first production run on the merged code; `oos_clock_start` to be recorded in `artifacts/forward_validation/CANDIDATE.json` after that run.
+- **Affected surface:** `final_score`, `actionable_rank`, `ranker_active` and every Top-30 from that run. On 2026-11-12 inputs the Top-30 overlap with the ranker order is 17/30.
+- **Reason:** the ranker's `financial_score` weight was fitted on history with market-cap look-ahead; with point-in-time market cap the selector order alone did better (+0.57 pt/period, t = 1.63, 79 periods). Checklist v2 was not run; operator decision.
+- **Expected downstream impact:** every `rankings.csv` hash differs from what the ranker would have produced; the forward-validation mandate restarts at 0/20; `ranker_shadow_comparison.json` reports `production_ranker=selector_only`, `shadow_ranker=pairwise_minimal`; the selector-only shadow ledger gains a `ranker` basket.
+- **Hash gap:** `model_hash_match` will keep passing across this change. Until the hash covers the dispatch, `CANDIDATE.json.ranker_mode` is the record of which order is the candidate.
+- **Reviewer:** operator — authorized in session 2026-11-13.
+
+
+## 2026-11-15 — candidate `model_hash` scheme widened to `ast-v2` (operator-authorized; no behavior change)
+
+Memo: `docs/governance/2026-11-15-pre-clock-decisions.md` §5
+
+| Surface | Old | New |
+|---|---|---|
+| Candidate `model_hash` | `827c35a9ed3ee6e1` (`ast-v1`) | `a9a430154568e242` (`ast-v2`) |
+| Files fingerprinted whole | `ranker_engine.py`, `selector_engine.py`, `decision_engine.py` | the same three, plus `common/ranker_mode.py` |
+| Assignments fingerprinted | none | `A4_SELECTOR_CONFIG` in `run_screen.py` |
+| Ruleset | `8887576e` | unchanged |
+
+- **Effective date:** 2026-11-15, before `oos_clock_start` for the selector-only order is recorded.
+- **Affected surface:** `tools/run_forward_validation.py` (`compute_model_hash`, `HASH_SCHEME`) and `artifacts/forward_validation/CANDIDATE.json`. No scoring file changes.
+- **Reason:** under `ast-v1` the production selector's block weights (`A4_SELECTOR_CONFIG`, in `run_screen.py`) and the order mode (`common/ranker_mode.py`) were outside the hash. The 2026-11-13 switch to selector-only changed the Top-30 with the hash unchanged.
+- **Equivalence:** the three engine files are byte-identical; `compute_model_hash_ast_v1()` still returns `827c35a9ed3ee6e1`. The new value records the same model with a wider fingerprint. It is not a new freeze.
+- **Expected downstream impact:** captures from the first run on this code carry the new hash and match the re-registered candidate. Earlier captures keep `827c35a9ed3ee6e1`; they predate the selector-only clock start and are history only.
+- **Still outside the hash:** the rest of `run_screen.py` (including which config object is passed to the selector), the ruleset file (tracked separately as `ruleset_hash`), and input data.
+- **Reviewer:** operator — authorized in session 2026-11-15 ("do all fixes").
+
+## 2026-11-15 — curated regulatory calendar refresh (operator-authorized)
+
+Memo: `docs/governance/2026-11-15-regulatory-calendar-refresh.md`
+
+| Surface | Old hash (sha256[:16]) | New hash (sha256[:16]) |
+|---|---|---|
+| `production_data/pdufa_dates.json` | `97881a3c775f56b6` (57 entries) | `0c27ab5dc48bf4a7` (59 entries) |
+| Candidate `model_hash` (ast-v2) | unchanged | unchanged |
+| Ruleset | `8887576e` | unchanged |
+
+- **Effective date:** the first production run after merge; intended before `oos_clock_start` for the selector-only order is recorded.
+- **Affected surface:** catalyst / regulatory calendar inputs (`event_ledger.py`, regulatory-calendar gate, catalyst block of the selector).
+- **Reason:** outcomes since the 2026-11-03 refresh (SMMT CRL; NUVB and IBRX approved early), a superseded EXEL date, a partner duplicate (ANAB), four missing dates (AQST ×2, UTHR, CELC), and missing indications.
+- **Expected downstream impact:** not measured with a full screen. Catalyst timing changes for SMMT, CYTK, TEVA, NUVB, IBRX, EXEL, ANAB, AQST, UTHR and CELC.
+- **Reviewer:** operator — authorized in session 2026-11-15.

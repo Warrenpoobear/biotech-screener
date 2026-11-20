@@ -6,6 +6,11 @@ import json
 import subprocess
 import sys
 
+import pytest
+
+# The MCP server needs the optional `mcp` package, which CI does not install.
+pytest.importorskip("mcp")
+
 
 def _request(req_id: int, method: str, params: dict | None = None) -> str:
     return json.dumps(

@@ -20,6 +20,7 @@ import requests
 # Single authority for CT.gov date granularity. Reused rather than
 # reimplemented so this collector and data_sources/ctgov_client.py cannot drift
 # apart on what "MONTH" means. See Spec 114.
+from common.atomic_io import atomic_write_json
 from data_sources.ctgov_client import date_provenance_shadow
 
 # =============================================================================
@@ -38,6 +39,7 @@ TICKER_TO_SPONSORS = {
     "ABUS": ["Arbutus Biopharma", "Arbutus Biopharma Corporation"],
     "ABVX": ["Abivax", "Abivax SA"],
     "ACAD": ["ACADIA Pharmaceuticals", "ACADIA Pharmaceuticals Inc."],
+    "ACHV": ["Achieve Life Sciences"],
     "ACIU": ["AC Immune", "AC Immune SA"],
     "ACLX": ["Arcellx", "Arcellx, Inc."],
     "ACRS": ["Aclaris Therapeutics", "Aclaris Therapeutics, Inc."],
@@ -83,6 +85,7 @@ TICKER_TO_SPONSORS = {
     "AUTL": ["Autolus Therapeutics", "Autolus Therapeutics plc"],
     "AVBP": ["ArriVent BioPharma", "ArriVent BioPharma, Inc."],
     "AVIR": ["Atea Pharmaceuticals", "Atea Pharmaceuticals, Inc."],
+    "AVTX": ["Avalo Therapeutics"],
     "AVXL": ["Anavex Life Sciences", "Anavex Life Sciences Corp."],
     "AXSM": ["Axsome Therapeutics"],
     "AZN": ["Astrazeneca", "Astrazeneca PLC"],
@@ -186,6 +189,7 @@ TICKER_TO_SPONSORS = {
     "IDYA": ["IDEAYA Biosciences", "IDEAYA Biosciences, Inc."],
     "IKT": ["Inhibikase Therapeutics", "Inhibikase Therapeutics, Inc."],
     "IMCR": ["Immunocore"],
+    "IMMX": ["Immix Biopharma"],
     "IMMP": ["Immutep"],
     "IMRX": ["Immuneering", "Immuneering Corporation"],
     "IMTX": ["Immatics", "Immatics N.V."],
@@ -235,6 +239,7 @@ TICKER_TO_SPONSORS = {
     "MLTX": ["MoonLake Immunotherapeutics"],
     "MLYS": ["Mineralys Therapeutics", "Mineralys Therapeutics, Inc."],
     "MNKD": ["MannKind", "MannKind Corporation"],
+    "MNPR": ["Monopar Therapeutics"],
     "MNMD": ["Mind Medicine (MindMed)", "Mind Medicine (MindMed) Inc."],
     "MRK": ["Merck Sharp & Dohme LLC", "Merck Sharp & Dohme"],
     "MRNA": ["ModernaTX, Inc.", "Moderna"],
@@ -319,8 +324,19 @@ TICKER_TO_SPONSORS = {
     "SRRK": ["Scholar Rock"],
     "SRZN": ["Surrozen"],
     "STOK": ["Stoke Therapeutics", "Stoke Therapeutics, Inc."],
+    "STTK": ["Shattuck Labs", "Shattuck Labs, Inc."],
     "STRO": ["Sutro Biopharma", "Sutro Biopharma, Inc."],
-    "SUPN": ["Supernus Pharmaceuticals", "Supernus Pharmaceuticals, Inc."],
+    # Indivior acquired Supernus Pharmaceuticals and renamed itself Supernus, Inc.;
+    # ticker INDV -> SUPN on 2026-11-03 (corporate_actions.json). The combined
+    # company sponsors both legacy pipelines.
+    "SUPN": [
+        "Supernus Pharmaceuticals",
+        "Supernus Pharmaceuticals, Inc.",
+        "Supernus, Inc.",
+        "Indivior",
+        "Indivior PLC",
+        "Indivior Inc.",
+    ],
     "SVRA": ["Savara", "Savara, Inc."],
     "SYRE": ["Spyre Therapeutics", "Spyre Therapeutics, Inc."],
     "TARA": ["Protara Therapeutics", "Protara Therapeutics, Inc."],
@@ -388,30 +404,36 @@ def _normalize_date(raw: str | None) -> str | None:
         return None
 
 
-def _fetch_trials_page(base_url: str, params: dict, max_retries: int = 3) -> tuple:
-    """Fetch a single page of trials. Returns (studies, next_page_token, success)."""
+class CtgovFetchError(RuntimeError):
+    """A CT.gov request failed after retries. Never the same as "no trials"."""
+
+
+# Statuses that are transient on CT.gov (rate limiting, edge/WAF throttling,
+# server errors). 2026-11-12: these came back mid-collection for random tickers
+# and were read as "0 trials".
+_RETRYABLE_STATUSES = {403, 408, 429, 500, 502, 503, 504}
+
+
+def _fetch_trials_page(base_url: str, params: dict, max_retries: int = 5) -> tuple:
+    """Fetch a single page of trials. Returns (studies, next_page_token, success).
+
+    success=False means the request failed after retries; callers must not treat
+    the empty study list as a real "no results".
+    """
     for attempt in range(max_retries):
         try:
             response = requests.get(base_url, params=params, timeout=30)
-
-            if response.status_code == 200:
-                data = response.json()
-                studies = data.get("studies", [])
-                next_token = data.get("nextPageToken")
-                return studies, next_token, True
-
-            elif response.status_code == 429:
-                wait_time = 5 * (attempt + 1)
-                time.sleep(wait_time)
-                continue
-            else:
-                return [], None, False
-
         except Exception:
-            if attempt < max_retries - 1:
-                time.sleep(2)
-                continue
+            response = None
+
+        if response is not None and response.status_code == 200:
+            data = response.json()
+            return data.get("studies", []), data.get("nextPageToken"), True
+
+        retryable = response is None or response.status_code in _RETRYABLE_STATUSES
+        if not retryable or attempt == max_retries - 1:
             return [], None, False
+        time.sleep(min(5 * (attempt + 1), 30))
 
     return [], None, False
 
@@ -460,18 +482,37 @@ def _parse_study(study: dict, ticker: str) -> dict:
     return record
 
 
+# CT.gov API v2 sort applied before the per-query result cap (see _fetch_all_trials).
+_CTGOV_CAP_SORT = "StudyFirstPostDate:desc"
+_CAP_TIEBREAK_EXTRA = 100  # one extra page to settle ties on the boundary date
+
+
 def _fetch_all_trials(query_params: dict, ticker: str, max_retries: int = 3, max_results: int = 1000) -> List[Dict]:
     """Fetch all pages of trials for a given set of query params."""
     base_url = "https://clinicaltrials.gov/api/v2/studies"
     all_trials = []
     next_page_token = None
 
-    while len(all_trials) < max_results:
-        params = {**query_params, "format": "json", "pageSize": 100}
+    # Server-side sort so the cap keeps a DETERMINISTIC subset: the newest
+    # max_results trials by first-posted date. Without it CT.gov's page order is
+    # unstable, and for sponsors above the cap (AZN ~4.8k trials, AMGN, SNY,
+    # LAB, DNA, CAI ...) each run fetched a different arbitrary 1,000 — ~5.6k
+    # trial IDs "disappeared" and ~5.9k "appeared" per collection, flooding
+    # diff-based catalyst detection (2026-08-06 and 2026-11-11). NCTId is not a
+    # sortable field in API v2. One extra page is fetched so ties on the
+    # boundary date are resolved by the local (first_posted, nct_id) sort below.
+    fetch_limit = max_results + _CAP_TIEBREAK_EXTRA
+    while len(all_trials) < fetch_limit:
+        params = {**query_params, "format": "json", "pageSize": 100, "sort": _CTGOV_CAP_SORT}
         if next_page_token:
             params["pageToken"] = next_page_token
 
-        studies, next_page_token, success = _fetch_trials_page(base_url, params, max_retries)
+        studies, next_page_token, success = _fetch_trials_page(base_url, params)
+
+        if not success:
+            # A failed page is not the end of the results: raising keeps a
+            # transient error from reading as "0 trials" or a truncated list.
+            raise CtgovFetchError(f"{ticker}: CT.gov page fetch failed after retries ({query_params})")
 
         if not studies:
             break
@@ -479,19 +520,19 @@ def _fetch_all_trials(query_params: dict, ticker: str, max_retries: int = 3, max
         for study in studies:
             all_trials.append(_parse_study(study, ticker))
 
-        if not success or not next_page_token:
+        if not next_page_token:
             break
 
         time.sleep(0.2)
 
-    # Sort before truncating. CT.gov pagination order is not stable, so an
-    # unsorted cap hands back a different arbitrary subset on every run for any
-    # sponsor with more than max_results trials (AMGN, ABBV, AZN, GILD, SNY and
-    # 5 others sit exactly at the cap). That breaks the "identical inputs ->
-    # byte-identical outputs" rule and makes a golden replay baseline
-    # unreproducible for those names.
-    all_trials.sort(key=lambda t: t.get("nct_id") or "")
-    return all_trials[:max_results]
+    # Deterministic cap: newest first-posted first, NCT ID as tiebreak, then
+    # truncate. (Sorting alone was not enough: the loop used to stop at
+    # max_results, so WHICH trials were fetched was already arbitrary.) Output
+    # stays in nct_id order so files diff cleanly run to run.
+    all_trials.sort(key=lambda t: (t.get("first_posted") or "", t.get("nct_id") or ""), reverse=True)
+    kept = all_trials[:max_results]
+    kept.sort(key=lambda t: t.get("nct_id") or "")
+    return kept
 
 
 def get_trials_for_ticker(ticker: str, max_retries: int = 3, max_results: int = 1000) -> List[Dict]:
@@ -578,27 +619,9 @@ def collect_all_trials(universe_file: Path, output_file: Path, allow_coverage_dr
     print("COLLECTING TRIALS")
     print(f"{'='*80}\n")
 
-    for i, ticker in enumerate(tickers, 1):
-        print(f"[{i:3d}/{len(tickers)}] {ticker:6s}", end=" ", flush=True)
-
-        trials = get_trials_for_ticker(ticker)
-
-        if trials:
-            all_trials.extend(trials)
-            stats["with_trials"] += 1
-            stats["total_trials"] += len(trials)
-            print(f"✅ {len(trials):2d} trials")
-        else:
-            print("   No trials")
-
-        time.sleep(0.5)  # Be nice to API
-
-        if i % 50 == 0:
-            print(f"\n  Progress: {i}/{len(tickers)} ({i/len(tickers)*100:.1f}%)")
-            print(f"  Trials found: {stats['total_trials']}\n")
-
-    # Coverage guard: refuse to overwrite good data with a regressed fetch.
-    # Runs BEFORE the write, so a bad run leaves the previous cache intact.
+    # Previous output: used by the coverage guard and to carry forward tickers
+    # whose fetch failed (a failed request is not "no trials").
+    previous: List[Dict] = []
     if output_file.exists():
         try:
             with open(output_file) as f:
@@ -607,6 +630,60 @@ def collect_all_trials(universe_file: Path, output_file: Path, allow_coverage_dr
             print(f"\n⚠️  Could not read existing {output_file} for coverage check: {e}")
             previous = []
 
+    def _record(ticker: str, trials: List[Dict]) -> None:
+        if trials:
+            all_trials.extend(trials)
+            stats["with_trials"] += 1
+            stats["total_trials"] += len(trials)
+            print(f"✅ {len(trials):2d} trials")
+        else:
+            print("   No trials")
+
+    failed: List[str] = []
+    for i, ticker in enumerate(tickers, 1):
+        print(f"[{i:3d}/{len(tickers)}] {ticker:6s}", end=" ", flush=True)
+
+        try:
+            _record(ticker, get_trials_for_ticker(ticker))
+        except CtgovFetchError as e:
+            failed.append(ticker)
+            print(f"⚠️  fetch failed ({e}) — will retry")
+
+        time.sleep(0.5)  # Be nice to API
+
+        if i % 50 == 0:
+            print(f"\n  Progress: {i}/{len(tickers)} ({i/len(tickers)*100:.1f}%)")
+            print(f"  Trials found: {stats['total_trials']}\n")
+
+    # Second pass for tickers whose requests failed, after a pause.
+    still_failed: List[str] = []
+    if failed:
+        print(f"\nRetrying {len(failed)} ticker(s) whose fetch failed: {', '.join(failed)}")
+        time.sleep(30)
+        for ticker in failed:
+            print(f"[retry] {ticker:6s}", end=" ", flush=True)
+            try:
+                _record(ticker, get_trials_for_ticker(ticker))
+            except CtgovFetchError as e:
+                still_failed.append(ticker)
+                print(f"❌ fetch failed again ({e})")
+            time.sleep(2)
+
+    # Still failing: keep the previous records for those tickers, loudly. Their
+    # collected_at dates stay as they were, so the carry-forward is traceable.
+    if still_failed:
+        print(f"\n{'='*80}")
+        print(f"⚠️  FETCH FAILED for {len(still_failed)} ticker(s) after retry — carrying forward previous records")
+        print(f"{'='*80}")
+        for ticker in still_failed:
+            carried = [r for r in previous if r.get("ticker") == ticker]
+            all_trials.extend(carried)
+            print(f"  {ticker:6s} carried forward {len(carried)} previous trial(s)")
+        print(f"{'='*80}\n")
+
+    # Coverage guard: refuse to overwrite good data with a regressed fetch.
+    # Runs BEFORE the write, so a bad run leaves the previous cache intact.
+    if previous:
         regressions = detect_coverage_regressions(previous, all_trials)
         if regressions:
             lost = sum(regressions.values())
@@ -629,9 +706,9 @@ def collect_all_trials(universe_file: Path, output_file: Path, allow_coverage_dr
             print("⚠️  --allow-coverage-drop set; writing anyway.\n")
 
     # Save
-    output_file.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_file, "w") as f:
-        json.dump(all_trials, f, indent=2)
+    # Atomic replace: production_data/trial_records.json is hard-linked into
+    # staged PIT inputs; an in-place write would rewrite them (common/atomic_io.py).
+    atomic_write_json(output_file, all_trials, indent=2)
 
     # Summary
     print(f"\n{'='*80}")

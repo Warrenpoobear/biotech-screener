@@ -14,7 +14,18 @@ from datetime import date
 
 import pytest
 
-from common.date_utils import DateLike, normalize_date, to_date_object, to_date_string, validate_as_of_date
+from common.date_utils import (
+    DateLike,
+    filing_deadline_13f,
+    is_quarter_end,
+    latest_completed_quarter_end,
+    normalize_date,
+    parse_quarter_end,
+    prior_quarter_end,
+    to_date_object,
+    to_date_string,
+    validate_as_of_date,
+)
 
 
 class TestNormalizeDate:
@@ -300,3 +311,83 @@ class TestDeterminism:
         result1 = to_date_string(d)
         result2 = to_date_string(d)
         assert result1 == result2
+
+
+class TestQuarterEnds:
+    """Tests for quarter-end recognition and validation."""
+
+    @pytest.mark.parametrize("value", ["2026-03-31", "2026-06-30", "2026-09-30", "2026-12-31"])
+    def test_quarter_ends_recognised(self, value):
+        """All four calendar quarter ends should be recognised."""
+        assert is_quarter_end(value) is True
+        assert parse_quarter_end(value) == value
+
+    @pytest.mark.parametrize("value", ["2026-07-01", "2026-06-29", "2026-02-28", "2026-01-31"])
+    def test_non_quarter_ends_rejected(self, value):
+        """Dates that are not quarter ends should be rejected."""
+        assert is_quarter_end(value) is False
+        with pytest.raises(ValueError, match="not a quarter end"):
+            parse_quarter_end(value)
+
+    def test_quarter_end_accepts_date_object(self):
+        """Quarter-end helpers accept date objects, not just strings."""
+        assert parse_quarter_end(date(2026, 6, 30)) == "2026-06-30"
+
+
+class TestLatestCompletedQuarterEnd:
+    """Tests for latest_completed_quarter_end."""
+
+    @pytest.mark.parametrize(
+        "today,expected",
+        [
+            (date(2026, 8, 14), date(2026, 6, 30)),  # mid-Q3 -> Q2 just completed
+            (date(2026, 7, 1), date(2026, 6, 30)),  # day after quarter end
+            (date(2026, 1, 5), date(2025, 12, 31)),  # year rollover
+            (date(2026, 4, 1), date(2026, 3, 31)),
+        ],
+    )
+    def test_latest_completed(self, today, expected):
+        assert latest_completed_quarter_end(today) == expected
+
+    def test_quarter_end_itself_is_not_yet_completed(self):
+        """On the quarter-end date the quarter is not yet complete."""
+        assert latest_completed_quarter_end(date(2026, 6, 30)) == date(2026, 3, 31)
+
+
+class TestPriorQuarterEnd:
+    """Tests for prior_quarter_end."""
+
+    @pytest.mark.parametrize(
+        "quarter,expected",
+        [
+            ("2026-06-30", date(2026, 3, 31)),
+            ("2026-03-31", date(2025, 12, 31)),  # crosses year boundary
+            ("2026-12-31", date(2026, 9, 30)),
+        ],
+    )
+    def test_prior_quarter(self, quarter, expected):
+        assert prior_quarter_end(quarter) == expected
+
+    def test_prior_quarter_rejects_non_quarter_end(self):
+        with pytest.raises(ValueError, match="not a quarter end"):
+            prior_quarter_end("2026-07-15")
+
+
+class TestFilingDeadline13F:
+    """Tests for the 45-day SEC 13F filing deadline."""
+
+    @pytest.mark.parametrize(
+        "quarter,expected",
+        [
+            ("2026-06-30", date(2026, 8, 14)),
+            ("2026-03-31", date(2026, 5, 15)),
+            ("2025-12-31", date(2026, 2, 14)),
+            ("2026-09-30", date(2026, 11, 14)),
+        ],
+    )
+    def test_deadline_is_45_days_after_quarter_end(self, quarter, expected):
+        assert filing_deadline_13f(quarter) == expected
+
+    def test_deadline_rejects_non_quarter_end(self):
+        with pytest.raises(ValueError, match="not a quarter end"):
+            filing_deadline_13f("2026-08-14")

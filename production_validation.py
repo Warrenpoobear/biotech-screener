@@ -11,6 +11,18 @@ from decimal import Decimal
 from typing import Any, Dict
 
 
+def coverage_fraction(count: int, base: int) -> tuple:
+    """Coverage as (denominator, percent) that cannot print numerator > denominator.
+
+    Module diagnostics count the population that module scored. The ranked
+    list is often smaller, so ``count / len(ranked)`` printed 309/297.
+    When ``base`` is smaller than ``count``, the denominator is ``count``.
+    """
+    denom = base if base >= count and base > 0 else max(count, 1)
+    pct = (count / denom * 100) if denom else 0.0
+    return denom, pct
+
+
 def validate_screening_output(result: Dict[str, Any], as_of_date: str, config: Dict[str, Any]) -> Dict[str, Any]:
     """
     Validate screening output against production invariants.
@@ -134,14 +146,17 @@ def validate_screening_output(result: Dict[str, Any], as_of_date: str, config: D
     m1_active = m1_diag.get("active", 0)
     print(f"  Module 1 (Universe):  {m1_active} active")
 
-    # Module 2
+    # Module 2 — denominator is the population Module 2 was asked to score
+    # (scored + missing), not len(ranked), which can be smaller.
     m2_scored = m2_diag.get("scored", 0)
-    m2_pct = m2_scored / universe_count * 100 if universe_count > 0 else 0
+    m2_missing = m2_diag.get("missing", 0)
+    m2_considered = m2_scored + m2_missing
+    m2_denom, m2_pct = coverage_fraction(m2_scored, m2_considered or universe_count)
     m2_check = m2_pct > 80  # Expect >80% coverage
     checks.append(("Module 2 coverage >80%", m2_check))
 
     status = "✅" if m2_check else "⚠️"
-    print(f"  {status} Module 2 (Financial): {m2_scored}/{universe_count} ({m2_pct:.0f}%)")
+    print(f"  {status} Module 2 (Financial): {m2_scored}/{m2_denom} ({m2_pct:.0f}%)")
 
     if not m2_check and m2_scored == 0:
         print("     ❌ ZERO coverage! Check field mapping & data source")
@@ -150,30 +165,32 @@ def validate_screening_output(result: Dict[str, Any], as_of_date: str, config: D
     m3_with_catalyst = m3_diag.get("tickers_with_events", 0)
     m3_actionable = m3_diag.get("coverage_actionable_180d", 0)
     m3_high_conf = m3_diag.get("coverage_high_conf_actionable", 0)
-    m3_pct = m3_with_catalyst / universe_count * 100 if universe_count > 0 else 0
-    m3_act_pct = m3_actionable / universe_count * 100 if universe_count > 0 else 0
-    m3_hc_pct = m3_high_conf / universe_count * 100 if universe_count > 0 else 0
+    m3_denom, m3_pct = coverage_fraction(m3_with_catalyst, universe_count)
+    _, m3_act_pct = coverage_fraction(m3_actionable, universe_count)
+    _, m3_hc_pct = coverage_fraction(m3_high_conf, universe_count)
     # Don't require 80% for catalysts (they're rarer)
     _ = True  # Informational only
 
     status = "✅" if m3_pct > 20 else "⚠️"
     print(f"  {status} Module 3 (Catalyst):")
     m3_downside = m3_diag.get("coverage_downside_actionable", 0)
-    m3_ds_pct = m3_downside / universe_count * 100 if universe_count > 0 else 0
-    print(f"       Any-event:           {m3_with_catalyst}/{universe_count} ({m3_pct:.0f}%)")
-    print(f"       Actionable (≤180d):  {m3_actionable}/{universe_count} ({m3_act_pct:.0f}%)")
-    print(f"       High-conf actable:   {m3_high_conf}/{universe_count} ({m3_hc_pct:.0f}%)")
-    print(f"       Downside active:     {m3_downside}/{universe_count} ({m3_ds_pct:.0f}%)")
+    m3_ds_denom, m3_ds_pct = coverage_fraction(m3_downside, universe_count)
+    print(f"       Any-event:           {m3_with_catalyst}/{m3_denom} ({m3_pct:.0f}%)")
+    m3_act_denom, _ = coverage_fraction(m3_actionable, universe_count)
+    m3_hc_denom, _ = coverage_fraction(m3_high_conf, universe_count)
+    print(f"       Actionable (≤180d):  {m3_actionable}/{m3_act_denom} ({m3_act_pct:.0f}%)")
+    print(f"       High-conf actable:   {m3_high_conf}/{m3_hc_denom} ({m3_hc_pct:.0f}%)")
+    print(f"       Downside active:     {m3_downside}/{m3_ds_denom} ({m3_ds_pct:.0f}%)")
 
     # Module 4
     m4_scored = m4_diag.get("scored", 0)
     m4_trials = m4_diag.get("total_trials", 0)
-    m4_pct = m4_scored / universe_count * 100 if universe_count > 0 else 0
+    m4_denom, m4_pct = coverage_fraction(m4_scored, universe_count)
     m4_check = m4_pct > 80  # Expect >80% coverage
     checks.append(("Module 4 coverage >80%", m4_check))
 
     status = "✅" if m4_check else "⚠️"
-    print(f"  {status} Module 4 (Clinical):  {m4_scored}/{universe_count} ({m4_pct:.0f}%), {m4_trials} trials")
+    print(f"  {status} Module 4 (Clinical):  {m4_scored}/{m4_denom} ({m4_pct:.0f}%), {m4_trials} trials")
 
     if not m4_check:
         print("     ⚠️  Low coverage! Many stocks missing clinical data")

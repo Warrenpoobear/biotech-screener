@@ -17,7 +17,7 @@ import argparse
 import io
 import json
 import os
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Dict, List, Optional, Tuple
 
 UTC = timezone.utc
@@ -97,6 +97,74 @@ IBB_REFERER = "https://www.ishares.com/us/products/239699/ishares-biotechnology-
 # ---------------------------------------------------------------------------
 # ETF fetch helpers
 # ---------------------------------------------------------------------------
+
+
+# Holdings older than this are refused: an ETF audit against stale constituents proposes
+# adding names that have since left the fund (the IBB URL above pins asOfDate=20260626,
+# and every later date redirects to an unreachable internal host).
+MAX_HOLDINGS_AGE_DAYS = 10
+_AS_OF_FORMATS = ("%b %d, %Y", "%d-%b-%Y", "%Y-%m-%d", "%m/%d/%Y")
+
+
+def _parse_as_of(text: str) -> Optional[date]:
+    text = text.strip().strip('"').strip()
+    for fmt in _AS_OF_FORMATS:
+        try:
+            return datetime.strptime(text, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+def parse_ishares_holdings_csv(content: str) -> Tuple[pd.DataFrame, Optional[date]]:
+    """Parse an iShares holdings CSV (metadata lines, then a Ticker,Name,... table).
+
+    Returns (equity holdings with columns ticker/name/weight_pct, the 'Fund Holdings as of' date or None).
+    """
+    lines = content.splitlines()
+    as_of = None
+    header_line = None
+    for i, line in enumerate(lines):
+        if as_of is None and line.lower().startswith("fund holdings as of"):
+            as_of = _parse_as_of(line.split(",", 1)[1] if "," in line else "")
+        if "Ticker" in line and "Name" in line:
+            header_line = i
+            break
+    if header_line is None:
+        return pd.DataFrame(columns=["ticker", "name", "weight_pct"]), as_of
+    df = pd.read_csv(io.StringIO("\n".join(lines[header_line:])), on_bad_lines="skip")
+    if "Asset Class" in df.columns:
+        df = df[df["Asset Class"] == "Equity"].copy()
+    df = df[df["Ticker"].astype(str).str.strip().str.match(r"^[A-Z]{1,6}$")].copy()
+    result = pd.DataFrame()
+    result["ticker"] = df["Ticker"].astype(str).str.strip()
+    result["name"] = df["Name"].astype(str).str.strip() if "Name" in df.columns else ""
+    result["weight_pct"] = df["Weight (%)"] if "Weight (%)" in df.columns else None
+    return result.drop_duplicates("ticker").reset_index(drop=True), as_of
+
+
+def holdings_are_stale(
+    as_of: Optional[date], today: Optional[date] = None, max_age_days: int = MAX_HOLDINGS_AGE_DAYS
+) -> bool:
+    """True if the holdings date is unknown or more than max_age_days before today."""
+    if as_of is None:
+        return True
+    today = today or datetime.now(UTC).date()
+    return (today - as_of).days > max_age_days
+
+
+def ibb_holdings_from_content(content: str, origin: str, today: Optional[date] = None) -> Tuple[pd.DataFrame, str]:
+    """Parse iShares IBB holdings and refuse them when stale. Returns (df, source_note)."""
+    df, as_of = parse_ishares_holdings_csv(content)
+    if df.empty:
+        return pd.DataFrame(), f"FETCH_FAILED_UNPARSEABLE ({origin})"
+    if holdings_are_stale(as_of, today):
+        return pd.DataFrame(), (
+            f"FETCH_FAILED_STALE_HOLDINGS (as_of={as_of.isoformat() if as_of else 'unknown'}, "
+            f"limit {MAX_HOLDINGS_AGE_DAYS} days; {origin}). Download current holdings from the iShares IBB page "
+            "and pass --ibb-holdings-file."
+        )
+    return df, f"{origin} (iShares Biotechnology ETF, as_of={as_of.isoformat()}) @ {datetime.now(UTC).isoformat()}"
 
 
 def _normalize_etf_ticker(raw: str) -> Optional[str]:
@@ -268,37 +336,10 @@ def _fetch_ibb_holdings(verbose: bool = True) -> Tuple[pd.DataFrame, str]:
                     "FETCH_FAILED_RETURNED_HTML",
                 )
 
-            lines = content.splitlines()
-            # BlackRock CSV format: ~9 metadata lines, then header row with Ticker,Name,...
-            header_line = None
-            for i, line in enumerate(lines):
-                if "Ticker" in line and "Name" in line:
-                    header_line = i
-                    break
-            if header_line is not None:
-                data_str = "\n".join(lines[header_line:])
-                try:
-                    df = pd.read_csv(io.StringIO(data_str), on_bad_lines="skip")
-                    # Filter to equity rows only
-                    if "Asset Class" in df.columns:
-                        df = df[df["Asset Class"] == "Equity"].copy()
-                    # Filter to valid ticker format
-                    ticker_mask = df["Ticker"].astype(str).str.strip().str.match(r"^[A-Z]{1,6}$")
-                    df = df[ticker_mask].copy()
-                    result = pd.DataFrame()
-                    result["ticker"] = df["Ticker"].str.strip()
-                    result["name"] = df["Name"].str.strip() if "Name" in df.columns else ""
-                    result["weight_pct"] = df["Weight (%)"] if "Weight (%)" in df.columns else None
-                    result = result.drop_duplicates("ticker").reset_index(drop=True)
-                    source = (
-                        f"BLACKROCK_VARNISH_API_portfolioId=239699 "
-                        f"(iShares Biotechnology ETF, asOfDate=20260626) "
-                        f"@ {datetime.now(UTC).isoformat()}"
-                    )
-                    return result, source
-                except Exception as e:
-                    if verbose:
-                        print(f"  CSV parse failed: {e}")
+            df, source = ibb_holdings_from_content(content, "BLACKROCK_VARNISH_API_portfolioId=239699")
+            if verbose and df.empty:
+                print(f"  IBB holdings refused: {source}")
+            return df, source
         else:
             if verbose:
                 print(f"  IBB fetch returned status {resp.status_code}")
@@ -1145,8 +1186,15 @@ def main():
     if args.ibb_holdings_file and os.path.exists(args.ibb_holdings_file):
         print(f"Loading IBB from file: {args.ibb_holdings_file}")
         try:
-            ibb_df = pd.read_csv(args.ibb_holdings_file)
-            ibb_source = f"FILE:{args.ibb_holdings_file}"
+            with open(args.ibb_holdings_file, encoding="utf-8-sig") as fh:
+                text = fh.read()
+            if text.lstrip().lower().startswith("ticker"):
+                ibb_df = pd.read_csv(io.StringIO(text))  # already-normalized ticker,name,... table
+                ibb_source = f"FILE:{args.ibb_holdings_file}"
+            else:  # raw iShares download: metadata lines + Ticker,Name,... table; staleness enforced
+                ibb_df, ibb_source = ibb_holdings_from_content(text, f"FILE:{args.ibb_holdings_file}")
+                if ibb_df.empty:
+                    print(f"  IBB file refused: {ibb_source}")
         except Exception as e:
             print(f"  Failed to load IBB file: {e}")
 

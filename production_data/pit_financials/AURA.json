@@ -1,7 +1,7 @@
 {
   "ticker": "AURA",
   "cik": "0001501796",
-  "collected_at": "2026-04-13T20:34:52.353562+00:00",
+  "collected_at": "2026-11-09T18:44:01.005580+00:00",
   "facts": {
     "cash": [
       {
@@ -9,343 +9,816 @@
         "val": 11302000,
         "filed": "2021-11-24",
         "form": "10-Q",
-        "accn": "0000950170-21-004908"
+        "accn": "0000950170-21-004908",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2020-12-31",
         "val": 17393000,
         "filed": "2021-11-24",
         "form": "10-Q",
-        "accn": "0000950170-21-004908"
+        "accn": "0000950170-21-004908",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2020-12-31",
         "val": 17393000,
         "filed": "2022-03-23",
         "form": "10-K",
-        "accn": "0000950170-22-004425"
+        "accn": "0000950170-22-004425",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2021-03-31",
         "val": 99674000,
         "filed": "2022-05-12",
         "form": "10-Q",
-        "accn": "0000950170-22-009719"
+        "accn": "0000950170-22-009719",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2021-06-30",
         "val": 92197000,
         "filed": "2022-08-11",
         "form": "10-Q",
-        "accn": "0000950170-22-016911"
+        "accn": "0000950170-22-016911",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2021-09-30",
         "val": 81829000,
         "filed": "2021-11-24",
         "form": "10-Q",
-        "accn": "0000950170-21-004908"
+        "accn": "0000950170-21-004908",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2021-09-30",
         "val": 81829000,
         "filed": "2022-11-10",
         "form": "10-Q",
-        "accn": "0000950170-22-024150"
+        "accn": "0000950170-22-024150",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2021-12-31",
         "val": 149063000,
         "filed": "2022-03-23",
         "form": "10-K",
-        "accn": "0000950170-22-004425"
+        "accn": "0000950170-22-004425",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2021-12-31",
         "val": 149063000,
         "filed": "2022-05-12",
         "form": "10-Q",
-        "accn": "0000950170-22-009719"
+        "accn": "0000950170-22-009719",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2021-12-31",
         "val": 149063000,
         "filed": "2022-08-11",
         "form": "10-Q",
-        "accn": "0000950170-22-016911"
+        "accn": "0000950170-22-016911",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2021-12-31",
         "val": 149063000,
         "filed": "2022-11-10",
         "form": "10-Q",
-        "accn": "0000950170-22-024150"
+        "accn": "0000950170-22-024150",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2021-12-31",
         "val": 149063000,
         "filed": "2023-03-15",
         "form": "10-K",
-        "accn": "0000950170-23-008166"
+        "accn": "0000950170-23-008166",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2022-03-31",
         "val": 108382000,
         "filed": "2022-05-12",
         "form": "10-Q",
-        "accn": "0000950170-22-009719"
+        "accn": "0000950170-22-009719",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2022-03-31",
         "val": 108382000,
         "filed": "2023-05-11",
         "form": "10-Q",
-        "accn": "0000950170-23-021302"
+        "accn": "0000950170-23-021302",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2022-06-30",
         "val": 53849000,
         "filed": "2022-08-11",
         "form": "10-Q",
-        "accn": "0000950170-22-016911"
+        "accn": "0000950170-22-016911",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2022-06-30",
         "val": 53849000,
         "filed": "2023-08-09",
         "form": "10-Q",
-        "accn": "0000950170-23-040138"
+        "accn": "0000950170-23-040138",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2022-09-30",
         "val": 61110000,
         "filed": "2022-11-10",
         "form": "10-Q",
-        "accn": "0000950170-22-024150"
+        "accn": "0000950170-22-024150",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2022-09-30",
         "val": 61110000,
         "filed": "2023-11-09",
         "form": "10-Q",
-        "accn": "0000950170-23-062097"
+        "accn": "0000950170-23-062097",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2022-12-31",
         "val": 121582000,
         "filed": "2023-03-15",
         "form": "10-K",
-        "accn": "0000950170-23-008166"
+        "accn": "0000950170-23-008166",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2022-12-31",
         "val": 121582000,
         "filed": "2023-05-11",
         "form": "10-Q",
-        "accn": "0000950170-23-021302"
+        "accn": "0000950170-23-021302",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2022-12-31",
         "val": 121582000,
         "filed": "2023-08-09",
         "form": "10-Q",
-        "accn": "0000950170-23-040138"
+        "accn": "0000950170-23-040138",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2022-12-31",
         "val": 121582000,
         "filed": "2023-11-09",
         "form": "10-Q",
-        "accn": "0000950170-23-062097"
+        "accn": "0000950170-23-062097",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2022-12-31",
         "val": 121582000,
         "filed": "2024-03-27",
         "form": "10-K",
-        "accn": "0000950170-24-036814"
+        "accn": "0000950170-24-036814",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2023-03-31",
         "val": 38492000,
         "filed": "2023-05-11",
         "form": "10-Q",
-        "accn": "0000950170-23-021302"
+        "accn": "0000950170-23-021302",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2023-03-31",
         "val": 38492000,
         "filed": "2024-05-09",
         "form": "10-Q",
-        "accn": "0000950170-24-056265"
+        "accn": "0000950170-24-056265",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2023-06-30",
         "val": 47732000,
         "filed": "2023-08-09",
         "form": "10-Q",
-        "accn": "0000950170-23-040138"
+        "accn": "0000950170-23-040138",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2023-06-30",
         "val": 47732000,
         "filed": "2024-08-08",
         "form": "10-Q",
-        "accn": "0000950170-24-093308"
+        "accn": "0000950170-24-093308",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2023-09-30",
         "val": 55584000,
         "filed": "2023-11-09",
         "form": "10-Q",
-        "accn": "0000950170-23-062097"
+        "accn": "0000950170-23-062097",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2023-09-30",
         "val": 55584000,
         "filed": "2024-11-12",
         "form": "10-Q",
-        "accn": "0000950170-24-125428"
+        "accn": "0000950170-24-125428",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2023-12-31",
         "val": 41063000,
         "filed": "2024-03-27",
         "form": "10-K",
-        "accn": "0000950170-24-036814"
+        "accn": "0000950170-24-036814",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2023-12-31",
         "val": 41063000,
         "filed": "2024-05-09",
         "form": "10-Q",
-        "accn": "0000950170-24-056265"
+        "accn": "0000950170-24-056265",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2023-12-31",
         "val": 41063000,
         "filed": "2024-08-08",
         "form": "10-Q",
-        "accn": "0000950170-24-093308"
+        "accn": "0000950170-24-093308",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2023-12-31",
         "val": 41063000,
         "filed": "2024-11-12",
         "form": "10-Q",
-        "accn": "0000950170-24-125428"
+        "accn": "0000950170-24-125428",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2023-12-31",
         "val": 41063000,
         "filed": "2025-03-24",
         "form": "10-K",
-        "accn": "0000950170-25-043943"
+        "accn": "0000950170-25-043943",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2024-03-31",
         "val": 26279000,
         "filed": "2024-05-09",
         "form": "10-Q",
-        "accn": "0000950170-24-056265"
+        "accn": "0000950170-24-056265",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2024-03-31",
         "val": 26279000,
         "filed": "2025-05-15",
         "form": "10-Q",
-        "accn": "0000950170-25-071907"
+        "accn": "0000950170-25-071907",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2024-06-30",
         "val": 30075000,
         "filed": "2024-08-08",
         "form": "10-Q",
-        "accn": "0000950170-24-093308"
+        "accn": "0000950170-24-093308",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2024-06-30",
         "val": 30075000,
         "filed": "2025-08-13",
         "form": "10-Q",
-        "accn": "0001193125-25-179426"
+        "accn": "0001193125-25-179426",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2024-09-30",
         "val": 25407000,
         "filed": "2024-11-12",
         "form": "10-Q",
-        "accn": "0000950170-24-125428"
+        "accn": "0000950170-24-125428",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2024-09-30",
         "val": 25407000,
         "filed": "2025-11-13",
         "form": "10-Q",
-        "accn": "0001193125-25-278817"
+        "accn": "0001193125-25-278817",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2024-12-31",
         "val": 31693000,
         "filed": "2025-03-24",
         "form": "10-K",
-        "accn": "0000950170-25-043943"
+        "accn": "0000950170-25-043943",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2024-12-31",
         "val": 31693000,
         "filed": "2025-05-15",
         "form": "10-Q",
-        "accn": "0000950170-25-071907"
+        "accn": "0000950170-25-071907",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2024-12-31",
         "val": 31693000,
         "filed": "2025-08-13",
         "form": "10-Q",
-        "accn": "0001193125-25-179426"
+        "accn": "0001193125-25-179426",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2024-12-31",
         "val": 31693000,
         "filed": "2025-11-13",
         "form": "10-Q",
-        "accn": "0001193125-25-278817"
+        "accn": "0001193125-25-278817",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2024-12-31",
         "val": 31693000,
         "filed": "2026-03-30",
         "form": "10-K",
-        "accn": "0001193125-26-130401"
+        "accn": "0001193125-26-130401",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2025-03-31",
         "val": 38226000,
         "filed": "2025-05-15",
         "form": "10-Q",
-        "accn": "0000950170-25-071907"
+        "accn": "0000950170-25-071907",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
+      },
+      {
+        "end": "2025-03-31",
+        "val": 38226000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2025-06-30",
         "val": 107367000,
         "filed": "2025-08-13",
         "form": "10-Q",
-        "accn": "0001193125-25-179426"
+        "accn": "0001193125-25-179426",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
+      },
+      {
+        "end": "2025-06-30",
+        "val": 107367000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2025-09-30",
         "val": 47553000,
         "filed": "2025-11-13",
         "form": "10-Q",
-        "accn": "0001193125-25-278817"
+        "accn": "0001193125-25-278817",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
+      },
+      {
+        "end": "2025-09-30",
+        "val": 47553000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
       },
       {
         "end": "2025-12-31",
         "val": 59515000,
         "filed": "2026-03-30",
         "form": "10-K",
-        "accn": "0001193125-26-130401"
+        "accn": "0001193125-26-130401",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 59515000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 59515000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 59515000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
+      },
+      {
+        "end": "2026-03-31",
+        "val": 84793000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 67836000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
+      },
+      {
+        "end": "2026-09-30",
+        "val": 41669000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "tag": "CashAndCashEquivalentsAtCarryingValue"
+      },
+      {
+        "end": "2020-12-31",
+        "val": 17393000,
+        "filed": "2022-03-23",
+        "form": "10-K",
+        "accn": "0000950170-22-004425",
+        "tag": "Cash"
+      },
+      {
+        "end": "2021-12-31",
+        "val": 149063000,
+        "filed": "2022-03-23",
+        "form": "10-K",
+        "accn": "0000950170-22-004425",
+        "tag": "Cash"
+      },
+      {
+        "end": "2020-09-30",
+        "val": 16243000,
+        "filed": "2021-11-24",
+        "form": "10-Q",
+        "accn": "0000950170-21-004908",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2020-12-31",
+        "val": 17487000,
+        "filed": "2022-03-23",
+        "form": "10-K",
+        "accn": "0000950170-22-004425",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2021-03-31",
+        "val": 99768000,
+        "filed": "2022-05-12",
+        "form": "10-Q",
+        "accn": "0000950170-22-009719",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2021-06-30",
+        "val": 92353000,
+        "filed": "2022-08-11",
+        "form": "10-Q",
+        "accn": "0000950170-22-016911",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2021-09-30",
+        "val": 81974000,
+        "filed": "2021-11-24",
+        "form": "10-Q",
+        "accn": "0000950170-21-004908",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2021-09-30",
+        "val": 81974000,
+        "filed": "2022-11-10",
+        "form": "10-Q",
+        "accn": "0000950170-22-024150",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2021-12-31",
+        "val": 149211000,
+        "filed": "2022-03-23",
+        "form": "10-K",
+        "accn": "0000950170-22-004425",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2021-12-31",
+        "val": 149211000,
+        "filed": "2023-03-15",
+        "form": "10-K",
+        "accn": "0000950170-23-008166",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2022-03-31",
+        "val": 108530000,
+        "filed": "2022-05-12",
+        "form": "10-Q",
+        "accn": "0000950170-22-009719",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2022-03-31",
+        "val": 108530000,
+        "filed": "2023-05-11",
+        "form": "10-Q",
+        "accn": "0000950170-23-021302",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2022-06-30",
+        "val": 54770000,
+        "filed": "2022-08-11",
+        "form": "10-Q",
+        "accn": "0000950170-22-016911",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2022-06-30",
+        "val": 54770000,
+        "filed": "2023-08-09",
+        "form": "10-Q",
+        "accn": "0000950170-23-040138",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2022-09-30",
+        "val": 62060000,
+        "filed": "2022-11-10",
+        "form": "10-Q",
+        "accn": "0000950170-22-024150",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2022-09-30",
+        "val": 62060000,
+        "filed": "2023-11-09",
+        "form": "10-Q",
+        "accn": "0000950170-23-062097",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2022-12-31",
+        "val": 122370000,
+        "filed": "2023-03-15",
+        "form": "10-K",
+        "accn": "0000950170-23-008166",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2022-12-31",
+        "val": 122370000,
+        "filed": "2024-03-27",
+        "form": "10-K",
+        "accn": "0000950170-24-036814",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2023-03-31",
+        "val": 39280000,
+        "filed": "2023-05-11",
+        "form": "10-Q",
+        "accn": "0000950170-23-021302",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2023-03-31",
+        "val": 39280000,
+        "filed": "2024-05-09",
+        "form": "10-Q",
+        "accn": "0000950170-24-056265",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2023-06-30",
+        "val": 48520000,
+        "filed": "2023-08-09",
+        "form": "10-Q",
+        "accn": "0000950170-23-040138",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2023-06-30",
+        "val": 48520000,
+        "filed": "2024-08-08",
+        "form": "10-Q",
+        "accn": "0000950170-24-093308",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2023-09-30",
+        "val": 56372000,
+        "filed": "2023-11-09",
+        "form": "10-Q",
+        "accn": "0000950170-23-062097",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2023-09-30",
+        "val": 56372000,
+        "filed": "2024-11-12",
+        "form": "10-Q",
+        "accn": "0000950170-24-125428",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2023-12-31",
+        "val": 41850000,
+        "filed": "2024-03-27",
+        "form": "10-K",
+        "accn": "0000950170-24-036814",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2023-12-31",
+        "val": 41850000,
+        "filed": "2025-03-24",
+        "form": "10-K",
+        "accn": "0000950170-25-043943",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2024-03-31",
+        "val": 27047000,
+        "filed": "2024-05-09",
+        "form": "10-Q",
+        "accn": "0000950170-24-056265",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2024-03-31",
+        "val": 27047000,
+        "filed": "2025-05-15",
+        "form": "10-Q",
+        "accn": "0000950170-25-071907",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2024-06-30",
+        "val": 30843000,
+        "filed": "2024-08-08",
+        "form": "10-Q",
+        "accn": "0000950170-24-093308",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2024-06-30",
+        "val": 30843000,
+        "filed": "2025-08-13",
+        "form": "10-Q",
+        "accn": "0001193125-25-179426",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2024-09-30",
+        "val": 26175000,
+        "filed": "2024-11-12",
+        "form": "10-Q",
+        "accn": "0000950170-24-125428",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2024-09-30",
+        "val": 26175000,
+        "filed": "2025-11-13",
+        "form": "10-Q",
+        "accn": "0001193125-25-278817",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2024-12-31",
+        "val": 32461000,
+        "filed": "2025-03-24",
+        "form": "10-K",
+        "accn": "0000950170-25-043943",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2024-12-31",
+        "val": 32461000,
+        "filed": "2026-03-30",
+        "form": "10-K",
+        "accn": "0001193125-26-130401",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2025-03-31",
+        "val": 38994000,
+        "filed": "2025-05-15",
+        "form": "10-Q",
+        "accn": "0000950170-25-071907",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2025-03-31",
+        "val": 38994000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2025-06-30",
+        "val": 108135000,
+        "filed": "2025-08-13",
+        "form": "10-Q",
+        "accn": "0001193125-25-179426",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2025-06-30",
+        "val": 108135000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2025-09-30",
+        "val": 48321000,
+        "filed": "2025-11-13",
+        "form": "10-Q",
+        "accn": "0001193125-25-278817",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2025-09-30",
+        "val": 48321000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 60283000,
+        "filed": "2026-03-30",
+        "form": "10-K",
+        "accn": "0001193125-26-130401",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2026-03-31",
+        "val": 85561000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 68604000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+      },
+      {
+        "end": "2026-09-30",
+        "val": 42437000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
       }
     ],
     "assets": [
@@ -600,6 +1073,48 @@
         "filed": "2026-03-30",
         "form": "10-K",
         "accn": "0001193125-26-130401"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 169430000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 169430000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 169430000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
+      },
+      {
+        "end": "2026-03-31",
+        "val": 137677000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 348129000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2026-09-30",
+        "val": 321617000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
       }
     ],
     "liabilities": [
@@ -854,6 +1369,48 @@
         "filed": "2026-03-30",
         "form": "10-K",
         "accn": "0001193125-26-130401"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 32517000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 32517000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 32517000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
+      },
+      {
+        "end": "2026-03-31",
+        "val": 30430000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 32862000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2026-09-30",
+        "val": 34190000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
       }
     ],
     "stockholders_equity": [
@@ -1474,6 +2031,27 @@
         "accn": "0001193125-26-130401"
       },
       {
+        "end": "2024-12-31",
+        "val": 151970000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808"
+      },
+      {
+        "end": "2024-12-31",
+        "val": 151970000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2024-12-31",
+        "val": 151970000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
+      },
+      {
         "end": "2025-03-31",
         "val": 127966000,
         "filed": "2025-05-15",
@@ -1495,6 +2073,27 @@
         "accn": "0001193125-25-278817"
       },
       {
+        "end": "2025-03-31",
+        "val": 127966000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808"
+      },
+      {
+        "end": "2025-03-31",
+        "val": 127966000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2025-03-31",
+        "val": 127966000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
+      },
+      {
         "end": "2025-06-30",
         "val": 174629000,
         "filed": "2025-08-13",
@@ -1509,6 +2108,20 @@
         "accn": "0001193125-25-278817"
       },
       {
+        "end": "2025-06-30",
+        "val": 174629000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2025-06-30",
+        "val": 174629000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
+      },
+      {
         "end": "2025-09-30",
         "val": 156667000,
         "filed": "2025-11-13",
@@ -1516,11 +2129,81 @@
         "accn": "0001193125-25-278817"
       },
       {
+        "end": "2025-09-30",
+        "val": 156667000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
+      },
+      {
         "end": "2025-12-31",
         "val": 136913000,
         "filed": "2026-03-30",
         "form": "10-K",
         "accn": "0001193125-26-130401"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 136913000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 136913000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 136913000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
+      },
+      {
+        "end": "2026-03-31",
+        "val": 107247000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808"
+      },
+      {
+        "end": "2026-03-31",
+        "val": 107247000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2026-03-31",
+        "val": 107247000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 315267000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 315267000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
+      },
+      {
+        "end": "2026-09-30",
+        "val": 287427000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
       }
     ],
     "shares_outstanding": [
@@ -1775,6 +2458,48 @@
         "filed": "2026-03-30",
         "form": "10-K",
         "accn": "0001193125-26-130401"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 63587777,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 63587777,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 63587777,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
+      },
+      {
+        "end": "2026-03-31",
+        "val": 64150468,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 103480053,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429"
+      },
+      {
+        "end": "2026-09-30",
+        "val": 103950771,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636"
       }
     ],
     "short_term_investments": [
@@ -1783,196 +2508,272 @@
         "val": 24899000,
         "filed": "2022-05-12",
         "form": "10-Q",
-        "accn": "0000950170-22-009719"
+        "accn": "0000950170-22-009719",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2022-06-30",
         "val": 68282000,
         "filed": "2022-08-11",
         "form": "10-Q",
-        "accn": "0000950170-22-016911"
+        "accn": "0000950170-22-016911",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2022-09-30",
         "val": 50409000,
         "filed": "2022-11-10",
         "form": "10-Q",
-        "accn": "0000950170-22-024150"
+        "accn": "0000950170-22-024150",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2022-12-31",
         "val": 67229000,
         "filed": "2023-03-15",
         "form": "10-K",
-        "accn": "0000950170-23-008166"
+        "accn": "0000950170-23-008166",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2022-12-31",
         "val": 67229000,
         "filed": "2023-05-11",
         "form": "10-Q",
-        "accn": "0000950170-23-021302"
+        "accn": "0000950170-23-021302",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2022-12-31",
         "val": 67229000,
         "filed": "2023-08-09",
         "form": "10-Q",
-        "accn": "0000950170-23-040138"
+        "accn": "0000950170-23-040138",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2022-12-31",
         "val": 67229000,
         "filed": "2023-11-09",
         "form": "10-Q",
-        "accn": "0000950170-23-062097"
+        "accn": "0000950170-23-062097",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2022-12-31",
         "val": 67229000,
         "filed": "2024-03-27",
         "form": "10-K",
-        "accn": "0000950170-24-036814"
+        "accn": "0000950170-24-036814",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2023-03-31",
         "val": 135030000,
         "filed": "2023-05-11",
         "form": "10-Q",
-        "accn": "0000950170-23-021302"
+        "accn": "0000950170-23-021302",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2023-06-30",
         "val": 114281000,
         "filed": "2023-08-09",
         "form": "10-Q",
-        "accn": "0000950170-23-040138"
+        "accn": "0000950170-23-040138",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2023-09-30",
         "val": 93472000,
         "filed": "2023-11-09",
         "form": "10-Q",
-        "accn": "0000950170-23-062097"
+        "accn": "0000950170-23-062097",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2023-12-31",
         "val": 185087000,
         "filed": "2024-03-27",
         "form": "10-K",
-        "accn": "0000950170-24-036814"
+        "accn": "0000950170-24-036814",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2023-12-31",
         "val": 185087000,
         "filed": "2024-05-09",
         "form": "10-Q",
-        "accn": "0000950170-24-056265"
+        "accn": "0000950170-24-056265",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2023-12-31",
         "val": 185087000,
         "filed": "2024-08-08",
         "form": "10-Q",
-        "accn": "0000950170-24-093308"
+        "accn": "0000950170-24-093308",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2023-12-31",
         "val": 185087000,
         "filed": "2024-11-12",
         "form": "10-Q",
-        "accn": "0000950170-24-125428"
+        "accn": "0000950170-24-125428",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2023-12-31",
         "val": 185087000,
         "filed": "2025-03-24",
         "form": "10-K",
-        "accn": "0000950170-25-043943"
+        "accn": "0000950170-25-043943",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2024-03-31",
         "val": 176595000,
         "filed": "2024-05-09",
         "form": "10-Q",
-        "accn": "0000950170-24-056265"
+        "accn": "0000950170-24-056265",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2024-06-30",
         "val": 157341000,
         "filed": "2024-08-08",
         "form": "10-Q",
-        "accn": "0000950170-24-093308"
+        "accn": "0000950170-24-093308",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2024-09-30",
         "val": 148970000,
         "filed": "2024-11-12",
         "form": "10-Q",
-        "accn": "0000950170-24-125428"
+        "accn": "0000950170-24-125428",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2024-12-31",
         "val": 119401000,
         "filed": "2025-03-24",
         "form": "10-K",
-        "accn": "0000950170-25-043943"
+        "accn": "0000950170-25-043943",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2024-12-31",
         "val": 119401000,
         "filed": "2025-05-15",
         "form": "10-Q",
-        "accn": "0000950170-25-071907"
+        "accn": "0000950170-25-071907",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2024-12-31",
         "val": 119401000,
         "filed": "2025-08-13",
         "form": "10-Q",
-        "accn": "0001193125-25-179426"
+        "accn": "0001193125-25-179426",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2024-12-31",
         "val": 119401000,
         "filed": "2025-11-13",
         "form": "10-Q",
-        "accn": "0001193125-25-278817"
+        "accn": "0001193125-25-278817",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2024-12-31",
         "val": 119401000,
         "filed": "2026-03-30",
         "form": "10-K",
-        "accn": "0001193125-26-130401"
+        "accn": "0001193125-26-130401",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2025-03-31",
         "val": 89765000,
         "filed": "2025-05-15",
         "form": "10-Q",
-        "accn": "0000950170-25-071907"
+        "accn": "0000950170-25-071907",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2025-06-30",
         "val": 69944000,
         "filed": "2025-08-13",
         "form": "10-Q",
-        "accn": "0001193125-25-179426"
+        "accn": "0001193125-25-179426",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2025-09-30",
         "val": 114313000,
         "filed": "2025-11-13",
         "form": "10-Q",
-        "accn": "0001193125-25-278817"
+        "accn": "0001193125-25-278817",
+        "tag": "MarketableSecurities"
       },
       {
         "end": "2025-12-31",
         "val": 84726000,
         "filed": "2026-03-30",
         "form": "10-K",
-        "accn": "0001193125-26-130401"
+        "accn": "0001193125-26-130401",
+        "tag": "MarketableSecurities"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 84726000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "tag": "MarketableSecurities"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 84726000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "tag": "MarketableSecurities"
+      },
+      {
+        "end": "2025-12-31",
+        "val": 84726000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "tag": "MarketableSecurities"
+      },
+      {
+        "end": "2026-03-31",
+        "val": 29940000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "tag": "MarketableSecurities"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 256004000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "tag": "MarketableSecurities"
+      },
+      {
+        "end": "2026-09-30",
+        "val": 255564000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "tag": "MarketableSecurities"
       }
     ],
     "research_and_development": [
@@ -2369,6 +3170,14 @@
         "start": "2025-01-01"
       },
       {
+        "end": "2025-03-31",
+        "val": 23343000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "start": "2025-01-01"
+      },
+      {
         "end": "2025-06-30",
         "val": 46225000,
         "filed": "2025-08-13",
@@ -2378,10 +3187,26 @@
       },
       {
         "end": "2025-06-30",
+        "val": 46225000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "start": "2025-01-01"
+      },
+      {
+        "end": "2025-06-30",
         "val": 22882000,
         "filed": "2025-08-13",
         "form": "10-Q",
         "accn": "0001193125-25-179426",
+        "start": "2025-04-01"
+      },
+      {
+        "end": "2025-06-30",
+        "val": 22882000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
         "start": "2025-04-01"
       },
       {
@@ -2394,10 +3219,26 @@
       },
       {
         "end": "2025-09-30",
+        "val": 68403000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "start": "2025-01-01"
+      },
+      {
+        "end": "2025-09-30",
         "val": 22178000,
         "filed": "2025-11-13",
         "form": "10-Q",
         "accn": "0001193125-25-278817",
+        "start": "2025-07-01"
+      },
+      {
+        "end": "2025-09-30",
+        "val": 22178000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
         "start": "2025-07-01"
       },
       {
@@ -2407,6 +3248,46 @@
         "form": "10-K",
         "accn": "0001193125-26-130401",
         "start": "2025-01-01"
+      },
+      {
+        "end": "2026-03-31",
+        "val": 27960000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "start": "2026-01-01"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 58709000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "start": "2026-01-01"
+      },
+      {
+        "end": "2026-06-30",
+        "val": 30749000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "start": "2026-04-01"
+      },
+      {
+        "end": "2026-09-30",
+        "val": 83451000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "start": "2026-01-01"
+      },
+      {
+        "end": "2026-09-30",
+        "val": 24742000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "start": "2026-07-01"
       }
     ],
     "net_income": [
@@ -3019,11 +3900,43 @@
         "start": "2025-01-01"
       },
       {
+        "end": "2025-03-31",
+        "val": -27483000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "start": "2025-01-01"
+      },
+      {
+        "end": "2025-03-31",
+        "val": -27483000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "start": "2025-01-01"
+      },
+      {
+        "end": "2025-03-31",
+        "val": -27483000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "start": "2025-01-01"
+      },
+      {
         "end": "2025-06-30",
         "val": -54502000,
         "filed": "2025-08-13",
         "form": "10-Q",
         "accn": "0001193125-25-179426",
+        "start": "2025-01-01"
+      },
+      {
+        "end": "2025-06-30",
+        "val": -54502000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
         "start": "2025-01-01"
       },
       {
@@ -3040,6 +3953,22 @@
         "filed": "2025-11-13",
         "form": "10-Q",
         "accn": "0001193125-25-278817",
+        "start": "2025-04-01"
+      },
+      {
+        "end": "2025-06-30",
+        "val": -27019000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "start": "2025-04-01"
+      },
+      {
+        "end": "2025-06-30",
+        "val": -27019000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
         "start": "2025-04-01"
       },
       {
@@ -3052,10 +3981,26 @@
       },
       {
         "end": "2025-09-30",
+        "val": -80632000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "start": "2025-01-01"
+      },
+      {
+        "end": "2025-09-30",
         "val": -26130000,
         "filed": "2025-11-13",
         "form": "10-Q",
         "accn": "0001193125-25-278817",
+        "start": "2025-07-01"
+      },
+      {
+        "end": "2025-09-30",
+        "val": -26130000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
         "start": "2025-07-01"
       },
       {
@@ -3065,6 +4010,70 @@
         "form": "10-K",
         "accn": "0001193125-26-130401",
         "start": "2025-01-01"
+      },
+      {
+        "end": "2026-03-31",
+        "val": -33685000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "start": "2026-01-01"
+      },
+      {
+        "end": "2026-03-31",
+        "val": -33685000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "start": "2026-01-01"
+      },
+      {
+        "end": "2026-03-31",
+        "val": -33685000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "start": "2026-01-01"
+      },
+      {
+        "end": "2026-06-30",
+        "val": -79322000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "start": "2026-01-01"
+      },
+      {
+        "end": "2026-06-30",
+        "val": -45637000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "start": "2026-04-01"
+      },
+      {
+        "end": "2026-06-30",
+        "val": -45637000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "start": "2026-04-01"
+      },
+      {
+        "end": "2026-09-30",
+        "val": -111388000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "start": "2026-01-01"
+      },
+      {
+        "end": "2026-09-30",
+        "val": -32066000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "start": "2026-07-01"
       }
     ],
     "operating_cash_flow": [
@@ -3333,11 +4342,27 @@
         "start": "2025-01-01"
       },
       {
+        "end": "2025-03-31",
+        "val": -23355000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "start": "2025-01-01"
+      },
+      {
         "end": "2025-06-30",
         "val": -44129000,
         "filed": "2025-08-13",
         "form": "10-Q",
         "accn": "0001193125-25-179426",
+        "start": "2025-01-01"
+      },
+      {
+        "end": "2025-06-30",
+        "val": -44129000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
         "start": "2025-01-01"
       },
       {
@@ -3349,12 +4374,44 @@
         "start": "2025-01-01"
       },
       {
+        "end": "2025-09-30",
+        "val": -64273000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "start": "2025-01-01"
+      },
+      {
         "end": "2025-12-31",
         "val": -84742000,
         "filed": "2026-03-30",
         "form": "10-K",
         "accn": "0001193125-26-130401",
         "start": "2025-01-01"
+      },
+      {
+        "end": "2026-03-31",
+        "val": -29893000,
+        "filed": "2026-05-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-216808",
+        "start": "2026-01-01"
+      },
+      {
+        "end": "2026-06-30",
+        "val": -62394000,
+        "filed": "2026-08-11",
+        "form": "10-Q",
+        "accn": "0001193125-26-343429",
+        "start": "2026-01-01"
+      },
+      {
+        "end": "2026-09-30",
+        "val": -88834000,
+        "filed": "2026-11-09",
+        "form": "10-Q",
+        "accn": "0001193125-26-452636",
+        "start": "2026-01-01"
       }
     ]
   }

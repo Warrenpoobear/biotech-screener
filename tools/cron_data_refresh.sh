@@ -55,6 +55,25 @@ log() {
 }
 
 stage_ctgov() {
+    # Refresh the source file first. warm_caches only PIT-filters
+    # production_data/trial_records.json into the daily cache; without this the
+    # file froze at last_update_posted=2026-09-14 and every daily cache was an
+    # identical copy (zero CTGov diff events, 2026-08-07..2026-11-03). Write to
+    # a copy and swap so a timeout never leaves a truncated file; seeding the
+    # copy keeps the collector's coverage-regression guard active.
+    log "CTgov source refresh (collect_ctgov_data.py, timeout 3000s)..."
+    local src="production_data/trial_records.json"
+    local tmp="${src}.refresh.tmp"
+    local rc=0
+    cp "$src" "$tmp"
+    timeout 3000 $PYTHON collect_ctgov_data.py --output "$tmp" 2>&1 | tail -8 || rc=$?
+    if [ $rc -eq 0 ]; then
+        mv "$tmp" "$src"
+        log "CTgov source refresh done"
+    else
+        rm -f "$tmp"
+        log "CTgov source refresh FAILED (exit $rc) — keeping previous file; ctgov_content_freshness gate will flag staleness"
+    fi
     log "CTgov warm cache..."
     $PYTHON warm_caches.py --sources ctgov --as-of-date "$TODAY" 2>&1 | tail -5
     log "CTgov done"

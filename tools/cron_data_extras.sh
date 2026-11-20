@@ -10,7 +10,8 @@
 #   form4        Incremental SEC Form 4 fetch (insider transactions)
 #   short        Yahoo Finance short interest snapshot
 #   pit_fin      Incremental SEC EDGAR XBRL facts refresh (per-ticker PIT)
-#   fin_records  Aggregate financial_records.json refresh (base layer for PIT override)
+#   fin_records  Aggregate financial_data.json refresh + merge new tickers into
+#                financial_records.json (base layer for PIT override)
 #   burn         Quarterly cash burn history (Module 2 burn-acceleration)
 #   purple       FDA Purple Book download + ingest (biologics competition)
 #   all          Run all stages (default)
@@ -95,7 +96,13 @@ stage_pit_fin() {
 }
 
 stage_fin_records() {
-    log "Aggregate financial_records.json refresh (timeout 1800s)..."
+    # collect_financial_data.py writes production_data/financial_data.json.
+    # run_screen.py reads financial_records.json, and its PIT override
+    # (pit_financials/) only replaces records for tickers already in that file,
+    # so merge any newly covered tickers across daily (previously weekly only,
+    # via cron_universe_weekly_refresh.sh). The merge adds missing tickers; it
+    # does not update existing records (PIT supplies those).
+    log "Aggregate financial_data.json refresh (timeout 1800s)..."
     local rc=0
     timeout 1800 $PYTHON collect_financial_data.py --universe production_data/universe.json 2>&1 | tail -5 || rc=$?
     if [ $rc -eq 124 ]; then
@@ -104,6 +111,15 @@ stage_fin_records() {
         log "fin_records failed (exit $rc) — continuing"
     else
         log "fin_records done"
+    fi
+
+    log "Merge new tickers financial_data.json -> financial_records.json..."
+    rc=0
+    timeout 300 $PYTHON tools/merge_financial_data_to_records.py 2>&1 | tail -20 || rc=$?
+    if [ $rc -ne 0 ]; then
+        log "fin_records merge failed (exit $rc) — continuing"
+    else
+        log "fin_records merge done"
     fi
 }
 

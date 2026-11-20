@@ -1,11 +1,12 @@
 # Wake Robin DEM — Model Documentation
 
 **Version:** 1.7.2 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
-**Last updated:** 2026-11-01 (coinvest 13F integrity fix + operator roster change — **operator-authorized selector-input change with out-of-sample clock reset**: `coinvest_signals.json` rebuilt from Q2 2026 13F [was stuck on Q1 since 2026-05-22], builder 1.1.0 staleness gate / firm grouping / roster gate, run-time filing-age refresh, `manager_registry.json` v4.0 with 30-manager `elite_core`; forward-validation `oos_clock_start=2026-11-02`, mandate restarts at 0/20; `model_hash 827c35a9ed3ee6e1` and ruleset `8887576e` unchanged. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`)
-**Prior update:** 2026-07-10 (forward-validation feed hardening — PR #489 merged & deployed to `main` @ `4d8623e5`: `set -e` wrapper fix, behavioral model-hash `ast-v1`, capture freshness gate + mandate quarantine schema, price-feed MultiIndex fix + `price_append_health` hard gate, liveness monitor; `CANDIDATE.json` re-registered to `827c35a9` [annotation-only equivalent to frozen `a9983a67`; freeze date 2026-06-26 unchanged]; **NO_MODEL_CHANGE**. Diagnostic perf as-of 7/9 [gross, research-only]: DEM Top-30 EW YTD +43.52% vs XBI +35.19%)
-**Earlier update:** 2026-06-28 (IC health check — `score_rank_pct` mean_ic +0.049 HEALTHY, hit_rate 61.8%, N=34; regime monitor gate met 118/20 windows, avg XS +0.268%; EES advisory 5/30 flagged; **no production change**. Earlier same day: YTD backtest data integrity audit — corrected YTD DEM +38.52% vs XBI +27.43% (+11.09pp); weekly validation DEM +31.79% vs SPY +12.32%, Sharpe 2.49)
-**Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature, ordinal-only) + EW Top-30. **FROZEN** until governance gates clear.
-**Coinvest input (from 2026-11-02 production run):** Q2 2026 13F (`period_of_report=2026-06-30`, file as_of 2026-10-30), 30-manager `elite_core` roster (registry v4.0) + unchanged 6-manager `conditional` tier; forward-validation clock restarted 2026-11-02 (0/20).
+**Last updated:** 2026-11-18 (LVB sleeve backtest corrections — price source, survivorship, broader benchmarks, quarterly rebalance, and a later rebalance-calendar correction to the same figures; in-sample research record, **no model change**. AZN split-adjusted price fix, PR #712, merged 2026-11-18; operator ruling: data correction, no clock reset. See the 2026-11-18 entry below)
+**Update before that:** 2026-11-17 (out-of-sample clock start recorded at 2026-11-17, PR #701; `snapshots_pit_v9` history rebuild written into `data/snapshots`, PR #698; research record — v9 backtests, roster range, portfolio construction and a 20-signal screen, **no model change**; ops fixes PRs #699, #700, #702. See the 2026-11-17 entries below)
+**Prior update:** 2026-11-15 (weekend of governance and research work; **no change to scoring, selection, order, sizing or eligibility except the operator-requested `de_vol_60d` input fix, PR #676, which lands before `oos_clock_start`**. Selector-only clock not yet started: dated drift override, `ast-v2` candidate hash `a9a430154568e242`, `ranker_mode` capture check, account Rule 4 at −10/−15 pp, protocol §4 fail and rollback rules. Low-risk sleeve shadow (PR #674, capture-only). Research history `data/snapshots_pit_v6` = v5 inputs + current code; backtests unchanged. Weekend signal research recorded as context only. See the 2026-11-15 entries below)
+**Earlier updates:** 2026-11-12/13 (missing-field fixes PR #614 + #636 with a clock reset; Sharadar price source PR #622 without a memo; market-cap look-ahead found in regenerated history and backtest claims deprecated, PR #660; production order switched to selector-only, PR #665. See the 2026-11-12 and 2026-11-13 entries). 2026-11-01 (coinvest 13F integrity fix + operator roster change; selector-input change with a clock reset. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`)
+**Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + **selector-only order** (`--ranker-mode selector_only`, operator decision 2026-11-13; the pairwise `minimal_v2` ranker is scored as a shadow and no longer orders the portfolio) + EW Top-30. Takes effect with the first production run on the merged code; out-of-sample clock resets. See the 2026-11-13 entry below and `docs/governance/2026-11-13-selector-only-production-switch.md`. *(Status before 2026-11-13: Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature: `coinvest_score_z` + `financial_score`; ordinal-only; does **not** read `inst_delta_z`) + EW Top-30. **FROZEN** until governance gates clear.)*
+**Coinvest input (from 2026-11-02 production run):** Q2 2026 13F (`period_of_report=2026-06-30`, file as_of 2026-10-30), 30-manager `elite_core` roster (registry v4.0) + unchanged 6-manager `conditional` tier. Forward-validation clock: `oos_clock_start` = **2026-11-17** (first promoted run on the PR #696 code; recorded in `CANDIDATE.json` by PR #701; mandate SM-20260629-001 at 0/20). Superseded starts: 2026-11-02, 2026-11-12, 2026-11-16. Q3 2026 13F holdings are in coinvest from the 2026-11-17 run (PRs #690/#692).
 Deployed ranker artifact = **capped Family C live-pilot vector**, not identical to the trained `minimal_v2`
 weights. See `production_data/ranker_v2_model.json` → `provenance` block for the deployed vs trained delta.
 
@@ -13,6 +14,778 @@ weights. See `production_data/ranker_v2_model.json` → `provenance` block for t
 stale selector/ranker prose with the already-active v1.14.0 configuration. The
 selector, ranker_v2 weights, eligibility rules, decision rulesets, and EW Top-30
 construction remain frozen; this document does not authorize behavior changes.
+
+---
+
+## Recent Update — 2026-11-18 (LVB Sleeve Backtest Corrections; AZN Split-Adjusted Price Fix — No Model Change)
+
+Classification: `RESEARCH_RECORD + DATA_CORRECTION / NO_MODEL_CHANGE`. Recorded at operator request. In-sample research only; none of it is out-of-sample evidence, and nothing here changes scoring, order, size, eligibility or the portfolio.
+
+**Setup for every figure below:** `data/snapshots_pit_v9`, 2020-03-31 → 2026-11-16, 82 monthly periods, net of 50 bp × one-way turnover. LVB = the 30 lowest-risk eligible names by mean percentile rank of `vol_60d` and `beta_120d` to XBI, equal weight, names with 20-day volatility below 10% excluded; built with `tools/low_risk_sleeve_shadow.py::build_sleeve`. Alpha is CAPM alpha in pt/month (t).
+
+> **Correction (2026-11-18, later the same day): rebalance calendar.** `lvb_universe_backtest.py` and `lvb_survivorship_check.py` used every snapshot folder as a rebalance date. `snapshots_pit_v9` holds two extra mid-month dates (2026-02-27 beside 2026-02-28, and 2026-04-16), so "82 monthly periods" were 82 holding periods over 79.5 months, including a 1-day period and two half-month periods, annualised as months. The scripts now rebalance on the last snapshot of each month (`month_end_dates`) and compound annual return over the actual span (`span_years`); tests in `tests/test_lvb_research_calendar.py`. The old code rerun on the same inputs reproduces every figure below exactly; the corrected values are (old → corrected; 80 monthly periods from 2020-03-31; maximum drawdowns and betas unchanged):
+>
+> | Figure | Old | Corrected |
+> |---|---|---|
+> | §1 full universe, production prices: ann. / Sharpe / alpha (t) | 21.8% / 1.35 / +1.38 (3.36) | 22.5% / 1.36 / +1.42 (3.36) |
+> | §1 ex-Top-30, production prices | 22.0% / 1.37 / +1.39 (3.46) | 22.9% / 1.39 / +1.43 (3.48) |
+> | §1 full universe, Sharadar | 19.4% / 1.23 / +1.22 (3.00) | 20.0% / 1.25 / +1.25 (2.99) |
+> | §1 ex-Top-30, Sharadar: ann. / alpha (t) | 20.8% / +1.31 (3.38) | 21.5% / +1.34 (3.38) |
+> | §1 XBI ann. return | 9.8% | 10.2% |
+> | §1 full minus ex-Top-30, production prices (t) | −0.02 (−0.16) | −0.02 (−0.22) |
+> | §2 alpha vs SPY (beta) / vs XLV | +0.75 (1.73; 0.55) / +0.66 (2.09) | +0.79 (1.76; 0.54) / +0.67 (2.09) |
+> | §2 quarterly alpha: Mar/Jun/Sep/Dec, Jan/Apr/Jul/Oct, Feb/May/Aug/Nov | +1.20, +1.13, +1.19 | +1.23, +1.15, +1.22 (t 2.93, 2.92, 2.98) |
+> | §2 ex-Top-30 quarterly range: ann. / alpha | 17.4–22.8% / +1.06–1.43 | 18.0–23.6% / +1.09–1.47 |
+> | §3 survivors / + delisted / + every missing: alpha (t) | +1.26 (3.05) / +1.08 (2.66) / +0.79 (2.03) | +1.29 (3.05) / +1.11 (2.66) / +0.82 (2.05) |
+> | §3 the same: ann. return | 19.9% / 17.6% / 12.2% | 20.5% / 18.2% / 12.7% |
+> | §3 ex-Top-30 alpha: survivors → + delisted | +1.29 → +1.12 | +1.33 → +1.14 |
+> | §3b Top-30 alone: ann. / Sharpe / alpha (t) | 18.7% / 0.71 / +0.74 (1.46) | 19.4% / 0.72 / +0.76 (1.47) |
+> | §3b 50/50, memo inputs | 21.1% / 1.02 / +1.06 (2.97) | 21.8% / 1.04 / +1.09 (2.98) |
+> | **§3b 50/50, corrected** | **19.0% / 0.94 / +0.91 (2.58)** | **19.7% / 0.95 / +0.94 (2.58)** |
+> | §3b 50/50 minus Top-30 (t); vs SPY; vs XLV | −0.18 (−0.44); +0.52 (0.87); +0.60 (1.14) | −0.18 (−0.45); +0.55 (0.91); +0.61 (1.14) |
+> | §3b SPY ann. return | 18.2% | 18.8% |
+> | Net reading: LVB alpha vs XBI after price-source and survivorship corrections | about +1.08 | about +1.11 |
+>
+> No conclusion changes. Separately: on Sharadar prices `lvb_universe_backtest.py` starts at 2020-01-31 (Sharadar has the lookback history the production file lacks), so its raw output covers 84 periods including the February–March 2020 crash; the §1–§3 Sharadar figures (old and corrected) are restricted to holding periods from 2020-03-31, as `lvb_5050_mix.py` and `lvb_survivorship_check.py` do through `--start`. The same calendar correction to the 50/50 proposal memo's research scripts is recorded in that memo (§4 note). Runs: `~/data/lvb_research_2026_11/repo_runs_2026_11_18/` (local).
+
+### 1. Full universe vs ex-Top-30, and the price source
+
+| LVB variant | Prices | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) |
+|---|---|---|---|---|---|
+| Full universe (`lvb_full` / `vol_beta_full`) | production split-adjusted | 21.8% | 1.35 | −12.3% | +1.38 (3.36) |
+| Ex-Top-30 (`lvb` / `vol_beta`) | production split-adjusted | 22.0% | 1.37 | −11.9% | +1.39 (3.46) |
+| Full universe | Sharadar `closeadj` | 19.4% | 1.23 | −12.6% | +1.22 (3.00) |
+| Ex-Top-30 | Sharadar `closeadj` | 20.8% | not reported | not reported | +1.31 (3.38) |
+| XBI | either | 9.8% | | | |
+
+- **Full and ex-Top-30 are the same within noise:** paired full minus ex-Top-30 −0.02 pt/month (t −0.16). The full-universe sleeve holds 2.5 Top-30 names a month on average (none in 16 of 82 months).
+- The production-price runs reproduce the 50/50 proposal memo's LVB figures within small price-data differences (memo §4 full universe 22.0%, Sharpe 1.35, +1.40; §4e research method 21.9%, 1.39, +1.40).
+- Sharadar `closeadj` is total return (SEP for stocks, SFP for ETFs). The production-file figures are higher mainly because of three events:
+  - **AZN 2026-01-28:** the ADR ratio change is recorded as a +96% one-day gain in `price_history_split_adj.csv`, adding about +3.4 pt to the sleeve that month. **A production data defect;** fixed in PR #712 (section 4 below).
+  - **JBIO 2025-04-29 (Aerovate → Jade), resolved from Sharadar ACTIONS:** AVTE paid a $2.40 special cash dividend on a $2.68 stock, did a 1:35 reverse split and became JBIO. 35 old shares ($93.80 adjusted) received $84.00 cash plus one new share at $10.14, about 98% of value, so the true return is about 0. The production split-adjusted file shows about 0%: its registry entry ("forward_split 9:1, factor 0.108") is mislabelled but its factor equals 10.14/93.80. Sharadar `closeadj` misses the dividend and books −87%, so **the Sharadar LVB runs are understated** by about 2.9 pt in April 2025 (about 0.04 pt/month over 82 months).
+  - **LENZ March 2024 (Graphite merger):** +98% in the production file vs +36% in Sharadar for the month.
+- Sharadar lacks SUPN for 2021–2022 (the older history sits under SUPN1).
+
+### 2. Broader benchmarks and rebalance frequency (Sharadar on both sides, full universe)
+
+| Benchmark | Alpha/month (t) | Note |
+|---|---|---|
+| XBI | +1.22 (3.00) | |
+| SPY | +0.75 (1.73) | beta 0.55 |
+| XLV | +0.66 (2.09) | beta 0.81; XLV explains about 62% of monthly variation |
+
+| Rebalance | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) | Turnover/month |
+|---|---|---|---|---|---|
+| Monthly | 19.4% | 1.23 | −12.6% | +1.22 (3.00) | 16.5% |
+| Quarterly, Mar/Jun/Sep/Dec | 19.5% | 1.20 | −14.3% | +1.20 (2.92) | 10.0% |
+| Quarterly, Jan/Apr/Jul/Oct | 18.5% | 1.20 | −11.9% | +1.13 (2.94) | 10.3% |
+| Quarterly, Feb/May/Aug/Nov | 19.2% | 1.22 | −13.3% | +1.19 (2.98) | 9.5% |
+
+The ex-Top-30 sleeve is more sensitive to the quarterly phase (17.4% to 22.8% a year, alpha +1.06 to +1.43).
+
+### 3. Survivorship check (Sharadar, LVB only)
+
+- Sharadar lists 1,076 SIC 2834–2836 common stocks that traded at a quarter-end since March 2020; v9 holds 290; 402 of the missing are delisted.
+- Each month, names missing from `rankings.csv` were added back if they passed production-like eligibility: Sharadar point-in-time market cap ≥ the smallest eligible name that day; price ≥ $5 and 20-day median dollar volume ≥ $500k (`common/data_quality.py`); not past the deep-drawdown gate (252-day drawdown < −40% and more than 25 pt worse than XBI, ruleset `drawdown_gate` / `drawdown_rel_xbi_gate`). Renamed tickers SUPN1, BHVN1 and INBX1 were matched to universe names. **The fundamental red-flag and missing-financials gates were not replicated.**
+
+| Full-universe LVB | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) | Excess vs XBI/month |
+|---|---|---|---|---|---|
+| Survivors only | 19.9% | 1.25 | −12.2% | +1.26 (3.05) | +0.55 |
+| + delisted names | 17.6% | 1.12 | −17.8% | +1.08 (2.66) | +0.39 |
+| + every missing name | 12.2% | 0.93 | −15.8% | +0.79 (2.03) | −0.02 |
+
+- With delisted names, about 58 added names pass per month and LVB holds 3.5 of them on average (most held: Taro, Seagen, Theravance, Abcam, Eagle, Horizon, Dynavax, Catalent, Intra-Cellular, Alexion). Paired difference −0.16 pt/month (t −1.54).
+- Ex-Top-30: alpha +1.29 → +1.12 (t 2.70); maximum drawdown −12% → −20%.
+- "Every missing name" adds mostly still-listed large pharma. That is a universe-scope question, not survivorship.
+- The survivors-only base is 19.9% rather than 19.4% because this script keeps Sharadar dividend-adjusted prices for names such as ABBV where the plain Sharadar run fell back to the split file.
+- This adds back returns for the sleeve only. It is not the v9 survivorship rebuild (coinvest, financials and the Top-30 are not re-run), which remains pending.
+
+### 3b. 50/50 Top-30 + LVB, recomputed on corrected data
+
+Same 82 months, monthly rebalance to 50/50, Sharadar total-return prices for both halves, LVB from the survivorship-corrected pool (`scripts/research/lvb_5050_mix.py`, PR #714):
+
+| Portfolio | Ann. return | Sharpe | Max drawdown | Alpha vs XBI (t) | Mean excess vs XBI (t) |
+|---|---|---|---|---|---|
+| Top-30 alone | 18.7% | 0.71 | −49.7% | +0.74 (1.46) | +0.75 (1.50) |
+| 50/50, memo inputs (production prices) | 21.1% | 1.02 | −26.1% | +1.06 (2.97) | +0.71 (1.61) |
+| **50/50, corrected** | **19.0%** | **0.94** | **−27.9%** | **+0.91 (2.58)** | **+0.57 (1.30)** |
+| S&P 500 (SPY) | 18.2% | 1.17 | −23.9% | +1.17 (2.76) | +0.44 (0.61) |
+
+- The mix still halves the Top-30's volatility and drawdown and cuts 12-month periods behind XBI from 28% to 18% (halves' excess correlation 0.10).
+- It trails the Top-30 alone by 0.18 pt/month (t −0.44): the memo's "same excess as the Top-30" does not hold on corrected data, though the gap is not significant.
+- Over this period it trails the S&P 500 on Sharpe (0.94 vs 1.17); alpha vs SPY alone +0.52 (t 0.87), vs XLV alone +0.60 (t 1.14).
+- Only the LVB half is survivorship-corrected; the Top-30 half is still survivor-only.
+
+### Net reading
+
+- **In-sample LVB alpha vs XBI goes from the memo's +1.40 to about +1.08 pt/month** after the price-source and survivorship corrections. The Sharadar runs still carry the JBIO understatement (about 0.04 pt/month), which is not corrected here. Against XLV alone it is +0.66 (t 2.09) before the survivorship correction. Directionally supportive, smaller and less certain than first reported; requires forward validation.
+- **The 50/50 Top-30 + LVB proposal** (`docs/governance/2026-11-17-proposal-5050-top30-lvb-sleeve.md`; PROPOSED, Tier 4, not approved) is not changed by this entry. Its LVB and 50/50 figures are superseded for evidence purposes by the readings above (corrected 50/50: 19.0%/yr, Sharpe 0.94, alpha vs XBI +0.91, t 2.58).
+- Forward shadows unchanged: `lvb` (`vol_beta`) live since 2026-11-16, `lvb_full` (`vol_beta_full`) from 2026-11-17. No reading below 20 LIVE windows.
+- Research code: `scripts/research/lvb_universe_backtest.py`, `lvb_factor_alpha.py`, `lvb_sharadar_prices.py`, `lvb_survivorship_check.py` — PR #714 (Tier 2, research only, not merged). Sharadar data stays local (licensed, not in git).
+
+### 4. AZN split-adjusted price fix (PR #712, Tier 3 input change, merged 2026-11-18, no clock reset)
+
+- `scripts/repair_price_history_splits.py` now applies a registry split whose factor sits inside the +300%/−75% gap thresholds when a one-day move within the 5-day window matches the factor within 15%. `production_data/corporate_actions.json` gains AZN `reverse_split` 1:2 effective 2026-01-28.
+- Regenerating `price_history_split_adj.csv` from the live `price_history.csv` changes only AZN's 1,525 rows before 2026-01-28 (×1.964).
+- **Today's scoring inputs are unchanged.** `run_screen.py` reads raw `price_history.csv` plus the registry for momentum and drawdown; AZN's 252-day drawdown is −0.1299 with and without the entry. The split-adjusted file feeds the Path C drawdown (baseline 2026-05-29) and shadows whose windows start after 2026-01-28.
+- `model_hash` unchanged. **Operator ruling 2026-11-18: data correction, no clock reset;** `oos_clock_start` stays 2026-11-17, mandate SM-20260629-001 continues. Memo: `docs/governance/2026-11-18-azn-adr-ratio-split-fix.md`.
+- Proposed follow-up, not done: replace the mislabelled JBIO registry entry with a $2.40 `special_dividend` plus a 1:35 `reverse_split` on 2025-04-29. The current factor already gives about the right return.
+
+### Governance
+
+- Verdict: `NO_MODEL_CHANGE`. Model frozen; ranker, selector, scoring, eligibility, sizing, production wiring and trading unchanged by this entry.
+- Operator action: decide the 50/50 proposal on the corrected figures. (PR #712: ruled no clock reset, 2026-11-18.)
+- Mirror: both branches (#712, #714) are pushed to WR-SW-Dev. Mirror PRs are not opened because `origin/main` and `WR-SW-Dev/main` have diverged (323/36) and the mirror lacks the code these build on; they follow the main sync.
+- Skill synchronization: `skills/`, `docs/hermes_skills/` and `.claude/skills/` reviewed; none cites LVB figures, so none was updated.
+- Open: the memo §4d partial survivorship check used price ≥ $2 and dollar volume ≥ $1M as "production rules"; this check uses $5 and $500k from `common/data_quality.py`. Not reconciled here.
+
+---
+
+## Recent Update — 2026-11-17 (Clock Start Recorded; v9 History Rebuild in `data/snapshots`; Universe and CI Fixes)
+
+Classification: `GOVERNANCE_RECORD / DATA_HYGIENE / NO_MODEL_CHANGE`. Operator-authorized in session 2026-11-17.
+
+- **Out-of-sample clock (PR #701):** `oos_clock_start` = **2026-11-17**, the first promoted run on the PR #696 code (manifest commit `fd731536`, WARN, 40 PASS / 4 WARN, LIVE capture quality PASS). Supersedes 2026-11-16; mandate SM-20260629-001 at 0/20. Memo `docs/governance/2026-11-17-oos-clock-start.md`.
+- **History rebuild `snapshots_pit_v9` (85 month-ends, 2020-01-31 → 2026-11-16; code `fd731536`, roster v4, selector-only):**
+  - 13F coinvest built from filings available on each date (per-date cache, amendment fix #692), not the nearest quarter-end cache.
+  - Point-in-time market data and financials (filed ≤ as-of date); verified per date: no 13F, price or financial input dated after the snapshot.
+  - CT.gov: per-date trial caches carried records as captured months later (25–45% of records updated after the as-of date, 2020–2025). Status and results are rolled back by date; phase and date revisions cannot be recovered without version history (approximation, labelled in each `_provenance_v9.json`). Five missing per-date caches were filled.
+  - On operator instruction ("replace all 21") the 21 dates in `data/snapshots` from 2025-05-30 to 2026-11-16 were replaced with v9; the previous directories (including the live 2026-07-31 and 2026-11-16) are in `data/snapshots_backup_pre_v9_2026-11-17/`, and all 21 are in `config/snapshot_provenance_exclusions.json` (PR #698). The full set is in `data/snapshots_pit_v9`. Forward-validation captures store baskets inline, so the ledger is unaffected.
+  - **Known remaining bias:** the history contains only names that survived to 2025; acquired and delisted names are missing before their exit. A survivorship rebuild is pending (needs Sharadar delisted prices). The 2026-11-15 approximation put the effect at +0.20 pt/month (t 0.51) in favour of including them.
+- **Universe (PR #699):** the weekly refresh's fetch step ignored `config/universe_coverage_exemptions.json` and demoted RPRX, ILMN and STVN; fixed, and the three entries restored to their #696 state.
+- **Universe audit (PR #700):** the XBI/IBB audit used IBB holdings pinned to 2026-06-26 by a hard-coded URL date for five months; holdings older than 10 days are now refused, and a downloaded iShares CSV can be supplied.
+- **CI (PR #702):** the `replay` regression check had failed on every run since at least 2026-06-10 because its golden rankings were made by February code; regenerated from the same input bundle with current code, so a red check again means a ranking change.
+- **Shadows (PR #697, capture-only):** Top-20, 50/50 Top-20 + low-risk sleeve, and ranks 1–10 vs 11–30, counted only from captures after 2026-11-17; no reading below 20 LIVE windows.
+- **LVB naming (PR #707 and this PR, capture-only):** **LVB** (low vol-beta) is the low-risk sleeve scored on 60-day volatility and 120-day beta to XBI only. Two shadows: `lvb` (outside the Top-30; registered 2026-11-16 as `vol_beta`) and `lvb_full` (full eligible universe, standalone; registered 2026-11-17 as `vol_beta_full`, PR #707). The old variant names still work; ledgers keep their original schema strings and `artifacts/low_risk_sleeve_shadow_vol_beta*/` directories. "Low-risk sleeve" alone means the original three-measure sleeve (PR #674).
+
+## Recent Update — 2026-11-17 (Research Record: v9 Backtests, Roster Range, Portfolio Construction, Signal Screen — No Model Change)
+
+Classification: `RESEARCH_RECORD / NO_MODEL_CHANGE`. In-sample, survivor-only history; recorded at operator request as context. None of this changes scoring, order, size or eligibility, and none of it is out-of-sample evidence.
+
+**Production model on v9** (monthly equal-weight Top-30 by `selector_score`, per-trade costs at $1M ≈ 25 bp per trade):
+
+| Window | Top-30 | XBI |
+|---|---|---|
+| Since 2020-01 (84 months) | +165% (+0.7 pt/month vs XBI, t 1.38) | +65% |
+| 5 years | +96% (t 1.60) | +17.5% |
+| 1 year | +43% | +30% |
+| Year to date | +10.7% | +19.6% |
+| 3 months (Aug–Oct 2026) | −21.9% | −0.8% |
+
+- **Roster hindsight on matching v9 data** (roster v4 vs v3.2, identical otherwise): Top-30 +0.68 vs +0.30 pt/month, difference +0.38 (t 1.12). On v9 most of v4's lead falls before its Nov 2023 selection window, but that period still benefits from choosing managers on later results. **Honest range for the Top-30 edge: about +0.3 to +0.7 pt/month vs XBI, not significant.** Supersedes the v7/v8 figures in the 2026-11-16 entry for v9 purposes.
+- **Portfolio size:** no reliable optimum. Top-20 minus Top-30 +0.38 pt/month (t 1.47) after a size sweep; rank buckets are not monotone (ranks 11–20 strongest, 1–10 no better than 21–30). Not a basis for a change.
+- **Low-risk sleeve and mixes** (82 months, same costs):
+
+| Portfolio | Ann. return | Sharpe | Max drawdown | Beta | CAPM alpha/month (t) |
+|---|---|---|---|---|---|
+| Top-30 | 18.4% | 0.70 | −50% | ≈1.0 | ≈ +0.7 (≈1.4) |
+| Low-risk sleeve | 19.3% | 1.24 | −12% | 0.38 | +1.2 (3.2) |
+| 50/50 Top-30 + sleeve | 19.9% | 0.97 | −25% | 0.69 | +0.96 (2.85) |
+| 50/50 Top-20 + sleeve | 22.3% | 1.09 | −22% | 0.67 | +1.15 (3.32) |
+| XBI | 9.8% | 0.49 | −57% | 1.0 | — |
+
+  The sleeve trails XBI in rallies (worst relative stretch −34%); the 50/50 mixes keep the XBI-relative drawdown near −13%. In-sample; tracked forward by the PR #697 shadows.
+- **Costs:** at $1M, ≈ 26 bp per trade (half-spread by market cap + square-root impact); the flat 50 bp × one-way turnover used in backtests is equivalent. Impact dominates above about $20M (≈ 67 bp per trade).
+- **Rejected or not adoptable (pre-registered bar t > 3 for new signals):**
+  - 13F rebuild on 56 specialist managers: count, conviction-weighted and new-position-weighted all trail production (new positions −2.06 pt/month at Top-20, t −3.75); crowding caps and z-caps rejected again; recent manager adds negative.
+  - Event and alternative signals, none adoptable: initial specialist 13D/13G (+5.6% over 3 months, t 2.9, median negative, roster-dependent, unstable by year); specialist Form 4 trades; specialist-led financings (effect is look-ahead); post-move drift; financing overhang; FDA decision drift; takeover likelihood (survivorship blocks a proper test); exclusivity cliffs; insider selling clusters; specialist exits; XBI rebalance flows; licensing deals; large-cap or XBI as the second half of a mix.
+  - Regime timing between Top-30 and sleeve: trend and volatility rules do not beat a static 50/50; a funding-window rule is the best (+0.35 pt/month vs 50/50, t 0.9) — shadow candidate only.
+- **Reading:** the selector is effectively a single coinvest factor (selector IC vs coinvest IC correlation 0.94). Stock-selection add-ons tested so far do not improve it; diversification at the portfolio level does, in-sample. Forward evidence decides.
+
+## Recent Update — 2026-11-17 (Coinvest CUSIP Mappings + RPRX, ILMN, STVN Added — Input Change, Clock Reset)
+
+Classification: `INPUT_CHANGE / CLOCK_RESET`. Operator-authorized 2026-11-17. Source of truth: `docs/governance/2026-11-17-coinvest-cusips-and-universe-adds-clock-reset.md`.
+
+Summary:
+- `cusip_static_map.json` +14 common-stock CUSIPs for active names never resolved in any 13F build (AVTX 12 roster holders, CBIO 10, FTH 9, QUIT 7, COAG 7, NKTR 6, AKTS 6, others ≤3). Coinvest rebuilt: 273 tickers (was 261).
+- RPRX, ILMN, STVN move from `pending_coverage` to active through `config/universe_coverage_exemptions.json` (no own drug trials, so trial/cartography coverage is exempted; name and market data still required).
+- Impact on 2026-11-16 inputs: Top-30 unchanged (30/30), eligible rank correlation 0.971; RPRX/STVN/ILMN rank 147–157; COAG #32, QUIT #35.
+
+Governance verdict:
+- Input change: `oos_clock_start` resets to the first promoted run on the merged code (expected 2026-11-17); mandate SM-20260629-001 restarts at 0/20. `model_hash` unchanged.
+
+## Recent Update — 2026-11-16 (Manager Roster v4: Backtest Lead Is In-Sample — Research Record)
+
+Classification: `RESEARCH_RECORD / NO_MODEL_CHANGE`. Source of truth: `docs/governance/2026-11-16-roster-v4-hindsight-backtest.md`.
+
+Summary:
+- Two histories identical except for the 13F roster (`snapshots_pit_v7`, registry v4.0; `snapshots_pit_v8_old_roster`, registry v3.2), Top-30 selector-only, net 50 bps, 77 months.
+- Before the roster's selection window (Mar 2020 – Oct 2023): new +0.61 pt/month, old +0.52, difference +0.09 (t 0.24).
+- Inside the selection window (Nov 2023 – Jun 2026): new +2.24, old +1.07, difference +1.17 (t 1.73).
+- Full period: new +1.33 (t 2.60), old +0.76 (t 1.51).
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Live roster unchanged; no clock effect.
+- Top-30 backtests on `snapshots_pit_v5`/`v6`/`v7` carry roster hindsight in 2023–2026. Quote the old-roster figure (about +0.5 to +0.8 pt/month, not significant) alongside them.
+
+---
+
+## Recent Update — 2026-11-16 (Selector-Only Out-of-Sample Clock Start Recorded)
+
+Classification: `GOVERNANCE_RECORD / OPERATOR_DECISION_RECORDED`. Tier 4 record. Source of truth: `docs/governance/2026-11-16-selector-only-clock-start.md`.
+
+Summary:
+- `oos_clock_start` is **2026-11-16**, recorded in `artifacts/forward_validation/CANDIDATE.json`. It is the first promoted production run on the selector-only code (manifest commit `ae5ceb81`, result WARN). The 2026-11-12 start is superseded; the 2026-11-13 runs failed promotion on the drift gate and took no capture.
+- The starting configuration includes the PIT cash/securities fix (PR #682) and the `de_vol_60d` refresh (PR #676), both merged before the run.
+- The evening's forward-validation, selector-only shadow and low-risk sleeve ledger rows are committed.
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Records only. `model_hash a9a430154568e242` (`ast-v2`) unchanged.
+- Frozen status: unchanged. **FROZEN (BLOCKED_LEVEL_0)** remains in force.
+- Mandate SM-20260629-001 is at **0/20** from 2026-11-16. The protocol §4 fail rule and the selector-only rollback rule run from this start. Any further authorized input or model fix resets the clock again.
+- The partial Q3 2026 13F refresh (PR #690; 16 of 30 managers on Q3) is in the starting configuration. Operator action pending: the second refresh once the remaining 14 managers have filed (routine, not a reset).
+
+Evidence:
+- Run: `data/snapshots/2026-11-16/run_manifest.json` (44 gates; 39 PASS, 5 WARN (turnover and drift_monitoring under the dated override, ruleset_health, and two non-blocking checks)).
+- Forward-validation capture 2026-11-16: LIVE, quality PASS, model hash `a9a430154568e242` match, `ranker_mode=selector_only`, eligible for the mandate.
+- Top-30 against the PR #682 prediction: all five in, as predicted for PR #682: COGT #2, VRDN #7, SYRE #12, DNTH #16, CYTK #28. The PR #690 changes also landed as predicted: ERAS #14, TARS #17, VOR #19, DSGN #22, SRZN #24 in; DMRA, AMLX, IMCR, AURA, SGMT out (ranks 34-63).
+
+Impact on alpha interpretation:
+- **No new performance evidence.** The clock has one capture and no completed window.
+
+---
+
+## Recent Update — 2026-11-15 (Research History v6; Low-Risk Sleeve Shadow; Weekend Signal Research — Context Only)
+
+Status: documentation of a rebuilt research history, a capture-only shadow, and scratch research. **No change to scoring, selection, order, sizing or eligibility.** Every performance figure below is in-sample, pseudo point-in-time and survivorship-biased. It is research context, **not evidence for promotion**; the forward record remains the only out-of-sample evidence.
+
+### Research history `data/snapshots_pit_v6`
+
+- **What it is:** the 80 monthly dates of `data/snapshots_pit_v5` (2020-01-31 → 2026-06-26), rerun with **v5's own staged inputs** (`data/staging/pit_regen_v5/<date>`, including Sharadar daily market cap) and **current code** (`dfd7f46d`). Relative to v5, that code adds the point-in-time `de_vol_60d` fix (PR #676) and the selector-only order now in production.
+- **How it was run:** in the isolated copy `~/wt/biotech-regen-v3`, with the same `run_screen.py` flags as v5 (`--pit-mode degrade --no-clinical-filter --diagnostics none`, side outputs isolated, live state protected), plus `--allow-weekend` for weekend month-ends. The driver is kept with the data (`_regen_v6_driver.py`). The set is not tracked in git, like v5. **v5 is unchanged and remains the frozen record.**
+- **Validation against v5, all 80 dates:** same tickers and columns. Differences are limited to:
+  - `de_vol_60d` and the columns derived from it (market-structure block, `selector_score`, risk flags, sizing);
+  - the order (`final_score`, `actionable_rank`, `ranker_active`, cohort membership and streak);
+  - the `inst_delta_*` diagnostics on one date (2023-06-30), where v5's copy came from an earlier trial run.
+
+  `inst_delta_z` and every other selector input are identical.
+- **Backtests** (net of 50 bps one-way on actual turnover, against XBI):
+
+| | v5 (frozen volatility, selector order) | v6 (point-in-time volatility) |
+|---|---|---|
+| Top-30 excess, 80 dates | +1.17 pt/month (t 2.16) | +1.16 (t 2.18) |
+| Difference | | −0.01 (t −0.14); Top-30 overlap 29.5/30 |
+| Market-structure block monthly IC | +0.086 (t 3.9) | +0.082 (t 3.7) |
+
+  - **84 months** (v6 plus the four live month-ends, recomputed with point-in-time volatility):
+    - Top-30 +1.11 pt/month (t 2.12); +295% cumulative against XBI +71%.
+    - Sharpe 0.79; worst drawdown against XBI −23%.
+    - By period: +1.38 (t 2.44) to 2024-09, +0.54 (t 0.48) since 2024-10.
+- **Use:** v6 is the reference history for new research because it reflects the current production model. v5 figures elsewhere in this document stand as recorded.
+
+### Low-risk sleeve shadow (PR #674, live from the 2026-11-16 run)
+
+- **Tool:** `tools/low_risk_sleeve_shadow.py`, daily step 5k.11b3, capture-only.
+- **What it records:** the 30 lowest-risk eligible names outside the production Top-30, equal weight, next to the Top-30.
+  - **Score:** the mean percentile of 60-day volatility, the largest one-day gain over 21 days, and 120-day beta to XBI. All are computed from split-adjusted closes dated on or before the snapshot.
+  - **Exclusion:** names whose 20-day volatility is below 10%, which means a price pinned near a pending cash-deal price or a stale feed. On 2026-11-12 this removed TECH, OPCH and PCRX.
+- **Pre-registered reading:**
+  - The sleeve is judged on CAPM alpha against XBI, and on whether a 50/50 Top-30 + sleeve mix beats the Top-30's Sharpe ratio, on non-overlapping 21-day (and 5-day) LIVE windows.
+  - No reading below 20 windows.
+  - It is **not** judged on excess over XBI: its beta is about 0.45 by design, so it trails strong rallies and would breach the account's XBI-relative Rule 4 levels.
+- **Basis:** v6 plus live month-ends, 84 months:
+  - Sleeve: beta 0.46, alpha +0.70 pt/month (t 1.61), Sharpe 0.74, maximum drawdown about −24% (XBI −57%).
+  - Excess over XBI about +0.2 pt/month, with a worst relative drawdown of −36%.
+  - Earlier v5 test: a 50/50 mix with the Top-30 had Sharpe 0.86 and alpha +0.92 (t 2.5).
+- **Use:** research record only. Using it with real money would be a separate governed decision.
+- **CI fix:** PR #675 corrected the gate-allowlist count test (45 → 46, after #670's `sec_13f_refresh_pending` gate), which had turned main's tests red.
+
+### Signal research, 2026-11-15 (scratch; v5 history plus live month-ends, 84 months)
+
+The common thread: what predicts returns across the eligible universe does not improve the selector's Top-30. No blend of these signals into the selector, and no change to the selector's block weights, beat the current selector.
+
+| Topic | Result |
+|---|---|
+| Original DEM ordering (developers, tier, catalyst timing, clinical optionality, sponsors, momentum) applied to current module outputs | +0.55 pt/month vs XBI (t 1.00) against current +1.14; strong 2020 and 2025, behind XBI 2022–2024; relative drawdown −32%. Original `DEFAULT_SELECTOR_CONFIG` weights +0.42; composite rank alone −0.01 |
+| Clinical scores | IC ≈ 0; removing low-clinical names from the Top-30 costs −0.60 pt/month (t −1.9). Consistent with the closed clinical lanes |
+| `lead_program_phase` | IC +0.056 (t 3.7), still +0.050 (t 4.1) after controlling for size and selector; phase-1 lead programs −0.97 pt/month vs XBI. Only +0.11 (t 0.5) as a Top-30 filter |
+| Catalyst signals | `catalyst_score` IC ≈ 0; nearness IC +0.026 (t 2.2), stronger since 2024-10; binary or hard-catalyst flags add nothing |
+| EES | `snapshots_pit_v5` has **no** options-based EES (the score equals `conditional_expected_move_z`); live EES was degraded 2026-08-14 → 10-30. 19 full-EES live weeks: IC +0.031 (t 1.0), not significant |
+| Price and risk factors | Low volatility, small largest daily gain, low beta and 1-month reversal predict across the universe (t 3–4). Blending any of them into the selector costs −0.2 to −0.8 pt/month |
+| `momentum_score` | Negative IC (−0.034, t −2.4), so it points the wrong way |
+| Survivability block (+0.10 in the selector) | Negative IC (top fifth minus bottom fifth −2.1 pt, t −3.4). Reweighting it to 0 or flipping it does not improve the Top-30 |
+| Dilution, net cash vs market cap, reverse splits, IPO age, seasonality | None robust. Low dilution reversed after 2024. Names below net cash: mean +7.4 pt/month but median −1.1, driven by a few shell companies and the 2020 spikes. Listing age survives controls (+0.029, t 2.3), weaker since 2024 |
+| Options as a signal | Spec 053 lane remains closed; no new long-horizon evidence |
+
+**Data warnings found during this work:**
+- `ms_*` Morningstar fields in the historical snapshots are identical on every date (today's values), so they carry look-ahead and must not be used in backtests.
+- `production_data/price_history.csv` is split-adjusted, like `price_history_split_adj.csv`, so it cannot be used to detect splits.
+- S-3 and 424B offering filings are not cached.
+- `pit_financials/*.json` carry filing dates and are usable point-in-time. Operating cash flow in 10-Qs is year-to-date.
+
+## Recent Update — 2026-11-15 (`de_vol_60d` Refreshed Every Run — Input Fix Before the Clock Starts)
+
+Status: operator-requested model-input fix, before `oos_clock_start` is recorded. No weight, signal, order, sizing or eligibility change. `model_hash` unchanged (`a9a430154568e242`).
+
+- **Defect:** `run_screen.py` Step C only filled a *missing* `vol_60d`, so stored values were never refreshed. `de_vol_60d` was identical on 2026-08-03 and 2026-11-12 for 244 of 287 tickers. In `data/snapshots_pit_v5` it is frozen across years (150 of 158 tickers identical from 2020-01 to 2022-01).
+- **Where it is used:** the selector's market-structure block (0.30 inside a 0.10 block, about 3% of `selector_score`); the decision engine's `high_vol` flag (size tier only, so no holdings effect under equal-weight Top-30); and the shadow ranker.
+- **Fix:** overwrite-always, like beta, alpha and RSI. A stored value is kept only when the series is too short to recompute.
+- **Impact:**
+  - Live, selector-only: 30/30 on 2026-11-12; over 30 days, mean 29.0/30 and min 28 (usually AMLX out).
+  - History, 84 months: Top-30 overlap 29.4/30; excess vs XBI moves by −0.01 pt/month (t −0.13).
+  - ~~The market-structure block taken on its own should not be cited from the historical snapshots.~~ *(Corrected later on 2026-11-15: on `data/snapshots_pit_v6`, rebuilt with point-in-time volatility, the block's monthly IC is still +0.082 (t = 3.7) against +0.086 on v5, so it was not an artifact of the frozen values. See the v6 entry above.)*
+- **Clock:** part of the selector-only window's starting configuration if merged before the 2026-11-16 run. Otherwise `oos_clock_start` is the first promoted run on the merged code.
+- Record: `docs/governance/2026-11-15-vol-60d-refresh-pre-clock.md`.
+
+## Recent Update — 2026-11-15 (Selector-Only Clock Not Yet Started; Gate Overrides, Candidate Hash Widened, Account and Protocol Rules)
+
+Status: no change to scoring, selection, order, sizing or eligibility. Operator-authorized in session 2026-11-15.
+
+- **The selector-only clock has not started.** The 2026-11-13 runs produced a correct selector-only snapshot and were refused promotion by the drift gate (top-20 overlap 14.3% against a 30% floor versus the 2026-11-12 pairwise snapshot). No 2026-11-13 snapshot was promoted and no capture was taken. `oos_clock_start` is to be recorded after the first promoted selector-only run (expected 2026-11-16).
+- **Dated gate override** (`config/drift_gate_overrides.json`, `common/drift_override.py`; PR #666 and the turnover follow-up): one entry, pinned to the 2026-11-12 baseline and valid 2026-11-16 to 2026-11-20, lets the drift gate and the turnover gate report WARN for the order change. Top-60 overlap, rank correlation and eligibility failures still block.
+- **Candidate identity widened to `ast-v2`:** `model_hash` is now `a9a430154568e242` (was `827c35a9ed3ee6e1`, `ast-v1`). The fingerprint adds `common/ranker_mode.py` and the `A4_SELECTOR_CONFIG` assignment in `run_screen.py`. Same model, wider fingerprint: the three engine files are unchanged and the `ast-v1` value is still reproducible. Logged in `governance/HASH_ROTATIONS.md`. The capture also checks the snapshot's `ranker_mode` against `CANDIDATE.json` (PR #667).
+- **Rules recorded before the clock starts** (`docs/governance/2026-11-15-pre-clock-decisions.md`): a routine quarterly 13F refresh is not a clock reset; agentic-account Rule 4 is review at −10 pp and liquidation at −15 pp against XBI; `FORWARD_VALIDATION_PROTOCOL.md` §4 gains a fail rule, a 60-window read-out and a selector-only rollback rule.
+- **Universe:** ACHV → QUIT (effective 2026-11-10) and SRZN activated (PR #668).
+- **Research context (scratch, not evidence for promotion):** selector-only Top-30 against XBI since 2020, net of 50 bps, +1.18 pt a month (t = 2.22) through 2026-11-12, with −15.6% against +2.9% over the last three months. The August and September shortfall traces to the selector's concentration in co-investment (factor IC −0.13 and −0.50). Caps, diversifiers and decay variants do not beat the current selector. The current 30-manager roster sits at the 98th percentile of random 30-of-63 lists (+1.57 against an average +1.10 pt a month), and a point-in-time roster adds +0.12 pt (t = 0.48) over using all managers, so roughly +1.1 pt a month is the no-hindsight backtest expectation, before survivorship bias.
+- **Follow-ups:** ~~Hermes skill mirrors and `docs/library-export/` still quote the `ast-v1` hash.~~ Resolved 2026-11-15: skills, mirrors and library export now quote `a9a430154568e242` (`ast-v2`), with the prior hash kept for reference.
+
+## Recent Update — 2026-11-13 (Production Order Switched to Selector-Only — Operator-Authorized Model Change)
+
+Classification: `OPERATOR_AUTHORIZED_MODEL_CHANGE`. Tier 3 code, Tier 4 decision. **Out-of-sample clock resets**; mandate SM-20260629-001 restarts at 0/20 from the first production run on the merged code.
+
+Summary:
+- `run_screen.py --ranker-mode` gains `selector_only`, now the default. `final_score = selector_score` for every eligible name; the pairwise `minimal_v2` ranker no longer reorders the top-60 cohort. Its scores are still written (`ranker_v2_score`, `ranker_v2_rank`) as a shadow record.
+- Unchanged: eligibility gates, the coinvest-only selector, ruleset `8887576e`, equal-weight Top-30, `decision_engine.py`, `selector_engine.py`, `ranker_engine.py`, `ranker_v2_pairwise.py`, `production_data/ranker_v2_model.json`.
+- Rollback: `--ranker-mode pairwise_minimal`.
+
+Why:
+- The ranker's negative `financial_score` weight was fitted on history with market-cap look-ahead (entry below).
+- On the corrected histories the selector order alone did better: +0.57 pt/period (t = 1.63) on `snapshots_pit_v5`, +0.62 (t = 1.64) on `snapshots_pit_v4`; 79 periods, Top-30, net 50 bps. Selector-only +1.53 pt/period (t = 2.94) against the current rule's +0.96 (t = 2.02) on v5.
+- `financial_score` monthly IC with point-in-time market cap: −0.013 (t = −1.3) across eligible names.
+
+Evidence standard:
+- **Checklist v2 was not run. The difference is not statistically significant.** This is an operator decision, not a promotion through the governed path.
+- The history is pseudo-PIT (survivorship-biased, in-sample for the selector settings).
+
+Effect on the ranking (2026-11-12 inputs, isolated copy):
+- New order equals `selector_score` descending for all 162 eligible names. Top-30 overlap with the ranker order 17/30.
+- Leave: ABSI, ASND, BLTE, DNLI, ERAS, KYMR, MDGL, PCVX, REPL, SLDB, TARS, TRAX, TVTX. Enter: AMLX, AURA, BCRX, CLDX, DFTX, DMRA, ELVN, EWTX, IDYA, IMCR, SGMT, TNGX, TSHA.
+- Matches the `selector_only` basket in the live shadow ledger for 2026-11-12 exactly.
+
+Governance:
+- Candidate `model_hash` stays `827c35a9ed3ee6e1`: the hash does not cover the ranker dispatch in `run_screen.py`. Logged in `governance/HASH_ROTATIONS.md` as a behavior change without a hash change; `CANDIDATE.json` carries `ranker_mode` and a `pending_clock_reset` block.
+- `oos_clock_start` is to be recorded after the first production run on the merged code.
+- Frozen status after the change: **FROZEN (BLOCKED_LEVEL_0)** applies to the new configuration.
+
+What changed:
+- `common/ranker_mode.py` (new), `run_screen.py`, `tools/selector_only_shadow.py` (records the ranker basket), tests, `artifacts/forward_validation/CANDIDATE.json`, `governance/HASH_ROTATIONS.md`, rules files, `docs/governance/2026-11-13-selector-only-production-switch.md`.
+
+---
+
+## Recent Update — 2026-11-13 (Market-Cap Look-Ahead in Regenerated History; Backtest Claims Deprecated)
+
+Classification: `BACKTEST_CORRECTION / EVIDENCE_DEPRECATION`. Documentation only; the tooling fix is PR #659 (Tier 2). No model, ranker, selector, eligibility, sizing or production behavior changes. No clock effect.
+
+Summary:
+- Historical `run_screen.py --as-of-date` runs read today's `market_data.json`. Every regenerated snapshot set (`data/snapshots_pit_v2` and earlier) carries today's market cap on every past date. `financial_score` divides cash and burn by market cap, so on that history it tracked later market-cap growth, and the ranker weights it negatively.
+- Regenerating all 80 months with the current model and point-in-time market data (`data/snapshots_pit_v4`), Top-30 by `actionable_rank`, equal weight, 79 periods, JBIO excluded, split-adjusted prices, costs on actual turnover, XBI gross (+75.7%):
+
+| Segment | Periods | Net 50 bps cumulative | Mean period excess | t | Hit |
+|---|---:|---:|---:|---:|---:|
+| Full | 79 | +193.1% | +0.68 pt | +1.47 | 56% |
+| Historical (before 2024-10-01) | 56 | +49.9% | +0.54 pt | +0.89 | 55% |
+| Live-period convention (from 2024-10-01) | 22 | +97.8% | +1.03 pt | +1.62 | 55% |
+
+  Full period at other cost levels: net 25 bps +0.79 pt (t = +1.70), net 100 bps +0.46 pt (t = +0.99), gross +0.90 pt (t = +1.94). Maximum drawdown −44.9% (−23.7% relative to XBI) at net 50 bps. Mean one-way turnover 21%.
+- The same regeneration with today's market data gives +1.64 pt (t = +2.99). About 60% of that is look-ahead.
+- `financial_score` monthly IC across eligible names: −0.067 (t = −6.9) with today's market data, −0.001 (t = −0.1) point-in-time; inside the ranker cohort +0.021 (t = +1.1).
+- Selector-only Top-30 minus the current rule: −0.60 pt (t = −1.69) with today's market data, **+0.62 pt (t = +1.64)** point-in-time.
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Frozen status unchanged: **FROZEN (BLOCKED_LEVEL_0)**.
+- The "+2.34pp/mo net-of-cost, t=2.57" figure, the Checklist v2 bundle result, the pairwise feature audit, the K=30 sweep, the regime decomposition and the `minimal_v2` training evidence are deprecated (operator sign-off 2026-11-13, PR #660). List and reasons: `docs/governance/2026-11-13-market-cap-lookahead-deprecation.md`.
+- The ranker's weights were fitted on the contaminated history. This entry does not authorize a ranker change.
+
+Impact on alpha interpretation:
+- The corrected history is pseudo-PIT: survivorship-biased, in-sample for the selector settings, and 20% of ticker-months still use today's share count. Its excess is not statistically significant.
+- The forward monitor remains the only out-of-sample evidence.
+- The earlier entry below ("+0.33 pt, t = +0.73" on `snapshots_pit_v2`) describes an older model vintage on look-ahead history and is superseded by this one.
+
+What changed:
+- `.claude/rules/research-backtest.md`, `.claude/rules/operational-state.md`, `.claude/rules/external-intel.md`, this file, and the deprecation note above.
+
+---
+
+## Recent Update — 2026-11-13 (Selection Benchmark Script Corrected; Top-30 vs XBI Rerun on PIT-v2 Snapshots)
+
+Classification: `RESEARCH_TOOL_FIX / BACKTEST_CORRECTION`. Tier 2 research tooling. No model, ranker, selector, eligibility, sizing or production behavior changes. No clock effect.
+
+Summary:
+- `scripts/research/build_selection_benchmark.py` summed period returns instead of compounding them, read the unadjusted `price_history.csv`, reported a 0% win rate whenever there was no constructed-shadow data, dropped any period whose snapshot date had no price row, and held unpriced names at a 0% return. All five are fixed (schema `selection_benchmark.v2`), and the report is now net of costs first with historical and live periods separated.
+- Separately fixed on 2026-11-12 (PR #655): `production_data/ipo_dates.json` had first dates truncated to November 2024, which made the script's survivorship filter hold one stock per period in 2020-21.
+- Rerun, Top-30 by `actionable_rank`, equal weight, `data/snapshots_pit_v2`, 2020-01-31 → 2026-06-26, 79 periods, JBIO excluded, split-adjusted prices, costs on actual turnover (mean 26.0% one-way per period), XBI gross:
+
+| Segment | Periods | Net 50 bps cumulative | XBI cumulative | Annualized excess | Mean period excess | t | Hit |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Full | 79 | +114.1% | +75.7% | +3.4 pt | +0.33 pt | +0.73 | 51% |
+| Historical (before 2024-10-01) | 56 | +23.2% | +11.3% | +2.3 pt | +0.24 pt | +0.41 | 52% |
+| Live-period convention (from 2024-10-01) | 22 | +73.5% | +60.7% | +6.3 pt | +0.50 pt | +0.69 | 45% |
+
+  Full period at other cost levels: net 25 bps +0.47 pt (t = +1.01), net 100 bps +0.07 pt (t = +0.16), gross +0.60 pt (t = +1.30). Maximum drawdown −55.4% (−21.3% relative to XBI) at net 50 bps.
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Research tooling and a backtest restatement.
+- Frozen status: unchanged. **FROZEN (BLOCKED_LEVEL_0)** remains in force.
+- Operator action required: decide whether the "+2.34pp/mo net-of-cost, t=2.57, 67 monthly periods" statements in `.claude/rules/research-backtest.md` (Current Operating Truths 1, Trust Buckets, Current Promotion Story 1-2) should be moved to "Deprecated". They were not edited here.
+
+Evidence:
+- `tests/test_build_selection_benchmark.py` (10 tests; all fail on `3eb05a29`).
+- Rerun command: `python3 scripts/research/build_selection_benchmark.py --pit-mode survivorship --top-n 30 --snapshot-dir data/snapshots_pit_v2`. Output `output/benchmarks/selection_only_top30_pseudo_pit_v2.json` is gitignored.
+- All 79 periods priced with 30 names; no period skipped.
+
+Impact on alpha interpretation:
+- On these snapshots the Top-30 is ahead of XBI, but the excess is **not statistically significant** at any cost level.
+- The result is pseudo-PIT, not true PIT, and carries two known biases:
+  - Survivorship: the price file holds 372 tickers and none stops trading before 2025, so names that failed or were acquired earlier are absent. This probably flatters the basket.
+  - Vintage: `snapshots_pit_v2` was generated with the pre-2026-11-01 manager roster and the financial inputs as they were before PR #586, #621 and #649. It is not the current model.
+- It is consistent with the "historical alpha collapsed" finding recorded after the PIT financial regeneration, and it does not support the earlier +2.34 pp/mo figure.
+- The forward monitor remains the only out-of-sample evidence.
+
+What changed:
+- `scripts/research/build_selection_benchmark.py`, `tests/test_build_selection_benchmark.py`, a note in `.claude/rules/research-backtest.md`.
+
+What did not change:
+- Ranker: unchanged.
+- Selector: unchanged.
+- Scoring: unchanged.
+- Eligibility: unchanged.
+- Sizing: unchanged.
+- Production wiring: unchanged. The script is research-only.
+- Trading/actionability: unchanged.
+
+Skill synchronization:
+- Skills reviewed: `.claude/rules/research-backtest.md`, `skills/validation`, `skills/ic_evaluation`.
+- Skills updated: `.claude/rules/research-backtest.md` (dated note under Canonical Benchmark Commands).
+- Skills not updated: `skills/validation`, `skills/ic_evaluation` (neither cites this script's output).
+- Reason: so future agents do not cite pre-fix output of this script, and see the restated figure next to the older claim.
+
+Open questions / next validation:
+- The disposition of the +2.34 pp/mo claim (operator).
+- A survivorship-free price history would be needed before any long-history conclusion.
+- `selection_benchmark.py`, `construction_v2_benchmark.py` and `ranker_evaluation_harness.py` were not audited for the same defects.
+
+Prior claim retracted:
+- Old claim: output of `build_selection_benchmark.py` before 2026-11-13 (for example the −57.7% cumulative excess it printed on 2026-11-12).
+- Corrected interpretation: that output combined additive returns, unadjusted prices and one-stock baskets. The figures above replace it.
+- Root cause: no test covered the script's return arithmetic or its behavior without constructed-shadow data.
+
+---
+
+## Recent Update — 2026-11-12 (Out-of-Sample Clock Start Recorded; Path C IC-Gate Closure Re-Recorded)
+
+Classification: `GOVERNANCE_RECORD / OPERATOR_DECISION_RECORDED`. Tier 4 record. Source of truth: `docs/governance/2026-11-12-clock-start-and-path-c-re-record.md`.
+
+Summary:
+- `oos_clock_start` is **2026-11-12**, recorded in `artifacts/forward_validation/CANDIDATE.json`. It is the first production run on the merged code (manifest commit `2770e533`, result WARN, snapshot promoted, `ctgov_content_freshness` PASS). The 2026-11-02 start is superseded.
+- The 2026-06-24 Path C IC-gate closure is re-recorded against the production order: `actionable_rank` mean IC +0.1534 over 31 live dates. The original `score_rank_pct` +0.0432 citation is retracted.
+- The evening's forward-validation ledger rows and the first selector-only shadow row are committed.
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Records only.
+- Frozen status: unchanged. **FROZEN (BLOCKED_LEVEL_0)** remains in force.
+- Mandate SM-20260629-001 is at **0/20** from 2026-11-12. Any further authorized input or model fix resets the clock again.
+- Operator action required: none for this record. The 13F Q3 rebuild (deadline about 2026-11-14) remains a manual, governed step and would be an input change.
+
+Evidence:
+- Run: `data/snapshots/2026-11-12/run_manifest.json` (commit `2770e533`, 43 gates, non-PASS: audit, drift_monitoring, ruleset_health, regulatory_calendar, all WARN).
+- Forward-validation capture 2026-11-12: LIVE, quality PASS, model hash match.
+- First snapshot against 2026-11-11: Top-30 overlap 27/30. ORIC, SMMT and ANNX left on `deep_drawdown` after a market decline that day (XBI −3.3%); 15 names became ineligible on `deep_drawdown` and none became eligible. This is a price move, not an effect of the merged changes.
+- Path C re-record: corrected `tools/build_ic_dashboard.py`, as of 2026-06-24, 20-day horizon, split-adjusted prices, regenerated snapshots excluded.
+
+Impact on alpha interpretation:
+- **No new performance evidence.** The clock has one capture and no completed window.
+- The Path C re-record keeps a past gate decision but does not make it evidence of edge: the 31 dates overlap heavily and the gate was a threshold test.
+- The starting configuration now includes every input fix merged through 2026-11-12, so the window is not split across the Sharadar price-source cutover or the `financial_score` input fix.
+
+What changed:
+- `artifacts/forward_validation/CANDIDATE.json` (`oos_clock_start`, reset note, `prior_oos_clock_starts`), the regenerated `WEEKLY_SUMMARY.md`, appended ledger rows, the governance record and `.claude/rules/operational-state.md`.
+
+What did not change:
+- Ranker: unchanged.
+- Selector: unchanged.
+- Scoring: unchanged.
+- Eligibility: unchanged.
+- Sizing: unchanged.
+- Production wiring: unchanged.
+- Trading/actionability: unchanged.
+
+Skill synchronization:
+- Skills reviewed: `skills/ic_evaluation`, `skills/selector_ranker`, `skills/screener_ops`, `.claude/rules/operational-state.md`.
+- Skills updated: `.claude/rules/operational-state.md` (clock start, candidate source line, Path C line).
+- Skills not updated: `skills/ic_evaluation`, `skills/selector_ranker`, `skills/screener_ops` still describe the start as "the first production run using the PR #614/#636 code (expected 2026-11-12)", which is now the recorded date; no instruction in them becomes wrong.
+- Reason: rules synchronized so future agents read the recorded start and the re-recorded Path C basis.
+
+Open questions / next validation:
+- Commit the forward-validation and selector-only ledgers periodically; nothing does it automatically.
+- Four large one-day declines now visible in the split-adjusted history (ABOS, EYPT, SION, TENX) have no corporate-action registry entry and were not verified against an outside source. All four names were already ineligible.
+
+Prior claim retracted:
+- Old claim: "Path C IC gate met (`score_rank_pct` mean_ic +0.0432 > +0.03)" (2026-06-24).
+- Corrected interpretation: the gate is met on `actionable_rank` (+0.1534). The `score_rank_pct` figure had the wrong sign (corrected −0.0201) and measured the composite percentile.
+- Root cause: see the IC dashboard sign-correction entry below.
+
+---
+
+## Recent Update — 2026-11-12 (IC Dashboard and Weekly Sweep: `score_rank_pct` Sign Inverted — Correction and Restatement)
+
+Classification: `MONITORING_TOOL_FIX / PRIOR_CLAIM_RETRACTED`. Tier 2 tooling. Source of truth: `docs/governance/2026-11-12-ic-dashboard-sign-correction.md`. Status when written: proposed on branch `fix/ic-dashboard-sign-and-scope`, not yet merged.
+
+Summary:
+- The IC dashboard (`tools/build_ic_dashboard.py`) and the weekly sweep (`scripts/shared_regime_check.py`) negated `score_rank_pct` before computing its IC. The percentile is higher-is-better, so every `score_rank_pct` IC they reported had the wrong sign. The defect dates from the tool's creation (2026-03-27).
+- The dashboard also measured only the composite percentile, not the production order, and read forward returns from the unadjusted `price_history.csv`.
+- Fix: correct the sign; add `actionable_rank` as a tracked signal; default to split-adjusted prices; add `recent_ic` and a `trend` flag.
+
+Governance verdict:
+- `NO_MODEL_CHANGE`. Monitoring tooling only. No clock effect.
+- Frozen status: unchanged. **FROZEN (BLOCKED_LEVEL_0)** remains in force.
+- Operator action required: decide whether to re-record the 2026-06-24 Path C IC-gate closure against the production-order reading (below).
+
+Evidence:
+- Spearman of `score_rank_pct` against `composite_rank` is −1.000 on six snapshot dates from 2026-02-27 to 2026-11-11.
+- Restated readings (corrected tool, 20-day horizon, split-adjusted prices; memo §3):
+  - As of 2026-06-24 (31 live dates): `score_rank_pct` −0.0201 (reported +0.0432); `actionable_rank` +0.1534, hit 90%; `coinvest_score_z` +0.1478.
+  - As of 2026-11-11 on the dates the production dashboard used (2026-08-18 → 10-14, all regenerated): `score_rank_pct` −0.1697 (reported +0.1764 HEALTHY); `actionable_rank` −0.2949.
+  - As of 2026-11-11 on live dates only (2026-06-02 → 08-13, 49 dates): `actionable_rank` +0.0318 with the last five dates averaging −0.2943 (`decaying`).
+- Tests: `tests/test_ic_dashboard_sign_and_scope.py` (8 tests; all fail on `688634cb`).
+
+Impact on alpha interpretation:
+- **No new performance evidence.** The windows overlap heavily and contain only a handful of independent observations.
+- The "primary signal HEALTHY" readings cited since March described the composite percentile with the sign reversed. They said nothing reliable about the production order.
+- On the production order, the corrected spring reading is positive and the August live readings are negative. The September and October readings rest on regenerated snapshots and are not point-in-time evidence.
+- With regenerated snapshots excluded, the newest live date with a realized 20-day return is 2026-08-13. The dashboard has no view of September onward until early December.
+
+What changed:
+- `tools/build_ic_dashboard.py`, `scripts/shared_regime_check.py`, two test files, the memo, `skills/ic_evaluation/SKILL.md` and two rules files.
+
+What did not change:
+- Ranker: unchanged.
+- Selector: unchanged.
+- Scoring: unchanged.
+- Eligibility: unchanged.
+- Sizing: unchanged.
+- Production wiring: the daily run still calls the dashboard; health thresholds are unchanged. The dashboard's `attention` can now be MEDIUM on a `decaying` trend.
+- Trading/actionability: unchanged.
+
+Skill synchronization:
+- Skills reviewed: `skills/ic_evaluation`, `skills/operational_health_baselines`, `skills/screener_ops`, `skills/validation`, `.claude/rules/operational-state.md`, `.claude/rules/research-backtest.md`, `agents/ic_health_monitor/SOUL.md`.
+- Skills updated: `skills/ic_evaluation/SKILL.md` and its generated mirror `docs/hermes_skills/ic-evaluation.md`; correction notes in the two rules files.
+- Skills not updated: `skills/operational_health_baselines`, `skills/screener_ops`, `skills/validation` (no `score_rank_pct` IC claims). `agents/ic_health_monitor/SOUL.md` has a stale load-bearing-signals list; left for a separate change.
+- Reason: skill instructions synchronized so future agents do not cite a pre-fix `score_rank_pct` IC, or treat the composite percentile as the production order.
+
+Open questions / next validation:
+- Path C closure record (operator).
+- Historical dashboard artifacts and `history.jsonl` rows are left as written and need the sign flipped when read.
+
+Prior claim retracted:
+- Old claim: "`score_rank_pct` IC HEALTHY: mean_ic = +0.0432, hit_rate = 54.3%, N = 35; cleared the Path C IC gate" (2026-06-24), and "score_rank_pct +0.1764 HEALTHY" (2026-11-11 dashboard).
+- Corrected interpretation: the sign was inverted. The composite percentile's IC was about −0.02 in the spring window and about −0.17 on the dates the 2026-11-11 dashboard used. The production order (`actionable_rank`) read +0.1534 in the spring window.
+- Root cause: `higher_is_better=False` was set for `score_rank_pct` when the dashboard was written and copied into the weekly sweep; no test pinned the direction against the real column convention.
+
+---
+
+## Recent Update — 2026-11-12 (Financial Score: Solvency by Operating Cash Flow, Deduped Cash Total — PR #649)
+
+Classification: `DATA_INTEGRITY_FIX / RANKER_INPUT_CHANGE`. Tier 3. Source of truth: `docs/governance/2026-11-12-financial-runway-solvency-fix.md`. Merge: PR #649 (`8b5fdd8c`, commit `f6d22e12`, merged 2026-11-12 14:25 ET); mirror PR WR-SW-Dev #67 (`af405495`).
+
+Summary:
+- **F1, false "profitable" classification.** `module_2_financial_v2.py::calculate_burn_rate_v2` returned `PROFITABLE` (monthly burn 0, runway 999 months) when net income was positive, even with negative operating cash flow. Operating cash flow now decides solvency; net income is used only when no cash-flow figure exists.
+- **F2, liquid assets.** `calculate_liquid_assets` now prefers the collectors' deduped `CashAndSecurities` total, and otherwise uses the largest investment tag instead of the first one found.
+- PR #610 and PR #611 (the earlier financial-score fixes) were **closed unmerged**. See "Prior claim retracted" below.
+
+Governance verdict:
+- `INPUT_CHANGE` to `financial_score`, one of the two features the live `minimal_v2` ranker reads. This is **not** `NO_MODEL_CHANGE`.
+- Authorization: operator, in session 2026-11-12 (instruction "merge #649"), under `docs/FORWARD_VALIDATION_PROTOCOL.md` §1.
+- Frozen status: unchanged. The DEM candidate freeze, the NO_MODEL_CHANGE forward-validation window and **FROZEN (BLOCKED_LEVEL_0)** all remain in force. This update does not unfreeze the model, clear any gate or authorize promotion.
+- Identity: `model_hash=827c35a9ed3ee6e1` and ruleset `8887576e` are unchanged. No hash rotation: the engine files are untouched.
+- Clock: merged and deployed **before** `oos_clock_start` was recorded, so it is intended to be part of the starting configuration of the window opened by the PR #614 reset (entry below), not a further reset. That holds only if `oos_clock_start` is set to 2026-11-12 or later.
+- Operator action required:
+  1. Record `oos_clock_start` in `artifacts/forward_validation/CANDIDATE.json` (still `2026-11-02` when this was written), with a reset note that also names PR #649.
+  2. Confirm on the first post-deploy snapshot that the Top-30 membership matches expectation (below).
+
+Evidence:
+- Isolated screens for as-of 2026-11-11 on copies of `production_data/`, main `69323d70` against the fix branch. Run without `--strict` and without a prior-snapshot directory. The main arm reproduced the production 2026-11-11 Top-30 exactly (30/30).
+- Results: 296 rows on both arms; Top-30 membership 30/30; Top-60 60/60; eligibility differences 0; sev3-gate failures 14 on both arms; names with a 999-month runway 97 → 83; Module 2 records changed 14 of 320.
+- F1 names with the largest change: KYMR 999 → 15.6 months, BDTX → 7.0, PGEN → 7.6, NMRA → 10.6. Rank moves inside the Top-30: KYMR 7 → 4, ORKA 21 → 19, SVRA 16 → 15, ORIC 4 → 5, SMMT 5 → 6, TRAX 6 → 7, ANNX 15 → 16, MDGL 19 → 21.
+- F2 changed no name on 2026-11-11 data.
+- Tests: `tests/test_financial_runway_and_cash_total.py` (10 tests; 6 fail on `69323d70`).
+- CI on PR #649: 40 failing tests, the same set as on main; lint and replay were already failing on main.
+- The live checkout was fast-forwarded to `8b5fdd8c` at about 14:28 ET on 2026-11-12, before the 16:30 ET production run. The scratch screen outputs were not retained.
+
+Impact on alpha interpretation:
+- **No new performance evidence.** This is a single-date input-integrity measurement.
+- It reduces one source of false signal: a name with a one-off accounting gain was scored as financially unconstrained. Because the ranker weight on `financial_score` is negative, the corrected (lower) score moves such a name **up**, as with KYMR.
+- The ranker's `financial_score` weight (−0.0533) was fit before PR #586 (trailing-12-month financials), PR #621 (market-cap units) and this fix corrected its inputs. Whether the negative sign still holds on corrected inputs is **not established** and requires a re-fit or explicit re-acceptance under Checklist v2.
+
+What changed:
+- `module_2_financial_v2.py` (`calculate_burn_rate_v2`, `calculate_liquid_assets`), the new test file and the governance memo.
+
+What did not change:
+- Ranker: unchanged (`minimal_v2` capped Family C artifact; weights and sign untouched).
+- Selector: unchanged (`coinvest_score_z` 100%).
+- Scoring: `final_score` logic unchanged. The `financial_score` *input* changes for names with positive net income and negative operating cash flow.
+- Eligibility: rules unchanged; no eligibility outcome changed on 2026-11-11.
+- Sizing: EW Top-30 unchanged.
+- Production wiring: unchanged. No new gate.
+- Trading/actionability: no rebalance-policy change.
+
+Skill synchronization:
+- Skills reviewed: `skills/financial_health`, `skills/selector_ranker`, `skills/validation`, `skills/screener_ops`, `.claude/rules/operational-state.md`.
+- Skills updated: `skills/financial_health/SKILL.md` (solvency rule, cash total, 999-month sentinel, trailing-12-month warning); `skills/selector_ranker/SKILL.md` (status note); `.claude/rules/operational-state.md` (governance event).
+- Skills not updated: `skills/validation`, `skills/screener_ops` (no stale financial-score facts). The `docs/hermes_skills/` mirrors are generated by `tools/sync_hermes_skills.py`; run the sync to propagate.
+- Reason: skill instructions synchronized so future agents do not treat positive net income as solvency, re-apply a year-to-date divisor to trailing-12-month cash flow, or revive PR #611 as written.
+
+Open questions / next validation:
+- Record `oos_clock_start` (operator).
+- 24 PIT financial stores lag their static records (memo §6 lists them). The refresh is the fix, not a staleness gate.
+- Re-fit or re-accept the ranker's `financial_score` weight on corrected inputs.
+- Items in PR #611 that were not carried over (memo §5) each need their own review.
+
+Prior claim retracted:
+- Old claim (PR #610 / #611 descriptions): a June- or September-dated operating cash flow is year-to-date and must be divided by 6 or 9 months; applying that fix changes the Top-30 to 14/30 overlap on 2026-11-04 data.
+- Corrected interpretation: since PR #586 the PIT financial store supplies trailing-12-month figures, so that divisor overstates burn 1.33x to 2x for 228 of 320 names. On current main it would change the Top-30 to 26/30 and remove 22 names from the rankings, including DNTH and STOK (ranks 1 and 2 on 2026-11-11). With that piece neutralised the rest of PR #611 leaves the Top-30 at 30/30.
+- Root cause: the PRs were measured against a main that predated the market-cap unit fix (PR #621), and the date rule did not account for the trailing-12-month store or for non-calendar fiscal years (IMMP's year ends 30 June).
+
+---
+
+## Recent Update — 2026-11-12 (Missing-Field Fixes: CT.gov Source Refresh + Content Gate, `inst_delta_z` Blank Semantics — Out-of-Sample Clock Reset; Sharadar Price-Source Cutover)
+
+Classification: `DATA_INTEGRITY_FIX / NEW_BLOCKING_GATE / OOS_CLOCK_RESET`. Tier 3, the highest affected tier. Separately, `PRICE_SOURCE_CHANGE` (PR #622) is documented here as a **governance gap** (see below). Source of truth: `docs/governance/2026-11-04-missing-fields-clock-reset.md` (amended 2026-11-12). Merges: PR #614 (`8f821f92`, 2026-11-12), PR #636 (`01c5bd0b`, 2026-11-12), PR #635 (`d8e9af62`), PR #622 (`f666886d`, 2026-11-11), PR #621 (`9abd748e`, 2026-11-11).
+
+Summary:
+- **M2, CT.gov source never refreshed.** `production_data/trial_records.json` had not been refreshed since about 2026-08-07. Its newest `last_update_posted` was 2026-09-14 at memo time.
+  - `tools/cron_data_refresh.sh` `stage_ctgov` only ran `warm_caches`, which PIT-filtered the stale file into a new `cache/ctgov/trial_records_<date>.json` every day.
+  - Diff-based CT.gov catalyst events were therefore 0 every day since 2026-08-07.
+  - The existing `source_freshness` check passed because it ages the cache by filename date, not by content.
+  - Fix:
+    - `stage_ctgov` now runs `collect_ctgov_data.py` before `warm_caches`. It writes to a seeded temp copy and swaps it in on success; on failure it keeps the previous file.
+    - New **blocking** gate `ctgov_content_freshness` in `tools/run_daily_production.py` (`check_ctgov_content_freshness`, `CTGOV_CONTENT_MAX_AGE_DAYS = 7`). It FAILs when the newest `last_update_posted` on or before as_of is more than 7 days old. Later dates are ignored, so reruns stay PIT. A FAIL gate blocks snapshot promotion.
+- **M3, registry-transition guard.** On 2026-11-03 the current 13F summary had 30 managers against 49 in the prior (2026-08-13) summary, so `inst_delta_z` was contaminated: 189/298 tickers showed net exits.
+  - `_apply_inst_registry_transition_guard` in `run_screen.py` now clears `inst_delta_z` when the manager counts differ. Raw `inst_delta_*` counts are kept.
+  - PR #636 amended it to write `""` and set `has_inst_delta="False"`, instead of the 0.0 first merged in #614.
+- **PR #635, missing delta stays blank.** In `institutional_summary.py::resolve_cross_quarter_delta`:
+  - An empty 13F filing period now returns no signal (`unknown_filing_period`) instead of a cross-quarter delta of identically 0.
+  - A same-source prior also returns no signal (`same_source_cache`).
+  - `tools/build_ic_dashboard.py` skips dates with no measured `inst_delta_z`.
+  - #635 also drops renamed-away symbols (e.g. INDV) on the ticker-change date, and no longer treats a price gap as a split when the corporate-actions registry is absent.
+- **M1, health price-coverage denominator.** Superseded by `main` `8f6e7823` (2026-11-11) and resolved to main's version at merge. Health report only.
+- **M4, Massive (Polygon) options credentials.** Not fixed by #614 (memo §1). PR #631 (`3a0d5c03`) later turned the Massive API off unless `MASSIVE_ENABLED=1`. These are overlay-only fields with no scoring effect under the live ruleset.
+
+Governance verdict:
+- `INPUT_CHANGE + OOS_CLOCK_RESET`, operator-authorized in session 2026-11-04 under `docs/FORWARD_VALIDATION_PROTOCOL.md` §1 (memo header). This is **not** `NO_MODEL_CHANGE`: M2 changes clinical/catalyst inputs and adds a blocking production gate.
+- Frozen status: unchanged. The DEM candidate freeze, the NO_MODEL_CHANGE forward-validation window and **FROZEN (BLOCKED_LEVEL_0)** all remain in force. This update does not unfreeze the model, clear any gate or authorize promotion.
+- Identity: `model_hash=827c35a9ed3ee6e1` (ast-v1) and ruleset `8887576e` (v1.14.0) are unchanged. There is **no hash rotation**: `ranker_engine.py`, `selector_engine.py` and `decision_engine.py` are untouched, and `governance/HASH_ROTATIONS.md` has no 2026-11-04 entry, consistent with the memo.
+- **`oos_clock_start`: pending. It will be the first post-merge production run, expected 2026-11-12 (16:30 ET), which had not yet run when this was written.**
+  - `artifacts/forward_validation/CANDIDATE.json` **still reads `oos_clock_start=2026-11-02`** until the operator updates it (memo §4 step 4).
+  - Until then, `tools/weekly_validation_summary.py` applies the 2026-11-02 epoch, so tool output may still count pre-fix captures. The live checkout holds LIVE/PASS captures for 2026-11-03 → 2026-11-11, and `artifacts/forward_validation/WEEKLY_SUMMARY.md` currently shows **1** mandate-eligible window under the 2026-11-02 epoch. The memo (written 2026-11-04) names only 11-02/11-03, but every capture dated before the new start is pre-fix. None of them **count** toward SM-20260629-001 and must not be cited as mandate progress.
+  - Mandate SM-20260629-001 restarts at **0/20**.
+- Operator action required:
+  1. Set `CANDIDATE.json` `oos_clock_start` to the first post-merge run's date, with an `oos_clock_reset_note` citing the memo.
+  2. Make sure the CT.gov refresh has run before the 16:30 ET production run (`tools/cron_data_refresh.sh ctgov`, memo §4 step 3). When read at 10:44 ET on 2026-11-12, `production_data/trial_records.json` in both the worktree and the live checkout had newest `last_update_posted = 2026-11-03`, which is 9 days old. The new blocking gate would FAIL on that file.
+  3. Measure the M2 ranking impact on the first post-deploy run against the prior day. It was not measured before merge (memo §3).
+  4. Acknowledge the PR #622 price-source change under protocol §1 (governance gap below).
+
+Evidence:
+- Memo `docs/governance/2026-11-04-missing-fields-clock-reset.md` §1–§4. Commits `378a199d` (M2), `53ccc078` (M3), `0aa45895` (#636 amendment), `d8e9af62` (#635).
+- Code (verified in tree at `01c5bd0b`):
+  - `tools/cron_data_refresh.sh::stage_ctgov` (calls `collect_ctgov_data.py`, timeout 3000s).
+  - `tools/run_daily_production.py::check_ctgov_content_freshness`, wired after `source_freshness`.
+  - `run_screen.py::_apply_inst_registry_transition_guard` (writes `""`, `has_inst_delta="False"`).
+- Tests: `tests/test_ctgov_content_freshness_gate.py`, `tests/test_inst_registry_transition.py`.
+- The live checkout is at `01c5bd0b` (read-only check, 2026-11-12 10:44 ET).
+
+Impact on alpha interpretation:
+- **No new performance evidence.** This is an integrity and governance update. Pre-reset forward captures (the 7 pre-2026-11-01 windows and all captures from 2026-11-02 up to the new start) are history only.
+- **M2 is a PIT/input-freshness repair, not an alpha claim.**
+  - From about 2026-08-07 to 2026-11-11, every CT.gov-derived clinical/catalyst input was built from a frozen trial file. Read any catalyst or clinical diagnostic over that span as reflecting stale trial data.
+  - Fresh records can change eligibility, catalyst buckets and gates (memo §3). The size of the change is **not yet measured**.
+  - The new gate prevents a repeat of this kind of false freshness, where the filename date is current but the content is stale.
+- **M3/#636/#635: no ranking change under the live ruleset** (memo §3):
+  - `sort_anchor = selector_score`, the selector weight on `inst_delta_z` is 0, and the live `minimal_v2` ranker reads only `coinvest_score_z` and `financial_score`.
+  - Readers that do change are the non-blocking rebalance-plan artifact (Top-30 → Top-20 prune by `inst_delta_z`), shadow and IC trackers, and the Event EV expectation overlay.
+  - **IC caveat:** before #635/#636, dates with an unknown filing period, a same-source prior or a registry transition stored `inst_delta_z` as neutral 0.0, and the IC panel counted those as measurements. Historical `inst_delta_z` IC readings that include such dates are contaminated. The affected dates have not been enumerated. `inst_delta_z` stays diagnostic-only.
+- **Blank ≠ zero for `inst_delta_z`:** a blank `inst_delta_z` with `has_inst_delta="False"` means no measured delta. Never impute 0, and never count it as an IC observation.
+
+What changed:
+- `tools/cron_data_refresh.sh` (`stage_ctgov` source refresh), `tools/run_daily_production.py` (new blocking gate), `run_screen.py` (registry-transition guard, blank semantics), `institutional_summary.py` and `tools/build_ic_dashboard.py` (#635).
+- The out-of-sample clock start moves from 2026-11-02 to the first post-merge production run. This is pending and has not yet been recorded in `CANDIDATE.json`.
+
+What did not change:
+- Ranker: unchanged (`minimal_v2` capped Family C artifact, `coinvest_score_z` + `financial_score`; `model_hash` unchanged).
+- Selector: engine and weights unchanged (`coinvest_score_z` 100%, `inst_delta_z` 0%).
+- Scoring: `final_score` logic unchanged. Clinical/catalyst *inputs* change through fresh CT.gov data (M2).
+- Eligibility: rules unchanged. Outcomes may change through fresh trial data (unmeasured).
+- Sizing: EW Top-30 unchanged.
+- Production wiring: a new blocking gate (`ctgov_content_freshness`) and a CT.gov source-refresh step. Ruleset `8887576e` stays pinned.
+- Trading/actionability: no rebalance-policy change.
+
+**Price source: Sharadar primary, yfinance fallback (PR #622, `5ba10e1f`, merged `f666886d` 2026-11-11 13:37 ET). This is a governance gap.**
+- What it does:
+  - `tools/run_daily_production.py::sharadar_price_source_enabled()` is on by default when `SHARADAR_API_KEY` is set. `BIOTECH_PRICE_SOURCE=yfinance` or a missing key restores yfinance-only behaviour.
+  - `common/sharadar_prices.py` re-fetches a trailing 10-day window from SEP (SFP for ETFs including XBI) and upserts it into `production_data/price_history.csv`. yfinance appends only what is still missing.
+  - Convention: **split-adjusted, not dividend-adjusted** (SEP `close`).
+  - Market cap and EV come from Sharadar DAILY ×1e6.
+  - One-time cutover tool: `tools/sharadar_price_backfill.py` (dry run by default; `--apply` to write; rows before 2020-01-01 untouched).
+- Commit-message validation on 2026-11-11 data, not independently re-run here:
+  - 91.7% of split-adjusted closes since 2020 within 0.5% of yfinance.
+  - Large gaps in IRON/LENZ/LGND/ORKA (reverse-merger histories) and AZN, where yfinance carries a fake +100% day at the 2026-01-28 ADR change.
+  - Actionable Top-30 identical to the yfinance run (0/30 change).
+- Timing: the 2026-11-11 production run's `run_manifest.json` records commit `cd592c20`, which predates #621/#622. **2026-11-12 is therefore the first in-pipeline Sharadar run, the same run that starts the #614 clock.** Whether production has `SHARADAR_API_KEY` set, and whether the one-time backfill was `--apply`'d, is **not verified** (`price_history.csv` is untracked).
+- Related, PR #621 (`6d7643fe`):
+  - A 2026-11-04 manual Sharadar refresh (`b1c302a7`) wrote market caps in $ millions into `market_data.json`. That caused an 11/30 Top-30 churn in an isolated 2026-11-11 screen. The live file was restored before the 16:30 run.
+  - Fix: scale ×1e6, plus a new `check_market_data_schema` FAIL when the median `market_cap` is below $10M (`MARKET_DATA_MIN_MEDIAN_CAP_USD`).
+- **Gap:**
+  - `docs/FORWARD_VALIDATION_PROTOCOL.md` §1 lists "No price-source change" during the window unless a verified bug is identified and the operator explicitly authorizes it, which resets the clock.
+  - The #622 commit message states "Operator-authorized source change (2026-11-11) … forward-validation comparability across the cutover is accepted." However, there is **no governance memo** in `docs/governance/`, **no `HASH_ROTATIONS.md` entry**, and the 2026-11-04 memo does not mention it.
+  - Neither the protocol §1 table (`price_history_split_adj.csv`) nor `CANDIDATE.json` `price_source` (`production_data/price_history.csv (close, split-adjusted)`) records the vendor.
+  - In practice, the #614 reset start coincides with the first Sharadar run. So **if** `oos_clock_start` is set to 2026-11-12 or later, the new forward window is not split across the price-source cutover.
+  - This document does **not** record an authorization. **Operator acknowledgement is required**, for example a memo or an amendment to the 2026-11-04 memo, to put the #622 cutover under the same reset on the record.
+
+**Other input changes merged between 2026-11-02 and the new clock start.** These are identified from commit titles only and were not individually reviewed here. All of them land before the pending `oos_clock_start`, so by timing they fall inside the new window's starting configuration:
+- curated PDUFA calendar +32 dates (PR #593). Its `HASH_ROTATIONS.md` 2026-11-03 entry still says the effective date is "Not yet decided".
+- universe +11 XBI tickers (#605) and universe-status / corporate-action updates (#601–#604).
+- INDV→SUPN ticker change and PDUFA/8-K corrections (#618).
+- inst_delta same-source handling (#626).
+- split-registry momentum adjustment (#625).
+- SEC 8-K PDUFA mislabel fix (#630).
+
+The operator may want the reset record to name these explicitly.
+
+Ops tooling (no model effect): PR #633 (`9c730878`) gates the cron watchdog's trapops recovery on today's `rankings.csv`. Before the fix it produced about 50 false MISSED/FAILED pairs per weekday before the 16:30 run. Tier 1, no clock reset.
+
+Skill synchronization:
+- Skills reviewed:
+  - `skills/ic_evaluation`, `skills/selector_ranker`, `skills/screener_ops`, `skills/institutional_signal`, `skills/operational_health_baselines`, `skills/validation`, `skills/biotech-ic-council`.
+  - The `docs/hermes_skills/` mirrors.
+  - `.claude/rules/operational-state.md`, `.claude/rules/research-backtest.md`, `.claude/rules/production-pipeline.md`.
+  - User-level `~/.claude/skills/biotech-*`, read-only.
+- Skills updated (repo `skills/` sources only; dated 2026-11-12 notes):
+  - `skills/ic_evaluation/SKILL.md`: clock-reset bullet; blank `inst_delta_z` is skipped by the IC panel.
+  - `skills/selector_ranker/SKILL.md`: `oos_clock_start=2026-11-02` marked superseded; live ranker does not read `inst_delta_z`.
+  - `skills/screener_ops/SKILL.md`: the "mid-November 20-window gate" is superseded by the restart; new CT.gov content gate.
+  - `skills/institutional_signal/SKILL.md`: blank-vs-zero semantics for `inst_delta_z`.
+  - `skills/operational_health_baselines/SKILL.md`: CT.gov source-content freshness row (filename date alone is insufficient).
+  - `.claude/rules/operational-state.md`: freeze/clock status. Also removes the stale "inst_delta_z … Active in ranker (NW-t = +3.32)" line.
+- Not hand-edited: the `docs/hermes_skills/` mirrors are generated from `skills/` by `tools/sync_hermes_skills.py`. Run the sync to propagate.
+- Skills not updated: `skills/validation` and `skills/biotech-ic-council` (no stale clock/price/inst_delta facts), and `.claude/rules/research-backtest.md` (historical B6 claims, out of scope).
+- Reason: skill instructions synchronized so future agents do not:
+  - cite 2026-11-02 as the clock start;
+  - treat a fresh CT.gov cache filename as fresh content;
+  - treat a blank `inst_delta_z` as a neutral zero;
+  - repeat the claim that the live ranker uses `inst_delta_z`.
+
+Open questions / next validation:
+- Record the new `oos_clock_start` in `CANDIDATE.json` (operator).
+- First post-deploy run: measure the M2 Top-30 / eligibility / bucket change against the prior day. Confirm that `ctgov_content_freshness` PASSes and that the Sharadar refresh status is OK or PARTIAL.
+- **Risk:** `ctgov_content_freshness` is blocking. If CT.gov collection fails for more than 7 days, production stops promoting snapshots. The collector's coverage-regression guard (exit 2, keeps the previous file) is the most likely trigger (memo §4).
+- Operator acknowledgement of the #622 price-source change, and optionally of the other input changes listed above.
+- Still open from 2026-11-01: run the 13F post-filing quarantine check; the Q3 2026 13F deadline is about 2026-11-14 (manual, governed rebuild). RNA and GLPG universe follow-ups (memo §2).
+
+Prior claim retracted:
+- Old claim: "the pairwise ranker consumes `inst_delta_z`" (earlier session notes). The same claim appears in `.claude/rules/operational-state.md` as "inst_delta_z … Active in ranker (NW-t = +3.32)".
+- Corrected interpretation: the live `minimal_v2` ranker reads only `coinvest_score_z` and `financial_score`. `inst_delta_z` has 0% selector weight and no ranker weight. It is diagnostic and export only.
+- Root cause: the claim conflated the legacy `minimal` feature set and the historical within-cohort audit (NW-t = +3.32) with the deployed `minimal_v2` artifact (memo §3).
+- Old claim: `oos_clock_start=2026-11-02` (2026-11-01 entry below).
+- Corrected interpretation: superseded by the 2026-11-04 memo. The start is the first post-merge production run (expected 2026-11-12), and no capture dated before it counts (on disk: 2026-11-03 → 2026-11-11).
 
 ---
 
@@ -1342,9 +2115,10 @@ Daily production run (`tools/run_daily_production.py`, cron 5:30 PM ET):
 
 ```
 Step 1: Archive production inputs (SHA-256 manifest)
-Step 2: Refresh prices (Yahoo/Morningstar → price_history.csv)
-Step 3: Refresh market data (→ market_data.json)
-Step 4: Poll CTgov (→ cache/ctgov/trial_records_{date}.json)
+Step 2: Refresh prices (Sharadar SEP/SFP primary, yfinance fallback since PR #622 → price_history.csv; was Yahoo/Morningstar)
+Step 3: Refresh market data (→ market_data.json; market cap from Sharadar DAILY ×1e6 when enabled)
+Step 4: Poll CTgov (→ cache/ctgov/trial_records_{date}.json; source file production_data/trial_records.json
+        is refreshed by cron_data_refresh.sh stage_ctgov → collect_ctgov_data.py since PR #614)
 Step 5: Run full screen (run_screen.py → data/snapshots/{date}/)
         ├── 5a-5d: Modules 1-4
         ├── 5e: Module 5 composite
@@ -1965,8 +2739,8 @@ diagnosis: sleeve budgets were destroying alpha.
 | Category | Gates | Current Status |
 |----------|-------|---------------|
 | Core | ruleset, trading_day, inputs | PASS |
-| Data freshness | XBI staleness, market data, CTgov, sponsorship | PASS |
-| Schema | market_data, DE schema, sort contrib | PASS |
+| Data freshness | XBI staleness, market data, CTgov, sponsorship; `ctgov_content_freshness` (blocking, newest `last_update_posted` ≤ 7d; added 2026-11-12, PR #614) | PASS (as of the original table; new gate not yet run) |
+| Schema | market_data (FAIL if median `market_cap` < $10M, PR #621), DE schema, sort contrib | PASS |
 | Drift | top-20/60 overlap, Spearman, migrations | WARN (66.7% top-20) |
 | Risk | concentration, exposure, portfolio weights | PASS |
 | Forward eval | rolling IC | WARN (IC -0.021 < floor 0.02) |
@@ -2716,7 +3490,7 @@ insider stabilization closure before treating the May 14 production-spec block a
 
 The production model continues unchanged per alpha-freeze policy (2026-04-04):
 
-- **Selector (gate):** 0.65 × `coinvest_score_z` + 0.35 × `inst_delta_z`
+- **Selector (gate):** 0.65 × `coinvest_score_z` + 0.35 × `inst_delta_z` *(superseded by v1.14.0 on 2026-05-04: `coinvest_score_z` 100%, `inst_delta_z` 0%. See the header and the 2026-11-12 entry.)*
   - Gate-only function; does NOT rank survivors, only selects/excludes
 - **Ranker:** 2-feature pairwise (`financial_score_z`, `coinvest_score_z`)
   - Ordinal-only (no rank-weighting; ECE=0.19)

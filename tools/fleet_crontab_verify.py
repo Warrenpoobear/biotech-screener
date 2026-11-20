@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -40,12 +41,14 @@ FLEET_CRON_JOBS: list[dict[str, Any]] = [
     {
         "job": "weekly_skills_review",
         "needle": "cron_weekly_skills_review.sh",
-        "schedule": "30 19 * * 5",
+        "schedule": "55 17 * * 5",
     },
     {
         "job": "data_auditor",
         "needle": "cron_data_auditor.sh",
         "schedule": "30 17 * * 1-5",
+        # The live host runs the auditor directly (`agents/data_auditor/run_audit.py --daily-only`).
+        "matcher": lambda line: "cron_data_auditor.sh" in line or "data_auditor/run_audit.py" in line,
     },
     {
         "job": "heartbeat_checks",
@@ -68,16 +71,11 @@ FLEET_CRON_JOBS: list[dict[str, Any]] = [
         "schedule": "0 22 * * 1-5",
     },
     {
+        # watchdog_noon (30 12) retired 2026-11-16: the */30 weekday watchdog covers it.
         "job": "watchdog_reboot",
         "needle": "cron_watchdog.sh",
         "schedule": "@reboot",
         "matcher": lambda line: "@reboot" in line and "cron_watchdog.sh" in line,
-    },
-    {
-        "job": "watchdog_noon",
-        "needle": "cron_watchdog.sh",
-        "schedule": "30 12 * * 1-5",
-        "matcher": lambda line: "30 12" in line and "cron_watchdog.sh" in line,
     },
 ]
 
@@ -92,6 +90,11 @@ def _line_matches(line: str, job: dict[str, Any]) -> bool:
 def read_active_crontab_lines() -> tuple[str, list[str]]:
     """Return (availability, active_lines). availability: OPERATOR_HOST | UNAVAILABLE."""
     if shutil.which("crontab") is None:
+        return "UNAVAILABLE", []
+    # A CI runner has the crontab binary but is never the operator host. Without this it
+    # reports "no crontab for runner" as every fleet job missing. On the operator host an
+    # empty or missing crontab still counts as a failure.
+    if os.environ.get("GITHUB_ACTIONS") == "true" or os.environ.get("CI") == "true":
         return "UNAVAILABLE", []
     try:
         proc = subprocess.run(

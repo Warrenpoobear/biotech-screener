@@ -78,6 +78,25 @@ artifacts/forward_validation/*
 !artifacts/forward_validation/CANDIDATE.json
 !artifacts/forward_validation/*.jsonl
 !artifacts/forward_validation/*.md
+# Selector-only shadow ledger (Spec 094): append-only evidence, same shape as
+# artifacts/forward_validation/ above. The directory un-ignore is load-bearing.
+!artifacts/selector_only_shadow/
+artifacts/selector_only_shadow/*
+!artifacts/selector_only_shadow/*.jsonl
+!artifacts/selector_only_shadow/*.md
+# Low-risk sleeve shadow ledger: append-only research record, same shape as above.
+!artifacts/low_risk_sleeve_shadow/
+artifacts/low_risk_sleeve_shadow/*
+!artifacts/low_risk_sleeve_shadow/*.jsonl
+!artifacts/low_risk_sleeve_shadow/*.md
+!artifacts/low_risk_sleeve_shadow_vol_beta/
+artifacts/low_risk_sleeve_shadow_vol_beta/*
+!artifacts/low_risk_sleeve_shadow_vol_beta/*.jsonl
+!artifacts/low_risk_sleeve_shadow_vol_beta/*.md
+!artifacts/low_risk_sleeve_shadow_vol_beta_full/
+artifacts/low_risk_sleeve_shadow_vol_beta_full/*
+!artifacts/low_risk_sleeve_shadow_vol_beta_full/*.jsonl
+!artifacts/low_risk_sleeve_shadow_vol_beta_full/*.md
 # Allow catalyst calendar HTML artifacts
 !artifacts/catalyst_calendars/
 artifacts/catalyst_calendars/*
@@ -534,3 +553,6 @@ dev/
 # Expression log atomic-write temps (#495); backups covered by *.bak* above
 data/*.jsonl.tmp.*
 data/*.jsonl.compact.tmp
+
+# local uv lockfile (deps governed by requirements.txt)
+uv.lock

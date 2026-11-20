@@ -39,7 +39,17 @@ SPONSOR_ALIASES = {
     "SLN": ["Silence Therapeutics plc", "Silence Therapeutics", "Silence"],
     "ADCT": ["ADC Therapeutics S.A.", "ADC Therapeutics", "ADCT"],
     "ALKS": ["Alkermes, Inc.", "Alkermes plc", "Alkermes"],
-    "INDV": ["Indivior Inc.", "Indivior PLC", "Indivior"],
+    # Indivior acquired Supernus Pharmaceuticals and renamed itself Supernus, Inc.;
+    # ticker INDV -> SUPN on 2026-11-03 (corporate_actions.json). Same list as
+    # collect_ctgov_data.py: the combined company sponsors both legacy pipelines.
+    "SUPN": [
+        "Supernus Pharmaceuticals",
+        "Supernus Pharmaceuticals, Inc.",
+        "Supernus, Inc.",
+        "Indivior",
+        "Indivior PLC",
+        "Indivior Inc.",
+    ],
     "JAZZ": ["Jazz Pharmaceuticals", "Jazz Pharmaceuticals plc", "Jazz"],
     "NVCR": ["NovoCure Ltd.", "NovoCure Limited", "Novocure", "NovoCure"],
     "XERS": ["Xeris Pharmaceuticals", "Xeris Biopharma", "Xeris"],

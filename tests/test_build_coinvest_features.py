@@ -555,7 +555,26 @@ class TestPriorQuarterFinding:
             period_of_report="2025-06-30",
             filed_at="2025-08-14",
         )
-        found = _find_prior_cache_dir(tmp_path, "2025-09-30")
+        found = _find_prior_cache_dir(tmp_path, "2025-09-30", "2025-09-30")
+        assert found is not None
+        assert found.name == "2025-09-30"
+
+    def test_find_prior_skips_directories_after_as_of(self, tmp_path):
+        _write_cache(
+            tmp_path,
+            "2025-09-30",
+            [(CIK_T1, "Baker Bros", [_holding("AAAA", value=100)])],
+            period_of_report="2025-06-30",
+            filed_at="2025-08-14",
+        )
+        _write_cache(
+            tmp_path,
+            "2026-08-01",
+            [(CIK_T1, "Baker Bros", [_holding("AAAA", value=50)])],
+            period_of_report="2025-06-30",
+            filed_at="2025-08-14",
+        )
+        found = _find_prior_cache_dir(tmp_path, "2025-09-30", "2025-12-31")
         assert found is not None
         assert found.name == "2025-09-30"
 
@@ -568,8 +587,85 @@ class TestPriorQuarterFinding:
             period_of_report="2025-12-31",
         )
         # Looking for prior of 2025-03-31 (which needs 2024-12-31 -> not found).
-        found = _find_prior_cache_dir(tmp_path, "2025-03-31")
+        found = _find_prior_cache_dir(tmp_path, "2025-03-31", "2025-12-31")
         assert found is None
+
+    def test_build_ignores_future_prior_cache(self, tmp_path):
+        _write_cache(
+            tmp_path,
+            "2026-02-19",
+            [(CIK_T1, "Baker Bros", [_holding("AAAA", value=110)])],
+            period_of_report="2025-12-31",
+            filed_at="2026-02-14",
+        )
+        _write_cache(
+            tmp_path,
+            "2025-11-15",
+            [(CIK_T1, "Baker Bros", [_holding("AAAA", value=100)])],
+            period_of_report="2025-09-30",
+            filed_at="2025-11-14",
+        )
+        _write_cache(
+            tmp_path,
+            "2026-08-01",
+            [(CIK_T1, "Baker Bros", [_holding("AAAA", value=50)])],
+            period_of_report="2025-09-30",
+            filed_at="2025-11-14",
+        )
+        result = build_coinvest_features(
+            "2026-02-19",
+            tmp_path,
+            UNIVERSE,
+            TIERS,
+            NAMES,
+        )
+        assert result["prior_cache_as_of_date"] == "2025-11-15"
+        assert result["tickers"]["AAAA"]["position_changes"]["Baker Bros"] == "HOLD"
+        assert result["created_at"] == "2026-02-19T00:00:00Z"
+
+    def test_explicit_cache_dir_ages_filings_on_target_date(self, tmp_path):
+        _write_cache(
+            tmp_path,
+            "2026-01-15",
+            [(CIK_T1, "Baker Bros", [_holding("AAAA", value=100)])],
+            period_of_report="2025-12-31",
+            filed_at="2026-01-10",
+        )
+        result = build_coinvest_features(
+            "2026-04-15",
+            tmp_path,
+            UNIVERSE,
+            TIERS,
+            NAMES,
+            cache_dir=tmp_path / "2026-01-15",
+        )
+        assert result["as_of_date"] == "2026-04-15"
+        assert result["tickers"]["AAAA"]["days_since_latest_filing"] == 95
+        assert result["tickers"]["AAAA"]["coinvest_recency_state"] == "stale"
+
+    def test_manager_json_path_cannot_escape_cache_dir(self, tmp_path):
+        _write_cache(
+            tmp_path,
+            "2026-02-19",
+            [(CIK_T1, "Baker Bros", [_holding("AAAA", value=100)])],
+        )
+        date_dir = tmp_path / "2026-02-19"
+        index_path = date_dir / "index.json"
+        index = json.loads(index_path.read_text(encoding="utf-8"))
+        index["managers"][0]["manager_json_path"] = "../secret.json"
+        index_path.write_text(json.dumps(index), encoding="utf-8")
+        (tmp_path / "secret.json").write_text(
+            json.dumps({"holdings": [_holding("ZZZZ", value=999)]}),
+            encoding="utf-8",
+        )
+        result = build_coinvest_features(
+            "2026-02-19",
+            tmp_path,
+            UNIVERSE,
+            TIERS,
+            NAMES,
+        )
+        assert "ZZZZ" not in result["tickers"]
 
     def test_dominant_period_of_report_picks_most_common(self, tmp_path):
         d = tmp_path / "test"

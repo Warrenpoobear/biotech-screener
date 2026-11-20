@@ -30,14 +30,13 @@ def test_verify_passes_when_all_jobs_present(verify_mod, monkeypatch):
     lines = [
         "40 14 * * 1-5 cd /repo && python3 tools/herald_health_check.py",
         "30 10 * * 1-5 /repo/tools/cron_intraday_mover.sh poll",
-        "30 19 * * 5 cd /repo && bash tools/cron_weekly_skills_review.sh",
+        "55 17 * * 5 cd /repo && bash tools/cron_weekly_skills_review.sh",
         "30 17 * * 1-5 cd /repo && bash tools/cron_data_auditor.sh",
         "30 17 * * 1-5 cd /repo && python3 tools/agent_heartbeat_checks.py",
         "0 18 * * 1-5 cd /repo && python3 tools/build_hermes_knowledge_layer.py",
         "5 18 * * 1-5 cd /repo && python3 agents/hermes-contradiction-detector/run_job.py",
         "0 22 * * 1-5 /repo/tools/cron_evening_catchup.sh",
         "@reboot /repo/tools/cron_watchdog.sh",
-        "30 12 * * 1-5 /repo/tools/cron_watchdog.sh",
     ]
     monkeypatch.setattr(verify_mod, "read_active_crontab_lines", lambda: ("OPERATOR_HOST", lines))
     report = verify_mod.verify_crontab()
@@ -47,10 +46,9 @@ def test_verify_passes_when_all_jobs_present(verify_mod, monkeypatch):
 
 def test_verify_fails_on_missing_watchdog_reboot(verify_mod, monkeypatch):
     lines = [
-        "30 12 * * 1-5 /repo/tools/cron_watchdog.sh",
         "40 14 * * 1-5 python3 tools/herald_health_check.py",
         "30 10 * * 1-5 /repo/tools/cron_intraday_mover.sh poll",
-        "30 19 * * 5 bash tools/cron_weekly_skills_review.sh",
+        "55 17 * * 5 bash tools/cron_weekly_skills_review.sh",
         "30 17 * * 1-5 bash tools/cron_data_auditor.sh",
         "30 17 * * 1-5 python3 tools/agent_heartbeat_checks.py",
         "0 18 * * 1-5 python3 tools/build_hermes_knowledge_layer.py",
@@ -74,3 +72,32 @@ def test_main_writes_artifact(verify_mod, tmp_path, monkeypatch):
     payload = json.loads(out.read_text(encoding="utf-8"))
     assert payload["schema"] == "fleet_crontab_verify.v1"
     assert payload["overall"] == "SKIP"
+
+
+def test_ci_runner_is_not_the_operator_host(monkeypatch):
+    """A CI runner has `crontab` but no fleet crontab; the live check must SKIP there."""
+    import tools.fleet_crontab_verify as mod
+
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    assert mod.read_active_crontab_lines() == ("UNAVAILABLE", [])
+    assert mod.verify_crontab()["overall"] == "SKIP"
+
+
+def test_live_host_forms_pass_without_noon_watchdog(verify_mod, monkeypatch):
+    """The host runs the auditor directly and has a */30 watchdog; no 12:30 line is required."""
+    lines = [
+        "40 14 * * 1-5 cd /repo && /usr/bin/python3 tools/herald_health_check.py",
+        "30 10 * * 1-5 /repo/tools/cron_intraday_mover.sh poll",
+        "55 17 * * 5 cd /repo && bash tools/cron_weekly_skills_review.sh",
+        "0 18 * * 1-5 cd /repo && /usr/bin/python3 agents/data_auditor/run_audit.py --daily-only",
+        "30 17 * * 1-5 cd /repo && /usr/bin/python3 tools/agent_heartbeat_checks.py",
+        "45 17 * * 1-5 cd /repo && /usr/bin/python3 tools/build_hermes_knowledge_layer.py",
+        "5 18 * * 1-5 cd /repo && /usr/bin/python3 agents/hermes-contradiction-detector/run_job.py --from-build",
+        "0 22 * * 1-5 /repo/tools/cron_evening_catchup.sh",
+        "*/30 * * * 1-5 /repo/tools/cron_watchdog.sh",
+        "@reboot sleep 180 && /repo/tools/cron_watchdog.sh",
+    ]
+    monkeypatch.setattr(verify_mod, "read_active_crontab_lines", lambda: ("OPERATOR_HOST", lines))
+    report = verify_mod.verify_crontab()
+    assert report["overall"] == "PASS", [c for c in report["checks"] if c["status"] != "PASS"]
+    assert "watchdog_noon" not in {c["job"] for c in report["checks"]}

@@ -27,7 +27,15 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "tools"))
 
-from backfill_market_snapshots import build_pit_snapshot, serialize_snapshot, write_frozen  # noqa: E402
+from backfill_market_snapshots import (  # noqa: E402
+    _fetch_fred_hy_oas_history,
+    _snapshot_output_path,
+    _validated_dates,
+    build_pit_snapshot,
+    main,
+    serialize_snapshot,
+    write_frozen,
+)
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -204,3 +212,43 @@ def test_identical_inputs_byte_identical_output(tmp_path):
 def test_too_little_history_raises():
     with pytest.raises(ValueError):
         build_pit_snapshot("2026-06-02", _inputs())
+
+
+def test_validated_dates_reject_path_segments():
+    with pytest.raises(ValueError):
+        _validated_dates(["../outside"])
+    with pytest.raises(ValueError):
+        _validated_dates(["2026-13-40"])
+    assert _validated_dates(["2026-09-16", "2026-09-15"]) == ["2026-09-15", "2026-09-16"]
+
+
+def test_snapshot_path_stays_inside_staging_root(tmp_path):
+    out = _snapshot_output_path(tmp_path, "2026-09-15")
+    assert out.is_relative_to(tmp_path.resolve())
+    assert out.name == "market_snapshot.json"
+
+
+def test_main_rejects_escaping_dates(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["backfill_market_snapshots.py", "--dates", "../outside", "--staging-root", str(tmp_path)],
+    )
+    assert main() == 1
+    assert not (tmp_path.resolve().parent / "outside").exists()
+
+
+def test_fred_error_does_not_log_api_key(monkeypatch, caplog):
+    import logging
+    import urllib.error
+    import urllib.request
+
+    monkeypatch.setenv("FRED_API_KEY", "super-secret-key")
+
+    def _boom(req, timeout=30):
+        raise urllib.error.URLError("api_key=super-secret-key")
+
+    monkeypatch.setattr(urllib.request, "urlopen", _boom)
+    with caplog.at_level(logging.WARNING):
+        assert _fetch_fred_hy_oas_history("2026-01-01", "2026-02-01") == []
+    assert "super-secret-key" not in caplog.text

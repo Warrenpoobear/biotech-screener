@@ -63,6 +63,9 @@ COLUMN_MAP = {
     "Category": "product_category",
     "product_category": "product_category",
     "BLA Type": "bla_type",
+    # FDA renamed "BLA Type" to "License Type" (seen 2026-10); without this the
+    # 351(k) biosimilar flag is silently empty and n_biosimilars drops to 0.
+    "License Type": "bla_type",
     # Biosimilar — derived from BLA Type if not explicit
     "Biosimilar": "is_biosimilar",
     "Is Biosimilar": "is_biosimilar",
@@ -147,38 +150,79 @@ def _normalize_applicant(name: str) -> str:
     return name.strip()
 
 
-def download_latest_csv(output_dir: Path) -> Optional[Path]:
-    """Attempt to download latest Purple Book CSV."""
-    try:
-        import urllib.request
+DOWNLOADS_PAGE = "https://purplebooksearch.fda.gov/downloads"
+_LINK_RE = re.compile(
+    r"https?://[^\"'\s]*/PurpleBook/(\d{4})/purplebook-search-([A-Za-z]+)-data-download\.csv",
+)
+_MONTHS = {
+    m.lower(): i
+    for i, m in enumerate(
+        [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ],
+        start=1,
+    )
+}
 
-        # Try current year/month pattern
-        now = datetime.now()
-        for month_offset in range(0, 6):
-            m = now.month - month_offset
-            y = now.year
-            while m <= 0:
-                m += 12
-                y -= 1
-            month_name = datetime(y, m, 1).strftime("%B").lower()
-            url = (
-                f"https://purplebooksearch.fda.gov/downloads/files/{y}/purplebook-search-{month_name}-data-download.csv"
-            )
-            dest = output_dir / f"purple_book_{y}_{m:02d}.csv"
-            try:
-                log.info("Trying: %s", url)
-                req = urllib.request.Request(url)
-                with urllib.request.urlopen(req, timeout=30) as resp:
-                    with open(dest, "wb") as f:
-                        f.write(resp.read())
-                log.info("Downloaded: %s", dest)
-                return dest
-            except Exception:
-                continue
-        log.warning("Could not download Purple Book CSV automatically")
-        return None
+
+def find_latest_csv_url(page_html: str) -> Optional[tuple[str, int, int]]:
+    """Return (url, year, month) of the newest monthly CSV linked on the page.
+
+    FDA moved the files to accessdata.fda.gov and the month casing is not
+    consistent (2026 has ``October`` but ``january``), so the URL is scraped
+    from the downloads page instead of being built from the date.
+    """
+    best = None
+    for m in _LINK_RE.finditer(page_html):
+        month = _MONTHS.get(m.group(2).lower())
+        if not month:
+            continue
+        key = (int(m.group(1)), month)
+        if best is None or key > best[1:]:
+            best = (m.group(0), *key)
+    return best
+
+
+def download_latest_csv(output_dir: Path) -> Optional[Path]:
+    """Download the newest Purple Book CSV linked from the FDA downloads page."""
+    import urllib.request
+
+    try:
+        req = urllib.request.Request(DOWNLOADS_PAGE, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            page = resp.read().decode("utf-8", errors="replace")
     except Exception as e:
-        log.warning("Download failed: %s", e)
+        log.warning("Could not fetch %s: %s", DOWNLOADS_PAGE, e)
+        return None
+    found = find_latest_csv_url(page)
+    if not found:
+        log.warning("No Purple Book CSV links found on %s", DOWNLOADS_PAGE)
+        return None
+    url, y, m = found
+    dest = output_dir / f"purple_book_{y}_{m:02d}.csv"
+    try:
+        log.info("Downloading: %s", url)
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            data = resp.read()
+        tmp = dest.with_suffix(".csv.tmp")
+        tmp.write_bytes(data)
+        tmp.replace(dest)
+        log.info("Downloaded: %s", dest)
+        return dest
+    except Exception as e:
+        log.warning("Download failed for %s: %s", url, e)
         return None
 
 
@@ -417,9 +461,24 @@ def main():
     log.info("Ingesting %s with as_of_date=%s", csv_path, args.as_of_date)
     result = ingest_csv(csv_path, args.as_of_date, ticker_map)
 
+    # Guard: a schema change that loses the license-type column yields 0
+    # biosimilars with no error (225 -> 0 on 2026-11-03). Never write that.
+    if result.get("n_records", 0) == 0 or result["stats"]["n_biosimilars"] == 0:
+        log.error(
+            "Refusing to write %s: n_records=%d n_biosimilars=%d (likely a CSV schema change)",
+            args.output,
+            result.get("n_records", 0),
+            result.get("stats", {}).get("n_biosimilars", 0),
+        )
+        sys.exit(2)
+
+    # Atomic replace: production_data files are hard-linked into data/staging,
+    # so writing in place would also change the staged PIT inputs.
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    with open(args.output, "w", encoding="utf-8") as f:
+    tmp = args.output.with_suffix(args.output.suffix + ".tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2)
+    tmp.replace(args.output)
 
     log.info(
         "Done: %d products, %d reference, %d biosimilars, %d interchangeables → %s",

@@ -297,7 +297,7 @@ At or past the 30-day evaluation threshold. Architecture freeze LIFTED 2026-05-2
 
 **SM-20260629-001 mandate UNBLOCKED (2026-07-10):** A `set -e` bug in `cron_daily_production.sh` was silently killing the forward-validation tail (including `run_forward_validation.py`) whenever `run_daily_production.py` exited with code 2 (WARN-status runs, which began 2026-04-17). Fixed in PR #489 (merged Jul 10). Live captures now running. The 10 backfilled legacy rows correctly count as 0 mandate-eligible windows; SM-20260629-001 requires 20/40/52 genuine live captures. Liveness monitor (`tools/cron_forward_validation_liveness.sh`) added Jul 10 — not yet installed in crontab (operator deploy step pending).
 
-**Model hash (AST-v1, 2026-07-10):** Raw-bytes model hash replaced with AST-normalized fingerprint (HASH_SCHEME=ast-v1, hash=827c35a9ed3ee6e1) so behavior-neutral edits (type annotations, docstrings) no longer flip the frozen DEM candidate hash. Operator must re-register candidate under 827c35a9ed3ee6e1.
+**Model hash (AST-v1, 2026-07-10):** Raw-bytes model hash replaced with AST-normalized fingerprint (HASH_SCHEME=ast-v1, hash=827c35a9ed3ee6e1) so behavior-neutral edits (type annotations, docstrings) no longer flip the frozen DEM candidate hash. Operator must re-register candidate under 827c35a9ed3ee6e1. *(Superseded 2026-11-15 by `ast-v2`, `a9a430154568e242`: same model, wider fingerprint. See `governance/HASH_ROTATIONS.md`.)*
 
 ## External IC and Alpha Benchmarks (May 2026)
 

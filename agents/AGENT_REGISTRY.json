@@ -224,6 +224,7 @@
       "supervised_by_orchestrator": false,
       "owner": "signal_lead",
       "notes": "Removed in commit 809da0ce2 (remove xAI/Grok agents and clean up all dependencies)",
+      "retired_without_successor": true,
       "llm_policy": "direct_llama_on_anomaly",
       "requires_preflight": false
     },

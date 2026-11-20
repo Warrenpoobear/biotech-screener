@@ -1,7 +1,7 @@
 # Agentic Account Operational Rules
 
 **Account**: 802349084 (Robinhood agentic)  
-**Confirmed**: 2026-06-24  
+**Confirmed**: 2026-06-24 (Rule 4 changed 2026-11-15)  
 **Purpose**: Live test case for Claude-managed biotech model portfolio operations
 
 ---
@@ -41,12 +41,16 @@ Equal-weight target = total equity / number of positions.
 
 | Trigger | Action |
 |---------|--------|
-| Drawdown vs XBI ≤ −2pp | Full liquidation to cash, market orders, within session |
-| Drawdown vs XBI ≤ −5pp | Liquidate immediately, no delay |
+| Drawdown vs XBI ≤ −10pp | Review: no new buys and no rebalance until the operator has reviewed model health |
+| Drawdown vs XBI ≤ −15pp | Full liquidation to cash, market orders, within session, after operator confirmation |
+
+Drawdown is measured per lot against XBI from each lot's own fill date (the convention in the `biotech-governance-check` skill). If it cannot be measured, the gate is UNVERIFIED: do not trade, ask the operator.
 
 Re-entry after hard exit requires explicit operator instruction. Not automatic.
 
 Check drawdown gate at the start of every rebalance session via `get_portfolio`.
+
+*Changed 2026-11-15 (operator decision; `docs/governance/2026-11-15-pre-clock-decisions.md` §3). The earlier triggers were −2pp (liquidate) and −5pp (liquidate immediately). On the selector-only history, −2pp was touched in about half of all 12-month holding periods through ordinary variation, and the six months after a first touch averaged +8.1pp of excess return. The new levels are touched in about 15% (−10pp) and 4% (−15pp) of 12-month periods on month-end observations. Those figures are in-sample and survivorship-biased.*
 
 ---
 
