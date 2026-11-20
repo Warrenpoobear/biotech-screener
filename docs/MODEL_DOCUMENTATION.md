@@ -1,8 +1,9 @@
 # Wake Robin DEM — Model Documentation
 
 **Version:** 1.7.2 (ruleset `8887576e`, v1.14.0 — 2026-05-04 demotion of `inst_delta_z`; see `RULESET_CHANGELOG.md`)
-**Last updated:** 2026-11-18 (LVB sleeve backtest corrections — price source, survivorship, broader benchmarks, quarterly rebalance, and a later rebalance-calendar correction to the same figures; in-sample research record, **no model change**. AZN split-adjusted price fix, PR #712, merged 2026-11-18; operator ruling: data correction, no clock reset. See the 2026-11-18 entry below)
-**Update before that:** 2026-11-17 (out-of-sample clock start recorded at 2026-11-17, PR #701; `snapshots_pit_v9` history rebuild written into `data/snapshots`, PR #698; research record — v9 backtests, roster range, portfolio construction and a 20-signal screen, **no model change**; ops fixes PRs #699, #700, #702. See the 2026-11-17 entries below)
+**Last updated:** 2026-11-20 (split confirmation window on momentum, drawdown, beta, and RSI. Tier 3 input fix. `model_hash` unchanged. Clock implication recorded; `oos_clock_start` not moved in the PR. See the 2026-11-20 entry below.)
+**Update before that:** 2026-11-18 (LVB sleeve backtest corrections — price source, survivorship, broader benchmarks, quarterly rebalance, and a later rebalance-calendar correction to the same figures; in-sample research record, **no model change**. AZN split-adjusted price fix, PR #712, merged 2026-11-18; operator ruling: data correction, no clock reset. See the 2026-11-18 entry below)
+**Prior to that:** 2026-11-17 (out-of-sample clock start recorded at 2026-11-17, PR #701; `snapshots_pit_v9` history rebuild written into `data/snapshots`, PR #698; research record — v9 backtests, roster range, portfolio construction and a 20-signal screen, **no model change**; ops fixes PRs #699, #700, #702. See the 2026-11-17 entries below)
 **Prior update:** 2026-11-15 (weekend of governance and research work; **no change to scoring, selection, order, sizing or eligibility except the operator-requested `de_vol_60d` input fix, PR #676, which lands before `oos_clock_start`**. Selector-only clock not yet started: dated drift override, `ast-v2` candidate hash `a9a430154568e242`, `ranker_mode` capture check, account Rule 4 at −10/−15 pp, protocol §4 fail and rollback rules. Low-risk sleeve shadow (PR #674, capture-only). Research history `data/snapshots_pit_v6` = v5 inputs + current code; backtests unchanged. Weekend signal research recorded as context only. See the 2026-11-15 entries below)
 **Earlier updates:** 2026-11-12/13 (missing-field fixes PR #614 + #636 with a clock reset; Sharadar price source PR #622 without a memo; market-cap look-ahead found in regenerated history and backtest claims deprecated, PR #660; production order switched to selector-only, PR #665. See the 2026-11-12 and 2026-11-13 entries). 2026-11-01 (coinvest 13F integrity fix + operator roster change; selector-input change with a clock reset. See `docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md`)
 **Status:** Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + **selector-only order** (`--ranker-mode selector_only`, operator decision 2026-11-13; the pairwise `minimal_v2` ranker is scored as a shadow and no longer orders the portfolio) + EW Top-30. Takes effect with the first production run on the merged code; out-of-sample clock resets. See the 2026-11-13 entry below and `docs/governance/2026-11-13-selector-only-production-switch.md`. *(Status before 2026-11-13: Production — coinvest-only selector (`coinvest_score_z` 100%, `inst_delta_z` 0%) + pairwise `minimal_v2` ranker (2-feature: `coinvest_score_z` + `financial_score`; ordinal-only; does **not** read `inst_delta_z`) + EW Top-30. **FROZEN** until governance gates clear.)*
@@ -16,6 +17,16 @@ selector, ranker_v2 weights, eligibility rules, decision rulesets, and EW Top-30
 construction remain frozen; this document does not authorize behavior changes.
 
 ---
+
+## Recent Update — 2026-11-20 (Split Confirmation Window — Tier 3 Input Fix)
+
+Classification: Tier 3 model-input bug fix. No change to selector weights, ranker, sizing, eligibility thresholds, or ruleset `8887576e`. `model_hash` stays `a9a430154568e242` (`ast-v2`). Memo: `docs/governance/2026-11-20-split-confirmation-window.md`.
+
+Momentum confirmed a registry split with `abs(log(observed) - log(factor)) <= log(2)`. AZN's factor 2.0 then matched a flat already-adjusted series (`abs(log(1) - log(2)) == log(2)`), and the lookback was doubled again (about −50% on any window crossing 2026-01-28). Drawdown and beta/RSI only dropped days beyond +300%/−75%, so AZN's +96% day stayed in those series.
+
+The scorer now uses the repair script's 15% relative window (`registry_split_confirmed` in `common/corporate_actions.py`). A confirmed registry factor is applied in momentum and, on the same series, in drawdown, beta, alpha, RSI, and `vol_60d`. A flat series is not adjusted. The live rank shift was not measured: `production_data/price_history.csv` is not in this checkout. The memo lists which names can move at as-of 2026-11-20 (AZN and KALA drawdown; IMMP beta/RSI/vol; SKYE 120-day return, because 0.5015 → 3.32 is 17% from factor 8).
+
+Clock: protocol §1 treats an authorized bug fix that changes a scoring input as a reset. This PR does not move `oos_clock_start` (still 2026-11-17). On merge, unless the operator rules otherwise, the clock becomes the first promoted run on this code and mandate SM-20260629-001 restarts at 0/20. The 2026-11-18 "no reset" ruling does not cover this fix: that repair changed no current score.
 
 ## Recent Update — 2026-11-18 (LVB Sleeve Backtest Corrections; AZN Split-Adjusted Price Fix — No Model Change)
 
