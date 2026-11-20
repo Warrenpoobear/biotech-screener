@@ -1,0 +1,280 @@
+{
+  "date": "2026-11-20",
+  "monitoring_day": "119 (Day 77 of monitoring resumed — AFTER 42-SESSION CRON GAP Sep 24 — Nov 20)",
+  "timestamp": "2026-11-20T09:00:00.000000Z",
+  "phase": "Day 119 — PRE-MARKET snapshot (Nov 20 09:00 ET, Thursday). CRITICAL: Monitoring cron was DOWN for 42 consecutive trading sessions (Sep 24 — Nov 20). Price data remains Aug 27 close basis (~60 trading sessions stale). Robinhood MCP unavailable. MAJOR GOVERNANCE EVENTS since Sep 23: Rule 4 updated (now -10pp/-15pp), OOS clock reset 4x (now 2026-11-17 start), Q3 13F due ~Nov 14, selector-only production switch Nov 13, market-cap look-ahead deprecation Nov 13. PRAX PDUFA Dec 27 2026 is NOW ~37 CALENDAR DAYS AWAY. IC/h20d gates remain overdue.",
+
+  "data_integrity": {
+    "primary_source": "Carried forward from daily_2026_09_23.json (Day 76 / Sep 23). Aug 27 close is LAST known price data.",
+    "price_date": "2026-08-27 close (LAST AVAILABLE — NOW ~60 TRADING SESSIONS STALE)",
+    "data_gap": "Aug 28 through Nov 20 — approximately 60 consecutive trading sessions without confirmed price data",
+    "monitoring_cron_gap": "daily_2026_09_23.json was the last file written. Sep 24 through Nov 20 monitoring files all MISSING (42 sessions). Cron down or Robinhood MCP unavailable throughout.",
+    "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged — no confirmed trades since Jun 24 rebalance)",
+    "cash_basis": "Carried forward $99.87 from Jun 24 MCP sourcing (unchanged, no confirmed trading activity)",
+    "mcp_status": "Robinhood MCP unavailable. Live quotes cannot be fetched. This is a session-level removal (tools set to Needs approval / Blocked on Robinhood connector).",
+    "data_quality": "DEGRADED — CRITICAL. Aug 27 close (last known). ~60 trading sessions of price movement UNCAPTURED. Full P&L, equity, and gate values UNKNOWN."
+  },
+
+  "market_status": {
+    "date": "2026-11-20",
+    "weekday": "Thursday",
+    "status": "OPEN",
+    "note": "Nov 20 = Thursday. Robinhood MCP unavailable — Nov 20 prices cannot be fetched. All portfolio data carried from Aug 27 basis. PRAX PDUFA December 27 is ~37 calendar days away. Next Monday rebalance: Nov 23."
+  },
+
+  "account": {
+    "account_id": "Robinhood 802349084",
+    "equity_fetchable": false,
+    "equity_estimated_usd": "UNKNOWN (Aug 27 basis was $138.04; ~60 sessions of P&L movement uncaptured)",
+    "equity_note": "Carried from Aug 27 close. Aug 28 through Nov 20 all unknown. CANNOT estimate current equity.",
+    "cash_carried": 99.87,
+    "buying_power_carried": null,
+    "total_estimated_account_value": "UNKNOWN (Aug 27 basis was $237.91)",
+    "equity_note_detail": "No new price data since Aug 27 close. MCP unavailable. ~60 sessions of actual P&L movement uncaptured."
+  },
+
+  "benchmark": {
+    "xbi_entry_price": 133.62,
+    "xbi_last_close": 168.23,
+    "xbi_last_close_date": "2026-08-27",
+    "xbi_return_since_entry_pct": 25.9,
+    "xbi_note": "XBI last close $168.23 (Aug 27 basis — ~60 trading sessions stale). +25.90% since Jun 10 entry ($133.62). Outperformance estimate STALE and unverifiable."
+  },
+
+  "portfolio_overview": {
+    "total_positions": 15,
+    "positions_negative_vs_entry": "UNKNOWN (all were positive as of Aug 27 basis)",
+    "positions_positive_vs_entry": "UNKNOWN (all 15 were positive Aug 27 basis)",
+    "avg_pnl_vs_entry_pct": "UNKNOWN (was +37.88% Aug 27 basis)",
+    "equity_usd": "UNKNOWN (was $138.04 Aug 27 basis)",
+    "cash_usd": 99.87,
+    "xbi_return_since_entry_pct": "UNKNOWN (was +25.90% Aug 27 basis)",
+    "outperformance_pp": "UNKNOWN (was +11.98pp Aug 27 basis)",
+    "drawdown_threshold_pp_review": -10.0,
+    "drawdown_threshold_pp_liquidation": -15.0,
+    "drawdown_note": "Rule 4 CHANGED 2026-11-15: thresholds now -10pp (review) / -15pp (liquidation). Was -2pp/-5pp. Last measured drawdown: +11.98pp vs XBI (Aug 27, ~60 sessions stale). Actual current status UNKNOWN.",
+    "gap_flags": "UNKNOWN (last known: 0 flags Aug 27)",
+    "monitoring_gap_sessions": 42,
+    "monitoring_gap_note": "No monitoring files Sep 24 through Nov 20 (42 trading sessions)"
+  },
+
+  "positions_last_known": [
+    {"ticker": "NRIX", "entry": 15.46, "last_close_aug27": 26.88, "pnl_pct_aug27": 73.87, "qty": 0.430232, "current_pnl": "UNKNOWN"},
+    {"ticker": "URGN", "entry": 28.02, "last_close_aug27": 45.5, "pnl_pct_aug27": 62.38, "qty": 0.237681, "current_pnl": "UNKNOWN"},
+    {"ticker": "SLDB", "entry": 6.49, "last_close_aug27": 10.13, "pnl_pct_aug27": 56.09, "qty": 1.028527, "current_pnl": "UNKNOWN"},
+    {"ticker": "RVMD", "entry": 143.76, "last_close_aug27": 221.15, "pnl_pct_aug27": 53.83, "qty": 0.046465, "current_pnl": "UNKNOWN"},
+    {"ticker": "DNTH", "entry": 72.1, "last_close_aug27": 111.54, "pnl_pct_aug27": 54.7, "qty": 0.092928, "current_pnl": "UNKNOWN"},
+    {"ticker": "PRAX", "entry": 241.92, "last_close_aug27": 367.85, "pnl_pct_aug27": 52.06, "qty": 0.02753, "current_pnl": "UNKNOWN", "catalyst": "PDUFA Dec 27 2026 (~37 days) — relutrigine SCN2A/SCN8A DEEs"},
+    {"ticker": "ERAS", "entry": 13.27, "last_close_aug27": 19.49, "pnl_pct_aug27": 46.87, "qty": 0.503396, "current_pnl": "UNKNOWN"},
+    {"ticker": "TRVI", "entry": 13.43, "last_close_aug27": 17.96, "pnl_pct_aug27": 33.73, "qty": 0.496649, "current_pnl": "UNKNOWN"},
+    {"ticker": "CMPS", "entry": 11.3, "last_close_aug27": 14.64, "pnl_pct_aug27": 29.56, "qty": 0.590265, "current_pnl": "UNKNOWN"},
+    {"ticker": "SYRE", "entry": 76.1, "last_close_aug27": 93.62, "pnl_pct_aug27": 23.02, "qty": 0.088041, "current_pnl": "UNKNOWN"},
+    {"ticker": "COGT", "entry": 31.35, "last_close_aug27": 37.09, "pnl_pct_aug27": 18.31, "qty": 0.212789, "current_pnl": "UNKNOWN"},
+    {"ticker": "XENE", "entry": 51.95, "last_close_aug27": 61.93, "pnl_pct_aug27": 19.21, "qty": 0.128578, "current_pnl": "UNKNOWN"},
+    {"ticker": "DRUG", "entry": 63.59, "last_close_aug27": 74.54, "pnl_pct_aug27": 17.22, "qty": 0.105839, "current_pnl": "UNKNOWN"},
+    {"ticker": "ALMS", "entry": 20.37, "last_close_aug27": 23.21, "pnl_pct_aug27": 13.94, "qty": 0.326013, "current_pnl": "UNKNOWN"},
+    {"ticker": "STOK", "entry": 28.74, "last_close_aug27": 32.59, "pnl_pct_aug27": 13.4, "qty": 0.231758, "current_pnl": "UNKNOWN"}
+  ],
+
+  "gap_flags_summary": {
+    "count": "UNKNOWN (cannot measure without live prices)",
+    "threshold_pct": 5.0,
+    "last_known": "0 gap flags (Aug 27 close)"
+  },
+
+  "governance_gates": {
+    "drawdown_gate": {
+      "status": "UNVERIFIABLE — ~60 SESSIONS STALE",
+      "last_outperformance_pp": 11.98,
+      "last_outperformance_date": "2026-08-27",
+      "threshold_review_pp": -10.0,
+      "threshold_liquidation_pp": -15.0,
+      "rule4_changed": "2026-11-15 — was -2pp/-5pp, now -10pp review / -15pp liquidation",
+      "detail": "Last measured Aug 27 close basis: +11.98pp outperformance. Rule 4 thresholds changed 2026-11-15. Gate CLEAR on last known basis but unverifiable for ~60 sessions of price movement."
+    },
+    "ic_gate": {
+      "status": "OVERDUE — 143+ DAYS (Jul 1 deadline, now Nov 20)",
+      "gate_was_due": "2026-07-01",
+      "last_measured": "2026-06-24",
+      "last_ic_score_rank_pct": -0.0201,
+      "last_ic_actionable_rank": 0.1534,
+      "last_ic_coinvest_score_z": 0.1478,
+      "note": "IC gate 143 days overdue. Corrected sign (2026-11-12): actionable_rank IC = +0.1534 over 31 live dates (the production-relevant figure). DEM candidate freeze + NO_MODEL_CHANGE window active (SM-20260629-001). OOS clock now at 0/20 (oos_clock_start 2026-11-17)."
+    },
+    "h20d_gate": {
+      "status": "OVERDUE — 143+ DAYS",
+      "gate_date": "2026-07-01",
+      "override_posture": "MAINTAINED (OPTION_B_OVERRIDE_2026_05_26)",
+      "note": "143+ days overdue. Q2 2026 coinvest rebuilt (Q2 holdings active from 2026-11-01 governance event). Q3 2026 13F deadline was ~Nov 14 2026 — may now need Q3 rebuild."
+    },
+    "jaccard_gate": {
+      "status": "STALE — last measured 2026-06-23",
+      "last_value": 0.875,
+      "threshold": 0.4,
+      "note": "0.875 on 2026-06-23 basis. Q2 coinvest promotion changed roster (Nov 1 event). Q3 13F potentially due for processing. Jaccard value will shift. Refresh needed."
+    },
+    "emergency_gate": {
+      "status": "UNVERIFIABLE — ~60 SESSIONS STALE",
+      "detail": "All 15 positions above entry as of Aug 27. Actual buffer unknown after ~60 sessions. STOK (Aug 27: +13.40%) was lowest buffer — no data since."
+    },
+    "positions_20pct_loss_gate": {
+      "status": "UNVERIFIABLE — ~60 SESSIONS STALE",
+      "lowest_pnl_aug27_name": "STOK",
+      "lowest_pnl_aug27_pct": 13.4,
+      "note": "All 15 positive Aug 27. ~60 sessions of movement unknown. No MCP to verify."
+    },
+    "monday_rebalance_gate": {
+      "status": "MULTIPLE UNRESOLVED (Sep 14, Sep 21, Sep 28, Oct 5, Oct 12, Oct 19, Oct 26, Nov 2, Nov 9, Nov 16, Nov 20=Thu so next Mon=Nov 23)",
+      "rule": "Rule 1: Monday market open = weekly rebalance check",
+      "next_monday_trigger": "2026-11-23",
+      "note": "Every Monday since Sep 14 has been an unresolved rebalance check due to MCP unavailability. Last confirmed rebalance: 2026-06-24 (Phase 2 EW rebalance, Robinhood 802349084). Approximately 11 consecutive Monday rebalance checks UNRESOLVED. Rule 1 requires weekly rebalance; Rule 2 requires exit/entry for roster changes. Operator must manually verify and act."
+    },
+    "oos_clock_gate": {
+      "status": "ACTIVE — 0/20 mandate-eligible windows",
+      "oos_clock_start": "2026-11-17",
+      "mandate": "SM-20260629-001",
+      "model_hash": "a9a430154568e242",
+      "ranker_mode": "selector_only",
+      "note": "OOS clock restarted 2026-11-17 (coinvest CUSIPs + universe adds: RPRX, ILMN, STVN). Mandate at 0/20. Selector-only production since 2026-11-13. Descriptive forward validation summary: 13 windows total (all pre-mandate), mean excess +1.142%, t=2.13, hit 77% — descriptive only, not mandate evidence."
+    }
+  },
+
+  "catalyst_watch": {
+    "critical_upcoming": [
+      {
+        "ticker": "PRAX",
+        "event": "FDA PDUFA — Relutrigine (SCN2A/SCN8A DEEs)",
+        "date": "December 27, 2026",
+        "calendar_days_away": 37,
+        "trading_days_away": "~27 (from Nov 20)",
+        "posture": "POSITIVE — no AdCom, no safety/efficacy concerns raised",
+        "priority": "HIGH — BINARY CATALYST APPROACHING",
+        "last_known_pnl_pct": 52.06
+      }
+    ],
+    "resolved_since_sep23": [
+      {
+        "ticker": "ALMS",
+        "event": "LUMUS Phase 2b SLE binary (Sep 30 deadline)",
+        "status": "UNKNOWN — outcome not captured in monitoring. Sep 30 deadline has passed. Data gap covers entire resolution window.",
+        "action_needed": "OPERATOR: verify ALMS LUMUS Phase 2b readout outcome"
+      },
+      {
+        "ticker": "XENE",
+        "event": "NDA azetukalner Q3 2026 (Sep 30 deadline)",
+        "status": "UNKNOWN — outcome not captured in monitoring. Sep 30 deadline has passed.",
+        "action_needed": "OPERATOR: verify XENE NDA filing status"
+      }
+    ],
+    "note": "~60-session monitoring gap means multiple catalyst outcomes are unknown. PRAX PDUFA Dec 27 is the most material upcoming binary (last known: +52.06% vs entry Aug 27)."
+  },
+
+  "governance_events_since_last_snapshot": [
+    {
+      "date": "2026-11-01",
+      "event": "Coinvest 13F integrity fix + roster change. Q2 2026 holdings promoted to production coinvest. Registry v4.0 (30-manager elite_core). OOS clock reset to 2026-11-02 (later superseded). Memos: docs/governance/2026-11-01-coinvest-13f-integrity-clock-reset.md, docs/governance/2026-11-01-coinvest-cusip-first-resolution.md"
+    },
+    {
+      "date": "2026-11-12",
+      "event": "Missing-field fixes: CT.gov source refresh + blocking gate ctgov_content_freshness; inst_delta_z blanking on registry-transition guard. Financial score fix (PR #649): operating cash flow + deduped CashAndSecurities. OOS clock reset to 2026-11-12. Sharadar price source activated (PR #622, operator ack pending at time). Memo: docs/governance/2026-11-04-missing-fields-clock-reset.md"
+    },
+    {
+      "date": "2026-11-13",
+      "event": "SELECTOR-ONLY PRODUCTION SWITCH: final_score = selector_score (--ranker-mode selector_only). Pairwise ranker is shadow only. Market-cap look-ahead deprecation: all pre-Nov-13 backtest figures deprecated. OOS clock reset. Memos: docs/governance/2026-11-13-selector-only-production-switch.md, docs/governance/2026-11-13-market-cap-lookahead-deprecation.md"
+    },
+    {
+      "date": "2026-11-15",
+      "event": "RULE 4 CHANGED: drawdown thresholds now -10pp (review) / -15pp (liquidation), was -2pp / -5pp. de_vol_60d refreshed every run (overwrite-always). Selector-only clock not yet started (drift gate failures). Memo: docs/governance/2026-11-15-pre-clock-decisions.md"
+    },
+    {
+      "date": "2026-11-16",
+      "event": "Selector-only OOS clock started: oos_clock_start = 2026-11-16 (later superseded by Nov 17). model_hash a9a430154568e242 (ast-v2). Memo: docs/governance/2026-11-16-selector-only-clock-start.md"
+    },
+    {
+      "date": "2026-11-17",
+      "event": "CLOCK RESET: Coinvest CUSIP mappings + RPRX, ILMN, STVN universe adds. OOS clock now 2026-11-17 (final, mandate 0/20). Memos: docs/governance/2026-11-17-coinvest-cusips-and-universe-adds-clock-reset.md, docs/governance/2026-11-17-oos-clock-start.md"
+    },
+    {
+      "date": "2026-11-18",
+      "event": "AZN ADR ratio change registered (split repair, no clock reset). SUPN company name and EU-registry sponsor aliases updated (no clock reset). Memos: docs/governance/2026-11-18-azn-adr-ratio-split-fix.md, docs/governance/2026-11-18-supn-name-and-sponsor-aliases-no-clock-reset.md"
+    },
+    {
+      "date": "2026-11-14",
+      "event": "Q3 2026 13F-HR filing deadline (~Nov 14, per operational-state.md). Coinvest_signals.json is currently on Q2 2026 holdings (rebuilt 2026-11-01). Q3 rebuild pending operator authorization after filings verified.",
+      "action_needed": "Verify Q3 2026 13F filings from tracked managers (Fairmount, Deep Track, Logos Global). Rebuild coinvest_signals.json from Q3 holdings per governed process."
+    }
+  ],
+
+  "monitoring_cron_gap": {
+    "gap_start": "2026-09-24",
+    "gap_end": "2026-11-20",
+    "sessions_missed": 42,
+    "cause": "Robinhood MCP tools removed from automated sessions (Needs approval / Blocked classification). Cron ran but could not fetch live data.",
+    "catalyst_outcomes_missed": ["ALMS LUMUS Phase 2b SLE (Sep 30)", "XENE NDA azetukalner (Q3 2026 / Sep 30 target)"],
+    "governance_events_missed_live": "Multiple OOS clock resets, Rule 4 change, selector-only switch, market-cap deprecation"
+  },
+
+  "escalation_flags": [
+    {
+      "id": "MCP_UNAVAILABLE_60_SESSIONS",
+      "reason": "Robinhood MCP tools have been unavailable for ~60 consecutive trading sessions (Aug 28 through Nov 20). Portfolio state, equity, positions, and quotes cannot be verified. All governance gates (drawdown, emergency, 20pct-loss) are UNVERIFIABLE. OPERATOR ACTION REQUIRED to restore data access.",
+      "priority": "CRITICAL — OPERATOR ACTION REQUIRED"
+    },
+    {
+      "id": "PRAX_PDUFA_37_DAYS",
+      "ticker": "PRAX",
+      "reason": "FDA PDUFA December 27 2026 for relutrigine (SCN2A/SCN8A DEEs) is ~37 calendar days away. Last known position value: +52.06% vs entry (Aug 27 basis — 60 sessions stale). Binary catalyst approaching. Rule 2 flags this for manual review when within 5 days. Operator should verify current PRAX price and position status.",
+      "priority": "HIGH — BINARY CATALYST APPROACHING"
+    },
+    {
+      "id": "ALMS_XENE_OUTCOMES_UNKNOWN",
+      "reason": "ALMS LUMUS Phase 2b SLE binary and XENE NDA filing both had Sep 30 2026 deadlines. Both outcomes occurred during the monitoring cron gap. Outcomes UNKNOWN. Position status unknown.",
+      "priority": "HIGH — VERIFY CATALYST OUTCOMES"
+    },
+    {
+      "id": "11_MONDAY_REBALANCES_MISSED",
+      "reason": "Every Monday rebalance since Sep 14 has been missed due to MCP unavailability (approximately 11 Mondays: Sep 14, Sep 21, Sep 28, Oct 5, Oct 12, Oct 19, Oct 26, Nov 2, Nov 9, Nov 16). Rule 1 requires weekly equal-weight rebalance. The portfolio may have drifted significantly from equal-weight targets. Rule 2 roster changes (entries/exits from Top-30 screener) are also unverified for this period. Next Monday: Nov 23.",
+      "priority": "HIGH — MULTIPLE REBALANCES OVERDUE"
+    },
+    {
+      "id": "IC_H20D_OVERDUE_143_DAYS",
+      "reason": "IC gate and h20d gate both 143+ days overdue (were due 2026-07-01, now Nov 20). OOS mandate at 0/20 live windows (clock just restarted 2026-11-17). Q3 2026 13F may need processing (filing deadline ~Nov 14).",
+      "priority": "GOVERNANCE_OVERDUE"
+    },
+    {
+      "id": "Q3_13F_FILING_WINDOW",
+      "reason": "Q3 2026 13F-HR filing deadline ~2026-11-14. Fairmount, Deep Track, and Logos Global Q3 holdings may now be available. Coinvest_signals.json is on Q2 2026 (rebuilt 2026-11-01). Q3 rebuild is a manual, governed step per operational-state.md.",
+      "priority": "GOVERNANCE_ACTION_NEEDED"
+    }
+  ],
+
+  "forward_validation_summary": {
+    "oos_clock_start": "2026-11-17",
+    "mandate_windows_eligible": 0,
+    "total_captured_windows": 13,
+    "mandate": "SM-20260629-001 (0/20)",
+    "descriptive_mean_excess_pct": 1.142,
+    "descriptive_t_stat": 2.13,
+    "descriptive_hit_rate": 0.77,
+    "descriptive_note": "13 captured windows including pre-clock replay windows. Descriptive only — not mandate evidence. Mandate clock restarted 2026-11-17 at 0/20 due to coinvest CUSIP/universe adds (PR #696).",
+    "ranker_mode": "selector_only (since 2026-11-13)"
+  },
+
+  "monitoring_summary": {
+    "status": "DEGRADED — CRITICAL DATA GAP",
+    "action_required": true,
+    "top_actions": [
+      "1. RESTORE MCP access or manual price feed — 60 sessions of price data missing",
+      "2. VERIFY ALMS LUMUS Phase 2b SLE outcome (Sep 30 deadline)",
+      "3. VERIFY XENE NDA azetukalner filing status (Sep 30 deadline)",
+      "4. VERIFY all 15 position current prices and drawdown gate status vs XBI",
+      "5. EXECUTE or document missed Monday rebalances (11 consecutive missed, Rule 1)",
+      "6. CHECK PRAX position (PDUFA Dec 27 2026, ~37 days away) — consider pre-PDUFA position review per Rule 2",
+      "7. PROCESS Q3 2026 13F filings (~Nov 14 deadline) per governed process",
+      "8. OOS mandate: 0/20 windows (clock start 2026-11-17) — no action needed but monitor"
+    ],
+    "data_quality": "CRITICAL — ~60 sessions stale, all gate values unverifiable",
+    "governance_posture": "MODEL FROZEN (DEM candidate freeze + selector-only NO_MODEL_CHANGE window). Rule 4 updated to -10pp/-15pp. Selector-only production since Nov 13.",
+    "last_prior_snapshot": "2026-09-23 (Day 76)"
+  }
+}
