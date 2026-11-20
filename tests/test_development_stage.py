@@ -304,61 +304,71 @@ class TestDevelopmentStageOverrides:
         assert stage == "commercial"
         assert source == "override"
 
-    def test_override_loader_returns_dict(self):
-        """Loader must always return a dict, never raise on missing/malformed input."""
+    def test_overrides_are_not_loaded_at_import(self):
         import run_screen
 
-        result = run_screen._load_development_stage_overrides()
-        assert isinstance(result, dict)
+        assert run_screen._DEVELOPMENT_STAGE_OVERRIDES == {}
 
-    def test_override_loader_drops_invalid_stage_values(self, tmp_path, monkeypatch):
-        """Mirror of the loader's invalid-stage filter, exercised against a temp file.
+    def test_override_loader_returns_dict(self, tmp_path):
+        """Loader must return a dict of applied stages and a skip list, and not raise on a missing file."""
+        import run_screen
 
-        The production loader hard-codes its path to production_data/, so this
-        test runs a parallel implementation whose filter logic must stay in
-        sync with run_screen._load_development_stage_overrides.
-        """
+        applied, skipped = run_screen._load_development_stage_overrides("2026-11-20", path=tmp_path / "missing.json")
+        assert applied == {}
+        assert skipped == []
+
+    def test_override_loader_drops_invalid_undated_and_future_rows(self, tmp_path):
         import json
 
-        from run_screen import DEVELOPMENT_STAGE_VALUES as VALID_STAGES
+        import run_screen
 
-        bad_payload = {
+        payload = {
             "schema_version": "1.0",
             "entries": {
-                "GOOD": {"stage": "commercial", "evidence": "x"},
-                "BAD1": {"stage": "fake_stage_value", "evidence": "y"},
-                "BAD2": {"stage": "PHASE_99", "evidence": "z"},
+                "GOOD": {"stage": "commercial", "effective_from": "2026-04-28"},
+                "BAD1": {"stage": "fake_stage_value", "effective_from": "2026-04-28"},
+                "BAD2": {"stage": "PHASE_99", "effective_from": "2026-04-28"},
                 "BAD3": "not even a dict",
-                "BAD4": {"stage": 123, "evidence": "numeric stage"},
+                "BAD4": {"stage": 123, "effective_from": "2026-04-28"},
+                "UNDATED": {"stage": "phase_2"},
+                "FUTURE": {"stage": "phase_3", "effective_from": "2026-12-01"},
             },
         }
         fake = tmp_path / "development_stage_overrides.json"
-        fake.write_text(json.dumps(bad_payload))
-
-        raw = json.loads(fake.read_text())
-        entries = raw.get("entries", {})
-        out = {}
-        for ticker, payload in entries.items():
-            if not isinstance(payload, dict):
-                continue
-            stage = payload.get("stage")
-            if isinstance(stage, str) and stage in VALID_STAGES:
-                out[str(ticker).upper()] = stage
-        assert out == {"GOOD": "commercial"}
+        fake.write_text(json.dumps(payload), encoding="utf-8")
+        applied, skipped = run_screen._load_development_stage_overrides("2026-11-20", path=fake)
+        assert applied == {"GOOD": "commercial"}
+        reasons = {row["ticker"]: row["reason"] for row in skipped}
+        assert reasons["UNDATED"] == "missing_effective_from"
+        assert reasons["FUTURE"] == "effective_from_after_as_of"
+        assert reasons["BAD1"] == "invalid_stage"
+        assert reasons["BAD3"] == "malformed_entry"
 
     def test_production_overrides_file_well_formed(self):
-        """Smoke test: the actual production_data/development_stage_overrides.json
-        must load without errors and contain the four expected tickers."""
+        """The production file keeps Spec 068 and the 2026-11-07 rows (#613), dated.
+
+        effective_from is the review date already on each row. A run on or after
+        2026-11-07 applies all seven. A run before a row's date does not.
+        """
         import run_screen
 
-        overrides = run_screen._load_development_stage_overrides()
-        # Every ticker in the override map must have a stage from the canonical enum
-        for ticker, stage in overrides.items():
+        applied, skipped = run_screen._load_development_stage_overrides("2026-11-20")
+        assert skipped == []
+        for ticker, stage in applied.items():
             assert stage in DEVELOPMENT_STAGE_VALUES, f"override for {ticker} has invalid stage {stage!r}"
-        # The four known overrides from Spec 068 audit 2026-04-28
-        assert overrides.get("MESO") == "commercial"
-        assert overrides.get("VCEL") == "commercial"
-        assert overrides.get("HALO") == "commercial"
-        assert overrides.get("MLYS") == "nda_bla"
-        # Override map size is small (sanity bound — review if this test fails after curation)
-        assert len(overrides) <= 20, "override map grew unexpectedly large; re-review"
+        assert applied.get("MESO") == "commercial"
+        assert applied.get("VCEL") == "commercial"
+        assert applied.get("HALO") == "commercial"
+        assert applied.get("MLYS") == "nda_bla"
+        assert applied.get("INSM") == "commercial"
+        assert applied.get("IMCR") == "commercial"
+        assert applied.get("ANRO") == "phase_2"
+        assert len(applied) <= 20, "override map grew unexpectedly large; re-review"
+
+        before_november, held = run_screen._load_development_stage_overrides("2026-11-06")
+        assert set(before_november) == {"MESO", "VCEL", "HALO", "MLYS"}
+        assert {row["ticker"] for row in held} == {"INSM", "IMCR", "ANRO"}
+
+        before_audit, held_all = run_screen._load_development_stage_overrides("2026-04-27")
+        assert before_audit == {}
+        assert {row["ticker"] for row in held_all} == {"MESO", "VCEL", "HALO", "MLYS", "INSM", "IMCR", "ANRO"}

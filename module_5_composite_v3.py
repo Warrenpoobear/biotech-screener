@@ -206,6 +206,98 @@ EXPECTED_RETURN_LAMBDA = DEFAULT_LAMBDA_ANNUAL  # 8% per 1σ per year (conservat
 # =============================================================================
 
 
+def catalyst_override_pit_reason(override: Dict[str, Any], as_of_date: str) -> Optional[str]:
+    """Why this catalyst override must not be applied, or None if it may be.
+
+    A row with no ``source_filed_at`` has no point-in-time availability and is
+    rejected. A row dated after ``as_of_date`` is look-ahead and is rejected.
+    An unparseable date is rejected rather than applied.
+    """
+    raw = override.get("source_filed_at")
+    if not isinstance(raw, str) or not raw.strip():
+        return "missing source_filed_at"
+    try:
+        filed = datetime.strptime(raw.strip()[:10], "%Y-%m-%d").date()
+    except ValueError:
+        return f"unparseable source_filed_at {raw!r}"
+    as_of = datetime.strptime(as_of_date, "%Y-%m-%d").date()
+    if filed > as_of:
+        return f"source_filed_at {filed.isoformat()} is after as_of_date {as_of_date}"
+    return None
+
+
+def apply_catalyst_overrides(
+    catalyst_by_ticker: Any,
+    overrides: List[Dict[str, Any]],
+    as_of_date: str,
+) -> Tuple[int, int]:
+    """Apply PIT-valid catalyst overrides in place. Returns (applied, rejected)."""
+    applied = 0
+    rejected = 0
+    for override in overrides:
+        ticker = str(override.get("ticker") or "").upper()
+        reason = catalyst_override_pit_reason(override, as_of_date)
+        if reason:
+            rejected += 1
+            logger.warning("Catalyst override skipped for %s: %s", ticker or "?", reason)
+            continue
+
+        if isinstance(catalyst_by_ticker, dict):
+            existing = catalyst_by_ticker.get(ticker)
+            if not existing:
+                existing = catalyst_by_ticker.get(ticker.lower())
+        else:
+            existing = next((s for s in catalyst_by_ticker if getattr(s, "ticker", None) == ticker), None)
+
+        if not existing:
+            continue
+
+        override_conf = Decimal(str(override.get("confidence", 0.7)))
+
+        if isinstance(existing, dict):
+            integration = existing.get("integration", {})
+            current_conf_str = integration.get("catalyst_confidence", "LOW")
+            current_conf = {"HIGH": Decimal("0.70"), "MED": Decimal("0.50"), "LOW": Decimal("0.35")}.get(
+                current_conf_str, Decimal("0.30")
+            )
+
+            if override_conf > current_conf:
+                integration["catalyst_confidence"] = "HIGH" if override_conf >= Decimal("0.70") else "MED"
+                integration["catalyst_override_applied"] = True
+                integration["catalyst_override_source"] = override.get("source", "manual_override")
+                existing["integration"] = integration
+
+                scores = existing.get("scores", {})
+                scores["override_confidence"] = str(override_conf)
+                scores["override_event_type"] = override.get("event_type")
+                existing["scores"] = scores
+                applied += 1
+        else:
+            current_conf = getattr(existing, "catalyst_confidence", None)
+            current_conf_val = {"HIGH": Decimal("0.70"), "MED": Decimal("0.50"), "LOW": Decimal("0.35")}.get(
+                current_conf.value if hasattr(current_conf, "value") else str(current_conf), Decimal("0.30")
+            )
+
+            if override_conf > current_conf_val:
+                from module_3_schema_v2 import ConfidenceLevel
+
+                existing.catalyst_confidence = (
+                    ConfidenceLevel.HIGH if override_conf >= Decimal("0.70") else ConfidenceLevel.MED
+                )
+                existing.override_confidence = override_conf
+                existing.override_event_type = override.get("event_type")
+                existing.override_source = override.get("source", "manual_override")
+                applied += 1
+
+    if applied or rejected:
+        logger.info(
+            "  Catalyst overrides: %d applied, %d rejected (missing or future source_filed_at)",
+            applied,
+            rejected,
+        )
+    return applied, rejected
+
+
 def compute_module_5_composite_v3(
     universe_result: Dict[str, Any],
     financial_result: Dict[str, Any],
@@ -472,10 +564,6 @@ def compute_module_5_composite_v3(
     # =========================================================================
     # LOAD AND APPLY CATALYST OVERRIDES (PIT-SAFE)
     # =========================================================================
-    catalyst_overrides_applied = 0
-    catalyst_overrides_rejected = 0
-    as_of_dt = datetime.strptime(as_of_date, "%Y-%m-%d").date()
-
     # Try common locations for catalyst overrides
     catalyst_overrides_path = None
     for candidate in [
@@ -493,77 +581,11 @@ def compute_module_5_composite_v3(
             with open(catalyst_overrides_path, "r", encoding="utf-8") as f:
                 overrides_data = json.load(f)
 
-            for override in overrides_data.get("overrides", []):
-                ticker = override.get("ticker", "").upper()
-                source_filed_at = override.get("source_filed_at")
-
-                # PIT guard: only apply if source_filed_at <= as_of_date
-                if source_filed_at:
-                    filed_dt = datetime.strptime(source_filed_at, "%Y-%m-%d").date()
-                    if filed_dt > as_of_dt:
-                        catalyst_overrides_rejected += 1
-                        continue
-
-                # Merge override into catalyst data
-                if isinstance(catalyst_by_ticker, dict):
-                    existing = catalyst_by_ticker.get(ticker)
-                    if not existing:
-                        existing = catalyst_by_ticker.get(ticker.lower())
-                else:
-                    existing = next((s for s in catalyst_by_ticker if getattr(s, "ticker", None) == ticker), None)
-
-                if not existing:
-                    continue
-
-                # Apply override: boost confidence and add event info
-                override_conf = Decimal(str(override.get("confidence", 0.7)))
-
-                # Handle both dict and dataclass objects
-                if isinstance(existing, dict):
-                    # Dict path (legacy format)
-                    integration = existing.get("integration", {})
-                    current_conf_str = integration.get("catalyst_confidence", "LOW")
-                    current_conf = {"HIGH": Decimal("0.70"), "MED": Decimal("0.50"), "LOW": Decimal("0.35")}.get(
-                        current_conf_str, Decimal("0.30")
-                    )
-
-                    if override_conf > current_conf:
-                        integration["catalyst_confidence"] = "HIGH" if override_conf >= Decimal("0.70") else "MED"
-                        integration["catalyst_override_applied"] = True
-                        integration["catalyst_override_source"] = override.get("source", "manual_override")
-                        existing["integration"] = integration
-
-                        scores = existing.get("scores", {})
-                        scores["override_confidence"] = str(override_conf)
-                        scores["override_event_type"] = override.get("event_type")
-                        existing["scores"] = scores
-
-                        catalyst_overrides_applied += 1
-                else:
-                    # Dataclass path (TickerCatalystSummaryV2)
-                    current_conf = getattr(existing, "catalyst_confidence", None)
-                    current_conf_val = {"HIGH": Decimal("0.70"), "MED": Decimal("0.50"), "LOW": Decimal("0.35")}.get(
-                        current_conf.value if hasattr(current_conf, "value") else str(current_conf), Decimal("0.30")
-                    )
-
-                    if override_conf > current_conf_val:
-                        # Modify dataclass attributes directly
-                        from module_3_schema_v2 import ConfidenceLevel
-
-                        existing.catalyst_confidence = (
-                            ConfidenceLevel.HIGH if override_conf >= Decimal("0.70") else ConfidenceLevel.MED
-                        )
-                        existing.override_confidence = override_conf
-                        existing.override_event_type = override.get("event_type")
-                        existing.override_source = override.get("source", "manual_override")
-
-                        catalyst_overrides_applied += 1
-
-            if catalyst_overrides_applied > 0 or catalyst_overrides_rejected > 0:
-                logger.info(
-                    f"  Catalyst overrides: {catalyst_overrides_applied} applied, "
-                    f"{catalyst_overrides_rejected} rejected (future source_filed_at)"
-                )
+            apply_catalyst_overrides(
+                catalyst_by_ticker,
+                overrides_data.get("overrides", []),
+                as_of_date,
+            )
         except Exception as e:
             logger.warning(f"  Failed to load catalyst overrides: {e}")
 

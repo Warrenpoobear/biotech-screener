@@ -2898,7 +2898,11 @@ def check_sec_13f_refresh_pending(
 
     Rebuilding ``coinvest_signals.json`` after a 13F deadline is a manual, governed
     step. Nothing triggers it, and from June to October 2026 production ran on
-    Q1 holdings while Q2 filings sat in the cache. WARN-only — never FAIL.
+    Q1 holdings while Q2 filings sat in the cache. When most selected managers
+    in the cache have a newer quarter than the file the ranker reads, the gate
+    FAILs and the snapshot is not promoted. An unreadable coinvest file or an
+    unknown period stays WARN: those cases do not establish that the cache is
+    newer. A missing cache index stays PASS and is left to ``sec_13f_cache``.
     """
     name = "sec_13f_refresh_pending"
     threshold = {"warn_share": warn_share}
@@ -2941,7 +2945,7 @@ def check_sec_13f_refresh_pending(
     if filed and share >= warn_share:
         return GateResult(
             name=name,
-            status="WARN",
+            status="FAIL",
             detail=f"{detail} (period {newest}) — rebuild coinvest_signals.json (manual, governed step)",
             value=value,
             threshold=threshold,
@@ -5058,6 +5062,7 @@ def build_run_manifest(
     # Read metadata.json from snapshot for ruleset info
     ruleset_info: Dict[str, Any] = {}
     row_counts: Dict[str, Any] = {}
+    meta: Dict[str, Any] = {}
     if snapshot_date_dir and (snapshot_date_dir / "metadata.json").exists():
         # Guard the JSON parse: a corrupt/truncated metadata.json must not
         # crash the manifest build — we still want a partial manifest with
@@ -5208,6 +5213,7 @@ def build_run_manifest(
         "screen_exit_code": screen_proc.returncode,
         "audit_exit_code": audit_proc.returncode if audit_proc else None,
         "gate_config": {k: v for k, v in asdict(config).items()},
+        "price_staleness_exclusions": meta.get("price_staleness_exclusions") or [],
     }
 
 
@@ -6387,7 +6393,7 @@ def run_daily(
     gate_results.append(sec_13f_gate)
     _logger.info(f"13F cache gate: {sec_13f_gate.status} — {sec_13f_gate.detail}")
 
-    # --- Gate: sec_13f_refresh_pending (WARN-only) ---
+    # --- Gate: sec_13f_refresh_pending (FAIL when most managers are ahead of coinvest) ---
     sec_13f_pending_gate = _safe_gate("sec_13f_refresh_pending", check_sec_13f_refresh_pending, as_of_date)
     gate_results.append(sec_13f_pending_gate)
     _logger.info(f"13F refresh pending gate: {sec_13f_pending_gate.status} — {sec_13f_pending_gate.detail}")
