@@ -36,7 +36,7 @@ concurrency:
 jobs:
   production-run:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
     env:
       PYTHONHASHSEED: "0"
 
@@ -145,6 +145,38 @@ jobs:
             --output production_data/market_data.json || {
             echo "::warning::collect_market_data.py failed — inputs_present gate will catch this"
           }
+
+      # ── Refresh CT.gov source, then warm the PIT cache ─────────
+      # warm_caches.py only copies production_data/trial_records.json into
+      # cache/ctgov/trial_records_<date>.json. The committed source froze at
+      # last_update_posted=2026-11-03 (the host cron refresh is not what this
+      # checkout runs), so a fresh cache filename still failed
+      # ctgov_content_freshness on 2026-11-19/20 (run 44749423118, 17d stale).
+      # Same temp-swap as tools/cron_data_refresh.sh stage_ctgov: failure keeps
+      # the previous file and the content gate still blocks promotion.
+      # Runs after input hydration so a stale bundle cannot win, and before
+      # the cache warm so that warm does not short-circuit on stale content.
+      - name: Refresh trial_records source
+        # continue-on-error is load-bearing: a failed collect must not skip the
+        # runner. The step still exits non-zero (visible in the log). Promotion
+        # is blocked by ctgov_content_freshness when the file stays stale.
+        continue-on-error: true
+        run: |
+          src="production_data/trial_records.json"
+          tmp="${src}.refresh.tmp"
+          cp "$src" "$tmp"
+          set +e
+          timeout 1200 python collect_ctgov_data.py --output "$tmp"
+          rc=$?
+          set -e
+          if [ "$rc" -eq 0 ]; then
+            mv "$tmp" "$src"
+            echo "CTgov source refresh done"
+          else
+            rm -f "$tmp"
+            echo "::error::CTgov source refresh FAILED (exit $rc) — keeping previous trial_records.json; ctgov_content_freshness will block promotion if it is stale"
+            exit "$rc"
+          fi
 
       # ── Warm ctgov cache ────────────────────────────────────────
       - name: Warm ctgov cache

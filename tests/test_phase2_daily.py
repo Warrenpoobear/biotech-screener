@@ -2077,8 +2077,9 @@ class TestOpsContractWithNewGates:
         assert "eligibility_consistency" in GATE_ALLOWLIST
 
     def test_allowlist_count_updated(self):
-        """Allowlist has 46 entries (sec_13f_refresh_pending added in #670)."""
-        assert len(GATE_ALLOWLIST) == 46
+        """Allowlist has 47 entries (split_adj_refresh added for fail-closed promotion)."""
+        assert len(GATE_ALLOWLIST) == 47
+        assert "split_adj_refresh" in GATE_ALLOWLIST
         assert "sec_13f_refresh_pending" in GATE_ALLOWLIST
 
     def test_ctgov_content_freshness_gate_is_allowlisted(self):

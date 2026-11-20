@@ -35,8 +35,10 @@ Alternatively, configure Hermes webhook subscriptions directly:
 from __future__ import annotations
 
 import argparse
+import hmac
 import json
 import os
+import sys
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
@@ -44,6 +46,26 @@ from urllib.parse import urlparse
 
 PROJECT_DIR = Path(os.environ.get("BIOTECH_PROJECT_DIR", Path(__file__).resolve().parent.parent))
 EVENTS_FILE = PROJECT_DIR / "output" / "webhook_events.jsonl"
+WEBHOOK_SECRET_ENV = "WEBHOOK_SHARED_SECRET"  # pragma: allowlist secret
+WEBHOOK_SECRET_HEADER = "X-Webhook-Secret"  # pragma: allowlist secret
+DEFAULT_BIND_HOST = "127.0.0.1"
+
+
+def webhook_secret() -> str:
+    """Shared secret from the environment. Empty means the receiver must reject."""
+    return os.environ.get(WEBHOOK_SECRET_ENV, "").strip()
+
+
+def webhook_authorized(header_value: str | None) -> bool:
+    """True only when the env secret is set and the header matches it.
+
+    An unset secret is a rejection, not an open receiver. Comparison is
+    constant-time and does not treat a missing header as a match.
+    """
+    secret = webhook_secret()
+    if not secret or header_value is None:
+        return False
+    return hmac.compare_digest(header_value, secret)
 
 
 class WebhookHandler(BaseHTTPRequestHandler):
@@ -52,6 +74,12 @@ class WebhookHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         """Handle incoming webhook POST requests."""
         path = urlparse(self.path).path
+        if not webhook_authorized(self.headers.get(WEBHOOK_SECRET_HEADER)):
+            if not webhook_secret():
+                self.send_error(401, "WEBHOOK_SHARED_SECRET is unset")
+            else:
+                self.send_error(401, "Invalid webhook secret")
+            return
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length).decode("utf-8") if content_length else ""
 
@@ -175,8 +203,19 @@ class WebhookHandler(BaseHTTPRequestHandler):
 def main():
     parser = argparse.ArgumentParser(description="Biotech webhook receiver")
     parser.add_argument("--port", type=int, default=9099, help="Port to listen on")
-    parser.add_argument("--host", default="127.0.0.1", help="Host to bind")
+    parser.add_argument(
+        "--host",
+        default=DEFAULT_BIND_HOST,
+        help="Host to bind (default 127.0.0.1; put a reverse proxy in front for external delivery)",
+    )
     args = parser.parse_args()
+
+    if not webhook_secret():
+        print(
+            f"{WEBHOOK_SECRET_ENV} is unset; refusing to start",
+            file=sys.stderr,
+        )
+        return 2
 
     server = HTTPServer((args.host, args.port), WebhookHandler)
     print("🧬 Biotech Webhook Receiver")
@@ -194,7 +233,8 @@ def main():
     except KeyboardInterrupt:
         print("\n👋 Stopped")
         server.server_close()
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
