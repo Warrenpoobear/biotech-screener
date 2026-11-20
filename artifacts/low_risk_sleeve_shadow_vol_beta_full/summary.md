@@ -23,7 +23,7 @@ Pre-registered 2026-11-17. Reading `rank_split`: production ranks 1-10 minus ran
 - Primary reading: the 252- and 126-trading-day differences on non-overlapping windows. Secondary: 63 and 21 days. The 252-day reading needs about 20 years of LIVE captures to reach 20 windows, so read its sign and size at each annual review instead, alongside the shorter horizons, and treat it as descriptive.
 - Nothing here changes the model or the account.
 
-Captures: 0 live, 1 replay. Price source: `price_history_split_adj.csv`. **Only LIVE captures are evidence.**
+Captures: 1 live, 1 replay. Price source: `price_history_split_adj.csv`. **Only LIVE captures are evidence.**
 
 ## LIVE
 
