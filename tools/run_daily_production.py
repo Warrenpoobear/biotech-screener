@@ -117,6 +117,7 @@ GATE_ALLOWLIST: frozenset[str] = frozenset(
         "phase2_health",
         "price_append_health",
         "split_adj_freshness",
+        "split_adj_refresh",
     }
 )
 
@@ -4935,6 +4936,88 @@ def _safe_file_hash(path: Optional[Path]) -> str:
     return ""
 
 
+# Inputs whose change must invalidate a same-day manifest skip. Prices are the
+# raw series plus the derived split-adjusted series. Overrides are the operator
+# files the screen reads; a missing file hashes as empty and stays stable.
+_RERUN_INPUT_NAMES: Tuple[str, ...] = (
+    "trial_records.json",
+    "coinvest_signals.json",
+    "catalyst_overrides.json",
+    "development_stage_overrides.json",
+    "crt_manual_overrides.json",
+    "aact_manual_overrides.json",
+)
+
+_SPLIT_ADJ_REFRESH_CONTINUE = frozenset({"APPENDED", "RETROACTIVE_CHANGE"})
+
+
+def compute_daily_input_hash(data_dir: Path, price_csv: Path) -> str:
+    """Hash the inputs that should force a same-day production rerun.
+
+    Computed from file bytes, not mtime, so a rewritten trial file or override
+    with the same timestamp still invalidates the skip. Missing files contribute
+    an empty digest and do not raise.
+    """
+    digest = hashlib.sha256()
+    labeled: List[Tuple[str, Path]] = [("prices", price_csv)]
+    split_adj = price_csv.parent / "price_history_split_adj.csv"
+    if split_adj != price_csv:
+        labeled.append(("prices_split_adj", split_adj))
+    labeled.extend((name, data_dir / name) for name in _RERUN_INPUT_NAMES)
+    for label, path in labeled:
+        digest.update(label.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(_safe_file_hash(path).encode("utf-8"))
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def should_skip_completed_manifest(existing_manifest: Optional[Dict[str, Any]], current_hash: str) -> bool:
+    """Skip only when the promoted manifest recorded this exact input hash.
+
+    A missing hash (manifests written before the input-hash skip) does not
+    skip: the next run must re-execute so an input fix is not frozen out.
+    """
+    if not existing_manifest or not current_hash:
+        return False
+    prior = existing_manifest.get("input_hash")
+    return isinstance(prior, str) and prior == current_hash
+
+
+def check_split_adj_refresh(stats: Dict[str, Any]) -> GateResult:
+    """FAIL unless the split-adjusted refresh appended or rewrote for a split.
+
+    APPENDED is a pure extend. RETROACTIVE_CHANGE is a real split rewrite: it
+    is installed and warned, and it does not block promotion. Every other
+    status (FAILED, TIMEOUT, ERROR, SCRIPT_MISSING, ...) blocks promotion.
+    """
+    status = str(stats.get("status") or "MISSING")
+    extra = stats.get("detail")
+    detail = f"split-adj refresh status={status}"
+    if extra:
+        detail = f"{detail}: {extra}"
+    if status == "APPENDED":
+        return GateResult(
+            name="split_adj_refresh",
+            status="PASS",
+            detail=detail,
+            value=stats.get("n_appended"),
+        )
+    if status == "RETROACTIVE_CHANGE":
+        return GateResult(
+            name="split_adj_refresh",
+            status="WARN",
+            detail=detail + " — completed FV windows may need recomputation",
+            value=stats.get("n_retroactive"),
+        )
+    return GateResult(
+        name="split_adj_refresh",
+        status="FAIL",
+        detail=detail + " — blocking promotion",
+        value=status,
+    )
+
+
 def _compute_provenance_hashes(
     *,
     as_of_date: str,
@@ -5647,16 +5730,29 @@ def run_daily(
         except Exception as exc:
             _logger.warning(f"Could not write self-improvement diagnosis: {exc}")
 
+    _input_hash = compute_daily_input_hash(data_dir, price_csv)
     if _step_done(_final_snap, "manifest_written"):
-        _logger.info(f"\n  Snapshot for {as_of_date} already has a completed manifest.")
-        _logger.info("Skipping expensive steps (price, cache, screen, audit, gates).")
-        _logger.info(f"To force a full rerun, delete: {_final_snap / _PROGRESS_FILE}")
         _rm_path = _final_snap / "run_manifest.json"
-        existing_manifest = json.loads(_rm_path.read_text(encoding="utf-8")) if _rm_path.exists() else None
-        if existing_manifest:
+        existing_manifest = None
+        if _rm_path.exists():
+            try:
+                existing_manifest = json.loads(_rm_path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                existing_manifest = None
+        if should_skip_completed_manifest(existing_manifest, _input_hash):
+            _logger.info(f"\n  Snapshot for {as_of_date} already has a completed manifest.")
+            _logger.info("Input hash matches (prices, trial records, coinvest, overrides).")
+            _logger.info("Skipping expensive steps (price, cache, screen, audit, gates).")
+            _logger.info(f"To force a full rerun, delete: {_final_snap / _PROGRESS_FILE}")
             _emit_self_improvement_artifacts(_final_snap, existing_manifest)
             return existing_manifest
-        # No manifest found despite progress marker — fall through
+        _logger.info(
+            "Snapshot for %s has manifest_written but the input hash does not match "
+            "(prior=%s, current=%s). Rerunning so an input fix is not skipped.",
+            as_of_date,
+            ((existing_manifest or {}).get("input_hash") or "missing")[:12],
+            _input_hash[:12],
+        )
 
     # --- Gate: Ruleset governance (pre-flight, before expensive work) ---
     _manifest_path = REPO_ROOT / "production_data" / "decision_rulesets" / "manifest.json"
@@ -5756,10 +5852,12 @@ def run_daily(
         gate_results.append(append_gate)
         _logger.info(f"Price-append gate: {append_gate.status} — {append_gate.detail}")
 
-    # --- Step 1b: refresh the split-adjusted series (non-blocking) ---
+    # --- Step 1b: refresh the split-adjusted series ---
     # price_history_split_adj.csv is the FV protocol's declared price source but
     # nothing refreshed it, so it silently drifted 17 trading days behind. Runs
     # after the raw append because it is derived from it.
+    # APPENDED and RETROACTIVE_CHANGE may continue (the latter is a warning).
+    # Any other status is a FAIL and blocks promotion.
     _split_adj_csv = price_csv.parent / "price_history_split_adj.csv"
     if not skip_price_refresh:
         split_adj_stats = refresh_split_adjusted_prices(price_csv, _split_adj_csv, REPO_ROOT)
@@ -5782,11 +5880,30 @@ def run_daily(
                 ", ".join(split_adj_stats.get("retroactive_tickers") or []),
             )
         else:
-            _logger.warning(
-                "Split-adj refresh → %s (%s); leaving incumbent file in place",
+            _logger.error(
+                "Split-adj refresh → %s (%s); blocking promotion",
                 _sa_status,
                 split_adj_stats.get("detail", "no detail"),
             )
+        split_adj_refresh_gate = check_split_adj_refresh(split_adj_stats)
+        gate_results.append(split_adj_refresh_gate)
+        _logger.info(f"Split-adj refresh gate: {split_adj_refresh_gate.status} — {split_adj_refresh_gate.detail}")
+        if split_adj_refresh_gate.status == "FAIL":
+            manifest = build_run_manifest(
+                as_of_date,
+                gate_results,
+                price_stats,
+                subprocess.CompletedProcess(args=[], returncode=-1),
+                None,
+                config,
+                requested_as_of_date=requested_as_of_date,
+                git_pre_run=git_pre_run,
+                data_dir=data_dir,
+                price_csv=price_csv,
+            )
+            manifest["input_hash"] = compute_daily_input_hash(data_dir, price_csv)
+            _emit_self_improvement_artifacts(_final_snap, manifest)
+            return manifest
 
     # --- Gate: deploy freshness (WARN) — merging is not deploying ---
     deploy_gate = check_deploy_freshness(REPO_ROOT)
@@ -6194,16 +6311,16 @@ def run_daily(
 
     if screen_proc.returncode == 1:
         # --strict Phase-2 health FAIL (policy gate, not data corruption).
-        # If rankings.csv exists, the screen completed — continue with
-        # downstream artifacts but record the gate failure.
+        # Exit 1 stays FAIL whether or not rankings.csv was written. A WARN
+        # here used to promote a HOLD/FAIL screen whenever the CSV existed.
         _rankings_exists = (staging_date_dir / "rankings.csv").exists()
         if _rankings_exists:
-            _logger.info("Screen exited 1 (Phase-2 health FAIL) but snapshot is complete — continuing")
+            _logger.error("Screen exited 1 (Phase-2 health FAIL). rankings.csv exists; snapshot will NOT be promoted.")
             gate_results.append(
                 GateResult(
                     name="phase2_health",
-                    status="WARN",
-                    detail="Phase-2 health FAIL (exit 1) — snapshot promoted with downstream artifacts",
+                    status="FAIL",
+                    detail="Phase-2 health FAIL (exit 1) — snapshot NOT promoted",
                     value=screen_proc.returncode,
                 )
             )
@@ -6232,19 +6349,21 @@ def run_daily(
                 )
             except Exception as _alert_exc:
                 _logger.debug("Operator alert skipped: %s", _alert_exc)
-            manifest = build_run_manifest(
-                as_of_date,
-                gate_results,
-                price_stats,
-                screen_proc,
-                None,
-                config,
-                requested_as_of_date=requested_as_of_date,
-                git_pre_run=git_pre_run,
-                data_dir=data_dir,
-            )
-            _emit_self_improvement_artifacts(staging_date_dir, manifest)
-            return manifest
+        manifest = build_run_manifest(
+            as_of_date,
+            gate_results,
+            price_stats,
+            screen_proc,
+            None,
+            config,
+            requested_as_of_date=requested_as_of_date,
+            git_pre_run=git_pre_run,
+            data_dir=data_dir,
+            price_csv=price_csv,
+        )
+        manifest["input_hash"] = compute_daily_input_hash(data_dir, price_csv)
+        _emit_self_improvement_artifacts(staging_date_dir, manifest)
+        return manifest
 
     elif screen_proc.returncode == 2:
         _logger.info("Screen completed with WARN (exit 2)")
@@ -6570,8 +6689,11 @@ def run_daily(
         ctgov_cache_dir=ctgov_cache_dir,
     )
 
-    # Stamp governance mode
+    # Stamp governance mode and the input hash used for same-day rerun skips.
+    # Hashed after price refresh so the next run compares against the files
+    # this run actually left on disk.
     manifest["governance_mode"] = _governance_mode
+    manifest["input_hash"] = compute_daily_input_hash(data_dir, price_csv)
 
     # Write manifest to staging dir (atomic: temp-file then rename)
     manifest_path = staging_date_dir / "run_manifest.json"
