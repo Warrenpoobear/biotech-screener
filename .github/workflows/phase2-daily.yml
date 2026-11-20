@@ -81,6 +81,11 @@ jobs:
       # ── Screen ──────────────────────────────────────────────────
       - name: Run Phase-2 screen
         id: screen
+        env:
+          # Same credentials as phase2-daily-production. Empty values leave
+          # options diagnostics empty; this workflow does not loosen that gate.
+          TT_SECRET: ${{ secrets.TT_SECRET }}
+          TT_REFRESH: ${{ secrets.TT_REFRESH }}
         run: |
           set +e
           mkdir -p output

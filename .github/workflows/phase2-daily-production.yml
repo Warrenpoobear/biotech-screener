@@ -278,6 +278,11 @@ jobs:
       - name: Run production daily
         id: runner
         continue-on-error: true  # don't short-circuit — uploads must happen
+        env:
+          # Operator-supplied. Empty when unset. The options snapshot and
+          # run_screen both no-op without them; hard_options_coverage still FAILs.
+          TT_SECRET: ${{ secrets.TT_SECRET }}
+          TT_REFRESH: ${{ secrets.TT_REFRESH }}
         run: |
           DATE="${{ steps.date.outputs.as_of_date }}"
           LOG="$RUNNER_TEMP/production_daily.log"

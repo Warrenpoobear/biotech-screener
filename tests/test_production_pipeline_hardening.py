@@ -119,6 +119,26 @@ def test_daily_workflow_refreshes_trials_before_cache_and_screen():
     assert refresh < warm < screen
 
 
+def test_tastytrade_pin_matches_session_api_and_workflows_pass_secrets():
+    """13.2.3 Session(is_test=...) reads TT_SECRET/TT_REFRESH. Gate threshold stays 40%."""
+    req = (REPO / "requirements.txt").read_text(encoding="utf-8")
+    assert "tastytrade==13.2.3" in req
+    lock = (REPO / "requirements.lock").read_text(encoding="utf-8")
+    assert "tastytrade==13.2.3" in lock
+
+    prod = (REPO / ".github/workflows/phase2-daily-production.yml").read_text(encoding="utf-8")
+    legacy = (REPO / ".github/workflows/phase2-daily.yml").read_text(encoding="utf-8")
+    for text, marker in (
+        (prod, "Run production daily"),
+        (legacy, "Run Phase-2 screen"),
+    ):
+        step = text[text.index(marker) : text.index(marker) + 800]
+        assert "TT_SECRET: ${{ secrets.TT_SECRET }}" in step
+        assert "TT_REFRESH: ${{ secrets.TT_REFRESH }}" in step
+
+    assert rdp.GateConfig().hard_options_coverage_fail_pct == 40.0
+
+
 def test_replay_golden_download_failure_exits_nonzero():
     text = (REPO / ".github/workflows/replay-regression.yml").read_text(encoding="utf-8")
     start = text.index("Download golden bundle")
