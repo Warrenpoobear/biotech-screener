@@ -80,6 +80,13 @@ mypy==2.1.0
 # Data Collection (used by collect_market_data.py and collectors)
 # ----------------------------------------------------------------------------
 yfinance==1.5.1
+# tastytrade 13.2.3: Session(is_test=...) reads TT_SECRET and TT_REFRESH.
+# common/options_diagnostics.py and tools/collect_options_snapshot.py await
+# tastytrade.metrics.get_market_metrics, tastytrade.instruments.get_option_chain,
+# and tastytrade.streamer.DXLinkStreamer (Greeks from tastytrade.dxfeed).
+# common/options_snapshot.py writes the sidecar from those diagnostics.
+# Absent credentials still leave IV empty; the hard options gate is unchanged.
+tastytrade==13.2.3
 beautifulsoup4==4.14.3
 lxml==6.1.1
 

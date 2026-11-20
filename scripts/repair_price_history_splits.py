@@ -36,7 +36,7 @@ import sys
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -49,9 +49,8 @@ DROP_THRESHOLD = -0.75  # -75% single-day → forward split
 # days (vendor and registry dates can differ by a day or two).
 CONFIRM_WINDOW_DAYS = 5
 
-# A registry split below the gap thresholds is applied only when a one-day move
-# in the window matches its factor within this relative tolerance.
-REGISTRY_FACTOR_TOLERANCE = 0.15
+# Relative match window: common.corporate_actions.REGISTRY_FACTOR_TOLERANCE
+# (15%). This script does not keep a second copy of that number.
 
 # Quantization for output prices (6 decimal places)
 PRICE_QUANT = Decimal("0.000001")
@@ -133,7 +132,7 @@ def find_registry_splits_below_threshold(
     registry: Any,
     confirmed: Dict[str, List[Dict[str, Any]]],
     window_days: int = CONFIRM_WINDOW_DAYS,
-    tolerance: float = REGISTRY_FACTOR_TOLERANCE,
+    tolerance: Optional[float] = None,
 ) -> Dict[str, List[Dict[str, Any]]]:
     """Registry splits too small for the gap detector (e.g. an ADR ratio change).
 
@@ -145,7 +144,10 @@ def find_registry_splits_below_threshold(
     of it. A registry entry alone never adjusts a series that shows no matching
     move, so an already-adjusted source is not adjusted twice.
     """
-    from common.corporate_actions import get_splits_only
+    from common.corporate_actions import REGISTRY_FACTOR_TOLERANCE, get_splits_only, registry_split_relative_error
+
+    if tolerance is None:
+        tolerance = REGISTRY_FACTOR_TOLERANCE
 
     found: Dict[str, List[Dict[str, Any]]] = {}
     for ticker, series in prices.items():
@@ -167,8 +169,8 @@ def find_registry_splits_below_threshold(
                 if abs((d - eff).days) > window_days or series[prev_d] <= 0:
                     continue
                 ratio = series[d] / series[prev_d]
-                err = abs(float(ratio) / expected - 1.0)
-                if err <= tolerance and (best is None or err < best[0]):
+                err = registry_split_relative_error(float(ratio), expected)
+                if err is not None and err <= tolerance and (best is None or err < best[0]):
                     best = (err, d, ratio)
             if best is None:
                 continue

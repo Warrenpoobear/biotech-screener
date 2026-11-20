@@ -341,6 +341,44 @@ def resolve_ticker_reverse(
     return predecessors
 
 
+# One definition of the relative window used to confirm a registry split
+# against an observed one-day price ratio. Shared by
+# scripts/repair_price_history_splits.py and run_screen.py (momentum,
+# drawdown, beta, RSI). 0.15 means 15%.
+#
+# Momentum used to confirm with abs(log(observed) - log(factor)) <= log(2).
+# For a factor of 2.0 that is true of a flat already-adjusted series
+# (observed ratio 1): abs(log(1) - log(2)) == log(2). The lookback was
+# doubled a second time.
+REGISTRY_FACTOR_TOLERANCE = 0.15
+
+
+def registry_split_relative_error(observed_ratio: float, registry_factor: float) -> Optional[float]:
+    """``abs(observed / factor - 1)``, or None when either input is unusable."""
+    try:
+        observed = float(observed_ratio)
+        expected = float(registry_factor)
+    except (TypeError, ValueError):
+        return None
+    if observed <= 0.0 or expected <= 0.0:
+        return None
+    return abs(observed / expected - 1.0)
+
+
+def registry_split_confirmed(
+    observed_ratio: float,
+    registry_factor: float,
+    tolerance: float = REGISTRY_FACTOR_TOLERANCE,
+) -> bool:
+    """True when ``observed_ratio`` is within ``tolerance`` (relative) of ``registry_factor``.
+
+    A flat already-adjusted series (observed ratio 1) does not confirm a
+    factor of 2.0: the relative error is 0.5, outside the 15% window.
+    """
+    err = registry_split_relative_error(observed_ratio, registry_factor)
+    return err is not None and err <= tolerance
+
+
 def cumulative_split_factor(
     ticker: str,
     from_date: str,

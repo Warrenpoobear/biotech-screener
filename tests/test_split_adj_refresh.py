@@ -189,13 +189,27 @@ def test_freshness_gate_warns_when_missing(tmp_path):
 
 
 def test_refresh_never_raises_on_missing_script(tmp_path):
-    """The step is non-blocking: a broken environment must not abort the run."""
+    """The helper returns a status instead of raising. The caller turns that into a FAIL gate."""
     raw = tmp_path / "price_history.csv"
     _write_prices(raw, _rows())
 
     stats = rdp.refresh_split_adjusted_prices(raw, tmp_path / "adj.csv", tmp_path)
 
     assert stats["status"] == "SCRIPT_MISSING"
+    gate = rdp.check_split_adj_refresh(stats)
+    assert gate.name == "split_adj_refresh"
+    assert gate.status == "FAIL"
+
+
+def test_split_adj_refresh_gate_continues_only_for_append_or_retroactive():
+    """APPENDED passes and RETROACTIVE_CHANGE warns. Anything else blocks promotion."""
+    appended = rdp.check_split_adj_refresh({"status": "APPENDED", "n_appended": 3})
+    retro = rdp.check_split_adj_refresh({"status": "RETROACTIVE_CHANGE", "n_retroactive": 2})
+    assert appended.status == "PASS"
+    assert retro.status == "WARN"
+    for status in ("FAILED", "TIMEOUT", "ERROR", "SCRIPT_MISSING", "SKIPPED", ""):
+        gate = rdp.check_split_adj_refresh({"status": status, "detail": "boom"})
+        assert gate.status == "FAIL", status
 
 
 @pytest.mark.parametrize("gap_days,expected", [(0, "PASS"), (14, "WARN")])
