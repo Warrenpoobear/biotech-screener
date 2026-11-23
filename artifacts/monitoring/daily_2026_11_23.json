@@ -1,0 +1,325 @@
+{
+  "date": "2026-11-23",
+  "monitoring_day": "Day ~135 (approximate). OOS clock Day 5 (started 2026-11-17). Monitoring gap: Nov 17-21 (5 sessions since last snapshot daily_2026_11_16.json).",
+  "timestamp": "2026-11-23T14:00:00.000000Z",
+  "phase": "PRE-MARKET snapshot (Nov 23 09:00 ET, Monday). Robinhood MCP STILL UNAVAILABLE. Price basis remains Aug 27 close (~60 trading sessions stale). GOVERNANCE NOTE: Q3 2026 coinvest rebuild confirmed (period_of_report=2026-09-30, 30/30 managers, as_of_date=2026-11-16). Selector-only OOS clock started 2026-11-17 (Day 5 today). First FV capture taken 2026-11-17 (5d window closes ~Nov 24).",
+  "data_integrity": {
+    "primary_source": "Carried forward from daily_2026_11_16.json (last snapshot). Aug 27 close is LAST known price data.",
+    "price_date": "2026-08-27 close (LAST AVAILABLE — now approximately 60 trading sessions stale as of Nov 23 open)",
+    "data_gap": "5 consecutive trading sessions with no monitoring snapshot (Nov 17-21)",
+    "monitoring_cron_gap": "Last written file was daily_2026_11_16.json. 5 trading sessions missed (Nov 17-21).",
+    "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged — no confirmed trades since Jun 24 rebalance)",
+    "cash_basis": "Carried forward 9.87 from Jun 24 MCP sourcing (unchanged, no confirmed trading activity)",
+    "mcp_status": "Robinhood MCP unavailable. No live quotes. No live portfolio fetch. All figures are carried-forward estimates only.",
+    "live_data_available": false
+  },
+  "market_status": {
+    "session": "PRE-MARKET (09:00 ET, Monday Nov 23)",
+    "trading_day": true,
+    "note": "No live data available. Figures below are stale carry-forward from Aug 27 close."
+  },
+  "account": {
+    "account_id": "Robinhood 802349084",
+    "equity_fetchable": false,
+    "equity_estimated_usd": 138.04,
+    "equity_note": "EXTREMELY STALE — last confirmed Aug 27 close (~60 sessions ago). Actual value unknown.",
+    "cash_carried": 9.87,
+    "buying_power_carried": null,
+    "total_estimated_account_value": 147.91,
+    "staleness_warning": "CRITICAL — ~60 trading sessions since last confirmed data. P&L and drawdown figures are unreliable."
+  },
+  "benchmark": {
+    "xbi_since_entry_pct": null,
+    "note": "XBI return not updated since Aug 27 close basis. Last known +25.9pp since Jun-10 entry. Current value unknown.",
+    "last_known_xbi_since_entry_pct": 25.9,
+    "last_known_as_of": "2026-08-27"
+  },
+  "portfolio_overview": {
+    "total_positions": 15,
+    "equity_usd_estimate": 138.04,
+    "cash_usd_estimate": 9.87,
+    "total_account_estimate": 147.91,
+    "cost_basis_usd": 100.13,
+    "avg_pnl_vs_entry_pct_last_known": 37.88,
+    "xbi_return_since_entry_pct_last_known": 25.9,
+    "outperformance_pp_last_known": 11.98,
+    "all_figures_stale": true,
+    "stale_as_of": "2026-08-27 close (~60 sessions)",
+    "gap_flags": 0,
+    "gap_flags_note": "No gap check possible — no current prices"
+  },
+  "positions": {
+    "COGT": {
+      "entry_price": 31.35,
+      "quantity": 0.212789,
+      "cost_basis": 6.6709,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": true,
+      "current_rank": 2,
+      "note": "No current price. Rank 2 in Nov 17 Top-30 (healthy)."
+    },
+    "DNTH": {
+      "entry_price": 72.1,
+      "quantity": 0.092928,
+      "cost_basis": 6.7001,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": true,
+      "current_rank": 25,
+      "note": "No current price. Rank 25 in Nov 17 Top-30 (marginal — approaching boundary)."
+    },
+    "NRIX": {
+      "entry_price": 15.46,
+      "quantity": 0.430232,
+      "cost_basis": 6.6514,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": false,
+      "current_rank": null,
+      "note": "No current price. NOT in Nov 17 Top-30 — model no longer supports this position."
+    },
+    "URGN": {
+      "entry_price": 28.02,
+      "quantity": 0.237681,
+      "cost_basis": 6.6598,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": false,
+      "current_rank": null,
+      "note": "No current price. NOT in Nov 17 Top-30 — model no longer supports this position."
+    },
+    "ALMS": {
+      "entry_price": 20.37,
+      "quantity": 0.326013,
+      "cost_basis": 6.6409,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": false,
+      "current_rank": null,
+      "note": "No current price. NOT in Nov 17 Top-30 — model no longer supports this position."
+    },
+    "SYRE": {
+      "entry_price": 76.1,
+      "quantity": 0.088041,
+      "cost_basis": 6.6999,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": true,
+      "current_rank": 11,
+      "note": "No current price. Rank 11 in Nov 17 Top-30 (healthy)."
+    },
+    "RVMD": {
+      "entry_price": 143.76,
+      "quantity": 0.046465,
+      "cost_basis": 6.681,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": true,
+      "current_rank": 1,
+      "note": "No current price. Rank 1 in Nov 17 Top-30 (top-ranked position)."
+    },
+    "CMPS": {
+      "entry_price": 11.3,
+      "quantity": 0.590265,
+      "cost_basis": 6.67,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": false,
+      "current_rank": null,
+      "note": "No current price. NOT in Nov 17 Top-30 — model no longer supports this position."
+    },
+    "SLDB": {
+      "entry_price": 6.49,
+      "quantity": 1.028527,
+      "cost_basis": 6.6752,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": false,
+      "current_rank": null,
+      "note": "No current price. NOT in Nov 17 Top-30 — model no longer supports this position."
+    },
+    "DRUG": {
+      "entry_price": 63.59,
+      "quantity": 0.105839,
+      "cost_basis": 6.6999,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": false,
+      "current_rank": null,
+      "note": "No current price. NOT in Nov 17 Top-30 — model no longer supports this position."
+    },
+    "STOK": {
+      "entry_price": 28.74,
+      "quantity": 0.231758,
+      "cost_basis": 6.6567,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": true,
+      "current_rank": 15,
+      "note": "No current price. Rank 15 in Nov 17 Top-30 (healthy)."
+    },
+    "PRAX": {
+      "entry_price": 241.92,
+      "quantity": 0.02753,
+      "cost_basis": 6.6617,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": true,
+      "current_rank": 14,
+      "note": "No current price. Rank 14 in Nov 17 Top-30 (healthy)."
+    },
+    "TRVI": {
+      "entry_price": 13.43,
+      "quantity": 0.496649,
+      "cost_basis": 6.6699,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": true,
+      "current_rank": 6,
+      "note": "No current price. Rank 6 in Nov 17 Top-30 (healthy)."
+    },
+    "ERAS": {
+      "entry_price": 13.27,
+      "quantity": 0.503396,
+      "cost_basis": 6.68,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": true,
+      "current_rank": 13,
+      "note": "No current price. Rank 13 in Nov 17 Top-30 (healthy)."
+    },
+    "XENE": {
+      "entry_price": 51.95,
+      "quantity": 0.128578,
+      "cost_basis": 6.6796,
+      "current_price": "UNAVAILABLE",
+      "last_known_pnl_pct": null,
+      "gap_flag": false,
+      "in_current_top30": false,
+      "current_rank": null,
+      "note": "No current price. NOT in Nov 17 Top-30 — model no longer supports this position."
+    }
+  },
+  "portfolio_model_overlap": {
+    "in_current_top30": ["RVMD", "COGT", "TRVI", "SYRE", "ERAS", "PRAX", "STOK", "DNTH"],
+    "not_in_current_top30": ["NRIX", "URGN", "ALMS", "CMPS", "SLDB", "DRUG", "XENE"],
+    "overlap_count": 8,
+    "total_positions": 15,
+    "overlap_pct": 53.3,
+    "top30_reference_date": "2026-11-17",
+    "model_hash_on_capture": "a9a430154568e242",
+    "ranker_mode": "selector_only",
+    "note": "7 of 15 Phase 2 names have drifted out of current Top-30 since original Jun 10 entry. This is INFORMATIONAL ONLY — no rebalance authority in this monitoring task."
+  },
+  "governance_gates": {
+    "drawdown_gate": {
+      "status": "UNVERIFIABLE — MCP and price data unavailable",
+      "rule_version": "UPDATED 2026-11-15 (operator decision)",
+      "threshold_review_pp": -10.0,
+      "threshold_liquidate_pp": -15.0,
+      "last_known_outperformance_pp": 11.98,
+      "last_known_as_of": "2026-08-27 close (~60 sessions stale)",
+      "gate_tripped": false,
+      "detail": "Cannot measure current drawdown. Last known: +11.98pp vs XBI (Aug 27 basis). Rule 4: review at -10pp, liquidate at -15pp. Gate UNVERIFIABLE — no live data."
+    },
+    "ic_gate": {
+      "status": "MEASURED (corrected 2026-11-12)",
+      "last_measured": "2026-11-12 (corrected)",
+      "actionable_rank_ic": 0.1534,
+      "coinvest_score_z_ic": 0.1478,
+      "score_rank_pct_ic_corrected": -0.0201,
+      "note": "IC is HEALTHY on corrected metrics. actionable_rank IC = +0.1534, coinvest_score_z IC = +0.1478 per 2026-11-12 sign-correction memo. Original score_rank_pct +0.0432 retracted (wrong sign).",
+      "gate_tripped": false
+    },
+    "jaccard_gate": {
+      "status": "Q3 2026 coinvest REBUILT — Jaccard not yet measured",
+      "coinvest_period_of_report": "2026-09-30",
+      "coinvest_as_of_date": "2026-11-16",
+      "managers_with_filing": 30,
+      "managers_total": 30,
+      "note": "Q3 2026 coinvest_signals.json confirmed (period_of_report=2026-09-30, 30/30 managers, as_of_date=2026-11-16). Q3 Jaccard vs prior roster has NOT been measured. Run check_13f_cohort_quarantine.py with --pre-date 2026-10-30 --post-date <first post-Q3-merge snapshot>.",
+      "gate_tripped": false,
+      "action_required": "Measure Q3 Jaccard and run cohort quarantine check per 13F governance protocol."
+    },
+    "forward_validation_gate": {
+      "status": "OOS CLOCK ACTIVE — Day 5",
+      "oos_clock_start": "2026-11-17",
+      "mandate": "SM-20260629-001",
+      "model_hash": "a9a430154568e242",
+      "hash_scheme": "ast-v2",
+      "ranker_mode": "selector_only",
+      "windows_eligible": 0,
+      "windows_required_directional": 20,
+      "last_capture_date": "2026-11-17",
+      "last_capture_model_hash_match": true,
+      "last_capture_ranker_mode_match": true,
+      "note": "Clock started 2026-11-17 (CUSIP mapping + universe adds PR #696). First capture taken 2026-11-17 — 5d window closes ~Nov 24. All prior captures pre-clock-start do not count toward 0/20 mandate. Weekly summary shows descriptive t=2.13 over all historical windows but mandate count is 0/20.",
+      "gate_tripped": false,
+      "weeks_to_20_windows": 20
+    },
+    "emergency_gate": {
+      "status": "NOT TRIPPED on last known data",
+      "last_checked": "2026-08-27 (stale ~60 sessions)",
+      "gate_tripped": false,
+      "note": "Cannot verify current state without live data."
+    }
+  },
+  "alerts": [
+    {
+      "severity": "CRITICAL",
+      "type": "MCP_UNAVAILABLE",
+      "message": "Robinhood MCP tools (get_portfolio, get_equity_quotes, get_equity_positions) remain unavailable. Price data is ~60 trading sessions stale. Live P&L, drawdown, and gap checks are impossible. Reconnecting Robinhood MCP is urgently needed."
+    },
+    {
+      "severity": "INFO",
+      "type": "MODEL_DRIFT",
+      "message": "7 of 15 Phase 2 portfolio names are NOT in current model Top-30 as of Nov 17 capture: NRIX, URGN, ALMS, CMPS, SLDB, DRUG, XENE. Informational only — no rebalance authority in this task."
+    },
+    {
+      "severity": "INFO",
+      "type": "Q3_COINVEST_REBUILT",
+      "message": "coinvest_signals.json shows Q3 2026 rebuild complete (period_of_report=2026-09-30, 30/30 managers, as_of_date=2026-11-16). Q3 Jaccard cohort quarantine check is PENDING — required by governance protocol."
+    },
+    {
+      "severity": "INFO",
+      "type": "OOS_CLOCK_DAY5",
+      "message": "Selector-only OOS clock at Day 5 (started 2026-11-17, mandate SM-20260629-001). First FV capture taken 2026-11-17; 5d window closes ~Nov 24. Mandate at 0/20 eligible windows."
+    },
+    {
+      "severity": "INFO",
+      "type": "MONITORING_GAP",
+      "message": "5 trading sessions without monitoring snapshot (Nov 17-21). Daily cron may not be persisting files between Nov 16 and today."
+    }
+  ],
+  "catalysts_check": {
+    "source": "catalyst_events.json / production_data/corporate_catalysts.json",
+    "note": "Catalyst data not fetched in this run — requires live cache warm or current screen output. Check artifacts/ops/knowledge_layer/ or run warm_caches.py for current catalyst status.",
+    "last_screener_run": "unknown (no rankings.csv dated after 2026-03-31 found in data/snapshots/)"
+  },
+  "action_items": [
+    "URGENT: Reconnect Robinhood MCP to restore live portfolio monitoring",
+    "Run Q3 coinvest cohort quarantine: python3 tools/check_13f_cohort_quarantine.py --pre-date 2026-10-30 --post-date <first post-Q3-merge snapshot>",
+    "Verify daily production screener is running (no current snapshots found in data/snapshots/ post-2026-03-31)",
+    "Run forward validation capture check after Nov 24 (first 5d window closes)",
+    "Investigate monitoring cron gap (Nov 17-21 — 5 sessions with no artifact written)"
+  ],
+  "mcp_tools_status": {
+    "robinhood_mcp": "UNAVAILABLE — connector not responding. get_portfolio, get_equity_quotes, get_equity_positions all unreachable.",
+    "note": "Robinhood MCP tools may be blocked by organization admin settings or require reconnection via claude.ai connector settings."
+  }
+}
