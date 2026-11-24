@@ -55,6 +55,10 @@ def test_terminates_when_todays_artifact_already_exists(tmp_path):
 
 
 @pytest.mark.skipif(shutil.which("bash") is None, reason="needs bash")
+@pytest.mark.skipif(
+    not Path("/usr/bin/python3").exists(),
+    reason="script invokes /usr/bin/python3 (cron PATH); absent in python:*-slim images",
+)
 def test_backfills_missing_weekdays_then_today(tmp_path):
     root = _layout(tmp_path)
     today = date.today()
