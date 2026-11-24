@@ -1,9 +1,12 @@
 name: rebuild-alpha-cohort-table
 
 on:
-  schedule:
-    # Weekdays at 1:30 PM UTC (30 min before phase2-daily-production)
-    - cron: "30 13 * * 1-5"
+  # No schedule: the builder reads data/archives/*.tar.gz, which is gitignored and
+  # never present on a hosted runner, so all 194 scheduled runs (2026-02-25 ->
+  # 2026-11-23) failed with "Discovered 0 total archives". phase2-daily-production
+  # gets exit 3 from fetch_alpha_table_artifact.py and builds in-process
+  # (alpha_table_rebuild_policy=if_missing) either way. Restore the cron only
+  # once archives are hydrated in this job.
   workflow_dispatch:
     inputs:
       as_of_date:
@@ -62,6 +65,13 @@ jobs:
           fi
           echo "as_of_date=$DATE" >> "$GITHUB_OUTPUT"
           echo "Resolved as_of_date=$DATE"
+
+      - name: Require snapshot archives
+        run: |
+          if ! compgen -G "data/archives/*.tar.gz" > /dev/null; then
+            echo "::error::No data/archives/*.tar.gz on this runner (gitignored, not hydrated) — cannot build the table"
+            exit 1
+          fi
 
       - name: Build OOS alpha cohort table
         id: build

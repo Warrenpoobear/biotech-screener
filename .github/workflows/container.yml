@@ -13,12 +13,16 @@ on:
       - "scripts/**"
       - "wake_robin_data_pipeline/**"
       - "tests/**"
+      - ".dockerignore"
+      - ".github/workflows/container.yml"
   pull_request:
     paths:
       - "Dockerfile"
       - "docker-compose.yml"
       - "requirements.txt"
       - "requirements.lock"
+      - ".dockerignore"
+      - ".github/workflows/container.yml"
 
 concurrency:
   group: container-${{ github.ref }}
@@ -50,10 +54,15 @@ jobs:
       - name: Build image
         run: docker build -t ${{ env.IMAGE_NAME }}:test .
 
+      # The image leaves out data/, production_data/ and *.csv (.dockerignore), so
+      # it is published without fixture data; ~180 tests read those committed
+      # files. Mount the checkout (same commit) so the image is tested for its
+      # interpreter and locked deps against the full tracked tree.
       - name: Run tests in container
         run: |
           docker run --rm \
             -e PYTHONHASHSEED=0 \
+            -v "$GITHUB_WORKSPACE:/app" \
             ${{ env.IMAGE_NAME }}:test \
             -m pytest tests/ -q \
               --override-ini="addopts=" \
@@ -80,10 +89,10 @@ jobs:
           from tools.run_daily_production import GATE_ALLOWLIST, MANIFEST_VERSION
           from archive_snapshot import sha256_file
           from backtest.ic_measurement import calculate_ic
-          from common.clinical_calendar_alpha import compute_calendar_alpha
-          from common.staleness_gates import check_staleness
+          from common.clinical_calendar_alpha import compose_clinical_score_v2
+          from common.staleness_gates import StalenessGateEngine
           from common.data_quality import DataQualityGates
-          from common.pit_enforcement import PITViolationError
+          from common.data_integration_contracts import PITViolationError
 
           # Verify decision engine produces deterministic output
           import json, hashlib
