@@ -13,12 +13,16 @@ on:
       - "scripts/**"
       - "wake_robin_data_pipeline/**"
       - "tests/**"
+      - ".dockerignore"
+      - ".github/workflows/container.yml"
   pull_request:
     paths:
       - "Dockerfile"
       - "docker-compose.yml"
       - "requirements.txt"
       - "requirements.lock"
+      - ".dockerignore"
+      - ".github/workflows/container.yml"
 
 concurrency:
   group: container-${{ github.ref }}
