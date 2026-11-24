@@ -125,3 +125,53 @@ class TestCollectorHandlesFailedTickers:
         with patch("collect_ctgov_data.get_trials_for_ticker", side_effect=fake):
             with pytest.raises(SystemExit):
                 cc.collect_all_trials(uni, out)
+
+    def test_transient_empty_reply_is_rechecked_before_the_guard(self, tmp_path):
+        """2026-11-23: ACHV came back as a successful empty reply once (37 -> 0)
+        and the guard discarded the whole 366-ticker refresh; the same query
+        returned all 37 trials minutes later."""
+        uni, out = self._setup(tmp_path, [{"ticker": "AAA", "nct_id": "NCT_OLD"}])
+        calls = {"AAA": 0}
+
+        def fake(ticker, *a, **k):
+            if ticker == "AAA":
+                calls["AAA"] += 1
+                return [] if calls["AAA"] == 1 else [{"ticker": "AAA", "nct_id": "NCT_OLD"}]
+            return [{"ticker": "BBB", "nct_id": "NCT_B"}]
+
+        with patch("collect_ctgov_data.get_trials_for_ticker", side_effect=fake):
+            cc.collect_all_trials(uni, out)
+        got = json.loads(out.read_text(encoding="utf-8"))
+        assert calls["AAA"] == 2
+        assert {r["nct_id"] for r in got} == {"NCT_OLD", "NCT_B"}
+
+    def test_recheck_only_refetches_tickers_that_dropped_to_zero(self, tmp_path):
+        uni, out = self._setup(tmp_path, [{"ticker": "AAA", "nct_id": "NCT_OLD"}])
+        calls = {"AAA": 0, "BBB": 0}
+
+        def fake(ticker, *a, **k):
+            calls[ticker] += 1
+            return [] if ticker == "AAA" else [{"ticker": "BBB", "nct_id": "NCT_B"}]
+
+        with patch("collect_ctgov_data.get_trials_for_ticker", side_effect=fake):
+            with pytest.raises(SystemExit):
+                cc.collect_all_trials(uni, out)
+        assert calls == {"AAA": 2, "BBB": 1}
+
+    def test_recheck_fetch_failure_carries_forward_previous_records(self, tmp_path):
+        prev = [{"ticker": "AAA", "nct_id": "NCT_OLD"}]
+        uni, out = self._setup(tmp_path, prev)
+        calls = {"AAA": 0}
+
+        def fake(ticker, *a, **k):
+            if ticker == "AAA":
+                calls["AAA"] += 1
+                if calls["AAA"] == 1:
+                    return []
+                raise cc.CtgovFetchError("503")
+            return [{"ticker": "BBB", "nct_id": "NCT_B"}]
+
+        with patch("collect_ctgov_data.get_trials_for_ticker", side_effect=fake):
+            cc.collect_all_trials(uni, out)
+        got = json.loads(out.read_text(encoding="utf-8"))
+        assert {r["nct_id"] for r in got} == {"NCT_OLD", "NCT_B"}

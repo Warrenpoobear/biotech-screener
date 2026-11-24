@@ -681,6 +681,25 @@ def collect_all_trials(universe_file: Path, output_file: Path, allow_coverage_dr
             print(f"  {ticker:6s} carried forward {len(carried)} previous trial(s)")
         print(f"{'='*80}\n")
 
+    # CT.gov occasionally answers a query with a successful empty page, which is
+    # indistinguishable from "no trials" on a single request (ACHV 37 -> 0 on
+    # 2026-11-23, full count again minutes later). Re-ask once before the guard
+    # judges the whole refresh; a ticker that is empty twice still trips it.
+    if previous:
+        zeroed = detect_coverage_regressions(previous, all_trials)
+        if zeroed:
+            print(f"\nRechecking {len(zeroed)} ticker(s) that returned no trials: {', '.join(zeroed)}")
+            time.sleep(30)
+            for ticker in zeroed:
+                print(f"[recheck] {ticker:6s}", end=" ", flush=True)
+                try:
+                    _record(ticker, get_trials_for_ticker(ticker))
+                except CtgovFetchError as e:
+                    carried = [r for r in previous if r.get("ticker") == ticker]
+                    all_trials.extend(carried)
+                    print(f"⚠️  fetch failed ({e}) — carrying forward {len(carried)} previous trial(s)")
+                time.sleep(2)
+
     # Coverage guard: refuse to overwrite good data with a regressed fetch.
     # Runs BEFORE the write, so a bad run leaves the previous cache intact.
     if previous:
