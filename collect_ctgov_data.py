@@ -288,6 +288,9 @@ TICKER_TO_SPONSORS = {
     "PVLA": ["Palvella Therapeutics", "Palvella Therapeutics, Inc."],
     "PYXS": ["Pyxis Oncology", "Pyxis Oncology, Inc."],
     "QTRX": ["Quanterix"],
+    # Achieve Life Sciences, ticker ACHV -> QUIT on 2026-11-10 (corporate_actions.json).
+    # Without this entry the term-search fallback for "QUIT" returns 1,000 unrelated trials.
+    "QUIT": ["Achieve Life Sciences"],
     "QURE": ["uniQure"],
     "RANI": ["Rani Therapeutics Holdings", "Rani Therapeutics"],
     "RAPP": ["Rapport Therapeutics", "Rapport Therapeutics, Inc."],
