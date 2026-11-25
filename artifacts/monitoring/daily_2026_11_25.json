@@ -1,0 +1,173 @@
+{
+  "date": "2026-11-25",
+  "monitoring_day": "Day ~168 (calendar days from 2026-06-10 entry date)",
+  "timestamp": "2026-11-25T14:00:00.000000Z",
+  "phase": "Day ~168 PRE-MARKET snapshot (Nov 25 09:00 ET, Wednesday). Robinhood MCP STILL UNAVAILABLE. yfinance also unavailable in this session. No live prices available. Last confirmed price data: Aug 27 close (~64 trading sessions stale). Selector-only OOS clock started 2026-11-16/17 (oos_clock_start confirmed in WEEKLY_SUMMARY.md and CANDIDATE.json). MONITORING NOTE: Original monitoring period was 2026-06-11 through 2026-06-30 — cron has continued firing into November. 9 calendar days since last snapshot (2026-11-16).",
+  "data_integrity": {
+    "primary_source": "Carried forward from daily_2026_11_16.json. Aug 27 close is LAST confirmed price data.",
+    "price_date": "2026-08-27 close (LAST AVAILABLE — now approximately 64 trading sessions stale as of Nov 25 open)",
+    "data_gap": "9 calendar days since last snapshot (Nov 16 -> Nov 25). 6 trading sessions.",
+    "price_source_attempted": ["Robinhood MCP (unavailable)", "yfinance (exit code 1 — unavailable in this session)"],
+    "mcp_status": "Robinhood MCP unavailable throughout Phase 2 monitoring. No live quotes. No live portfolio fetch.",
+    "yfinance_status": "yfinance unavailable in this session (exit code 1). No fallback price source.",
+    "live_data_available": false,
+    "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged — no confirmed trades since Jun 24 rebalance)",
+    "cash_basis": "Carried forward 9.87 from Jun 24 MCP sourcing (unchanged, no confirmed trading activity)"
+  },
+  "market_status": {
+    "session": "PRE-MARKET (09:00 ET, Wednesday Nov 25)",
+    "trading_day": true,
+    "day_of_week": "Wednesday",
+    "note": "No live data available. All portfolio figures are stale carry-forward from Aug 27 close (~64 sessions ago)."
+  },
+  "account": {
+    "account_id": "Robinhood 802349084",
+    "equity_fetchable": false,
+    "equity_estimated_usd": 138.04,
+    "equity_note": "EXTREMELY STALE — last confirmed Aug 27 close (~64 sessions ago). Actual value unknown. Carry-forward from Nov 16 snapshot.",
+    "cash_carried": 99.87,
+    "buying_power_carried": null,
+    "total_estimated_account_value": 237.91,
+    "staleness_warning": "CRITICAL — ~64 trading sessions since last confirmed data. P&L and drawdown figures are unreliable."
+  },
+  "benchmark": {
+    "xbi_since_entry_pct": null,
+    "note": "XBI return not updated since Aug 27 close basis. Stale figure from last confirmed snapshot: +25.9pp since Jun-10 entry. Current value unknown.",
+    "last_known_xbi_since_entry_pct": 25.9,
+    "last_known_as_of": "2026-08-27"
+  },
+  "portfolio_overview": {
+    "total_positions": 15,
+    "equity_usd_estimate": 138.04,
+    "cash_usd_estimate": 99.87,
+    "total_account_estimate": 237.91,
+    "cost_basis_usd": 100.13,
+    "avg_pnl_vs_entry_pct_last_known": 37.88,
+    "avg_pnl_as_of": "2026-08-27 (stale ~64 sessions)",
+    "xbi_return_since_entry_pct_last_known": 25.9,
+    "outperformance_pp_last_known": 11.98,
+    "all_figures_stale": true,
+    "stale_as_of": "2026-08-27 close (~64 sessions)",
+    "gap_flags": 0,
+    "gap_flags_note": "No gap check possible — no current prices available"
+  },
+  "positions": {
+    "COGT": {"entry_price": 31.35, "quantity": 0.212789, "cost_basis": 6.6709, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "DNTH": {"entry_price": 72.1,  "quantity": 0.092928, "cost_basis": 6.7001, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "NRIX": {"entry_price": 15.46, "quantity": 0.430232, "cost_basis": 6.6514, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "URGN": {"entry_price": 28.02, "quantity": 0.237681, "cost_basis": 6.6598, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "ALMS": {"entry_price": 20.37, "quantity": 0.326013, "cost_basis": 6.6409, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "SYRE": {"entry_price": 76.1,  "quantity": 0.088041, "cost_basis": 6.7019, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "RVMD": {"entry_price": 143.76,"quantity": 0.046465, "cost_basis": 6.6809, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "CMPS": {"entry_price": 11.3,  "quantity": 0.590265, "cost_basis": 6.6700, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "SLDB": {"entry_price": 6.49,  "quantity": 1.028527, "cost_basis": 6.6752, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "DRUG": {"entry_price": 63.59, "quantity": 0.105839, "cost_basis": 6.7300, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "STOK": {"entry_price": 28.74, "quantity": 0.231758, "cost_basis": 6.6553, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "PRAX": {"entry_price": 241.92,"quantity": 0.027530, "cost_basis": 6.6600, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "TRVI": {"entry_price": 13.43, "quantity": 0.000000, "cost_basis": 6.6700, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "ERAS": {"entry_price": 10.63, "quantity": 0.000000, "cost_basis": 6.6700, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."},
+    "XENE": {"entry_price": 32.4,  "quantity": 0.000000, "cost_basis": 6.6700, "current_price": "UNAVAILABLE", "pnl_pct": null, "gap_flag": false, "note": "No current price. Last known from Aug 27 close (stale ~64 sessions)."}
+  },
+  "gap_check": {
+    "status": "SKIPPED — no current prices",
+    "threshold_pct": 5.0,
+    "positions_flagged": 0,
+    "note": "Gap check requires current prices. Neither Robinhood MCP nor yfinance available in this session."
+  },
+  "governance_gates": {
+    "drawdown_gate": {
+      "status": "UNVERIFIABLE",
+      "threshold_review_pp": -10.0,
+      "threshold_liquidate_pp": -15.0,
+      "current_drawdown_vs_xbi_pp": null,
+      "last_known_outperformance_pp": 11.98,
+      "last_known_as_of": "2026-08-27",
+      "note": "Rule 4 updated 2026-11-15: review at -10pp, liquidate at -15pp (was -2pp/-5pp). Drawdown UNVERIFIABLE — MCP and yfinance unavailable. Last known was +11.98pp outperformance vs XBI as of Aug 27. Gate cannot be verified today; do not execute trades."
+    },
+    "ic_gate": {
+      "status": "OVERDUE",
+      "last_ic_measurement": "2026-06-24 (corrected reading 2026-11-12)",
+      "corrected_reading": "actionable_rank mean IC +0.1534 over 31 live dates (2026-11-12 correction)",
+      "original_reading_retracted": "score_rank_pct +0.0432 (retracted 2026-11-12; sign error)",
+      "days_overdue": 154,
+      "note": "IC gate is 154 days overdue as of Nov 25. Corrected reading (2026-11-12) for actionable_rank IC = +0.1534, hit_rate N=31. IC refresh gated on freeze lift + tooling correction (Spec 100). No change since Nov 16 snapshot."
+    },
+    "jaccard_gate": {
+      "status": "PENDING_Q3_REBUILD",
+      "q2_promoted": "2026-11-01 (Q2 2026, 30-manager elite_core roster, builder 1.2.0)",
+      "q3_filing_deadline": "~2026-11-14",
+      "q3_rebuild_status": "Q3 13F filings due ~Nov 14. coinvest_signals.json may need rebuild for Q3 holdings. Status not confirmed in this session.",
+      "last_jaccard": 0.875,
+      "last_jaccard_as_of": "2026-06-23",
+      "note": "Q3 2026 13F filings were due ~Nov 14. The coinvest rebuild for Q3 is a manual governed step (staleness gate stops silent carry-forward but does not trigger rebuild). Quarantine check pending: check_13f_cohort_quarantine.py --pre-date 2026-10-30 --post-date <first post-Q3 snapshot>."
+    },
+    "forward_validation_clock": {
+      "status": "RUNNING",
+      "oos_clock_start": "2026-11-17",
+      "confirmed_in": "WEEKLY_SUMMARY.md (updated 2026-11-17T21:50Z)",
+      "mandate_eligible_windows": 0,
+      "total_captured_windows": 13,
+      "mean_weekly_excess": "+1.142%",
+      "t_stat": 2.13,
+      "hit_rate": "77%",
+      "cumulative_excess": "+14.85%",
+      "note": "Clock started 2026-11-17 (first promoted selector-only run). OOS clock per WEEKLY_SUMMARY: oos_clock_start=2026-11-16 (superseded to Nov 17 per operational-state.md 2026-11-17 entry). 0/20 mandate-eligible windows counted. Descriptive t=2.13 cleared two-tailed 95% threshold but is NOT mandate evidence (computed over all windows including pre-clock)."
+    },
+    "emergency_gate": {
+      "status": "NOT_TRIPPED_LAST_KNOWN",
+      "last_verified_as_of": "2026-11-16 snapshot",
+      "note": "No emergency conditions observed in last known data. Cannot verify current state without live data."
+    }
+  },
+  "governance_summary": {
+    "selector_only_switch": "2026-11-13 (operator-authorized). final_score = selector_score.",
+    "model_hash": "a9a430154568e242",
+    "ruleset_id": "8887576e (v1.14.0)",
+    "freeze_status": "FROZEN (BLOCKED_LEVEL_0) — DEM candidate freeze + NO_MODEL_CHANGE forward-validation window active",
+    "oos_clock": "0/20 mandate-eligible windows (clock started 2026-11-17)",
+    "last_production_capture": "2026-11-17 (LIVE, model_hash_match=true, ranker_mode_match=true, quality=PASS, eligible_for_mandate=true)"
+  },
+  "alerts": [
+    {
+      "severity": "WARN",
+      "code": "PRICE_DATA_STALE",
+      "message": "No current price data available. yfinance and Robinhood MCP both unavailable in this session. Last confirmed prices are ~64 trading sessions stale (Aug 27 close)."
+    },
+    {
+      "severity": "WARN",
+      "code": "DRAWDOWN_UNVERIFIABLE",
+      "message": "Drawdown gate cannot be verified without live prices. Last known was +11.98pp outperformance (Aug 27). Rule 4 changed 2026-11-15: thresholds now -10pp review / -15pp liquidate."
+    },
+    {
+      "severity": "INFO",
+      "code": "IC_GATE_OVERDUE",
+      "message": "IC gate is 154 days overdue. Corrected reading +0.1534 (Nov 12). Refresh requires Spec 100 implementation and freeze lift."
+    },
+    {
+      "severity": "INFO",
+      "code": "Q3_13F_REBUILD_PENDING",
+      "message": "Q3 2026 13F filings due ~Nov 14. coinvest_signals.json rebuild for Q3 is a manual governed step. Run check_13f_cohort_quarantine.py after rebuild."
+    },
+    {
+      "severity": "INFO",
+      "code": "OOS_CLOCK_RUNNING",
+      "message": "Selector-only OOS clock started 2026-11-17. Currently 0/20 mandate-eligible windows. Descriptive t=2.13 (pre-clock + post-clock combined) is NOT mandate evidence."
+    },
+    {
+      "severity": "INFO",
+      "code": "MONITORING_PERIOD_EXTENDED",
+      "message": "Original monitoring window was 2026-06-11 through 2026-06-30. Cron has continued firing through November. No action needed — observation continues."
+    }
+  ],
+  "action_items": [
+    "MANUAL: Reconnect Robinhood MCP or use alternative broker data source to get live prices and portfolio equity.",
+    "MANUAL: Verify Q3 2026 13F rebuild status (coinvest_signals.json). Filings due ~Nov 14. Run quarantine check if rebuilt.",
+    "MANUAL: Run IC refresh after Spec 100 implementation and freeze lift.",
+    "OBSERVE: OOS clock running. Next milestone: 20 mandate-eligible live windows for directional proof gate."
+  ],
+  "data_sources_attempted": {
+    "robinhood_mcp": "unavailable",
+    "yfinance": "unavailable (exit code 1)",
+    "last_snapshot": "daily_2026_11_16.json"
+  }
+}
