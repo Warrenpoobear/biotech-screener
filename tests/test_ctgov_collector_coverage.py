@@ -15,6 +15,7 @@ silently corrupted production_data/trial_records.json:
 3. Nothing noticed. A ticker going from 134 trials to 0 wrote out clean.
 """
 
+import json
 import sys
 from pathlib import Path
 from unittest.mock import patch
@@ -24,6 +25,8 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from collect_ctgov_data import TICKER_TO_SPONSORS, _fetch_all_trials, detect_coverage_regressions
+
+REPO = Path(__file__).parent.parent
 
 # Tickers that silently lost every trial in the 2026-07-30 re-warm.
 RESTORED_TICKERS = [
@@ -74,6 +77,36 @@ class TestSponsorMappingCoverage:
     def test_no_empty_sponsor_lists_anywhere(self):
         empty = [t for t, s in TICKER_TO_SPONSORS.items() if not s]
         assert not empty, f"tickers with empty sponsor lists: {empty}"
+
+    def test_ticker_changes_carry_the_sponsor_mapping(self):
+        """ACHV -> QUIT (2026-11-10) renamed the universe but not this table, so
+        QUIT fell back to query.term=QUIT: 1,000 unrelated trials, while the
+        37 committed ACHV records tripped the coverage guard every day."""
+        registry = json.loads((REPO / "production_data" / "corporate_actions.json").read_text(encoding="utf-8"))
+        actions = registry if isinstance(registry, list) else registry.get("actions", [])
+        missing = [
+            f"{a['old_ticker']} -> {a['new_ticker']}"
+            for a in actions
+            if isinstance(a, dict)
+            and a.get("action") == "ticker_change"
+            and a.get("old_ticker") in TICKER_TO_SPONSORS
+            and a.get("new_ticker") not in TICKER_TO_SPONSORS
+        ]
+        assert not missing, f"ticker changes that dropped the CT.gov sponsor mapping: {missing}"
+
+    def test_quit_uses_achieve_sponsor(self):
+        assert TICKER_TO_SPONSORS["QUIT"] == TICKER_TO_SPONSORS["ACHV"]
+
+
+class TestCommittedTrialRecordsMatchUniverse:
+    def test_no_records_for_tickers_outside_the_universe(self):
+        """A ticker missing from the universe is never fetched, so its committed
+        records read as a total loss to the coverage guard on every refresh."""
+        data = REPO / "production_data"
+        universe = {s.get("ticker") for s in json.loads((data / "universe.json").read_text(encoding="utf-8"))}
+        records = json.loads((data / "trial_records.json").read_text(encoding="utf-8"))
+        orphans = sorted({r.get("ticker") for r in records} - universe)
+        assert not orphans, f"trial_records.json tickers not in universe.json: {orphans}"
 
 
 class TestDeterministicTruncation:
