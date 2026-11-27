@@ -1,0 +1,102 @@
+{
+  "date": "2026-11-27",
+  "monitoring_day": "Day ~127 (approximate \u2014 MCP gap since launch; cron gap Sep 24\u2013Nov 15)",
+  "timestamp": "2026-11-27T14:10:00.000000Z",
+  "phase": "PRE-MARKET snapshot (Nov 27 09:00 ET, Friday). Robinhood MCP STILL UNAVAILABLE (blocked \u2014 Needs approval per org settings). Price basis remains Aug 27 close (~65 trading sessions stale). GOVERNANCE: OOS clock started 2026-11-17; mandate SM-20260629-001 at ~8/20 trading sessions (not weekly windows \u2014 need 20 weekly windows). Production is selector-only since 2026-11-13. Q3 2026 13F still pending rebuild (due 2026-11-14). Last monitoring snapshot: 2026-11-16 (11 trading sessions ago).",
+  "data_integrity": {
+    "primary_source": "Carried forward from daily_2026_11_16.json (last snapshot).",
+    "price_date": "2026-08-27 close (LAST AVAILABLE \u2014 now approximately 65 trading sessions stale as of Nov 27 open)",
+    "data_gap": "11 consecutive trading sessions with no monitoring snapshot (Nov 17 through Nov 26)",
+    "monitoring_cron_gap": "Last written file was daily_2026_11_16.json. 11 sessions missing.",
+    "quantities_source": "production_data/phase2_entry_prices.json (sourced 2026-06-24, unchanged)",
+    "cash_basis": "Carried forward 99.87 from Jun 24 MCP sourcing (unchanged)",
+    "mcp_status": "Robinhood MCP unavailable. Org admin settings: Needs approval (blocked in automated runs). No live quotes. No live portfolio fetch. All figures are carried-forward estimates only.",
+    "live_data_available": false
+  },
+  "market_status": {
+    "session": "PRE-MARKET (09:00 ET, Friday Nov 27)",
+    "trading_day": true,
+    "note": "No live data available. Figures below are stale carry-forward from Aug 27 close."
+  },
+  "account": {
+    "account_id": "Robinhood 802349084",
+    "equity_fetchable": false,
+    "equity_estimated_usd": 138.04,
+    "equity_note": "EXTREMELY STALE \u2014 last confirmed Aug 27 close (~65 sessions ago). Actual value unknown.",
+    "cash_carried": 99.87,
+    "buying_power_carried": null,
+    "total_estimated_account_value": 237.91,
+    "staleness_warning": "CRITICAL \u2014 ~65 trading sessions since last confirmed data. P&L and drawdown figures are unreliable."
+  },
+  "benchmark": {
+    "xbi_since_entry_pct": null,
+    "note": "XBI return not updated since Aug 27 close basis. Stale figure from last snapshot.",
+    "last_known_xbi_since_entry_pct": 25.9,
+    "last_known_as_of": "2026-08-27"
+  },
+  "portfolio_overview": {
+    "total_positions": 15,
+    "equity_usd_estimate": 138.04,
+    "cash_usd_estimate": 99.87,
+    "total_account_estimate": 237.91,
+    "cost_basis_usd": 100.13,
+    "avg_pnl_vs_entry_pct_last_known": 37.88,
+    "xbi_return_since_entry_pct_last_known": 25.9,
+    "outperformance_pp_last_known": 11.98,
+    "all_figures_stale": true,
+    "stale_as_of": "2026-08-27 close (~65 sessions)",
+    "gap_flags": 0,
+    "gap_flags_note": "No gap check possible \u2014 no current prices",
+    "positions_above_20pct_loss": 0,
+    "positions_above_20pct_loss_note": "Cannot evaluate \u2014 no current prices"
+  },
+  "governance_gates": {
+    "drawdown_gate": {
+      "status": "UNKNOWN",
+      "threshold_review": -10.0,
+      "threshold_liquidate": -15.0,
+      "rule_changed": "2026-11-15 (was -2pp review, -5pp liquidate)",
+      "current_drawdown_vs_xbi": null,
+      "note": "Cannot evaluate without current prices. Last known portfolio ~+37.9% vs entry, XBI ~+25.9%."
+    },
+    "ic_gate": {
+      "status": "NOT_APPLICABLE",
+      "note": "OOS clock started 2026-11-17. At ~8 trading sessions into new window (need 20 weekly periods). Selector-only mode active since 2026-11-13. Existing IC: actionable_rank IC +0.1534 (as of Jun 2026 period)."
+    },
+    "jaccard_gate": {
+      "status": "NOT_EVALUATED",
+      "note": "Last known Jaccard: 0.875 (Jun 2026). Q3 2026 13F still pending rebuild (filings due ~2026-11-14). Current coinvest on Q2 2026 holdings."
+    },
+    "emergency_gate": {
+      "status": "NOT_TRIPPED",
+      "note": "No emergency conditions flagged in production logs. Cannot verify without live data."
+    },
+    "oos_mandate": {
+      "status": "IN_PROGRESS",
+      "mandate": "SM-20260629-001",
+      "windows_completed": "~8 trading sessions since Nov 17 start (need 20 weekly windows)",
+      "oos_clock_start": "2026-11-17",
+      "model_hash": "a9a430154568e242",
+      "ranker_mode": "selector_only",
+      "note": "Clock started 2026-11-17 after RPRX/ILMN/STVN universe adds (PR #696). Mandate at ~0\u20131 weekly window completed. Protocol: docs/FORWARD_VALIDATION_PROTOCOL.md"
+    }
+  },
+  "forward_validation_status": {
+    "as_of": "2026-11-09 (last WEEKLY_SUMMARY entry)",
+    "last_weekly_window": "W46 (2026-11-09)",
+    "last_weekly_result": "PASS",
+    "cumulative_t": 2.13,
+    "windows_total": 13,
+    "two_tailed_95_cleared": true,
+    "bootstrap_avg_pct": 79,
+    "bottom30_avg_excess_vs_xbi": -1.91,
+    "note": "These 13 windows predate the current OOS clock (started 2026-11-17). They do NOT count toward SM-20260629-001 (0/20). New window accumulation started fresh on 2026-11-17."
+  },
+  "catalyst_check": {
+    "status": "NOT_EVALUATED",
+    "note": "catalyst_events.json not checked in this run. No external data source available. Manual review recommended."
+  },
+  "alerts": [],
+  "mcp_unavailability_note": "Robinhood MCP tools (get_portfolio, get_equity_quotes, get_equity_positions) require manual approval per org admin settings. Automated monitoring cannot fetch live data until org admin grants access or tools are moved to auto-approve.",
+  "summary": "Day ~127 snapshot. Robinhood MCP still unavailable (blocked by org settings). Price basis is Aug 27 close (~65 trading sessions stale). No new price data available for 15-position Phase 2 portfolio. OOS forward validation clock running since 2026-11-17 (selector-only, ~8 sessions elapsed). Governance gates cannot be fully evaluated without live prices. No alerts tripped based on available data. Recommendation: Enable Robinhood MCP auto-approve in org admin settings to restore live monitoring."
+}
